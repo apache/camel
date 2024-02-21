@@ -51,7 +51,7 @@ import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
 
 /**
- * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+ * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
  */
 @UriEndpoint(firstVersion = "3.8.0", scheme = "spring-rabbitmq", title = "Spring RabbitMQ",
              syntax = "spring-rabbitmq:exchangeName",
