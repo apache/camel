@@ -452,14 +452,14 @@ from("optaplanner:myProblemName")
   .to("...")
 ----
 
-You can pass the Optaplanner SolverManager in 2 ways:
+You can pass the OptaPlanner SolverManager in 2 ways:
 
 - as #parameter
 - as header
 
 When running `camel-optaplanner` on Spring Boot or Quarkus, it is preferable to use the Spring Boot or Quarkus way of creating the SolverManager.
 
-It is possible to migrate legacy Camel Optaplanner Routes, by putting the XML config file, as show in the code below. Camel Optaplanner will handle creating the SolverManager for those legacy Routes:
+It is possible to migrate legacy Camel OptaPlanner Routes, by putting the XML config file, as show in the code below. Camel OptaPlanner will handle creating the SolverManager for those legacy Routes:
 
 [source,java]
 ----
@@ -528,7 +528,7 @@ If the route or consumer is suspended then http status 503 is now returned inste
 
 === camel-twitter
 
-The component was updated to use Twitter4j version 4.1.2, which https://twitter4j.org/2022/10/21/264[has moved the packages] used by a few of its classes. If accessing certain twitter-related data, such as the Twit status, you need to update the packages used from `twitter4j.Status` to `twitter4j.v1.Status`.
+The component was updated to use Twitter4j version 4.1.2, which https://twitter4j.org/2022/10/21/264[has moved the packages] used by a few of its classes. If accessing certain twitter-related data, such as the Tweet status, you need to update the packages used from `twitter4j.Status` to `twitter4j.v1.Status`.
 
 
 == Upgrading Camel 4.0.1 to 4.0.2
