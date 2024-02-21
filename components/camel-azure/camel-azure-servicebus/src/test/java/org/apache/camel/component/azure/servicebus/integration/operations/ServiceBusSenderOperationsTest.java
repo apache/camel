@@ -88,7 +88,7 @@ public class ServiceBusSenderOperationsTest {
     void testSendSingleMessage() {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
 
-        operations.sendMessages("test data", null, Map.of("customKey", "customValue")).block();
+        operations.sendMessages("test data", null, Map.of("customKey", "customValue"), null).block();
 
         final boolean exists = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
                 .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("test data"));
@@ -97,7 +97,7 @@ public class ServiceBusSenderOperationsTest {
 
         //test bytes
         byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
-        operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue")).block();
+        operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue"), null).block();
         final boolean exists2 = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
                 .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(),
                         testByteBody));
@@ -105,7 +105,7 @@ public class ServiceBusSenderOperationsTest {
 
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
-            operations.sendMessages(12345, null, null).block();
+            operations.sendMessages(12345, null, null, null).block();
         });
     }
 
@@ -118,7 +118,7 @@ public class ServiceBusSenderOperationsTest {
         inputBatch.add("test batch 2");
         inputBatch.add("test batch 3");
 
-        operations.sendMessages(inputBatch, null, null).block();
+        operations.sendMessages(inputBatch, null, null, null).block();
 
         final Spliterator<ServiceBusReceivedMessage> receivedMessages
                 = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
@@ -143,7 +143,7 @@ public class ServiceBusSenderOperationsTest {
         inputBatch2.add(byteBody1);
         inputBatch2.add(byteBody2);
 
-        operations.sendMessages(inputBatch2, null, null).block();
+        operations.sendMessages(inputBatch2, null, null, null).block();
         final Spliterator<ServiceBusReceivedMessage> receivedMessages2
                 = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
 
@@ -161,7 +161,7 @@ public class ServiceBusSenderOperationsTest {
     void testScheduleMessage() {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
 
-        operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null).block();
+        operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null, null).block();
 
         final boolean exists = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
                 .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
@@ -171,7 +171,7 @@ public class ServiceBusSenderOperationsTest {
 
         //test bytes
         byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
-        operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null).block();
+        operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null, null).block();
         final boolean exists2 = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
                 .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(),
                         testByteBody));
@@ -179,7 +179,7 @@ public class ServiceBusSenderOperationsTest {
 
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
-            operations.scheduleMessages(12345, OffsetDateTime.now(), null, null).block();
+            operations.scheduleMessages(12345, OffsetDateTime.now(), null, null, null).block();
         });
     }
 
@@ -192,7 +192,7 @@ public class ServiceBusSenderOperationsTest {
         inputBatch.add("testSchedulingBatchMessages 2");
         inputBatch.add("testSchedulingBatchMessages 3");
 
-        operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null).block();
+        operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null, null).block();
 
         final Spliterator<ServiceBusReceivedMessage> receivedMessages
                 = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
@@ -220,7 +220,7 @@ public class ServiceBusSenderOperationsTest {
         inputBatch2.add(byteBody1);
         inputBatch2.add(byteBody2);
 
-        operations.scheduleMessages(inputBatch2, OffsetDateTime.now(), null, null).block();
+        operations.scheduleMessages(inputBatch2, OffsetDateTime.now(), null, null, null).block();
         final Spliterator<ServiceBusReceivedMessage> receivedMessages2
                 = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
 
