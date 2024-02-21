@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Zeebe component which does integrage with Camunda Zeebe to interact with the API.
+ * Zeebe component which integrates with Camunda Zeebe to interact with the API.
  */
 @UriEndpoint(firstVersion = "3.21.0", scheme = "zeebe", title = "Zeebe", syntax = "zeebe:operationName",
              category = { Category.WORKFLOW, Category.SAAS },

@@ -2,7 +2,7 @@
 :doctitle: Zeebe
 :shortname: zeebe
 :artifactid: camel-zeebe
-:description: Zeebe component which does integrage with Camunda Zeebe to interact with the API.
+:description: Zeebe component which integrates with Camunda Zeebe to interact with the API.
 :since: 3.21
 :supportlevel: Experimental
 :tabs-sync-option:
