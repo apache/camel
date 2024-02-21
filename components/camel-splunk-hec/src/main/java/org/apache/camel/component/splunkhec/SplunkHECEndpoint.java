@@ -32,7 +32,7 @@ import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
- * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
+ * The splunk component allows publishing events in Splunk using the HTTP Event Collector.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
              syntax = "splunk-hec:splunkURL", category = { Category.MONITORING },

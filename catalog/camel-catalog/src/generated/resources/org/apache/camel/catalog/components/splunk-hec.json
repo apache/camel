@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "splunk-hec",
     "title": "Splunk HEC",
-    "description": "The splunk component allows to publish events in Splunk using the HTTP Event Collector.",
+    "description": "The splunk component allows publishing events in Splunk using the HTTP Event Collector.",
     "deprecated": false,
     "firstVersion": "3.3.0",
     "label": "monitoring",
