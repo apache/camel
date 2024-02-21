@@ -14,9 +14,9 @@
 
 *{component-header}*
 
-The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]
+The Olingo4 component uses http://olingo.apache.org/[Apache Olingo]
 version 4.0 APIs to interact with OData 4.0 compliant service.
-Since version 4.0 OData is OASIS standard and number of popular open source 
+Since version 4.0, OData is an OASIS standard and a number of popular open source
 and commercial vendors and products support this protocol.
 A sample list of supporting products can be found on the OData 
 http://www.odata.org/ecosystem/[website].
@@ -68,9 +68,9 @@ include::partial$component-endpoint-headers.adoc[]
 == Endpoint HTTP Headers
 
 The component level configuration property **httpHeaders** supplies static HTTP header information.
-However, some systems requires dynamic header information to be passed to and received from the endpoint.
+However, some systems require dynamic header information to be passed to and received from the endpoint.
 A sample use case would be systems that require dynamic security tokens.  The **endpointHttpHeaders** 
-and **responseHttpHeaders** endpoint properties provides this capability.  Set headers that need to 
+and **responseHttpHeaders** endpoint properties provide this capability.  Set headers that need to
 be passed to the endpoint in the *`CamelOlingo4.endpointHttpHeaders`* property and the 
 response headers will be returned in a *`CamelOlingo4.responseHttpHeaders`* property.  
 Both properties are of the type *`java.util.Map<String, String>`*.
@@ -84,22 +84,22 @@ the OData resource being queried, created or modified.
 |=======================================================================
 |OData Resource Type |Resource URI from resourcePath and keyPredicate |In or Out Body Type
 
-|Entity data model |$metadata |org.apache.olingo.commons.api.edm.Edm
+|Entity data model |$metadata |`org.apache.olingo.commons.api.edm.Edm`
 
-|Service document |/ |org.apache.olingo.client.api.domain.ClientServiceDocument
+|Service document |/ |`org.apache.olingo.client.api.domain.ClientServiceDocument`
 
-|OData entity set |<entity-set> |org.apache.olingo.client.api.domain.ClientEntitySet
+|OData entity set |<entity-set> |`org.apache.olingo.client.api.domain.ClientEntitySet`
 
-|OData entity |<entity-set>(<key-predicate>) |org.apache.olingo.client.api.domain.ClientEntity for Out body (response)
-java.util.Map<String, Object> for In body (request)
+|OData entity |<entity-set>(<key-predicate>) |`org.apache.olingo.client.api.domain.ClientEntity` for Out body (response)
+`java.util.Map<String, Object>` for In body (request)
 
-|Simple property |<entity-set>(<key-predicate>)/<simple-property> |org.apache.olingo.client.api.domain.ClientPrimitiveValue
+|Simple property |<entity-set>(<key-predicate>)/<simple-property> |`org.apache.olingo.client.api.domain.ClientPrimitiveValue`
 
-|Simple property value |<entity-set>(<key-predicate>)/<simple-property>/$value |org.apache.olingo.client.api.domain.ClientPrimitiveValue
+|Simple property value |<entity-set>(<key-predicate>)/<simple-property>/$value |`org.apache.olingo.client.api.domain.ClientPrimitiveValue`
 
-|Complex property |<entity-set>(<key-predicate>)/<complex-property> |org.apache.olingo.client.api.domain.ClientComplexValue
+|Complex property |<entity-set>(<key-predicate>)/<complex-property> |`org.apache.olingo.client.api.domain.ClientComplexValue`
 
-|Count |<resource-uri>/$count |java.lang.Long
+|Count |<resource-uri>/$count |`java.lang.Long`
 |=======================================================================
 
 == Samples
