@@ -23,7 +23,7 @@ monitor Camel using JMX.
 
 [NOTE]
 ====
-If you run Camel standalone with just `camel-core` as a dependency, and you want JMX enabled out of the box, then you need to add `camel-management` as a dependency.
+If you run Camel standalone with just `camel-core` as a dependency, and you want JMX to enable out of the box, then you need to add `camel-management` as a dependency.
 ====
 
 
