@@ -15,7 +15,7 @@
 *{component-header}*
 
 The Quickfix component adapts the
-http://www.quickfixj.org/[QuickFIX/J] FIX engine for using in Camel .
+http://www.quickfixj.org/[QuickFIX/J] FIX engine for using in Camel.
 This component uses the standard http://www.fixprotocol.org/[Financial
 Interchange (FIX) protocol] for message transport.
 
@@ -48,9 +48,9 @@ the sessionID is:
 (BeginString):(SenderCompID)[/(SenderSubID)[/(SenderLocationID)]]->(TargetCompID)[/(TargetSubID)[/(TargetLocationID)]]
 ----
 
-The optional *lazyCreateEngine* parameter allows to
-create QuickFIX/J engine on demand. Value *true* means the engine is
-started when first message is send or there's consumer configured in
+The optional *lazyCreateEngine* parameter allows
+creating QuickFIX/J engine on demand. Value *true* means the engine is
+started when the first message is sent or there's consumer configured in
 route definition. When **false** value is used, the engine is started at
 the endpoint creation. When this parameter is missing, the value of
 component's property *lazyCreateEngines* is being used.
@@ -69,16 +69,16 @@ quickfix:config.cfg?sessionID=FIX.4.2:MyTradingCompany->SomeExchange&lazyCreateE
 
 FIX sessions are endpoints for the *quickfix* component. An endpoint URI
 may specify a single session or all sessions managed by a specific
-QuickFIX/J engine. Typical applications will use only one FIX engine but
+QuickFIX/J engine. Typical applications will use only one FIX engine, but
 advanced users may create multiple FIX engines by referencing different
 configuration files in *quickfix* component endpoint URIs.
 
 When a consumer does not include a session ID in the endpoint URI, it
 will receive exchanges for all sessions managed by the FIX engine
 associated with the configuration file specified in the URI. If a
-producer does not specify a session in the endpoint URI then it must
+producer does not specify a session in the endpoint URI, then it must
 include the session-related fields in the FIX message being sent. If a
-session is specified in the URI then the component will automatically
+session is specified in the URI, then the component will automatically
 inject the session-related fields into the FIX message.
 
 // component-configure options: START
@@ -107,10 +107,10 @@ receiving a message string, the FIX engine can properly parse the data.
 == QuickFIX/J Configuration Extensions
 
 When using QuickFIX/J directly, one typically writes code to create
-instances of logging adapters, message stores and communication
+instances of logging adapters, message stores, and communication
 connectors. The *quickfix* component will automatically create instances
 of these classes based on information in the configuration file. It also
-provides defaults for many of the common required settings and adds
+provides defaults for many of the commonly required settings and adds
 additional capabilities (like the ability to activate JMX support).
 
 The following sections describe how the *quickfix* component processes
@@ -122,7 +122,7 @@ user manual].
 === Communication Connectors
 
 When the component detects an initiator or acceptor session setting in
-the QuickFIX/J configuration file it will automatically create the
+the QuickFIX/J configuration file, it will automatically create the
 corresponding initiator and/or acceptor connector. These settings can be
 in the default or in a specific session section of the configuration
 file.
@@ -389,7 +389,7 @@ body is modified when sending a logon message
 the counterparty. It is important that the outgoing logon message is
 being processed __synchronously__. If it is processed asynchronously (on
 another thread), the FIX engine will immediately send the unmodified
-outgoing message when it's callback method returns.
+outgoing message when its callback method returns.
 
 == FIX Sequence Number Management
 
