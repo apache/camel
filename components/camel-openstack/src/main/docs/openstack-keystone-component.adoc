@@ -63,7 +63,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-You can use following settings for each subsystem:
+You can use the following settings for each subsystem:
 
 == domains
 
@@ -72,7 +72,7 @@ You can use following settings for each subsystem:
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new domain.
+|`create` | Create a new domain.
 
 |`get` | Get the domain.
 
@@ -83,7 +83,7 @@ You can use following settings for each subsystem:
 |`delete` | Delete the domain.
 |=========================================================================
 
-If you need more precise domain settings you can create new object of the type *org.openstack4j.model.identity.v3.Domain* and send in the message body.
+If you need more precise domain settings, you can create a new object of the type *org.openstack4j.model.identity.v3.Domain* and send in the message body.
 
 == groups
 
@@ -92,7 +92,7 @@ If you need more precise domain settings you can create new object of the type *
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new group.
+|`create` | Create a new group.
 
 |`get` | Get the group.
 
@@ -109,7 +109,7 @@ If you need more precise domain settings you can create new object of the type *
 |`removeUserFromGroup` | Remove the user from the group.
 |=========================================================================
 
-If you need more precise group settings you can create new object of the type *org.openstack4j.model.identity.v3.Group* and send in the message body.
+If you need more precise group settings, you can create a new object of the type *org.openstack4j.model.identity.v3.Group* and send in the message body.
 
 == projects
 
@@ -118,7 +118,7 @@ If you need more precise group settings you can create new object of the type *o
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new project.
+|`create` | Create a new project.
 
 |`get` | Get the project.
 
@@ -129,7 +129,7 @@ If you need more precise group settings you can create new object of the type *o
 |`delete` | Delete the project.
 |=========================================================================
 
-If you need more precise project settings you can create new object of the type *org.openstack4j.model.identity.v3.Project* and send in the message body.
+If you need more precise project settings, you can create a new object of the type *org.openstack4j.model.identity.v3.Project* and send in the message body.
 
 == regions
 
@@ -149,7 +149,7 @@ If you need more precise project settings you can create new object of the type 
 |`delete` | Delete the region.
 |=========================================================================
 
-If you need more precise region settings you can create new object of the type *org.openstack4j.model.identity.v3.Region* and send in the message body.
+If you need more precise region settings, you can create a new object of the type *org.openstack4j.model.identity.v3.Region* and send in the message body.
 
 == users
 
@@ -169,7 +169,7 @@ If you need more precise region settings you can create new object of the type *
 |`delete` | Delete the user.
 |=========================================================================
 
-If you need more precise user settings you can create new object of the type *org.openstack4j.model.identity.v3.User* and send in the message body.
+If you need more precise user settings, you can create a new object of the type *org.openstack4j.model.identity.v3.User* and send in the message body.
 
 
 
