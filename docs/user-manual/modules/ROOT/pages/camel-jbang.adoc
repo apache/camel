@@ -3287,6 +3287,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.metrics`
 | Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) when running standalone Camel
 
+|`camel.jbang.open-api`
+| File name of open-api spec file (json or yaml) that are used when using `--open-api` to generate routes from swagger/openapi API spec file.
+
 |`camel.jbang.ignoreLoadingError`
 | Whether to ignore route loading and compilation errors (use this with care!)
 
