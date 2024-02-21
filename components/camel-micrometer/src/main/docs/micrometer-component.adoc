@@ -14,12 +14,12 @@
 
 *{component-header}*
 
-The Micrometer component allows to collect various metrics directly
+The Micrometer component allows collecting various metrics directly
 from Camel routes. Supported metric types
 are xref:#MicrometerComponent-counter[counter], xref:#MicrometerComponent-summary[summary],
-and xref:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
-simple way to measure the behaviour of an application. Configurable
-reporting backends (via Micrometer registries) enable different integration options for
+and xref:#MicrometerComponent-timer[timer].
+http://micrometer.io/[Micrometer] provides a simple way to measure the behaviour of an application.
+The configurable reporting backend (via Micrometer registries) enables different integration options for
 collecting and visualizing statistics.
 
 The component also provides
@@ -88,19 +88,19 @@ Some Camel specific metrics are available out of the box.
 |camel.routes.running |gauge |Number of routes currently running
 |camel.exchanges.inflight |gauge |Route inflight messages
 |camel.exchanges.total |counter |Total number of processed exchanges
-|camel.exchanges.succeeded |counter |Number of successfully completed exchange
+|camel.exchanges.succeeded |counter |Number of successfully completed exchanges
 |camel.exchanges.failed |counter |Number of failed exchanges
 |camel.exchanges.failures.handled |counter |Number of failures handled
 |camel.exchanges.external.redeliveries |counter |Number of external initiated redeliveries (such as from JMS broker)
-|camel.exchange.event.notifier |gauge + summary | Metrics for message created, sent, completed, and failed events
+|camel.exchange.event.notifier |gauge + summary | Metrics for messages created, sent, completed, and failed events
 |camel.route.policy |gauge + summary |Route performance metrics
 |camel.route.policy.long.task |gauge + summary |Route long task metric
 |=====================================================
 
 === Using legacy metrics naming
 
-In Camel 3.20 or older, then the naming of metrics are using _camelCase_ style.
-However, since Camel 3.21 onwards, the naming is using micrometer convention style (see table above).
+In Camel 3.20 or older, then the naming of metrics is using _camelCase_ style.
+However, since Camel 3.21 onwards, the naming is using the Micrometer convention style (see table above).
 
 To use the legacy naming, then you can use the `LEGACY` naming from the `xxxNamingStrategy` interfaces.
 
@@ -124,15 +124,15 @@ The naming style can be configured on:
 
 Each meter has type and name. Supported types are
 xref:#MicrometerComponent-counter[counter],
-xref:#MicrometerComponent-summary[distribution summary] and
-timer. If no type is provided then a counter is used by default.
+xref:#MicrometerComponent-summary[distribution summary], and
+timer. If no type is provided, then a counter is used by default.
 
 The meter name is a string that is evaluated as `Simple` expression. In addition to using the `CamelMetricsName`
-header (see below), this allows to select the meter depending on exchange data.
+header (see below), this allows selecting the meter depending on exchange data.
 
 The optional `tags` URI parameter is a comma-separated string, consisting of `key=value` expressions. Both
 `key` and `value` are strings that are also evaluated as `Simple` expression.
-E.g. the URI parameter `tags=X=${header.Y}` would assign the current value of header `Y` to the key `X`.
+E.g., the URI parameter `tags=X=${header.Y}` would assign the current value of header `Y` to the key `X`.
 
 
 === Headers
@@ -174,7 +174,7 @@ micrometer:counter:name[?options]
 |decrement |- |Double value to subtract from the counter
 |=====================================================
 
-If neither `increment` or `decrement` is defined then counter value will
+If neither `increment` or `decrement` is defined then value of the counter will
 be incremented by one. If `increment` and `decrement` are both defined
 only increment operation is called.
 
@@ -194,7 +194,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-Both `increment` and `decrement` values are evaluated as `Simple` expressions with a Double result, e.g.
+Both `increment` and `decrement` values are evaluated as `Simple` expressions with a Double result, e.g.,
 if header `X` contains a value that evaluates to 3.0, the `simple.counter` counter is decremented by 3.0:
 
 [source,java]
@@ -271,7 +271,7 @@ from("direct:in")
 
 ----
 
-`value` is evaluated as `Simple` expressions with a Double result, e.g.
+`value` is evaluated as `Simple` expressions with a Double result, e.g.,
 if header `X` contains a value that evaluates to 3.0, this value is registered with the `simple.histogram`:
 
 [source,java]
@@ -363,7 +363,7 @@ from("direct:in")
 == Using Micrometer route policy factory
 
 `MicrometerRoutePolicyFactory` allows to add a RoutePolicy for each
-route in order to exposes route utilization statistics using Micrometer.
+route to expose route utilization statistics using Micrometer.
 This factory can be used in Java and XML as the examples below
 demonstrates.
 
@@ -374,7 +374,7 @@ dedicated `MicrometerRoutePolicy` per route you want to instrument, in case you 
 want to instrument a few selected routes.
 ====
 
-From Java you just add the factory to the `CamelContext` as shown below:
+From Java, you add the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -396,7 +396,7 @@ following options:
 |=======================================================================
 |Name |Default |Description
 |prettyPrint |false |Whether to use pretty print when outputting statistics in json format
-|meterRegistry |  |Allow to use a shared `MeterRegistry`. If none is provided then Camel will create a shared instance used by the this CamelContext.
+|meterRegistry |  |Allow using a shared `MeterRegistry`. If none is provided, then Camel will create a shared instance used by the CamelContext.
 |durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration in when dumping the statistics as json.
 |configuration | see below |MicrometerRoutePolicyConfiguration.class
 |=======================================================================
@@ -429,7 +429,7 @@ statistics while routing messages. It works by using a Micrometer Timer for
 each node in all the routes. This factory can be used in Java and XML as
 the examples below demonstrates.
 
-From Java you just set the factory to the `CamelContext` as shown below:
+From Java, you set the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -444,20 +444,20 @@ And from XML DSL you define a <bean> as follows:
   <bean id="metricsMessageHistoryFactory" class="org.apache.camel.component.micrometer.messagehistory.MicrometerMessageHistoryFactory"/>
 ----
 
-The following options is supported on the factory:
+The following options are supported on the factory:
 
 [width="100%",options="header"]
 |=======================================================================
 |Name |Default |Description
 |prettyPrint |false |Whether to use pretty print when outputting statistics in json format
-|meterRegistry |  |Allow to use a shared `MeterRegistry`. If none is provided then Camel will create a shared instance used by the this CamelContext.
+|meterRegistry |  |Allow using a shared `MeterRegistry`. If none is provided, then Camel will create a shared instance used by the CamelContext.
 |durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration when dumping the statistics as json.
 |=======================================================================
 
-At runtime the metrics can be accessed from Java API or JMX which allows
+At runtime the metrics can be accessed from Java API or JMX, which allows
 to gather the data as json output.
 
-From Java code you can get the service from the CamelContext as
+From Java code, you can get the service from the CamelContext as
 shown:
 
 [source,java]
@@ -481,10 +481,10 @@ EventNotifiers can be added to the CamelContext, e.g.:
 camelContext.getManagementStrategy().addEventNotifier(new MicrometerExchangeEventNotifier())
 ----
 
-At runtime the metrics can be accessed from Java API or JMX which allows
+At runtime the metrics can be accessed from Java API or JMX, which allows
 to gather the data as json output.
 
-From Java code you can do get the service from the CamelContext as
+From Java code, you can get the service from the CamelContext as
 shown:
 
 [source,java]
@@ -500,15 +500,15 @@ with `name=MicrometerEventNotifier`.
 == Instrumenting Camel thread pools
 
 `InstrumentedThreadPoolFactory` allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
-which collects information from inside of Camel.
+which collects information from the inside of Camel.
 See more details at xref:manual::threading-model.adoc[Threading Model].
 
 
 == Exposing Micrometer statistics in JMX
 
-Micrometer uses `MeterRegistry` implementations in order to publish statistics. While in production scenarios it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for test or local deployments to publish statistics to JMX.
+Micrometer uses `MeterRegistry` implementations to publish statistics. While in production scenarios it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for test or local deployments to publish statistics to JMX.
 
-In order to achieve this, add the following dependency:
+To achieve this, add the following dependency:
 
 [source,xml]
 ----
@@ -582,9 +582,9 @@ camel.metrics.binders=processor,jvm-info,file-descriptor
 
 == Using Camel Micrometer with Spring Boot
 
-When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot auto configuration will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
+When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot autoconfiguration will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
 
-For example to capture data with Prometheus, you can add the following dependency:
+For example, to capture data with Prometheus, you can add the following dependency:
 
 [source,xml]
 ----
