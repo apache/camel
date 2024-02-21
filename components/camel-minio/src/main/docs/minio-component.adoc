@@ -29,10 +29,9 @@ minio://bucketName[?options]
 ------------------------------
 
 The bucket will be created if it doesn't already exist. +
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
+You can append query options to the URI in the following format: `?options=value&option2=value&...`
 
-For example in order to read file `hello.txt` from the bucket `helloBucket`, use the following snippet:
+For example, to read file `hello.txt` from the bucket `helloBucket`, use the following snippet:
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -62,8 +61,8 @@ the https://min.io/[Minio].
 
 This component implements the Batch Consumer.
 
-This allows you for instance to know how many messages exists in this
-batch and for instance let the Aggregator
+This allows you, for instance, to know how many messages exist in this
+batch and for instance, let the Aggregator
 aggregate this number of messages.
 
 // component headers: START
@@ -99,7 +98,7 @@ from("minio://MyBucket?minioClient=#client&delay=5000&maxMessagesPerPoll=5")
 
 === Minio Producer Operation examples
 
-- CopyObject: this operation copy an object from one bucket to a different one
+- CopyObject: this operation copies an object from one bucket to a different one
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -135,7 +134,7 @@ This operation will copy the object with the name expressed in the header camelD
 
 This operation will delete the object camelKey from the bucket mycamelbucket.
 
-- ListBuckets: this operation list the buckets for this account in this region
+- ListBuckets: this operation lists the buckets for this account in this region
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -146,7 +145,7 @@ This operation will delete the object camelKey from the bucket mycamelbucket.
 
 This operation will list the buckets for this account
 
-- DeleteBucket: this operation delete the bucket specified as URI parameter or header
+- DeleteBucket: this operation deletes the bucket specified as URI parameter or header
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -168,7 +167,7 @@ This operation will delete the bucket mycamelbucket
 
 This operation will list the objects in the mycamelbucket bucket
 
-- GetObject: this operation get a single object in a specific bucket
+- GetObject: this operation gets a single object in a specific bucket
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -183,9 +182,9 @@ This operation will list the objects in the mycamelbucket bucket
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket.
+This operation will return a MinioObject instance related to the camelKey object in `mycamelbucket` bucket.
 
-- GetObjectRange: this operation get a single object range in a specific bucket
+- GetObjectRange: this operation gets a single object range in a specific bucket
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -201,7 +200,7 @@ This operation will return an MinioObject instance related to the camelKey objec
   .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObjectRange")
   .to("mock:result");
 --------------------------------------------------------------------------------
-This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket, containing bytes from 0 to 9.
+This operation will return a MinioObject instance related to the camelKey object in `mycamelbucket` bucket, containing bytes from 0 to 9.
 
 - createDownloadLink: this operation will return a presigned url through which a file can be downloaded using GET method
 
@@ -237,26 +236,27 @@ This operation will return an MinioObject instance related to the camelKey objec
 
 createDownLink and createUploadLink have a default expiry of 3600s which can be overridden by setting the header MinioConstants.PRESIGNED_URL_EXPIRATION_TIME (value in seconds)
 
-== Bucket Autocreation
+== Bucket Auto-creation
 
 With the option `autoCreateBucket` users are able to avoid the autocreation of a Minio Bucket in case it doesn't exist. The default for this option is `true`.
-If set to false any operation on a not-existent bucket in Minio won't be successful, and an error will be returned.
+If set to false, any operation on a not-existent bucket in Minio won't be successful, and an error will be returned.
 
-== Automatic detection of Minio client in registry
+== Automatic detection of a Minio client in registry
 
 The component is capable of detecting the presence of a Minio bean into the registry.
-If it's the only instance of that type it will be used as client, and you won't have to define it as uri parameter, like the example above.
+If it's the only instance of that type, it will be used as the client, and you won't have to define it as uri parameter, like the example above.
 This may be really useful for smarter configuration of the endpoint.
 
 == Moving stuff between a bucket and another bucket
 
-Some users like to consume stuff from a bucket and move the content in a different one without using the copyObject feature of this component.
-If this is case for you, don't forget to remove the bucketName header from the incoming exchange of the consumer, otherwise the file will always be overwritten on the same
-original bucket.
+Some users like to consume stuff from a bucket and move the content in a different one without using the `copyObject` feature of this component.
+If this is the case for you, remember to remove the `bucketName` header from the incoming exchange of the consumer.
+Otherwise, the file will always be overwritten on the same original bucket.
 
 == MoveAfterRead consumer option
 
-In addition to deleteAfterRead it has been added another option, moveAfterRead. With this option enabled the consumed object will be moved to a target destinationBucket instead of being only deleted.
+In addition to `deleteAfterRead`, it has been added another option, `moveAfterRead`.
+With this option enabled, the consumed object will be moved to a target `destinationBucket` instead of being only deleted.
 This will require specifying the destinationBucket option. As example:
 
 [source,java]
@@ -265,12 +265,13 @@ This will require specifying the destinationBucket option. As example:
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+In this case, the objects consumed will be moved to `myothercamelbucket` bucket and deleted from the original one (because of `deleteAfterRead` set to true as default).
 
 == Using a POJO as body
 
-Sometimes build a Minio Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
-In Minio there are multiple operations you can submit, as an example for List brokers request, you can do something like:
+Sometimes build a Minio Request can be complex because of multiple options.
+We introduce the possibility to use a POJO as the body.
+In Minio, there are multiple operations you can submit, as an example for List brokers request, you can do something like:
 
 [source,java]
 ------------------------------------------------------------------------------------------------------
@@ -281,7 +282,7 @@ from("direct:minio")
      .to("minio://test?minioClient=#minioClient&operation=listObjects&pojoRequest=true")
 ------------------------------------------------------------------------------------------------------
 
-In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
 == Dependencies
 
