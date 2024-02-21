@@ -22,7 +22,7 @@ include::partial$language-options.adoc[]
 
 == Examples
 
-For example, you can use JQ in a xref:manual::predicate.adoc[Predicate] with the xref:eips:choice-eip.adoc[Content Based Router] EIP.
+For example, you can use JQ in a xref:manual::predicate.adoc[Predicate] with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
 
 [source,java]
 ----
@@ -45,7 +45,7 @@ To enable camel-jackson POJO type conversion, refer to the Camel Jackson documen
 
 By default, JQ uses the message body as the input source. However, you can also use a header as input by specifying the `headerName` option.
 
-For example to count the number of books from a JSON document that was stored in a header named `books` you can do:
+For example, to count the number of books from a JSON document that was stored in a header named `books` you can do:
 
 [source,java]
 ----
@@ -61,9 +61,9 @@ NOTE: JQ comes with about a hundred built-in functions, and you can see many exa
 
 The camel-jq adds the following functions:
 
-* `header` - Allow to access the Message header in a JQ expression.
-* `property` - Allow to access the Exchange property in a JQ expression.
-* `constant` - Allow to use a constant value as-is in a JQ expression.
+* `header`: allow accessing the Message header in a JQ expression.
+* `property`: allow accessing the Exchange property in a JQ expression.
+* `constant`: allow using a constant value as-is in a JQ expression.
 
 For example, to set the property foo with the value from the Message header `MyHeader':
 
@@ -97,7 +97,7 @@ from("direct:start")
 
 == Transforming a JSon message
 
-For basic JSon transformation where you have a fixed structure you can represent with a combination of using
+For basic JSon transformation where you have a fixed structure, you can represent with a combination of using
 Camel simple and JQ language as:
 
 [source]
