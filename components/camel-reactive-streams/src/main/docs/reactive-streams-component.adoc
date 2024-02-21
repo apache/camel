@@ -77,7 +77,7 @@ The library is aimed to support all the communication modes needed by an applica
 * *Process* data flowing from a Camel route using a reactive processing step (In-Out from Camel)
 
 == Getting data from Camel
-In order to subscribe to data flowing from a Camel route, exchanges should be redirected to
+To subscribe to data flowing from a Camel route, exchanges should be redirected to
 a named stream, like in the following snippet:
 
 [source,java]
@@ -166,7 +166,7 @@ Flowable.interval(1, TimeUnit.SECONDS)
     .subscribe(elements);
 ---------------------------------------------------------
 
-String items are generated every second by RxJava in the example and they are pushed into the Camel route defined above.
+String items are generated every second by RxJava in the example, and they are pushed into the Camel route defined above.
 
 === Sending data to Camel using the direct API
 
@@ -184,7 +184,8 @@ Flowable.just("hello", "world")
 == Request a transformation to Camel
 
 Routes defined in some Camel DSL can be used within a reactive stream framework to perform a
-specific transformation (the same mechanism can be also used to eg. just send data to a _http_ endpoint and continue).
+specific transformation.
+The same mechanism can be also used to e.g., send data to an _http_ endpoint and continue.
 
 The following snippet shows how RxJava functional code can request the task of loading and marshalling files to Camel.
 
@@ -210,7 +211,7 @@ from("reactive-streams:readAndMarshal")
 
 === Request a transformation to Camel using the direct API
 
-An alternative approach consists in using the URI endpoints directly in the reactive flow:
+An alternative approach consists of using the URI endpoints directly in the reactive flow:
 
 [source,java]
 ---------------------------------------------------------
@@ -224,8 +225,8 @@ Flowable.just(new File("file1.txt"), new File("file2.txt"))
     .subscribe();
 ---------------------------------------------------------
 
-When using the _to()_ method instead of the _toStream_, there is no need to define the
-route using "reactive-streams:" endpoints (although they are used under the hood).
+When using the `to()` method instead of the `toStream`, there is no need to define the
+route using `reactive-streams:` endpoints (although they are used under the hood).
 
 In this case, the Camel transformation can be just:
 
@@ -239,7 +240,7 @@ from("direct:process")
 == Process Camel data into the reactive framework
 
 While a reactive streams _Publisher_ allows exchanging data in a unidirectional way,
-Camel routes often use a in-out exchange pattern (eg. to define REST endpoints and, in general,
+Camel routes often use an in-out exchange pattern (e.g., to define REST endpoints and, in general,
 where a reply is needed for each request).
 
 In these circumstances, users can add a reactive processing step to the flow, to enhance a Camel route or to
@@ -255,7 +256,7 @@ from("timer:clock")
 .log("Continue with Camel route... n=${body}");
 ---------------------------------------------------------
 
-A reactive processing step can be associated to the "direct:reactive" endpoint:
+A reactive processing step can be associated with the "direct:reactive" endpoint:
 
 [source,java]
 ---------------------------------------------------------
@@ -289,7 +290,7 @@ See Camel examples (*camel-example-reactive-streams*) for details.
 
 When routing Camel exchanges to an external subscriber, backpressure is handled by an internal buffer that caches exchanges
 before delivering them.
-If the subscriber is slower than the exchange rate, the buffer may become too big. In many circumstances this must be avoided.
+If the subscriber is slower than the exchange rate, the buffer may become too big. In many circumstances, this must be avoided.
 
 Considering the following route:
 
@@ -320,9 +321,9 @@ When more than `10` messages are in flight, the route is suspended, waiting for 
 With this mechanism, the subscriber controls the route suspension/resume automatically, through backpressure.
 When multiple subscribers are consuming items from the same stream, the slowest one controls the route status automatically.
 
-In other circumstances, eg. when using a `http` consumer, the route suspension makes the http service unavailable, so
+In other circumstances, e.g., when using a `http` consumer, the route suspension makes the http service unavailable, so
 using the default configuration (no policy, unbounded buffer) should be preferable. Users should try to avoid memory issues
-by limiting the number of requests to the http service (eg. scaling out).
+by limiting the number of requests to the http service (e.g., scaling out).
 
 In contexts where a certain amount of data loss is acceptable, setting a backpressure strategy other than `BUFFER` can
  be a solution for dealing with fast sources.
@@ -333,7 +334,7 @@ from("direct:thermostat")
 .to("reactive-streams:flow?backpressureStrategy=LATEST");
 ---------------------------------------------------------
 
-When the `LATEST` backpressure strategy is used, only the last exchange received from the route is kept by the publisher, while older data is discarded (other options are available).
+When the `LATEST` backpressure strategy is used, the publisher keeps only the last exchange received from the route, while older data is discarded (other options are available).
 
 === Controlling Backpressure (consumer side)
 
