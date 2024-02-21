@@ -2,7 +2,7 @@
 :doctitle: Telegram
 :shortname: telegram
 :artifactid: camel-telegram
-:description: Send and receive messages acting as a Telegram Bot Telegram Bot API.
+:description: Send and receive messages using the Telegram Bot API.
 :since: 2.18
 :supportlevel: Stable
 :tabs-sync-option:
@@ -26,7 +26,7 @@ for the camel-telegram endpoint.
 
 [NOTE]
 ====
-In order to allow the Bot to receive all messages exchanged within a group or channel (not just
+To allow the Bot to receive all messages exchanged within a group or channel (not just
 the ones starting with a '/' character), ask the BotFather to *disable the privacy mode*, using the
 */setprivacy* command.
 ====
@@ -72,7 +72,7 @@ include::partial$component-endpoint-headers.adoc[]
 == Usage
 
 The Telegram component supports both consumer and producer endpoints.
-It can also be used in *reactive chat-bot mode* (to consume, then produce messages).
+It can also be used in *reactive chatbot mode* (to consume, then produce messages).
 
 == Producer Example
 
@@ -115,7 +115,7 @@ The following message bodies are allowed for a producer endpoint (messages of ty
 | `EditMessageTextMessage` | To edit text and game messages (editMessageText)
 | `EditMessageCaptionMessage` | To edit captions of messages (editMessageCaption)
 | `EditMessageMediaMessage` | To edit animation, audio, document, photo, or video messages. (editMessageMedia)
-| `EditMessageReplyMarkupMessage` | To edit only the reply markup of message. (editMessageReplyMarkup)
+| `EditMessageReplyMarkupMessage` | To edit only the reply markup of a message. (editMessageReplyMarkup)
 | `EditMessageDelete` | To delete a message, including service messages. (deleteMessage)
 | `SendLocationMessage` | To send a location (setSendLocation)
 | `EditMessageLiveLocationMessage` | To send changes to a live location (editMessageLiveLocation)
@@ -182,10 +182,10 @@ Supported types for incoming messages are
 
 == Reactive Chat-Bot Example
 
-The reactive chat-bot mode is a simple way of using the Camel component to build a simple
-chat bot that replies directly to chat messages received from the Telegram users.
+The reactive chatbot mode is a simple way of using the Camel component to build a simple
+chatbot that replies directly to chat messages received from the Telegram users.
 
-The following is a basic configuration of the chat-bot in Java DSL
+The following is a basic configuration of the chatbot in Java DSL
 
 [source,java]
 ---------------------------------------------------------
@@ -246,7 +246,7 @@ from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHer
 Any message received by the bot will be dumped to your log together with information about the chat (`CamelTelegramChatId`
 header).
 
-Once you get the chat ID, you can use the following sample route to push message to it.
+Once you get the chat ID, you can use the following sample route to push a message to it.
 
 [source,java]
 ---------------------------------------------------------
@@ -259,7 +259,8 @@ Note that the corresponding URI parameter is simply `chatId`.
 
 == Customizing keyboard
 
-You can customize the user keyboard instead of asking him to write an option. `OutgoingTextMessage` has the property `ReplyMarkup` which can be used for such thing.
+You can customize the user keyboard instead of asking him to write an option.
+`OutgoingTextMessage` has the property `ReplyMarkup` which can be used for such a thing.
 
 [source,java]
 ---------------------------------------------------------
@@ -293,7 +294,7 @@ from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHer
     .to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
 
-If you want to disable it the next message must have the property `removeKeyboard` set on `ReplyKeyboardMarkup` object.
+If you want to disable it, the next message must have the property `removeKeyboard` set on `ReplyKeyboardMarkup` object.
 
 [source,java]
 ---------------------------------------------------------
@@ -319,7 +320,7 @@ from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHer
 
 The Telegram component supports usage in the *webhook mode* using the *camel-webhook* component.
 
-In order to enable webhook mode, users need first to add a REST implementation to their application.
+To enable webhook mode, users need first to add a REST implementation to their application.
 Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 [source,xml]
