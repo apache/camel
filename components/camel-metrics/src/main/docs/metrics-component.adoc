@@ -14,12 +14,12 @@
 
 *{component-header}*
 
-The Metrics component allows to collect various metrics directly
+The Metrics component allows collecting various metrics directly
 from Camel routes. Supported metric types
 are xref:#MetricsComponent-counter[counter], xref:#MetricsComponent-histogram[histogram],
-xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides
-simple way to measure behaviour of application. Configurable
-reporting backend is enabling different integration options for
+xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge].
+http://metrics.dropwizard.io[Metrics] provides a simple way to measure the behaviour of applications.
+The configurable reporting backend enables different integration options for
 collecting and visualizing statistics. The component also provides
 a `MetricsRoutePolicyFactory` which allows to expose route statistics
 using Dropwizard Metrics, see bottom of page for details.
@@ -63,13 +63,18 @@ include::partial$component-endpoint-headers.adoc[]
 == Metric Registry
 
 Camel Metrics component uses by default a `MetricRegistry` instance with
-a `Slf4jReporter` that has a 60 second reporting interval.
+a `Slf4jReporter` that has a 60-second reporting interval.
 This default registry can be replaced with a custom one by providing
 a `MetricRegistry` bean. If multiple `MetricRegistry` beans exist in the
 application, the one with name `metricRegistry` is used.
 
-For example using Spring Java Configuration:
+For example:
 
+[tabs]
+====
+
+Java (Spring)::
++
 [source,java]
 ----
 @Configuration
@@ -94,8 +99,8 @@ public static class MyConfig extends SingleRouteCamelConfiguration {
 }
 ----
 
-Or using CDI:
-
+Java (CDI)::
++
 [source,java]
 ----
 class MyBean extends RouteBuilder {
@@ -118,13 +123,15 @@ class MyBean extends RouteBuilder {
 }
 ----
 
+====
+
 == Usage
 
 Each metric has type and name. Supported types are
 xref:#MetricsComponent-counter[counter],
 xref:#MetricsComponent-histogram[histogram], xref:#MetricsComponent-meter[meter],
 xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge].
-Metric name is simple string. If metric type is not provided then type meter is used by default.
+Metric name is simple string. If a metric type is not provided, then type meter is used by default.
 
 === Headers
 
@@ -164,7 +171,7 @@ metrics:counter:metricname[?options]
 |decrement |- |Long value to subtract from the counter
 |=====================================================
 
-If neither `increment` or `decrement` is defined then counter value will
+If neither `increment` or `decrement` is defined then the value of the counter will
 be incremented by one. If `increment` and `decrement` are both defined
 only increment operation is called.
 
@@ -400,7 +407,7 @@ metrics:gauge:metricname[?options]
 |subject  |- |Any object to be observed by the gauge
 |=====================================================
 
-If `subject` is not defined it's simply ignored, i.e. the gauge is not registered.
+If `subject` is not defined it's simply ignored, i.e., the gauge is not registered.
 
 [source,java]
 ----
@@ -433,19 +440,19 @@ from("direct:in")
 
 == MetricsRoutePolicyFactory
 
-This factory allows to add a RoutePolicy for each
-route which exposes route utilization statistics using Dropwizard metrics.
+This factory allows adding a `RoutePolicy` for each
+route that exposes route utilization statistics using Dropwizard metrics.
 This factory can be used in Java and XML as the examples below
 demonstrates.
 
 [NOTE]
 ====
-Instead of using the MetricsRoutePolicyFactory you can define a
+Instead of using the `MetricsRoutePolicyFactory` you can define a
 MetricsRoutePolicy per route you want to instrument, in case you only
 want to instrument a few selected routes.
 ====
 
-From Java you just add the factory to the `CamelContext` as shown below:
+From Java, you add the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -466,22 +473,22 @@ following options:
 [width="100%",options="header"]
 |=======================================================================
 |Name |Default |Description
-|useJmx |false |Whether to report fine grained statistics to JMX by
+|useJmx |false |Whether to report fine-grained statistics to JMX by
 using the `com.codahale.metrics.JmxReporter`. +
 Notice that if JMX is enabled on CamelContext
 then a `MetricsRegistryService` mbean is enlisted under the services
 type in the JMX tree. That mbean has a single operation to output the
 statistics using json. Setting `useJmx` to true is only needed if you
-want fine grained mbeans per statistics type.
+want fine-grained mbeans per statistics type.
 
 |jmxDomain |org.apache.camel.metrics |The JMX domain name
 
 |prettyPrint |false |Whether to use pretty print when outputting
 statistics in json format
 
-|metricsRegistry |  |Allow to use a shared
-`com.codahale.metrics.MetricRegistry`. If none is provided then Camel
-will create a shared instance used by the this CamelContext.
+|metricsRegistry |  |Allow using a shared
+`com.codahale.metrics.MetricRegistry`. If none is provided, then Camel
+will create a shared instance used by the CamelContext.
 
 |rateUnit |TimeUnit.SECONDS |The unit to use for rate in the metrics
 reporter or when dumping the statistics as json.
@@ -490,7 +497,7 @@ reporter or when dumping the statistics as json.
 the metrics reporter or when dumping the statistics as json.
 
 |namePattern |`##name##.##routeId##.##type##` |*Camel 2.17:* The name
-pattern to use. Uses dot as separators, but you can change that. The
+pattern to use. Use dot as separators, but you can change that. The
 values `##name##`, `##routeId##`, and `##type##` will be replaced with actual
 value. Where `###name###` is the name of the CamelContext. `###routeId###`
 is the name of the route. And `###type###` is the value of responses.
@@ -514,13 +521,13 @@ if (registryService != null) {
 
 == MetricsMessageHistoryFactory
 
-This factory allows to use metrics to
+This factory allows using metrics to
 capture Message History performance
 statistics while routing messages. It works by using a metrics Timer for
 each node in all the routes. This factory can be used in Java and XML as
 the examples below demonstrates.
 
-From Java you just set the factory to the `CamelContext` as shown below:
+From Java, you set the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -535,27 +542,27 @@ And from XML DSL you define a <bean> as follows:
   <bean id="metricsMessageHistoryFactory" class="org.apache.camel.component.metrics.messagehistory.MetricsMessageHistoryFactory"/>
 ----
 
-The following options is supported on the factory:
+The following options are supported on the factory:
 
 [width="100%",options="header"]
 |=======================================================================
 |Name |Default |Description
-|useJmx |false |Whether to report fine grained statistics to JMX by
+|useJmx |false |Whether to report fine-grained statistics to JMX by
 using the `com.codahale.metrics.JmxReporter`. +
 Notice that if JMX is enabled on CamelContext
 then a `MetricsRegistryService` mbean is enlisted under the services
 type in the JMX tree. That mbean has a single operation to output the
 statistics using json. Setting `useJmx` to true is only needed if you
-want fine grained mbeans per statistics type.
+want fine-grained mbeans per statistics type.
 
 |jmxDomain |org.apache.camel.metrics |The JMX domain name
 
 |prettyPrint |false |Whether to use pretty print when outputting
 statistics in json format
 
-|metricsRegistry |  |Allow to use a shared
-`com.codahale.metrics.MetricRegistry`. If none is provided then Camel
-will create a shared instance used by the this CamelContext.
+|metricsRegistry |  |Allow using a shared
+`com.codahale.metrics.MetricRegistry`. If none is provided, then Camel
+will create a shared instance used by the CamelContext.
 
 |rateUnit |TimeUnit.SECONDS |The unit to use for rate in the metrics
 reporter or when dumping the statistics as json.
@@ -564,17 +571,17 @@ reporter or when dumping the statistics as json.
 the metrics reporter or when dumping the statistics as json.
 
 |namePattern |`##name##.##routeId##.###id###.##type##` |The name pattern
-to use. Uses dot as separators, but you can change that. The values
+to use. Use dot as separators, but you can change that. The values
 `##name##`, `##routeId##`, `##type##`, and `###id###` will be replaced with
 actual value. Where `###name###` is the name of the CamelContext.
 `###routeId###` is the name of the route. The `###id###` pattern represents
 the node id. And `###type###` is the value of history.
 |=======================================================================
 
-At runtime the metrics can be accessed from Java API or JMX which allows
+At runtime the metrics can be accessed from Java API or JMX, which allows
 to gather the data as json output.
 
-From Java code you can do get the service from the CamelContext as
+From Java code, you can get the service from the CamelContext as
 shown:
 
 [source,java]
@@ -588,8 +595,8 @@ with `name=MetricsMessageHistoryService`.
 
 == InstrumentedThreadPoolFactory
 
-This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
-which collects information from inside of Camel.
+This factory allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
+which collects information from the inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
 
 
