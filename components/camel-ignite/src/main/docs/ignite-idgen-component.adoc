@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with https://apacheignite.readme.io/docs/id-generator[Ignite Atomic Sequences and ID Generators].
+The Ignite ID Generator endpoint is one of camel-ignite endpoints that allow you to interact with https://apacheignite.readme.io/docs/id-generator[Ignite Atomic Sequences and ID Generators].
 
 // component-configure options: START
 
