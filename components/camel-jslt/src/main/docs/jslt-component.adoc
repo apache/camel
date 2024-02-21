@@ -2,7 +2,7 @@
 :doctitle: JSLT
 :shortname: jslt
 :artifactid: camel-jslt
-:description: Query or transform JSON payloads using an JSLT.
+:description: Query or transform JSON payloads using JSLT.
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:

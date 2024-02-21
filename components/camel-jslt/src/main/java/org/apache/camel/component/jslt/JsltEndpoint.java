@@ -59,7 +59,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Query or transform JSON payloads using an JSLT.
+ * Query or transform JSON payloads using JSLT.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION }, headersClass = JsltConstants.class)
