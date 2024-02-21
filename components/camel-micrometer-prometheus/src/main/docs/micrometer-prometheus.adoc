@@ -9,7 +9,8 @@
 
 *Since Camel {since}*
 
-The camel-micrometer-prometheus is used for running Camel standalone (camel-main) and integrate with Micrometer Prometheus Registry.
+The camel-micrometer-prometheus is used for running Camel standalone (Camel Main),
+and to integrate with the Micrometer Prometheus Registry.
 
 == Auto-detection from classpath
 
