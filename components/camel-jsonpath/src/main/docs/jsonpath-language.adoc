@@ -25,8 +25,13 @@ include::partial$language-options.adoc[]
 == Examples
 
 For example, you can use JSONPath in a xref:manual::predicate.adoc[Predicate]
-with the xref:eips:choice-eip.adoc[Content Based Router] EIP.
+with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("queue:books.new")
@@ -39,8 +44,8 @@ from("queue:books.new")
       .to("jms:queue:book.expensive");
 ----
 
-And in XML DSL:
-
+XML DSL::
++
 [source,xml]
 ----
 <route>
@@ -61,10 +66,12 @@ And in XML DSL:
 </route>
 ----
 
+====
+
 == JSONPath Syntax
 
 Using the JSONPath syntax takes some time to learn, even for basic predicates.
-So for example to find out all the cheap books you have to do:
+So for example, to find out all the cheap books you have to do:
 
 [source,text]
 ----
@@ -124,18 +131,23 @@ Camel JSONPath supports message body using the following types:
 | InputStream | If none of the above types matches, then Camel will attempt to read the message body as a `java.io.InputStream`.
 |===
 
-If a message body is of unsupported type then an exception is thrown by default, however you
-can configure JSONPath to suppress exceptions (see below)
+If a message body is of unsupported type, then an exception is thrown by default.
+However, you can configure JSONPath to suppress exceptions (see below)
 
 
 == Suppressing exceptions
 
 By default, jsonpath will throw an exception if the json payload does not
 have a valid path accordingly to the configured jsonpath expression. In
-some use-cases you may want to ignore this in case the json payload
+some use-cases, you may want to ignore this in case the json payload
 contains optional data. Therefore, you can set the option
 `suppressExceptions` to `true` to ignore this as shown:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -147,8 +159,8 @@ from("direct:start")
             .to("mock:other");
 ----
 
-And in XML DSL:
-
+XML DSL::
++
 [source,xml]
 ----
 <route>
@@ -165,6 +177,8 @@ And in XML DSL:
 </route>
 ----
 
+====
+
 This option is also available on the `@JsonPath` annotation.
 
 == Inline Simple expressions
@@ -174,6 +188,11 @@ in the JSONPath expression using the simple syntax `$\{xxx}`.
 
 An example is shown below:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -186,8 +205,8 @@ from("direct:start")
       .to("mock:expensive");
 ----
 
-And in XML DSL:
-
+XML DSL::
++
 [source,xml]
 ----
 <route>
@@ -208,19 +227,28 @@ And in XML DSL:
 </route>
 ----
 
+====
+
 You can turn off support for inlined Simple expression by setting the option `allowSimple` to `false` as shown:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 .when().jsonpath("$.store.book[?(@.price < 10)]", false, false)
 ----
 
-And in XML DSL:
-
+XML DSL::
++
 [source,xml]
 ----
 <jsonpath allowSimple="false">$.store.book[?(@.price &lt; 10)]</jsonpath>
 ----
+
+====
 
 == JSONPath injection
 
@@ -242,9 +270,9 @@ public class Foo {
 == Encoding Detection
 
 The encoding of the JSON document is
-detected automatically, if the document is encoded in unicode  (UTF-8,
-UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE ) as specified in  RFC-4627. If
-the encoding is a non-unicode encoding, you can either make sure that
+detected automatically, if the document is encoded in unicode (UTF-8,
+UTF-16LE, UTF-16BE, UTF-32LE, UTF-32BE) as specified in RFC-4627.
+If the encoding is a non-unicode encoding, you can either make sure that
 you enter the document in String format to JSONPath, or you
 can specify the encoding in the header `CamelJsonPathJsonEncoding` which
 is defined as a constant in: `JsonpathConstants.HEADER_JSON_ENCODING`.
@@ -284,14 +312,14 @@ from("direct:start")
     .to("log:book");
 ----
 
-If book array contains only one book, it will be converted into a Book object.
+If a book array contains only one book, it will be converted into a Book object.
 
 == Using header as input
 
 By default, JSONPath uses the message body as the input source. However, you can also use a header as input
 by specifying the `headerName` option.
 
-For example to count the number of books from a JSON document that
+For example, to count the number of books from a JSON document that
 was stored in a header named `books` you can do:
 
 [source,java]
@@ -320,10 +348,10 @@ The same example in XML DSL would be:
 
 == Transforming a JSon message
 
-For basic JSon transformation where you have a fixed structure you can represent with a combination of using
+For basic JSon transformation where you have a fixed structure, you can represent with a combination of using
 Camel simple and JSonPath language as:
 
-[source]
+[source,json]
 ----
 {
   "company": "${jsonpath($.customer.name)}",
