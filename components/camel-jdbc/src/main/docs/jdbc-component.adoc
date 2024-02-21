@@ -15,13 +15,13 @@
 *{component-header}*
 
 The JDBC component enables you to access databases through JDBC, where
-SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
+SQL queries (SELECT) and operations (INSERT, UPDATE, etc.) are sent in
 the message body. This component uses the standard JDBC API, unlike the
-xref:sql-component.adoc[SQL Component] component, which uses
+xref:sql-component.adoc[SQL Component], which uses
 spring-jdbc.
 
-NOTE: Use the xref:spring-jdbc-component.adoc[Spring JDBC Component] instead of this component,
-when you use Spring and need to support Spring Transactions.
+NOTE: When you use Spring and need to support Spring Transactions,
+use the xref:spring-jdbc-component.adoc[Spring JDBC Component] instead of this one.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -65,7 +65,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Result
 
-By default the result is returned in the OUT body as an
+By default, the result is returned in the OUT body as an
 `ArrayList<HashMap<String, Object>>`. The `List` object contains the
 list of rows and the `Map` objects contain each row with the `String`
 key as the column name. You can use the option `outputType` to control
@@ -83,14 +83,15 @@ return the generated keys in headers. +
 generated keys will be provided as headers with the keys listed in the
 table above.
 
-Using generated keys does not work with together with named parameters.
+Using generated keys does not work together with named parameters.
 
 == Using named parameters
 
 In the given route below, we want to get all the projects from the
-projects table. Notice the SQL query has 2 named parameters, :?lic and
-:?min. +
- Camel will then lookup these parameters from the message headers.
+`projects` table.
+Notice the SQL query has two named parameters, `:?lic` and
+`:?min`.
+Camel will then look up these parameters from the message headers.
 Notice in the example above we set two headers with constant value
  for the named parameters:
 
@@ -108,7 +109,7 @@ map on the headers with the key `CamelJdbcParameters`.
 
 == Samples
 
-In the following example, we setup the DataSource that camel-jdbc requires.
+In the following example, we set up the DataSource that camel-jdbc requires.
 First we register our datasource in the Camel registry as `testdb`:
 
 [source,java]
@@ -132,7 +133,7 @@ from("direct:hello")
 
 We create an endpoint, add the SQL query to the body of the IN message,
 and then send the exchange. The result of the query is returned in the
-OUT body:
+_OUT_ body:
 
 [source,java]
 ----
@@ -140,27 +141,27 @@ Endpoint endpoint = context.getEndpoint("direct:hello");
 Exchange exchange = endpoint.createExchange();
 // then we set the SQL on the in body
 exchange.getMessage().setBody("select * from customer order by ID");
-// now we send the exchange to the endpoint, and receives the response from Camel
+// now we send the exchange to the endpoint, and receive the response from Camel
 Exchange out = template.send(endpoint, exchange);
 ----
 
 If you want to work on the rows one by one instead of the entire
-ResultSet at once you need to use the Splitter EIP
+ResultSet at once, you need to use the Splitter EIP
 such as:
 
 [source,java]
 ----
 from("direct:hello")
-// here we split the data from the testdb into new messages one by one
+// here we split the data from the testdb into new messages one by one,
 // so the mock endpoint will receive a message per row in the table
-// the StreamList option allows to stream the result of the query without creating a List of rows
+// the StreamList option allows streaming the result of the query without creating a List of rows
 // and notice we also enable streaming mode on the splitter
 .to("jdbc:testdb?outputType=StreamList")
   .split(body()).streaming()
   .to("mock:result");
 ----
 
-== Sample - Polling the database every minute
+=== Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
 combine it with a polling scheduler such as the xref:timer-component.adoc[Timer]
@@ -175,7 +176,7 @@ from("timer://foo?period=60000")
   .to("activemq:queue:customers");
 ----
 
-== Sample - Move Data Between Data Sources
+=== Move Data Between Data Sources
 
 A common use case is to query for data, process it and move it to
 another data source (ETL operations). In the following example, we
