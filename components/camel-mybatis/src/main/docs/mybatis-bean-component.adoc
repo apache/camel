@@ -18,7 +18,7 @@ The MyBatis Bean component allows you to query, insert, update and
 delete data in a relational database using http://mybatis.org/[MyBatis] bean annotations.
 
 This component can **only** be used as a producer. If you want to consume
-from MyBatis then use the regular **mybatis** component.
+from MyBatis, then use the regular **mybatis** component.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -66,8 +66,8 @@ the header with the key `CamelMyBatisResult`.
 
 == Samples
 
-For example if you wish to consume beans from a JMS queue and insert
-them into a database you could do the following:
+For example, if you wish to consume beans from a JMS queue and insert
+them into a database, you could do the following:
 
 [source,java]
 ----
