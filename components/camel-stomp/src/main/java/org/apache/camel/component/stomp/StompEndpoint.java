@@ -55,7 +55,7 @@ import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
 /**
- * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
+ * Send and receive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination",
              category = { Category.MESSAGING })
