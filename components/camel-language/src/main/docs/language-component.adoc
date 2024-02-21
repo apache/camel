@@ -20,10 +20,10 @@ to an endpoint which executes a script by any of the supported
 Languages in Camel.
 
 By having a component to execute language scripts, it allows more
-dynamic routing capabilities. For example by using the
-Routing Slip or xref:eips:dynamicRouter-eip.adoc[Dynamic
-Router] EIPs you can send messages to `language` endpoints where the
-script is dynamic defined as well.
+dynamic routing capabilities.
+For example, by using the Routing Slip or xref:eips:dynamicRouter-eip.adoc[Dynamic Router] EIPs
+you can send messages to `language` endpoints where the
+script is dynamically defined as well.
 
 You only have to include additional Camel
 components if the language of choice mandates it, such as using
@@ -36,7 +36,7 @@ language://languageName[:script][?options]
 ----
 
 You can refer to an external resource for
-the script using same notation as supported by the other
+the script using the same notation as supported by the other
 xref:language-component.adoc[Language]s in Camel
 
 ----
@@ -71,8 +71,8 @@ from("direct:hello")
     .to("language:simple:Hello ${body}")
 ----
 
-In case you want to convert the message body type you can do this as
-well (however it is better to use xref:eips:convertBodyTo-eip.adoc[Convert Body To]):
+In case you want to convert the message body type, you can do this as
+well. However, it is better to use xref:eips:convertBodyTo-eip.adoc[Convert Body To]:
 
 [source,java]
 ----
@@ -115,7 +115,7 @@ from("direct:start")
 
 By default, the script is loaded once and cached. However, you can disable
 the `contentCache` option and have the script loaded on each
-evaluation. For example if the file _myscript.txt_ is changed on disk, then the
+evaluation. For example, if the file `myscript.txt` is changed on disk, then the
 updated script is used:
 
 [source,java]
