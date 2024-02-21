@@ -30,12 +30,6 @@ TIP: See the `cacheSize` option for more details on _how much cache_ to use depe
 include::partial$eip-exchangeProperties.adoc[]
 // eip exchangeProperties: END
 
-== Exchange properties
-
-// eip exchangeProperties: START
-include::partial$eip-exchangeProperties.adoc[]
-// eip exchangeProperties: END
-
 == Using Routing Slip
 
 The Routing Slip EIP allows to route a message through a series of xref:manual::endpoint.adoc[endpoints] (the slip).
