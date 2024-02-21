@@ -13,12 +13,12 @@
 
 The
 LZF xref:manual::data-format.adoc[Data Format] is a message compression
-and de-compression format. It uses the
+and decompression format. It uses the
 LZF deflate algorithm. Messages marshalled using LZF compression can be
 unmarshalled using LZF decompression just prior to being consumed at the
 endpoint. The compression capability is quite useful when you deal with
-large XML and Text based payloads or when you read messages previously
-comressed using LZF algotithm.
+large XML and text-based payloads or when you read messages previously
+compressed using LZF algorithm.
 
 == Options
 
@@ -28,7 +28,7 @@ include::partial$dataformat-options.adoc[]
 
 == Marshal
 
-In this example we marshal a regular text/XML payload to a compressed
+In this example, we marshal a regular text/XML payload to a compressed
 payload employing LZF compression format and send it an ActiveMQ queue
 called MY_QUEUE.
 
@@ -50,10 +50,10 @@ from("activemq:queue:MY_QUEUE").unmarshal().lzf().process(new UnCompressedMessag
 
 == Dependencies
 
-To useLZF compression in your camel routes you need to add a dependency
+To use LZF compression in your Camel routes, you need to add a dependency
 on *camel-lzf* which implements this data format.
 
-If you use Maven you can just add the following to your `pom.xml`,
+If you use Maven you can add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
