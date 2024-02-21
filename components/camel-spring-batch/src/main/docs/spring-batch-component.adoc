@@ -39,7 +39,8 @@ spring-batch:jobName[?options]
 ------------------------------
 
 Where *jobName* represents the name of the Spring Batch job located in
-the Camel registry. Alternatively if a JobRegistry is provided it will be used 
+the Camel registry.
+Alternatively, if a JobRegistry is provided, it will be used
 to locate the job instead.
 
 WARNING: This component can only be used to define producer endpoints, which
@@ -64,7 +65,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == Usage
 
-When Spring Batch component receives the message, it triggers the job
+When the Spring Batch component receives the message, it triggers the job
 execution. The job will be executed using the
 `org.springframework.batch.core.launch.JobLaucher` instance resolved
 according to the following algorithm:
@@ -75,7 +76,7 @@ Registry for the `JobLauncher` with the given name.
 *Deprecated and will be removed in Camel 3.0!*
 * if there is `JobLauncher` registered in the Camel
 Registry under *jobLauncher* name, then use it.
-* if none of the steps above allow to resolve the `JobLauncher` and
+* if none of the steps above allow resolving the `JobLauncher` and
 there is exactly one `JobLauncher` instance in the Camel
 Registry, then use it.
 
@@ -125,7 +126,7 @@ classes, which can be used to hook into Spring Batch infrastructure.
 `CamelItemReader` can be used to read batch data directly from the Camel
 infrastructure.
 
-For example the snippet below configures Spring Batch to read data from
+For example, the snippet below is configuring Spring Batch to read data from
 JMS queue.
 
 [source,xml]
@@ -149,7 +150,7 @@ JMS queue.
 `CamelItemWriter` has similar purpose as `CamelItemReader`, but it is
 dedicated to write chunk of the processed data.
 
-For example the snippet below configures Spring Batch to read data from
+For example, the snippet below is configuring Spring Batch to read data from
 JMS queue.
 
 [source,xml]
@@ -172,13 +173,13 @@ JMS queue.
 
 `CamelItemProcessor` is the implementation of Spring Batch
 `org.springframework.batch.item.ItemProcessor` interface. The latter
-implementation relays on
+implementation relays on the
 http://camel.apache.org/request-reply.html[Request Reply pattern] to
 delegate the processing of the batch item to the Camel infrastructure.
 The item to process is sent to the Camel endpoint as the body of the
 message.
 
-For example the snippet below performs simple processing of the batch
+For example, the snippet below performs simple processing of the batch
 item using the http://camel.apache.org/direct.html[Direct endpoint] and
 the http://camel.apache.org/simple.html[Simple expression language].
 
