@@ -130,11 +130,7 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
     protected void configureBuilder(XPathBuilder builder, Object[] properties, Expression source) {
         builder.setSource(source);
 
-        Class<?> clazz = property(Class.class, properties, 0, null);
-        if (clazz != null) {
-            builder.setResultType(clazz);
-        }
-        clazz = property(Class.class, properties, 2, documentType);
+        Class<?> clazz = property(Class.class, properties, 2, documentType);
         if (clazz != null) {
             builder.setDocumentType(clazz);
         }
@@ -175,6 +171,11 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         Map<String, String> ns = property(Map.class, properties, 10, null);
         if (ns != null && !ns.isEmpty()) {
             builder.setNamespaces(ns);
+        }
+        // must set result type last as it influence the QName in use
+        clazz = property(Class.class, properties, 0, null);
+        if (clazz != null) {
+            builder.setResultType(clazz);
         }
     }
 
