@@ -35,6 +35,13 @@ This means you can monitor your Camel applications and gather statistics at 4-ti
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
 == Using Step EIP
 
 In Java, you use `step` to group together sub nodes as shown:

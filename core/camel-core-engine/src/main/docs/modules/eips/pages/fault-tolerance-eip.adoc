@@ -17,6 +17,12 @@ The Fault Tolerance EIP supports 2 options which are listed below:
 |===
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 See xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] for all the configuration options
 on the Fault Tolerance xref:circuitBreaker-eip.adoc[Circuit Breaker].
 

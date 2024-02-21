@@ -16,6 +16,12 @@ If you need to call an external service over the network then you should use *on
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using fallback
 
 The *onFallback* is used by xref:circuitBreaker-eip.adoc[Circuit Breaker] EIPs to execute a fallback route.

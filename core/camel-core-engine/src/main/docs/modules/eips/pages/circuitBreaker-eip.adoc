@@ -28,6 +28,12 @@ The states are as follows:
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 Below is an example route showing a circuit breaker endpoint that protects against

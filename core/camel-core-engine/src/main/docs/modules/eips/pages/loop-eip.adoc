@@ -16,15 +16,9 @@ include::partial$eip-options.adoc[]
 
 == Exchange properties
 
-For each iteration two exchange properties are set on the `Exchange`.
-Processors can rely on these properties to process the message in different ways.
-
-[width="100%",cols="3,1m,6",options="header"]
-|===
-| Property | Type | Description
-| `CamelLoopSize` | `int` | Total number of loops. This is not available if running the loop in while loop mode.
-| `CamelLoopIndex` | `int` | Index of the current iteration (0 based).
-|===
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Looping modes
 

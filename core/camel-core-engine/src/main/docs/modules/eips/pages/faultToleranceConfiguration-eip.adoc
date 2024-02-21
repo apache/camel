@@ -11,6 +11,12 @@ This page documents all the specific options for the xref:fault-tolerance-eip.ad
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 See xref:fault-tolerance-eip.adoc[Fault Tolerance] EIP for details how to use this EIP.

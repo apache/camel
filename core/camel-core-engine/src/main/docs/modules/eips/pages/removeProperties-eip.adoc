@@ -15,7 +15,13 @@ based on pattern syntax.
 include::partial$eip-options.adoc[]
 // eip options: END
 
-== Remove Properties by pattern
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Remove Exchange Properties by pattern
 
 The Remove Properties EIP supports pattern
 matching by the following rules in the given order:

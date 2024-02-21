@@ -14,6 +14,12 @@ to rollback and stop continue routing the message.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using Rollback
 
 We want test message for some conditions and force a rollback if a message may be faulty.

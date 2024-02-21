@@ -25,6 +25,12 @@ the xref:manual::exchange.adoc[Exchange] failed, otherwise it stays there.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Idempotent Consumer implementations
 
 The idempotent consumer provides a pluggable repository which you can implement

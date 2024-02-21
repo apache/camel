@@ -22,18 +22,13 @@ Define a channel for each recipient. Then use a Recipient List to inspect an inc
 include::partial$eip-options.adoc[]
 // eip options: END
 
-
 TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
 
 == Exchange properties
 
-The following exchange properties are set on each `Exchange` that are sent by the recipient list:
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelRecipientListEndpoint` | `String` | Uri of the `Endpoint` that the message was sent to.
-|=======================================================================
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using Recipient List
 

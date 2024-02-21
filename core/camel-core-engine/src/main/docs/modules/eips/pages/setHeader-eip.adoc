@@ -14,6 +14,12 @@ The SetHeader EIP is used for setting a xref:message.adoc[message] header.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using Set Header
 
 The following example shows how to set a header in a Camel route:

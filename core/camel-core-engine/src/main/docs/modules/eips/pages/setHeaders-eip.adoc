@@ -14,6 +14,13 @@ The SetHeaders EIP is used for setting multiple xref:message.adoc[message] heade
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
 == Using Set Headers
 
 The following example shows how to set multiple headers in a Camel route using Java, XML or YAML. Note that the syntax is slightly different in each case.

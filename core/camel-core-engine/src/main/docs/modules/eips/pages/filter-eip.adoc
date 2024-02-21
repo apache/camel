@@ -25,6 +25,12 @@ in Java. The filter will *include* the message if the predicate evaluated to `tr
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 The Camel xref:languages:simple-language.adoc[Simple] language

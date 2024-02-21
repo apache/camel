@@ -21,6 +21,12 @@ NOTE: The returned value from the script is discarded and not used. If the retur
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using Script EIP
 
 The route below will read the file contents and call a groovy script

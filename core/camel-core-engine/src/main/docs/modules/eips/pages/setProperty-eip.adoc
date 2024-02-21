@@ -17,6 +17,12 @@ This is *not* for setting xref:manual:ROOT:using-propertyplaceholder.adoc[proper
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 The following example shows how to set a property on the exchange in a Camel route:

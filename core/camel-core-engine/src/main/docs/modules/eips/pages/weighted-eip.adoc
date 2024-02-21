@@ -15,6 +15,12 @@ With this policy in case of failures the exchange will be tried on the next endp
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Examples
 
 In this example we want to send the most message to the first endpoint, then the second, and only a few to the last.

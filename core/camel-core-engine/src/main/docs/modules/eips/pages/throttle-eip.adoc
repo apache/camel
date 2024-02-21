@@ -18,6 +18,12 @@ Use a Throttler that controls the rate how many or fast messages are flowing to 
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using Throttle
 
 The below example will throttle messages received on seda:a before being sent to mock:result

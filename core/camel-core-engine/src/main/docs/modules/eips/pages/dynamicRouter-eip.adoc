@@ -20,6 +20,12 @@ image::eip/DynamicRouter.gif[image]
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Dynamic Router
 
 The Dynamic Router is similar to the xref:routingSlip-eip.adoc[Routing Slip] EIP,

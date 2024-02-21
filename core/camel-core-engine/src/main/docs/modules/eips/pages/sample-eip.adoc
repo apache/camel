@@ -19,6 +19,13 @@ and all other messages are stopped.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
 == Using Sample EIP
 
 In the example below we sample one message per second (default time period):

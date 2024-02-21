@@ -14,6 +14,12 @@ The Remove Header EIP allows you to remove a single header from the xref:message
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 We want to remove a header with key "myHeader" from the message:

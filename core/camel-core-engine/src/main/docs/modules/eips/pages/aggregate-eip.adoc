@@ -28,6 +28,12 @@ Messages with the same correlation key is aggregated together, using an `Aggrega
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Worker pools
 
 The aggregate EIP will always use a worker pool, that is used to process all the outgoing messages from the aggregator.
@@ -100,22 +106,6 @@ class ArrayListAggregationStrategy implements AggregationStrategy {
 
 TIP: The `org.apache.camel.builder.AggregationStrategies` is a builder that can
 be used for creating commonly used aggregation strategies without having to create a class.
-
-=== Exchange Properties
-
-The completed (outgoing) exchange from the Aggregate EIP contains the following information
-as exchange properties, allowing you to know how the exchange was completed, and how
-many messages were combined.
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelAggregatedSize` | `int` | The total number of messages aggregated.
-| `CamelAggregatedCompletedBy` | `String` | The condition that triggered the completion. Possible values are size, timeout, interval, predicate, force, strategy, and consumer. The consumer value represents the completion from batch consumer.
-| `CamelAggregatedCorrelationKey` | `String` | The correlation identifier as a `String`.
-| `CamelAggregatedTimeout` | `long` | The time-out in milliseconds as set by the completion time-out.
-|=======================================================================
-
 
 === Aggregate by grouping exchanges
 

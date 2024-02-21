@@ -12,6 +12,12 @@ This EIP allows you to use your own xref:loadBalance-eip.adoc[Load Balancer] imp
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 An example using Java DSL:

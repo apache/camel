@@ -21,7 +21,13 @@ When a message is *not* valid then a `PredicateValidationException` is thrown.
 include::partial$eip-options.adoc[]
 // eip options: END
 
-=== Using Validate EIP
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using Validate EIP
 
 The route below will read the file contents and validate the message body against a regular expression.
 

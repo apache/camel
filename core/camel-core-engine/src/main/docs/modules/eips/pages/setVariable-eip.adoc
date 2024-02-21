@@ -14,6 +14,14 @@ The SetVariable EIP is used for setting a xref:manual:ROOT:exchange.adoc[Exchang
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
 The following example shows how to set a variable on the exchange in a Camel route:
 
 [tabs]

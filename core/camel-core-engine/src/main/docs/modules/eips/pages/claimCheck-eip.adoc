@@ -22,6 +22,11 @@ The Camel implementation of this EIP pattern stores the message content temporar
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Claim Check Operation
 

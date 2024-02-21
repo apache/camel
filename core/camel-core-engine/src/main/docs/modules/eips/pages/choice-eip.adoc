@@ -1,3 +1,4 @@
+
 = Choice EIP
 :doctitle: Choice
 :shortname: choice
@@ -19,6 +20,12 @@ image::eip/ContentBasedRouter.gif[image]
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Example
 

@@ -30,16 +30,11 @@ TIP: See the `cacheSize` option for more details on _how much cache_ to use depe
 include::partial$eip-exchangeProperties.adoc[]
 // eip exchangeProperties: END
 
-== Manual Exchange properties (TODO remove me)
+== Exchange properties
 
-The following exchange properties are set on each `Exchange` that are sent by the routing slip:
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelToEndpoint` | `String` | Uri of the `Endpoint` that the message was sent to.
-| `CamelSlipEndpoint` | `String` | Uri of the `Endpoint` that the message was sent to.
-|=======================================================================
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using Routing Slip
 

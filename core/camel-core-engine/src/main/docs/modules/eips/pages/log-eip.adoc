@@ -21,6 +21,12 @@ Camel provides many ways to log the fact that you are processing a message. Here
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 === Difference between Log EIP and Log component
 
 This log EIP is much lighter and meant for logging human logs such as `Starting to do ...` etc.

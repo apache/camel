@@ -24,14 +24,9 @@ include::partial$eip-options.adoc[]
 
 == Exchange properties
 
-The following exchange properties are set on each `Exchange` that are multicasted:
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelMulticastIndex` | `int` | An index counter that increases for each Exchange being multicasted. The counter starts from 0.
-| `CamelMulticastComplete` | `boolean` | Whether this Exchange is the last.
-|=======================================================================
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using Multicast
 

@@ -22,16 +22,9 @@ include::partial$eip-options.adoc[]
 
 == Exchange properties
 
-The following exchange properties are set on each `Exchange` that are split:
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelSplitIndex` | `int` | A split counter that increases for each Exchange being split. The counter starts from 0.
-| `CamelSplitSize` | `int` | The total number of Exchanges that was split.
-       This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size.
-| `CamelSplitComplete` | `boolean` | Whether this Exchange is the last.
-|=======================================================================
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using Split
 

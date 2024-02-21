@@ -14,6 +14,12 @@ The Remove Variable EIP allows you to remove a single variable.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 We want to remove a variable with key "myVar" from the exchange:

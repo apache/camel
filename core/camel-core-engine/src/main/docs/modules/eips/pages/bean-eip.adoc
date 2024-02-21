@@ -28,6 +28,12 @@ the xref:manual::registry.adoc[Registry].
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 === Bean scope
 
 When using `singleton` scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.

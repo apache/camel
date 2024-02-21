@@ -42,6 +42,12 @@ the service by a name.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using Service Call
 
 The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Zookeeper, DNS.

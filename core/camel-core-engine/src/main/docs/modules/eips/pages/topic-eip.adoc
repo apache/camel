@@ -15,6 +15,13 @@ With this policy then all destination is selected.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
 == Examples
 
 In this example we send the message to all three endpoints:

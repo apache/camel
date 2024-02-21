@@ -35,7 +35,13 @@ include::partial$eip-options.adoc[]
 
 == Exchange properties
 
-The following exchange properties are set on each `Exchange` participating in a Saga (normal actions, compensating actions and completions):
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Exchange headers
+
+The following exchange headers are set on each `Exchange` participating in a Saga (normal actions, compensating actions and completions):
 
 [width="100%",cols="4m,2m,5",options="header"]
 |===

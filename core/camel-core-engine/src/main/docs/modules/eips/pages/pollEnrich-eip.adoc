@@ -39,6 +39,12 @@ NOTE: This page documents the Poll Enrich EIP.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Content enrichment using Poll Enrich EIP
 
 `pollEnrich` uses a xref:polling-consumer.adoc[Polling Consumer] to obtain the additional data.

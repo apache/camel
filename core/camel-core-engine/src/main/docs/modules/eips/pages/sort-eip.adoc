@@ -18,6 +18,13 @@ Use a special filter, a xref:message-translator.adoc[Message Translator], betwee
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
 == How sorting works
 
 Sort will by default sort the message body using a default `Comparator` that handles numeric values

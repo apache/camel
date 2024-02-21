@@ -20,12 +20,6 @@ The Resequencer implementation in Camel uses an xref:manual::expression.adoc[Exp
 as the `Comparator` to re-order the messages. By using the expression then the messages
 can easily be re-ordered by a message header or another piece of the message.
 
-== Options
-
-// eip options: START
-include::partial$eip-options.adoc[]
-// eip options: END
-
 Camel supports two re-sequencing algorithms:
 
 * xref:batchConfig-eip.adoc[Batch Resequencing] - *Default mode*: collects messages into a batch, sorts the messages and sends them to their output.
@@ -33,6 +27,18 @@ Camel supports two re-sequencing algorithms:
 
 By default, the Resequencer does not support duplicate messages and will only keep the last message, in case a message arrives with the same message expression.
 However, in the batch mode you can enable it to allow duplicates.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Batch Resequencing
 

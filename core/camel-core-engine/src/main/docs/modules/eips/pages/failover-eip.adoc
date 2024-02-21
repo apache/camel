@@ -15,6 +15,12 @@ with the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 In the example below calling the three http services is done with the load balancer.

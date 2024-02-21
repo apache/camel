@@ -14,6 +14,12 @@ The Remove Property EIP allows you to remove a single property from the `Exchang
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 We want to remove an exchange property with key "myProperty" from the exchange:
