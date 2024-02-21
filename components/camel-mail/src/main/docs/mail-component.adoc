@@ -44,9 +44,9 @@ possible.
 *Using mock-mail for testing*
 
 You can use a mock framework for unit testing, which allows you to test
-without the need for a real mail server. However you should remember to
+without the need for a real mail server. However, you should remember to
 not include the mock-mail when you go into production or other
-environments where you need to send mails to a real mail server. Just
+environments where you need to send mail to a real mail server. Just
 the presence of the mock-javamail.jar on the classpath means that it
 will kick in and avoid sending the mails.
 ====
@@ -91,14 +91,14 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Sample endpoints
 
-Typically, you specify a URI with login credentials as follows (taking
-SMTP as an example):
+Typically, you specify a URI with login credentials as follows:
 
+.SMTP example
 ------------------------------------------------
 smtp://[username@]host[:port][?password=somepwd]
 ------------------------------------------------
 
-Alternatively, it is possible to specify both the user name and the
+Alternatively, it is possible to specify both the username and the
 password as query options:
 
 -----------------------------------------------------
@@ -149,7 +149,7 @@ configuration.
 The mail component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
-component specific code you need to write and is configurable at the
+component-specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
 to use the utility with the mail component.
 
@@ -189,9 +189,9 @@ Spring DSL based configuration of endpoint
 
 === Configuring JavaMail Directly
 
-Camel uses Jakarta JavaMail, which only trusts certificates issued by well
-known Certificate Authorities (the default JVM trust configuration). If
-you issue your own certificates, you have to import the CA certificates
+Camel uses Jakarta JavaMail, which only trusts certificates issued by
+well-known Certificate Authorities (the default JVM trust configuration).
+If you issue your own certificates, you have to import the CA certificates
 into the JVM's Java trust/key store files, override the default JVM
 trust/key store files (see `SSLNOTES.txt` in JavaMail for details).
 
@@ -247,7 +247,7 @@ fallback.
 In the sample code below, the email message is sent to
 `davsclaus@apache.org`, because it takes precedence over the
 pre-configured recipient, `info@mycompany.com`. Any `CC` and `BCC`
-settings in the endpoint URI are also ignored and those recipients will
+settings in the endpoint URI are also ignored, and those recipients will
 not receive any mail. The choice between headers and pre-configured
 settings is all or nothing: the mail component _either_ takes the
 recipients exclusively from the headers or exclusively from the
@@ -281,8 +281,7 @@ The preceding example uses a semicolon, `;`, as the separator character.
 You can specify recipients in the format, `name <email>`, to include
 both the name and the email address of the recipient.
 
-For example, you define the following headers on the a
-Message:
+For example, you define the following headers on the message:
 
 [source,java]
 ---------------------------------------------------------
@@ -335,7 +334,7 @@ from("imap://admin@mymailserver.com?password=secret&unseen=true&delay=60000")
 
 [WARNING]
 ====
-*Attachments are not support by all Camel components*
+*Attachments are not supported by all Camel components*
 
 The _Attachments API_ is based on the Java Activation Framework and is
 generally only used by the Mail API. Since many of the other Camel
@@ -373,10 +372,10 @@ producer.process(exchange);
 
 == SSL sample
 
-In this sample, we want to poll our Google mail inbox for mails. To
-download mail onto a local mail client, Google mail requires you to
-enable and configure SSL. This is done by logging into your Google mail
-account and changing your settings to allow IMAP access. Google have
+In this sample, we want to poll our Google Mail inbox for mails. To
+download mail onto a local mail client, Google Mail requires you to
+enable and configure SSL. This is done by logging into your Google Mail
+account and changing your settings to allow IMAP access. Google has
 extensive documentation on how to do this.
 
 [source,java]
@@ -385,7 +384,7 @@ from("imaps://imap.gmail.com?username=YOUR_USERNAME@gmail.com&password=YOUR_PASS
     + "&delete=false&unseen=true&delay=60000").to("log:newmail");
 -------------------------------------------------------------------------------------
 
-The preceding route polls the Google mail inbox for new mails once every
+The preceding route polls the Google Mail inbox for new mails once every
 minute and logs the received messages to the `newmail` logger
 category. +
  Running the sample with `DEBUG` logging enabled, we can monitor the
@@ -402,9 +401,9 @@ progress in the logs:
 
 == Consuming mails with attachment sample
 
-In this sample we poll a mailbox and store all attachments from the
+In this sample, we poll a mailbox and store all attachments from the
 mails as files. First, we define a route to poll the mailbox. As this
-sample is based on google mail, it uses the same route as shown in the
+sample is based on Google Mail, it uses the same route as shown in the
 SSL sample:
 
 [source,java]
@@ -413,13 +412,13 @@ from("imaps://imap.gmail.com?username=YOUR_USERNAME@gmail.com&password=YOUR_PASS
     + "&delete=false&unseen=true&delay=60000").process(new MyMailProcessor());
 ---------------------------------------------------------------------------------------
 
-Instead of logging the mail we use a processor where we can process the
+Instead of logging the mail, we use a processor where we can process the
 mail from java code:
 
 [source,java]
 ---------------------------------------------------------------------------------
 public void process(Exchange exchange) throws Exception {
-    // the API is a bit clunky so we need to loop
+    // the API is a bit clunky, so we need to loop
     AttachmentMessage attachmentMessage = exchange.getMessage(AttachmentMessage.class);
     Map<String, DataHandler> attachments = attachmentMessage.getAttachments();
     if (attachments.size() > 0) {
@@ -442,18 +441,18 @@ public void process(Exchange exchange) throws Exception {
 }
 ---------------------------------------------------------------------------------
 
-As you can see the API to handle attachments is a bit clunky but it's
-there so you can get the `javax.activation.DataHandler` so you can
+As you can see the API to handle attachments is a bit clunky, but it's
+there, so you can get the `javax.activation.DataHandler` so you can
 handle the attachments using standard API.
 
 == How to split a mail message with attachments
 
-In this example we consume mail messages which may have a number of
+In this example, we consume mail messages which may have a number of
 attachments. What we want to do is to use the
 Splitter EIP per individual attachment, to process
-the attachments separately. For example if the mail message has 5
+the attachments separately. For example, if the mail message has five
 attachments, we want the Splitter to process five
-messages, each having a single attachment. To do this we need to provide
+messages, each having a single attachment. To do this, we need to provide
 a custom Expression to the
 Splitter where we provide a List<Message> that
 contains the five messages with the single attachment.
@@ -464,10 +463,10 @@ The code is provided out of the box in Camel 2.10 onwards in the
 can find the source code
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-mail/src/main/java/org/apache/camel/component/mail/SplitAttachmentsExpression.java[here]
 
-In the Camel route you then need to use this
+In the Camel route, you then need to use this
 Expression in the route as shown below:
 
-If you use XML DSL then you need to declare a method call expression in
+If you use XML DSL, then you need to declare a method call expression in
 the Splitter as shown below
 
 [source,xml]
@@ -494,7 +493,7 @@ And then use the expression with the splitter EIP.
 You can configure a `searchTerm` on the `MailEndpoint` which allows you
 to filter out unwanted mails.
 
-For example to filter mails to contain Camel in either Subject or Text
+For example, to filter mails to contain Camel in either Subject or Text,
 you can do as follows:
 
 [source,xml]
@@ -505,13 +504,13 @@ you can do as follows:
 </route>
 -------------------------------------------------------------------------------------------------
 
-Notice we use the `"searchTerm.subjectOrBody"` as parameter key to
+Notice we use the `"searchTerm.subjectOrBody"` as a parameter key to
 indicate that we want to search on mail subject or body, to contain the
 word "Camel". +
  The class `org.apache.camel.component.mail.SimpleSearchTerm` has a
 number of options you can configure:
 
-Or to get the new unseen emails going 24 hours back in time you can do.
+Or to get the new unseen emails going 24 hours back in time, you can do.
 Notice the "now-24h" syntax. See the table below for more details.
 
 [source,xml]
@@ -523,8 +522,8 @@ Notice the "now-24h" syntax. See the table below for more details.
 --------------------------------------------------------------------------------------------------
 
 You can have multiple searchTerm in the endpoint uri configuration. They
-would then be combined together using AND operator, eg so both
-conditions must match. For example to get the last unseen emails going
+would then be combined using the `AND` operator, e.g., so both
+conditions must match. For example, to get the last unseen emails going
 back 24 hours which has Camel in the mail subject you can do:
 
 [source,xml]
@@ -564,13 +563,13 @@ class. This allows you to build complex terms such as:
 
 [source,java]
 --------------------------------------------------------------
-// we just want the unseen mails which is not spam
+// we just want the unseen mails that are not spam
 SearchTermBuilder builder = new SearchTermBuilder();
 
 builder.unseen().body(Op.not, "Spam").subject(Op.not, "Spam")
   // which was sent from either foo or bar
   .from("foo@somewhere.com").from(Op.or, "bar@somewhere.com");
-  // .. and we could continue building the terms
+  // ... and we could continue building the terms
 
 SearchTerm term = builder.build();
 --------------------------------------------------------------
@@ -578,10 +577,10 @@ SearchTerm term = builder.build();
 
 == Polling Optimization
 
-The parameter maxMessagePerPoll and fetchSize allow you to restrict the number message that should be processed for each poll.
+The parameter maxMessagePerPoll and fetchSize allow you to restrict the number of messages that should be processed for each poll.
 These parameters should help to prevent bad performance when working with folders that contain a lot of messages.
-In previous versions these parameters have been evaluated too late, so that big mailboxes could still cause performance problems.
-With Camel 3.1 these parameters are evaluated earlier during the poll to avoid these problems.
+In previous versions, these parameters have been evaluated too late, so that big mailboxes could still cause performance problems.
+With Camel 3.1, these parameters are evaluated earlier during the poll to avoid these problems.
 
 == Using headers with additional Java Mail Sender properties
 
@@ -590,7 +589,7 @@ the Exchange as message headers with keys starting with `java.smtp.`.
 
 You can set any of the `java.smtp` properties which you can find in the Java Mail documentation.
 
-For example to provide a dynamic uuid in `java.smtp.from` (SMTP MAIL command):
+For example, to provide a dynamic uuid in `java.smtp.from` (SMTP MAIL command):
 
 [source,java]
 ----
