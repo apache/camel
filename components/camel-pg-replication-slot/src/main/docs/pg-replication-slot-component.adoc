@@ -14,8 +14,8 @@
 
 *{component-header}*
 
-This is a component for Apache Camel which allows for
-consuming from PostgreSQL replication slots. The component works with PostgreSQL 10 or later.
+This is a component for Apache Camel that allows consuming from PostgreSQL replication slots.
+The component works with PostgreSQL 10 or later.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -62,13 +62,13 @@ from("pg-replication-slot://localhost:5432/finance/sync_slot:test_decoding?user=
 
 == Tips
 
-PostgreSQL can generate a huge amount of empty transactions on certain operations (e.g. `VACUUM`). These transactions can congest
+PostgreSQL can generate a huge number of empty transactions on certain operations (e.g. `VACUUM`). These transactions can congest
 your route. Using `greedy=true` query parameter can help with this problem. It will help your route filter out empty transactions quickly
 without waiting for the `delay`*`timeUnit` parameter between each exchange.
 
 The order of the messages is guaranteed, but the same message might come more than once. So, for example, if you're using
-this component to sync data from PostgreSQL to other database, make sure your operations are idempotent (e.g. use UPSERT
-instead of INSERT,...). This will make sure repeated messages won't affect your system negatively.
+this component to sync data from PostgreSQL to another database, make sure your operations are idempotent (e.g., use `UPSERT`
+instead of `INSERT`, etc). This will make sure repeated messages won't affect your system negatively.
 
 
 
