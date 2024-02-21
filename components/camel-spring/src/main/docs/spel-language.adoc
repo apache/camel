@@ -17,8 +17,8 @@ to be used as an Expression or Predicate in the DSL or XML Configuration.
 
 [NOTE]
 ====
-It is recommended to use SpEL in Spring runtimes. However, you can
-use SpEL in other runtimes (there are some functionality which SpEL can only do in a Spring runtime)
+It is recommended to use SpEL in Spring runtimes.
+Although you can use SpEL in other runtimes, there is some functionality that SpEL can only do in a Spring runtime.
 ====
 
 == SpEL Options
@@ -79,10 +79,10 @@ from("direct:foo")
 
 SpEL expressions need to be surrounded by `#{` `}` delimiters since
 expression templating is enabled. This allows you to combine SpEL
-expressions with regular text and use this as extremely lightweight
+expressions with regular text and use this as an extremely lightweight
 template language.
 
-For example if you construct the following route:
+For example, if you construct the following route:
 
 [source,java]
 ----
@@ -94,8 +94,8 @@ from("direct:example")
 In the route above, notice `spel` is a static method which we need to
 import from `org.apache.camel.language.spel.SpelExpression.spel`, as we
 use `spel` as an Expression passed in as a parameter
-to the `setBody` method. Though if we use the fluent API we can do this
-instead:
+to the `setBody` method.
+Though if we use the fluent API, we can do this instead:
 
 [source,java]
 ----
@@ -105,10 +105,10 @@ from("direct:example")
 ----
 
 Notice we now use the `spel` method from the `setBody()` method. And
-this does not require us to static import the `spel` method.
+this does not require us to statically import the `spel` method.
 
 Then we send a message with the string "World" in the body, and a header
-"dayOrNight" with value "day":
+`dayOrNight` with value `day`:
 
 [source,java]
 ----
@@ -121,7 +121,7 @@ day"_
 === Bean integration
 
 You can reference beans defined in the xref:manual::registry.adoc[Registry]
-in your SpEL expressions. For example if you have a bean named "foo"
+in your SpEL expressions. For example, if you have a bean named "foo"
 registered in the Spring `ApplicationContext`. You
 can then invoke the "bar" method on this bean like this:
 
@@ -133,10 +133,10 @@ can then invoke the "bar" method on this bean like this:
 
 == Loading script from external resource
 
-You can externalize the script and have Camel load it from a resource
+You can externalize the script and have Apache Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
-e.g. to refer to a file on the classpath you can do:
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 ----
