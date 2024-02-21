@@ -9,8 +9,7 @@
 
 *Since Camel {since}*
 
-The microprofile-config component is used for bridging the Eclipse MicroProfile Config with the
-xref:properties-component.adoc[Properties Component].
+The microprofile-config component is used for bridging the Eclipse MicroProfile Config with the Properties Component.
 This allows using configuration management from Eclipse MicroProfile with Camel.
 
 To enable this, add this component to the classpath and Camel should auto-detect this when starting up.
