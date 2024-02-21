@@ -108,7 +108,7 @@ from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDel
   .to("bean:logService?method=parseLogLine");
 ----
 
-If you want to re-load the file if it rollover/rewritten then you should also turn on the `fileWatcher` and `retry` options.
+If you want to re-load the file if it roll over/rewritten then you should also turn on the `fileWatcher` and `retry` options.
 
 [source,java]
 ----
