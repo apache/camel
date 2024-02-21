@@ -48,7 +48,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Kubernetes Replication Controllers Producer Examples
 
-- listReplicationControllers: this operation list the RCs on a kubernetes cluster
+- listReplicationControllers: this operation lists the RCs on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -57,9 +57,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of RCs from your cluster
+This operation returns a List of RCs from your cluster
 
-- listReplicationControllersByLabels:  this operation list the RCs by labels on a kubernetes cluster
+- listReplicationControllersByLabels:  this operation lists the RCs by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of RCs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a List of RCs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 == Kubernetes Replication Controllers Consumer Example
 
