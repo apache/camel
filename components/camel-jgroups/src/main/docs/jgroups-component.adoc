@@ -37,7 +37,7 @@ for this component.
 jgroups:clusterName[?options]
 -----------------------------
 
-Where *clusterName* represents the name of the JGroups cluster the
+Where *clusterName* represents the name of the JGroups cluster, the
 component should connect to.
 
 
@@ -79,7 +79,7 @@ endpoint.
 
 [source,java]
 --------------------------------------------------
-// Send message to the cluster named 'clusterName'
+// Send a message to the cluster named 'clusterName'
 from("direct:start").to("jgroups:clusterName");
 --------------------------------------------------
 
@@ -92,7 +92,7 @@ coordinator of the cluster (and ignore these sent to the "slave" nodes),
 use the `JGroupsFilters.dropNonCoordinatorViews()` filter. This filter
 is particularly useful when you want a single Camel node to become the
 master in the cluster, because messages passing this filter notifies you
-when given node has become a coordinator of the cluster. The snippet
+ when a given node has become a coordinator of the cluster. The snippet
 below demonstrates how to collect only messages received by the master
 node.
 
@@ -113,14 +113,14 @@ If you would like to create delayer that would affect
 the route only if the Camel context has not been started yet, use the
 `JGroupsExpressions.delayIfContextNotStarted(long delay)` factory
 method. The expression created by this factory method will return given
-delay value only if the Camel context is in the state different than
+delay value only if the Camel context is in the state different from
 `started`. This expression is particularly useful if you would like to
 use JGroups component for keeping singleton (master) route within the
 cluster. xref:controlbus-component.adoc[Control Bus] `start` command
 won't initialize the singleton route if the Camel Context hasn't been
 yet started. So you need to delay a startup of the master route, to be
 sure that it has been initialized after the Camel Context startup.
-Because such scenario can happen only during the initialization of the
+Because such a scenario can happen only during the initialization of the
 cluster, we don't want to delay startup of the slave node becoming the
 new master - that's why we need a conditional delay expression.
 
@@ -146,8 +146,8 @@ from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).t
 
 === Sending (receiving) messages to (from) the JGroups cluster
 
-In order to send message to the JGroups cluster use producer endpoint,
-just as demonstrated on the snippet below.
+To send a message to the JGroups cluster, use producer endpoint,
+just as demonstrated in the snippet below.
 
 [source,java]
 ------------------------------------------------
@@ -156,8 +156,8 @@ from("direct:start").to("jgroups:myCluster");
 producerTemplate.sendBody("direct:start", "msg")
 ------------------------------------------------
 
-To receive the message from the snippet above (on the same or the other
-physical machine) listen on the messages coming from the given cluster,
+To receive the message from the snippet above (on the same, or the other
+physical machine), listen to the messages coming from the given cluster,
 just as demonstrated on the code fragment below.
 
 [source,java]
@@ -174,7 +174,7 @@ mockEndpoint.assertIsSatisfied();
 
 The snippet below demonstrates how to create the consumer endpoint
 listening to the notifications regarding cluster membership changes. By
-default only regular messages are consumed by the endpoint.
+default, the endpoint consumes only regular messages.
 
 [source,java]
 ---------------------------------------------------------------------
@@ -191,7 +191,7 @@ mockEndpoint.assertIsSatisfied();
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one
 of the slaves will be elected as a new master and started. In this
-particular example we want to keep singleton xref:jetty-component.adoc[jetty]
+particular example, we want to keep singleton xref:jetty-component.adoc[jetty]
 instance listening for the requests on
 address` http://localhost:8080/orders`.
 
