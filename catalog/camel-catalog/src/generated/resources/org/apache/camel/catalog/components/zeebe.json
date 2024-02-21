@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "zeebe",
     "title": "Zeebe",
-    "description": "Zeebe component which does integrage with Camunda Zeebe to interact with the API.",
+    "description": "Zeebe component which integrates with Camunda Zeebe to interact with the API.",
     "deprecated": false,
     "firstVersion": "3.21.0",
     "label": "workflow,saas",
