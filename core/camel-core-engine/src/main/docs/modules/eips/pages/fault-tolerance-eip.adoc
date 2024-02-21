@@ -6,7 +6,6 @@ xref:others:microprofile-fault-tolerance.adoc[MicroProfile Fault Tolerance] libr
 
 == Options
 
-// eip options: START
 The Fault Tolerance EIP supports 2 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -15,13 +14,6 @@ The Fault Tolerance EIP supports 2 options which are listed below:
 | *faultToleranceConfiguration* | Configures the Fault Tolerance EIP Use end when configuration is complete, to return back to the Fault Tolerance EIP. |  | FaultToleranceConfigurationDefinition
 | *faultToleranceConfigurationRef* | Refers to a Fault Tolerance configuration to use for configuring the Fault Tolerance EIP. |  | String
 |===
-// eip options: END
-
-== Exchange properties
-
-// eip exchangeProperties: START
-include::partial$eip-exchangeProperties.adoc[]
-// eip exchangeProperties: END
 
 See xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] for all the configuration options
 on the Fault Tolerance xref:circuitBreaker-eip.adoc[Circuit Breaker].
