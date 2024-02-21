@@ -2,7 +2,7 @@
 :doctitle: Spring RabbitMQ
 :shortname: spring-rabbitmq
 :artifactid: camel-spring-rabbitmq
-:description: Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+:description: Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
 :since: 3.8
 :supportlevel: Stable
 :tabs-sync-option:

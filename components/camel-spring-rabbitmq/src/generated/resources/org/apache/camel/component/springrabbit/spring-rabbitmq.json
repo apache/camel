@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "spring-rabbitmq",
     "title": "Spring RabbitMQ",
-    "description": "Send and receive messages from RabbitMQ using Spring RabbitMQ client.",
+    "description": "Send and receive messages from RabbitMQ using the Spring RabbitMQ client.",
     "deprecated": false,
     "firstVersion": "3.8.0",
     "label": "messaging",
