@@ -36,7 +36,7 @@ for this component.
 jgroups-raft:clusterName[?options]
 -----------------------------
 
-Where *clusterName* represents the name of the JGroups-raft cluster the
+Where *clusterName* represents the name of the JGroups-raft cluster, the
 component should connect to.
 
 == Options
@@ -73,7 +73,7 @@ from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to("seda:queue");
 ----------------------------------------------
 
 Using `jgroups-raft` component on the producer side of the route will use the body of the camel exchange (which must be a `byte[]`)
-to perform a setX() operation on the raftHandle associated with the endpoint..
+to perform a setX() operation on the raftHandle associated with the endpoint.
 
 [source,java]
 --------------------------------------------------
@@ -86,7 +86,8 @@ from("direct:start").to("jgroups-raft:clusterName");
 === Receive cluster view change notifications
 
 The snippet below demonstrates how to create the consumer endpoint
-listening to the change role events. By default this option is off.
+listening to the change role events.
+By default, this option is off.
 
 [source,java]
 ---------------------------------------------------------------------
@@ -100,7 +101,7 @@ from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to(mock:mockEndpoin
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one
 of the slaves will be elected as a new master and started. In this
-particular example we want to keep singleton xref:jetty-component.adoc[jetty]
+particular example, we want to keep singleton xref:jetty-component.adoc[jetty]
 instance listening for the requests on
 address` http://localhost:8080/orders`.
 
