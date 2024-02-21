@@ -43,7 +43,7 @@ and receiving traps.
 
 It can also be used to request information using GET method.
 
-The response body type is org.apache.camel.component.snmp.SnmpMessage
+The response body type is `org.apache.camel.component.snmp.SnmpMessage`.
 
 
 // component-configure options: START
@@ -103,17 +103,20 @@ The result will be the following:
 </snmp>
 -----------------------------------------------------------
 
-As you maybe recognized there is one more result than
-requested....1.3.6.1.2.1.1.1.0. +
- This one is filled in by the device automatically in this special case.
-So it may absolutely happen, that you receive more than you
-requested...be prepared.
+As you maybe recognized, there is one more result than
+requested: `....1.3.6.1.2.1.1.1.0`.
+The device fills in this one automatically in this special case.
+So it may absolutely happen that you receive more than you
+requested.
+Be prepared.
 
 *OID starting with dot representation*
 -------------------------
 .1.3.6.1.4.1.6527.3.1.2.21.2.1.50
 -------------------------
-As you may notice, default snmpVersion is 0 which means *version1* in the endpoint if it is not set explicitly. Make sure you explicitly set snmpVersion which is not default value, of course in a case of where you are able to query SNMP tables with different versions. Other possible values are *version2c* and *version3*.
+As you may notice, default `snmpVersion` is 0, which means `version1` in the endpoint if it is not set explicitly.
+Make sure you explicitly set `snmpVersion` which is not default value, in a case of where you are able to query SNMP tables with different versions.
+Other possible values are `version2c` and `version3`.
 
 == Examples
 
@@ -130,8 +133,7 @@ snmp:127.0.0.1:162?protocol=udp&type=TRAP
 -----------------------------------------
 
 You can get the community of SNMP TRAP with message
-header 'securityName', +
- peer address of the SNMP TRAP with message header 'peerAddress'.
+header `securityName`, peer address of the SNMP TRAP with message header `peerAddress`.
 
 Routing example in Java: (converts the SNMP PDU to XML String)
 
