@@ -44,11 +44,11 @@ for this component:
 
 [NOTE]
 ====
-Atlassian does not release their JIRA Java client's to Maven Central.
+Atlassian does not release their JIRA Java client to Maven Central.
 Therefore, when using `camel-jira` then the `pom.xml` has included Maven repository
 to the following URL: `https://packages.atlassian.com/maven-external`.
 
-Just keep this in mind as Maven will then use this repository to download the JIRA client (and potentially other JARs).
+Keep this in mind as Maven will then use this repository to download the JIRA client (and potentially other JARs).
 Which allows Atlassian to track these downloads by their servers.
 ====
 
@@ -76,7 +76,7 @@ For producers:
 * transitionIssue: transition a status of a given issue
 * watchers: add/remove watchers of a given issue
 
-As Jira is fully customizable, you must assure the fields IDs exists for the project and workflow, as they can change between different Jira servers.
+As Jira is fully customizable, you must ensure the field IDs exist for the project and workflow, as they can change between different Jira servers.
 
 // component-configure options: START
 
@@ -107,11 +107,11 @@ Camel-jira supports the following forms of authentication:
 * https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/[OAuth 3 legged authentication]
 * https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html[Personal Token]*
 
-We recommend to use OAuth or Personal token whenever possible, as it provides the best security for your users and system.
+We recommend using OAuth or Personal token whenever possible, as it provides the best security for your users and system.
 
 === Basic authentication requirements:
 
-* An username and a password.
+* A username and a password.
 
 === OAuth authentication requirements:
 
@@ -132,7 +132,7 @@ Follow the tutorial to generate the https://confluence.atlassian.com/enterprise/
 == JQL:
 
 The JQL URI option is used by both consumer endpoints.  Theoretically,
-items like "project key", etc. could be URI options themselves.
+items like the "project key", etc. could be URI options themselves.
  However, by requiring the use of JQL, the consumers become much more
 flexible and powerful.
 
@@ -152,7 +152,7 @@ This is in order to optimize startup processing, rather than having to index eve
 issue in the project.
 
 Another note is that, similarly, the newComments consumer will have to
-index every single issue *and* comment in the project. Therefore, for
+index every single issue *and* comment on the project. Therefore, for
 large projects, it's *vital* to optimize the JQL expression as much as
 possible. For example, the JIRA Toolkit Plugin includes a "Number of
 comments" custom field -- use '"Number of comments" > 0' in your query.
@@ -165,11 +165,11 @@ jira://[type]?[required options]&jql=RAW(project=[project key] AND status in (Op
 
 == Operations
 
-See a list of required headers to set when using the Jira operations. The author field for the producers is automatically set to the authenticated user in the Jira side.
+See a list of required headers to set when using the Jira operations. The author field for the producers is automatically set to the authenticated user on the Jira side.
 
 If any required field is not set, then an IllegalArgumentException is throw.
 
-There are operations that requires `id` for fields suchs as: issue type, priority, transition. Check the valid `id` on your jira project as they may differ on a jira installation and project workflow.
+There are operations that requires `id` for fields such as the issue type, priority, transition. Check the valid `id` on your jira project as they may differ on a jira installation and project workflow.
 
 == AddIssue
 
@@ -193,7 +193,7 @@ Optional:
 Required:
 
 * `IssueKey`: The issue key identifier.
-* body of the exchange is the description.
+* the body of the exchange is the description.
 
 == Attach
 
@@ -216,7 +216,7 @@ Required:
 
 * `IssueKey`: The issue key identifier.
 * `IssueTransitionId`: The issue transition `id`.
-* body of the exchange is the description.
+* the body of the exchange is the description.
 
 == UpdateIssue
 
@@ -237,13 +237,13 @@ Required:
 
 == WatchUpdates (consumer)
 
-* `watchedFields` Comma separated list of fields to watch for changes i.e `Status,Priority,Assignee,Components` etc.
-* `sendOnlyUpdatedField` By default only changed field is send as the body.
+* `watchedFields` Comma separated list of fields to watch for changes i.e. `Status,Priority,Assignee,Components` etc.
+* `sendOnlyUpdatedField` By default, only the changed field is sent as the body.
 
-All messages also contain following headers that add additional info about the change:
+All messages also contain the following headers that add additional info about the change:
 
 * `issueKey`: Key of the updated issue
-* `changed`: name of the updated field (i.e Status)
+* `changed`: name of the updated field (i.e., Status)
 * `watchedIssues`: list of all issue keys that are watched in the time of update
 
 
