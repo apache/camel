@@ -178,27 +178,25 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "advanced",
               description = "Disables the default user agent set by this builder if none has been provided by the user")
     protected boolean defaultUserAgentDisabled;
+    @Metadata(label = "producer",
+              description = "Whether to skip mapping all the Camel headers as HTTP request headers."
+                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
+                            + " parsing overhead with many object allocations for the JVM garbage collector.")
+    protected boolean skipRequestHeaders;
+    @Metadata(label = "producer",
+              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
+                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
+                            + " with many object allocations for the JVM garbage collector.")
+    protected boolean skipResponseHeaders;
     @Metadata(label = "producer,advanced",
               defaultValue = "true",
               description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
                             + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     protected boolean copyHeaders = true;
-    @Metadata(label = "producer,advanced",
-              description = "Whether to skip mapping all the Camel headers as HTTP request headers."
-                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
-                            + " parsing overhead with many object allocations for the JVM garbage collector.")
-    protected boolean skipRequestHeaders;
-    @Metadata(label = "producer,advanced",
-              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
-                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
-                            + " with many object allocations for the JVM garbage collector.")
-    protected boolean skipResponseHeaders;
-
-    @Metadata(label = "producer", defaultValue = "false",
+    @Metadata(label = "producer,advanced", defaultValue = "false",
               description = "Whether to the HTTP request should follow redirects."
                             + " By default the HTTP request does not follow redirects ")
     protected boolean followRedirects;
-
     @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
     protected String userAgent;
 

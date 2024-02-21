@@ -49,22 +49,6 @@ public interface HttpsComponentBuilderFactory {
      */
     interface HttpsComponentBuilder extends ComponentBuilder<HttpComponent> {
         /**
-         * Whether to the HTTP request should follow redirects. By default the
-         * HTTP request does not follow redirects.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param followRedirects the value to set
-         * @return the dsl builder
-         */
-        default HttpsComponentBuilder followRedirects(boolean followRedirects) {
-            doSetProperty("followRedirects", followRedirects);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -86,6 +70,44 @@ public interface HttpsComponentBuilderFactory {
         default HttpsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder skipRequestHeaders(
+                boolean skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder skipResponseHeaders(
+                boolean skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
             return this;
         }
         /**
@@ -128,6 +150,22 @@ public interface HttpsComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to the HTTP request should follow redirects. By default the
+         * HTTP request does not follow redirects.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param followRedirects the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder followRedirects(boolean followRedirects) {
+            doSetProperty("followRedirects", followRedirects);
+            return this;
+        }
+        /**
          * This threshold in bytes controls whether the response payload should
          * be stored in memory as a byte array or be streaming based. Set this
          * to -1 to always use streaming mode.
@@ -143,44 +181,6 @@ public interface HttpsComponentBuilderFactory {
         default HttpsComponentBuilder responsePayloadStreamingThreshold(
                 int responsePayloadStreamingThreshold) {
             doSetProperty("responsePayloadStreamingThreshold", responsePayloadStreamingThreshold);
-            return this;
-        }
-        /**
-         * Whether to skip mapping all the Camel headers as HTTP request
-         * headers. If there are no data from Camel headers needed to be
-         * included in the HTTP request then this can avoid parsing overhead
-         * with many object allocations for the JVM garbage collector.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param skipRequestHeaders the value to set
-         * @return the dsl builder
-         */
-        default HttpsComponentBuilder skipRequestHeaders(
-                boolean skipRequestHeaders) {
-            doSetProperty("skipRequestHeaders", skipRequestHeaders);
-            return this;
-        }
-        /**
-         * Whether to skip mapping all the HTTP response headers to Camel
-         * headers. If there are no data needed from HTTP headers then this can
-         * avoid parsing overhead with many object allocations for the JVM
-         * garbage collector.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param skipResponseHeaders the value to set
-         * @return the dsl builder
-         */
-        default HttpsComponentBuilder skipResponseHeaders(
-                boolean skipResponseHeaders) {
-            doSetProperty("skipResponseHeaders", skipResponseHeaders);
             return this;
         }
         /**
@@ -753,13 +753,13 @@ public interface HttpsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "followRedirects": ((HttpComponent) component).setFollowRedirects((boolean) value); return true;
             case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.hc.client5.http.cookie.CookieStore) value); return true;
-            case "copyHeaders": ((HttpComponent) component).setCopyHeaders((boolean) value); return true;
-            case "responsePayloadStreamingThreshold": ((HttpComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
             case "skipRequestHeaders": ((HttpComponent) component).setSkipRequestHeaders((boolean) value); return true;
             case "skipResponseHeaders": ((HttpComponent) component).setSkipResponseHeaders((boolean) value); return true;
+            case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.hc.client5.http.cookie.CookieStore) value); return true;
+            case "copyHeaders": ((HttpComponent) component).setCopyHeaders((boolean) value); return true;
+            case "followRedirects": ((HttpComponent) component).setFollowRedirects((boolean) value); return true;
+            case "responsePayloadStreamingThreshold": ((HttpComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
             case "allowJavaSerializedObject": ((HttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "authCachingDisabled": ((HttpComponent) component).setAuthCachingDisabled((boolean) value); return true;
             case "automaticRetriesDisabled": ((HttpComponent) component).setAutomaticRetriesDisabled((boolean) value); return true;

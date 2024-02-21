@@ -16009,8 +16009,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Zeebe (camel-zeebe)
-     * Zeebe component which does integrage with Camunda Zeebe to interact with
-     * the API.
+     * Zeebe component which integrates with Camunda Zeebe to interact with the
+     * API.
      * 
      * Category: workflow,saas
      * Since: 3.21
@@ -16033,8 +16033,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Zeebe (camel-zeebe)
-     * Zeebe component which does integrage with Camunda Zeebe to interact with
-     * the API.
+     * Zeebe component which integrates with Camunda Zeebe to interact with the
+     * API.
      * 
      * Category: workflow,saas
      * Since: 3.21
