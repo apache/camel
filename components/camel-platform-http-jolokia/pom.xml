@@ -47,6 +47,18 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-platform-http</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>${vertx-version}</version>
+        </dependency>
+
+        <!-- jolokia -->
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-agent-jvm</artifactId>
+            <version>${jolokia-version}</version>
+        </dependency>
 
         <!-- json -->
         <dependency>
