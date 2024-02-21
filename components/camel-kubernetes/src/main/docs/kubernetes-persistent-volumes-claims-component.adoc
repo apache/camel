@@ -46,7 +46,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Kubernetes Persistent Volume Claims Producer Examples
 
-- listPersistentVolumesClaims: this operation list the pvc on a kubernetes cluster
+- listPersistentVolumesClaims: this operation lists the pvc on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -55,9 +55,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of pvc from your cluster
+This operation returns a List of pvc from your cluster
 
-- listPersistentVolumesClaimsByLabels:  this operation list the pvc by labels on a kubernetes cluster
+- listPersistentVolumesClaimsByLabels:  this operation lists the pvc by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of pvc from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a List of pvc from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 
 
