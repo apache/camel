@@ -15,8 +15,8 @@
 *{component-header}*
 
 The JCR component allows you to add/read nodes to/from a JCR
-compliant content repository (for example,
-http://jackrabbit.apache.org/[Apache Jackrabbit]) with its producer, or
+compliant content repository, for example,
+http://jackrabbit.apache.org/[Apache Jackrabbit], with its producer, or
 register an EventListener with the consumer.
 
 You can use consumer as an EventListener in
@@ -77,7 +77,7 @@ from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
 ------------------------------------------------------------------------
 
 The following code will register an EventListener under the path
-import-application/inbox for Event.NODE_ADDED and Event.NODE_REMOVED
+import-application/inbox for `Event.NODE_ADDED` and `Event.NODE_REMOVED`
 events (event types 1 and 2, both masked as 3) and listening deep for
 all the children.
 
