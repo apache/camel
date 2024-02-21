@@ -9,7 +9,7 @@
 
 *Since Camel {since}*
 
-A pluggable resource resolver that allows to load files from github over the internet via `https` protocol.
+A pluggable resource resolver that allows to load files from GitHub over the internet via `https` protocol.
 
 The syntax is
 
@@ -18,7 +18,7 @@ The syntax is
 github:organization:repository:branch:filename
 ----
 
-The default branch is `main` so if you want to load from this branch you can use a shorter syntax
+The default branch is `main` so if you want to load from this branch, you can use a shorter syntax
 
 [source,text]
 ----
@@ -32,7 +32,7 @@ For example to load: `https://github.com/apache/camel-kamelets/blob/main/kamelet
 github:apache:camel-kamelets:main:kamelets/aws-ddb-streams-source.kamelet.yaml
 ----
 
-Because the file is in the main branch we can omit this:
+Because the file is in the main branch, we can omit this:
 
 [source,text]
 ----
