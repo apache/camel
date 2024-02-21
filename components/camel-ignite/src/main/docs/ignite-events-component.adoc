@@ -17,7 +17,7 @@
 
 The Ignite Events endpoint is one of camel-ignite endpoints which allows you to https://apacheignite.readme.io/docs/events[receive events] from the Ignite cluster by creating a local event listener.
 
-The Exchanges created by this consumer put the received Event object into the body of the IN message.
+The Exchanges created by this consumer put the received Event object into the body of the _IN_ message.
 
 // component-configure options: START
 

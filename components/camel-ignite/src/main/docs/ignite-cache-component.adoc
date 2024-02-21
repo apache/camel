@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an https://apacheignite.readme.io/docs/data-grid[Ignite Cache].
+The Ignite Cache endpoint is one of camel-ignite endpoints that allow you to interact with an https://apacheignite.readme.io/docs/data-grid[Ignite Cache].
 This offers both a Producer (to invoke cache operations on an Ignite cache) and a Consumer (to consume changes from a continuous query).
 
 The cache value is always the body of the message, whereas the cache key is always stored in the `IgniteConstants.IGNITE_CACHE_KEY` message header.
