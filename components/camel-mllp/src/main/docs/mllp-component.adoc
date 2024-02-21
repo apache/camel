@@ -19,7 +19,7 @@ MLLP protocol and provide the functionality required by Healthcare
 providers to communicate with other systems using the MLLP protocol.
 
 The MLLP component provides a simple configuration URI, automated HL7
-acknowledgment generation and automatic acknowledgment interrogation.
+acknowledgment generation, and automatic acknowledgment interrogation.
 
 The MLLP protocol does not typically use a large number of concurrent
 TCP connections - a single active TCP connection is the normal case.
@@ -71,11 +71,11 @@ The MLLP Consumer supports receiving MLLP-framed messages and sending
 HL7 Acknowledgements.  The MLLP Consumer can automatically generate the
 HL7 Acknowledgement (HL7 Application Acknowledgements only - AA, AE and
 AR), or the acknowledgement can be specified using
-the CamelMllpAcknowledgement exchange property.  Additionally, the type
+the `CamelMllpAcknowledgement` exchange property.  Additionally, the type
 of acknowledgement that will be generated can be controlled by setting
-the CamelMllpAcknowledgementType exchange property. The MLLP Consumer
+the `CamelMllpAcknowledgementType` exchange property. The MLLP Consumer
 can read messages without sending any HL7 Acknowledgement if the
-automatic acknowledgement is disabled and exchange pattern is InOnly.
+automatic acknowledgement is disabled and the exchange pattern is `InOnly`.
 
 === Exchange Properties
 
@@ -85,23 +85,23 @@ by these properties on the Camel exchange:
 [width="100%",cols="<34%,<33%,<33%",]
 |====================================
 |*Key* |*Type* |*Description*
-|CamelMllpAcknowledgement | byte[] | If present, this property will we sent to client as the MLLP Acknowledgement
-|CamelMllpAcknowledgementString | String | If present and CamelMllpAcknowledgement is not present, this property will we sent to client as the MLLP Acknowledgement
-|CamelMllpAcknowledgementMsaText | String | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the contents of MSA-3 in the generated HL7 acknowledgement
-|CamelMllpAcknowledgementType | String  | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the HL7 acknowledgement type (i.e. AA, AE, AR)
-|CamelMllpAutoAcknowledge | Boolean | Overrides the autoAck query parameter
+|`CamelMllpAcknowledgement` | byte[] | If present, this property will be sent to the client as the MLLP Acknowledgement
+|`CamelMllpAcknowledgementString` | String | If present and `CamelMllpAcknowledgement` is not present, this property will we sent to the client as the MLLP Acknowledgement
+|`CamelMllpAcknowledgementMsaText` | String | If neither `CamelMllpAcknowledgement` or `CamelMllpAcknowledgementString` are present and autoAck is true, this property can be used to specify the contents of MSA-3 in the generated HL7 acknowledgement
+|`CamelMllpAcknowledgementType` | String  | If neither `CamelMllpAcknowledgement` or `CamelMllpAcknowledgementString` are present and autoAck is true, this property can be used to specify the HL7 acknowledgement type (i.e. AA, AE, AR)
+|`CamelMllpAutoAcknowledge` | Boolean | Overrides the autoAck query parameter
 
-|CamelMllpCloseConnectionBeforeSend | Boolean | If true, the Socket will be closed before sending data
-|CamelMllpResetConnectionBeforeSend | Boolean | If true, the Socket will be reset before sending data
-|CamelMllpCloseConnectionAfterSend | Boolean | If true, the Socket will be closed immediately after sending data
-|CamelMllpResetConnectionAfterSend | Boolean | If true, the Socket will be reset immediately after sending any data
+|`CamelMllpCloseConnectionBeforeSend` | Boolean | If true, the Socket will be closed before sending data
+|`CamelMllpResetConnectionBeforeSend` | Boolean | If true, the Socket will be reset before sending data
+|`CamelMllpCloseConnectionAfterSend` | Boolean | If true, the Socket will be closed immediately after sending data
+|`CamelMllpResetConnectionAfterSend` | Boolean | If true, the Socket will be reset immediately after sending any data
 |====================================
 
 == MLLP Producer
 
 The MLLP Producer supports sending MLLP-framed messages and receiving
 HL7 Acknowledgements.  The MLLP Producer interrogates the HL7
-Acknowledgments and raises exceptions if a negative acknowledgement is
+Acknowledgements and raises exceptions if a negative acknowledgement is
 received.  The received acknowledgement is interrogated and an exception
 is raised in the event of a negative acknowledgement. The MLLP Producer
 can ignore acknowledgements when configured with InOnly exchange pattern.
@@ -113,10 +113,10 @@ The state of the TCP Socket can be controlled by these properties on the Camel e
 [width="100%",cols="<34%,<33%,<33%",]
 |====================================
 |*Key* |*Type* |*Description*
-|CamelMllpCloseConnectionBeforeSend | Boolean | If true, the Socket will be closed before sending data
-|CamelMllpResetConnectionBeforeSend | Boolean | If true, the Socket will be reset before sending data
-|CamelMllpCloseConnectionAfterSend | Boolean | If true, the Socket will be closed immediately after sending data
-|CamelMllpResetConnectionAfterSend | Boolean | If true, the Socket will be reset immediately after sending any data
+|`CamelMllpCloseConnectionBeforeSend` | Boolean | If true, the Socket will be closed before sending data
+|`CamelMllpResetConnectionBeforeSend` | Boolean | If true, the Socket will be reset before sending data
+|`CamelMllpCloseConnectionAfterSend` | Boolean | If true, the Socket will be closed immediately after sending data
+|`CamelMllpResetConnectionAfterSend` | Boolean | If true, the Socket will be reset immediately after sending any data
 |====================================
 
 
