@@ -16,7 +16,7 @@ used as an xref:manual::expression.adoc[Expression] or xref:manual::predicate.ad
 in Camel routes.
 
 For example, you can use JavaScript in a xref:manual::predicate.adoc[Predicate]
-with the xref:eips:choice-eip.adoc[Content Based Router] EIP.
+with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
 
 == JavaScript Options
 
@@ -46,12 +46,11 @@ include::partial$language-options.adoc[]
 
 == Dependencies
 
-To use JavaScript in your camel routes you need to add the dependency on
-*camel-javascript* which implements the JavaScript language (JavaScript with GraalVM).
+To use JavaScript in your Camel routes, you need to add the dependency on
+*camel-javascript*, which implements the JavaScript language (JavaScript with GraalVM).
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your pom.xml,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 -------------------------------------
