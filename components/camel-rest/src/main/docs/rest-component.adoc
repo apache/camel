@@ -15,11 +15,10 @@
 
 *{component-header}*
 
-The REST component allows to define REST endpoints (consumer) using the
-Rest DSL and plugin to other Camel components as the
-REST transport.
+The REST component allows defining REST endpoints (consumer) using the
+Rest DSL and plugin to other Camel components as the REST transport.
 
-The rest component can also be used as a client (producer) to call REST services.
+The REST component can also be used as a client (producer) to call REST services.
 
 == URI format
 
@@ -43,9 +42,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported rest components
+== Supported REST components
 
-The following components support rest consumer (Rest DSL):
+The following components support the REST consumer (Rest DSL):
 
 * camel-netty-http
 * camel-jetty
@@ -53,7 +52,7 @@ The following components support rest consumer (Rest DSL):
 * camel-undertow
 * camel-platform-http
 
-The following components support rest producer:
+The following components support the REST producer:
 
 * camel-http
 * camel-netty-http
@@ -67,8 +66,9 @@ define the REST context path using support for parameters.
 
 [TIP]
 ====
-If no uriTemplate is configured then path option works the same way. It
-does not matter if you configure only path or if you configure both
+If no uriTemplate is configured then `path` option works the same way.
+
+It does not matter if you configure only `path` or if you configure both
 options. Though configuring both a path and uriTemplate is a more common
 practice with REST.
 ====
@@ -105,9 +105,9 @@ from("rest:get:hello:/french/{me}")
 
 == Rest producer examples
 
-You can use the rest component to call REST services like any other Camel component.
+You can use the REST component to call REST services like any other Camel component.
 
-For example to call a REST service on using `hello/\{me}` you can do
+For example, to call a REST service on using `hello/\{me}` you can do
 
 [source,java]
 ----
@@ -115,8 +115,8 @@ from("direct:start")
   .to("rest:get:hello/{me}");
 ----
 
-And then the dynamic value `\{me}` is mapped to Camel message with the same name.
-So to call this REST service you can send an empty message body and a header as shown:
+And then the dynamic value `\{me}` is mapped to a Camel message with the same name.
+So to call this REST service, you can send an empty message body and a header as shown:
 
 [source,java]
 ----
@@ -143,7 +143,7 @@ from("direct:start")
 ----
 
 You can use the `producerComponent` to select which Camel component to use as the HTTP client, for example
-to use http you can do:
+to use http, you can do:
 
 [source,java]
 ----
@@ -158,7 +158,7 @@ from("direct:start")
 
 The REST producer supports binding using JSON or XML like the rest-dsl does.
 
-For example to use jetty with JSON binding mode turned on you can configure this in the rest configuration:
+For example, to use jetty with JSON binding mode turned on, you can configure this in the REST configuration:
 
 [source,java]
 ----
@@ -168,7 +168,7 @@ from("direct:start")
   .to("rest:post:user");
 ----
 
-Then when calling the REST service using REST producer it will automatic bind any POJOs to JSON before calling the REST service:
+Then when calling the REST service using the REST producer, it will automatically bind any POJOs to JSON before calling the REST service:
 
 [source,java]
 ----
@@ -180,12 +180,12 @@ Then when calling the REST service using REST producer it will automatic bind an
 ----
 
 In the example above we send a POJO instance `UserPojo` as the message body. And because we have turned on JSON binding
-in the rest configuration, then the POJO will be marshalled from POJO to JSON before calling the REST service.
+in the REST configuration, then the POJO will be marshalled from POJO to JSON before calling the REST service.
 
-However if you want to also perform binding for the response message (e.g. what the REST service sends back as response) you
+However, if you want to also perform binding for the response message (e.g., what the REST service sends back, as response) you
 would need to configure the `outType` option to specify what is the class name of the POJO to unmarshal from JSON to POJO.
 
-For example if the REST service returns a JSON payload that binds to `com.foo.MyResponsePojo` you can configure this as shown:
+For example, if the REST service returns a JSON payload that binds to `com.foo.MyResponsePojo` you can configure this as shown:
 
 [source,java]
 ----
@@ -200,8 +200,8 @@ IMPORTANT: You must configure `outType` option if you want POJO binding to happe
 
 == More examples
 
-See Rest DSL which offers more examples and how you
-can use the Rest DSL to define those in a nicer RESTful way.
+See Rest DSL, which offers more examples and how you
+can use the Rest DSL to define those in a nicer, restful way.
 
 There is a *camel-example-servlet-rest-tomcat* example in the Apache
 Camel distribution, that demonstrates how to use the
