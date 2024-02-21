@@ -40,7 +40,7 @@ jsonata:specName[?options]
 
 Where *specName* is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
-(eg: \file://folder/myfile.vm).
+(e.g.: `\file://folder/myfile.vm`).
 
 
 // component-configure options: START
@@ -58,7 +58,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == Samples
 
-For example you could use something like
+For example, you could use something like:
 
 [source,java]
 --------------------------------------
@@ -66,7 +66,7 @@ from("activemq:My.Queue").
   to("jsonata:com/acme/MyResponse.json");
 --------------------------------------
 
-And a file based resource:
+And a file-based resource:
 
 [source,java]
 ---------------------------------------------------------------
