@@ -66,7 +66,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 |`reserve` | Reserve image.
 
-|`create` | Create new image.
+|`create` | Create a new image.
 
 |`update` | Update image.
 
@@ -74,7 +74,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 |`get` | Get the image.
 
-|`getAll` | Get all image.
+|`getAll` | Get all images.
 
 |`delete` | Delete the image.
 |=========================================================================
