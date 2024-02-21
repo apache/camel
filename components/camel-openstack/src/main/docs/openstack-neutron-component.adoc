@@ -60,7 +60,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-You can use following settings for each subsystem:
+You can use the following settings for each subsystem:
 
 == networks
 
@@ -69,7 +69,7 @@ You can use following settings for each subsystem:
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new network.
+|`create` | Create a new network.
 
 |`get` | Get the network.
 
@@ -78,7 +78,7 @@ You can use following settings for each subsystem:
 |`delete` | Delete the network.
 |=========================================================================
 
-If you need more precise network settings you can create new object of the type *org.openstack4j.model.network.Network* and send in the message body.
+If you need more precise network settings, you can create a new object of the type *org.openstack4j.model.network.Network* and send in the message body.
 
 == subnets
 
@@ -98,7 +98,7 @@ If you need more precise network settings you can create new object of the type 
 |`action` | Perform an action on the subnet.
 |=========================================================================
 
-If you need more precise subnet settings you can create new object of the type *org.openstack4j.model.network.Subnet* and send in the message body.
+If you need more precise subnet settings, you can create a new object of the type *org.openstack4j.model.network.Subnet* and send in the message body.
 
 == ports
 
@@ -107,7 +107,7 @@ If you need more precise subnet settings you can create new object of the type *
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new port.
+|`create` | Create a new port.
 
 |`get` | Get the port.
 
@@ -126,7 +126,7 @@ If you need more precise subnet settings you can create new object of the type *
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new router.
+|`create` | Create a new router.
 
 |`get` | Get the router.
 

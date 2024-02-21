@@ -59,7 +59,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-You can use following settings for each subsystem:
+You can use the following settings for each subsystem:
 
 == containers
 
@@ -68,7 +68,7 @@ You can use following settings for each subsystem:
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new container.
+|`create` | Create a new container.
 
 |`get` | Get the container.
 
@@ -85,7 +85,7 @@ You can use following settings for each subsystem:
 |`deleteMetadata` | Delete metadata.
 |=========================================================================
 
-If you need more precise container settings you can create new object of the type *org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions* (in case of create or update operation) 
+If you need more precise container settings, you can create a new object of the type *org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions* (in case of create or update operation)
 or *org.openstack4j.model.storage.object.options.ContainerListOptions* for listing containers and send in the message body.
 
 == objects
@@ -95,7 +95,7 @@ or *org.openstack4j.model.storage.object.options.ContainerListOptions* for listi
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new object.
+|`create` | Create a new object.
 
 |`get` | Get the object.
 

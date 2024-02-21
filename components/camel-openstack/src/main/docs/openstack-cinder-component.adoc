@@ -60,7 +60,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-You can use following settings for each subsystem:
+You can use the following settings for each subsystem:
 
 == volumes
 
@@ -82,7 +82,7 @@ You can use following settings for each subsystem:
 |`delete` | Delete the volume.
 |=========================================================================
 
-If you need more precise volume settings you can create new object of the type *org.openstack4j.model.storage.block.Volume* and send in the message body.
+If you need more precise volume settings, you can create a new object of the type *org.openstack4j.model.storage.block.Volume* and send in the message body.
 
 == snapshots
 
@@ -91,7 +91,7 @@ If you need more precise volume settings you can create new object of the type *
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new snapshot.
+|`create` | Create a new snapshot.
 
 |`get` | Get the snapshot.
 
@@ -103,7 +103,7 @@ If you need more precise volume settings you can create new object of the type *
 
 |=========================================================================
 
-If you need more precise server settings you can create new object of the type *org.openstack4j.model.storage.block.VolumeSnapshot* and send in the message body.
+If you need more precise server settings, you can create a new object of the type *org.openstack4j.model.storage.block.VolumeSnapshot* and send in the message body.
 
 
 
