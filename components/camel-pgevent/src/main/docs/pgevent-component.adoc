@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-This is a component for Apache Camel which allows for
+This is a component for Apache Camel that allows for
 Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY
 commands added since PostgreSQL 8.3.
 
