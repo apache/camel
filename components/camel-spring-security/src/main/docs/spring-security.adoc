@@ -15,13 +15,13 @@ The Camel Spring Security component provides role-based authorization
 for Camel routes. It leverages the authentication and user services
 provided by
 https://spring.io/projects/spring-security[Spring
-Security] (formerly Acegi Security) and adds a declarative, role-based
+Security] (formerly Acegi Security), and adds a declarative, role-based
 policy system to control whether a route can be executed by a given
 principal.
 
 If you are not familiar with the Spring Security authentication and
 authorization system, please review the current reference documentation
-on the SpringSource web site linked above.
+on the SpringSource website linked above.
 
 [[SpringSecurity-Creatingauthorizationpolicies]]
 == Creating authorization policies
@@ -60,7 +60,7 @@ context
 instance.
 
 |`useThreadSecurityContext` |`true` |If a `javax.security.auth.Subject` cannot be found in the In message
-header under Exchange.AUTHENTICATION, check the Spring Security
+header under `Exchange.AUTHENTICATION`, check the Spring Security
 `SecurityContextHolder` for an `Authentication` object.
 
 |`alwaysReauthenticate` |`false` |If set to true, the `SpringSecurityAuthorizationPolicy` will always call
@@ -130,7 +130,7 @@ to a route:
       <route>
          <from uri="direct:start"/>
          <!-- The exchange should be authenticated with the role -->
-         <!-- of ADMIN before it is send to mock:endpoint -->
+         <!-- of ADMIN before it is sent to mock:endpoint -->
          <policy ref="admin">
             <to uri="mock:end"/>
          </policy>
@@ -147,12 +147,14 @@ the _admin_ `SpringSecurityAuthorizationPolicy`.
 [[SpringSecurity-Authentication]]
 == Authentication
 
-The process of obtaining security credentials that are used for
-authorization is not specified by this component. You can write your own
-processors or components which get authentication information from the
-exchange depending on your needs. For example, you might create a
+This component does not specify the process of obtaining security credentials that are used for
+authorization.
+You can write your own processors or components which get authentication information from the
+exchange depending on your needs.
+For example, you might create a
 processor that gets credentials from an HTTP request header originating
-in the xref:ROOT:jetty-component.adoc[Jetty] component. No matter how the credentials
+in the xref:ROOT:jetty-component.adoc[Jetty] component.
+No matter how the credentials
 are collected, they need to be placed in the In message or the
 `SecurityContextHolder` so the Camel xref:spring-security.adoc[Spring
 Security] component can access them:
@@ -168,7 +170,7 @@ import org.springframework.security.authentication.*;
 public class MyAuthService implements Processor {
     public void process(Exchange exchange) throws Exception {
         // get the username and password from the HTTP header
-        // http://en.wikipedia.org/wiki/Basic_access_authentication
+        // https://en.wikipedia.org/wiki/Basic_access_authentication
         String userpass = new String(Base64.decodeBase64(exchange.getIn().getHeader("Authorization", String.class)));
         String[] tokens = userpass.split(":");
         
@@ -222,7 +224,7 @@ If authentication or authorization fails in the
 will be thrown. This can be handled using Camel's standard exception
 handling methods, like the Exception Clause.
 The `CamelAuthorizationException` will have a reference to the ID of the
-policy which threw the exception so you can handle errors based on the
+policy which threw the exception, so you can handle errors based on the
 policy as well as the type of exception:
 
 [source,xml]
