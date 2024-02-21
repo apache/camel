@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The Ignite Queue endpoint is one of camel-ignite endpoints which allows you to interact with https://apacheignite.readme.io/docs/queue-and-set[Ignite Queue data structures].
+The Ignite Queue endpoint is one of camel-ignite endpoints that allow you to interact with https://apacheignite.readme.io/docs/queue-and-set[Ignite Queue data structures].
 
 // component-configure options: START
 
