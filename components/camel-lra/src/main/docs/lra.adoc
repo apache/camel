@@ -11,7 +11,7 @@
 
 *Since Camel {since}*
 
-The LRA module provides bindings of the Saga EIP with any https://github.com/eclipse/microprofile-lra[MicroProfile compatible LRA Coordinator].
+The LRA module provides bindings of the xref:eips:saga-eip.adoc[Saga EIP] with any https://github.com/eclipse/microprofile-lra[MicroProfile compatible LRA Coordinator].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
