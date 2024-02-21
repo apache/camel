@@ -73,14 +73,14 @@ include::partial$component-endpoint-headers.adoc[]
 
 This component supports 2 producer endpoints.
 
-*insert* - The insert producer builds a searchable index by analyzing
+*insert*: the insert producer builds a searchable index by analyzing
 the body in incoming exchanges and associating it with a token
 ("content").
-*query* - The query producer performs searches on a pre-created index.
+*query*: the query producer performs searches on a pre-created index.
 The query uses the searchable index to perform score & relevance based
 searches. Queries are sent via the incoming exchange contains a header
 property name called 'QUERY'. The value of the header property 'QUERY'
-is a Lucene Query. For more details on how to create Lucene Queries
+is a Lucene Query. For more details on how to create Lucene Queries,
 check out https://lucene.apache.org/core/8_4_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package.description[Query Parser Classic syntax]
 
 === Lucene Processor
