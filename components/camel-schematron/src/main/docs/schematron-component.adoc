@@ -16,17 +16,17 @@
 
 http://www.schematron.com/index.html[Schematron] is an XML-based
 language for validating XML instance documents. It is used to make
-assertions about data in an XML document and it is also used to express
+assertions about data in an XML document, and it is also used to express
 operational and business rules. Schematron is
 an http://standards.iso.org/ittf/PubliclyAvailableStandards/index.html[ISO
 Standard]. The schematron component uses the leading
 http://www.schematron.com/implementation.html[implementation] of ISO
-schematron. It is an XSLT based implementation. The schematron rules is
+schematron. It is an XSLT based implementation. The schematron rules are
 run through http://www.schematron.com/implementation.html[four XSLT
 pipelines], which generates a final XSLT which will be used as the basis
 for running the assertion against the XML document. The component is
 written in a way that Schematron rules are loaded at the start of the
-endpoint (only once) this is to minimise the overhead of instantiating a
+endpoint (only once) this is to minimize the overhead of instantiating a
 Java Templates object representing the rules.
 
 == URI format
@@ -101,11 +101,11 @@ XML DSL. The schematrion rules file is sourced from the file system:
 *Where to store schematron rules?*
 
 Schematron rules can change with business requirement, as such it is
-recommended to store these rules somewhere in file system. When the
+recommended to store these rules somewhere in a file system. When the
 schematron component endpoint is started, the rules are compiled into
-XSLT as a  Java Templates Object. This is done only once to minimise the
+XSLT as a  Java Templates Object. This is done only once to minimize the
 overhead of instantiating Java Templates object, which can be an
-expensive operation for large set of rules and given that the process
+expensive operation for a large set of rules and given that the process
 goes through four pipelines
 of http://www.schematron.com/implementation.html[XSLT transformations].
 So if you happen to store the rules in the file system, in the event of
