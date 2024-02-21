@@ -57,7 +57,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 You configure the NATS servers on either the component or the endpoint.
 
-For example to configure this once on the component you can do:
+For example, to configure this once on the component, you can do:
 
 [source,java]
 ----
@@ -87,7 +87,7 @@ NatsComponent nats = context.getComponent("nats", NatsComponent.class);
 nats.setServers("scott:tiger@someserver:4222,superman:123@someotherserver:42222");
 ----
 
-If you are using Camel Main or Spring Boot you can configure the server urls in the `application.properties` file
+If you are using Camel Main or Spring Boot, you can configure the server urls in the `application.properties` file
 [source,properties]
 ----
 camel.component.nats.servers=scott:tiger@someserver:4222,superman:123@someotherserver:42222
@@ -96,7 +96,7 @@ camel.component.nats.servers=scott:tiger@someserver:4222,superman:123@someothers
 == Request/Reply support
 The producer supports request/reply where it can wait for an expected reply message.
 
-The consumer will when routing the message is complete, send back the message as reply-message if required.
+The consumer will, when routing the message is complete, send back the message as reply-message if required.
 
 == Examples
 
@@ -108,7 +108,7 @@ from("direct:send")
   .to("nats:mytopic");
 ----
 
-In case of using Authorization you can directly specify your credentials in the server URL
+In case of using authorization, you can directly specify your credentials in the server URL
 
 [source,java]
 ----
