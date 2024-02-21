@@ -30,12 +30,12 @@ public class ServiceBusUtilsTest {
     @Test
     void testCreateServiceBusMessage() {
         // test string
-        final ServiceBusMessage message1 = ServiceBusUtils.createServiceBusMessage("test string", null);
+        final ServiceBusMessage message1 = ServiceBusUtils.createServiceBusMessage("test string", null, null);
 
         assertEquals("test string", message1.getBody().toString());
 
         // test int
-        final ServiceBusMessage message2 = ServiceBusUtils.createServiceBusMessage(String.valueOf(12345), null);
+        final ServiceBusMessage message2 = ServiceBusUtils.createServiceBusMessage(String.valueOf(12345), null, null);
 
         assertEquals("12345", message2.getBody().toString());
     }
@@ -46,7 +46,7 @@ public class ServiceBusUtilsTest {
         inputMessages.add("test data");
         inputMessages.add(String.valueOf(12345));
 
-        final Iterable<ServiceBusMessage> busMessages = ServiceBusUtils.createServiceBusMessages(inputMessages, null);
+        final Iterable<ServiceBusMessage> busMessages = ServiceBusUtils.createServiceBusMessages(inputMessages, null, null);
 
         assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
                 .anyMatch(record -> record.getBody().toString().equals("test data")));

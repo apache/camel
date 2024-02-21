@@ -41,35 +41,40 @@ public class ServiceBusSenderOperations {
     public Mono<Void> sendMessages(
             final Object data,
             final ServiceBusTransactionContext context,
-            final Map<String, Object> applicationProperties) {
+            final Map<String, Object> applicationProperties,
+            final String correlationId) {
         if (data instanceof Iterable) {
-            return sendMessages((Iterable<Object>) data, context, applicationProperties);
+            return sendMessages((Iterable<Object>) data, context, applicationProperties, correlationId);
         }
 
-        return sendMessage(data, context, applicationProperties);
+        return sendMessage(data, context, applicationProperties, correlationId);
     }
 
     public Mono<List<Long>> scheduleMessages(
             final Object data,
             final OffsetDateTime scheduledEnqueueTime,
             final ServiceBusTransactionContext context,
-            final Map<String, Object> applicationProperties) {
+            final Map<String, Object> applicationProperties,
+            final String correlationId) {
         if (ObjectHelper.isEmpty(scheduledEnqueueTime)) {
             throw new IllegalArgumentException("To schedule a message, you need to set scheduledEnqueueTime.");
         }
 
         if (data instanceof Iterable) {
-            return scheduleMessages((Iterable<Object>) data, scheduledEnqueueTime, context, applicationProperties);
+            return scheduleMessages((Iterable<Object>) data, scheduledEnqueueTime, context, applicationProperties,
+                    correlationId);
         }
 
-        return scheduleMessage(data, scheduledEnqueueTime, context, applicationProperties);
+        return scheduleMessage(data, scheduledEnqueueTime, context, applicationProperties, correlationId);
     }
 
     private Mono<Void> sendMessages(
             final Iterable<Object> data,
             final ServiceBusTransactionContext context,
-            final Map<String, Object> applicationProperties) {
-        final Iterable<ServiceBusMessage> messages = ServiceBusUtils.createServiceBusMessages(data, applicationProperties);
+            final Map<String, Object> applicationProperties,
+            final String correlationId) {
+        final Iterable<ServiceBusMessage> messages
+                = ServiceBusUtils.createServiceBusMessages(data, applicationProperties, correlationId);
 
         if (ObjectHelper.isEmpty(context)) {
             return client.sendMessages(messages);
@@ -81,8 +86,9 @@ public class ServiceBusSenderOperations {
     private Mono<Void> sendMessage(
             final Object data,
             final ServiceBusTransactionContext context,
-            final Map<String, Object> applicationProperties) {
-        final ServiceBusMessage message = ServiceBusUtils.createServiceBusMessage(data, applicationProperties);
+            final Map<String, Object> applicationProperties,
+            final String correlationId) {
+        final ServiceBusMessage message = ServiceBusUtils.createServiceBusMessage(data, applicationProperties, correlationId);
 
         if (ObjectHelper.isEmpty(context)) {
             return client.sendMessage(message);
@@ -95,8 +101,9 @@ public class ServiceBusSenderOperations {
             final Object data,
             final OffsetDateTime scheduledEnqueueTime,
             final ServiceBusTransactionContext context,
-            final Map<String, Object> applicationProperties) {
-        final ServiceBusMessage message = ServiceBusUtils.createServiceBusMessage(data, applicationProperties);
+            final Map<String, Object> applicationProperties,
+            final String correlationId) {
+        final ServiceBusMessage message = ServiceBusUtils.createServiceBusMessage(data, applicationProperties, correlationId);
 
         if (ObjectHelper.isEmpty(context)) {
             return client.scheduleMessage(message, scheduledEnqueueTime)
@@ -110,8 +117,10 @@ public class ServiceBusSenderOperations {
     private Mono<List<Long>> scheduleMessages(
             final Iterable<Object> data, final OffsetDateTime scheduledEnqueueTime,
             final ServiceBusTransactionContext context,
-            final Map<String, Object> applicationProperties) {
-        final Iterable<ServiceBusMessage> messages = ServiceBusUtils.createServiceBusMessages(data, applicationProperties);
+            final Map<String, Object> applicationProperties,
+            final String correlationId) {
+        final Iterable<ServiceBusMessage> messages
+                = ServiceBusUtils.createServiceBusMessages(data, applicationProperties, correlationId);
 
         if (ObjectHelper.isEmpty(context)) {
             return client.scheduleMessages(messages, scheduledEnqueueTime)

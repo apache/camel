@@ -144,16 +144,19 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
             final Object inputBody = exchange.getMessage().getBody();
             final Map<String, Object> applicationProperties
                     = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+            final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
 
             Mono<Void> sendMessageAsync;
 
             if (exchange.getMessage().getBody() instanceof Iterable) {
                 sendMessageAsync
                         = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<Object>) inputBody),
-                                configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
+                                configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties,
+                                correlationId);
             } else {
                 sendMessageAsync = serviceBusSenderOperations.sendMessages(exchange.getMessage().getBody(String.class),
-                        configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
+                        configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties,
+                        correlationId);
             }
 
             subscribeToMono(sendMessageAsync, exchange, noop -> {
@@ -167,6 +170,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
             final Object inputBody = exchange.getMessage().getBody();
             final Map<String, Object> applicationProperties
                     = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+            final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
 
             Mono<List<Long>> scheduleMessagesAsync;
 
@@ -175,13 +179,15 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                         = serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<Object>) inputBody),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
-                                applicationProperties);
+                                applicationProperties,
+                                correlationId);
             } else {
                 scheduleMessagesAsync
                         = serviceBusSenderOperations.scheduleMessages(exchange.getMessage().getBody(String.class),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
-                                applicationProperties);
+                                applicationProperties,
+                                correlationId);
             }
 
             subscribeToMono(scheduleMessagesAsync, exchange,
