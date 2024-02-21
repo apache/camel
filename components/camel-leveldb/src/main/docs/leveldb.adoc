@@ -12,7 +12,8 @@
 *Since Camel {since}*
 
 https://github.com/google/leveldb[Leveldb] is a very lightweight and
-embedable key value database. It allows together with Camel to provide
+embeddable key value database.
+It allows, together with Camel, providing
 persistent support for various Camel features such as
 Aggregator.
 
@@ -25,7 +26,7 @@ Current features it provides:
 
 `LevelDBAggregationRepository` is an `AggregationRepository` which on
 the fly persists the aggregated messages. This ensures that you will not
-lose messages, as the default aggregator will use an in memory only
+lose messages, as the default aggregator will use an in-memory only
 `AggregationRepository`.
 
 It has the following options:
@@ -38,33 +39,32 @@ It has the following options:
 |`repositoryName` |String |A mandatory repository name. Allows you to use a shared `LevelDBFile`
 for multiple repositories.
 
-|`persistentFileName` |String |Filename for the persistent storage. If no file exists on startup a new
+|`persistentFileName` |String |Filename for the persistent storage. If no file exists on startup, a new
 file is created.
 
 |`levelDBFile` |LevelDBFile |Use an existing configured
 `org.apache.camel.component.leveldb.LevelDBFile` instance.
 
-|`sync` |boolean |Whether or not the LevelDBFile should sync on write or
-not. Default is false. By sync on write ensures that its always waiting
-for all writes to be spooled to disk and thus will not loose updates.
+|`sync` |boolean |Whether the LevelDBFile should sync on writing or
+not. Default is false. By sync on writing ensures that it's always waiting
+for all writes to be spooled to disk and thus will not lose updates.
 See http://leveldb.googlecode.com/svn/trunk/doc/index.html[LevelDB docs]
-for more details about async vs sync writes.
+for more details about async vs. sync writes.
 
 |`returnOldExchange` |boolean |Whether the get operation should return the old existing Exchange if any
-existed. By default this option is `false` to optimize as we do not need
+existed. By default, this option is `false` to optimize as we do not need
 the old exchange when aggregating.
 
-|`useRecovery` |boolean |Whether or not recovery is enabled. This option is by default `true`.
-When enabled the Camel Aggregator automatic
-recover failed aggregated exchange and have them resubmitted.
+|`useRecovery` |boolean |Whether recovery is enabled. This option is by default `true`.
+When enabled, the Camel Aggregator automatically recovers failed aggregated exchange and have them resubmitted.
 
-|`recoveryInterval` |long |If recovery is enabled then a background task is run every x'th time to
-scan for failed exchanges to recover and resubmit. By default this
-interval is 5000 millis.
+|`recoveryInterval` |long |If recovery is enabled, then a background task is run every x'th time to
+scan for failed exchanges to recover and resubmit. By default, this
+interval is 5000 milliseconds.
 
 |`maximumRedeliveries` |int |Allows you to limit the maximum number of redelivery attempts for a
-recovered exchange. If enabled then the Exchange will be moved to the
-dead letter channel if all redelivery attempts failed. By default this
+recovered exchange. If enabled, then the Exchange will be moved to the
+dead letter channel if all redelivery attempts failed. By default, this
 option is disabled. If this option is used then the `deadLetterUri`
 option must also be provided.
 
@@ -89,22 +89,22 @@ and a `WARN` is logged. And it only persists the `Message` body and the
 === Recovery
 
 The `LevelDBAggregationRepository` will by default recover any failed
-Exchange. It does this by having a background tasks
+Exchange. It does this by having a background task
 that scans for failed Exchanges in the persistent
 store. You can use the `checkInterval` option to set how often this task
 runs. The recovery works as transactional which ensures that Camel will
 try to recover and redeliver the failed Exchange.
-Any Exchange which was found to be recovered will be
+Any Exchange found to be recovered will be
 restored from the persistent store and resubmitted and send out again.
 
-The following headers is set when an Exchange is
+The following headers are set when an Exchange is
 being recovered/redelivered:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
 
-|`Exchange.REDELIVERED` |Boolean |Is set to true to indicate the Exchange is being
+|`Exchange.REDELIVERED` |Boolean |It is set to true to indicate the Exchange is being
 redelivered.
 
 |`Exchange.REDELIVERY_COUNTER` |Integer |The redelivery attempt, starting from 1.
@@ -113,8 +113,7 @@ redelivered.
 Only when an Exchange has been successfully
 processed it will be marked as complete which happens when the `confirm`
 method is invoked on the `AggregationRepository`. This means if the same
-Exchange fails again it will be kept retried until
-it success.
+Exchange fails again, it will be kept retried until it succeeds.
 
 You can use option `maximumRedeliveries` to limit the maximum number of
 redelivery attempts for a given recovered Exchange.
@@ -123,7 +122,7 @@ send the Exchange when the `maximumRedeliveries` was
 hit.
 
 You can see some examples in the unit tests of camel-leveldb, for
-example
+example,
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-leveldb/src/test/java/org/apache/camel/component/leveldb/LevelDBAggregateRecoverTest.java[this
 test].
 
@@ -132,7 +131,8 @@ test].
 
 Component serializes by using Java serialization mechanism by default.
 
-You can use serialization via Jackson (using json). Jackson serialization brings better performance, but also several limitations.
+You can use serialization via Jackson (using json).
+Jackson's serialization brings better performance, but also several limitations.
 
 Example of jackson serialization:
 [source,java]
@@ -170,12 +170,10 @@ The same example but using Spring XML instead:
 [[LevelDB-Dependencies]]
 == Dependencies
 
-To use LevelDB in your camel routes you need to add
-the a dependency on *camel-leveldb*.
+To use LevelDB in your Camel routes, you need to add a dependency on *camel-leveldb*.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your pom.xml,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 ----------------------------------------
