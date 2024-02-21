@@ -27,6 +27,6 @@ include::partial$language-options.adoc[]
 
 == Example
 
-See xref:eips:split-eip.adoc[Split] EIP which has examples using the XML Tokenize language.
+See xref:eips:split-eip.adoc[Split EIP], which has examples using the XML Tokenize language.
 
 include::spring-boot:partial$starter.adoc[]
