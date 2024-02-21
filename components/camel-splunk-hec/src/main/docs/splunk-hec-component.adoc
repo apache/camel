@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Splunk HEC component allows to send data to Splunk using the
+The Splunk HEC component allows sending data to Splunk using the
 https://dev.splunk.com/enterprise/docs/dataapps/httpeventcollector/[HTTP Event Collector].
 
 Maven users will need to add the following dependency to their pom.xml
@@ -55,14 +55,14 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 == Message body
-The body must be serializable to JSON so it may be sent to Splunk.
+The body must be serializable to JSON, so it may be sent to Splunk.
 
 A `String` or a `java.util.Map` object can be serialized easily.
 
 == Use Cases
 The Splunk HEC endpoint may be used to stream data to Splunk for ingestion.
 
-It is meant for high volume ingestion of machine data.
+It is meant for high-volume ingestion of machine data.
 
 == Configuring the index time
 
@@ -75,9 +75,9 @@ from("direct:start")
         .to("splunk-hec://localhost:8080?token=token");
 -------------------------------
 
-If you are ingesting a large enough dataset with a big enough lag then the time
+If you are ingesting a large enough dataset with a big enough lag, then the time
 the event hits the server and when that event actually happened could be skewed. If
-you want to override the index time you can do so.
+you want to override the index time, you can do so.
 
 [source,java]
 -------------------------------
