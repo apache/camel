@@ -1,3 +1,10 @@
+= Choice EIP
+:doctitle: Choice
+:shortname: choice
+:description: Route messages based on a series of predicates
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
 
 = Choice EIP
 :doctitle: Choice
