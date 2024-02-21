@@ -45,12 +45,12 @@ The *kamelet* endpoint is *lenient*, which means that the endpoint accepts addit
 
 == Discovery
 
-If a xref:manual::route-template.adoc[Route Template] is not found, the *kamelet* endpoint tries to load the related *kamelet* definition from the file system (by default `classpath:/kamelets`). The default resolution mechanism expect kamelet files to have the extension `.kamelet.yaml`.
+If a xref:manual::route-template.adoc[Route Template] is not found, the *kamelet* endpoint tries to load the related *kamelet* definition from the file system (by default `classpath:/kamelets`). The default resolution mechanism expects _Kamelets_ files to have the extension `.kamelet.yaml`.
 
 == Samples
 
 
-Kamelets can be used as if they were standard Camel components.
+_Kamelets_ can be used as if they were standard Camel components.
 For example, suppose that we have created a Route Template as follows:
 
 [source,java]
