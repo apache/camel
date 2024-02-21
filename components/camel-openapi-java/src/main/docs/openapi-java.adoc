@@ -41,7 +41,7 @@ You can enable the OpenApi api from the rest-dsl by configuring the
 public class UserRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        // configure we want to use servlet as the component for the rest DSL
+        // configure we want to use servlet as the component for the rest DSL,
         // and we enable json binding mode
         restConfiguration().component("netty-http").bindingMode(RestBindingMode.json)
             // and output using pretty print
@@ -73,7 +73,7 @@ public class UserRouteBuilder extends RouteBuilder {
 == Options
 
 The OpenApi module can be configured using the following options. To
-configure using a servlet you use the init-param as shown above. When
+configure using a servlet, you use the init-param as shown above. When
 configuring directly in the rest-dsl, you use the appropriate method,
 such as `enableCORS`, `host,contextPath`, dsl. The options
 with `api.xxx` is configured using `apiProperty` dsl.
@@ -88,19 +88,19 @@ false.
 
 |openapi.version |String |OpenApi spec version. Is default 3.0.
 
-|host |String |To setup the hostname. If not configured camel-openapi-java will
+|host |String |To set up the hostname. If not configured, camel-openapi-java will
 calculate the name as localhost based.
 
 |schemes |String |The protocol schemes to use. Multiple values can be
 separated by comma such as "http,https". The default value is "http".
 
-|base.path |String |*Required*: To setup the base path where the REST services is available.
-The path is relative (eg do not start with http/https) and
+|base.path |String |*Required*: To set up the base path where the REST services are available.
+The path is relative (e.g., do not start with http/https) and
 camel-openapi-java will calculate the absolute base path at runtime,
 which will be `protocol://host:port/context-path/base.path`
 
-|api.path |String |To setup the path where the API is available (eg /api-docs). The path is
-relative (eg do not start with http/https) and camel-openapi-java will
+|api.path |String |To set up the path where the API is available (eg /api-docs). The path is
+relative (e.g., do not start with http/https) and camel-openapi-java will
 calculate the absolute base path at runtime, which will be `protocol://host:port/context-path/api.path`
 So using relative paths is much easier. See above for an example.
 
@@ -122,11 +122,11 @@ So using relative paths is much easier. See above for an example.
 
 |api.license.url |String |A URL to the license used for the API.
 
-|api.default.consumes |String |Comma separated list of default media types when `RestParamType.body` is used
+|api.default.consumes |String |Comma-separated list of default media types when `RestParamType.body` is used
 without providing any `.consumes()` configuration. The default value is `application/json`. Note that this applies only
 to the generated OpenAPI document and not to the actual REST services.
 
-|api.default.produces |String |Comma separated list of default media types when `outType` is used
+|api.default.produces |String |Comma-separated list of default media types when `outType` is used
 without providing any `.produces()` configuration. The default value is `application/json`. Note that this applies only
 to the generated OpenAPI document and not to the actual REST services
 |===
@@ -134,7 +134,7 @@ to the generated OpenAPI document and not to the actual REST services
 == Adding Security Definitions in API doc
 
 The Rest DSL now supports declaring OpenApi `securityDefinitions` in the generated API document.
-For example as shown below:
+For example, as shown below:
 
 [source,java]
 ----
@@ -147,10 +147,10 @@ rest("/user").tag("dude").description("User rest service")
     .consumes("application/json").produces("application/json")
 ----
 
-Here we have setup two security definitions
+Here we have set up two security definitions
 
-- OAuth2 - with implicit authorization with the provided url
-- Api Key - using an api key that comes from HTTP header named _myHeader_
+- OAuth2: with implicit authorization with the provided url
+- Api Key: using an api key that comes from HTTP header named _myHeader_
 
 Then you need to specify on the rest operations which security to use by referring to
 their key (petstore_auth or api_key).
@@ -166,16 +166,16 @@ their key (petstore_auth or api_key).
     .security("petstore_auth", "write:pets,read:pets")
 ----
 
-Here the get operation is using the Api Key security and the put operation
+Here the get operation is using the Api Key security, and the put operation
 is using OAuth security with permitted scopes of read and write pets.
 
 == JSon or Yaml
 
 The camel-openapi-java module supports both JSon and Yaml out of the
 box. You can specify in the request url what you want returned by using
-/openapi.json or /openapi.yaml for either one. If none is specified then
+`/openapi.json` or `/openapi.yaml` for either one. If none is specified, then
 the HTTP Accept header is used to detect if json or yaml can be
-accepted. If either both is accepted or none was set as accepted then
+accepted. If either both are accepted or none was set as accepted, then
 json is returned as the default format.
 
 == useXForwardHeaders and API URL resolution
