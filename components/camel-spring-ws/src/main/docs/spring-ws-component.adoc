@@ -34,7 +34,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-*Be aware* Spring WS version 4.x does not support Axiom anymore (because Axiom does not support Jakarte JEE 9)
+*Be aware* Spring WS version 4.x does not support Axiom anymore (because Axiom does not support Jakarta JEE 9)
 
 == URI format
 
@@ -57,7 +57,7 @@ name of the root element contained in the message.
 |`soapaction` |Used to map web service requests based on the SOAP action specified in
 the header of the message.
 
-|`uri` |In order to map web service requests that target a specific URI.
+|`uri` |To map web service requests that target a specific URI.
 
 |`xpathresult` |Used to map web service requests based on the evaluation of an XPath
 `expression` against the incoming message. The result of the evaluation
@@ -65,15 +65,15 @@ should match the XPath result specified in the endpoint URI.
 
 |`beanname` |Allows you to reference an
 `org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher`
-object in order to integrate with existing (legacy)
+object to integrate with existing (legacy)
 http://static.springsource.org/spring-ws/sites/1.5/reference/html/server.html#server-endpoint-mapping[endpoint
 mappings] like `PayloadRootQNameEndpointMapping`,
-`SoapActionEndpointMapping`, etc
+`SoapActionEndpointMapping`, etc.
 |=======================================================================
 
-As a consumer the *address* should contain a value relevant to the
+As a consumer, the *address* should contain a value relevant to the
 specified mapping-type (e.g. a SOAP action, XPath expression). As a
-producer the address should be set to the URI of the web service your
+ producer, the address should be set to the URI of the web service your
 calling upon.
 
 
@@ -109,13 +109,13 @@ And sent a message:
 template.requestBody("direct:example", "<foobar xmlns=\"http://foo.com\"><msg>test message</msg></foobar>");
 ------------------------------------------------------------------------------------------------------------
 
-Remember if it's a SOAP service you're calling you don't have to include
+Remember if it's a SOAP service you're calling, you don't have to include
 SOAP tags. Spring-WS will perform the XML-to-SOAP marshaling.
 
 == Sending SOAP and WS-Addressing action headers
 
 When a remote web service requires a SOAP action or use of the
-WS-Addressing standard you define your route as:
+WS-Addressing standard, you define your route as:
 
 [source,java]
 -----------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ from("direct:example")
 .to("spring-ws:http://foo.com/bar?soapAction=http://foo.com&wsAddressingAction=http://bar.com")
 -----------------------------------------------------------------------------------------------
 
-Optionally you can override the endpoint options with header values:
+Optionally, you can override the endpoint options with header values:
 
 [source,java]
 --------------------------------------------------------------------
@@ -135,7 +135,7 @@ SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "http://baz.com");
 == Using SOAP headers
 
 You can provide the SOAP header(s) as a Camel Message header when
-sending a message to a spring-ws endpoint, for example given the
+sending a message to a spring-ws endpoint, for example, given the
 following SOAP header in a String
 
 [source,java]
@@ -158,7 +158,7 @@ Service.
 Likewise, the spring-ws consumer will also enrich the Camel Message with
 the SOAP header.
 
-For an example see this
+For example, see this
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring-ws/src/test/java/org/apache/camel/component/spring/ws/SoapHeaderTest.java[unit
 test].
 
@@ -166,7 +166,7 @@ test].
 
 Spring WS Camel supports propagation of the headers and attachments into
 Spring-WS WebServiceMessage response. The
-endpoint will use so called "hook" the MessageFilter (default
+endpoint will use so-called "hook" the MessageFilter (default
 implementation is provided by BasicMessageFilter) to propagate the
 exchange headers and attachments into WebServiceMessage response. Now
 you can use
@@ -181,7 +181,7 @@ exchange.getIn().addAttachment("myAttachment", new DataHandler(...))
 ====
 If the exchange header in the pipeline contains text, it generates
 Qname(key)=value attribute in the soap header. Recommended is to create
-a QName class directly and put into any key into header.
+a QName class directly and put any key into header.
 ====
 
 == How to transform the soap header using a stylesheet
@@ -211,13 +211,14 @@ Use the bead defined above in the camel endpoint
 
 If you need to provide your custom processing of either headers or
 attachments, extend existing BasicMessageFilter and override the
-appropriate methods or write a brand new implementation of the
-MessageFilter interface. +
- To use your custom filter, add this into your spring context:
+appropriate methods or write a brand-new implementation of the
+MessageFilter interface.
+To use your custom filter, add this into your spring context:
 
 You can specify either a global a or a local message filter as
-follows: 
- a) the global custom filter that provides the global configuration for
+follows:
+
+- the global custom filter that provides the global configuration for
 all Spring-WS endpoints
 
 [source,xml]
@@ -225,20 +226,19 @@ all Spring-WS endpoints
 <bean id="messageFilter" class="your.domain.myMessageFiler" scope="singleton" />
 --------------------------------------------------------------------------------
 
-or
- b) the local messageFilter directly on the endpoint as follows:
+- the local messageFilter directly on the endpoint as follows:
 
 [source,java]
 -------------------------------------------------------------------------------------
 to("spring-ws:http://yourdomain.com?messageFilter=#myEndpointSpecificMessageFilter");
 -------------------------------------------------------------------------------------
 
-For more information see
+For more information, see
 https://issues.apache.org/jira/browse/CAMEL-5724[CAMEL-5724]
 
-If you want to create your own MessageFilter, consider overriding the
-following methods in the default implementation of MessageFilter in
-class BasicMessageFilter:
+If you want to create your own `MessageFilter`, consider overriding the
+following methods in the default implementation of `MessageFilter` in
+class `BasicMessageFilter`:
 
 [source,java]
 -------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ Spring configuration:
     </property>
 </bean>
 
-<!-- force use of Sun SAAJ implementation, http://static.springsource.org/spring-ws/sites/1.5/faq.html#saaj-jboss -->
+<!-- force use of Sun SAAJ implementation, https://static.springsource.org/spring-ws/sites/1.5/faq.html#saaj-jboss -->
 <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
     <property name="messageFactory">
         <bean class="com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl"/>
@@ -284,14 +284,14 @@ Spring configuration:
 
 == Exposing web services
 
-In order to expose a web service using this component you first need to
-set-up a
+To expose a web service using this component, you first need to
+set up a
 http://static.springsource.org/spring-ws/sites/1.5/reference/html/server.html[MessageDispatcher]
 to look for endpoint mappings in a Spring XML file. If you plan on
-running inside a servlet container you probably want to use a
+running inside a servlet container, you probably want to use a
 `MessageDispatcherServlet` configured in `web.xml`.
 
-By default the `MessageDispatcherServlet` will look for a Spring XML
+By default, the `MessageDispatcherServlet` will look for a Spring XML
 named `/WEB-INF/spring-ws-servlet.xml`. To use Camel with Spring-WS the
 only mandatory bean in that XML file is `CamelEndpointMapping`. This
 bean allows the `MessageDispatcher` to dispatch web service requests to
@@ -337,13 +337,13 @@ http://static.springsource.org/spring-ws/sites/1.5/reference/html/tutorial.html[
 Contract-First Web Services]. Basically paragraph 3.6 "Implementing the
 Endpoint" is handled by this component (specifically paragraph 3.6.2
 "Routing the Message to the Endpoint" is where `CamelEndpointMapping`
-comes in). Also don't forget to check out the
+comes in). Also remember to check out the
 Spring Web Services Example included in the
 Camel distribution.
 
 == Endpoint mapping in routes
 
-With the XML configuration in-place you can now use Camel's DSL to
+With the XML configuration in place, you can now use Camel's DSL to
 define what web service requests are handled by your endpoint:
 
 The following route will receive all web service requests that have a
@@ -398,10 +398,10 @@ The use of the `beanname` mapping-type is primarily meant for (legacy)
 situations where you're already using Spring-WS and have endpoint
 mappings defined in a Spring XML file. The `beanname` mapping-type
 allows you to wire your Camel route into an existing endpoint mapping.
-When you're starting from scratch it's recommended to define your
+When you're starting from scratch, it's recommended to define your
 endpoint mappings as Camel URI's (as illustrated above with
 `endpointMapping`) since it requires less configuration and is more
-expressive. Alternatively you could use vanilla Spring-WS with the help
+expressive. Alternatively, you could use vanilla Spring-WS with the help
 of annotations.
 ====
 
@@ -433,10 +433,10 @@ An example of a route using `beanname`:
 
 Camel's pluggable data formats offer support for
 pojo/xml marshalling using libraries such as JAXB.
-You can use these data formats in your route to sent and
+You can use these data formats in your route to send and
 receive pojo's, to and from web services.
 
-When _accessing_ web services you can marshal the request and unmarshal
+When _accessing_ web services, you can marshal the request and unmarshal
 the response message:
 
 [source,java]
@@ -447,7 +447,7 @@ jaxb.setContextPath("com.example.model");
 from("direct:example").marshal(jaxb).to("spring-ws:http://foo.com/bar").unmarshal(jaxb);
 ----------------------------------------------------------------------------------------
 
-Similarly when _providing_ web services, you can unmarshal XML requests
+Similarly, when _providing_ web services, you can unmarshal XML requests
 to POJO's and marshal the response message back to XML:
 
 [source,java]
