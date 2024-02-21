@@ -20,7 +20,7 @@ Starting with Camel 4.0, our project has migrated to JakartaEE. Some parts of Ap
 result in unexpected behavior and other runtime problems.
 ====
 
-The Olingo2 component utilizes http://olingo.apache.org/[Apache Olingo]
+The Olingo2 component uses http://olingo.apache.org/[Apache Olingo]
 version 2.0 APIs to interact with OData 2.0 compliant services.
 A number of popular commercial and enterprise vendors and products
 support the OData protocol. A sample list of supporting products can be
@@ -74,12 +74,12 @@ include::partial$component-endpoint-headers.adoc[]
 == Endpoint HTTP Headers
 
 The component level configuration property **httpHeaders** supplies static HTTP header information.
-However, some systems requires dynamic header information to be passed to and received from the endpoint.
+However, some systems require dynamic header information to be passed to and received from the endpoint.
 A sample use case would be systems that require dynamic security tokens.  The **endpointHttpHeaders** 
-and **responseHttpHeaders** endpoint properties provides this capability.  Set headers that need to 
+and **responseHttpHeaders** endpoint properties provide this capability.  Set headers that need to
 be passed to the endpoint in the *`CamelOlingo2.endpointHttpHeaders`* property and the 
 response headers will be returned in a *`CamelOlingo2.responseHttpHeaders`* property.  
-Both properties are of the type *`java.util.Map<String, String>`*.
+Both properties are of the type `java.util.Map<String, String>`.
 
 == OData Resource Type Mapping
 
@@ -90,26 +90,26 @@ the OData resource being queried, created or modified.
 |=======================================================================
 |OData Resource Type |Resource URI from resourcePath and keyPredicate |In or Out Body Type
 
-|Entity data model |$metadata |org.apache.olingo.odata2.api.edm.Edm
+|Entity data model |$metadata |`org.apache.olingo.odata2.api.edm.Edm`
 
-|Service document |/ |org.apache.olingo.odata2.api.servicedocument.ServiceDocument
+|Service document |/ |`org.apache.olingo.odata2.api.servicedocument.ServiceDocument`
 
-|OData feed |<entity-set> |org.apache.olingo.odata2.api.ep.feed.ODataFeed
+|OData feed |<entity-set> |`org.apache.olingo.odata2.api.ep.feed.ODataFeed`
 
-|OData entry |<entity-set>(<key-predicate>) |org.apache.olingo.odata2.api.ep.entry.ODataEntry for Out body (response)
-java.util.Map<String, Object> for In body (request)
+|OData entry |<entity-set>(<key-predicate>) |`org.apache.olingo.odata2.api.ep.entry.ODataEntry` for Out body (response)
+`java.util.Map<String, Object>` for In body (request)
 
-|Simple property |<entity-set>(<key-predicate>)/<simple-property> |Appropriate Java data type as described by Olingo EdmProperty
+|Simple property |<entity-set>(<key-predicate>)/<simple-property> |The appropriate Java data type as described by Olingo EdmProperty
 
-|Simple property value |<entity-set>(<key-predicate>)/<simple-property>/$value |Appropriate Java data type as described by Olingo EdmProperty
+|Simple property value |<entity-set>(<key-predicate>)/<simple-property>/$value |The appropriate Java data type as described by Olingo EdmProperty
 
 |Complex property |<entity-set>(<key-predicate>)/<complex-property> |java.util.Map<String, Object>
 
 |Zero or one association link |<entity-set>(<key-predicate>/$link/<one-to-one-entity-set-property> |String for response
-java.util.Map<String, Object> with key property names and values for request
+`java.util.Map<String, Object>` with key property names and values for request
 
-|Zero or many association links |<entity-set>(<key-predicate>/$link/<one-to-many-entity-set-property> |java.util.List<String> for response
-java.util.List<java.util.Map<String, Object>> containing list of key property names and values for request
+|Zero or many association links |<entity-set>(<key-predicate>/$link/<one-to-many-entity-set-property> |`java.util.List<String>` for response
+`java.util.List<java.util.Map<String, Object>>` containing a list of key property names and values for request
 
 |Count |<resource-uri>/$count |java.lang.Long
 |=======================================================================
@@ -137,7 +137,7 @@ from("direct:...")
 ------------------------------------------------------------
 
 The following route creates Manufacturer entry using the
-*java.util.Map<String, Object>* in body message. 
+`java.util.Map<String, Object>` in the body message.
 
 [source,java]
 ------------------------------------------------------------
