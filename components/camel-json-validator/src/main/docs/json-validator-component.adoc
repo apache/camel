@@ -15,7 +15,7 @@
 *{component-header}*
 
 The JSON Schema Validator component performs bean validation of the message body
-against JSON Schemas v4, v6, v7, v2019-09 draft and and v2020-12(partial) using the NetworkNT JSON Schema library
+against JSON Schemas v4, v6, v7, v2019-09 draft and v2020-12(partial) using the NetworkNT JSON Schema library
 (https://github.com/networknt/json-schema-validator).
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -59,7 +59,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == Example
 
-Assuming we have the following JSON Schema
+Assuming we have the following JSON Schema:
 
 *myschema.json*
 
@@ -101,7 +101,7 @@ Assuming we have the following JSON Schema
 }
 ----
 
-we can validate incoming JSON with the following Camel route, where `myschema.json` is loaded from the classpath.
+We can validate incoming JSON with the following Camel route, where `myschema.json` is loaded from the classpath.
 
 [source,java]
 ----
@@ -112,7 +112,7 @@ from("direct:start")
 
 If you use the default schema loader, it will try to determine the schema version from the $schema property and instruct the https://github.com/networknt[validator] appropriately.  If it can't find (or doesn't recognize) the $schema property, it will assume your schema is version https://json-schema.org/specification-links.html#draft-2019-09-formerly-known-as-draft-8[2019-09].
 
-If your schema is local to your application (e.g. a classpath location as opposed to URL), your schema can also contain $ref links to a relative subschema in the classpath.  Per the JSON schema spec, your schema must not have an $id identifier property for this to work properly.  See the https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/java/org/apache/camel/component/jsonvalidator/LocalRefSchemaTest.java[unit test] and https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/resources/org/apache/camel/component/jsonvalidator/Order.json[schema] for an example.
+If your schema is local to your application (e.g. a classpath location as opposed to URL), your schema can also contain `$ref` links to a relative subschema in the classpath.  Per the JSON schema spec, your schema must not have an $id identifier property for this to work properly.  See the https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/java/org/apache/camel/component/jsonvalidator/LocalRefSchemaTest.java[unit test] and https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/resources/org/apache/camel/component/jsonvalidator/Order.json[schema] for an example.
 
 
 include::spring-boot:partial$starter.adoc[]
