@@ -61,18 +61,18 @@ include::partial$component-endpoint-options.adoc[]
 |Endpoint |Description
 
 |stream |Streams data to a named index or the default if not specified.
-When using stream mode be aware of that Splunk has some internal buffer
-(about 1MB or so) before events gets to the index. 
+When using stream mode, be aware of that Splunk has some internal buffer
+(about 1MB or so) before events get to the index.
 If you need realtime, better use submit or tcp mode.
 
 |submit |submit mode. Uses Splunk rest api to publish events to a named index or
 the default if not specified.
 
-|tcp |tcp mode. Streams data to a tcp port, and requires a open receiver port
+|tcp |tcp mode. Streams data to a tcp port, and requires an open receiver port
 in Splunk.
 |=======================================================================
 
-When publishing events the message body should contain a
+When publishing events, the message body should contain a
 SplunkEvent.  See comment under message body.
 
 *Example*
@@ -83,7 +83,7 @@ SplunkEvent.  See comment under message body.
           .to("splunk://submit?username=user&password=123&index=myindex&sourceType=someSourceType&source=mySource")...
 ----------------------------------------------------------------------------------------------------------------------
 
-In this example a converter is required to convert to a SplunkEvent
+In this example, a converter is required to convert to a SplunkEvent
 class.
 
 == Consumer Endpoints:
@@ -116,12 +116,12 @@ SplunkEvent in the body.
 
 Splunk operates on data in key/value pairs. The SplunkEvent class is a
 placeholder for such data, and should be in the message body for the producer. 
-Likewise it will be returned in the body per search
+Likewise, it will be returned in the body per search
 result for the consumer.
 
 You can send raw data to Splunk by setting the raw
-option on the producer endpoint. This is useful for eg. json/xml and
-other payloads where Splunk has build in support. 
+option on the producer endpoint. This is useful for e.g., json/xml and
+other payloads where Splunk has built in support.
 
 == Use Cases
 
@@ -134,7 +134,7 @@ Search Twitter for tweets with music and publish events to Splunk
           .to("splunk://submit?username=foo&password=bar&index=camel-tweets&sourceType=twitter&source=music-tweets");
 --------------------------------------------------------------------------------------------------------------------------------------------
 
-To convert a Tweet to a SplunkEvent you could use a converter like
+To convert a Tweet to a `SplunkEvent`, you could use a converter like:
 
 [source,java]
 ----------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ public class Tweet2SplunkEvent {
 }
 ----------------------------------------------------------------------------------
 
-Search Splunk for tweets
+Search Splunk for tweets:
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------------------------
@@ -175,9 +175,9 @@ Search Splunk for tweets
 == Other comments
 
 Splunk comes with a variety of options for leveraging machine generated
-data with prebuilt apps for analyzing and displaying this.  +
- For example the jmx app. could be used to publish jmx attributes, eg.
-route and jvm metrics to Splunk, and displaying this on a dashboard.
+data with prebuilt apps for analyzing and displaying this.
+For example, the jmx app could be used to publish jmx attributes, e.g.,
+route and jvm metrics to Splunk, and display this on a dashboard.
 
 
 
