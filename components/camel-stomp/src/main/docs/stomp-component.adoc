@@ -2,7 +2,7 @@
 :doctitle: Stomp
 :shortname: stomp
 :artifactid: camel-stomp
-:description: Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
+:description: Send and receive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:
