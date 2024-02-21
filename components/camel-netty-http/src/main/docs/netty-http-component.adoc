@@ -15,23 +15,24 @@
 *{component-header}*
 
 The Netty HTTP component is an extension to xref:netty-component.adoc[Netty]
-component to facilitiate HTTP transport with xref:netty-component.adoc[Netty].
+component to simplify HTTP transport with xref:netty-component.adoc[Netty].
 
 
 [NOTE]
 ====
 *Stream*
 
-Netty is stream based, which means the input it receives is submitted to
+Netty is stream-based, which means the input it receives is submitted to
 Camel as a stream. That means you will only be able to read the content
-of the stream *once*. If you find a situation where the message body appears to be empty or
+of the stream *once*. If you find a situation where the message body appears to be empty, or
 you need to access the data multiple times (eg: doing multicasting, or
-redelivery error handling) you should use Stream caching or convert the
+redelivery error handling), you should use Stream caching or convert the
 message body to a `String` which is safe to be re-read multiple times. 
-Notice Netty HTTP reads the entire stream into memory using
+
+Note also that Netty HTTP reads the entire stream into memory using
 `io.netty.handler.codec.http.HttpObjectAggregator` to build the entire
-full http message. But the resulting message is still a stream based
-message which is readable once.
+full http message. But the resulting message is still a stream-based
+message that is readable once.
 ====
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -57,10 +58,10 @@ netty-http:http://0.0.0.0:8080[?options]
 
 [NOTE]
 ====
-*Query parameters vs endpoint options*
+*Query parameters vs. endpoint options*
 
 You may be wondering how Camel recognizes URI query parameters and
-endpoint options. For example you might create endpoint URI as follows:
+endpoint options. For example, you might create endpoint URI as follows:
 `netty-http:http//example.com?myParam=myValue&compression=true` . In
 this example `myParam` is the HTTP parameter, while `compression` is the
 Camel endpoint option. The strategy used by Camel in such situations is
@@ -69,6 +70,7 @@ means that for the discussed example, the HTTP request sent by Netty
 HTTP producer to the endpoint will look as follows:
 `http//example.com?myParam=myValue`, because `compression` endpoint
 option will be resolved and removed from the target URL.
+
 Keep also in mind that you cannot specify endpoint options using dynamic
 headers (like `CamelHttpQuery`). Endpoint options can be specified only
 at the endpoint URI definition level (like `to` or `from` DSL elements).
@@ -81,7 +83,7 @@ at the endpoint URI definition level (like `to` or `from` DSL elements).
 This component inherits all the options from
 xref:netty-component.adoc[Netty], so make sure to look at
 the xref:netty-component.adoc[Netty] documentation as well.
-Notice that some options from xref:netty-component.adoc[Netty] is not
+Notice that some options from xref:netty-component.adoc[Netty] are not
 applicable when using this Netty HTTP component, such as options
 related to UDP transport.
 ====
@@ -117,10 +119,83 @@ accessible at all times.
 io.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
 ----------------------------------------------------------------------------------------------------------
 
+== Using HTTP Basic Authentication
+
+The Netty HTTP consumer supports HTTP basic authentication by specifying
+the security realm name to use, as shown below
+
+[source,java]
+------------------------------------------------------------------------------------------
+<route>
+   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf"/>
+   ...
+</route>
+------------------------------------------------------------------------------------------
+
+The realm name is mandatory to enable basic authentication. By default,
+the JAAS based authenticator is used, which will use the realm name
+specified (karaf in the example above) and use the JAAS realm and the
+`JAAS \{\{LoginModule}}s` of this realm for authentication.
+
+End user of Apache Karaf / ServiceMix has a karaf realm out of the box,
+and hence why the example above would work out of the box in these
+containers.
+
+=== Specifying ACL on web resources
+
+The `org.apache.camel.component.netty.http.SecurityConstraint` allows
+to define constraints on web resources.
+And the `org.apache.camel.component.netty.http.SecurityConstraintMapping` is
+provided out of the box, allowing to easily define inclusions and
+exclusions with roles.
+
+For example, as shown below in the XML DSL, we define the constraint
+bean:
+
+[source,xml]
+-------------------------------------------------------------------------------------------------
+  <bean id="constraint" class="org.apache.camel.component.netty.http.SecurityConstraintMapping">
+    <!-- inclusions defines url -> roles restrictions -->
+    <!-- a * should be used for any role accepted (or even no roles) -->
+    <property name="inclusions">
+      <map>
+        <entry key="/*" value="*"/>
+        <entry key="/admin/*" value="admin"/>
+        <entry key="/guest/*" value="admin,guest"/>
+      </map>
+    </property>
+    <!-- exclusions is used to define public urls, which requires no authentication -->
+    <property name="exclusions">
+      <set>
+        <value>/public/*</value>
+      </set>
+    </property>
+  </bean>
+-------------------------------------------------------------------------------------------------
+
+The constraint above is defined so that
+
+* access to /* is restricted and any roles are accepted (also if user has
+no roles)
+* access to /admin/* requires the admin role
+* access to /guest/* requires the admin or guest role
+* access to /public/* is an exclusion that means no authentication is
+needed, and is therefore public for everyone without logging in
+
+To use this constraint, we just need to refer to the bean id as shown
+below:
+
+[source,xml]
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<route>
+   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true&amp;securityConfiguration.realm=karaf&amp;securityConfiguration.securityConstraint=#constraint"/>
+   ...
+</route>
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 == Examples
 
-In the route below we use Netty HTTP as a HTTP server, which returns
-back a hardcoded "Bye World" message.
+In the route below, we use Netty HTTP as an HTTP server, which returns a hardcoded _"Bye World"_ message.
 
 [source,java]
 -----------------------------------------------
@@ -137,11 +212,11 @@ ProducerTemplate as shown below:
     System.out.println(out);
 ------------------------------------------------------------------------------------------------------------
 
-And we get back "Bye World" as the output.
+And we get _"Bye World"_ as the output.
 
-=== How do I let Netty match wildcards
+=== How do I let Netty match wildcards?
 
-By default Netty HTTP will only match on exact uri's. But you can
+By default, Netty HTTP will only match on exact uri's. But you can
 instruct Netty to match prefixes. For example
 
 [source,java]
@@ -154,7 +229,7 @@ match, so it will match if you enter +
  `\http://0.0.0.0:8123/foo` but not match if you do
 `\http://0.0.0.0:8123/foo/bar`.
 
-So if you want to enable wildcard matching you do as follows:
+So if you want to enable wildcard matching, you do as follows:
 
 [source,java]
 ---------------------------------------------------------------------------------
@@ -163,7 +238,7 @@ from("netty-http:http://0.0.0.0:8123/foo?matchOnUriPrefix=true").to("mock:foo");
 
 So now Netty matches any endpoints with starts with `foo`.
 
-To match *any* endpoint you can do:
+To match *any* endpoint, you can do:
 
 [source,java]
 -----------------------------------------------------------------------------
@@ -173,7 +248,7 @@ from("netty-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 === Using multiple routes with same port
 
 In the same CamelContext you can have multiple
-routes from Netty HTTP that shares the same port (eg a
+routes from Netty HTTP that shares the same port (e.g., a
 `io.netty.bootstrap.ServerBootstrap` instance). Doing this requires a
 number of bootstrap options to be identical in the routes, as the routes
 will share the same `io.netty.bootstrap.ServerBootstrap` instance. The
@@ -185,7 +260,7 @@ defined in the
 `org.apache.camel.component.netty.NettyServerBootstrapConfiguration`
 configuration class. If you have configured another route with different
 options, Camel will throw an exception on startup, indicating the
-options is not identical. To mitigate this ensure all options is
+options are not identical. To mitigate this ensure all options are
 identical.
 
 Here is an example with two routes that share the same port.
@@ -203,12 +278,13 @@ from("netty-http:http://0.0.0.0:{{port}}/bar")
   .transform().constant("Bye Camel");
 -----------------------------------------------
 
-And here is an example of a mis configured 2nd route that do not have
+And here is an example of a mis-configured second route that does not have
 identical
 `org.apache.camel.component.netty.NettyServerBootstrapConfiguration`
-option as the 1st route. This will cause Camel to fail on startup.
+option as the first route.
+This will cause Camel to fail on startup.
 
-*Two routes sharing the same port, but the 2nd route is misconfigured
+*Two routes are sharing the same port, but the second route is misconfigured
 and will fail on starting*
 
 [source,java]
@@ -217,15 +293,15 @@ from("netty-http:http://0.0.0.0:{{port}}/foo")
   .to("mock:foo")
   .transform().constant("Bye World");
 
-// we cannot have a 2nd route on same port with SSL enabled, when the 1st route is NOT
+// we cannot have a 2nd route on the same port with SSL enabled, when the 1st route is NOT
 from("netty-http:http://0.0.0.0:{{port}}/bar?ssl=true")
   .to("mock:bar")
   .transform().constant("Bye Camel");
 --------------------------------------------------------------------------------------
 
-=== Reusing same server bootstrap configuration with multiple routes
+=== Reusing the same server bootstrap configuration with multiple routes
 
-By configuring the common server bootstrap option in an single instance
+By configuring the common server bootstrap option in a single instance
 of a
 `org.apache.camel.component.netty.NettyServerBootstrapConfiguration`
 type, we can use the `bootstrapConfiguration` option on the Netty HTTP
@@ -260,7 +336,7 @@ And in the routes you refer to this option as shown below
 </route>
 ----------------------------------------------------------------------------------------------------------
 
-=== Reusing same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
+=== Reusing the same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
 
 See the Netty HTTP Server Example
 for more details and example how to do that.
@@ -272,7 +348,7 @@ Netty HTTP component can act as a reverse proxy, in that case
 `Exchange.HTTP_PORT` headers are populated from the absolute
 URL received on the request line of the HTTP request.
 
-Here's an example of a HTTP proxy that simply transforms the response
+Here's an example of an HTTP proxy that simply transforms the response
 from the origin server to uppercase.
 
 [source,java]
@@ -295,80 +371,6 @@ void processResponse(final Exchange exchange) {
     ByteBufUtil.writeUtf8(buf, string.toUpperCase(Locale.US));
 }
 ------------------------------------------------------------------------------------------
-
-== Using HTTP Basic Authentication
-
-The Netty HTTP consumer supports HTTP basic authentication by specifying
-the security realm name to use, as shown below
-
-[source,java]
-------------------------------------------------------------------------------------------
-<route>
-   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf"/>
-   ...
-</route>
-------------------------------------------------------------------------------------------
-
-The realm name is mandatory to enable basic authentication. By default
-the JAAS based authenticator is used, which will use the realm name
-specified (karaf in the example above) and use the JAAS realm and the
-JAAS \{\{LoginModule}}s of this realm for authentication.
-
-End user of Apache Karaf / ServiceMix has a karaf realm out of the box,
-and hence why the example above would work out of the box in these
-containers.
-
-=== Specifying ACL on web resources
-
-The `org.apache.camel.component.netty.http.SecurityConstraint` allows
-to define constrains on web resources. And the
-`org.apache.camel.component.netty.http.SecurityConstraintMapping` is
-provided out of the box, allowing to easily define inclusions and
-exclusions with roles.
-
-For example as shown below in the XML DSL, we define the constraint
-bean:
-
-[source,xml]
--------------------------------------------------------------------------------------------------
-  <bean id="constraint" class="org.apache.camel.component.netty.http.SecurityConstraintMapping">
-    <!-- inclusions defines url -> roles restrictions -->
-    <!-- a * should be used for any role accepted (or even no roles) -->
-    <property name="inclusions">
-      <map>
-        <entry key="/*" value="*"/>
-        <entry key="/admin/*" value="admin"/>
-        <entry key="/guest/*" value="admin,guest"/>
-      </map>
-    </property>
-    <!-- exclusions is used to define public urls, which requires no authentication -->
-    <property name="exclusions">
-      <set>
-        <value>/public/*</value>
-      </set>
-    </property>
-  </bean>
--------------------------------------------------------------------------------------------------
-
-The constraint above is define so that
-
-* access to /* is restricted and any roles is accepted (also if user has
-no roles)
-* access to /admin/* requires the admin role
-* access to /guest/* requires the admin or guest role
-* access to /public/* is an exclusion which means no authentication is
-needed, and is therefore public for everyone without logging in
-
-To use this constraint we just need to refer to the bean id as shown
-below:
-
-[source,xml]
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<route>
-   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true&amp;securityConfiguration.realm=karaf&amp;securityConfiguration.securityConstraint=#constraint"/>
-   ...
-</route>
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
