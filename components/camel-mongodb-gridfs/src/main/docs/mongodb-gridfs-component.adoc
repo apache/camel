@@ -49,7 +49,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Configuration of database in Spring XML
+== Configuration of a database in Spring XML
 
 The following Spring XML creates a bean defining the connection to a
 MongoDB instance.
@@ -87,7 +87,7 @@ xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
 
 === count
 
-Returns the total number of file in the collection, returning an Integer
+Returns the total number of files in the collection, returning an Integer
 as the OUT message body.
 
 [source,java]
@@ -109,7 +109,7 @@ Integer count = template.requestBodyAndHeaders("direct:count", query, headers);
 
 === listAll
 
-Returns an Reader that lists all the filenames and their IDs in a tab
+Returns a Reader that lists all the filenames and their IDs in a tab
 separated stream.
 
 ----------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ filename2.txt   2897651254
 
 Finds a file in the GridFS system and sets the body to an InputStream of
 the content. Also provides the metadata has headers. It uses
-Exchange.FILE_NAME from the incoming headers to determine the file to find.
+`Exchange.FILE_NAME` from the incoming headers to determine the file to find.
 
 [source,java]
 -------------------------------------------------------------------------------------------------
@@ -136,8 +136,8 @@ InputStream result = template.requestBodyAndHeaders("direct:findOne", "irrelevan
 
 === create
 
-Creates a new file in the GridFs database. It uses the
-Exchange.FILE_NAME from the incoming headers for the name and the body
+Create a new file in the GridFs database. It uses the
+`Exchange.FILE_NAME` from the incoming headers for the name and the body
 contents (as an InputStream) as the content.
 
 [source,java]
