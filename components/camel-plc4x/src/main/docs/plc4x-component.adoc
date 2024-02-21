@@ -24,8 +24,7 @@ plc4x://driver[?options]
 
 The bucket will be created if it doesn't already exist.
 
-You can append query options to the URI in the following format,
-?options=value&option2=value&...
+You can append query options to the URI in the following format: `?options=value&option2=value&...`.
 
 
 // component-configure options: START
@@ -48,7 +47,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Dependencies
 
-Maven users will need to add the following dependency to their pom.xml.
+Maven users will need to add the following dependency to their `pom.xml`.
 
 *pom.xml*
 
@@ -76,7 +75,7 @@ read from the PLC.
 
 == Polling Consumer
 
-The polling consumer supports consecutive reading. The input and output is the same as for the regular consumer.
+The polling consumer supports consecutive reading. The input and output are the same as for the regular consumer.
 
 == Producer
 
