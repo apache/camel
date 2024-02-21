@@ -13,10 +13,10 @@
 
 The Camel Java Flight Recorder (JFR) component is used for integrating Camel with Java Flight Recorder (JFR).
 
-This allows to monitor and troubleshoot your Camel applications with JFR.
+This allows you to monitor and troubleshoot your Camel applications with JFR.
 
 The camel-jfr component emits lifecycle events for startup to JFR.
-This can for example be used to pin-point which Camel routes may be slow to startup.
+This can, for example, be used to pinpoint which Camel routes may be slow to startup.
 
 See the __startupRecorder__ options from xref:components:others:main.adoc[Camel Main]
 
@@ -24,7 +24,7 @@ See the __startupRecorder__ options from xref:components:others:main.adoc[Camel 
 
 To enable you just need to add `camel-jfr` to the classpath, and enable JFR recording.
 
-JFR recordings can be started either at:
+JFR recordings can be started at:
 
 - When running the JVM using JVM arguments
 - When starting Camel by setting `camel.main.startup-recorder-recording=true`.
