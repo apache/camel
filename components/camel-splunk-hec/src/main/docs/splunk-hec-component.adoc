@@ -2,7 +2,7 @@
 :doctitle: Splunk HEC
 :shortname: splunk-hec
 :artifactid: camel-splunk-hec
-:description: The splunk component allows to publish events in Splunk using the HTTP Event Collector.
+:description: The splunk component allows publishing events in Splunk using the HTTP Event Collector.
 :since: 3.3
 :supportlevel: Stable
 :tabs-sync-option:
