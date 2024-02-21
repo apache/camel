@@ -16,7 +16,7 @@
 
 The Optaplanner component solves the planning problem contained in a
 message with http://www.optaplanner.org/[OptaPlanner]. +
- For example: feed it an unsolved Vehicle Routing problem and it solves
+ For example, feed it an unsolved Vehicle Routing problem and it solves
 it.
 
 The component supports consumer listening for SloverManager results and
@@ -62,20 +62,20 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Message Body
 
-Camel takes the planning problem for the IN body, solves it and returns
-it on the OUT body. The IN body object supports the following use cases:
+Camel takes the planning problem for the _IN_ body, solves it and returns
+it on the _OUT_ body. The _IN_ body object supports the following use cases:
 
-* If the body contains the PlanningSolution annotation, then it will be solved using the
+* If the body contains the `PlanningSolution` annotation, then it will be solved using the
 solver identified by solverId and either synchronously or asynchronously.
-* If the body is instance of ProblemChange, then it will trigger
-addProblemFactChange.
+* If the body is an instance of `ProblemChange`, then it will trigger
+`addProblemFactChange`.
 * If the body is none of the above types, then the producer will return
-the best result from the solver identified by solverId
+the best result from the solver identified by `solverId`.
 
 
 === Samples
 
-Solve a planning problem that's on the ActiveMQ queue with OptaPlanner, passing the SolverManager:
+Solve a planning problem on the ActiveMQ queue with OptaPlanner, passing the SolverManager:
 
 [source,java]
 --------------------------------------------------
