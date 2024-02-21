@@ -49,9 +49,9 @@ The Cloudtrail consumer will use an API method called LookupEvents.
 
 This method will only take into account management events like create/update/delete of resources and Cloudtrail insight events where enabled.
 
-This means, you won't consumer the events registered in the Cloudtrail logs stored on S3, in case of creation of a new Trail.
+This means you won't consume the events registered in the Cloudtrail logs stored on S3, in case of creation of a new Trail.
 
-This is important to notice and it must be taken into account when using this component.
+This is important to notice, and it must be taken into account when using this component.
 
 == URI Format
 
