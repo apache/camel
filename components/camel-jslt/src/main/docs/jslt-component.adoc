@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Jslt component allows you to process a JSON messages using an
+The JSLT component allows you to process JSON messages using an
 https://github.com/schibsted/jslt[JSLT] expression. This can be
 ideal when doing JSON to JSON transformation or querying data.
 
@@ -40,7 +40,7 @@ jslt:specName[?options]
 
 Where *specName* is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
-(eg: \file://folder/myfile.vm).
+(e.g.: `\file://folder/myfile.vm`).
 
 
 // component-configure options: START
@@ -68,12 +68,12 @@ Camel can supply exchange information as variables when applying a JSLT expressi
 | name | value
 | headers | The headers of the In message as a json object
 | variables |The variables
-| exchange.properties | The *Exchange* properties as a json object. _exchange_ is the name of the variable and _properties_ is the path to the exchange properties. Available if _allowContextMapAll_ option is true.
+| exchange.properties | The *Exchange* properties as a json object. `exchange` is the name of the variable and `properties` is the path to the exchange properties. Available if `allowContextMapAll` option is true.
 |===
 
 All the values that cannot be converted to json with Jackson are denied and will not be available in the jslt expression.
 
-For example, the header named "type" and the exchange property "instance" can be accessed like
+For example, the header named `type` and the exchange property `instance` can be accessed like
 
 [source,json]
 --------------------------------------
@@ -85,7 +85,7 @@ For example, the header named "type" and the exchange property "instance" can be
 
 == Samples
 
-For example you could use something like
+For example, you could use something like:
 
 [source,java]
 --------------------------------------
@@ -93,7 +93,7 @@ from("activemq:My.Queue").
   to("jslt:com/acme/MyResponse.json");
 --------------------------------------
 
-And a file based resource:
+And a file-based resource:
 
 [source,java]
 ---------------------------------------------------------------
@@ -103,7 +103,7 @@ from("activemq:My.Queue").
 ---------------------------------------------------------------
 
 You can also specify which JSLT expression the component should use
-dynamically via a header, so for example:
+dynamically via a header, so, for example:
 
 [source,java]
 ---------------------------------------------------------------------
