@@ -36,7 +36,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------------------------------
 
-You can if you prefer use a named reference to a data format which can
+You can, if you prefer, use a named reference to a data format which can
 then be defined in your Registry such as via your
 Spring XML file. e.g.
 
@@ -87,13 +87,13 @@ You can specify multiple context paths using `:` as a separator, for example
 == Partial marshalling / unmarshalling
 
 JAXB 2 supports marshalling and unmarshalling XML tree fragments. By
-default JAXB looks for the `@XmlRootElement` annotation on a given class to
-operate on whole XML tree. This is useful, but not always. Sometimes the
-generated code does not have the `@XmlRootElement` annotation and sometimes you
+default, JAXB looks for the `@XmlRootElement` annotation on a given class to
+operate on the whole XML tree. This is useful, but not always. Sometimes the
+generated code does not have the `@XmlRootElement` annotation, and sometimes you
 need to unmarshall only part of the tree.
 
-In that case you can use partial unmarshalling. To enable this
-behaviour you need set property `partClass` on the `JaxbDataFormat`. Camel will pass this class
+In that case, you can use partial unmarshalling. To enable this
+behavior, you need set property `partClass` on the `JaxbDataFormat`. Camel will pass this class
 to the JAXB unmarshaller. If `JaxbConstants.JAXB_PART_CLASS` is set as
 one of the exchange headers, its value is used to override the `partClass` property
 on the `JaxbDataFormat`.
@@ -123,7 +123,7 @@ the XML declaration, you can set this option to be `true`. The default value of 
 
 `JaxbDataFormat` supports ignoring
 https://www.w3.org/TR/xml/#NT-Char[Non-XML Characters],
-you just need to set the `filterNonXmlChars` property to `true`.
+you need to set the `filterNonXmlChars` property to `true`.
 The `JaxbDataFormat` will replace any non-XML character with a space character (`" "`) during message
 marshalling or unmarshalling. You can also set the Exchange property `Exchange.FILTER_NON_XML_CHARS`.
 
@@ -165,7 +165,7 @@ If you use XJC to create the java class from the schema, you will get an
 `ObjectFactory` for your JAXB context. Since the `ObjectFactory` uses
 https://jakarta.ee/specifications/xml-binding/2.3/apidocs/javax/xml/bind/jaxbelement[JAXBElement]
 to hold the reference of the schema and element instance value,
-`JaxbDataformat` will ignore the `JAXBElement` by default and you will get
+`JaxbDataformat` will ignore the `JAXBElement` by default, and you will get
 the element instance value instead of the `JAXBElement` object from the
 unmarshaled message body.
 
@@ -178,7 +178,7 @@ property to be `false`.
 You can set the `encoding` option on the `JaxbDataFormat` to configure the
 `Marshaller.JAXB_ENCODING` encoding property on the JAXB Marshaller.
 
-You can setup which encoding to use when you declare the `JaxbDataFormat`. You can also provide the encoding in the
+You can set up which encoding to use when you declare the `JaxbDataFormat`. You can also provide the encoding in the
 Exchange property `Exchange.CHARSET_NAME`. This property will override the encoding set on the `JaxbDataFormat`.
 
 == Controlling namespace prefix mapping
@@ -189,7 +189,7 @@ as `ns2`, `ns3`, `ns4` etc. To control this mapping, Camel allows you to refer
 to a map which contains the desired mapping.
 
 For example, in Spring XML we can define a `Map` with the mapping. In the
-mapping file below, we map SOAP to use soap as as a prefix. While our custom
+mapping file below, we map SOAP to use soap as a prefix. While our custom
 namespace `http://www.mycompany.com/foo/2` is not using any prefix.
 
 [source,xml]
@@ -201,9 +201,9 @@ namespace `http://www.mycompany.com/foo/2` is not using any prefix.
  </util:map>
 -----------------------------------------------------------------------
 
-To use this in JAXB or SOAP data formats you refer to
+To use this in JAXB or SOAP data formats, you refer to
 this map, using the `namespacePrefixRef` attribute as shown below. Then
-Camel will lookup in the Registry a `java.util.Map`
+Camel will look up in the Registry a `java.util.Map`
 with the id `myMap`, which was what we defined above.
 
 [source,xml]
@@ -268,22 +268,21 @@ You can do the same using the XML DSL:
 == Marshal data that is already XML
 
 The JAXB marshaller requires that the message body is JAXB compatible,
-e.g it is a `JAXBElement`, a java instance that has JAXB annotations, or
+e.g., it is a `JAXBElement`, a java instance that has JAXB annotations, or
 extends `JAXBElement`. There can be situations where the message body is
-already in XML, e.g from a `String` type.
+already in XML, e.g., from a `String` type.
 
 `JaxbDataFormat` has an option named `mustBeJAXBElement` which you can set to `false` to relax this check and
 have the JAXB marshaller only attempt marshalling on `JAXBElement` (`javax.xml.bind.JAXBIntrospector#isElement` returns `true`).
-In those situations the marshaller will fallback to marshal the message body as-is.
+In those situations, the marshaller will fall back to marshal the message body as-is.
 
 == Dependencies
 
-To use JAXB in your camel routes you need to add dependency on
-*camel-jaxb* which implements this data format.
+To use JAXB in your Camel routes, you need to add a dependency on
+*camel-jaxb*, which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 -------------------------------------
