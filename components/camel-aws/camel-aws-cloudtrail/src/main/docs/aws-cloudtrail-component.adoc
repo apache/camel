@@ -43,6 +43,16 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
+== Cloudtrail Events consumed
+
+The Cloudtrail consumer will use an API method called LookupEvents.
+
+This method will only take into account management events like create/update/delete of resources and Cloudtrail insight events where enabled.
+
+This means, you won't consumer the events registered in the Cloudtrail logs stored on S3, in case of creation of a new Trail.
+
+This is important to notice and it must be taken into account when using this component.
+
 == URI Format
 
 -----------------------------------
