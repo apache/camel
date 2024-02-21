@@ -15,7 +15,7 @@
 *{component-header}*
 
 The SSH component enables access to SSH servers such that you can send
-an SSH command, and process the response.
+an SSH command and process the response.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -87,7 +87,7 @@ set, and if so, use it to locate the referenced Public Key certificate
 and use that for authentication.
 2.  If `certResource` is not set, it will look to see if a
 `keyPairProvider` has been set, and if so, it will use that for
-certificate based authentication.
+certificate-based authentication.
 3.  If neither `certResource` nor `keyPairProvider` are set, it will use
 the `username` and `password` options for authentication. Even though the `username` 
 and `password` are provided in the endpoint configuration and headers set with 
@@ -123,7 +123,8 @@ An example of using Public Key authentication is provided in
 == Certificate Dependencies
 
 You will need to add some additional runtime dependencies if you use
-certificate based authentication. You may need to use later versions depending what version
+certificate-based authentication.
+You may need to use later versions depending on what version
 of Camel you are using.
 
 The component uses `sshd-core` library which is based on either `bouncycastle` or `eddsa` security providers. `camel-ssh` is picking explicitly `bouncycastle` as security provider.
