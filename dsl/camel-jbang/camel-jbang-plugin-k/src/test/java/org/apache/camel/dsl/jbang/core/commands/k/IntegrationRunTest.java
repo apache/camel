@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.k;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import org.apache.camel.RuntimeCamelException;
@@ -197,6 +198,63 @@ class IntegrationRunTest extends KubeBaseTest {
                             constant: Hello Camel !!!
                         - to: log:info
                   traits: {}""", printer.getOutput());
+    }
+
+    @Test
+    public void shouldInferDependenciesYamlRoute() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route-deps.yaml" };
+        command.output = "yaml";
+        command.doCall();
+
+        String[] specDependencies = getDependencies(printer.getOutput());
+        String[] deps = new String[] {
+                "camel:caffeine", "camel:http", "camel:jackson", "camel:jsonpath", "camel:log", "camel:timer" };
+        Assertions.assertArrayEquals(deps, specDependencies, "Dependencies don't match: " + Arrays.toString(specDependencies));
+    }
+
+    @Test
+    public void shouldAddComplexDependenciesYamlRoute() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route-deps.yaml" };
+        command.dependencies = new String[] { "camel-twitter", "mvn:foo:bar:1.0" };
+        command.output = "yaml";
+        command.doCall();
+
+        String[] specDependencies = getDependencies(printer.getOutput());
+        String[] deps = new String[] {
+                "camel:caffeine", "camel:http", "camel:jackson", "camel:jsonpath", "camel:log", "camel:timer", "camel:twitter",
+                "mvn:foo:bar:1.0" };
+        Assertions.assertArrayEquals(deps, specDependencies, "Dependencies don't match: " + Arrays.toString(specDependencies));
+    }
+
+    @Test
+    public void shouldInferDependenciesJavaRoute() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:Sample.java" };
+        command.output = "yaml";
+        command.doCall();
+
+        String[] specDependencies = getDependencies(printer.getOutput());
+        String[] deps = new String[] {
+                "camel:aws2-s3", "camel:caffeine", "camel:dropbox", "camel:jacksonxml", "camel:java-joor-dsl", "camel:kafka",
+                "camel:mongodb", "camel:telegram", "camel:zipfile" };
+        Assertions.assertArrayEquals(deps, specDependencies, "Dependencies don't match: " + Arrays.toString(specDependencies));
+    }
+
+    @Test
+    public void shouldAddComplexDependenciesJavaRoute() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:Sample.java" };
+        command.dependencies = new String[] { "camel-twitter", "mvn:foo:bar:1.0" };
+        command.output = "yaml";
+        command.doCall();
+
+        String[] specDependencies = getDependencies(printer.getOutput());
+        String[] deps = new String[] {
+                "camel:aws2-s3", "camel:caffeine", "camel:dropbox", "camel:jacksonxml", "camel:java-joor-dsl", "camel:kafka",
+                "camel:mongodb", "camel:telegram", "camel:twitter", "camel:zipfile", "mvn:foo:bar:1.0" };
+        Assertions.assertArrayEquals(deps, specDependencies, "Dependencies don't match: " + Arrays.toString(specDependencies));
     }
 
     @Test

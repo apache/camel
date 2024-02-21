@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.k;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesCrudDispatcher;
@@ -36,6 +38,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
+import org.yaml.snakeyaml.Yaml;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KubeBaseTest {
@@ -88,6 +91,16 @@ public class KubeBaseTest {
         created.getSpec().setFlows(integration.getSpec().getFlows());
 
         return created;
+    }
+
+    protected String[] getDependencies(String yamlSource) {
+        Yaml yaml = new Yaml();
+        Map<String, Object> obj = yaml.load(yamlSource);
+        //noinspection unchecked
+        obj = (Map<String, Object>) obj.get("spec");
+        //noinspection unchecked
+        List<String> specDeps = (List<String>) obj.get("dependencies");
+        return specDeps.toArray(new String[specDeps.size()]);
     }
 
 }
