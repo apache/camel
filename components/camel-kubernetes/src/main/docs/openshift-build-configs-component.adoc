@@ -43,7 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Openshift Build Configs Producer Examples
 
-- listBuilds: this operation list the Build Configs on an Openshift cluster
+- listBuilds: this operation lists the Build Configs on an Openshift cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -52,9 +52,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of Builds from your Openshift cluster
+This operation returns a List of Builds from your Openshift cluster
 
-- listBuildsByLabels: this operation list the build configs by labels on an Openshift cluster
+- listBuildsByLabels: this operation lists the build configs by labels on an Openshift cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of Build configs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a List of Build configs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 
 include::spring-boot:partial$starter.adoc[]

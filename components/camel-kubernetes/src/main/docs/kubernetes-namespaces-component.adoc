@@ -47,7 +47,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Kubernetes Namespaces Producer Examples
 
-- listNamespaces: this operation list the namespaces on a kubernetes cluster
+- listNamespaces: this operation lists the namespaces on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -56,9 +56,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of namespaces from your cluster
+This operation returns a List of namespaces from your cluster
 
-- listNamespacesByLabels:  this operation list the namespaces by labels on a kubernetes cluster
+- listNamespacesByLabels:  this operation lists the namespaces by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of Namespaces from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a List of Namespaces from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 == Kubernetes Namespaces Consumer Example
 
