@@ -19,7 +19,6 @@ package org.apache.camel.component.platform.http.plugin;
 import java.util.HashMap;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.util.VersionUtil;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.platform.http.spi.PlatformHttpPluginRegistry;
 import org.apache.camel.support.ResolverHelper;
@@ -41,7 +40,7 @@ public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
         DefaultJolokiaPlatformHttpPlugin plugin = registry
                 .resolvePluginById("jolokia", DefaultJolokiaPlatformHttpPlugin.class).orElseThrow();
         Assertions.assertNotNull(plugin);
-        HttpRequestHandler handler = plugin.getRequestHandler();
+        HttpRequestHandler handler = plugin.getJolokiaRequestHandler();
 
         JSONAware json = handler.handleGetRequest("", "/", new HashMap<>());
 

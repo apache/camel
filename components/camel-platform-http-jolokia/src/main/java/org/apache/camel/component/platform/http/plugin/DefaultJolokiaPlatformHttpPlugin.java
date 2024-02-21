@@ -17,7 +17,22 @@
 package org.apache.camel.component.platform.http.plugin;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.management.RuntimeMBeanException;
+
+import io.netty.buffer.ByteBufInputStream;
+import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
+import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.impl.Arguments;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.impl.Utils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
@@ -34,6 +49,8 @@ import org.jolokia.server.core.service.api.Restrictor;
 import org.jolokia.server.core.util.NetworkUtil;
 import org.jolokia.service.jmx.LocalRequestHandler;
 import org.jolokia.service.serializer.JolokiaSerializer;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +59,11 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJolokiaPlatformHttpPlugin.class);
 
-    private final JolokiaServiceManager serviceManager;
-
-    private HttpRequestHandler requestHandler;
-
-    private final LogHandler jolokiaLogHandler;
-
     private CamelContext camelContext;
+    private final JolokiaServiceManager serviceManager;
+    private final LogHandler jolokiaLogHandler;
+    private HttpRequestHandler requestHandler;
+    private Handler<RoutingContext> handler;
 
     public DefaultJolokiaPlatformHttpPlugin() {
         var config = new StaticConfiguration(ConfigKey.AGENT_ID, NetworkUtil.getAgentId(hashCode(), "vertx"));
@@ -69,6 +84,7 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
     public void doStart() {
         var jolokiaContext = serviceManager.start();
         requestHandler = new HttpRequestHandler(jolokiaContext);
+        handler = createVertxHandler();
     }
 
     @Override
@@ -79,7 +95,11 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
     }
 
     @Override
-    public HttpRequestHandler getRequestHandler() {
+    public Object getHandler() {
+        return handler;
+    }
+
+    public HttpRequestHandler getJolokiaRequestHandler() {
         return requestHandler;
     }
 
@@ -137,6 +157,60 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
         public boolean isDebug() {
             return log.isDebugEnabled();
         }
+    }
+
+    private Handler<RoutingContext> createVertxHandler() {
+        return routingContext -> {
+            HttpServerRequest req = routingContext.request();
+            String remainingPath = Utils.pathOffset(req.path(), routingContext);
+
+            JSONAware json = null;
+            try {
+                requestHandler.checkAccess(req.remoteAddress().host(), req.remoteAddress().host(), getOriginOrReferer(req));
+                if (req.method() == HttpMethod.GET) {
+                    json = requestHandler.handleGetRequest(req.uri(), remainingPath, getParams(req.params()));
+                } else {
+                    Arguments.require(routingContext.body() != null, "Missing body");
+                    InputStream inputStream = new ByteBufInputStream(routingContext.body().buffer().getByteBuf());
+                    json = requestHandler.handlePostRequest(req.uri(), inputStream, StandardCharsets.UTF_8.name(),
+                            getParams(req.params()));
+                }
+            } catch (Throwable exp) {
+                json = requestHandler.handleThrowable(
+                        exp instanceof RuntimeMBeanException ? ((RuntimeMBeanException) exp).getTargetException() : exp);
+            } finally {
+                if (json == null)
+                    json = requestHandler.handleThrowable(new Exception("Internal error while handling an exception"));
+
+                routingContext.response()
+                        .setStatusCode(getStatusCode(json))
+                        .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .end(json.toJSONString());
+            }
+        };
+    }
+
+    private Map<String, String[]> getParams(MultiMap params) {
+        Map<String, String[]> response = new HashMap<>();
+        for (String name : params.names()) {
+            response.put(name, params.getAll(name).toArray(new String[0]));
+        }
+        return response;
+    }
+
+    private String getOriginOrReferer(HttpServerRequest req) {
+        String origin = req.getHeader(HttpHeaders.ORIGIN);
+        if (origin == null) {
+            origin = req.getHeader(HttpHeaders.REFERER);
+        }
+        return origin != null ? origin.replaceAll("[\\n\\r]*", "") : null;
+    }
+
+    private int getStatusCode(JSONAware json) {
+        if (json instanceof JSONObject && ((JSONObject) json).get("status") instanceof Integer) {
+            return (Integer) ((JSONObject) json).get("status");
+        }
+        return 200;
     }
 
 }
