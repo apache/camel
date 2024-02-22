@@ -168,14 +168,23 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Evaluates the expression at a given breakpoint node id and returns the result as String")
     String evaluateExpressionAtBreakpoint(String nodeId, String language, String expression);
 
-    @ManagedOperation(description = "Updates/adds the exchange property (uses same type as old exchange property  value) on the suspended breakpoint at the given node id")
+    @ManagedOperation(description = "Updates/adds the exchange property (uses same type as old exchange property value) on the suspended breakpoint at the given node id")
     void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value);
+
+    @ManagedOperation(description = "Updates/adds the exchange property (with a new type) on the suspended breakpoint at the given node id")
+    void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type);
 
     @ManagedOperation(description = "Removes the exchange property on the suspended breakpoint at the given node id")
     void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName);
 
-    @ManagedOperation(description = "Updates/adds the exchange property (with a new type) on the suspended breakpoint at the given node id")
-    void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type);
+    @ManagedOperation(description = "Updates/adds the exchange variable (uses same type as old variableName value) on the suspended breakpoint at the given node id")
+    void setExchangeVariableOnBreakpoint(String nodeId, String variableName, Object value);
+
+    @ManagedOperation(description = "Updates/adds the exchange variable (with a new type) on the suspended breakpoint at the given node id")
+    void setExchangeVariableOnBreakpoint(String nodeId, String variableName, Object value, String type);
+
+    @ManagedOperation(description = "Removes the exchange variable on the suspended breakpoint at the given node id")
+    void removeExchangeVariableOnBreakpoint(String nodeId, String variableName);
 
     @ManagedOperation(description = "Returns the message history at the given node id as XML")
     String messageHistoryOnBreakpointAsXml(String nodeId);
