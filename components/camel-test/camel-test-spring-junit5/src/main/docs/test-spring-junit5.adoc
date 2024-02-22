@@ -16,7 +16,7 @@ both the classic Spring XML files or Spring Boot.
 
 The recommended approach is to annotate the test class with `org.apache.camel.test.spring.junit5.CamelSpringBootTest`.
 This replaces the Junit4 `@RunWith` annotation using `SpringRunner.class` or `CamelSpringBootRunner.class`.
-To enable auto configuration of the Camel context and other Spring boot auto configurable components,
+To enable autoconfiguration of the Camel context and other Spring boot auto-configurable components,
 use the annotation `org.springframework.boot.autoconfigure.EnableAutoConfiguration`.
 The Spring test context may be specified in one of three ways:
 
@@ -123,7 +123,7 @@ If your test extends this class, you must provide the Spring context by implemen
 protected abstract AbstractApplicationContext createApplicationContext();
 ----
 
-=== Using the @CamelSpringTest annotation
+=== Using the `@CamelSpringTest` annotation
 
 A better and recommended approach involves the usage of the
 `org.apache.camel.test.spring.junit5.CamelSpringTest` annotation, as shown:
@@ -203,10 +203,10 @@ The following annotations can be used with `camel-spring-junit5` unit testing.
 | @CamelSpringBootTest | Used for testing Camel with Spring Boot
 | @CamelSpringTest | Used for testing Camel with classic Spring XML (not Spring Boot)
 | @DisableJmx | Used for disabling JMX
-| @EnableRouteCoverage | Enables dumping route coverage statistic. The route coverage status is written as xml files in the `target/camel-route-coverage` directory after the test has finished. See more information at xref:manual::camel-report-maven-plugin.adoc[Camel Maven Report Plugin].
+| @EnableRouteCoverage | Enables dumping route coverage statistics. The route coverage status is written as xml files in the `target/camel-route-coverage` directory after the test has finished. See more information at xref:manual::camel-report-maven-plugin.adoc[Camel Maven Report Plugin].
 | @ExcludeRoutes | Indicates if certain route builder classes should be excluded from package scan discovery
-| @MockEndpoints | Auto-mocking of endpoints whose URIs match the provided filter. For more information see xref:manual::advice-with.adoc[Advice With].
-| @MockEndpointsAndSkip | Auto-mocking of endpoints whose URIs match the provided filter with the added provision that the endpoints are also skipped. For more information see xref:manual::advice-with.adoc[Advice With].
+| @MockEndpoints | Auto-mocking of endpoints whose URIs match the provided filter. For more information, see xref:manual::advice-with.adoc[Advice With].
+| @MockEndpointsAndSkip | Auto-mocking of endpoints whose URIs match the provided filter with the added provision that the endpoints are also skipped. For more information, see xref:manual::advice-with.adoc[Advice With].
 | @ProvidesBreakpoint | Indicates that the annotated method returns a `Breakpoint` for use in the test. Useful for intercepting traffic to all endpoints or simply for setting a break point in an IDE for debugging. The method must be `public static`, take no arguments, and return `Breakpoint`.
 | @ShutdownTimeout | Timeout to use for xref:manual::graceful-shutdown.adoc[shutdown]. The default is 10 seconds.
 | @UseAdviceWith | To enable testing with xref:manual::advice-with.adoc[Advice With].
