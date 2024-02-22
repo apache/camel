@@ -124,7 +124,7 @@ public class BindyEscapedCsvTest extends CamelTestSupport {
 		@DataField(pos = 5)
 		private String e;
 
-		@DataField(pos = 6, columnName = "ios_flg")
+		@DataField(pos = 6)
 		private String f;
 
 		@DataField(pos = 7)
