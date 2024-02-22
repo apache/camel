@@ -589,7 +589,7 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Session Token used when the user needs to assume a IAM
+         * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -641,7 +641,7 @@ public interface Aws2AthenaComponentBuilderFactory {
         }
         /**
          * Set whether the Athena client should expect to use Session
-         * Credentials. This is useful in situation in which the user needs to
+         * Credentials. This is useful in a situation in which the user needs to
          * assume a IAM role for doing operations in Athena.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
