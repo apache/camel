@@ -230,7 +230,8 @@ public interface BacklogDebugger extends StatefulService {
     void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName);
 
     /**
-     * Updates/adds the variable (uses same type as old variableName value) on the suspended breakpoint at the given node id
+     * Updates/adds the variable (uses same type as old variableName value) on the suspended breakpoint at the given
+     * node id
      */
     void setExchangeVariableOnBreakpoint(String nodeId, String variableName, Object value)
             throws NoTypeConversionAvailableException;
