@@ -11,16 +11,16 @@
 
 The `camel-test-main-junit5` module is used for unit testing Camel launched in Standalone mode with Camel Main.
 
-This module proposes 2 approaches to configure and launch Camel like a Camel Main application for testing purpose.
+This module proposes two approaches to configure and launch Camel like a Camel Main application for testing purpose.
 
-The *legacy* approach consisting of extending the base class `org.apache.camel.test.main.junit5.CamelMainTestSupport` and overriding the appropriate methods to enable or disable a feature.
+* *Legacy*: This approach consists of extending the base class `org.apache.camel.test.main.junit5.CamelMainTestSupport` and overriding the appropriate methods to enable or disable a feature.
 
-The *annotation* based approach consisting of annotating the test classes with `org.apache.camel.test.main.junit5.CamelMainTest` with the appropriate attributes to enable or disable a feature.
+* *Annotation*: This approach consists of annotating the test classes with `org.apache.camel.test.main.junit5.CamelMainTest` with the appropriate attributes to enable or disable a feature.
 
-In the next sections, for each use case both approaches are proposed with the labels *legacy* and *annotation* to differentiate them.
+In the next section,
+for each use case both approaches are proposed with the labels *legacy* and *annotation* to differentiate them.
 
-Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+Maven users will need to add the following dependency to their `pom.xml` for this component:
 
 [source,xml]
 ----
@@ -45,9 +45,15 @@ The same behavior can be simulated with `CamelMainTestSupport` by overriding the
 === Annotation ===
 The same behavior can be simulated with `CamelMainTest` by setting the attribute `mainClass` to provide the main class of the application to test.
 
+=== Examples
+
 In the next examples, the main class of the application to test is the class `SomeMainClass`.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 class SomeTest extends CamelMainTestSupport {
@@ -61,7 +67,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 @CamelMainTest(mainClass = SomeMainClass.class)
@@ -70,20 +77,31 @@ class SomeTest {
     // Rest of the test class
 }
 ----
+====
 
 == Configure Camel as a Camel Main application
 
 A Camel Main application has access to many specific configuration properties that are not available from the base class `CamelTestSupport`.
 
 === Legacy ===
-The base class `CamelMainTestSupport` provides the method `configure(MainConfigurationProperties configuration)` that can be overridden in order to configure Camel for the test like a Camel Main application.
+The base class `CamelMainTestSupport` provides the method `configure(MainConfigurationProperties configuration)`
+that can be overridden to configure Camel for the test like a Camel Main application.
 
 === Annotation ===
-The annotation `Configure` allows to mark a method with an arbitrary name and a parameter of type `MainConfigurationProperties` to be called in order to configure Camel for the test like a Camel Main application. Several methods in the test class and/or its parent classes can be annotated.
+The annotation `Configure` allows
+to mark a method with an arbitrary name and a parameter of type `MainConfigurationProperties`
+to be called to configure Camel for the test like a Camel Main application.
+Several methods in the test class and/or its parent classes can be annotated.
+
+=== Examples ===
 
 In the next examples, the test class `SomeTest` adds a configuration class and specifies the xml routes to include.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 import org.apache.camel.main.MainConfigurationProperties;
@@ -102,7 +120,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 import org.apache.camel.main.MainConfigurationProperties;
@@ -122,6 +141,8 @@ class SomeTest {
     // Rest of the test class
 }
 ----
+====
+
 
 == Configure a custom property placeholder location
 
@@ -135,11 +156,17 @@ The method `getPropertyPlaceholderLocations()` can be overridden to provide a co
 === Annotation ===
 The attribute `propertyPlaceholderLocations` can be set to provide a list of locations.
 
-The order in the list matter especially in case of a property defined at several locations, the value of the property found in the first location where it is defined, is used.
+The order in the list matters, especially in case of a property defined at several locations, the value of the property found in the first location where it is defined, is used.
+
+=== Examples ===
 
 In the next examples, the property placeholder locations configured are `extra-application.properties` and `application.properties` both available in the default package.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 class SomeTest extends CamelMainTestSupport {
@@ -153,7 +180,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 @CamelMainTest(propertyPlaceholderLocations = { "classpath:extra-application.properties", "classpath:application.properties" })
@@ -162,6 +190,8 @@ class SomeTest {
     // Rest of the test class
 }
 ----
+
+====
 
 === The file name of the property placeholder
 
@@ -175,11 +205,17 @@ The attribute `propertyPlaceholderFileName` can be set to provide the file name 
 
 It can then infer the locations of the property placeholder as it assumes that it is located either in the same package as the test class or directly in the default package.
 
+=== Examples ===
+
 In the next examples, since the test class is `com.somecompany.SomeTest` and the file name of the property placeholder is `custom-application.properties` , the actual possible locations of the property placeholder are `classpath:com/somecompany/custom-application.properties;optional=true,classpath:custom-application.properties;optional=true` which means that for each property to find, it tries to get it first from the properties file of the same package if it exists and if it cannot be found, it tries to get it from the properties file with the same name but in the default package if it exists.
 
 NOTE: Since the properties files are declared as optional, no exception is raised if they are both absent.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 package com.somecompany;
@@ -195,7 +231,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 package com.somecompany;
@@ -207,9 +244,13 @@ class SomeTest {
 }
 ----
 
+====
+
 == Replace an existing bean
 
-In Camel Main, you have the opportunity to bind custom beans dynamically using the specific annotation `@BindToRegistry` which is very helpful but for testing purpose, you may need to replace the bean by a mock or a test implementation.
+In Camel Main,
+you have the opportunity to bind custom beans dynamically using the specific annotation `@BindToRegistry` which is very helpful
+but for testing purpose, you may need to replace the bean by a mock, or test implementation.
 
 === Legacy ===
 To bind additional beans, you can still override the well known method `bindToRegistry(Registry registry)` but this method cannot be used to replace a bean created and bound automatically by Camel as it is called too early in the initialization process of Camel. To work around this problem, you can instead bind your beans by overriding the new method `bindToRegistryAfterInjections(Registry registry)` which is called after existing injections and automatic binding have been done.
@@ -217,12 +258,18 @@ To bind additional beans, you can still override the well known method `bindToRe
 === Annotation ===
 The annotation `ReplaceInRegistry` allows to mark a method or a field to replace an existing bean in the registry.
 
-* In case of a field, the name and its type are used to identify the bean to replace, and the value of the field is the new value of the bean. The field can be in the test class or in a parent class.
-* In case of a method, the name and its return type are used to identify the bean to replace, and the return value of the method is the new value of the bean. The method can be in the test class or in a parent class.
+* In the case of a field, the name and its type are used to identify the bean to replace, and the value of the field is the new value of the bean. The field can be in the test class or in a parent class.
+* In the case of a method, the name and its return type are used to identify the bean to replace, and the return value of the method is the new value of the bean. The method can be in the test class or in a parent class.
+
+=== Examples ===
 
 In the next examples, an instance of a custom bean of type `CustomGreetings` is used to replace the bean of type `Greetings` automatically bound by Camel with the name `myGreetings`.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 class SomeTest extends CamelMainTestSupport {
@@ -239,10 +286,9 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
-
-==== Using a field ====
-
+Annotation (field)::
++
+.Using a field
 [source,java]
 ----
 import org.apache.camel.test.main.junit5.ReplaceInRegistry;
@@ -258,8 +304,9 @@ class SomeTest {
 ----
 <1> We cannot rely on the value of property that is injected thanks to `@PropertyInject` like in the previous code snippet because the injection occurs after the instantiation of the test class, so it would be `null`.
 
-==== Using a method ====
-
+Annotation (method)::
++
+.Using a method
 [source,java]
 ----
 import org.apache.camel.test.main.junit5.ReplaceInRegistry;
@@ -279,6 +326,8 @@ class SomeTest {
 }
 ----
 
+====
+
 == Override existing properties
 
 Some properties are inherited from properties file like the `application.properties` and need to be overridden within the context of the test.
@@ -289,9 +338,15 @@ The method `useOverridePropertiesWithPropertiesComponent()` can be overridden to
 === Annotation ===
 The attribute `properties` can be set to provide an array of `String` representing the key/value pairs of properties to override in the following format `"property-key-1=property-value-1", "property-key-2=property-value-1", ...`.
 
+=== Examples ===
+
 In the next examples, the value of the property whose name is `host` is replaced with `localhost`.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 import static org.apache.camel.util.PropertiesHelper.asProperties;
@@ -307,7 +362,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 @CamelMainTest(properties = { "host=localhost" })
@@ -316,20 +372,35 @@ class SomeTest {
     // Rest of the test class
 }
 ----
+====
 
 == Replace from endpoints
 
-To be able to test easily the behavior of a route without being affected by the type of from endpoint used in the route, it can be very helpful to replace the from endpoint with an endpoint more test friendly.
+To be able to test easily the behavior of a route without being affected by the type of `_from_` endpoint used in the route,
+it can be very helpful to replace the `_from_` endpoint with an endpoint more test friendly.
 
 === Legacy ===
-The method `replaceRouteFromWith()` can be called to provide the id of the route to modify and the URI of the new from endpoint.
+
+The method `replaceRouteFromWith()` can be called
+to provide the id of the route to modify and the URI of the new `_from_` endpoint.
 
 === Annotation ===
-The attribute `replaceRouteFromWith` can be set to provide an array of `String` representing a list of id of the route to modify and the URI of the new from endpoint in the following format `"route-id-1=new-uri-1", "route-id-2=new-uri-2", ...`.
+
+The attribute `replaceRouteFromWith` can be set
+to provide an array
+of `String` representing a list of route IDs
+to modify and the URI of the new `_from_` endpoint in the following format `"route-id-1=new-uri-1",
+"route-id-2=new-uri-2", ...`.
+
+=== Examples ===
 
 In the next examples, the route whose id is `main-route` is advised to replace its current from endpoint with a `direct:main` endpoint.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 class SomeTest extends CamelMainTestSupport {
@@ -345,7 +416,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 @CamelMainTest(replaceRouteFromWith = { "main-route=direct:main" })
@@ -354,6 +426,8 @@ class SomeTest {
     // Rest of the test class
 }
 ----
+
+====
 
 == Configure additional camel configuration classes
 
@@ -365,9 +439,15 @@ There is no specific method for that, but it can be done by overriding the metho
 === Annotation ===
 The attribute `configurationClasses` can be set to provide an array of additional camel configuration classes.
 
+=== Examples ===
+
 In the next examples, the camel configuration class `SomeCamelConfiguration` is added to the global configuration.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 class SomeTest extends CamelMainTestSupport {
@@ -382,7 +462,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 @CamelMainTest(configurationClasses = SomeCamelConfiguration.class)
@@ -391,6 +472,8 @@ class SomeTest {
     // Rest of the test class
 }
 ----
+
+====
 
 == Advice a route
 
@@ -402,9 +485,15 @@ A route needs to be advised directly in the test method using one of the utility
 === Annotation ===
 The attribute `advices` can be set to provide an array of annotations of type `AdviceRouteMapping` representing a mapping between a route to advice and the corresponding route builders to call to advice the route. As the route builders are instantiated using the default constructor, make sure that the default constructor exists.
 
+=== Examples ===
+
 In the next examples, the route whose id is `main-route` is advised to replace its current from endpoint with a `direct:main` endpoint.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 class SomeTest extends CamelMainTestSupport {
@@ -416,7 +505,7 @@ class SomeTest extends CamelMainTestSupport {
 
     @Test
     void someTest() throws Exception {
-        // Advice the route by replace the from endpoint
+        // Advice the route to replace the from endpoint
         AdviceWith.adviceWith(context, "main-route", ad -> ad.replaceFromWith("direct:main")); // <2>
 
         // must start Camel after we are done using advice-with
@@ -432,7 +521,8 @@ class SomeTest extends CamelMainTestSupport {
 <2> Call a utility method `AdviceWith.adviceWith` to advice a route
 <3> Start the Camel context as it was not yet started
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 @CamelMainTest(advices = @AdviceRouteMapping(route = "main-route", advice = SomeTest.SomeRouteBuilder.class))
@@ -450,6 +540,8 @@ class SomeTest {
 }
 ----
 
+====
+
 == Mock and skip an endpoint
 
 For testing purpose, it can be helpful to mock only or to mock and skip all the endpoints matching with a given pattern.
@@ -462,9 +554,15 @@ The method `isMockEndpointsAndSkip()` can be overridden to provide the pattern t
 The attribute `mockEndpoints` can be set to provide the pattern that should match with the endpoints to mock.
 The attribute `mockEndpointsAndSkip` can be set to provide the pattern that should match with the endpoints to mock and skip.
 
+=== Examples ===
+
 In the next examples, the endpoints whose URI starts with `direct:` are mocked.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 class SomeTest extends CamelMainTestSupport {
@@ -478,7 +576,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 @CamelMainTest(mockEndpoints = "direct:*")
@@ -487,6 +586,8 @@ class SomeTest {
     // Rest of the test class
 }
 ----
+
+====
 
 == Dump route coverage
 
@@ -502,37 +603,55 @@ The attribute `dumpRouteCoverage` can be set to `true` indicating that the featu
 
 == Override the shutdown timeout
 
-The default shutdown timeout of Camel is not really adapted for a test as it can be very long. This feature allows to override it to 10 seconds by default, but it can also be set to a custom value knowing that it is expressed in seconds.
+The default shutdown timeout of Camel is not really adapted for a test as it can be very long.
+This feature allows overriding it to 10 seconds by default,
+but it can also be set to a custom value knowing that it is expressed in seconds.
 
 === Legacy ===
+
 The method `getShutdownTimeout()` can be overridden to return the expected shutdown timeout.
 
 === Annotation ===
+
 The attribute `shutdownTimeout` can be set to the expected shutdown timeout.
 
 == Debug mode
 
-For debugging purpose, it is possible to be called before and after invoking a processor allowing to log specific messages or add breakpoints in your favorite IDE.
+For debugging purpose,
+it is possible to be called before
+and after invoking a processor allowing you to log specific messages or add breakpoints in your favorite IDE.
 
 === Legacy ===
-The method `isUseDebugger()` can be overridden to return `true` indicating that the feature is enabled. The methods `debugBefore` and `debugAfter` can then be overridden to execute some specific code for debugging purpose.
+
+The method `isUseDebugger()` can be overridden to return `true` indicating that the feature is enabled.
+The methods `debugBefore` and `debugAfter` can then be overridden to execute some specific code for debugging purpose.
 
 === Annotation ===
-The test class needs to implement the interface `org.apache.camel.test.main.junit5.DebuggerCallback` to enable the feature. The methods `debugBefore` and `debugAfter` can then be implemented to execute some specific code for debugging purpose.
+
+The test class needs to implement the interface `org.apache.camel.test.main.junit5.DebuggerCallback` to enable the feature.
+The methods `debugBefore` and `debugAfter` can then be implemented to execute some specific code for debugging purpose.
 
 == Enable JMX
 
-JMX is disabled by default when launching the tests, however if needed, it is still possible to enable it.
+JMX is disabled by default when launching the tests, however, if needed, it is still possible to enable it.
 
 === Legacy ===
+
 The method `useJmx()` can be overridden to return `true`. It returns `false` by default.
 
 === Annotation ===
+
 The attribute `useJmx` can be set to `true`. It is set to `false` by default.
+
+=== Examples ===
 
 In the next examples, JMX has been enabled for the test.
 
-=== Legacy ===
+[tabs]
+====
+
+Legacy::
++
 [source,java]
 ----
 class SomeTest extends CamelMainTestSupport {
@@ -546,7 +665,8 @@ class SomeTest extends CamelMainTestSupport {
 }
 ----
 
-=== Annotation ===
+Annotation::
++
 [source,java]
 ----
 @CamelMainTest(useJmx = true)
@@ -556,21 +676,33 @@ class SomeTest {
 }
 ----
 
+====
+
 == Nested tests
 
-The annotation based approach supports natively https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested[Nested tests]. It is even possible to annotate `@Nested` test class with `@CamelMainTest` to change the configuration inherited from the outer class however please note that not all attributes can be set at nested test class level. Indeed, for the sake of simplicity, the attributes `dumpRouteCoverage` and `shutdownTimeout` can only be set at outer class level.
+The annotation-based approach supports natively https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested[Nested tests].
+It is even possible to annotate `@Nested` test class
+with `@CamelMainTest` to change the configuration inherited from the outer class.
+However, please note that not all attributes can be set at nested test class level.
+Indeed, for the sake of simplicity,
+the attributes `dumpRouteCoverage` and `shutdownTimeout` can only be set at outer class level.
 
-According to the total amount of values accepted by an attribute, if a `@Nested` test class set this attribute, the behavior can change:
+According to the total number of values accepted by an attribute,
+if a `@Nested` test class set this attribute, the behavior can change:
 
  * In case of *multivalued* attributes like `properties`, `replaceRouteFromWith`, `configurationClasses` and `advices`, the values set on the `@Nested` test class are added to the values of the outer classes, and the resulting values are ordered from outermost to innermost.
  * In case of *mono-valued* attributes like `mainClass`, `propertyPlaceholderFileName`, `mockEndpoints` and `mockEndpointsAndSkip`, the value set on the innermost class is used.
 
-The only exception is the attribute `propertyPlaceholderLocations` that behaves like a mono-valued attribute because it is tightly coupled with `propertyPlaceholderFileName` so it must have the same behavior for the sake of consistency.
+The only exception is the attribute `propertyPlaceholderLocations` that behaves like a mono-valued attribute.
+Because it is tightly coupled with `propertyPlaceholderFileName`, so it must have the same behavior for the sake of consistency.
 
 To have a better understanding of the behavior for each type of attribute, please check the following examples:
 
 === Multivalued ===
-In the next example, the property `some-property` is set to `foo` for all the tests in `SomeTest` including the tests in `SomeNestedTest`. Additionally, the property `some-other-property` is set to `bar` but only for all the tests in `SomeNestedTest`.
+
+In the next example,
+the property `some-property` is set to `foo` for all the tests in `SomeTest` including the tests in `SomeNestedTest`.
+Additionally, the property `some-other-property` is set to `bar` but only for all the tests in `SomeNestedTest`.
 
 [source,java]
 ----
@@ -589,7 +721,11 @@ class SomeTest {
 ----
 
 === Mono-valued ===
-In the next example, `SomeMainClass` is used as main class for all the tests directly inside `SomeTest` but also the tests in the `@Nested` test class `SomeOtherNestedTest` as it is not redefined. `SomeOtherMainClass` is used as main class for all the tests directly inside `SomeNestedTest` but also the tests in the `@Nested` test class `SomeDeeplyNestedTest` as it is not redefined.
+
+In the next example, `SomeMainClass` is used as the main class for all the tests directly inside `SomeTest`,
+but also the tests in the `@Nested` test class `SomeOtherNestedTest` as it is not redefined.
+`SomeOtherMainClass` is used as the main class for all the tests directly inside `SomeNestedTest`,
+but also the tests in the `@Nested` test class `SomeDeeplyNestedTest` as it is not redefined.
 
 [source,java]
 ----
@@ -619,4 +755,6 @@ class SomeTest {
 }
 ----
 
-The annotations `@Configure` and `@ReplaceInRegistry` can also be used on methods or fields inside `@Nested` test classes knowing that the annotations of outer classes are processed before the annotations of inner classes.
+The annotations `@Configure` and `@ReplaceInRegistry` can also be used on methods or fields
+inside `@Nested` test classes knowing that the annotations of outer classes are processed
+before the annotations of inner classes.
