@@ -72,7 +72,7 @@ public class JGroupsLockMasterTest {
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
-            context.setName("context-" + id);
+            context.getCamelContextExtension().setName("context-" + id);
             context.addService(service);
             context.addRoutes(new RouteBuilder() {
                 @Override

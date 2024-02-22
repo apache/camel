@@ -39,7 +39,7 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
 
     protected CamelContext createCamelContext(String name, String managementPattern) throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.setName(name);
+        context.getCamelContextExtension().setName(name);
         if (managementPattern != null) {
             context.getManagementNameStrategy().setNamePattern(managementPattern);
         }
