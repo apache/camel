@@ -20,7 +20,7 @@ The Twitter Direct Message Component consumes/produces a user's direct messages.
 ====
 *Consumer interval of time*
 
-When using the Direct Message consumer, it will consider only the last 30 days direct messages
+When using the Direct Message consumer, it will consider only the last 30-day direct messages
 ====
 
 
