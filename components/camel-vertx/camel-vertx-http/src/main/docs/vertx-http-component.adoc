@@ -73,7 +73,7 @@ URI, or as a header with the key `Exchange.HTTP_QUERY` on the message.
 
 == Response code
 
-Camel will handle according to the HTTP response code:
+Camel will handle, according to the HTTP response code:
 
 * Response code is in the range 100..299, Camel regards it as a success
 response.
@@ -95,7 +95,7 @@ codes. This allows you to get any response from the remote server.
 
 * The HTTP status code
 * The HTTP status line (text of the status code)
-* Redirect location, if server returned a redirect
+* Redirect location if server returned a redirect
 * Response body as a `java.lang.String`, if server provided a body as
 response
 
