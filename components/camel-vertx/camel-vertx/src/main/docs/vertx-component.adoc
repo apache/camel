@@ -20,12 +20,6 @@ https://vertx.io/docs/vertx-core/java/#event_bus[EventBus].
 The vertx https://vertx.io/docs/vertx-core/java/#event_bus[EventBus]
 sends and receives JSON events.
 
-[NOTE]
-====
-The version of Vert.x, used by the component, requires at least Java 1.8 at
-runtime.
-====
-
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
