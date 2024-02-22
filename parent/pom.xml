@@ -69,7 +69,7 @@
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
         <aws-java-sdk2-version>2.24.8</aws-java-sdk2-version>
-        <aws-xray-version>2.15.0</aws-xray-version>
+        <aws-xray-version>2.15.1</aws-xray-version>
         <azure-sdk-bom-version>1.2.20</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
         <beanio-version>3.0.0</beanio-version>
