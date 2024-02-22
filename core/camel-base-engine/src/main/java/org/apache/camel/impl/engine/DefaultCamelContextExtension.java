@@ -338,7 +338,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         return managementMBeanAssembler;
     }
 
-    void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
+    @Override
+    public void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
         this.managementMBeanAssembler
                 = camelContext.getInternalServiceManager().addService(camelContext, managementMBeanAssembler, false);
     }
