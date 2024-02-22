@@ -11,12 +11,17 @@
 
 The WAL component provides a resume strategy that uses a write-ahead log to
 
-A resume strategy that uses a write-ahead strategy to keep a transaction log of the in-processing and processed records. This strategy works by wrapping another strategy. This increases the reliability of the resume API by ensuring that records are saved locally before being sent to the remote data storage used by the resume strategy, thus guaranteeing that records can re recovered in case of crash of that system.
+A resume strategy that uses a write-ahead strategy to keep a transaction log of the in-processing and processed records.
+This strategy works by wrapping another strategy.
+This increases the reliability of the resume API by ensuring that records are saved locally before being sent
+to the remote data storage.
+Thus guaranteeing that records can be recovered in case that system crashes.
 
 
 == Usage
 
-Because this strategy wraps another one, then the other one should be created first and then passed as an-argument to this strategy when creating it.
+Because this strategy wraps another one,
+then the other one should be created first and then passed as an argument to this strategy when creating it.
 
 [source,java]
 ----
