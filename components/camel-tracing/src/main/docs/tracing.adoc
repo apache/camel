@@ -9,6 +9,10 @@
 
 *Since Camel {since}*
 
-This module is common interfaces and API for distributed tracing.
+This module is a common interface and API for distributed tracing.
 
-This module is not intended to be used by end users, but they should use `camel-opentelemetry`, `camel-opentracing` or `camel-zipkin` instead.
+This module is not intended to be used by end users. Instead, should use one of:
+
+* xref:opentelemetry.adoc[`camel-opentelemetry`]
+* xref:observation.adoc[`camel-observation`]
+
