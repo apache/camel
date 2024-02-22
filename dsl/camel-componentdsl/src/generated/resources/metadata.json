@@ -7403,8 +7403,8 @@
   "WordpressComponentBuilderFactory": {
     "kind": "component",
     "name": "wordpress",
-    "title": "Wordpress",
-    "description": "Manage posts and users using Wordpress API.",
+    "title": "WordPress",
+    "description": "Manage posts and users using the WordPress API.",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "cloud,api,cms",
