@@ -38,7 +38,9 @@ public abstract class DefaultConfigurationProperties<T> {
     private StartupSummaryLevel startupSummaryLevel;
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
+    private boolean durationMaxIdleSecondsIgnoreInflightExchanges = false;
     private int durationMaxMessages;
+    private boolean durationMaxMessagesIgnoreInflightExchanges = true;
     @Metadata(defaultValue = "shutdown", enums = "shutdown,stop")
     private String durationMaxAction = "shutdown";
     private int shutdownTimeout = 45;
@@ -212,6 +214,18 @@ public abstract class DefaultConfigurationProperties<T> {
         this.durationMaxIdleSeconds = durationMaxIdleSeconds;
     }
 
+    public boolean getDurationMaxIdleSecondsIgnoreInflightExchanges() {
+        return durationMaxIdleSecondsIgnoreInflightExchanges;
+    }
+
+    /**
+     * To specify if when shutting down because of the max idle seconds limit has reached, Camel should wait for all the
+     * inflight Exchanges to be completed.
+     */
+    public void setDurationMaxIdleSecondsIgnoreInflightExchanges(boolean durationMaxIdleSecondsIgnoreInflightExchanges) {
+        this.durationMaxIdleSecondsIgnoreInflightExchanges = durationMaxIdleSecondsIgnoreInflightExchanges;
+    }
+
     public int getDurationMaxMessages() {
         return durationMaxMessages;
     }
@@ -222,6 +236,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
+    }
+
+    public boolean getDurationMaxMessagesIgnoreInflightExchanges() {
+        return durationMaxMessagesIgnoreInflightExchanges;
+    }
+
+    /**
+     * To specify if when shutting down because of the max messages limit has reached, Camel should wait for all the
+     * inflight Exchanges to be completed.
+     */
+    public void setDurationMaxMessagesIgnoreInflightExchanges(boolean durationMaxMessagesIgnoreInflightExchanges) {
+        this.durationMaxMessagesIgnoreInflightExchanges = durationMaxMessagesIgnoreInflightExchanges;
     }
 
     public String getDurationMaxAction() {
@@ -1668,11 +1694,29 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
+     * To specify if when shutting down because of the max idle seconds limit has reached, Camel should wait for all the
+     * inflight Exchanges to be completed.
+     */
+    public T withDurationMaxIdleSecondsIgnoreInflightExchanges(boolean durationMaxIdleSecondsIgnoreInflightExchanges) {
+        this.durationMaxIdleSecondsIgnoreInflightExchanges = durationMaxIdleSecondsIgnoreInflightExchanges;
+        return (T) this;
+    }
+
+    /**
      * To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run
      * Camel for a short while.
      */
     public T withDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
+        return (T) this;
+    }
+
+    /**
+     * To specify if when shutting down because of the max messages limit has reached, Camel should wait for all the
+     * inflight Exchanges to be completed.
+     */
+    public T withDurationMaxMessagesIgnoreInflightExchanges(boolean durationMaxMessagesIgnoreInflightExchanges) {
+        this.durationMaxMessagesIgnoreInflightExchanges = durationMaxMessagesIgnoreInflightExchanges;
         return (T) this;
     }
 

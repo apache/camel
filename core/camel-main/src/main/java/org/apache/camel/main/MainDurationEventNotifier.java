@@ -55,7 +55,9 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
     private final CamelContext camelContext;
     private final int maxMessages;
+    private final boolean maxMessagesIgnoreInflightExchanges;
     private final long maxIdleSeconds;
+    private final boolean maxIdleSecondsIgnoreInflightExchanges;
     private final MainShutdownStrategy shutdownStrategy;
     private final boolean stopCamelContext;
     private final boolean restartDuration;
@@ -64,12 +66,21 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     private volatile StopWatch watch;
     private volatile ScheduledExecutorService idleExecutorService;
 
-    public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, long maxIdleSeconds,
-                                     MainShutdownStrategy shutdownStrategy, boolean stopCamelContext,
+    public MainDurationEventNotifier(
+                                     CamelContext camelContext,
+                                     int maxMessages,
+                                     boolean maxMessagesIgnoreInflightExchanges,
+                                     long maxIdleSeconds,
+                                     boolean maxIdleSecondsIgnoreInflightExchanges,
+                                     MainShutdownStrategy shutdownStrategy,
+                                     boolean stopCamelContext,
                                      boolean restartDuration, String action) {
+
         this.camelContext = camelContext;
         this.maxMessages = maxMessages;
+        this.maxMessagesIgnoreInflightExchanges = maxMessagesIgnoreInflightExchanges;
         this.maxIdleSeconds = maxIdleSeconds;
+        this.maxIdleSecondsIgnoreInflightExchanges = maxIdleSecondsIgnoreInflightExchanges;
         this.shutdownStrategy = shutdownStrategy;
         this.stopCamelContext = stopCamelContext;
         this.restartDuration = restartDuration;
@@ -110,10 +121,21 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             if (complete) {
                 doneMessages.increment();
                 final int doneCount = doneMessages.intValue();
-                final boolean result = doneCount >= maxMessages;
+
+                int inflight = 0;
+                boolean result = doneCount >= maxMessages;
+
+                if (result && !maxMessagesIgnoreInflightExchanges) {
+                    inflight = camelContext.getInflightRepository().size();
+                    result = inflight == 0;
+                }
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Duration max messages check {} >= {} -> {}", doneCount, maxMessages, result);
+                    if (!maxMessagesIgnoreInflightExchanges) {
+                        LOG.trace("Duration max messages check {}/{} >= {} -> {}", doneCount, inflight, maxMessages, result);
+                    } else {
+                        LOG.trace("Duration max messages check {} >= {} -> {}", doneCount, maxMessages, result);
+                    }
                 }
 
                 if (result && shutdownStrategy.isRunAllowed()) {
@@ -246,7 +268,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
         // any inflight messages currently
         int inflight = camelContext.getInflightRepository().size();
-        if (inflight > 0) {
+        if (inflight > 0 && !maxIdleSecondsIgnoreInflightExchanges) {
             LOG.trace("Duration max idle check is skipped due {} inflight messages", inflight);
             return;
         }

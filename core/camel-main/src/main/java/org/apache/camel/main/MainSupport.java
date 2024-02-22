@@ -258,7 +258,9 @@ public abstract class MainSupport extends BaseMainSupport {
             EventNotifier notifier = new MainDurationEventNotifier(
                     camelContext,
                     mainConfigurationProperties.getDurationMaxMessages(),
+                    mainConfigurationProperties.getDurationMaxMessagesIgnoreInflightExchanges(),
                     mainConfigurationProperties.getDurationMaxIdleSeconds(),
+                    mainConfigurationProperties.getDurationMaxIdleSecondsIgnoreInflightExchanges(),
                     shutdownStrategy,
                     true,
                     mainConfigurationProperties.isRoutesReloadRestartDuration(),

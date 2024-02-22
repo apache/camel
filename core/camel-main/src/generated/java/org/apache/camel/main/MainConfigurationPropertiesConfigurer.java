@@ -91,8 +91,12 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxAction": target.setDurationMaxAction(property(camelContext, java.lang.String.class, value)); return true;
         case "durationmaxidleseconds":
         case "DurationMaxIdleSeconds": target.setDurationMaxIdleSeconds(property(camelContext, int.class, value)); return true;
+        case "durationmaxidlesecondsignoreinflightexchanges":
+        case "DurationMaxIdleSecondsIgnoreInflightExchanges": target.setDurationMaxIdleSecondsIgnoreInflightExchanges(property(camelContext, boolean.class, value)); return true;
         case "durationmaxmessages":
         case "DurationMaxMessages": target.setDurationMaxMessages(property(camelContext, int.class, value)); return true;
+        case "durationmaxmessagesignoreinflightexchanges":
+        case "DurationMaxMessagesIgnoreInflightExchanges": target.setDurationMaxMessagesIgnoreInflightExchanges(property(camelContext, boolean.class, value)); return true;
         case "durationmaxseconds":
         case "DurationMaxSeconds": target.setDurationMaxSeconds(property(camelContext, int.class, value)); return true;
         case "endpointbridgeerrorhandler":
@@ -336,8 +340,12 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxAction": return java.lang.String.class;
         case "durationmaxidleseconds":
         case "DurationMaxIdleSeconds": return int.class;
+        case "durationmaxidlesecondsignoreinflightexchanges":
+        case "DurationMaxIdleSecondsIgnoreInflightExchanges": return boolean.class;
         case "durationmaxmessages":
         case "DurationMaxMessages": return int.class;
+        case "durationmaxmessagesignoreinflightexchanges":
+        case "DurationMaxMessagesIgnoreInflightExchanges": return boolean.class;
         case "durationmaxseconds":
         case "DurationMaxSeconds": return int.class;
         case "endpointbridgeerrorhandler":
@@ -582,8 +590,12 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxAction": return target.getDurationMaxAction();
         case "durationmaxidleseconds":
         case "DurationMaxIdleSeconds": return target.getDurationMaxIdleSeconds();
+        case "durationmaxidlesecondsignoreinflightexchanges":
+        case "DurationMaxIdleSecondsIgnoreInflightExchanges": return target.getDurationMaxIdleSecondsIgnoreInflightExchanges();
         case "durationmaxmessages":
         case "DurationMaxMessages": return target.getDurationMaxMessages();
+        case "durationmaxmessagesignoreinflightexchanges":
+        case "DurationMaxMessagesIgnoreInflightExchanges": return target.getDurationMaxMessagesIgnoreInflightExchanges();
         case "durationmaxseconds":
         case "DurationMaxSeconds": return target.getDurationMaxSeconds();
         case "endpointbridgeerrorhandler":

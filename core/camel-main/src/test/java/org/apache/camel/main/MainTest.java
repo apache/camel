@@ -177,6 +177,24 @@ public class MainTest {
     }
 
     @Test
+    public void testDurationMaxMessages() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("timer:tick?repeatCount=1")
+                        .to("seda:foo");
+                from("seda:foo")
+                        .delay(1000)
+                        .to("mock:results");
+            }
+        });
+        main.configure().withDurationMaxMessages(1);
+        main.configure().withDurationMaxMessagesIgnoreInflightExchanges(false);
+        main.run();
+    }
+
+    @Test
     public void testDurationIdleSeconds() throws Exception {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
