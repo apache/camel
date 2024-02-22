@@ -28,8 +28,8 @@ Where `name` is the name of the `Timer` object, which is created and
 shared across endpoints. So if you use the same name for all your timer
 endpoints, only one `Timer` object and thread will be used.
 
-*Note:* The IN body of the generated exchange is `null`. So
-`exchange.getIn().getBody()` returns `null`.
+NOTE: The _IN_ body of the generated exchange is `null`.
+Therefore, calling `exchange.getIn().getBody()` returns `null`.
 
 [TIP]
 ====
@@ -100,9 +100,7 @@ And the route in Spring DSL:
 
 == Firing as soon as possible
 
-*Since Camel 2.17*
-
-You may want to fire messages in a Camel route as soon as possible you
+You may want to fire messages in a Camel route as soon as possible, you
 can use a negative delay:
 
 [source,xml]
@@ -113,7 +111,7 @@ can use a negative delay:
 </route>
 ----
 
-In this way the timer will fire messages immediately.
+In this way, the timer will fire messages immediately.
 
 You can also specify a `repeatCount` parameter in conjunction with a
 negative delay to stop firing messages after a fixed number has been
@@ -125,7 +123,8 @@ messages until the route will be stopped.
 == Firing only once
 
 You may want to fire a message in a Camel route only once, such as when
-starting the route. To do that you use the `repeatCount` option as shown:
+starting the route.
+To do that, you use the `repeatCount` option as shown:
 
 [source,xml]
 ----
