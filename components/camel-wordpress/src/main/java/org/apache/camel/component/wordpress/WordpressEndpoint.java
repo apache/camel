@@ -43,9 +43,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
- * Manage posts and users using Wordpress API.
+ * Manage posts and users using the WordPress API.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation",
+@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "WordPress", syntax = "wordpress:operation",
              category = { Category.CLOUD, Category.API, Category.CMS })
 public class WordpressEndpoint extends DefaultEndpoint {
 
