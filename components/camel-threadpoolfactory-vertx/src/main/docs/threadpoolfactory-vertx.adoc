@@ -18,7 +18,7 @@ You can plug in different engines via an SPI interface. This is a VertX based pl
 == Restrictions
 
 This implementation has been designed to use VertX worker threads for EIPs where concurrency has been enabled (using default settings).
-However, this is limited to only apply when the EIP are not configured with a specific thread pool. For example the first example
+However, this is limited to only apply when the EIP is not configured with a specific thread pool. For example, the first example
 below will use VertX worker threads, and the 2nd below will not:
 
 [source,java]
