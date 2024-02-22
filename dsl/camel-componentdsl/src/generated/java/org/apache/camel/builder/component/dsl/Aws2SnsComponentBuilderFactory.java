@@ -142,7 +142,7 @@ public interface Aws2SnsComponentBuilderFactory {
          * Only for FIFO Topic. Strategy for setting the messageGroupId on the
          * message. Can be one of the following options: useConstant,
          * useExchangeId, usePropertyValue. For the usePropertyValue option, the
-         * value of property CamelAwsMessageGroupId will be used.
+         * value of property CamelAwsSnsMessageGroupId will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
