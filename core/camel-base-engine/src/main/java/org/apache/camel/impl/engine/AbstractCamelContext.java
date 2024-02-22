@@ -1603,27 +1603,6 @@ public abstract class AbstractCamelContext extends BaseService
         return camelContextExtension.getTypeConverter();
     }
 
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setTypeConverter(TypeConverter typeConverter) {
-        camelContextExtension.setTypeConverter(typeConverter);
-    }
-
-    /**
-     * Get a type converter or create a new one if unset
-     *
-     * @deprecated use DefaultCamelContextExtension#getOrCreateTypeConverter()
-     * @return     A type converter instance
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    protected TypeConverter getOrCreateTypeConverter() {
-        return camelContextExtension.getOrCreateTypeConverter();
-    }
-
     @Override
     public TypeConverterRegistry getTypeConverterRegistry() {
         return camelContextExtension.getTypeConverterRegistry();
@@ -1652,16 +1631,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
         camelContextExtension.setPropertiesComponent(propertiesComponent);
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    protected void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
-        camelContextExtension.setManagementMBeanAssembler(managementMBeanAssembler);
     }
 
     public void setAutoCreateComponents(boolean autoCreateComponents) {
@@ -3880,28 +3849,8 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected RestRegistry createRestRegistry() {
-        RestRegistryFactory factory = getRestRegistryFactory();
+        RestRegistryFactory factory = camelContextExtension.getRestRegistryFactory();
         return factory.createRegistry();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public RestRegistryFactory getRestRegistryFactory() {
-        return camelContextExtension.getRestRegistryFactory();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
-        camelContextExtension.setRestRegistryFactory(restRegistryFactory);
     }
 
     @Override
@@ -3932,16 +3881,6 @@ public abstract class AbstractCamelContext extends BaseService
         return camelContextExtension.getTransformerRegistry();
     }
 
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setTransformerRegistry(TransformerRegistry transformerRegistry) {
-        camelContextExtension.setTransformerRegistry(transformerRegistry);
-    }
-
     @Override
     public Validator resolveValidator(DataType type) {
         return getValidatorRegistry().resolveValidator(new ValidatorKey(type));
@@ -3950,16 +3889,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public ValidatorRegistry getValidatorRegistry() {
         return camelContextExtension.getValidatorRegistry();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
-        camelContextExtension.setValidatorRegistry(validatorRegistry);
     }
 
     @Override
@@ -4158,84 +4087,14 @@ public abstract class AbstractCamelContext extends BaseService
         return camelContextExtension;
     }
 
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setName(String name) {
-        camelContextExtension.setName(name);
-    }
-
     @Override
     public String getName() {
         return camelContextExtension.getName();
     }
 
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setDescription(String description) {
-        camelContextExtension.setDescription(description);
-    }
-
     @Override
     public String getDescription() {
         return camelContextExtension.getDescription();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public FactoryFinder getBootstrapFactoryFinder() {
-        return camelContextExtension.getBootstrapFactoryFinder();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public FactoryFinder getFactoryFinder(String path) {
-        return camelContextExtension.getFactoryFinder(path);
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
-        camelContextExtension.addInterceptStrategy(interceptStrategy);
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public StartupStepRecorder getStartupStepRecorder() {
-        return camelContextExtension.getStartupStepRecorder();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
-        camelContextExtension.setStartupStepRecorder(startupStepRecorder);
     }
 
     public void addRoute(Route route) {
@@ -4248,36 +4107,6 @@ public abstract class AbstractCamelContext extends BaseService
         synchronized (routes) {
             routes.remove(route);
         }
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
-        return camelContextExtension.resolvePropertyPlaceholders(text, keepUnresolvedOptional);
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public String getBasePackageScan() {
-        return camelContextExtension.getBasePackageScan();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setBasePackageScan(String basePackageScan) {
-        camelContextExtension.setBasePackageScan(basePackageScan);
     }
 
     byte getStatusPhase() {

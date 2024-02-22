@@ -12,6 +12,29 @@ Camel startup summary will now report total number of routes without (internal r
 This ensures the total number better reflect the total number of user created routes. The summary now includes a separate
 number of Kamelets and Rest DSL routes. See also the camel-kamelet section.
 
+The following deprecated methods from the `AbstractCamelContext`, deprecated on 4.2 as part of CAMEL-19998, were finally removed:
+
+* `setTypeConverter`
+* `getOrCreateTypeConverter`
+* `setManagementMBeanAssembler`
+* `getRestRegistryFactory`
+* `setRestRegistryFactory`
+* `setTransformerRegistry`
+* `setValidatorRegistry`
+* `setName`
+* `setDescription`
+* `getBootstrapFactoryFinder`
+* `getFactoryFinder`
+* `addInterceptStrategy`
+* `getStartupStepRecorder`
+* `setStartupStepRecorder`
+* `resolvePropertyPlaceholders`
+* `getBasePackageScan`
+* `setBasePackageScan`
+
+Users of these methods should use the respective operations from the `ExtendedCamelContext` (accessed via `getCamelContextExtension()`),
+instead.
+
 === Intercept EIP
 
 The `interceptFrom` and `interceptSentToEndpoint` EIPs is now storing the intercepted endpoint using key `Exchange.INTERCEPTED_ENDPOINT`
