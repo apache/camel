@@ -226,7 +226,7 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.disableJMX();
         ctx.init();
         assertNotNull(ctx.getName(), "Should have a default name");
-        ctx.setName("foo");
+        ctx.getCamelContextExtension().setName("foo");
         assertEquals("foo", ctx.getName());
 
         assertNotNull(ctx.toString());

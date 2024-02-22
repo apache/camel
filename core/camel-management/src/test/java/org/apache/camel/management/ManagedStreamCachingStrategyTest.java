@@ -96,7 +96,7 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 DefaultCamelContext dcc = (DefaultCamelContext) context;
-                dcc.setName("myCamel");
+                dcc.getCamelContextExtension().setName("myCamel");
 
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setSpoolEnabled(true);

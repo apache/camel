@@ -49,7 +49,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
                 .addScript("sql/createAndPopulateDatabase.sql").build();
 
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
+        camel1.getCamelContextExtension().setName("camel-1");
         camel1.getComponent("sql", SqlComponent.class).setDataSource(db);
     }
 

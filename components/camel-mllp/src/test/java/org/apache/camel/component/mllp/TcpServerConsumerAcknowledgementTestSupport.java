@@ -75,7 +75,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         context.setUseMDCLogging(true);
-        context.setName(this.getClass().getSimpleName());
+        context.getCamelContextExtension().setName(this.getClass().getSimpleName());
 
         return context;
     }
