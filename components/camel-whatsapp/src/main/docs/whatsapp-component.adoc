@@ -15,9 +15,13 @@
 The WhatsApp component provides access to the https://developers.facebook.com/docs/whatsapp/cloud-api[WhatsApp Cloud API].
 It allows a Camel-based application to send messages using a cloud-hosted version of the WhatsApp Business Platform.
 
-Before using this component you have to set up Developer Assets and Platform Access, following the instructions at the
+Before using this component, you have to set up Developer Assets and Platform Access, following the instructions at the
 https://developers.facebook.com/docs/whatsapp/cloud-api/get-started#set-up-developer-assets[Register WhatsApp Business Cloud API account].
-Once the account is set up you can navigate to https://developers.facebook.com/apps/?show_reminder=true[Meta for Developers Apps], in order to access to the WhatsApp dashboard where you can get the **authorization token**, **phone number id** and you can add **recipient phone numbers**, these parameters are mandatory in order to use the component.=
+Once the account is set up,
+you can navigate to https://developers.facebook.com/apps/?show_reminder=true[Meta for Developers Apps],
+to access to the WhatsApp dashboard.
+There you can get the **authorization token**, **phone number id**,
+and you can add **recipient phone numbers**, these parameters are mandatory to use the component.=
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -86,7 +90,7 @@ For more information you can refer to https://developers.facebook.com/docs/whats
 
 The Whatsapp component supports usage in the *webhook mode* using the *camel-webhook* component.
 
-In order to enable webhook mode, users need first to add a REST implementation to their application.
+To enable webhook mode, users need first to add a REST implementation to their application.
 Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 [source,xml]
@@ -106,6 +110,9 @@ In Java DSL:
 fromF("webhook:whatsapp:%s?authorizationToken=%s&webhookVerifyToken=%s", "<phoneNumberId>", "<AuthorizationToken>", "<webhookVerifyToken>").log("${body}")
 ---------------------------------------------------------
 
-In order to enable and configure the webhook, the following guide can be used https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks the webhook component will expose an endpoint that can be used into the whatsapp administration console.
+You can follow the
+https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks[set up webhooks guide]
+to enable and configure the webhook.
+The webhook component will expose an endpoint that can be used into the whatsapp administration console.
 
-Refer to the *camel-webhook* component documentation for instructions on how to set it.
+Refer to the xref:webhook-component.adoc[camel-webhook component] documentation for instructions on how to set it.
