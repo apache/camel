@@ -344,7 +344,8 @@ public class KnativeHttpTest {
         mock.expectedMessageCount(1);
 
         if (Objects.equals(CloudEvents.v1_0.version(), ce.version())
-                || Objects.equals(CloudEvents.v1_0_1.version(), ce.version())) {
+                || Objects.equals(CloudEvents.v1_0_1.version(), ce.version())
+                || Objects.equals(CloudEvents.v1_0_2.version(), ce.version())) {
             given()
                     .contentType(Knative.MIME_STRUCTURED_CONTENT_MODE)
                     .body(
