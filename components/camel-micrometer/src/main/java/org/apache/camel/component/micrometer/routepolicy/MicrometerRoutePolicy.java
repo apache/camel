@@ -31,6 +31,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerUtils;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -54,6 +55,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     private MicrometerRoutePolicyConfiguration configuration = MicrometerRoutePolicyConfiguration.DEFAULT;
 
     private final Map<Route, MetricsStatistics> statisticsMap = new HashMap<>();
+    boolean registerKamelets;
+    boolean registerTemplates = true;
 
     private static final class MetricsStatistics {
         private final MeterRegistry meterRegistry;
@@ -221,6 +224,12 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     public void onInit(Route route) {
         super.onInit(route);
 
+        ManagementStrategy ms = route.getCamelContext().getManagementStrategy();
+        if (ms != null && ms.getManagementAgent() != null) {
+            registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+            registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+        }
+
         if (getMeterRegistry() == null) {
             setMeterRegistry(MicrometerUtils.getOrCreateMeterRegistry(
                     route.getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
@@ -248,7 +257,15 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // for now we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
         statisticsMap.computeIfAbsent(route,
-                it -> new MetricsStatistics(getMeterRegistry(), it, getNamingStrategy(), configuration));
+                it -> {
+                    // skip routes that should not be included
+                    boolean skip = (it.isCreatedByKamelet() && !registerKamelets)
+                            || (it.isCreatedByRouteTemplate() && !registerTemplates);
+                    if (skip) {
+                        return null;
+                    }
+                    return new MetricsStatistics(getMeterRegistry(), it, getNamingStrategy(), configuration);
+                });
     }
 
     @Override

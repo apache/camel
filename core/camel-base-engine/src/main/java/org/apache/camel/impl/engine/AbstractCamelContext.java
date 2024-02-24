@@ -2572,8 +2572,13 @@ public abstract class AbstractCamelContext extends BaseService
             int templates = 0;
             int rests = 0;
             int disabled = 0;
-            boolean registerKamelets = getManagementStrategy().getManagementAgent().getRegisterRoutesCreateByKamelet();
-            boolean registerTemplates = getManagementStrategy().getManagementAgent().getRegisterRoutesCreateByTemplate();
+            boolean registerKamelets = false;
+            boolean registerTemplates = true;
+            ManagementStrategy ms = getManagementStrategy();
+            if (ms != null && ms.getManagementAgent() != null) {
+                registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+                registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+            }
             List<String> lines = new ArrayList<>();
             List<String> configs = new ArrayList<>();
             routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder));
@@ -3074,8 +3079,13 @@ public abstract class AbstractCamelContext extends BaseService
             int kamelets = 0;
             int templates = 0;
             int rests = 0;
-            boolean registerKamelets = getManagementStrategy().getManagementAgent().getRegisterRoutesCreateByKamelet();
-            boolean registerTemplates = getManagementStrategy().getManagementAgent().getRegisterRoutesCreateByTemplate();
+            boolean registerKamelets = false;
+            boolean registerTemplates = true;
+            ManagementStrategy ms = getManagementStrategy();
+            if (ms != null && ms.getManagementAgent() != null) {
+                registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+                registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+            }
             List<String> lines = new ArrayList<>();
 
             final ShutdownStrategy shutdownStrategy = camelContextExtension.getShutdownStrategy();
