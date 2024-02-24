@@ -17,7 +17,7 @@ image::eip/ContentFilter.gif[image]
 
 == Message Content filtering using a Processor
 
-In this example we add our own xref:manual::processor.adoc[Processor] using
+In this example, we add our own xref:manual::processor.adoc[Processor] using
 explicit Java to filter the message:
 
 [source,java]
@@ -37,7 +37,7 @@ from("direct:start")
 == Message Content filtering using a Bean EIP
 
 We can use xref:bean-eip.adoc[Bean EIP] to use any Java
-method on any bean to act as content filter:
+method on any bean to act as a content filter:
 
 [tabs]
 ====
