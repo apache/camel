@@ -51,7 +51,8 @@ public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable
     protected void doStart() throws Exception {
         super.doStart();
         ServiceHelper.startService(delegatedConsumer);
-        getComponent().addHttpEndpoint(getEndpoint().getPath(), getEndpoint().getHttpMethodRestrict(), delegatedConsumer);
+        getComponent().addHttpEndpoint(getEndpoint().getPath(), getEndpoint().getHttpMethodRestrict(),
+                getEndpoint().getConsumes(), getEndpoint().getProduces(), delegatedConsumer);
     }
 
     @Override

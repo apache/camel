@@ -332,6 +332,12 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                         if (u.getVerbs() != null) {
                             line += " (" + u.getVerbs() + ")";
                         }
+                        if (u.getConsumes() != null) {
+                            line += " accept: " + u.getConsumes();
+                        }
+                        if (u.getProduces() != null) {
+                            line += " produce: " + u.getProduces();
+                        }
                         LOG.info("    {}", line);
                     }
                 }
@@ -441,7 +447,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         live.handler(new BlockingHandlerDecorator(handler, true));
         ready.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/health", null, null);
+        platformHttpComponent.addHttpEndpoint("/q/health", null, null,
+                "application/json", null);
     }
 
     protected void setupJolokia() {
@@ -457,7 +464,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         Handler<RoutingContext> handler = (Handler<RoutingContext>) jolokiaPlugin.getHandler();
         jolokia.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/jolokia", null, null);
+        platformHttpComponent.addHttpEndpoint("/q/jolokia", null, null,
+                "text/plain,application/json",null);
     }
 
     protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
@@ -703,7 +711,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         dev.handler(new BlockingHandlerDecorator(handler, true));
         devSub.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/dev", null, null);
+        platformHttpComponent.addHttpEndpoint("/q/dev", null, null,
+                "text/plain,application/json", null);
     }
 
     protected void setupUploadConsole(final String dir) {
@@ -784,7 +793,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         upload.handler(new BlockingHandlerDecorator(handler, true));
         uploadDelete.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/upload", "PUT,DELETE", null);
+        platformHttpComponent.addHttpEndpoint("/q/upload", "PUT,DELETE",
+                "multipart/form-data", null, null);
     }
 
 }
