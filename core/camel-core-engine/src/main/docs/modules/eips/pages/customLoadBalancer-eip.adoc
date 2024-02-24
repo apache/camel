@@ -60,7 +60,7 @@ XML::
 ----
 ====
 
-To implement a custom load balancer you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
+To implement a custom load balancer, you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
 The former supports the asynchronous routing engine, and the latter does not. Here is an example of a custom load balancer implementation:
 
 [source,java]
