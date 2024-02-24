@@ -931,6 +931,15 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return false;
         }
 
+        if (route != null && route.isCreatedByKamelet() && !agent.getRegisterRoutesCreateByKamelet()) {
+            // skip routes created from kamelets
+            return false;
+        }
+        if (route != null && route.isCreatedByRouteTemplate() && !agent.getRegisterRoutesCreateByTemplate()) {
+            // skip routes created from route templates
+            return false;
+        }
+
         // always register if we are starting CamelContext
         if (getCamelContext().getStatus().isStarting()
                 || getCamelContext().getStatus().isInitializing()) {
