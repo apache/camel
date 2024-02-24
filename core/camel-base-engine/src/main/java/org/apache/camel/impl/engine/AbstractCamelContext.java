@@ -2594,7 +2594,8 @@ public abstract class AbstractCamelContext extends BaseService
                     rests++;
                 }
                 boolean skip = order.getRoute().isCreatedByRestDsl()
-                               ||  (!registerKamelets && order.getRoute().isCreatedByKamelet()) || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
+                        || (!registerKamelets && order.getRoute().isCreatedByKamelet())
+                        || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
                 if (!skip && ServiceStatus.Started.name().equals(status)) {
                     started++;
                 }
@@ -2631,7 +2632,8 @@ public abstract class AbstractCamelContext extends BaseService
                     } else if (route.isCreatedByRestDsl()) {
                         rests++;
                     }
-                    boolean skip = route.isCreatedByRestDsl() || (!registerKamelets && route.isCreatedByKamelet()) || (!registerTemplates && route.isCreatedByRouteTemplate());
+                    boolean skip = route.isCreatedByRestDsl() || (!registerKamelets && route.isCreatedByKamelet())
+                            || (!registerTemplates && route.isCreatedByRouteTemplate());
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
@@ -3106,7 +3108,8 @@ public abstract class AbstractCamelContext extends BaseService
                     rests++;
                 }
                 boolean skip = order.getRoute().isCreatedByRestDsl()
-                               || (!registerKamelets && order.getRoute().isCreatedByKamelet()) || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
+                        || (!registerKamelets && order.getRoute().isCreatedByKamelet())
+                        || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
                 if (!skip && ServiceStatus.Stopped.name().equals(status)) {
                     stopped++;
                 }
