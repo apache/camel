@@ -790,15 +790,4 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
-    /**
-     * Used for sorting the routes mbeans accordingly to their ids.
-     */
-    private static final class RouteMBeans implements Comparator<ManagedRouteMBean> {
-
-        @Override
-        public int compare(ManagedRouteMBean o1, ManagedRouteMBean o2) {
-            return o1.getRouteId().compareToIgnoreCase(o2.getRouteId());
-        }
-    }
-
 }
