@@ -26,6 +26,7 @@ import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
@@ -33,6 +34,8 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 
 public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<ExchangeEvent> {
@@ -42,6 +45,8 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
     private MicrometerExchangeEventNotifierNamingStrategy namingStrategy
             = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+    boolean registerKamelets;
+    boolean registerTemplates = true;
 
     public MicrometerExchangeEventNotifier() {
         super(ExchangeEvent.class);
@@ -61,6 +66,15 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
 
     public void setNamingStrategy(MicrometerExchangeEventNotifierNamingStrategy namingStrategy) {
         this.namingStrategy = namingStrategy;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ManagementStrategy ms = getCamelContext().getManagementStrategy();
+        if (ms != null && ms.getManagementAgent() != null) {
+            registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+            registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+        }
     }
 
     @Override
@@ -94,14 +108,29 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
 
     @Override
     public void notify(CamelEvent eventObject) {
-        if (!(getIgnoreExchanges().test(((ExchangeEvent) eventObject).getExchange()))) {
-            handleExchangeEvent((ExchangeEvent) eventObject);
-            if (eventObject instanceof ExchangeCreatedEvent) {
-                handleCreatedEvent((ExchangeCreatedEvent) eventObject);
-            } else if (eventObject instanceof ExchangeSentEvent) {
-                handleSentEvent((ExchangeSentEvent) eventObject);
-            } else if (eventObject instanceof ExchangeCompletedEvent || eventObject instanceof ExchangeFailedEvent) {
-                handleDoneEvent((ExchangeEvent) eventObject);
+        if (eventObject instanceof ExchangeEvent ee) {
+            // skip routes that should not be included
+            boolean skip = false;
+            String routeId = ExchangeHelper.getAtRouteId(ee.getExchange());
+            if (routeId != null) {
+                Route route = ee.getExchange().getContext().getRoute(routeId);
+                if (route != null) {
+                    skip = (route.isCreatedByKamelet() && !registerKamelets)
+                            || (route.isCreatedByRouteTemplate() && !registerTemplates);
+                }
+            }
+            if (skip) {
+                return;
+            }
+            if (!(getIgnoreExchanges().test(ee.getExchange()))) {
+                handleExchangeEvent(ee);
+                if (eventObject instanceof ExchangeCreatedEvent) {
+                    handleCreatedEvent((ExchangeCreatedEvent) eventObject);
+                } else if (eventObject instanceof ExchangeSentEvent) {
+                    handleSentEvent((ExchangeSentEvent) eventObject);
+                } else if (eventObject instanceof ExchangeCompletedEvent || eventObject instanceof ExchangeFailedEvent) {
+                    handleDoneEvent((ExchangeEvent) eventObject);
+                }
             }
         }
     }
