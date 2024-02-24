@@ -139,7 +139,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                 String id = route.getId();
                 ManagedRouteMBean mr = mcc.getManagedRoute(id);
                 ManagedConsumerMBean mc = mcc.getManagedConsumer(id);
-                if (mc != null) {
+                if (mr != null && mc != null) {
                     JsonObject jo = new JsonObject();
                     Integer inflight = mc.getInflightExchanges();
                     if (inflight == null) {
