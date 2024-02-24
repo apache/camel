@@ -130,7 +130,7 @@ public String slip(String body, @ExchangeProperties Map<String, Object> properti
     int invoked = 0;
     Object current = properties.get("invoked");
     if (current != null) {
-        invoked = Integer.valueOf(current.toString());
+        invoked = Integer.parseInt(current.toString());
     }
     invoked++;
     // and store the state back on the properties
@@ -173,7 +173,7 @@ public class MyDynamicRouter {
     @Consume(uri = "activemq:foo")
     @DynamicRouter
     public String route(@XPath("/customer/id") String customerId, @Header("Location") String location, Document body) {
-        // query a database to find the best match of the endpoint based on the input parameters
+        // Query a database to find the best match of the endpoint based on the input parameters
         // return the next endpoint uri, where to go. Return null to indicate the end.
     }
 }
