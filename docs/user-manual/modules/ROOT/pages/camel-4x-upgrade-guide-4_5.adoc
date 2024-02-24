@@ -39,3 +39,11 @@ listed from JMX will no longer include Kamelet routes.
 
 The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
 on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentation.
+
+=== camel-micrometer and camel-metrics
+
+Due to Kamelets are changed to act more like a Camel component, and not expose internal details as JMX MBeans, then
+micrometer and metrics no longer include statistics for those Kamelet routes.
+
+The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
+on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentation.
