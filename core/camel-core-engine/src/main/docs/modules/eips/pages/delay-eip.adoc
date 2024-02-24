@@ -74,7 +74,7 @@ Note that delay creates its own block, so some DSLs (including Java) require the
 
 The delayed value can be a dynamic xref:manual::expression.adoc[Expression].
 
-For example to delay a random between 1 and 5 seconds, we can use
+For example, to delay a random between 1 and 5 seconds, we can use
 the xref:languages:simple-language.adoc[Simple] language:
 
 [tabs]
@@ -168,7 +168,7 @@ XML::
    <delay asyncDelayed="true">
        <constant>1000</constant>
    </delay>
-   <to uri="activemq:aDealyedQueue"/>
+   <to uri="activemq:aDelayedQueue"/>
 </route>
 ----
 
@@ -184,6 +184,6 @@ YAML::
             constant: 1000
           asyncDelayed: true
       - to:
-          uri: activemq:aDealyedQueue
+          uri: activemq:aDelayedQueue
 ----
 ====
