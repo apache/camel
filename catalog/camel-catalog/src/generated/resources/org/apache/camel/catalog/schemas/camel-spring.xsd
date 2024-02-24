@@ -12258,6 +12258,7 @@ XML. May be null.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="kamelet" type="xs:boolean"/>
         <xs:attribute name="logMask" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
