@@ -12,7 +12,7 @@ The ConvertHeaderTo EIP allows you to transform message header to a different ty
 include::partial$eip-options.adoc[]
 // eip options: END
 
-NOTE: The type is a FQN classname (fully qualified), so for example `java.lang.String`, `com.foo.MyBean` etc.
+NOTE: The type is a FQN class name (fully qualified), so for example `java.lang.String`, `com.foo.MyBean` etc.
 However, Camel has shorthand for common Java types, most noticeable `String` can be used instead of `java.lang.String`.
 You can also use `byte[]` for a byte array.
 
@@ -24,7 +24,7 @@ include::partial$eip-exchangeProperties.adoc[]
 
 == Example
 
-For example to convert the foo header to `String`:
+For example, to convert the foo header to `String`:
 
 [tabs]
 ====
@@ -113,12 +113,12 @@ The ConvertHeaderTo supports using xref:components:languages:simple-language.ado
 
 Suppose you have multiple headers:
 
-- region
-- emea
-- na
-- pacific
+- `region`
+- `emea`
+- `na`
+- `pacific`
 
-And that region points to either ema, na or pacific which has some order details.
+And that region points to either `emea`, `na` or `pacific`, which has some order details.
 Then you can use dynamic header to convert the header of choice. Now suppose that the region header has value `emea`:
 
 [tabs]
