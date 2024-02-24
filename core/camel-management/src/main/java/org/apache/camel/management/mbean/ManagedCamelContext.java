@@ -61,10 +61,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     private final LoadTriplet load = new LoadTriplet();
     private final LoadThroughput thp = new LoadThroughput();
     private final String jmxDomain;
+    private final boolean includeRouteTemplates;
+    private final boolean includeKamelets;
 
     public ManagedCamelContext(CamelContext context) {
         this.context = context;
         this.jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
+        this.includeRouteTemplates = context.getManagementStrategy().getManagementAgent().getRegisterRoutesCreateByTemplate();
+        this.includeKamelets = context.getManagementStrategy().getManagementAgent().getRegisterRoutesCreateByKamelet();
     }
 
     @Override
@@ -83,7 +87,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // we should only count this as 1 instead of 3.
         UnitOfWork uow = exchange.getUnitOfWork();
         if (uow != null) {
-            int level = uow.routeStackLevel();
+            int level = uow.routeStackLevel(includeRouteTemplates, includeKamelets);
             if (level <= 1) {
                 super.completedExchange(exchange, time);
             }
@@ -100,7 +104,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // we should only count this as 1 instead of 3.
         UnitOfWork uow = exchange.getUnitOfWork();
         if (uow != null) {
-            int level = uow.routeStackLevel();
+            int level = uow.routeStackLevel(includeRouteTemplates, includeKamelets);
             if (level <= 1) {
                 super.failedExchange(exchange);
             }
@@ -117,7 +121,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // we should only count this as 1 instead of 3.
         UnitOfWork uow = exchange.getUnitOfWork();
         if (uow != null) {
-            int level = uow.routeStackLevel();
+            int level = uow.routeStackLevel(includeRouteTemplates, includeKamelets);
             if (level <= 1) {
                 super.processExchange(exchange, type);
             }
