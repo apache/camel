@@ -99,7 +99,7 @@ for?
 
 a|image::eip/MessageExpirationIcon.gif[image]
 |xref:message-expiration.adoc[Message Expiration] |How can a sender indicate
-when a message should be considered stale and thus shouldn’t be processed?
+when a message should be considered stale and thus shouldn't be processed?
 
 |===
 
@@ -108,7 +108,7 @@ when a message should be considered stale and thus shouldn’t be processed?
 [width="100%",cols="10%,10%,80%",]
 |===
 a|image::eip/ContentBasedRouterIcon.gif[image]
-|xref:choice-eip.adoc[Content Based Router] |How do we handle
+|xref:choice-eip.adoc[Content-Based Router] |How do we handle
 a situation where the implementation of a single logical function (e.g.,
 inventory check) is spread across multiple physical systems?
 
@@ -132,7 +132,7 @@ different way?
 
 a|image::eip/AggregatorIcon.gif[image]
 |xref:aggregate-eip.adoc[Aggregator] |How do we combine the results of
-individual, but related messages so that they can be processed as a
+individual, but related, messages so that they can be processed as a
 whole?
 
 a|image::eip/ResequencerIcon.gif[image]
@@ -179,7 +179,7 @@ a|image::eip/WireTap.gif[image]
 in a given period to avoid downstream route does not get overloaded?
 
 a|image::eip/MessagingAdapterIcon.gif[image]
-|xref:kamelet-eip.adoc[Kamelet] | How can I call Kamelets (route templates).
+|xref:kamelet-eip.adoc[Kamelet] | How can I call Kamelets (route templates)?
 
 a|image::eip/MessageExpirationIcon.gif[image]
 |xref:delay-eip.adoc[Delayer] |How can I delay the sending of a message?
@@ -189,10 +189,10 @@ a|image::eip/MessageDispatcherIcon.gif[image]
 number of endpoints?
 
 a|image::eip/MessageDispatcherIcon.gif[image]
-|xref:circuitBreaker-eip.adoc[Circuit Breaker] |How can I stop to call an external service if the service is broken?
+|xref:circuitBreaker-eip.adoc[Circuit Breaker] |How can I stop calling an external service if the service is broken?
 
 a|image::eip/MessageExpirationIcon.gif[image]
-|xref:stop-eip.adoc[Stop] |How can I stop continue routing a message?
+|xref:stop-eip.adoc[Stop] |How can I stop to continue routing a message?
 
 a|image::eip/MessagingGatewayIcon.gif[image]
 |xref:serviceCall-eip.adoc[Service Call] |How can I call a remote service in a distributed system
@@ -221,11 +221,11 @@ required data items available?
 
 a|image::eip/ContentFilterIcon.gif[image]
 |xref:content-filter-eip.adoc[Content Filter] |How do you simplify dealing
-with a large message, when you are interested only in a few data items?
+with a large message when you are interested only in a few data items?
 
 a|image::eip/StoreInLibraryIcon.gif[image]
 |xref:claimCheck-eip.adoc[Claim Check] |How can we reduce the data volume
-of message sent across the system without sacrificing information
+of a message sent across the system without sacrificing information
 content?
 
 a|image::eip/NormalizerIcon.gif[image]
@@ -282,7 +282,7 @@ receiver deal with duplicate messages?
 
 a|image::eip/MessageFilterIcon.gif[image]
 |xref:resume-strategies.adoc[Resumable Consumer] |How can a message
-receiver resume from last known offset?
+receiver resume from the last known offset?
 
 a|image::eip/TransactionalClientIcon.gif[image]
 |xref:transactional-client.adoc[Transactional Client] |How can a client
@@ -304,7 +304,7 @@ and via non-messaging techniques?
 |===
 a|image::eip/ControlBusIcon.gif[image]
 |xref:ROOT:controlbus-component.adoc[ControlBus] |How can we effectively administer a
-messaging system that is distributed across multiple platforms and a
+messaging system distributed across multiple platforms and a
 wide geographic area?
 
 a|image::eip/DetourIcon.gif[image]
