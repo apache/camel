@@ -6,7 +6,7 @@ http://www.enterpriseintegrationpatterns.com/EventDrivenConsumer.html[Event Driv
 from the
 xref:enterprise-integration-patterns.adoc[EIP patterns].
 
-The default consumer model is event based (i.e. asynchronous)
+The default consumer model is event-based (i.e., asynchronous)
 as this means that the Camel container can then manage pooling,
 threading and concurrency for you in a declarative manner.
 
