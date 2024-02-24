@@ -2588,7 +2588,8 @@ public abstract class AbstractCamelContext extends BaseService
                 } else if (order.getRoute().isCreatedByRestDsl()) {
                     rests++;
                 }
-                boolean skip = (!registerKamelets && order.getRoute().isCreatedByKamelet()) || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
+                boolean skip = order.getRoute().isCreatedByRestDsl()
+                               ||  (!registerKamelets && order.getRoute().isCreatedByKamelet()) || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
                 if (!skip && ServiceStatus.Started.name().equals(status)) {
                     started++;
                 }
@@ -2625,7 +2626,7 @@ public abstract class AbstractCamelContext extends BaseService
                     } else if (route.isCreatedByRestDsl()) {
                         rests++;
                     }
-                    boolean skip = (!registerKamelets && route.isCreatedByKamelet()) || (!registerTemplates && route.isCreatedByRouteTemplate());
+                    boolean skip = route.isCreatedByRestDsl() || (!registerKamelets && route.isCreatedByKamelet()) || (!registerTemplates && route.isCreatedByRouteTemplate());
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
@@ -2651,10 +2652,20 @@ public abstract class AbstractCamelContext extends BaseService
             if (!registerTemplates) {
                 newTotal -= templates;
             }
+            newTotal -= rests;
             StringJoiner sj = new StringJoiner(" ");
             sj.add("total:" + newTotal);
             if (total != started) {
                 sj.add("started:" + started);
+            }
+            if (kamelets > 0) {
+                sj.add("kamelets:" + kamelets);
+            }
+            if (templates > 0) {
+                sj.add("templates:" + templates);
+            }
+            if (rests > 0) {
+                sj.add("rest-dsl:" + rests);
             }
             if (disabled > 0) {
                 sj.add("disabled:" + disabled);
@@ -3084,7 +3095,8 @@ public abstract class AbstractCamelContext extends BaseService
                 } else if (order.getRoute().isCreatedByRestDsl()) {
                     rests++;
                 }
-                boolean skip = (!registerKamelets && order.getRoute().isCreatedByKamelet()) || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
+                boolean skip = order.getRoute().isCreatedByRestDsl()
+                               || (!registerKamelets && order.getRoute().isCreatedByKamelet()) || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
                 if (!skip && ServiceStatus.Stopped.name().equals(status)) {
                     stopped++;
                 }
@@ -3106,10 +3118,20 @@ public abstract class AbstractCamelContext extends BaseService
             if (!registerTemplates) {
                 newTotal -= templates;
             }
+            newTotal -= rests;
             StringJoiner sj = new StringJoiner(" ");
             sj.add("total:" + newTotal);
             if (total != stopped) {
                 sj.add("stopped:" + stopped);
+            }
+            if (kamelets > 0) {
+                sj.add("kamelets:" + kamelets);
+            }
+            if (templates > 0) {
+                sj.add("templates:" + templates);
+            }
+            if (rests > 0) {
+                sj.add("rest-dsl:" + rests);
             }
             if (forced > 0) {
                 sj.add("forced:" + forced);
