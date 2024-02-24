@@ -470,9 +470,12 @@ public class MulticastProcessor extends AsyncProcessorSupport
                         Exchange exchange = completion.pollUnordered();
                         int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
                         while (nbAggregated.get() < index) {
+                            int idx = nbAggregated.getAndIncrement();
                             AggregationStrategy strategy = getAggregationStrategy(null);
-                            strategy.timeout(result.get() != null ? result.get() : original,
-                                    nbAggregated.getAndIncrement(), nbExchangeSent.get(), timeout);
+                            if (strategy != null) {
+                                strategy.timeout(result.get() != null ? result.get() : original,
+                                        idx, nbExchangeSent.get(), timeout);
+                            }
                         }
                         if (exchange != null) {
                             doAggregate(result, exchange, original);
