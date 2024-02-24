@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -2650,19 +2651,21 @@ public abstract class AbstractCamelContext extends BaseService
             if (!registerTemplates) {
                 newTotal -= templates;
             }
-            if (disabled > 0) {
-                LOG.info("Routes startup (total:{} started:{} disabled:{})", newTotal, started, disabled);
-            } else if (total != started) {
-                LOG.info("Routes startup (total:{} started:{})", newTotal, started);
-            } else {
-                LOG.info("Routes startup (started:{})", started);
+            StringJoiner sj = new StringJoiner(" ");
+            sj.add("total:" + newTotal);
+            if (total != started) {
+                sj.add("started:" + started);
             }
+            if (disabled > 0) {
+                sj.add("disabled:" + disabled);
+            }
+            LOG.info(String.format("Routes startup (%s)", sj));
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
                 for (String line : lines) {
                     LOG.info(line);
                 }
-                if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
+                if (startupSummaryLevel == StartupSummaryLevel.Verbose && !configs.isEmpty()) {
                     LOG.info("Routes configuration:");
                     for (String line : configs) {
                         LOG.info(line);
@@ -3103,13 +3106,15 @@ public abstract class AbstractCamelContext extends BaseService
             if (!registerTemplates) {
                 newTotal -= templates;
             }
-            if (forced > 0) {
-                logger.log(String.format("Routes stopped (total:%s stopped:%s forced:%s)", newTotal, stopped, forced));
-            } else if (total != stopped) {
-                logger.log(String.format("Routes stopped (total:%s stopped:%s)", newTotal, stopped));
-            } else {
-                logger.log(String.format("Routes stopped (stopped:%s)", stopped));
+            StringJoiner sj = new StringJoiner(" ");
+            sj.add("total:" + newTotal);
+            if (total != stopped) {
+                sj.add("stopped:" + stopped);
             }
+            if (forced > 0) {
+                sj.add("forced:" + forced);
+            }
+            logger.log(String.format("Routes stopped (%s)", sj));
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
                 for (String line : lines) {
