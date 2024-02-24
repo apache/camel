@@ -22,7 +22,7 @@ The most natural Camel approach is using xref:enrich-eip.adoc[Enrich] EIP.
 
 You can consume a message from
 one destination, transform it with something like
-xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery]
+xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery],
 and then send it on to another destination.
 
 [tabs]
@@ -62,7 +62,8 @@ YAML::
 ====
 
 You can also enrich the message in Java DSL directly (using fluent builder) as an
-xref:manual::expression.adoc[Expression]. In the example below the message
+xref:manual::expression.adoc[Expression].
+In the example below, the message
 is enriched by appending ` World!` to the message body:
 
 [source,java]
@@ -88,7 +89,7 @@ xref:languages:simple-language.adoc[Simple] language:
 
 == Content enrichment using a Processor
 
-In this example we add our own xref:manual::processor.adoc[Processor] using
+In this example, we add our own xref:manual::processor.adoc[Processor] using
 explicit Java to enrich the message:
 
 [source,java]
@@ -149,12 +150,13 @@ YAML::
 
 Camel comes with two kinds of Content Enricher EIPs:
 
-* xref:enrich-eip.adoc[Enrich] EIP - This is the most common content enricher that uses a `Producer` to obtain the data.
-It is usually used for xref:requestReply-eip.adoc[Request Reply] messaging, for instance to invoke an external web service.
+* xref:enrich-eip.adoc[Enrich] EIP: This is the most common content enricher that uses a `Producer` to obtain the data.
+It is usually used for xref:requestReply-eip.adoc[Request Reply] messaging,
+for instance, to invoke an external web service.
 
-* xref:pollEnrich-eip.adoc[Poll Enrich] EIP - Uses a xref:polling-consumer.adoc[Polling
+* xref:pollEnrich-eip.adoc[Poll Enrich] EIP: Uses a xref:polling-consumer.adoc[Polling
 Consumer] to obtain the additional data. It is usually used for
-xref:event-message.adoc[Event Message] messaging, for instance to read a
-file or download a xref:ROOT:ftp-component.adoc[FTP] file.
+xref:event-message.adoc[Event Message] messaging, for instance, to read a
+file or download one using xref:ROOT:ftp-component.adoc[FTP].
 
-For more details see xref:enrich-eip.adoc[Enrich] EIP and xref:pollEnrich-eip.adoc[Poll Enrich] EIP.
+For more details, see xref:enrich-eip.adoc[Enrich] EIP and xref:pollEnrich-eip.adoc[Poll Enrich] EIP.
