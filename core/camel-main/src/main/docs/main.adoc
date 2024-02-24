@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 117 options, which are listed below.
+The camel.main supports 119 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -76,6 +76,8 @@ The camel.main supports 117 options, which are listed below.
 | *camel.main.jmxEnabled* | Enable JMX in your Camel application. | true | boolean
 | *camel.main.jmxManagementMBeans{zwsp}Level* | Sets the mbeans registration level. The default value is Default. | Default | ManagementMBeansLevel
 | *camel.main.jmxManagementName{zwsp}Pattern* | The naming pattern for creating the CamelContext JMX management name. The default pattern is #name# | #name# | String
+| *camel.main.jmxManagement{zwsp}RegisterRoutesCreateByKamelet* | Whether routes created by Kamelets should be registered for JMX management. Enabling this allows to have fine-grained monitoring and management of every route created via Kamelets. This is default disabled as a Kamelet is intended as a component (black-box) and its implementation details as Camel route makes the overall management and monitoring of Camel applications more verbose. During development of Kamelets then enabling this will make it possible for developers to do fine-grained performance inspection and identify potential bottlenecks in the Kamelet routes. However, for production usage then keeping this disabled is recommended. | false | boolean
+| *camel.main.jmxManagement{zwsp}RegisterRoutesCreateByTemplate* | Whether routes created by route templates (not Kamelets) should be registered for JMX management. Enabling this allows to have fine-grained monitoring and management of every route created via route templates. This is default enabled (unlike Kamelets) as routes created via templates is regarded as standard routes, and should be available for management and monitoring. | true | boolean
 | *camel.main.jmxManagement{zwsp}StatisticsLevel* | Sets the JMX statistics level, the level can be set to Extended to gather additional information The default value is Default. | Default | ManagementStatisticsLevel
 | *camel.main.jmxUpdateRoute{zwsp}Enabled* | Whether to allow updating routes at runtime via JMX using the ManagedRouteMBean. This is disabled by default, but can be enabled for development and troubleshooting purposes, such as updating routes in an existing running Camel via JMX and other tools. | false | boolean
 | *camel.main.lightweight* | Configure the context to be lightweight. This will trigger some optimizations and memory reduction options. Lightweight context have some limitations. At this moment, dynamic endpoint destinations are not supported. | false | boolean
