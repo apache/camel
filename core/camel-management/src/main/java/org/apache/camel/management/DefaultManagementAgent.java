@@ -69,6 +69,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean endpointRuntimeStatisticsEnabled;
     private Boolean registerAlways = false;
     private Boolean registerNewRoutes = true;
+    private Boolean registerRoutesCreateByKamelet = true;
+    private Boolean registerRoutesCreateByTemplate = true;
     private Boolean mask = true;
     private Boolean includeHostName = false;
     private Boolean useHostIPAddress = false;
@@ -112,6 +114,14 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (System.getProperty(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES) != null) {
             registerNewRoutes = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES);
             values.put(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES, registerNewRoutes);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_TEMPLATE) != null) {
+            registerRoutesCreateByTemplate = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_TEMPLATE);
+            values.put(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_TEMPLATE, registerRoutesCreateByTemplate);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_KAMELET) != null) {
+            registerRoutesCreateByKamelet = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_KAMELET);
+            values.put(JmxSystemPropertyKeys.REGISTER_ROUTES_CREATED_BY_KAMELET, registerRoutesCreateByKamelet);
         }
         if (System.getProperty(JmxSystemPropertyKeys.MASK) != null) {
             mask = Boolean.getBoolean(JmxSystemPropertyKeys.MASK);
@@ -220,6 +230,22 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     @Override
     public void setRegisterNewRoutes(Boolean registerNewRoutes) {
         this.registerNewRoutes = registerNewRoutes;
+    }
+
+    public Boolean getRegisterRoutesCreateByKamelet() {
+        return registerRoutesCreateByKamelet != null && registerRoutesCreateByKamelet;
+    }
+
+    public void setRegisterRoutesCreateByKamelet(Boolean registerRoutesCreateByKamelet) {
+        this.registerRoutesCreateByKamelet = registerRoutesCreateByKamelet;
+    }
+
+    public Boolean getRegisterRoutesCreateByTemplate() {
+        return registerRoutesCreateByTemplate != null && registerRoutesCreateByTemplate;
+    }
+
+    public void setRegisterRoutesCreateByTemplate(Boolean registerRoutesCreateByTemplate) {
+        this.registerRoutesCreateByTemplate = registerRoutesCreateByTemplate;
     }
 
     @Override
