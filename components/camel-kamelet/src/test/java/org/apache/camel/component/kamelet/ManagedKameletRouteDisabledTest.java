@@ -23,7 +23,6 @@ import java.util.UUID;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -46,13 +45,6 @@ public class ManagedKameletRouteDisabledTest extends CamelTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.getManagementStrategy().getManagementAgent().setRegisterRoutesCreateByKamelet(false);
-        return context;
-    }
-
     @Test
     public void testKameletRouteMBeanDisabled() throws Exception {
         String body = UUID.randomUUID().toString();
@@ -72,6 +64,7 @@ public class ManagedKameletRouteDisabledTest extends CamelTestSupport {
             ids.add(name);
         }
         assertTrue(ids.contains("direct"));
+        // is disabled by default
         assertFalse(ids.contains("kamelet"));
     }
 

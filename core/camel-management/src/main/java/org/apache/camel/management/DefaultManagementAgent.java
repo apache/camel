@@ -69,7 +69,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean endpointRuntimeStatisticsEnabled;
     private Boolean registerAlways = false;
     private Boolean registerNewRoutes = true;
-    private Boolean registerRoutesCreateByKamelet = true;
+    private Boolean registerRoutesCreateByKamelet = false;
     private Boolean registerRoutesCreateByTemplate = true;
     private Boolean mask = true;
     private Boolean includeHostName = false;

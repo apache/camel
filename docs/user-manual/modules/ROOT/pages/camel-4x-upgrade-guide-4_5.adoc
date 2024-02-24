@@ -26,3 +26,13 @@ After:
 ----
 String uri = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
 ----
+
+=== camel-kamelet
+
+Routes created by Kamelets are no longer registered as JMX MBeans to avoid cluttering up with unwanted MBeans, as a Kamelet
+is intended to act like a Camel component, despite its implementation is Camel routes. This means that the number of routes
+listed from JMX etc will no longer include Kamelet routes.
+
+
+The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
+on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentation.

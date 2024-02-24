@@ -23,6 +23,7 @@ import java.util.UUID;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -33,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ManagedKameletRouteTest extends CamelTestSupport {
+public class ManagedKameletRouteEnabledTest extends CamelTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -42,6 +43,13 @@ public class ManagedKameletRouteTest extends CamelTestSupport {
 
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getManagementStrategy().getManagementAgent().setRegisterRoutesCreateByKamelet(true);
+        return context;
     }
 
     @Test

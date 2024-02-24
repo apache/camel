@@ -202,14 +202,14 @@ public interface ManagementAgent extends Service {
     /**
      * Whether to register mbeans for routes created by a Kamelet
      * <p/>
-     * This option is default <tt>true</tt>.
+     * This option is default <tt>false</tt>.
      */
     Boolean getRegisterRoutesCreateByKamelet();
 
     /**
      * Whether to register mbeans for routes created by a Kamelet
      * <p/>
-     * This option is default <tt>true</tt>.
+     * This option is default <tt>false</tt>.
      */
     void setRegisterRoutesCreateByKamelet(Boolean registerRoutesCreateByKamelet);
 
