@@ -11,6 +11,8 @@ as the input (source) to the route.
 
 The `from` EIP is the input.
 
+NOTE: the Java DSL also provides a `fromF` EIP, which can be used to avoid concatenating route parameters and making the code harder to read.
+
 == Options
 
 // eip options: START
