@@ -4,17 +4,17 @@
 The
 http://www.enterpriseintegrationpatterns.com/MessageRouter.html[Message
 Router] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
-allows you to consume from an input destination, evaluate some predicate
+allows you to consume from an input destination, evaluate some predicate,
 then choose the right output destination.
 
 image::eip/MessageRouter.gif[image]
 
-In Camel the Message Router can be archived in different ways such as:
+In Camel, the Message Router can be archived in different ways such as:
 
-* You can use the xref:choice-eip.adoc[Content Based Router] to evaluate and choose the output destination.
+* You can use the xref:choice-eip.adoc[Content-Based Router] to evaluate and choose the output destination.
 * The xref:routingSlip-eip.adoc[Routing Slip] and xref:dynamicRouter-eip.adoc[Dynamic Router] EIPs can also be used for choosing which destination to route messages.
 
-The xref:choice-eip.adoc[Content Based Router] is recommended to use when you have multiple predicates to evaluate
+The xref:choice-eip.adoc[Content-Based Router] is recommended to use when you have multiple predicates to evaluate
 where to send the message.
 
 The xref:routingSlip-eip.adoc[Routing Slip] and xref:dynamicRouter-eip.adoc[Dynamic Router] are arguably
@@ -24,8 +24,8 @@ to choose where the message should go.
 == Example
 
 The following example shows how to route a request from an input
-direct:a endpoint to either direct:b, direct:c, or direct:d depending on
-the evaluation of various xref:manual::predicate.adoc[Predicate]:
+`direct:a` endpoint to either `direct:b`, `direct:c`, or `direct:d` depending on
+the evaluation of various xref:manual::predicate.adoc[Predicates]:
 
 [tabs]
 ====
