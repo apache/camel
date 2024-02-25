@@ -330,13 +330,20 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     for (HttpEndpointModel u : endpoints) {
                         String line = "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + u.getUri();
                         if (u.getVerbs() != null) {
-                            line += " (" + u.getVerbs() + ")";
+                            line += "    (" + u.getVerbs() + ")";
                         }
-                        if (u.getConsumes() != null) {
-                            line += " accept: " + u.getConsumes();
-                        }
-                        if (u.getProduces() != null) {
-                            line += " produce: " + u.getProduces();
+                        if (u.getConsumes() != null || u.getProduces() != null) {
+                            line += "    (";
+                            if (u.getConsumes() != null) {
+                                line += "accept:" + u.getConsumes();
+                                if (u.getProduces() != null) {
+                                    line += " ";
+                                }
+                            }
+                            if (u.getProduces() != null) {
+                                line += "produce:" + u.getProduces();
+                            }
+                            line += ")";
                         }
                         LOG.info("    {}", line);
                     }
