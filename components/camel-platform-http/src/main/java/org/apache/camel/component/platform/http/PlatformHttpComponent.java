@@ -103,8 +103,8 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
     /**
      * Adds a known http endpoint managed by this component.
      */
-    public void addHttpEndpoint(String uri, String verbs, Consumer consumer) {
-        HttpEndpointModel model = new HttpEndpointModel(uri, verbs, consumer);
+    public void addHttpEndpoint(String uri, String verbs, String consumes, String produces, Consumer consumer) {
+        HttpEndpointModel model = new HttpEndpointModel(uri, verbs, consumes, produces, consumer);
         httpEndpoints.add(model);
         for (PlatformHttpListener listener : listeners) {
             try {
