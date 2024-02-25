@@ -14,7 +14,7 @@ image::eip/MessageEndpointSolution.gif[image]
 
 Connect an application to a messaging channel using a Message Endpoint, a client of the messaging system that the application can then use to send or receive messages.
 
-When using the xref:manual::dsl.adoc[DSL] to create xref:manual::routes.adoc[Routes] you
+When using the xref:manual::dsl.adoc[DSL] to create xref:manual::routes.adoc[Routes], you
 typically refer to Message Endpoints by their xref:manual::uris.adoc[URIs]
 rather than directly using the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
