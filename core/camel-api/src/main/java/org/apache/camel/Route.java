@@ -47,6 +47,7 @@ public interface Route extends RuntimeConfiguration {
     String NODE_PREFIX_ID_PROPERTY = "nodePrefixId";
     String REST_PROPERTY = "rest";
     String TEMPLATE_PROPERTY = "template";
+    String KAMELET_PROPERTY = "kamelet";
     String DESCRIPTION_PROPERTY = "description";
     String CONFIGURATION_ID_PROPERTY = "configurationId";
     String SUPERVISED = "supervised";
@@ -69,6 +70,21 @@ public interface Route extends RuntimeConfiguration {
      * @return true if custom id, false if auto assigned id
      */
     boolean isCustomId();
+
+    /**
+     * Whether this route is a Rest DSL route.
+     */
+    boolean isCreatedByRestDsl();
+
+    /**
+     * Whether this route was created from a route template (or a Kamelet).
+     */
+    boolean isCreatedByRouteTemplate();
+
+    /**
+     * Whether this route was created from a Kamelet.
+     */
+    boolean isCreatedByKamelet();
 
     /**
      * Gets the route group

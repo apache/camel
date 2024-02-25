@@ -130,6 +130,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
+    public boolean isCreatedByRouteTemplate() {
+        return "true".equals(route.getProperties().getOrDefault(Route.TEMPLATE_PROPERTY, "false"));
+    }
+
+    @Override
+    public boolean isCreatedByKamelet() {
+        return "true".equals(route.getProperties().getOrDefault(Route.KAMELET_PROPERTY, "false"));
+    }
+
+    @Override
     public TabularData getRouteProperties() {
         try {
             final Map<String, Object> properties = route.getProperties();

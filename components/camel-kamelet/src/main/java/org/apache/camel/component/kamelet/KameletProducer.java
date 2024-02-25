@@ -20,12 +20,13 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class KameletProducer extends DefaultAsyncProducer {
+final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(KameletProducer.class);
 
@@ -38,6 +39,7 @@ final class KameletProducer extends DefaultAsyncProducer {
     private final boolean block;
     private final long timeout;
     private final boolean sink;
+    private String routeId;
 
     public KameletProducer(KameletEndpoint endpoint, String key) {
         super(endpoint);
@@ -122,6 +124,16 @@ final class KameletProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         }
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public String getKey() {

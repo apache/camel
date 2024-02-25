@@ -367,6 +367,28 @@ public class DefaultUnitOfWork implements UnitOfWork {
         return routes.size();
     }
 
+    public int routeStackLevel(boolean includeRouteTemplate, boolean includeKamelet) {
+        if (includeKamelet && includeRouteTemplate) {
+            return routes.size();
+        }
+
+        int level = 0;
+        for (Route r : routes) {
+            if (r.isCreatedByKamelet()) {
+                if (includeKamelet) {
+                    level++;
+                }
+            } else if (r.isCreatedByRouteTemplate()) {
+                if (includeRouteTemplate) {
+                    level++;
+                }
+            } else {
+                level++;
+            }
+        }
+        return level;
+    }
+
     @Override
     public boolean isBeforeAfterProcess() {
         return false;

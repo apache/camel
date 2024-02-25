@@ -313,6 +313,9 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         // yes we can optimize and use the producer directly for sending
         if (destination.isSingletonProducer()) {
             this.producer = destination.createAsyncProducer();
+            if (this.producer instanceof RouteIdAware ria) {
+                ria.setRouteId(getRouteId());
+            }
             // ensure the producer is managed and started
             camelContext.addService(this.producer, true, true);
         } else {

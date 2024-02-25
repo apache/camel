@@ -395,6 +395,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         routeProperties.put(Route.REST_PROPERTY, rest);
         String template = Boolean.toString(definition.isTemplate() != null && definition.isTemplate());
         routeProperties.put(Route.TEMPLATE_PROPERTY, template);
+        String kamelet = Boolean.toString(definition.isKamelet() != null && definition.isKamelet());
+        routeProperties.put(Route.KAMELET_PROPERTY, kamelet);
         if (definition.getAppliedRouteConfigurationIds() != null) {
             routeProperties.put(Route.CONFIGURATION_ID_PROPERTY,
                     String.join(",", definition.getAppliedRouteConfigurationIds()));

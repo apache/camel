@@ -101,6 +101,8 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "Default")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
+    private boolean jmxManagementRegisterRoutesCreateByKamelet;
+    private boolean jmxManagementRegisterRoutesCreateByTemplate = true;
     private boolean camelEventsTimestampEnabled;
     private boolean useMdcLogging;
     private String mdcLoggingKeysPattern;
@@ -995,6 +997,41 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
+    }
+
+    public boolean isJmxManagementRegisterRoutesCreateByKamelet() {
+        return jmxManagementRegisterRoutesCreateByKamelet;
+    }
+
+    /**
+     * Whether routes created by Kamelets should be registered for JMX management. Enabling this allows to have
+     * fine-grained monitoring and management of every route created via Kamelets.
+     *
+     * This is default disabled as a Kamelet is intended as a component (black-box) and its implementation details as
+     * Camel route makes the overall management and monitoring of Camel applications more verbose.
+     *
+     * During development of Kamelets then enabling this will make it possible for developers to do fine-grained
+     * performance inspection and identify potential bottlenecks in the Kamelet routes.
+     *
+     * However, for production usage then keeping this disabled is recommended.
+     */
+    public void setJmxManagementRegisterRoutesCreateByKamelet(boolean jmxManagementRegisterRoutesCreateByKamelet) {
+        this.jmxManagementRegisterRoutesCreateByKamelet = jmxManagementRegisterRoutesCreateByKamelet;
+    }
+
+    public boolean isJmxManagementRegisterRoutesCreateByTemplate() {
+        return jmxManagementRegisterRoutesCreateByTemplate;
+    }
+
+    /**
+     * Whether routes created by route templates (not Kamelets) should be registered for JMX management. Enabling this
+     * allows to have fine-grained monitoring and management of every route created via route templates.
+     *
+     * This is default enabled (unlike Kamelets) as routes created via templates is regarded as standard routes, and
+     * should be available for management and monitoring.
+     */
+    public void setJmxManagementRegisterRoutesCreateByTemplate(boolean jmxManagementRegisterRoutesCreateByTemplate) {
+        this.jmxManagementRegisterRoutesCreateByTemplate = jmxManagementRegisterRoutesCreateByTemplate;
     }
 
     public boolean isCamelEventsTimestampEnabled() {
@@ -2198,6 +2235,35 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
+        return (T) this;
+    }
+
+    /**
+     * Whether routes created by Kamelets should be registered for JMX management. Enabling this allows to have
+     * fine-grained monitoring and management of every route created via Kamelets.
+     *
+     * This is default disabled as a Kamelet is intended as a component (black-box) and its implementation details as
+     * Camel route makes the overall management and monitoring of Camel applications more verbose.
+     *
+     * During development of Kamelets then enabling this will make it possible for developers to do fine-grained
+     * performance inspection and identify potential bottlenecks in the Kamelet routes.
+     *
+     * However, for production usage then keeping this disabled is recommended.
+     */
+    public T withJmxManagementRegisterRoutesCreateByKamelet(boolean jmxManagementRegisterRoutesCreateByKamelet) {
+        this.jmxManagementRegisterRoutesCreateByKamelet = jmxManagementRegisterRoutesCreateByKamelet;
+        return (T) this;
+    }
+
+    /**
+     * Whether routes created by route templates (not Kamelets) should be registered for JMX management. Enabling this
+     * allows to have fine-grained monitoring and management of every route created via route templates.
+     *
+     * This is default enabled (unlike Kamelets) as routes created via templates is regarded as standard routes, and
+     * should be available for management and monitoring.
+     */
+    public T withJmxManagementRegisterRoutesCreateByTemplate(boolean jmxManagementRegisterRoutesCreateByTemplate) {
+        this.jmxManagementRegisterRoutesCreateByTemplate = jmxManagementRegisterRoutesCreateByTemplate;
         return (T) this;
     }
 

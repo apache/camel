@@ -133,9 +133,9 @@ MBeans are registered at startup. The levels are:
 
 * `ContextOnly` -  Camel will register MBeans for the context (neither for any route nor for any processor).
 
-=== Registering new MBeans for new routes or endpoints
+=== Registering new MBeans for new routes, created by route templates, Kamelets
 
-Camel provides two settings to control when to register mbeans.
+Camel provides the following settings to control when to register mbeans.
 
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
@@ -145,6 +145,11 @@ Camel provides two settings to control when to register mbeans.
 |`registerNewRoutes` |`true` |If enabled then adding new routes after
 CamelContext has been started will also register
 MBeans from that given route.
+
+|`registerRoutesCreateByKamelet` |`false` |If enabled then adding routes created by Kamelet will also register MBeans from that given route.
+
+|`registerRoutesCreateByTemplate` |`true` |If enabled then adding routes created by route template (not Kamelet, see option above) will also register MBeans from that given route.
+
 |=======================================================================
 
 By default, Camel automatically registers MBeans for all routes configured at
@@ -152,6 +157,12 @@ startup. The `registerNewRoutes` option controls whether MBeans should also be
 registered for new routes added later on. This feature can be disabled, for
 example, if you are adding and removing temporary routes that do not require
 management.
+
+In *Camel 4.5* onwards there are additional options to configure whether routes created from route templates or Kamelets
+should be registered as MBeans or not. By default, Kamelets are now disabled with the intention to regard a Kamelet
+as a component, instead of a set of additional routes and processors MBeans that is essentially not needed for management
+and monitoring. The option `registerRoutesCreateByKamelet` can be set to `true` to enable MBeans which is how Camel 4.4 or
+older behaves. On the other hand routes created from route templates (not Kamelets) are default enabled.
 
 CAUTION: However, be cautious when using the `registerAlways` option in
 conjunction with dynamic EIP patterns, such as the xref:components:eips:recipientList-eip.adoc[Recipient List],
