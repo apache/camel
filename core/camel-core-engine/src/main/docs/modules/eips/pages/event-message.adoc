@@ -63,7 +63,7 @@ XML::
 ----
 ====
 
-== Using setExchangePattern EIP
+== Using `setExchangePattern` EIP
 
 You can specify the
 xref:manual::exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
