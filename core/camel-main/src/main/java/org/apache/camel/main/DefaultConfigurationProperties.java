@@ -101,6 +101,7 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "Default")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
+    private boolean jmxUpdateRouteEnabled;
     private boolean jmxManagementRegisterRoutesCreateByKamelet;
     private boolean jmxManagementRegisterRoutesCreateByTemplate = true;
     private boolean camelEventsTimestampEnabled;
@@ -133,7 +134,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
-    private boolean jmxUpdateRouteEnabled;
     @Metadata(enums = "xml,yaml")
     private String dumpRoutes;
     private String dumpRoutesInclude = "routes";
