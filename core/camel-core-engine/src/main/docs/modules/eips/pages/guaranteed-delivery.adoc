@@ -8,12 +8,12 @@ patterns] using among others the following components:
 
 * xref:ROOT:file-component.adoc[File] for using file systems as a persistent store of
 messages
-* xref:ROOT:jms-component.adoc[JMS] when using persistent delivery (the default) for
+* xref:ROOT:jms-component.adoc[JMS] when using persistent delivery, the default, for
 working with JMS queues and topics for high performance, clustering and load balancing
 * xref:ROOT:kafka-component.adoc[Kafka] when using persistent delivery for
 working with streaming events for high performance, clustering and load balancing
 * xref:ROOT:jpa-component.adoc[JPA] for using a database as a persistence layer, or use
-any of the other database component such as xref:ROOT:sql-component.adoc[SQL],
+any of the other database components such as xref:ROOT:sql-component.adoc[SQL],
 xref:ROOT:jdbc-component.adoc[JDBC], or xref:ROOT:mybatis-component.adoc[MyBatis]
 
 image::eip/GuaranteedMessagingSolution.gif[image]
