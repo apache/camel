@@ -13,13 +13,14 @@ of the xref:manual::exchange.adoc[Exchange].
 
 The message contains the following information:
 
-- _body_ - the message body (i.e. payload)
-- _headers_ - headers with additional information
-- _messageId_ - Unique id of the message.
+- `_body_`: the message body (i.e., payload)
+- `_headers_`: headers with additional information
+- `_messageId_`: Unique id of the message.
   By default, the message uses the same id as `Exchange.getExchangeId` as messages are associated with the
-  `Exchange` and using different IDs does not offer much value. Another reason is to optimize for performance to avoid generating new IDs.
+  `Exchange` and using different IDs offers little value.
+Another reason is to optimize for performance to avoid generating new IDs.
   A few Camel components do provide their own message IDs such as the JMS components.
-- _timestamp_ - The timestamp the message originates from.
-  Some systems like JMS, Kafka, AWS have a timestamp on the event/message, that Camel received.
-  This method returns the timestamp, if a timestamp exists.
+- `_timestamp_`: the timestamp the message originates from.
+Some systems like JMS, Kafka, AWS have a timestamp on the event/message that Camel receives.
+This method returns the timestamp if a timestamp exists.
 
