@@ -19,14 +19,14 @@ The Message Translator can be done in different ways in Camel:
 
 == Example
 
-Each of above approaches is documented in the following examples:
+Each of the approaches above is documented in the following examples:
 
 === Message Translator with Transform EIP
 
 You can use a xref:transform-eip.adoc[Transform] which uses an
 xref:manual::expression.adoc[Expression] to do the transformation:
 
-In the example below we prepend Hello to the message body using the
+In the example below, we prepend Hello to the message body using the
 xref:components:languages:simple-language.adoc[Simple] language:
 
 [tabs]
@@ -56,7 +56,7 @@ XML::
 
 === Message Translator with Bean
 
-You can transform a message using Camels
+You can transform a message using Camel's
 xref:manual::bean-integration.adoc[Bean Integration] to call any method on a bean
 that performs the message translation:
 
@@ -114,7 +114,7 @@ XML::
 === Message Translator using Templating Components
 
 You can also consume a message from one destination, transform it with something like
-xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery] and then send
+xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery], and then send
 it on to another destination.
 
 [tabs]
