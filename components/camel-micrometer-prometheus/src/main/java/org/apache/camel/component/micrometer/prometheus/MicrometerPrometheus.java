@@ -386,6 +386,6 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         metrics.handler(new BlockingHandlerDecorator(handler, true));
 
         platformHttpComponent.addHttpEndpoint("/q/metrics", null,
-                null, format,null);
+                null, format, null);
     }
 }
