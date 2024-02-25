@@ -144,14 +144,18 @@ The exchange is then complete, and from the client point of view, the message is
 
 For instance, configuring the dead letter channel as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 errorHandler(deadLetterChannel("jms:queue:dead")
     .maximumRedeliveries(3).redeliveryDelay(5000));
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <errorHandler id="myErrorHandler" type="DeadLetterChannel"
@@ -159,6 +163,8 @@ And in XML:
   <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="5000"/>
 </errorHandler>
 ----
+
+====
 
 The Dead Letter error handler will clear the caused exception (`setException(null)`), by moving the caused exception to a property on the xref:manual::exchange.adoc[Exchange], with the key `Exchange.EXCEPTION_CAUGHT`.
 Then the xref:manual::exchange.adoc[Exchange]
@@ -194,6 +200,11 @@ There is also a *useOriginalBody* option, which only keeps the original message 
 not change the message headers.
 ====
 
+[tabs]
+====
+Java::
++
+
 [source,java]
 ----
 // will use the original message (body and headers)
@@ -201,8 +212,10 @@ errorHandler(deadLetterChannel("jms:queue:dead")
    .useOriginalMessage().maximumRedeliveries(5).redeliveryDelay(5000);
 ----
 
+XML::
++
 And in XML, you set `useOriginalMessage=true` on the `<errorHandler>` as shown:
-
++
 [source,xml]
 ----
 <errorHandler id="myErrorHandler" type="DeadLetterChannel" useOriginalMessage="true"
@@ -210,6 +223,8 @@ And in XML, you set `useOriginalMessage=true` on the `<errorHandler>` as shown:
   <redeliveryPolicy maximumRedeliveries="5" redeliveryDelay="5000"/>
 </errorHandler>
 ----
+
+====
 
 Then the messages routed to the `jms:queue:dead` is the original input.
 If we want to manually retry, we can move the JMS message from the failed to the input queue, with no problem as the message is the same as the original we received.
@@ -230,7 +245,12 @@ When the Dead Letter Channel is doing redelivery, it's possible to configure a x
  executed just _before_ every redelivery attempt.
 This can be used for situations where you need to alter the message before it's redelivered.
 
-For example, in Java DSL you can do:
+For example, you can do:
+
+[tabs]
+====
+Java::
++
 
 [source,java]
 ----
@@ -239,8 +259,10 @@ errorHandler(deadLetterChannel("jms:queue:dead")
   .onRedeliver(new MyOnRedeliveryProcessor());
 ----
 
+XML::
++
 And in XML DSL, you specify a bean id via `onRedeliveryRef` on the `<errorHandler>` as shown:
-
++
 [source,xml]
 ----
 <bean id="myRedeliveryProcessor" class="com.foo.MyRedeliveryProcessor"/>
@@ -250,6 +272,8 @@ And in XML DSL, you specify a bean id via `onRedeliveryRef` on the `<errorHandle
   <redeliveryPolicy maximumRedeliveries="3"/>
 </errorHandler>
 ----
+
+====
 
 TIP: Camel also supports xref:manual::exception-clause.adoc[onException] to use `onRedeliver`.
 This means you can do special on redelivery for different exceptions, as opposed to `onRedelivery` set on
@@ -275,13 +299,20 @@ public static class MyPrepareProcessor implements Processor {
 
 Then configure the error handler to use the processor as follows:
 
+[tabs]
+====
+Java::
++
+
 [source,java]
 ----
 errorHandler(deadLetterChannel("jms:dead").onPrepareFailure(new MyPrepareProcessor()));
 ----
 
+XML::
++
 Configuring this from Spring XML is done with the `onPrepareFailureRef` to refer to the processor as a `<bean>` as shown:
-
++
 [source,xml]
 ----
 <bean id="myPrepare"
@@ -289,6 +320,8 @@ Configuring this from Spring XML is done with the `onPrepareFailureRef` to refer
 
 <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="jms:dead" onPrepareFailureRef="myPrepare"/>
 ----
+
+====
 
 === Calling a processor when an exception occurred
 
@@ -313,19 +346,26 @@ public static class OnErrorLogger implements Processor {
 
 You can then configure the Dead Letter Channel to use this as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 errorHandler(deadLetterChannel("jms:dead").onExceptionOccurred(new OnErrorLogger()));
 ----
 
+XML::
++
 Configuring this from Spring XML is done with the `onExceptionOccurredRef` to refer to the processor as a `<bean>` as shown:
-
++
 [source,xml]
 ----
 <bean id="myErrorLogger" class="com.foo.OnErrorLogger"/>
 
 <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="jms:dead" onExceptionOccurredRef="myErrorLogger"/>
 ----
+====
 
 
 === Redeliver Delay Pattern
