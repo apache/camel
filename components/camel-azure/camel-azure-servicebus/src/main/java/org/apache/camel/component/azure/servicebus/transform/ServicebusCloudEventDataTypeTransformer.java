@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.azure.servicebus.transform;
 
+import java.util.Map;
+
 import org.apache.camel.Message;
 import org.apache.camel.component.azure.servicebus.ServiceBusConstants;
 import org.apache.camel.component.cloudevents.CloudEvent;
@@ -25,11 +27,9 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
-import java.util.Map;
-
 /**
- * Data type transformer converts Azure Service bus receive messages response to CloudEvent v1_0 data format. The data type sets Camel
- * specific CloudEvent headers with values extracted from Azure Service bus receive messages response.
+ * Data type transformer converts Azure Service bus receive messages response to CloudEvent v1_0 data format. The data
+ * type sets Camel specific CloudEvent headers with values extracted from Azure Service bus receive messages response.
  */
 @DataTypeTransformer(name = "azure-servicebus:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Azure Service bus receive messages response details")
@@ -52,7 +52,8 @@ public class ServicebusCloudEventDataTypeTransformer extends Transformer {
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(ServiceBusConstants.MESSAGE_ID, String.class));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         if (message.getHeaders().containsKey(ServiceBusConstants.CONTENT_TYPE)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, message.getHeaders().containsKey(ServiceBusConstants.CONTENT_TYPE));
+            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE,
+                    message.getHeaders().containsKey(ServiceBusConstants.CONTENT_TYPE));
         } else {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
         }

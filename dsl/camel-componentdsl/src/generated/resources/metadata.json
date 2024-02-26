@@ -946,8 +946,8 @@
   "AzureStorageDatalakeComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-storage-datalake",
-    "title": "Azure Storage Datalake Service",
-    "description": "Sends and receives files to\/from Azure DataLake Storage.",
+    "title": "Azure Storage Data Lake Service",
+    "description": "Sends and receives files to\/from Azure Data Lake Storage.",
     "deprecated": false,
     "firstVersion": "3.8.0",
     "label": "cloud,file,bigdata",
