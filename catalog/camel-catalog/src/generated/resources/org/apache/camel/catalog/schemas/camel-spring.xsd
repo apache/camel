@@ -3947,7 +3947,7 @@ Enables random backoff. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a reference to an exiting bean to use, which is looked up from the registry.
+Sets a reference to an existing bean to use, which is looked up from the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5714,7 +5714,7 @@ Sets the back off multiplier. Default value: 2.0
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Turn on exponential backk off. Default value: false
+Turn on exponential back off. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
