@@ -6,7 +6,7 @@
 :supportlevel: Stable
 :tabs-sync-option:
 
-The SetVariable EIP is used for setting a xref:manual:ROOT:exchange.adoc[Exchange] variable.
+The SetVariable EIP is used for setting an xref:manual:ROOT:exchange.adoc[Exchange] variable.
 
 == Options
 
@@ -80,7 +80,7 @@ XML::
 
 === Setting variable with the current message body
 
-It is of course also possible to set an variable with a value
+It is of course also possible to set a variable with a value
 from anything on the `Exchange` such as the message body:
 
 [tabs]
