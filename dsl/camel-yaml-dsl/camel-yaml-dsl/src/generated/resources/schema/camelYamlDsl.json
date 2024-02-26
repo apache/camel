@@ -5925,7 +5925,7 @@
       },
       "org.apache.camel.model.SetHeadersDefinition" : {
         "title" : "Set Headers",
-        "description" : "Allows to set multiple headers on the message at the same time.",
+        "description" : "Allows setting multiple headers on the message at the same time.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {

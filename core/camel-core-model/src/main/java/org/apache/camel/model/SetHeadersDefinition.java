@@ -32,7 +32,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Allows to set multiple headers on the message at the same time.
+ * Allows setting multiple headers on the message at the same time.
  */
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setHeaders")
