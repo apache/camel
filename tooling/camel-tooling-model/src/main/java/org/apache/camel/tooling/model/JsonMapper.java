@@ -17,7 +17,6 @@
 package org.apache.camel.tooling.model;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -45,7 +44,7 @@ public final class JsonMapper {
 
     public static BaseModel<?> generateModel(Path file) {
         try {
-            String json = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            String json = Files.readString(file);
             return generateModel(json);
         } catch (IOException e) {
             throw new RuntimeException("Error reading json file: " + file, e);

@@ -218,7 +218,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     String parentScheme = parentUriEndpoint.scheme().split(",")[0];
                     String superClassName = superclass.getName();
                     String packageName = superClassName.substring(0, superClassName.lastIndexOf('.'));
-                    String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
+                    String fileName
+                            = "META-INF/" + packageName.replace('.', '/') + "/" + parentScheme + PackageHelper.JSON_SUFIX;
                     String json = loadResource(fileName);
                     parentData = JsonMapper.generateComponentModel(json);
                 }
@@ -297,7 +298,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         String packageName = name.substring(0, name.lastIndexOf('.'));
         String fileName = scheme + PackageHelper.JSON_SUFIX;
 
-        String file = packageName.replace('.', '/') + "/" + fileName;
+        String file = "META-INF/" + packageName.replace('.', '/') + "/" + fileName;
         updateResource(resourcesOutputDir.toPath(), file, json);
 
         generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel, parentData);
