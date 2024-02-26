@@ -399,8 +399,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Map<String, Set<String>> usedLabels = new TreeMap<>();
 
         // find all json files in camel-core
-        Path coreDirTarget = modelDir.resolve("target/classes/org/apache/camel/model");
-        Path coreModelAppDirTarget = modelDir.resolve("target/classes/org/apache/camel/model/app");
+        Path coreDirTarget = modelDir.resolve("target/classes/META-INF/org/apache/camel/model");
+        Path coreModelAppDirTarget = modelDir.resolve("target/classes/META-INF/org/apache/camel/model/app");
         jsonFiles = allJsonFiles.stream()
                 .filter(p -> p.startsWith(coreDirTarget))
                 .filter(p -> !p.startsWith(coreModelAppDirTarget))
@@ -464,7 +464,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<Path> jsonFiles;
 
         // find all json files in camel-core
-        Path coreDirTarget = modelDir.resolve("target/classes/org/apache/camel/model/app");
+        Path coreDirTarget = modelDir.resolve("target/classes/META-INF/org/apache/camel/model/app");
         jsonFiles = allJsonFiles.stream()
                 .filter(p -> p.startsWith(coreDirTarget))
                 .collect(Collectors.toCollection(TreeSet::new));

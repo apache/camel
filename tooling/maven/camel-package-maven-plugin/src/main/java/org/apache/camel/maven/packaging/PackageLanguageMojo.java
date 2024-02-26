@@ -150,7 +150,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         String modelName = asModelName(name);
 
                         String json = PackageHelper.loadText(new File(
-                                core, "src/generated/resources/org/apache/camel/model/language/" + modelName
+                                core, "src/generated/resources/META-INF/org/apache/camel/model/language/" + modelName
                                       + PackageHelper.JSON_SUFIX));
 
                         LanguageModel languageModel = extractLanguageModel(project, json, name, javaType);

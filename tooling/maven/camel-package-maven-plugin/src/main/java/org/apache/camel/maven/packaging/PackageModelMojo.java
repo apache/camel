@@ -66,7 +66,7 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
         // find all json files in camel-core
         List<String> models;
         try (Stream<Path> jsonFiles
-                = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model"))) {
+                = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/META-INF/org/apache/camel/model"))) {
             models = jsonFiles
                     // special for app should not be in the summary
                     .filter(p -> !p.getParent().getFileName().toString().endsWith("app"))

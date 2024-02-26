@@ -390,7 +390,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         File coreDir = findCamelDirectory(project.getBasedir(), "camel-core-model");
 
         if (coreDir.isDirectory()) {
-            File target = new File(coreDir, "src/generated/resources/org/apache/camel/model");
+            File target = new File(coreDir, "src/generated/resources/META-INF/org/apache/camel/model");
             PackageHelper.findJsonFiles(target, jsonFiles);
         }
 
