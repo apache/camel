@@ -61,6 +61,40 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * The properties set on a Cookies when a Cookie is added (currently
+         * only supported by camel-platform-http-vertx).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.CookieConfiguration&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param cookieConfiguration the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieConfiguration(
+                org.apache.camel.component.platform.http.cookie.CookieConfiguration cookieConfiguration) {
+            doSetProperty("cookieConfiguration", cookieConfiguration);
+            return this;
+        }
+        /**
+         * The properties set on a Cookies when a Cookie is added (currently
+         * only supported by camel-platform-http-vertx).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.CookieConfiguration&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param cookieConfiguration the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieConfiguration(
+                String cookieConfiguration) {
+            doSetProperty("cookieConfiguration", cookieConfiguration);
+            return this;
+        }
+        /**
          * A comma separated list of HTTP methods to serve, e.g. GET,POST . If
          * no methods are specified, all methods will be served.
          * 
@@ -157,6 +191,43 @@ public interface PlatformHttpEndpointBuilderFactory {
          */
         default PlatformHttpEndpointBuilder produces(String produces) {
             doSetProperty("produces", produces);
+            return this;
+        }
+        /**
+         * Whether to enable the Cookie Handler that allows Cookie addition,
+         * expiry, and retrieval (currently only supported by
+         * camel-platform-http-vertx).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useCookieHandler the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder useCookieHandler(
+                boolean useCookieHandler) {
+            doSetProperty("useCookieHandler", useCookieHandler);
+            return this;
+        }
+        /**
+         * Whether to enable the Cookie Handler that allows Cookie addition,
+         * expiry, and retrieval (currently only supported by
+         * camel-platform-http-vertx).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useCookieHandler the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder useCookieHandler(
+                String useCookieHandler) {
+            doSetProperty("useCookieHandler", useCookieHandler);
             return this;
         }
         /**

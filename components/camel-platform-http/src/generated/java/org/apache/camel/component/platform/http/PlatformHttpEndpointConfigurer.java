@@ -24,6 +24,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookieconfiguration":
+        case "cookieConfiguration": target.setCookieConfiguration(property(camelContext, org.apache.camel.component.platform.http.cookie.CookieConfiguration.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -41,6 +43,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": target.setPlatformHttpEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
+        case "usecookiehandler":
+        case "useCookieHandler": target.setUseCookieHandler(property(camelContext, boolean.class, value)); return true;
         case "usestreaming":
         case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -53,6 +57,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "consumes": return java.lang.String.class;
+        case "cookieconfiguration":
+        case "cookieConfiguration": return org.apache.camel.component.platform.http.cookie.CookieConfiguration.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -70,6 +76,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": return org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class;
         case "produces": return java.lang.String.class;
+        case "usecookiehandler":
+        case "useCookieHandler": return boolean.class;
         case "usestreaming":
         case "useStreaming": return boolean.class;
         default: return null;
@@ -83,6 +91,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumes": return target.getConsumes();
+        case "cookieconfiguration":
+        case "cookieConfiguration": return target.getCookieConfiguration();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -100,6 +110,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": return target.getPlatformHttpEngine();
         case "produces": return target.getProduces();
+        case "usecookiehandler":
+        case "useCookieHandler": return target.isUseCookieHandler();
         case "usestreaming":
         case "useStreaming": return target.isUseStreaming();
         default: return null;

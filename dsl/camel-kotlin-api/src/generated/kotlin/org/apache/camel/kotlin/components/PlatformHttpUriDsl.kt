@@ -48,6 +48,10 @@ public class PlatformHttpUriDsl(
     it.property("consumes", consumes)
   }
 
+  public fun cookieConfiguration(cookieConfiguration: String) {
+    it.property("cookieConfiguration", cookieConfiguration)
+  }
+
   public fun httpMethodRestrict(httpMethodRestrict: String) {
     it.property("httpMethodRestrict", httpMethodRestrict)
   }
@@ -70,6 +74,14 @@ public class PlatformHttpUriDsl(
 
   public fun produces(produces: String) {
     it.property("produces", produces)
+  }
+
+  public fun useCookieHandler(useCookieHandler: String) {
+    it.property("useCookieHandler", useCookieHandler)
+  }
+
+  public fun useCookieHandler(useCookieHandler: Boolean) {
+    it.property("useCookieHandler", useCookieHandler.toString())
   }
 
   public fun useStreaming(useStreaming: String) {
