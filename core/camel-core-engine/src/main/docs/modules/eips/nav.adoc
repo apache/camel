@@ -80,7 +80,7 @@
 ** xref:routingSlip-eip.adoc[Routing Slip]
 ** xref:saga-eip.adoc[Saga]
 ** xref:sample-eip.adoc[Sample]
-** xref:scatter-gather.adoc[Scatter Gather]
+** xref:scatter-gather.adoc[Scatter-Gather]
 ** xref:script-eip.adoc[Script]
 ** xref:selective-consumer.adoc[Selective Consumer]
 ** xref:service-activator.adoc[Service Activator]
