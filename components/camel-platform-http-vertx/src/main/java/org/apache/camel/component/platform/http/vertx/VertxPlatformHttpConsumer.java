@@ -30,6 +30,8 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.Cookie;
+import io.vertx.core.http.CookieSameSite;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
@@ -46,6 +48,8 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
+import org.apache.camel.component.platform.http.cookie.CookieConfiguration;
+import org.apache.camel.component.platform.http.cookie.CookieHandler;
 import org.apache.camel.component.platform.http.spi.Method;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
@@ -75,6 +79,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
     private Route route;
     private VertxPlatformHttpRouter router;
     private HttpRequestBodyHandler httpRequestBodyHandler;
+    private CookieConfiguration cookieConfiguration;
 
     public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint,
                                      Processor processor,
@@ -102,6 +107,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
             httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
         } else {
             httpRequestBodyHandler = new DefaultHttpRequestBodyHandler(router.bodyHandler());
+        }
+        if (getEndpoint().isUseCookieHandler()) {
+            cookieConfiguration = getEndpoint().getCookieConfiguration();
         }
     }
 
@@ -269,6 +277,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         if (user != null) {
             in.setHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, user);
         }
+        if (getEndpoint().isUseCookieHandler()) {
+            exchange.setProperty(Exchange.COOKIE_HANDLER, new VertxCookieHandler(ctx));
+        }
 
         return populateCamelMessage(ctx, exchange, in);
     }
@@ -333,6 +344,51 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
                         "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
                         fileName, fileNameExtWhitelist);
             }
+        }
+    }
+
+    class VertxCookieHandler implements CookieHandler {
+
+        private RoutingContext routingContext;
+
+        VertxCookieHandler(RoutingContext routingContext) {
+            this.routingContext = routingContext;
+        }
+
+        @Override
+        public void addCookie(String name, String value) {
+            Cookie cookie = Cookie.cookie(name, value)
+                    .setPath(cookieConfiguration.getPath())
+                    .setDomain(cookieConfiguration.getDomain())
+                    .setSecure(cookieConfiguration.isSecure())
+                    .setHttpOnly(cookieConfiguration.isHttpOnly())
+                    .setSameSite(getSameSite(cookieConfiguration.getSameSite()));
+            if (cookieConfiguration.getMaxAge() != null) {
+                cookie.setMaxAge(cookieConfiguration.getMaxAge());
+            }
+            routingContext.response().addCookie(cookie);
+        }
+
+        private CookieSameSite getSameSite(CookieConfiguration.CookieSameSite sameSite) {
+            for (CookieSameSite css : CookieSameSite.values()) {
+                // 'Strict', 'Lax', or 'None'
+                if (css.toString().equals(sameSite.getValue())) {
+                    return css;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String removeCookie(String name) {
+            Cookie cookie = routingContext.response().removeCookie(name);
+            return cookie == null ? null : cookie.getValue();
+        }
+
+        @Override
+        public String getCookieValue(String name) {
+            Cookie cookie = routingContext.request().getCookie(name);
+            return cookie == null ? null : cookie.getValue();
         }
     }
 }
