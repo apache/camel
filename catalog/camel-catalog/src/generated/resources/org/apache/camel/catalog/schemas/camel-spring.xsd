@@ -1215,7 +1215,7 @@ Evaluates a Python expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The destination endpoints are selected by random.
+The destination endpoints are selected randomly.
 ]]>
       </xs:documentation>
     </xs:annotation>

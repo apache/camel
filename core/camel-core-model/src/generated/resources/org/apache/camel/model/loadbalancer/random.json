@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "random",
     "title": "Random",
-    "description": "The destination endpoints are selected by random.",
+    "description": "The destination endpoints are selected randomly.",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition",
