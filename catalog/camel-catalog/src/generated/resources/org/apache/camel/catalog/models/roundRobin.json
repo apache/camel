@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "roundRobin",
     "title": "Round Robin",
-    "description": "The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.",
+    "description": "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition",
