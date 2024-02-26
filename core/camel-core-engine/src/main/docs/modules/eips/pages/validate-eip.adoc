@@ -6,7 +6,7 @@
 :supportlevel: Stable
 :tabs-sync-option:
 
-The Validate EIP uses an xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
+The Validate EIP uses an xref:manual::expression.adoc[Expression] or a xref:manual::predicate.adoc[Predicate]
 to validate the contents of a message.
 
 image::eip/MessageSelectorIcon.gif[image]
@@ -79,7 +79,7 @@ from("file:inbox")
   .to("bean:myServiceBean.processLine");
 ----
 +
-You can also use validate together with the xref:components:languages:simple-language.adoc[Simple] language.
+You can also use `validate` together with the xref:components:languages:simple-language.adoc[Simple] language.
 +
 [source,java]
 ----
