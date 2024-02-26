@@ -21,7 +21,7 @@ image::eip/message_flow_in_route.png[image]
 A route first starts with a consumer (think `from` in the DSL) that populates the initial
 exchange. At each processor step, the out message from the previous step is the in
 message of the next. In many cases, processors don’t set an out message, so in this case
-the in message is reused. At the end of a route, the xref:manual::exchange-pattern.adoc[Messageg Exchange Pattern] (MEP)
+the in message is reused. At the end of a route, the xref:manual::exchange-pattern.adoc[Message Exchange Pattern] (MEP)
 of the exchange determines whether a reply needs to be sent back to the caller of the route. If the MEP is `InOnly`,
 no reply will be sent back. If it’s `InOut`, Camel will take the out message from the last
 step and return it.
@@ -29,7 +29,7 @@ step and return it.
 == Processor API
 
 The `Processor` interface is a central API in Camel.
-Its API is purposely designed to be both simple and flexible in the form of a single functional method:
+Its API is purposely designed to be both straightforward and flexible in the form of a single functional method:
 
 [source,java]
 ----
@@ -73,14 +73,21 @@ from("activemq:myQueue")
 You can also call a processor by its bean id, if the processor
 has been enlisted in the xref:manual::registry.adoc[Registry], such as with the id `myProcessor`:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("activemq:myQueue")
   .process("myProcessor");
 ----
 
+XML::
++
 And in XML you can refer to the fully qualified class name via `#class:` syntax:
-
++
 [source,xml]
 ----
 <route>
@@ -89,8 +96,10 @@ And in XML you can refer to the fully qualified class name via `#class:` syntax:
 </route>
 ----
 
+Spring XML::
++
 Or if you use Spring XML you can create the processor via `<bean>`:
-
++
 [source,xml]
 ----
 <beans>
@@ -108,8 +117,9 @@ Or if you use Spring XML you can create the processor via `<bean>`:
 
 </beans>
 ----
+====
 
-=== Why use process when you can use to instead?
+=== Why use `process` when you can use `to` instead?
 
 The process can be used in routes as an anonymous inner class such:
 
@@ -125,5 +135,5 @@ The process can be used in routes as an anonymous inner class such:
 ----
 
 This is usable for quickly whirling up some code. If the code in the
-inner class gets a bit more complicated it is of course advised to
+inner class gets a bit more complicated, it is advised to
 refactor it into a separate class.
