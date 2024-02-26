@@ -129,11 +129,6 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
     }
 
     @Override
-    public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, long timestamp, Exchange exchange) {
-        return newMessageHistory(routeId, namedNode, exchange);
-    }
-
-    @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, Exchange exchange) {
         if (nodePattern != null) {
             String name = namedNode.getShortName();
