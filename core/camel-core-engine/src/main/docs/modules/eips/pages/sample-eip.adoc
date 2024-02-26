@@ -21,7 +21,7 @@ include::partial$eip-options.adoc[]
 
 == Using Sample EIP
 
-In the example below we sample one message per second (default time period):
+In the example below, we sample one message per second (default time period):
 
 [tabs]
 ====
@@ -50,7 +50,7 @@ XML::
 === Sampling using time period
 
 The default time period is 1 second, but this can easily be configured.
-For example to sample 1 message per 5 seconds you can do:
+For example, to sample one message per 5 seconds, you can do:
 
 [tabs]
 ====
@@ -78,9 +78,9 @@ XML::
 
 === Sampling using message frequency
 
-The Sample EIP can also be configured to sample based on frequency instead of time period.
+The Sample EIP can also be configured to sample based on frequency instead of a time period.
 
-For example to sample every 10th message you can do:
+For example, to sample every 10th message you can do:
 
 [tabs]
 ====
