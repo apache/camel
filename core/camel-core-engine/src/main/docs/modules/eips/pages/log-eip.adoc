@@ -164,7 +164,7 @@ from("direct:start").routeId("fooRoute")
 ----
 
 XML::
-
++
 [source,xml]
 ----
 <route id="fooRoute">
@@ -207,7 +207,7 @@ camelContext.getGlobalOptions().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
 ----
 
 XML::
-
++
 [source,xml]
 ----
 <camelContext>
