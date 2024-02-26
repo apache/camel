@@ -1431,7 +1431,7 @@ Forces a rollback by stopping routing the message
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads
+The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads
 the load evenly.
 ]]>
       </xs:documentation>

@@ -14005,7 +14005,7 @@
       },
       "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition" : {
         "title" : "Round Robin",
-        "description" : "The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.",
+        "description" : "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
