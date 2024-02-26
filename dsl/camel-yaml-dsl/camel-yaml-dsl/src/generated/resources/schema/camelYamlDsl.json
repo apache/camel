@@ -13992,7 +13992,7 @@
       },
       "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition" : {
         "title" : "Random",
-        "description" : "The destination endpoints are selected by random.",
+        "description" : "The destination endpoints are selected randomly.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
