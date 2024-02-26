@@ -7,7 +7,7 @@
 :tabs-sync-option:
 
 Weighted mode for xref:loadBalance-eip.adoc[Load Balancer] EIP.
-With this policy in case of failures the exchange will be tried on the next endpoint.
+With this policy in case of failures, the exchange will be tried on the next endpoint.
 
 == Options
 
@@ -17,11 +17,16 @@ include::partial$eip-options.adoc[]
 
 == Examples
 
-In this example we want to send the most message to the first endpoint, then the second, and only a few to the last.
+In this example, we want to send the most message to the first endpoint, then the second, and only a few to the last.
 
-The distribution ratio is 7 = 4 + 2 + 1.
-This means that for every 7 message then 4 goes to the 1st, 2 for the 2nd, and 1 for the last.
+The distribution ratio is `7 = 4 + 2 + 1`.
+This means that for every seventh message then 4 goes to the first, 2 for the second, and 1 for the last.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -32,8 +37,8 @@ from("direct:start")
     .end();
 ----
 
-In XML you'll have a route like this:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -46,3 +51,4 @@ In XML you'll have a route like this:
       </loadBalance>
 </route>
 ----
+====
