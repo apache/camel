@@ -111,7 +111,12 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         if (eventObject instanceof ExchangeEvent ee) {
             // skip routes that should not be included
             boolean skip = false;
-            String routeId = ExchangeHelper.getAtRouteId(ee.getExchange());
+            String routeId;
+            if (eventObject instanceof ExchangeCreatedEvent) {
+                routeId = ee.getExchange().getFromRouteId();
+            } else {
+                routeId = ExchangeHelper.getAtRouteId(ee.getExchange());
+            }
             if (routeId != null) {
                 Route route = ee.getExchange().getContext().getRoute(routeId);
                 if (route != null) {
