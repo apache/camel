@@ -31,10 +31,10 @@ method.
 
 If you need to use Polling Consumer from within a route, then the xref:pollEnrich-eip.adoc[Poll Enrich] EIP can be used.
 
-On the other hand if you need to use Polling Consumer programmatically,
+On the other hand, if you need to use Polling Consumer programmatically,
 then using xref:manual::consumertemplate.adoc[ConsumerTemplate] is a good choice.
 
-And if you want to use the lower level Camel APIs then you can create the `PollingConsumer` instance to be used.
+And if you want to use the lower level Camel APIs, then you can create the `PollingConsumer` instance to be used.
 
 === Using Polling Consumer from Java
 
@@ -69,8 +69,8 @@ https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apach
 
 In Camel there are two kinds of `PollingConsumer` implementations:
 
-- _Custom_ - Some components have their own custom implementation of `PollingConsumer` which is optimized for the given component.
-- _Default_ - `EventDrivenPollingConsumer` is the default implementation otherwise.
+- _Custom_: Some components have their own custom implementation of `PollingConsumer` which is optimized for the given component.
+- _Default_: `EventDrivenPollingConsumer` is the default implementation otherwise.
 
 
 The `EventDrivenPollingConsumer` supports the following options:
@@ -78,7 +78,7 @@ The `EventDrivenPollingConsumer` supports the following options:
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|`pollingConsumerQueueSize` |`1000` | The queue size for the internal hand-off queue between the polling consumer,
+|`pollingConsumerQueueSize` |`1000` | The queue size for the internal hand-off queue between the polling consumer
 and producers sending data into the queue.
 
 |`pollingConsumerBlockWhenFull` |`true` | Whether to block any producer if the internal queue is full.
