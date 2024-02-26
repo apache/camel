@@ -82,6 +82,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Sets the assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean}
+     *
      * @param managementMBeanAssembler the assembler to use
      */
     void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler);
