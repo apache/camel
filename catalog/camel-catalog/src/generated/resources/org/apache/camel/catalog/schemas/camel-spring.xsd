@@ -1720,7 +1720,7 @@ Sets the value of a message header
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Allows to set multiple headers on the message at the same time.
+Allows setting multiple headers on the message at the same time.
 ]]>
       </xs:documentation>
     </xs:annotation>
