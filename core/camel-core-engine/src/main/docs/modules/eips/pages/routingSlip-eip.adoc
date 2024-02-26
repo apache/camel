@@ -75,8 +75,8 @@ The message will be routed in a xref:pipeline-eip.adoc[pipeline] fashion, i.e., 
 The Routing Slip sets a property, `Exchange.SLIP_ENDPOINT`, on the `Exchange` which contains the
 current endpoint as it advanced though the slip. This allows you to _know_ how far we have processed in the slip.
 
-The Routing Slip will compute the slip *beforehand* which means,
-the slip is only computed once. If you need to compute the slip _on-the-fly_ then use the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP instead.
+The Routing Slip will compute the slip *beforehand*, which means the slip is only computed once.
+If you need to compute the slip _on-the-fly_, then use the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP instead.
 
 === How is the slip computed
 
