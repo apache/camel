@@ -81,6 +81,58 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+=== Supported AWS Bedrock Models
+
+- Titan Text Express V1 with id `amazon.titan-text-express-v1`
+Express is a large language model for text generation. It is useful for a wide range of advanced, general language tasks such as open-ended text generation and conversational chat, as well as support within Retrieval Augmented Generation (RAG).
+
+Json schema for request
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "inputText": {
+      "type": "string"
+    },
+    "textGenerationConfig": {
+      "type": "object",
+      "properties": {
+        "maxTokenCount": {
+          "type": "integer"
+        },
+        "stopSequences": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "temperature": {
+          "type": "integer"
+        },
+        "topP": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maxTokenCount",
+        "stopSequences",
+        "temperature",
+        "topP"
+      ]
+    }
+  },
+  "required": [
+    "inputText",
+    "textGenerationConfig"
+  ]
+}
+--------------------------------------------------------------------------------
+
 === Bedrock Producer operations
 
 Camel-AWS Bedrock component provides the following operation on the producer side:
