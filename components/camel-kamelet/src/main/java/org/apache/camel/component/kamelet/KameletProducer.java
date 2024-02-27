@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
@@ -40,6 +41,7 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
     private final long timeout;
     private final boolean sink;
     private String routeId;
+    boolean registerKamelets;
 
     public KameletProducer(KameletEndpoint endpoint, String key) {
         super(endpoint);
@@ -49,23 +51,6 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
         this.block = endpoint.isBlock();
         this.timeout = endpoint.getTimeout();
         this.sink = getEndpoint().getEndpointKey().startsWith("kamelet://sink");
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        if (consumer == null || stateCounter != component.getStateCounter()) {
-            stateCounter = component.getStateCounter();
-            consumer = component.getConsumer(key, block, timeout);
-        }
-        if (consumer == null) {
-            if (endpoint.isFailIfNoConsumers()) {
-                throw new KameletConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
-            } else {
-                LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
-            }
-        } else {
-            consumer.getProcessor().process(exchange);
-        }
     }
 
     @Override
@@ -111,8 +96,22 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
                         }
                     }
                 }
-                // kamelet producer that calls its kamelet consumer to process the incoming exchange
-                return consumer.getAsyncProcessor().process(exchange, callback);
+                if (registerKamelets) {
+                    // kamelets are first-class registered as route (as old behavior)
+                    return consumer.getAsyncProcessor().process(exchange, callback);
+                } else {
+                    // kamelet producer that calls its kamelet consumer to process the incoming exchange
+                    // create exchange copy to let a new lifecycle originate from the calling route (not the kamelet route)
+                    final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true, true);
+                    // fake copy as being created by the consumer
+                    copy.getExchangeExtension().setFromEndpoint(consumer.getEndpoint());
+                    copy.getExchangeExtension().setFromRouteId(consumer.getRouteId());
+                    return consumer.getAsyncProcessor().process(copy, doneSync -> {
+                        // copy result back after processing is done
+                        ExchangeHelper.copyResults(exchange, copy);
+                        callback.done(doneSync);
+                    });
+                }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -138,6 +137,14 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
 
     public String getKey() {
         return key;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ManagementStrategy ms = getEndpoint().getCamelContext().getManagementStrategy();
+        if (ms != null && ms.getManagementAgent() != null) {
+            registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+        }
     }
 
 }
