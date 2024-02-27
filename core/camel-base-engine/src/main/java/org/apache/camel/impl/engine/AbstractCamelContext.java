@@ -2560,8 +2560,7 @@ public abstract class AbstractCamelContext extends BaseService
                 } else if (order.getRoute().isCreatedByRestDsl()) {
                     rests++;
                 }
-                boolean skip = order.getRoute().isCreatedByRestDsl()
-                        || (!registerKamelets && order.getRoute().isCreatedByKamelet())
+                boolean skip = (!registerKamelets && order.getRoute().isCreatedByKamelet())
                         || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
                 if (!skip && ServiceStatus.Started.name().equals(status)) {
                     started++;
@@ -2599,7 +2598,7 @@ public abstract class AbstractCamelContext extends BaseService
                     } else if (route.isCreatedByRestDsl()) {
                         rests++;
                     }
-                    boolean skip = route.isCreatedByRestDsl() || (!registerKamelets && route.isCreatedByKamelet())
+                    boolean skip = (!registerKamelets && route.isCreatedByKamelet())
                             || (!registerTemplates && route.isCreatedByRouteTemplate());
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
@@ -2626,7 +2625,6 @@ public abstract class AbstractCamelContext extends BaseService
             if (!registerTemplates) {
                 newTotal -= templates;
             }
-            newTotal -= rests;
             StringJoiner sj = new StringJoiner(" ");
             sj.add("total:" + newTotal);
             if (total != started) {
@@ -3074,8 +3072,7 @@ public abstract class AbstractCamelContext extends BaseService
                 } else if (order.getRoute().isCreatedByRestDsl()) {
                     rests++;
                 }
-                boolean skip = order.getRoute().isCreatedByRestDsl()
-                        || (!registerKamelets && order.getRoute().isCreatedByKamelet())
+                boolean skip = (!registerKamelets && order.getRoute().isCreatedByKamelet())
                         || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
                 if (!skip && ServiceStatus.Stopped.name().equals(status)) {
                     stopped++;
@@ -3098,7 +3095,6 @@ public abstract class AbstractCamelContext extends BaseService
             if (!registerTemplates) {
                 newTotal -= templates;
             }
-            newTotal -= rests;
             StringJoiner sj = new StringJoiner(" ");
             sj.add("total:" + newTotal);
             if (total != stopped) {
