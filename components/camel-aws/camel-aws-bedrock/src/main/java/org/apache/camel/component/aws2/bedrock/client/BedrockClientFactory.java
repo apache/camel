@@ -23,7 +23,7 @@ import org.apache.camel.component.aws2.bedrock.client.impl.BedrockRuntimeClientS
 import org.apache.camel.component.aws2.bedrock.client.impl.BedrockRuntimeClientStandardImpl;
 
 /**
- * Factory class to return the correct type of AWS Bedrock client.
+ * Factory class to return the correct type of AWS Bedrock runtime client.
  */
 public final class BedrockClientFactory {
 
@@ -31,12 +31,12 @@ public final class BedrockClientFactory {
     }
 
     /**
-     * Return the correct AWS Bedrock client (based on remote vs local).
+     * Return the correct AWS Bedrock runtime client (based on remote vs local).
      *
      * @param  configuration configuration
-     * @return               EKSClient
+     * @return               BedrockRuntimeInternalClient
      */
-    public static BedrockRuntimeInternalClient getEksClient(BedrockConfiguration configuration) {
+    public static BedrockRuntimeInternalClient getBedrockRuntimeClient(BedrockConfiguration configuration) {
         if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
             return new BedrockRuntimeClientIAMOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {

@@ -2,7 +2,7 @@
 :doctitle: AWS Bedrock
 :shortname: aws-bedrock
 :artifactid: camel-aws2-bedrock
-:description: Manage AWS EKS cluster instances.
+:description: Invoke Model of AWS Bedrock service.
 :since: 4.5
 :supportlevel: Preview
 :tabs-sync-option:

@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 /**
- * Manage AWS EKS cluster instances.
+ * Invoke Model of AWS Bedrock service.
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock", title = "AWS Bedrock",
              syntax = "aws-bedrock:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
@@ -67,7 +67,7 @@ public class BedrockEndpoint extends ScheduledPollEndpoint {
 
         bedrockRuntimeClient = configuration.getBedrockRuntimeClient() != null
                 ? configuration.getBedrockRuntimeClient()
-                : BedrockClientFactory.getEksClient(configuration).getBedrockRuntimeClient();
+                : BedrockClientFactory.getBedrockRuntimeClient(configuration).getBedrockRuntimeClient();
     }
 
     @Override

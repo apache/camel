@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-bedrock",
     "title": "AWS Bedrock",
-    "description": "Manage AWS EKS cluster instances.",
+    "description": "Invoke Model of AWS Bedrock service.",
     "deprecated": false,
     "firstVersion": "4.5.0",
     "label": "cloud,management",
