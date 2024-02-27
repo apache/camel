@@ -47,8 +47,8 @@ public class BedrockProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-            case invokeModel:
-                invokeModel(getEndpoint().getBedrockRuntimeClient(), exchange);
+            case invokeTextModel:
+                invokeTextModel(getEndpoint().getBedrockRuntimeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -80,7 +80,7 @@ public class BedrockProducer extends DefaultProducer {
         return (BedrockEndpoint) super.getEndpoint();
     }
 
-    private void invokeModel(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange) throws InvalidPayloadException {
+    private void invokeTextModel(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
             if (payload instanceof InvokeModelRequest) {
