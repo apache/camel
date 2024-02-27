@@ -1385,7 +1385,7 @@ public abstract class AbstractCamelContext extends BaseService
     private static String toResourcePath(Package clazz, String languageName) {
         String packageName = clazz.getName();
         packageName = packageName.replace('.', '/');
-        return packageName + "/" + languageName + ".json";
+        return "META-INF/" + packageName + "/" + languageName + ".json";
     }
 
     private String doLoadResource(String resourceName, String path, String resourceType) throws IOException {
