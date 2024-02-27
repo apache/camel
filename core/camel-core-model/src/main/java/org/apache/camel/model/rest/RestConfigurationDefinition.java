@@ -95,7 +95,7 @@ public class RestConfigurationDefinition {
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableNoContentResponse;
     @XmlAttribute
-    @Metadata(label = "consumer", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "consumer", javaType = "java.lang.Boolean", defaultValue = "true")
     private String inlineRoutes;
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -374,11 +374,12 @@ public class RestConfigurationDefinition {
     /**
      * Inline routes in rest-dsl which are linked using direct endpoints.
      *
-     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
-     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
-     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     * Each service in Rest DSL is an individual route, meaning that you would have at least two routes per service
+     * (rest-dsl, and the route linked from rest-dsl). By inlining (default) allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service. If a route is
+     * not using direct endpoint then the rest-dsl is not inlined, and will become an individual route.
      *
-     * This option is default <tt>false</tt>.
+     * This option is default <tt>true</tt>.
      */
     public void setInlineRoutes(String inlineRoutes) {
         this.inlineRoutes = inlineRoutes;
@@ -736,11 +737,12 @@ public class RestConfigurationDefinition {
     /**
      * Inline routes in rest-dsl which are linked using direct endpoints.
      *
-     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
-     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
-     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     * Each service in Rest DSL is an individual route, meaning that you would have at least two routes per service
+     * (rest-dsl, and the route linked from rest-dsl). By inlining (default) allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service. If a route is
+     * not using direct endpoint then the rest-dsl is not inlined, and will become an individual route.
      *
-     * This option is default <tt>false</tt>.
+     * This option is default <tt>true</tt>.
      */
     public RestConfigurationDefinition inlineRoutes(String inlineRoutes) {
         setInlineRoutes(inlineRoutes);
@@ -750,11 +752,12 @@ public class RestConfigurationDefinition {
     /**
      * Inline routes in rest-dsl which are linked using direct endpoints.
      *
-     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
-     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
-     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     * Each service in Rest DSL is an individual route, meaning that you would have at least two routes per service
+     * (rest-dsl, and the route linked from rest-dsl). By inlining (default) allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service. If a route is
+     * not using direct endpoint then the rest-dsl is not inlined, and will become an individual route.
      *
-     * This option is default <tt>false</tt>.
+     * This option is default <tt>true</tt>.
      */
     public RestConfigurationDefinition inlineRoutes(boolean inlineRoutes) {
         setInlineRoutes(inlineRoutes ? "true" : "false");

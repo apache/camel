@@ -228,6 +228,16 @@ public class DefaultModel implements Model {
                                 // inline by replacing the outputs
                                 r.getOutputs().clear();
                                 r.getOutputs().addAll(toBeInlined.getOutputs());
+                                // and copy over various ids
+                                if (toBeInlined.getRouteId() != null) {
+                                    r.setId(toBeInlined.getRouteId());
+                                }
+                                if (toBeInlined.getNodePrefixId() != null) {
+                                    r.setNodePrefixId(toBeInlined.getNodePrefixId());
+                                }
+                                if (toBeInlined.getGroup() != null) {
+                                    r.setGroup(toBeInlined.getRouteId());
+                                }
                             }
                         }
                     }

@@ -79,8 +79,8 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
         // and we should have rest in the routes that indicate its from a rest dsl
         assertTrue(xml2.contains("rest=\"true\""));
 
-        // there should be 3 + 2 routes
-        assertEquals(3 + 2, context.getRouteDefinitions().size());
+        // there should be 3 routes (inlined)
+        assertEquals(3, context.getRouteDefinitions().size());
     }
 
     @Override

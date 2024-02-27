@@ -30,7 +30,8 @@ public class RestRefTest extends SpringTestSupport {
 
     @Test
     public void testRestRefTest() throws Exception {
-        assertEquals(2 + 3, context.getRoutes().size());
+        // inlined routes
+        assertEquals(3, context.getRoutes().size());
 
         assertEquals(2, context.getRestDefinitions().size());
         RestDefinition rest = context.getRestDefinitions().get(0);
