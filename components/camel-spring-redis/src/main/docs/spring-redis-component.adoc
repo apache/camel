@@ -16,9 +16,9 @@
 *{component-header}*
 
 This component allows sending and receiving messages from
-https://redis.io/[Redis]. Redis is advanced key-value store where
+https://redis.io/[Redis]. Redis is an advanced key-value store where
 keys can contain strings, hashes, lists, sets and sorted sets. In
-addition it provides pub/sub functionality for inter-app
+addition, it provides pub/sub functionality for inter-app
 communications.
 Camel provides a producer for executing commands, consumer for
 subscribing to pub/sub messages an idempotent repository for filtering
@@ -28,7 +28,7 @@ out duplicate messages.
 ====
 *Prerequisites*
 
-In order to use this component, you must have a Redis server running.
+To use this component, you must have a Redis server running.
 ====
 
 == URI Format
@@ -62,8 +62,8 @@ at https://github.com/apache/camel/tree/main/components/camel-spring-redis/src/t
 
 === Message headers evaluated by the Redis producer
 
-The producer issues commands to the server and each command has
-different set of parameters with specific types. The result from the
+The producer issues commands to the server, and each command has
+a different set of parameters with specific types. The result from the
 command execution is returned in the message body.
 
 [width="100%",cols="10%,40%,50%,10%",options="header",]
@@ -75,12 +75,12 @@ command execution is returned in the message body.
 
 |`HGET` |Get the value of a hash field |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String) |String
 
-|`HSETNX` |Set the value of a hash field, only if the field does not exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
+|`HSETNX` |Set the value of a hash field only if the field does not exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Object) |void
 
 |`HMSET` |Set multiple hash fields to multiple values |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUES`/"CamelRedis.Values" (Map<String, Object>) |void
 
-|`HMGET` |Get the values of all the given hash fields |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELDS`/"CamelRedis.Filds" (Collection<String>) |Collection<Object>
+|`HMGET` |Get the values of all the given hash fields |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELDS`/"CamelRedis.Fields" (Collection<String>) |Collection<Object>
 
 |`HINCRBY` |Increment the integer value of a hash field by the given number |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Long) |Long
@@ -104,7 +104,7 @@ command execution is returned in the message body.
 
 |`RPUSH` |Append one or multiple values to a list |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 
-|`RPUSHX` |Append a value to a list, only if the list exists |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
+|`RPUSHX` |Append a value to a list only if the list exists |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 
 |`LPUSH` |Prepend one or multiple values to a list |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 
@@ -221,7 +221,7 @@ from high to low |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstant
 
 |`ZREMRANGEBYSCORE` |Remove all members in a sorted set within the given scores |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |void
 
-|`ZUNIONSTORE` |Add multiple sorted sets and store the resulting sorted set in a new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+|`ZUNIONSTORE` |Add multiple sorted sets and store the resulting-sorted set in a new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
 `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
 |`ZINTERSTORE` |Intersect multiple sorted sets and store the resulting sorted set in a
@@ -251,7 +251,7 @@ new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"
 
 |`GETRANGE` |Get a substring of the string stored at a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |String
 
-|`SETNX` |Set the value of a key, only if the key does not exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Boolean
+|`SETNX` |Set the value of a key only if the key does not exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Boolean
 
 |`SETEX` |Set the value and expiration of a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.TIMEOUT`/"CamelRedis.Timeout"
 (Long), SECONDS |void
@@ -268,7 +268,7 @@ new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"
 
 |`MSET` |Set multiple keys to multiple values |`RedisConstants.VALUES`/"CamelRedis.Values" (Map<String, Object>) |void
 
-|`MSETNX` |Set multiple keys to multiple values, only if none of the keys exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |void
+|`MSETNX` |Set multiple keys to multiple values only if none of the keys exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |void
 
 |`GETSET` |Set the string value of a key and return its old value |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Object
 |=======================================================================
@@ -316,8 +316,8 @@ milliseconds |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TI
 |`GEOADD` |Adds the specified geospatial items (latitude, longitude, name) to the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.LATITUDE`/"CamelRedis.Latitude" (Double), `RedisConstants.LONGITUDE`/"CamelRedis.Longitude" (Double), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 |`GEODIST` |Return the distance between two members in the geospatial index for the specified key  |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUES`/"CamelRedis.Values" (Object[]) |Distance
 |`GEOHASH` |Return valid Geohash strings representing the position of an element in the geospatial index for the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |List<String>
-|`GEOPOS` |Return the positions (longitude,latitude) of an element in the geospatial index for the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |List<Point>
-|`GEORADIUS` |Return the  element in the geospatial index for the specified key which are within the borders of the area specified with the center location and the maximum distance from the center (the radius) |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.LATITUDE`/"CamelRedis.Latitude" (Double), `RedisConstants.LONGITUDE`/"CamelRedis.Longitude" (Double), `RedisConstants.RADIUS`/"CamelRedis.Radius" (Double), `RedisConstants.COUNT`/"CamelRedis.Count" (Integer) |GeoResults
+|`GEOPOS` |Return the positions (longitude, latitude) of an element in the geospatial index for the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |List<Point>
+|`GEORADIUS` |Return the  element in the geospatial index for the specified key which is within the borders of the area specified with the center location and the maximum distance from the center (the radius) |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.LATITUDE`/"CamelRedis.Latitude" (Double), `RedisConstants.LONGITUDE`/"CamelRedis.Longitude" (Double), `RedisConstants.RADIUS`/"CamelRedis.Radius" (Double), `RedisConstants.COUNT`/"CamelRedis.Count" (Integer) |GeoResults
 |`GEORADIUSBYMEMBER` |This command is exactly like GEORADIUS with the sole difference that instead of taking, as the center of the area to query, a longitude and latitude value, it takes the name of a member already existing inside the geospatial index for the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.RADIUS`/"CamelRedis.Radius" (Double), `RedisConstants.COUNT`/"CamelRedis.Count" (Integer) |GeoResults
 |=======================================================================
 

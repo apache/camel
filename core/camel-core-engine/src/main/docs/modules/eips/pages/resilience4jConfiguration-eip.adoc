@@ -11,6 +11,12 @@ This page documents all the specific options for the xref:resilience4j-eip.adoc[
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 See xref:resilience4j-eip.adoc[Resilience4j] EIP for details how to use this EIP.

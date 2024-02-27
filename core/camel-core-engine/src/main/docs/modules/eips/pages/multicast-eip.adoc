@@ -6,14 +6,14 @@
 :supportlevel: Stable
 :tabs-sync-option:
 
-The Multicast EIP allows to route *the same* message to a number of xref:manual::endpoint.adoc[endpoints]
+The Multicast EIP allows routing *the same* message to a number of xref:manual::endpoint.adoc[endpoints]
 and process them in a different way.
 
 image::eip/RecipientListIcon.gif[image]
 
-The Multicast EIP has many features and is also used as baseline for
+The Multicast EIP has many features and is also used as a baseline for
 the xref:recipientList-eip.adoc[Recipient List] and xref:split-eip.adoc[Split] EIPs.
-For example the Multicast EIP is capable of aggregating each multicasted message into a single
+For example, the Multicast EIP is capable of aggregating each multicasted message into a single
 _response_ message as the result after the Multicast EIP.
 
 == Options
@@ -24,19 +24,14 @@ include::partial$eip-options.adoc[]
 
 == Exchange properties
 
-The following exchange properties are set on each `Exchange` that are multicasted:
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelMulticastIndex` | `int` | An index counter that increases for each Exchange being multicasted. The counter starts from 0.
-| `CamelMulticastComplete` | `boolean` | Whether this Exchange is the last.
-|=======================================================================
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using Multicast
 
-The following example shows how to take a request from the direct:a
-endpoint, then multicast these request to direct:x, direct:y, and direct:z.
+The following example shows how to take a request from the `direct:a`
+endpoint, then multicast these requests to `direct:x`, `direct:y`, and `direct:z`.
 
 [tabs]
 ====
@@ -66,9 +61,9 @@ XML::
 ----
 ====
 
-By default, Multicast EIP runs in single threaded mode, which mean
+By default, Multicast EIP runs in single threaded mode, which means
 that the next multicasted message is processed only when the previous is finished.
-This means that direct:b must be done before Camel will call direct:c and so on.
+This means that `direct:b` must be done before Camel will call `direct:c` and so on.
 
 === Multicasting with parallel processing
 
@@ -116,8 +111,8 @@ thread that called the multicast, then make sure to enable the synchronous optio
 
 You may want to continue routing the exchange after the Multicast EIP. 
 
-In the example above then sending to mock:result happens after the Multicast EIP has finished.
-In other words direct:y, direct:y, and direct:z should be completed first, before the message
+In the example below, then sending to `mock:result` happens after the Multicast EIP has finished.
+In other words, `direct:x`, `direct:y`, and `direct:z` should be completed first, before the message
 continues.
 
 [tabs]
@@ -200,7 +195,7 @@ We can refer to the FQN class name with `#class:` syntax as shown below:
 The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
 access to the original input exchange. You may want to use this when you aggregate messages and
 there has been a failure in one of the messages, which you then want to enrich on the original
-input message and return as response; it's the aggregate method with 3 exchange parameters.
+input message and return as response; it's the aggregate method with three exchange parameters.
 ====
 
 === Stop processing in case of exception
@@ -209,12 +204,12 @@ The Multicast EIP will by default continue to process
 the entire exchange even in case one of the
 multicasted messages will throw an exception during routing. 
 
-For example if you want to multicast to 3 destinations and the 2nd
+For example, if you want to multicast to three destinations and the second
 destination fails by an exception. What Camel does by default is to
 process the remainder destinations. You have the chance to deal with the exception
 when aggregating using an `AggregationStrategy`.
 
-But sometimes you just want Camel to stop and let the exception be
+But sometimes you want Camel to stop and let the exception be
 propagated back, and let the Camel xref:manual::error-handler.adoc[Error Handler]
 handle it. You can do this by specifying that it should stop in case of an
 exception occurred. This is done by the `stopOnException` option as
@@ -274,7 +269,7 @@ XML::
 ====
 
 In the example above, then `MyProcessor` is causing a failure and throws an exception.
-This means the Multicast EIP will stop after this, and not the last route (direct:baz).
+This means the Multicast EIP will stop after this, and not the last route (`direct:baz`).
 
 === Preparing the message by deep copying before multicasting
 
@@ -282,16 +277,16 @@ The multicast EIP will copy the source
 exchange and multicast each copy. However, the copy
 is a shallow copy, so in case you have mutable message bodies, then
 any changes will be visible by the other copied messages. If you want to
-use a deep clone copy then you need to use a custom `onPrepare` which
+use a deep clone copy, then you need to use a custom `onPrepare` which
 allows you to create a deep copy of the message body in the `Processor`.
 
-Notice the `onPrepare` can be used for any kind of custom logic which
+Notice the `onPrepare` can be used for any kind of custom logic that
 you would like to execute before the xref:manual::exchange.adoc[Exchange] is
 being multicasted.
 
 == See Also
 
-Because Multicast EIP is baseline for
+Because Multicast EIP is a baseline for
 the xref:recipientList-eip.adoc[Recipient List] and xref:split-eip.adoc[Split] EIPs,
-then you can find more information in those EIPs about features that is also available
+then you can find more information in those EIPs about features that are also available
 with Multicast EIP.

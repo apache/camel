@@ -16,10 +16,10 @@ Camel provides the following policies out-of-the-box:
 |=======================================================================
 | Policy | Description
 | xref:customLoadBalancer-eip.adoc[Custom Load Balancer] | To use a custom load balancer implementation.
-| xref:failover-eip.adoc[Failover Load Balancer] | In case of failures the exchange will be tried on the next endpoint.
-| xref:roundRobin-eip.adoc[Round Robin Load Balancer] | The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.
-| xref:random-eip.adoc[Random Load Balancer] |  The destination endpoints are selected by random.
+| xref:failover-eip.adoc[Fail-over Load Balancer] | In case of failures, the exchange will be tried on the next endpoint.
+| xref:roundRobin-eip.adoc[Round Robin Load Balancer] | The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.
+| xref:random-eip.adoc[Random Load Balancer] |  The destination endpoints are selected randomly.
 | xref:sticky-eip.adoc[Sticky Load Balancer] | Sticky load balancing using an xref:manual::expression.adoc[Expression] to calculate a correlation key to perform the sticky load balancing.
 | xref:topic-eip.adoc[Topic Load Balancer] | Topic which sends to all destinations.
-| xref:weighted-eip.adoc[Weighted Loader Balancer] | Uses a weighted load distribution ratio for each server with respect to others.
+| xref:weighted-eip.adoc[Weighted Loader Balancer] | Use a weighted load distribution ratio for each server with respect to others.
 |=======================================================================

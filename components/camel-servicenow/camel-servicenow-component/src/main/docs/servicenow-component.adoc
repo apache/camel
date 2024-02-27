@@ -16,9 +16,9 @@
 
 The ServiceNow component provides access to ServiceNow platform through their REST API.
 
-The component supports multiple version of ServiceNow platform with default to Helsinki.
+The component supports multiple versions of ServiceNow platform with default to Helsinki.
 
-Maven users will need to add the following dependency to their pom.xml
+Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]

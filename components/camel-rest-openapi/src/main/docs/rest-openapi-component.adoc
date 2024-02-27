@@ -15,10 +15,10 @@
 
 *{component-header}*
 
-The REST OpenApi* configures rest producers from
+The REST OpenApi configures rest producers from
 https://www.openapis.org/[OpenApi] (Open API) specification document and
 delegates to a component implementing the _RestProducerFactory_
-interface. Currently known working components are:
+interface. Currently, known working components are:
 
 * xref:http-component.adoc[http]
 * xref:netty-http-component.adoc[netty-http]
@@ -57,16 +57,18 @@ load the resource, which means that you can use CLASSPATH resources
 (`bean:nameOfBean.methodName`) to get the specification resource,
 failing that OpenApi's own resource loading support.
 
-This component does not act as a HTTP client, it delegates that to
-another component mentioned above. The lookup mechanism searches for a
-single component that implements the _RestProducerFactory_ interface and
-uses that. If the CLASSPATH contains more than one, then the property
+This component does not act as an HTTP client.
+It delegates that to another component mentioned above.
+The lookup mechanism searches for a single component that
+implements the _RestProducerFactory_ interface and
+uses that.
+If the CLASSPATH contains more than one, then the property
 `componentName` should be set to indicate which component to delegate
 to.
 
-Most of the configuration is taken from the OpenApi specification but
+Most of the configuration is taken from the OpenApi specification, but
 the option exists to override those by specifying them on the component
-or on the endpoint. Typically you would just need to override the 
+or on the endpoint. Typically, you would need to override the
 `host` or `basePath` if those differ from the specification.
 
 [NOTE]
@@ -89,7 +91,7 @@ the _RestProducerFactory_ interface for this to work.
 This component's endpoint URI is lenient which means that in addition
 to message headers you can specify REST operation's parameters as
 endpoint parameters, these will be constant for all subsequent
-invocations so it makes sense to use this feature only for parameters
+invocations, so it makes sense to use this feature only for parameters
 that are indeed constant for all invocations -- for example API version
 in path such as `/api/\{version}/users/\{id}`.
 
@@ -112,7 +114,7 @@ include::partial$component-endpoint-options.adoc[]
 Checkout the `rest-openapi-simple` example project in
 the https://github.com/apache/camel-spring-boot-examples repository.
 
-For example if you wanted to use the 
+For example, if you wanted to use the
 https://petstore3.swagger.io/api/v3/[_PetStore_] provided REST API simply
 reference the specification URI and desired operation id from the
 OpenApi specification or download the specification and store it as
@@ -155,7 +157,7 @@ Support in Camel for Spring Boot will auto create the
 `HttpComponent` Spring bean, and you can configure it using
 `application.properties` (or `application.yml`) using prefix
 `camel.component.http.`. We are defining the `petstore`
-component here in order to have a named component in the Camel context
+component here to have a named component in the Camel context
 that we can use to interact with the PetStore REST API, if this is the
 only `rest-openapi` component used we might configure it in the same
 manner (using `application.properties`).
@@ -203,11 +205,11 @@ The value is taken from the `Content-Type` Camel message exchange header.
 |Validates whether the resolved request path is valid for the API operation.
 
 |validation.request.parameter.header.missing
-|Validates whether a HTTP header required by the API operation is present. The header is
+|Validates whether an HTTP header required by the API operation is present. The header is
 expected to be present among the Camel message exchange headers.
 
 |validation.request.parameter.query.missing
-|Validates whether a HTTP query parameter required by the API operation is present. The query parameter is
+|Validates whether an HTTP query parameter required by the API operation is present. The query parameter is
 expected to be present among the Camel message exchange headers.
 |===
 

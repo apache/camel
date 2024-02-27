@@ -8,13 +8,13 @@ image::eip/MessageTranslator.gif[image]
 
 Camel has support for message transformation using several techniques.
 One such technique is xref:dataformats:index.adoc[Data Formats],
-where marshal and unmarshal comes from.
+where marshal and unmarshal come from.
 
-So in other words the xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs
+So in other words, the xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs
 are used with xref:dataformats:index.adoc[Data Formats].
 
-- _Marshal_ - Transforms the message body (such as Java object) into a binary or textual format, ready to be wired over the network.
-- _Unmarshal_ - Transforms data in some binary or textual format (such as received over the network)
+- _Marshal_: Transforms the message body (such as Java object) into a binary or textual format, ready to be wired over the network.
+- _Unmarshal_: Transforms data in some binary or textual format (such as received over the network)
 into a Java object; or some other representation according to the data format being used.
 
 == Example
@@ -24,7 +24,8 @@ Each file is then transformed into Java Objects using xref:dataformats:jaxb-data
 Then a xref:ROOT:bean-component.adoc[Bean] is invoked that takes in the Java object.
 
 Then the reverse operation happens to transform the Java objects back into XML also via JAXB,
-but using the `marshal` operation. And finally the message is routed to a xref:ROOT:jms-component.adoc[JMS] queue.
+but using the `marshal` operation.
+And finally, the message is routed to a xref:ROOT:jms-component.adoc[JMS] queue.
 
 [tabs]
 ====
@@ -72,7 +73,11 @@ YAML::
 
 == Allow Null Body
 
-Sometimes, there are situations where `null` can be a normal value for the body of a message but `null` by default is not an accepted value to unmarshal. To workaround that, it is possible to allow `null` as value to a body to unmarshall using the option `allowNullBody` as shown in the next code snippets:
+Sometimes,
+there are situations where `null` can be a normal value for the body of a message but `null` by default is not an accepted value to unmarshal.
+To work around that,
+it is possible to allow `null` as value to a body to unmarshall
+using the option `allowNullBody` as shown in the next code snippets:
 
 [tabs]
 ====

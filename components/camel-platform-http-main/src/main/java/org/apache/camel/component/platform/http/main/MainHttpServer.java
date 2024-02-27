@@ -18,10 +18,8 @@ package org.apache.camel.component.platform.http.main;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,21 +32,13 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import javax.management.RuntimeMBeanException;
-
-import io.netty.buffer.ByteBufInputStream;
 import io.vertx.core.Handler;
-import io.vertx.core.MultiMap;
-import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.impl.Arguments;
 import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.impl.BlockingHandlerDecorator;
-import io.vertx.ext.web.impl.Utils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -80,9 +70,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
-import org.jolokia.server.core.http.HttpRequestHandler;
-import org.json.simple.JSONAware;
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -343,7 +330,20 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     for (HttpEndpointModel u : endpoints) {
                         String line = "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + u.getUri();
                         if (u.getVerbs() != null) {
-                            line += " (" + u.getVerbs() + ")";
+                            line += "    (" + u.getVerbs() + ")";
+                        }
+                        if (u.getConsumes() != null || u.getProduces() != null) {
+                            line += "    (";
+                            if (u.getConsumes() != null) {
+                                line += "accept:" + u.getConsumes();
+                                if (u.getProduces() != null) {
+                                    line += " ";
+                                }
+                            }
+                            if (u.getProduces() != null) {
+                                line += "produce:" + u.getProduces();
+                            }
+                            line += ")";
                         }
                         LOG.info("    {}", line);
                     }
@@ -454,7 +454,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         live.handler(new BlockingHandlerDecorator(handler, true));
         ready.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/health", null, null);
+        platformHttpComponent.addHttpEndpoint("/q/health", null, null,
+                "application/json", null);
     }
 
     protected void setupJolokia() {
@@ -467,40 +468,11 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         jolokia.method(HttpMethod.GET);
         jolokia.method(HttpMethod.POST);
 
-        Handler<RoutingContext> handler = routingContext -> {
-            HttpRequestHandler requestHandler = jolokiaPlugin.getRequestHandler();
-
-            HttpServerRequest req = routingContext.request();
-            String remainingPath = Utils.pathOffset(req.path(), routingContext);
-
-            JSONAware json = null;
-            try {
-                requestHandler.checkAccess(req.remoteAddress().host(), req.remoteAddress().host(), getOriginOrReferer(req));
-                if (req.method() == HttpMethod.GET) {
-                    json = requestHandler.handleGetRequest(req.uri(), remainingPath, getParams(req.params()));
-                } else {
-                    Arguments.require(routingContext.body() != null, "Missing body");
-                    InputStream inputStream = new ByteBufInputStream(routingContext.body().buffer().getByteBuf());
-                    json = requestHandler.handlePostRequest(req.uri(), inputStream, StandardCharsets.UTF_8.name(),
-                            getParams(req.params()));
-                }
-            } catch (Throwable exp) {
-                json = requestHandler.handleThrowable(
-                        exp instanceof RuntimeMBeanException ? ((RuntimeMBeanException) exp).getTargetException() : exp);
-            } finally {
-                if (json == null)
-                    json = requestHandler.handleThrowable(new Exception("Internal error while handling an exception"));
-
-                routingContext.response()
-                        .setStatusCode(getStatusCode(json))
-                        .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .end(json.toJSONString());
-            }
-        };
-
+        Handler<RoutingContext> handler = (Handler<RoutingContext>) jolokiaPlugin.getHandler();
         jolokia.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/jolokia", null, null);
+        platformHttpComponent.addHttpEndpoint("/q/jolokia", null, null,
+                "text/plain,application/json", null);
     }
 
     protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
@@ -510,29 +482,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 PlatformHttpPluginRegistry.class);
         return result.orElseThrow(() -> new IllegalArgumentException(
                 "Cannot create PlatformHttpPluginRegistry. Make sure camel-platform-http JAR is on classpath."));
-    }
-
-    private Map<String, String[]> getParams(MultiMap params) {
-        Map<String, String[]> response = new HashMap<>();
-        for (String name : params.names()) {
-            response.put(name, params.getAll(name).toArray(new String[0]));
-        }
-        return response;
-    }
-
-    private String getOriginOrReferer(HttpServerRequest req) {
-        String origin = req.getHeader(HttpHeaders.ORIGIN);
-        if (origin == null) {
-            origin = req.getHeader(HttpHeaders.REFERER);
-        }
-        return origin != null ? origin.replaceAll("[\\n\\r]*", "") : null;
-    }
-
-    protected int getStatusCode(JSONAware json) {
-        if (json instanceof JSONObject && ((JSONObject) json).get("status") instanceof Integer) {
-            return (Integer) ((JSONObject) json).get("status");
-        }
-        return 200;
     }
 
     @Override
@@ -769,7 +718,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         dev.handler(new BlockingHandlerDecorator(handler, true));
         devSub.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/dev", null, null);
+        platformHttpComponent.addHttpEndpoint("/q/dev", null, null,
+                "text/plain,application/json", null);
     }
 
     protected void setupUploadConsole(final String dir) {
@@ -850,7 +800,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         upload.handler(new BlockingHandlerDecorator(handler, true));
         uploadDelete.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/upload", "PUT,DELETE", null);
+        platformHttpComponent.addHttpEndpoint("/q/upload", "PUT,DELETE",
+                "multipart/form-data", null, null);
     }
 
 }

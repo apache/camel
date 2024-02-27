@@ -1215,7 +1215,7 @@ Evaluates a Python expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The destination endpoints are selected by random.
+The destination endpoints are selected randomly.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1431,7 +1431,7 @@ Forces a rollback by stopping routing the message
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads
+The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads
 the load evenly.
 ]]>
       </xs:documentation>
@@ -1720,7 +1720,7 @@ Sets the value of a message header
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Allows to set multiple headers on the message at the same time.
+Allows setting multiple headers on the message at the same time.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -3947,7 +3947,7 @@ Enables random backoff. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a reference to an exiting bean to use, which is looked up from the registry.
+Sets a reference to an existing bean to use, which is looked up from the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5714,7 +5714,7 @@ Sets the back off multiplier. Default value: 2.0
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Turn on exponential backk off. Default value: false
+Turn on exponential back off. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12258,6 +12258,7 @@ XML. May be null.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="kamelet" type="xs:boolean"/>
         <xs:attribute name="logMask" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

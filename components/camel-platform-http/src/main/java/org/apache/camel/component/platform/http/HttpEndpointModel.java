@@ -29,6 +29,8 @@ public class HttpEndpointModel implements Comparable<HttpEndpointModel> {
 
     private final String uri;
     private String verbs;
+    private final String consumes;
+    private final String produces;
     private final Consumer consumer;
 
     public HttpEndpointModel(String uri) {
@@ -40,9 +42,15 @@ public class HttpEndpointModel implements Comparable<HttpEndpointModel> {
     }
 
     public HttpEndpointModel(String uri, String verbs, Consumer consumer) {
+        this(uri, verbs, null, null, consumer);
+    }
+
+    public HttpEndpointModel(String uri, String verbs, String consumes, String produces, Consumer consumer) {
         this.uri = uri;
         addVerb(verbs);
         this.consumer = consumer;
+        this.consumes = consumes;
+        this.produces = produces;
     }
 
     public String getUri() {
@@ -69,6 +77,14 @@ public class HttpEndpointModel implements Comparable<HttpEndpointModel> {
                 this.verbs += verb.toUpperCase(Locale.US);
             }
         }
+    }
+
+    public String getConsumes() {
+        return consumes;
+    }
+
+    public String getProduces() {
+        return produces;
     }
 
     @Override

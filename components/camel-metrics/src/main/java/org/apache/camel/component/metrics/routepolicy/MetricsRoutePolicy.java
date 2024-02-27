@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.RoutePolicySupport;
 
 /**
@@ -50,6 +51,8 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
     private MetricsStatistics statistics;
     private Route route;
     private String namePattern = String.format("%s.%s.%s", NAME_TOKEN, ROUTE_ID_TOKEN, TYPE_TOKEN);
+    boolean registerKamelets;
+    boolean registerTemplates = true;
 
     private static final class MetricsStatistics {
         private final String routeId;
@@ -139,6 +142,12 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
     public void onInit(Route route) {
         super.onInit(route);
 
+        ManagementStrategy ms = route.getCamelContext().getManagementStrategy();
+        if (ms != null && ms.getManagementAgent() != null) {
+            registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+            registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+        }
+
         this.route = route;
         try {
             registryService = route.getCamelContext().hasService(MetricsRegistryService.class);
@@ -156,11 +165,16 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
-        // create statistics holder
-        // for know we record only all the timings of a complete exchange (responses)
-        // we have in-flight / total statistics already from camel-core
-        Timer responses = registryService.getMetricsRegistry().timer(createName("responses"));
-        statistics = new MetricsStatistics(route, responses);
+        // skip routes that should not be included
+        boolean skip = (route.isCreatedByKamelet() && !registerKamelets)
+                || (route.isCreatedByRouteTemplate() && !registerTemplates);
+        if (!skip) {
+            // create statistics holder
+            // for know we record only all the timings of a complete exchange (responses)
+            // we have in-flight / total statistics already from camel-core
+            Timer responses = registryService.getMetricsRegistry().timer(createName("responses"));
+            statistics = new MetricsStatistics(route, responses);
+        }
     }
 
     private String createName(String type) {

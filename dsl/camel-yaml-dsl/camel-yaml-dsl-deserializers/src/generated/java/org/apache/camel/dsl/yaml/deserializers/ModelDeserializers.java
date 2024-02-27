@@ -1097,7 +1097,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "method", type = "string", description = "Sets the method name on the bean to use", displayName = "Method"),
-                    @YamlProperty(name = "ref", type = "string", description = "Sets a reference to an exiting bean to use, which is looked up from the registry", displayName = "Ref"),
+                    @YamlProperty(name = "ref", type = "string", description = "Sets a reference to an existing bean to use, which is looked up from the registry", displayName = "Ref"),
                     @YamlProperty(name = "scope", type = "enum:Singleton,Request,Prototype", defaultValue = "Singleton", description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time. When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean while processing a request and you want to call the same bean instance multiple times while processing the request. The bean does not have to be thread-safe as the instance is only called from the same request. When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope. So when using prototype scope then this depends on the bean registry implementation.", displayName = "Scope")
             }
     )
@@ -12274,7 +12274,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Random",
-            description = "The destination endpoints are selected by random.",
+            description = "The destination endpoints are selected randomly.",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -12503,11 +12503,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maximumRedeliveries", type = "number", description = "Sets the maximum redeliveries x = redeliver at most x times 0 = no redeliveries -1 = redeliver forever", displayName = "Maximum Redeliveries"),
                     @YamlProperty(name = "maximumRedeliveryDelay", type = "string", defaultValue = "60000", description = "Sets the maximum delay between redelivery", displayName = "Maximum Redelivery Delay"),
                     @YamlProperty(name = "redeliveryDelay", type = "string", defaultValue = "1000", description = "Sets the initial redelivery delay", displayName = "Redelivery Delay"),
-                    @YamlProperty(name = "retriesExhaustedLogLevel", type = "string", defaultValue = "ERROR", description = "Sets the logging level to use when retries have been exhausted", displayName = "Retries Exhausted Log Level"),
+                    @YamlProperty(name = "retriesExhaustedLogLevel", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF", defaultValue = "ERROR", description = "Sets the logging level to use when retries have been exhausted", displayName = "Retries Exhausted Log Level"),
                     @YamlProperty(name = "retryAttemptedLogInterval", type = "number", defaultValue = "1", description = "Sets the interval to use for logging retry attempts", displayName = "Retry Attempted Log Interval"),
-                    @YamlProperty(name = "retryAttemptedLogLevel", type = "string", defaultValue = "DEBUG", description = "Sets the logging level to use for logging retry attempts", displayName = "Retry Attempted Log Level"),
+                    @YamlProperty(name = "retryAttemptedLogLevel", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF", defaultValue = "DEBUG", description = "Sets the logging level to use for logging retry attempts", displayName = "Retry Attempted Log Level"),
                     @YamlProperty(name = "useCollisionAvoidance", type = "boolean", description = "Turn on collision avoidance.", displayName = "Use Collision Avoidance"),
-                    @YamlProperty(name = "useExponentialBackOff", type = "boolean", description = "Turn on exponential backk off", displayName = "Use Exponential Back Off")
+                    @YamlProperty(name = "useExponentialBackOff", type = "boolean", description = "Turn on exponential back off", displayName = "Use Exponential Back Off")
             }
     )
     public static class RedeliveryPolicyDefinitionDeserializer extends YamlDeserializerBase<RedeliveryPolicyDefinition> {
@@ -14580,7 +14580,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Round Robin",
-            description = "The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.",
+            description = "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -16287,7 +16287,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetHeadersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Headers",
-            description = "Allows to set multiple headers on the message at the same time.",
+            description = "Allows setting multiple headers on the message at the same time.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),

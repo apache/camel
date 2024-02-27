@@ -385,6 +385,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         // use blocking handler as the task can take longer time to complete
         metrics.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/metrics", null, null);
+        platformHttpComponent.addHttpEndpoint("/q/metrics", null,
+                null, format, null);
     }
 }

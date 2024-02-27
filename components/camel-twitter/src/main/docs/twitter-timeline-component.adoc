@@ -14,8 +14,15 @@
 
 *{component-header}*
 
-The Twitter Timeline component consumes twitter timeline or update the status of specific user.
-The timelineType can be one of: public, home, user, mentions or retweetsofme.
+The Twitter Timeline component consumes twitter timeline or updates the status of specific user.
+
+The `timelineType` can be one of:
+
+* `public`
+* `home`
+* `user`
+* `mentions`
+* `retweetsofme`
 
 // component-configure options: START
 

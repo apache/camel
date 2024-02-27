@@ -14,8 +14,8 @@
 
 *{component-header}*
 
-The RSS component is used for polling RSS feeds. Camel will default
-poll the feed every 60th seconds.
+The RSS component is used for polling RSS feeds. By default, Camel will
+poll the feed every 60th second.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -30,7 +30,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-*Note:* The component currently only supports polling (consuming) feeds.
+NOTE: The component currently only supports consuming feeds.
 
 == URI format
 
@@ -74,7 +74,7 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 == Example
 
 If the URL for the RSS feed uses query parameters, this component will
-resolve them. For example if the feed uses `alt=rss`, then the following example will be resolved:
+resolve them. For example, if the feed uses `alt=rss`, then the following example will be resolved:
 
 [source,java]
 ----

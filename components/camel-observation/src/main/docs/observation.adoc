@@ -14,7 +14,7 @@
 The Micrometer Observation component is used for performing observability of incoming and
 outgoing Camel messages using https://micrometer.io/docs/observation[Micrometer Observation].
 
-By configuring the `ObservationRegistry` you can add behaviour to your observations such as metrics (e.g. via `Micrometer`) or tracing (e.g. via `OpenTelemetry` or `Brave`) or any custom behaviour.
+By configuring the `ObservationRegistry` you can add behaviour to your observations such as metrics (e.g., via `Micrometer`) or tracing (e.g., via `OpenTelemetry` or `Brave`) or any custom behaviour.
 
 Events are captured for incoming and outgoing messages being sent to/from Camel.
 
@@ -30,7 +30,7 @@ The configuration properties for the Micrometer Observations are:
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
 uses the rules from Intercept.
 |encoding |false| Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
-Dashes need for instances to be encoded for JMS property keys.
+Dashes required for instances to be encoded for JMS property keys.
 
 |=======================================================================
 
@@ -54,7 +54,7 @@ MeterRegistry meterRegistry = new SimpleMeterRegistry();
 
 // This component comes from Micrometer Tracing - it's an abstraction over tracers
 io.micrometer.tracing.Tracer otelTracer = otelTracer();
-// This component comes from Micrometer Tracing - example of B3 header propagation via OpenTelemetry
+// This component comes from Micrometer Tracing - an example of B3 header propagation via OpenTelemetry
 OtelPropagator otelPropagator = new OtelPropagator(ContextPropagators.create(B3Propagator.injectingSingleHeader()), tracer);
 
 // Configuration ObservationRegistry for metrics
@@ -63,7 +63,7 @@ observationRegistry.observationConfig().observationHandler(new DefaultMeterObser
 // Configuration ObservationRegistry for tracing
 observationRegistry.observationConfig().observationHandler(new ObservationHandler.FirstMatchingCompositeObservationHandler(new CamelPropagatingSenderTracingObservationHandler<>(otelTracer, otelPropagator), new CamelPropagatingReceiverTracingObservationHandler<>(otelTracer, otelPropagator), new CamelDefaultTracingObservationHandler(otelTracer)));
 
-// Both components ObserationRegistry and MeterRegistry should be set manually or they will be resolved from CamelContext if present
+// Both components ObservationRegistry and MeterRegistry should be set manually, or they will be resolved from CamelContext if present
 micrometerObservationTracer.setObservationRegistry(observationRegistry);
 micrometerObservationTracer.setTracer(otelTracer);
 
@@ -75,7 +75,7 @@ micrometerObservationTracer.init(context);
 
 // TODO: Not done yet
 
-If you are using Spring Boot then you can add
+If you are using Spring Boot, then you can add
 the `camel-observation-starter` dependency, and turn on OpenTracing by annotating
 the main class with `@CamelObservation`.
 

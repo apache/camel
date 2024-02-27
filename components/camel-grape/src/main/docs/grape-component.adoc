@@ -17,7 +17,7 @@
 
 http://docs.groovy-lang.org/latest/html/documentation/grape.html[Grape]
 component allows you to fetch, load and manage additional jars when
-`CamelContext` is running. In practice with Camel Grape component you
+`CamelContext` is running. In practice with the Camel Grape component you
 can add new components, data formats and beans to your `CamelContext`
 without the restart of the router.
 
@@ -53,7 +53,7 @@ import static org.apache.camel.component.grape.GrapeComponent.grapeCamelContext;
 CamelContext camelContext = grapeCamelContext(new DefaultCamelContext());
 --------------------------------------------------------------------------------
 
-You can also set up the Groovy class loader used be Camel context by
+You can also set up the Groovy class loader used by the Camel context by
 yourself:
 
 [source,java]
@@ -61,7 +61,7 @@ yourself:
 camelContext.setApplicationContextClassLoader(new GroovyClassLoader(myClassLoader));
 ------------------------------------------------------------------------------------
 
-For example the following snippet loads Camel FTP component:
+For example, the following snippet loads Camel FTP component:
 
 [source,java]
 ------------------------------------------------
@@ -96,16 +96,16 @@ for this component:
 
 == Default payload type
 
-By default Camel Grape component operates on the String payloads:
+By default, the Camel Grape component operates on the String payloads:
 
 [source,java]
 ------------------------------------------------------------------------------------------------
 producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/camel-ftp/2.15.2");
 ------------------------------------------------------------------------------------------------
 
-But of course Camel build-in xref:manual::type-converter.adoc[type conversion
+Of course, Camel build-in xref:manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
-example below Camel automatically converts binary payload into the
+example below, Camel automatically converts binary payload into the
 String:
 
 [source,java]
@@ -115,7 +115,7 @@ producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/cam
 
 == Loading components at runtime
 
-In order to load the new component at the router runtime, just grab the
+To load the new component at the router runtime, just grab the
 jar containing the given component:
 
 [source,java]
@@ -127,7 +127,7 @@ template.sendBody("stream:out", "msg");
 
 == Loading processors bean at runtime
 
-In order to load the new processor bean  with your custom business login
+To load the new processor bean with your custom business login
 at the router runtime, just grab the jar containing the required bean:
 
 [source,java]
@@ -145,7 +145,7 @@ int price = template.requestBody("bean:com.example.PricingBean?method=currentPro
 After you download new jar, you usually would like to have it loaded by
 the Camel again after the restart of the `CamelContext`. It is certainly
 possible, as Grape component keeps track of the jar files you have
-installed. In order to load again the installed jars on the context
+installed. To load again the installed jars on the context
 startup, use the `GrapeEndpoint.loadPatches()` method in your route: 
 
  
@@ -170,7 +170,7 @@ camelContext.addRoutes(
 == Managing the installed jars
 
 If you would like to check what jars have been installed into the given
-`CamelContext`, send message to the grape endpoint with
+`CamelContext`, send a message to the grape endpoint with
 the `CamelGrapeCommand` header set to `GrapeCommand.listPatches`:
 
 [source,java]
@@ -180,7 +180,7 @@ from("netty-http:http://0.0.0.0:80/patches").
     to("grape:list");
 ----------------------------------------------------------------------------------------
 
-Connecting the to the route defined above using the HTTP client returns
+Connecting to the route defined above using the HTTP client returns
 the list of the jars installed by Grape component:
 
 [source,bash]

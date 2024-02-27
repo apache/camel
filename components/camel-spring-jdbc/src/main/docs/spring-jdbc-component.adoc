@@ -18,7 +18,7 @@
 The Spring JDBC component is an extension of the JDBC component with one additional feature
 to integrate with Spring Transaction Manager.
 
-For general use of this component then see the xref:jdbc-component.adoc[JDBC Component].
+NOTE: For general use of this component, see the xref:jdbc-component.adoc[JDBC Component].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

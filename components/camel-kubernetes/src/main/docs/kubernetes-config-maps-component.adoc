@@ -47,7 +47,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Kubernetes ConfigMaps Producer Examples
 
-- listConfigMaps: this operation list the configmaps
+- listConfigMaps: this operation lists the configmaps
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -56,9 +56,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of ConfigMaps from your cluster
+This operation returns a List of ConfigMaps from your cluster
 
-- listConfigMapsByLabels: this operation list the configmaps selected by label
+- listConfigMapsByLabels: this operation lists the configmaps selected by label
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of ConfigMaps from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a List of ConfigMaps from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 == Kubernetes ConfigMaps Consumer Example
 

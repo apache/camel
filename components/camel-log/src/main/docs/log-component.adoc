@@ -18,7 +18,7 @@
 The Log component logs message exchanges to the underlying logging
 mechanism.
 
-Camel uses http://www.slf4j.org/[SLF4J] which allows you to configure
+Camel uses http://www.slf4j.org/[SLF4J], which allows you to configure
 logging via, among others:
 
 * Log4j
@@ -42,7 +42,7 @@ can append query options to the URI in the following format,
 If there's single instance
 of `org.slf4j.Logger` found in the Registry, the *loggingCategory* is no
 longer used to create logger instance. The registered instance is used
-instead. Also it is possible to reference particular `Logger` instance
+instead. Also, it is possible to reference particular `Logger` instance
 using `?logger=#myLogger` URI parameter. Eventually, if there's no
 registered and URI `logger` parameter, the logger instance is created
 using *loggingCategory*.
@@ -61,11 +61,9 @@ also ships with the `Throughput` logger, which is used whenever the
 
 [TIP]
 ====
-*Also a log in the DSL*
-
 There is also a `log` directly in the DSL, but it has a different
-purpose. Its meant for lightweight and human logs. See more details at
-LogEIP.
+purpose. It's meant for lightweight and human logs. See more details at
+xref:eips:log-eip.adoc[LogEIP].
 ====
 
 
@@ -129,7 +127,7 @@ from("activemq:orders").
 == Throughput logger with groupInterval sample
 
 This route will result in message stats logged every 10s, with an
-initial 60s delay and stats should be displayed even if there isn't any
+initial 60s delay, and stats should be displayed even if there isn't any
 message traffic.
 
 [source,java]
@@ -240,16 +238,16 @@ Component is intelligent enough to pick it up automatically.
 ====
 The `ExchangeFormatter` gets applied to *all Log endpoints within
 that Camel Context*. If you need different ExchangeFormatters for
-different endpoints, just instantiate the LogComponent as many times as
+different endpoints, instantiate the LogComponent as many times as
 needed, and use the relevant bean name as the endpoint prefix.
 ====
 
 
 When using a custom log formatter, you
 can specify parameters in the log uri, which gets configured on the
-custom log formatter. Though when you do that you should define the
-"logFormatter" as prototype scoped so its not shared if you have
-different parameters, eg:
+custom log formatter. Though when you do that, you should define the
+"logFormatter" as prototype scoped, so it's not shared if you have
+different parameters, e.g.:
 
 [source,xml]
 ----

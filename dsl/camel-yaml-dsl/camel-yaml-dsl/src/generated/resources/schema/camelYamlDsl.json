@@ -552,7 +552,7 @@
             "ref" : {
               "type" : "string",
               "title" : "Ref",
-              "description" : "Sets a reference to an exiting bean to use, which is looked up from the registry"
+              "description" : "Sets a reference to an existing bean to use, which is looked up from the registry"
             },
             "scope" : {
               "type" : "string",
@@ -4362,7 +4362,8 @@
             "type" : "string",
             "title" : "Retries Exhausted Log Level",
             "description" : "Sets the logging level to use when retries have been exhausted",
-            "default" : "ERROR"
+            "default" : "ERROR",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "retryAttemptedLogInterval" : {
             "type" : "number",
@@ -4374,7 +4375,8 @@
             "type" : "string",
             "title" : "Retry Attempted Log Level",
             "description" : "Sets the logging level to use for logging retry attempts",
-            "default" : "DEBUG"
+            "default" : "DEBUG",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "useCollisionAvoidance" : {
             "type" : "boolean",
@@ -4384,7 +4386,7 @@
           "useExponentialBackOff" : {
             "type" : "boolean",
             "title" : "Use Exponential Back Off",
-            "description" : "Turn on exponential backk off"
+            "description" : "Turn on exponential back off"
           }
         }
       },
@@ -5925,7 +5927,7 @@
       },
       "org.apache.camel.model.SetHeadersDefinition" : {
         "title" : "Set Headers",
-        "description" : "Allows to set multiple headers on the message at the same time.",
+        "description" : "Allows setting multiple headers on the message at the same time.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -13992,7 +13994,7 @@
       },
       "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition" : {
         "title" : "Random",
-        "description" : "The destination endpoints are selected by random.",
+        "description" : "The destination endpoints are selected randomly.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -14005,7 +14007,7 @@
       },
       "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition" : {
         "title" : "Round Robin",
-        "description" : "The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.",
+        "description" : "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {

@@ -48,12 +48,12 @@ include::partial$component-endpoint-options.adoc[]
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
-all of the endpoints. The endpoint URI MUST contain a prefix.
+all the endpoints. The endpoint URI MUST contain a prefix.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
 the format *`CamelTwilio.<option>`*. Note that the *`inBody`* option
-overrides message header, i.e. the endpoint option *`inBody=option`*
+overrides message header, i.e., the endpoint option *`inBody=option`*
 would override a *`CamelTwilio.option`* header.
 
 Endpoint can be one of:
@@ -61,18 +61,17 @@ Endpoint can be one of:
 [width="100%",cols="20%,20%,60%",options="header"]
 |=======================================================================
 | Endpoint  | Shorthand Alias | Description
-| *creator* | create          | Make the request to the Twilio API to perform the create
-| *deleter* | delete          | Make the request to the Twilio API to perform the delete
-| *fetcher* | fetch           | Make the request to the Twilio API to perform the fetch
-| *reader*  | read            | Make the request to the Twilio API to perform the read
-| *updater* | update          | Make the request to the Twilio API to perform the update
+| *creator* | create          | Make the request to the Twilio API to perform the `create`
+| *deleter* | delete          | Make the request to the Twilio API to perform the `delete`
+| *fetcher* | fetch           | Make the request to the Twilio API to perform the `fetch`
+| *reader*  | read            | Make the request to the Twilio API to perform the `read`
+| *updater* | update          | Make the request to the Twilio API to perform the `update`
 |=======================================================================
 
 Available endpoints differ depending on the endpoint prefixes.
 
-For more information on the endpoints and options see API documentation at:
-https://www.twilio.com/docs/libraries/reference/twilio-java/index.html
-
+For more information on the endpoints and options,
+see https://www.twilio.com/docs/libraries/reference/twilio-java/index.html[Twilio API documentation].
 
 
 include::spring-boot:partial$starter.adoc[]

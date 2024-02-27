@@ -15,7 +15,8 @@
 
 *{component-header}*
 
-This component can be used to watch file modification events in folder. It is based on https://github.com/gmethvin/directory-watcher[gmethvin/directory-watcher].
+This component can be used to watch file modification events in the folder.
+It is based on the project https://github.com/gmethvin/directory-watcher[directory-watcher].
 
 == URI Options
 
@@ -53,7 +54,7 @@ from("file-watch://some-directory?events=DELETE,CREATE&antInclude=**/*.txt")
     .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
 ----
 
-=== Create snapshot of file when modified:
+=== Create a snapshot of file when modified:
 
 [source,java]
 ----

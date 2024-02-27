@@ -38,7 +38,7 @@ public class TwoManagedNamePatternTest extends TestSupport {
 
     protected CamelContext createCamelContext(String name, String pattern) throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.setName(name);
+        context.getCamelContextExtension().setName(name);
         context.getManagementNameStrategy().setNamePattern(pattern);
         return context;
     }

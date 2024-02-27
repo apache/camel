@@ -86,6 +86,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
     private Boolean template;
+    private Boolean kamelet;
     private RestDefinition restDefinition;
     private RestBindingDefinition restBindingDefinition;
     private InputTypeDefinition inputType;
@@ -1178,7 +1179,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * This route is created from a route template.
+     * This route is created from a route template (or from a Kamelet).
      */
     public void setTemplate(Boolean template) {
         this.template = template;
@@ -1188,6 +1189,19 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     @Metadata(label = "advanced")
     public Boolean isTemplate() {
         return template;
+    }
+
+    /**
+     * This route is created from a Kamelet.
+     */
+    public void setKamelet(Boolean kamelet) {
+        this.kamelet = kamelet;
+    }
+
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    public Boolean isKamelet() {
+        return kamelet;
     }
 
     public RestDefinition getRestDefinition() {

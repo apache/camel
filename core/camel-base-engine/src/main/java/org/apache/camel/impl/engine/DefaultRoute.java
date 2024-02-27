@@ -142,6 +142,21 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    public boolean isCreatedByRestDsl() {
+        return "true".equals(properties.get(Route.REST_PROPERTY));
+    }
+
+    @Override
+    public boolean isCreatedByRouteTemplate() {
+        return "true".equals(properties.get(Route.TEMPLATE_PROPERTY));
+    }
+
+    @Override
+    public boolean isCreatedByKamelet() {
+        return "true".equals(properties.get(Route.KAMELET_PROPERTY));
+    }
+
+    @Override
     public String getGroup() {
         return (String) properties.get(Route.GROUP_PROPERTY);
     }

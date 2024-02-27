@@ -580,8 +580,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
     }
     /**
-     * Azure Storage Datalake Service (camel-azure-storage-datalake)
-     * Sends and receives files to/from Azure DataLake Storage.
+     * Azure Storage Data Lake Service (camel-azure-storage-datalake)
+     * Sends and receives files to/from Azure Data Lake Storage.
      * 
      * Category: cloud,file,bigdata
      * Since: 3.8
@@ -2365,7 +2365,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JSLT (camel-jslt)
-     * Query or transform JSON payloads using an JSLT.
+     * Query or transform JSON payloads using JSLT.
      * 
      * Category: transformation
      * Since: 3.1
@@ -3818,7 +3818,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Splunk HEC (camel-splunk-hec)
-     * The splunk component allows to publish events in Splunk using the HTTP
+     * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
      * 
      * Category: monitoring
@@ -3884,7 +3884,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
-     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
      * 
      * Category: messaging
      * Since: 3.8
@@ -3989,7 +3989,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Stomp (camel-stomp)
-     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
+     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
      * Protocol) compliant message brokers.
      * 
      * Category: messaging
@@ -4042,7 +4042,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Telegram (camel-telegram)
-     * Send and receive messages acting as a Telegram Bot Telegram Bot API.
+     * Send and receive messages using the Telegram Bot API.
      * 
      * Category: cloud,api,chat
      * Since: 2.18
@@ -4305,8 +4305,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.WhatsappComponentBuilderFactory.whatsapp();
     }
     /**
-     * Wordpress (camel-wordpress)
-     * Manage posts and users using Wordpress API.
+     * WordPress (camel-wordpress)
+     * Manage posts and users using the WordPress API.
      * 
      * Category: cloud,api,cms
      * Since: 2.21
@@ -4436,8 +4436,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Zeebe (camel-zeebe)
-     * Zeebe component which does integrage with Camunda Zeebe to interact with
-     * the API.
+     * Zeebe component which integrates with Camunda Zeebe to interact with the
+     * API.
      * 
      * Category: workflow,saas
      * Since: 3.21

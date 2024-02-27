@@ -29,15 +29,23 @@ The To and xref:toD-eip.adoc[ToD] EIPs are the most common patterns to use in Ca
 include::partial$eip-options.adoc[]
 // eip options: END
 
-=== Different between To and ToD
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Different between To and ToD
 
 The `to` is used for sending messages to a static xref:message-endpoint.adoc[endpoint].
-In other words `to` sends message only to the *same* endpoint.
+In other words `to` sends messages only to the *same* endpoint.
 
-The `toD` is used for sending message to a dynamic xref:message-endpoint.adoc[endpoint].
+The `toD` is used for sending messages to a dynamic xref:message-endpoint.adoc[endpoint].
 The dynamic endpoint is evaluated _on-demand_ by an xref:manual:ROOT:expression.adoc[Expression].
 By default, the xref:components:languages:simple-language.adoc[Simple] expression is used to compute
 the dynamic endpoint URI.
+
+NOTE: the Java DSL also provides a `toF` EIP, which can be used to avoid concatenating route parameters and making the code harder to read.
 
 == Using To
 

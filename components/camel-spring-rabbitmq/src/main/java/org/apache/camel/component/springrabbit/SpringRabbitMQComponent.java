@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -112,6 +113,11 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "producer", defaultValue = "false",
               description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown.")
     private boolean allowNullBody;
+    @Metadata(label = "advanced",
+              description = "Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each element:"
+                            + " consumer. exchange. queue. binding. dlq.exchange. dlq.queue. dlq.binding."
+                            + " For example to declare a queue with message ttl argument: queue.x-message-ttl=60000")
+    private Map<String, Object> args;
 
     @Override
     protected void doInit() throws Exception {
@@ -153,7 +159,14 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setRejectAndDontRequeue(rejectAndDontRequeue);
         endpoint.setAllowNullBody(allowNullBody);
 
-        endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
+        if (args != null) {
+            Map<String, Object> copy = new HashMap<>(args);
+            Map<String, Object> extra = PropertiesHelper.extractProperties(parameters, ARG_PREFIX);
+            copy.putAll(extra);
+            endpoint.setArgs(copy);
+        } else {
+            endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
+        }
         setProperties(endpoint, parameters);
 
         return endpoint;
@@ -357,5 +370,13 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
 
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
+    }
+
+    public Map<String, Object> getArgs() {
+        return args;
+    }
+
+    public void setArgs(Map<String, Object> args) {
+        this.args = args;
     }
 }

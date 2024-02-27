@@ -22,34 +22,29 @@ Define a channel for each recipient. Then use a Recipient List to inspect an inc
 include::partial$eip-options.adoc[]
 // eip options: END
 
-
 TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
 
 == Exchange properties
 
-The following exchange properties are set on each `Exchange` that are sent by the recipient list:
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelRecipientListEndpoint` | `String` | Uri of the `Endpoint` that the message was sent to.
-|=======================================================================
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using Recipient List
 
-The Recipient List EIP allows to route *the same* message to a number of xref:manual::endpoint.adoc[endpoints]
+The Recipient List EIP allows routing *the same* message to a number of xref:manual::endpoint.adoc[endpoints]
 and process them in a different way.
 
-There can be 1 or more destinations, and Camel will execute them sequentially (by default).
+There can be one or more destinations, and Camel will execute them sequentially (by default).
 However, a parallel mode exists which allows processing messages concurrently.
 
 The Recipient List EIP has many features and is based on the xref:multicast-eip.adoc[Multicast] EIP.
-For example the Recipient List EIP is capable of aggregating each message into a single
+For example, the Recipient List EIP is capable of aggregating each message into a single
 _response_ message as the result after the Recipient List EIP.
 
 === Using Static Recipient List
 
-The following example shows how to route a request from an input queue:a endpoint
+The following example shows how to route a request from an input `queue:a` endpoint
 to a static list of destinations, using `constant`:
 
 [tabs]
@@ -128,7 +123,7 @@ By default, Camel uses comma as delimiter, but this option lets you specify a cu
 ----
 <route>
   <from uri="direct:a"/>
-  <!-- use semi-colon as a delimiter for String based values -->
+  <!-- use semicolon as a delimiter for String-based values -->
   <recipientList delimiter=";">
     <header>myHeader</header>
   </recipientList>
@@ -136,10 +131,11 @@ By default, Camel uses comma as delimiter, but this option lets you specify a cu
 ----
 
 So if *myHeader* contains a `String` with the value `"activemq:queue:foo;activemq:topic:hello ; log:bar"`
-then Camel will split the `String` using the delimiter given in the XML that was comma, resulting into 3 endpoints to send to.
-You can use spaces between the endpoints as Camel will trim the value when it look up the endpoint to send to.
+then Camel will split the `String` using the delimiter given in the XML that was comma,
+resulting into three endpoints to send to.
+You can use spaces between the endpoints as Camel will trim the value when it looks up the endpoint to send to.
 
-And in Java DSL, you specify the delimiter as 2nd parameter as shown below:
+And in Java DSL, you specify the delimiter as second parameter as shown below:
 
 [source,java]
 ----
@@ -150,7 +146,7 @@ from("direct:a")
 === Using parallel processing
 
 The Recipient List supports `parallelProcessing` similar to what xref:multicast-eip.adoc[Multicast] and xref:split-eip.adoc[Split] EIPs have as well.
-When using parallel processing then a thread pool is used to have concurrent tasks sending the `Exchange`
+When using parallel processing, then a thread pool is used to have concurrent tasks sending the `Exchange`
 to multiple recipients concurrently.
 
 You can enable parallel mode using `parallelProcessing` as shown:
@@ -193,12 +189,12 @@ the same way you would do it for the `aggregationStrategy`. By default, Camel us
 The Recipient List EIP will by default continue to process the entire exchange even in case one of the
 sub messages will throw an exception during routing.
 
-For example if you want to route to 3 destinations and the 2nd
+For example, if you want to route to three destinations and the second
 destination fails by an exception. What Camel does by default is to
 process the remainder destinations. You have the chance to deal with the exception
 when aggregating using an `AggregationStrategy`.
 
-But sometimes you just want Camel to stop and let the exception be
+But sometimes you want the Camel to stop and let the exception be
 propagated back, and let the Camel xref:manual::error-handler.adoc[Error Handler]
 handle it. You can do this by specifying that it should stop in case of an
 exception occurred. This is done by the `stopOnException` option as
@@ -254,10 +250,10 @@ XML::
 ====
 
 In this example suppose a message is sent with the header `whereTo=direct:foo,direct:bar,direct:baz`
-that means the recipient list sends messages to those 3 endpoints.
+that means the recipient list sends messages to those three endpoints.
 
 Now suppose that the `MyProcessor` is causing a failure and throws an exception.
-This means the Recipient List EIP will stop after this, and not the last route (direct:baz).
+This means the Recipient List EIP will stop after this, and not the last route (`direct:baz`).
 
 === Ignore invalid endpoints
 
@@ -301,9 +297,11 @@ For example, you can set a timeout value of 20 sec.
 
 [WARNING]
 .Tasks may keep running
-If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.
+If the timeout is reached with running tasks still remaining,
+certain tasks for which it is challenging for Camel to shut down in a graceful manner may continue to run.
+So use this option with a bit of care.
 
-For example in the unit test below you can see that we multicast the message to 3 destinations.
+For example, in the unit test below, you can see that we multicast the message to three destinations.
 We have a timeout of 2 seconds, which means only the last two messages can be completed within the timeframe.
 This means we will only aggregate the last two which yields a result aggregation which outputs "BC".
 
@@ -340,7 +338,7 @@ This allows you to deal with the timeout in the `AggregationStrategy` if you rea
 .Timeout is total
 ====
 The timeout is total, which means that after X time, Camel will aggregate the messages which have completed within the timeframe.
-The remainders will be cancelled. Camel will also only invoke the `timeout` method in the `TimeoutAwareAggregationStrategy` once, for the first index which caused the timeout.
+The remainder will be canceled. Camel will also only invoke the `timeout` method in the `TimeoutAwareAggregationStrategy` once, for the first index which caused the timeout.
 ====
 
 === Using ExchangePattern in recipients
@@ -350,7 +348,7 @@ a message to a recipient using a different exchange pattern. For example, you ma
 but want to use `InOut` exchange pattern with a recipient list. You can configure the exchange pattern directly in the
 recipient endpoints.
 
-For example in the route below we pick up new files (which will be started as `InOnly`) and then route to a recipient list.
+For example, in the route below we pick up new files (which will be started as `InOnly`) and then route to a recipient list.
 As we want to use `InOut` with the ActiveMQ (JMS) endpoint we can now specify this using the `exchangePattern=InOut` option.
 Then the response from the JMS request/reply will then be continued routed, and thus the response is what will be stored
 in as a file in the outbox directory.
@@ -374,6 +372,6 @@ See more details at xref:event-message.adoc[Event Message] and xref:requestReply
 
 == See Also
 
-Because Recipient List EIP is based from the xref:multicast-eip.adoc[Multicast],
+Because Recipient List EIP is based on the xref:multicast-eip.adoc[Multicast],
 then you can find more information in xref:multicast-eip.adoc[Multicast] EIP
-about features that is also available with Recipient List EIP.
+about features that are also available with Recipient List EIP.

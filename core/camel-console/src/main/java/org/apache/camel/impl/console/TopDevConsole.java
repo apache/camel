@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
@@ -270,6 +271,7 @@ public class TopDevConsole extends AbstractDevConsole {
         List<Route> routes = getCamelContext().getRoutes();
         routes.stream()
                 .map(route -> mcc.getManagedRoute(route.getRouteId()))
+                .filter(Objects::nonNull)
                 .filter(r -> acceptRoute(r, filter))
                 .sorted(TopDevConsole::top)
                 .limit(max)
@@ -284,6 +286,7 @@ public class TopDevConsole extends AbstractDevConsole {
 
         routes.stream()
                 .map(route -> mcc.getManagedRoute(route.getRouteId()))
+                .filter(Objects::nonNull)
                 .filter(r -> acceptRoute(r, subPath))
                 .forEach(r -> {
                     try {

@@ -22,7 +22,7 @@ generates these DTOs.
 ====
 Developers wishing to contribute to the component are instructed
 to look at the https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component/README.md[README.md] file on instructions on how to get started and
-setup your environment for running integration tests.
+set up your environment for running integration tests.
 ====
 
 == Getting Started
@@ -52,7 +52,7 @@ Spring Boot users should use the starter instead.
 ----
 
 . *Generate DTOs*. Optionally, generate Java DTOs to represent your salesforce objects. This step isn't a hard requirement per se, but most use cases will benefit from the type safety and auto-completion. Use the <<MavenPlugin,maven plugin>> to generate DTOs for the salesforce objects you'll be working with.
-. *Configure authentication*. Using the OAuth key and secret you generated previously, configure salesforce <<AuthenticatingToSalesforce,authentication>>. 
+. *Configure authentication*. Using the OAuth key and secret, you generated previously, configure salesforce <<AuthenticatingToSalesforce,authentication>>.
 . *Create routes*. Starting creating routes that interact with salesforce!
 
 
@@ -80,7 +80,7 @@ The component supports three OAuth authentication flows:
 * https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm[OAuth 2.0 Refresh Token Flow]
 * https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm[OAuth 2.0 JWT Bearer Token Flow]
 
-For each of the flows, different sets of properties needs to be set:
+For each of the flows, different sets of properties need to be set:
 
 .Properties to set for each authentication flow
 |===
@@ -106,7 +106,7 @@ Using Username-Password Flow in production is not encouraged.
 ====
 The certificate used in JWT Bearer Token Flow can be a self-signed
 certificate. The KeyStore holding the certificate and the private key
-must contain only single certificate-private key entry.
+must contain only a single certificate-private key entry.
 ====
 
 == General Usage
@@ -143,7 +143,7 @@ via inbound message headers, header names that start with `Sforce` or
 response headers that start with `Sforce` will be present in the outbound
 message headers.
 
-For example to fetch API limits you can specify:
+For example, to fetch API limits, you can specify:
 
 [source,java]
 ----
@@ -209,8 +209,8 @@ The following operations are supported:
 * <<upsertSObject,upsertSObject>> - Inserts or updates an SObject using an External Id.
 * <<deleteSObjectWithId,deleteSObjectWithId>> - Deletes an SObject using an External Id.
 * <<query,query>> - Runs a Salesforce SOQL query.
-* <<queryMore,queryMore>> - Retrieves more results (in case of large number of
-results) using result link returned from the 'query' API.
+* <<queryMore,queryMore>> - Retrieves more results (in case of a large number of
+results) using the result link returned from the 'query' API.
 * <<queryAll,queryAll>> - Runs a SOQL query. Unlike the query operation, queryAll returns records that are deleted because of a merge or delete. queryAll also returns information about archived task and event records.
 * <<sosl_search,search>> - Runs a Salesforce SOSL query.
 * <<apexCall,apexCall>> - Executes a user defined APEX REST API call.
@@ -425,7 +425,7 @@ Retrieves the specified blob field from an individual record.
 | Parameter | Type | Description | Default | Required
 
 | `sObjectBlobFieldName` | `String`  | SOSL query | |x
-| `sObjectName` | `String`  | Name of SObject, e.g. Account | | Required if SObject not supplied in body
+| `sObjectName` | `String`  | Name of SObject, e.g., Account | | Required if SObject not supplied in body
 | `sObjectId` | `String`  | Id of SObject | | Required if SObject not supplied in body
 | Body | `AbstractSObjectBase` | SObject to determine type and Id from. If not supplied, `sObjectId`
 and `sObjectName` parameters will be used. | | Required if `sObjectId`
@@ -639,7 +639,7 @@ The important thing to remember is the priority of the values specified in these
 . value in message header takes precedence before template value
 . value in template is set if no other value in header or body was given
 
-For example to send one record for approval using values in headers use:
+For example, to send one record for approval using values in headers use:
 
 Given a route:
 
@@ -709,11 +709,11 @@ Composite API supports only JSON payloads.
 ====
 As with the batch API, the results can vary from API to API so the body of each `SObjectCompositeResult` instance is given as a
 `java.lang.Object`. In most cases the result will be a `java.util.Map` with string keys and values or other
-`java.util.Map` as value. Requests are made in JSON format hold some type information (i.e. it is known what values are
+`java.util.Map` as value. Requests are made in JSON format hold some type information (i.e., it is known what values are
 strings and what values are numbers).
 ====
 
-Lets look at an example:
+Let's look at an example:
 
 [source,java]
 ----
@@ -803,11 +803,11 @@ the identifier values (`Id` property) or their corresponding
 
 Note that for some records operation can succeed and for some it can fail -- so you need to manually check for errors.
 
-Easiest way to use this functionality is to use the DTOs generated by the `camel-salesforce-maven-plugin`, but you
-also have the option of customizing the references that identify the each object in the tree, for instance primary keys
+The easiest way to use this functionality is to use the DTOs generated by the `camel-salesforce-maven-plugin`, but you
+also have the option of customizing the references that identify each object in the tree, for instance primary keys
 from your database.
 
-Lets look at an example:
+Let's look at an example:
 
 [source,java]
 ----
@@ -858,10 +858,10 @@ list of responses with the order preserved, so that the n-th requests response i
 [NOTE]
 ====
 The results can vary from API to API so the result of each sub-request (`SObjectBatchResult.result`) is given as a `java.lang.Object`. In most cases
-the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests are made in JSON format and hold some type information (i.e. it is known what values are strings and what values are numbers).
+the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests are made in JSON format and hold some type information (i.e., it is known what values are strings and what values are numbers).
 ====
 
-Lets look at an example:
+Let's look at an example:
 
 [source,java]
 ----
@@ -918,7 +918,7 @@ Retrieve one or more records of the same object type.
 | sObjectIds | List of String or comma-separated string | A list of one or more IDs of the objects to return. All IDs must belong to the same object type. | | x
 | sObjectFields | List of String or comma-separated string | A list of fields to include in the response. The field names you specify must be valid, and you must have read-level permissions to each field. | | x
 | sObjectName | String | Type of SObject, e.g. `Account` | | x
-| sObjectClass | String | Fully-qualified class name of DTO class to use for deserializing the response. | | Required if `sObjectName` parameter does not resolve to a class that exists in the package specified by the `package` option.
+| sObjectClass | String | Fully qualified class name of DTO class to use for deserializing the response. | | Required if `sObjectName` parameter does not resolve to a class that exists in the package specified by the `package` option.
 |===
 
 *Output*
@@ -1617,7 +1617,7 @@ Gets results for a Result Id
 | `batchId` | `String` | Id of Batch | | Required if body not supplied
 | `resultId` | `String` | Id of Result | | If not passed in body
 | Body | `BatchInfo` or `String` | `JobInfo` instance from which `jobId` and `batchId` will be used.
-Otherwise can be a `String` containing the `resultId` | | `BatchInfo` Required if `jobId` and `BatchId` not supplied
+Otherwise, can be a `String` containing the `resultId` | | `BatchInfo` Required if `jobId` and `BatchId` not supplied
 |===
 
 *Output*
@@ -1683,7 +1683,7 @@ to Avro based on the Schema associated with the topic you're publishing to. The 
 field names must match event field names exactly, including case.
 * `byte[]`. Camel will not perform any serialization. Value must be the Avro-encoded event payload.
 * `com.salesforce.eventbus.protobuf.ProducerEvent`. Providing a `ProducerEvent` allows full control,
-e.g. setting the `id` property, which can be tied back to the `PublishResult.CorrelationKey`.
+e.g., setting the `id` property, which can be tied back to the `PublishResult.CorrelationKey`.
 
 *Output*
 
@@ -1805,7 +1805,7 @@ Type: `PlatformEvent` or `org.cometd.bayeux.Message`
 
 ==== Change Data Capture Events
 
-Change Data Capture (CDC) allows you to receive near-real-time changes of Salesforce records, and synchronize corresponding records in an external data store. Change Data Capture publishes change events, which represent changes to Salesforce records. Changes include creation of a new record, updates to an existing record, deletion of a record, and undeletion of a record.
+Change Data Capture (CDC) allows you to receive near-real-time changes of Salesforce records, and synchronize corresponding records in an external data store. Change Data Capture publishes change events, which represent changes to Salesforce records. Changes include the creation of a new record, updates to an existing record, deletion of a record, and undeletion of a record.
 
 The URI format to consume CDC events is as follows:
 

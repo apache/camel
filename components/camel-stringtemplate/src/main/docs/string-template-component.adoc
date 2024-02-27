@@ -102,7 +102,7 @@ This scenario can be used in production when the resource never changes.
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set then Camel uses this over the endpoint configured
+headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
 == StringTemplate Attributes
@@ -124,7 +124,7 @@ exchange.getIn().setHeader("CamelStringTemplateVariableMap", variableMap);
 
 == Samples
 
-For example you could use a string template as follows in order to
+For example, you could use a string template as follows in order to
 formulate a response to a message:
 
 [source,java]
@@ -135,7 +135,7 @@ from("activemq:My.Queue").
 
 == The Email Sample
 
-In this sample we want to use a string template to send an order
+In this sample, we want to use a string template to send an order
 confirmation email. The email template is laid out in `StringTemplate`
 as:
 

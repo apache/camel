@@ -9,7 +9,7 @@
 Sticky mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 
 A stick mode means that a correlation key (calculated as xref:manual::expression.adoc[Expression])
-is used to determine the destination. This allows to route all messages with the same key to the same destination.
+is used to determine the destination. This allows routing all messages with the same key to the same destination.
 
 == Options
 
@@ -17,9 +17,15 @@ is used to determine the destination. This allows to route all messages with the
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Examples
 
-In this case we are using the header myKey as correlation expression:
+In this case, we are using the header myKey as correlation expression:
 
 [tabs]
 ====

@@ -29,8 +29,6 @@ public final class ServiceBusConstants {
     public static final String APPLICATION_PROPERTIES = HEADER_PREFIX + "ApplicationProperties";
     @Metadata(label = "consumer", description = "Gets the content type of the message.", javaType = "String")
     public static final String CONTENT_TYPE = HEADER_PREFIX + "ContentType";
-    @Metadata(label = "consumer", description = "Gets a correlation identifier.", javaType = "String")
-    public static final String CORRELATION_ID = HEADER_PREFIX + "CorrelationId";
     @Metadata(label = "consumer", description = "Gets the description for a message that has been dead-lettered.",
               javaType = "String")
     public static final String DEAD_LETTER_ERROR_DESCRIPTION = HEADER_PREFIX + "DeadLetterErrorDescription";
@@ -97,6 +95,10 @@ public final class ServiceBusConstants {
     @Metadata(label = "producer", description = "Overrides the desired operation to be used in the producer.",
               javaType = "org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition")
     public static final String PRODUCER_OPERATION = HEADER_PREFIX + "ProducerOperation";
+
+    // headers evaluated by the producer and consumer
+    @Metadata(label = "common", description = "Gets or Sets a correlation identifier.", javaType = "String")
+    public static final String CORRELATION_ID = HEADER_PREFIX + "CorrelationId";
 
     private ServiceBusConstants() {
     }

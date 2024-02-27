@@ -1,41 +1,41 @@
-= Scatter Gather
+= Scatter-Gather
 
 Camel supports the
-https://www.enterpriseintegrationpatterns.com/patterns/messaging/BroadcastAggregate.html[Scatter Gather]
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/BroadcastAggregate.html[Scatter-Gather]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
 
-The Scatter Gather from the EIP patterns allows you to route messages to a number of dynamically
+The Scatter-Gather from the EIP patterns allows you to route messages to a number of dynamically
 specified recipients and re-aggregate the responses back into a single message.
 
 image::eip/BroadcastAggregate.gif[image]
 
-In Camel the Scatter Gather EIP is supported in two different synchronous modes.
+In Camel, the Scatter-Gather EIP is supported in two different synchronous modes.
 
 - request/reply mode, where the re-aggregated response message continues being routed synchronously
-after the Scatter Gather is complete.
+after the Scatter-Gather is complete.
 
 - one-way mode, where the response message is being routed asynchronous separately from
 the incoming message thread.
 
-== Request/Reply vs One-Way messaging modes
+== Request/Reply vs. One-Way messaging modes
 
-In Camel the request/reply mode is done by using only the xref:recipientList-eip.adoc[Recipient List]
+In Camel, the request/reply mode is done by using only the xref:recipientList-eip.adoc[Recipient List]
 which comes with aggregation built-in (which is often the simplest solution).
 
-The request/reply mode refers to the fact that the response message, is tied synchronously
-to the incoming message (that would wait), until the response message is ready, and then continue being routed.
+The request/reply mode refers to the fact that the response message is tied synchronously
+to the incoming message (that would wait) until the response message is ready, and then continue being routed.
 This allows for xref:requestReply-eip.adoc[Request Reply] messaging style.
 
-The one-way mode refers to the fact that the response message, is not tied to the incoming message (which will continue).
+The one-way mode refers to the fact that the response message is not tied to the incoming message (which will continue).
 And the response message (when its ready) will continue being routed independently of the incoming message.
 This only allows for xref:event-message.adoc[Event Message] messaging style.
 
 In the one-way mode, then you combine the xref:recipientList-eip.adoc[Recipient List] and xref:aggregate-eip.adoc[Aggregate] EIPs
-together as the Scatter Gather EIP solution.
+together as the Scatter-Gather EIP solution.
 
 == Using Recipient List only
 
-In the following example we want to call two HTTP services and gather their responses into a single message,
+In the following example, we want to call two HTTP services and gather their responses into a single message,
 as the response:
 
 [source,xml]
@@ -54,11 +54,11 @@ as the response:
 ----
 
 This is a basic example that only uses basic functionality of the xref:recipientList-eip.adoc[Recipient List].
-For more details how the aggregation works, see the xref:recipientList-eip.adoc[Recipient List] documentation.
+For more details on how the aggregation works, see the xref:recipientList-eip.adoc[Recipient List] documentation.
 
 == Using Recipient List and Aggregate EIP
 
-In this example we want to get the best quote for beer from several vendors.
+In this example, we want to get the best quote for beer from several vendors.
 
 We use xref:recipientList-eip.adoc[Recipient List] to get the request for a quote to all vendors
 and an xref:aggregate-eip.adoc[Aggregate] to pick the best quote out of all the responses.
@@ -89,7 +89,7 @@ The routes for this are defined as:
 </routes>
 ----
 
-So in the first route you see that the xref:recipientList-eip.adoc[Recipient List] is looking at the
+So in the first route, you see that the xref:recipientList-eip.adoc[Recipient List] is looking at the
 listOfVendors header for the list of recipients. So, we need to send a message like:
 
 [source,java]
@@ -156,8 +156,9 @@ request is for beer and then sets the price of beer on the exchange for retrieva
 The message is forwarded on to the next step using xref:manual::pojo-producing.adoc[POJO Producing]
 (see the `@Produce` annotation).
 
-At the next step we want to take the beer quotes from all vendors and find out which one was the best
-(i.e. the lowest!). To do this we use the xref:aggregate-eip.adoc[Aggregate] EIP with a custom
+At the next step, we want to take the beer quotes from all vendors and find out which one was the best
+(i.e., the lowest!).
+To do this, we use the xref:aggregate-eip.adoc[Aggregate] EIP with a custom
 `AggregationStrategy`.
 
 The xref:aggregate-eip.adoc[Aggregate] needs to be able to compare only the messages from this particular quote;
@@ -185,7 +186,7 @@ public class LowestQuoteAggregationStrategy implements AggregationStrategy {
 }
 ----
 
-And finally the aggregator will assemble the response message with the best beer price (the lowest).
+And finally, the aggregator will assemble the response message with the best beer price (the lowest).
 Notice how the aggregator has timeout built-in, meaning that if one or more of the beer vendors does
 not respond, then the aggregator will discard those _late_ responses, and send out a message with the _best price so far_.
 
@@ -193,7 +194,7 @@ The message is then continued to another route via the `direct:bestBeer` endpoin
 
 == See Also
 
-The Scatter Gather EIP is a composite pattern that is built by exiting EIPs:
+The Scatter-Gather EIP is a composite pattern built by exiting EIPs:
 
 - xref:recipientList-eip.adoc[Recipient List]
 - xref:aggregate-eip.adoc[Aggregate]

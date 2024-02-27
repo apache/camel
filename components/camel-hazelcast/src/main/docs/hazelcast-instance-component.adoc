@@ -16,7 +16,7 @@
 *{component-header}*
 
 The http://www.hazelcast.com/[Hazelcast] instance component is one of Camel Hazelcast Components which allows you to consume join/leave events of the cache instance in the cluster.
-Hazelcast makes sense in one single "server node", but it's extremly powerful in a clustered environment.
+Hazelcast makes sense in one single "server node", but it's extremely powerful in a clustered environment.
 
 // component-configure options: START
 
@@ -34,7 +34,7 @@ include::partial$component-endpoint-options.adoc[]
 
 == instance consumer - from("hazelcast-instance:foo")
 
-The instance consumer fires if a new cache instance will join or leave the cluster.
+The instance consumer fires if a new cache instance joins or leaves the cluster.
  
 Here's a sample:
 

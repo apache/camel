@@ -14,9 +14,10 @@
 https://hapifhir.github.io/hapi-hl7v2/[HAPI] provides a
 https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
 class that provides access to fields using a commonly used terse
-location specification syntax. The HL7 Terser language allows to use this
+location specification syntax.
+The HL7 Terser language allows using this
 syntax to extract values from HL7 messages and to use them as expressions
-and predicates for filtering, content-based routing etc.
+and predicates for filtering, content-based routing, etc.
 
 == HL7 Terser Language options
 
@@ -27,7 +28,7 @@ include::partial$language-options.adoc[]
 
 == Example
 
-In the example below we want to set a header with the patent id
+In the example below, we want to set a header with the patent id
 from field QRD-8 in the QRY_A19 message:
 
 [source,java]
@@ -62,7 +63,7 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 // Use standard or define your own validation rules
 ValidationContext defaultContext = new DefaultValidation();
 
-// Throws PredicateValidationException if message does not validate
+// Throws PredicateValidationException if a message does not validate
 from("direct:test1")
    .validate(messageConformsTo(defaultContext))
    .to("mock:test1");
@@ -87,7 +88,7 @@ import static org.apache.camel.component.hl7.HL7.messageConforms;
 HapiContext hapiContext = new DefaultHapiContext();
 hapiContext.getParserConfiguration().setValidating(false); // don't validate during parsing
 
-// customize HapiContext some more ... e.g. enforce that PID-8 in ADT_A01 messages of version 2.4 is not empty
+// customize HapiContext some more ... e.g., enforce that PID-8 in ADT_A01 messages of version 2.4 is not empty
 ValidationRuleBuilder builder = new ValidationRuleBuilder() {
    @Override
    protected void configure() {
@@ -111,7 +112,7 @@ from("direct:test1")
 == HL7 Acknowledgement expression
 
 A common task in HL7v2 processing is to generate an acknowledgement
-message as response to an incoming HL7v2 message, e.g. based on a
+message as a response to an incoming HL7v2 message, e.g., based on a
 validation result. The `ack` expression lets us accomplish this very
 elegantly:
 
@@ -138,7 +139,7 @@ from("direct:test1")
 
 === Custom Acknowledgement for MLLP
 
-In special situations you may want to set a custom acknowledgement without using Exceptions.
+In special situations, you may want to set a custom acknowledgement without using Exceptions.
 This can be achieved using the `ack` expression:
 
 [source,java]

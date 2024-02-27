@@ -9,15 +9,15 @@
 
 The *hazelcast-* component allows you to work with the
 http://www.hazelcast.com[Hazelcast] distributed data grid / cache.
-Hazelcast is a in memory data grid, entirely written in Java (single
-jar). It offers a great palette of different data stores like map, multi
-map (same key, n values), queue, list and atomic number. The main reason
+Hazelcast is an in-memory data grid, entirely written in Java (single
+jar). It offers a great palette of different data stores like map,
+multimap (same key, n values), queue, list and atomic number. The main reason
 to use Hazelcast is its simple cluster support. If you have enabled
-multicast on your network you can run a cluster with hundred nodes with
-no extra configuration. Hazelcast can simply configured to add
+multicast on your network, you can run a cluster with a hundred nodes with
+no extra configuration. Hazelcast can simply configure to add
 additional features like n copies between nodes (default is 1), cache
-persistence, network configuration (if needed), near cache, eviction
-and so on. For more information consult the Hazelcast documentation on
+persistence, network configuration (if needed), near cache, eviction,
+and so on. For more information, consult the Hazelcast documentation on
 http://www.hazelcast.com/docs.jsp[http://www.hazelcast.com/docs.jsp].
 
 == {doctitle} components
@@ -112,7 +112,7 @@ for this component:
 === Configuring HazelcastInstance on component
 
 You can also configure the hazelcast instance on the component which will then be used by all hazelcast endpoints.
-In the example above we setup this for the hazelcast map component and setup hazelcast via verbose `<bean>` configurations.
+In the example above we set up this for the hazelcast map component and setup hazelcast via verbose `<bean>` configurations.
 
 [source,xml]
 ------------------------------------------------------------------------------
@@ -136,12 +136,12 @@ In the example above we setup this for the hazelcast map component and setup haz
 
 == Publishing hazelcast instance as an OSGI service
 
-If operating in an OSGI container and you would want to use one instance
+If operating in an OSGI container, and you would want to use one instance
 of hazelcast across all bundles in the same container. You can publish
 the instance as an OSGI service and bundles using the cache al need is
 to reference the service in the hazelcast endpoint.
 
-=== Bundle A create an instance and publishes it as an OSGI service
+=== Bundle A create an instance and publish it as an OSGI service
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------

@@ -294,6 +294,10 @@ public final class DefaultConfigurationConfigurer {
                     .setManagementNamePattern(config.getJmxManagementNamePattern());
             camelContext.getManagementStrategy().getManagementAgent()
                     .setUpdateRouteEnabled(config.isJmxUpdateRouteEnabled());
+            camelContext.getManagementStrategy().getManagementAgent()
+                    .setRegisterRoutesCreateByKamelet(config.isJmxManagementRegisterRoutesCreateByKamelet());
+            camelContext.getManagementStrategy().getManagementAgent()
+                    .setRegisterRoutesCreateByTemplate(config.isJmxManagementRegisterRoutesCreateByTemplate());
         }
         if (config.isCamelEventsTimestampEnabled()) {
             camelContext.getManagementStrategy().getEventFactory().setTimestampEnabled(true);

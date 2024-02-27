@@ -22,6 +22,7 @@ import java.util.stream.StreamSupport;
 
 import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusMessage;
+import org.apache.camel.util.ObjectHelper;
 
 public final class ServiceBusUtils {
 
@@ -29,7 +30,7 @@ public final class ServiceBusUtils {
     }
 
     public static ServiceBusMessage createServiceBusMessage(
-            final Object data, final Map<String, Object> applicationProperties) {
+            final Object data, final Map<String, Object> applicationProperties, final String correlationId) {
         ServiceBusMessage serviceBusMessage;
         if (data instanceof String) {
             serviceBusMessage = new ServiceBusMessage((String) data);
@@ -43,13 +44,16 @@ public final class ServiceBusUtils {
         if (applicationProperties != null) {
             serviceBusMessage.getRawAmqpMessage().getApplicationProperties().putAll(applicationProperties);
         }
+        if (ObjectHelper.isNotEmpty(correlationId)) {
+            serviceBusMessage.setCorrelationId(correlationId);
+        }
         return serviceBusMessage;
     }
 
     public static Iterable<ServiceBusMessage> createServiceBusMessages(
-            final Iterable<?> data, final Map<String, Object> applicationProperties) {
+            final Iterable<?> data, final Map<String, Object> applicationProperties, final String correlationId) {
         return StreamSupport.stream(data.spliterator(), false)
-                .map(obj -> createServiceBusMessage(obj, applicationProperties))
+                .map(obj -> createServiceBusMessage(obj, applicationProperties, correlationId))
                 .collect(Collectors.toList());
     }
 }

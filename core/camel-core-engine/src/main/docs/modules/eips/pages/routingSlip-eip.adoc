@@ -26,14 +26,9 @@ TIP: See the `cacheSize` option for more details on _how much cache_ to use depe
 
 == Exchange properties
 
-The following exchange properties are set on each `Exchange` that are sent by the routing slip:
-
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelToEndpoint` | `String` | Uri of the `Endpoint` that the message was sent to.
-| `CamelSlipEndpoint` | `String` | Uri of the `Endpoint` that the message was sent to.
-|=======================================================================
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using Routing Slip
 
@@ -75,8 +70,8 @@ The message will be routed in a xref:pipeline-eip.adoc[pipeline] fashion, i.e., 
 The Routing Slip sets a property, `Exchange.SLIP_ENDPOINT`, on the `Exchange` which contains the
 current endpoint as it advanced though the slip. This allows you to _know_ how far we have processed in the slip.
 
-The Routing Slip will compute the slip *beforehand* which means,
-the slip is only computed once. If you need to compute the slip _on-the-fly_ then use the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP instead.
+The Routing Slip will compute the slip *beforehand*, which means the slip is only computed once.
+If you need to compute the slip _on-the-fly_, then use the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP instead.
 
 === How is the slip computed
 

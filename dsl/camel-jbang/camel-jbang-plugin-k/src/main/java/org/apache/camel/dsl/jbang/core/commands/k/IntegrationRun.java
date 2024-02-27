@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.k;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +26,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -42,6 +45,8 @@ import org.apache.camel.github.GistResourceResolver;
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultResourceResolvers;
+import org.apache.camel.main.KameletMain;
+import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.spi.ResourceResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -66,6 +71,11 @@ import picocli.CommandLine.Command;
 
 @Command(name = "run", description = "Run Camel integrations on Kubernetes", sortOptions = false)
 public class IntegrationRun extends KubeBaseCommand {
+
+    // ignored list of dependencies, can be either groupId or artifactId
+    // as camel-k loads dependencies from the catalog produced by camel-k-runtime, some camel core dependencies
+    // are not available, so we have to skip them
+    private static final String[] SKIP_DEPS = new String[] { "camel-core-languages", "camel-endpointdsl" };
 
     @CommandLine.Parameters(description = "The Camel file(s) to run.",
                             arity = "0..9", paramLabel = "<files>")
@@ -170,6 +180,7 @@ public class IntegrationRun extends KubeBaseCommand {
 
     public IntegrationRun(CamelJBangMain main) {
         super(main);
+        Arrays.sort(SKIP_DEPS);
     }
 
     public Integer doCall() throws Exception {
@@ -181,17 +192,6 @@ public class IntegrationRun extends KubeBaseCommand {
         integration.setSpec(new IntegrationSpec());
         integration.getMetadata()
                 .setName(getIntegrationName(integrationSources));
-
-        if (dependencies != null && dependencies.length > 0) {
-            List<String> deps = new ArrayList<>();
-            for (String dependency : dependencies) {
-                String normalized = normalizeDependency(dependency);
-                validateDependency(normalized, printer());
-                deps.add(normalized);
-            }
-
-            integration.getSpec().setDependencies(deps);
-        }
 
         if (kit != null) {
             IntegrationKit integrationKit = new IntegrationKit();
@@ -245,6 +245,17 @@ public class IntegrationRun extends KubeBaseCommand {
             traitsSpec.setContainer(containerTrait);
         } else {
             List<Source> resolvedSources = resolveSources(integrationSources);
+
+            Set<String> intDependencies = calculateDependencies(resolvedSources);
+            if (dependencies != null && dependencies.length > 0) {
+                for (String dependency : dependencies) {
+                    String normalized = normalizeDependency(dependency);
+                    validateDependency(normalized, printer());
+                    intDependencies.add(normalized);
+                }
+            }
+            List<String> deps = new ArrayList<>(intDependencies);
+            integration.getSpec().setDependencies(deps);
 
             List<Flows> flows = new ArrayList<>();
             List<Sources> sources = new ArrayList<>();
@@ -404,22 +415,22 @@ public class IntegrationRun extends KubeBaseCommand {
         }
     }
 
-    private List<Source> resolveSources(List<String> sources) {
+    private List<Source> resolveSources(List<String> sourcePaths) {
         List<Source> resolved = new ArrayList<>();
-        for (String source : sources) {
-            SourceScheme sourceScheme = SourceScheme.fromUri(source);
-            String fileExtension = FileUtil.onlyExt(source);
-            String fileName = SourceScheme.onlyName(FileUtil.onlyName(source)) + "." + fileExtension;
+        for (String sourcePath : sourcePaths) {
+            SourceScheme sourceScheme = SourceScheme.fromUri(sourcePath);
+            String fileExtension = FileUtil.onlyExt(sourcePath);
+            String fileName = SourceScheme.onlyName(FileUtil.onlyName(sourcePath)) + "." + fileExtension;
             try {
                 switch (sourceScheme) {
                     case GIST -> {
                         StringJoiner all = new StringJoiner(",");
-                        GistHelper.fetchGistUrls(source, all);
+                        GistHelper.fetchGistUrls(sourcePath, all);
 
                         try (ResourceResolver resolver = new GistResourceResolver()) {
                             for (String uri : all.toString().split(",")) {
                                 resolved.add(new Source(
-                                        fileName,
+                                        fileName, sourcePath,
                                         IOHelper.loadText(resolver.resolve(uri).getInputStream()),
                                         fileExtension, compression, false));
                             }
@@ -428,24 +439,24 @@ public class IntegrationRun extends KubeBaseCommand {
                     case HTTP -> {
                         try (ResourceResolver resolver = new DefaultResourceResolvers.HttpResolver()) {
                             resolved.add(new Source(
-                                    fileName,
-                                    IOHelper.loadText(resolver.resolve(source).getInputStream()),
+                                    fileName, sourcePath,
+                                    IOHelper.loadText(resolver.resolve(sourcePath).getInputStream()),
                                     fileExtension, compression, false));
                         }
                     }
                     case HTTPS -> {
                         try (ResourceResolver resolver = new DefaultResourceResolvers.HttpsResolver()) {
                             resolved.add(new Source(
-                                    fileName,
-                                    IOHelper.loadText(resolver.resolve(source).getInputStream()),
+                                    fileName, sourcePath,
+                                    IOHelper.loadText(resolver.resolve(sourcePath).getInputStream()),
                                     fileExtension, compression, false));
                         }
                     }
                     case FILE -> {
                         try (ResourceResolver resolver = new DefaultResourceResolvers.FileResolver()) {
                             resolved.add(new Source(
-                                    fileName,
-                                    IOHelper.loadText(resolver.resolve(source).getInputStream()),
+                                    fileName, sourcePath,
+                                    IOHelper.loadText(resolver.resolve(sourcePath).getInputStream()),
                                     fileExtension, compression, true));
                         }
                     }
@@ -453,27 +464,28 @@ public class IntegrationRun extends KubeBaseCommand {
                         try (ResourceResolver resolver = new DefaultResourceResolvers.ClasspathResolver()) {
                             resolver.setCamelContext(new DefaultCamelContext());
                             resolved.add(new Source(
-                                    fileName,
-                                    IOHelper.loadText(resolver.resolve(source).getInputStream()),
+                                    fileName, sourcePath,
+                                    IOHelper.loadText(resolver.resolve(sourcePath).getInputStream()),
                                     fileExtension, compression, true));
                         }
                     }
                     case GITHUB, RAW_GITHUB -> {
                         StringJoiner all = new StringJoiner(",");
-                        GitHubHelper.fetchGithubUrls(source, all);
+                        GitHubHelper.fetchGithubUrls(sourcePath, all);
 
                         try (ResourceResolver resolver = new GitHubResourceResolver()) {
                             for (String uri : all.toString().split(",")) {
                                 resolved.add(new Source(
-                                        fileName,
+                                        fileName, sourcePath,
                                         IOHelper.loadText(resolver.resolve(uri).getInputStream()),
                                         fileExtension, compression, false));
                             }
                         }
                     }
                     case UNKNOWN -> {
-                        try (FileInputStream fis = new FileInputStream(source)) {
-                            resolved.add(new Source(fileName, IOHelper.loadText(fis), fileExtension, compression, true));
+                        try (FileInputStream fis = new FileInputStream(sourcePath)) {
+                            resolved.add(
+                                    new Source(fileName, sourcePath, IOHelper.loadText(fis), fileExtension, compression, true));
                         }
                     }
                 }
@@ -540,7 +552,7 @@ public class IntegrationRun extends KubeBaseCommand {
         }
     }
 
-    private record Source(String name, String content, String extension, boolean compressed, boolean local) {
+    private record Source(String name, String path, String content, String extension, boolean compressed, boolean local) {
 
         /**
          * Provides source contant and automatically handles compression of content when enabled.
@@ -565,6 +577,94 @@ public class IntegrationRun extends KubeBaseCommand {
 
         public boolean isYaml() {
             return "yaml".equals(language());
+        }
+    }
+
+    private Set<String> calculateDependencies(List<Source> resolvedSources) throws Exception {
+        List<String> files = new ArrayList<>();
+        for (Source s : resolvedSources) {
+            if (s.local && !s.path.startsWith("classpath:")) {
+                // get the absolute path for a local file
+                files.add("file://" + new File(s.path).getAbsolutePath());
+            } else {
+                files.add(s.path);
+            }
+        }
+        final KameletMain main = new KameletMain();
+        //        main.setDownload(false);
+        main.setFresh(false);
+        RunDownloadListener downloadListener = new RunDownloadListener(resolvedSources);
+        main.setDownloadListener(downloadListener);
+        main.setSilent(true);
+        // enable stub in silent mode so we do not use real components
+        main.setStubPattern("*");
+        // do not run for very long in silent run
+        main.addInitialProperty("camel.main.autoStartup", "false");
+        main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        main.addInitialProperty("camel.jbang.verbose", "false");
+        main.addInitialProperty("camel.main.routesIncludePattern", String.join(",", files));
+
+        main.start();
+        main.run();
+
+        main.stop();
+        main.shutdown();
+        return downloadListener.getDependencies();
+    }
+
+    private static class RunDownloadListener implements DownloadListener {
+
+        final Set<String> dependencies = new TreeSet<>();
+        private final List<Source> resolvedSources;
+
+        public RunDownloadListener(List<Source> resolvedSources) {
+            this.resolvedSources = resolvedSources;
+        }
+
+        @Override
+        public void onDownloadDependency(String groupId, String artifactId, String version) {
+            if (!skipArtifact(groupId, artifactId)) {
+                // format: camel:<component name>
+                // KameletMain is used to resolve the dependencies and it already contains
+                // camel-kamelets and camel-rest artifacts, then the source code must be inspected
+                // to actually add them if they are used in the route.
+                if ("camel-rest".equals(artifactId) && routeContainsEndpoint("rest")) {
+                    dependencies.add("camel:" + artifactId.replace("camel-", ""));
+                }
+                if (("camel-kamelet".equals(artifactId) || "camel-yaml-dsl".equals(artifactId))
+                        && routeContainsEndpoint("kamelet")) {
+                    dependencies.add("camel:" + artifactId.replace("camel-", ""));
+                }
+                if (!"camel-rest".equals(artifactId) && !"camel-kamelet".equals(artifactId)
+                        && !"camel-yaml-dsl".equals(artifactId)) {
+                    dependencies.add("camel:" + artifactId.replace("camel-", ""));
+                }
+            }
+        }
+
+        private boolean skipArtifact(String groupId, String artifactId) {
+            return Arrays.binarySearch(SKIP_DEPS, artifactId) >= 0 || Arrays.binarySearch(SKIP_DEPS, groupId) >= 0;
+        }
+
+        // inspect the source code to determine if it contains a specific endpoint
+        private boolean routeContainsEndpoint(String componentName) {
+            boolean contains = false;
+            for (Source source : resolvedSources) {
+                // find if the route contains the component with the format: <component>:
+                if (source.content.contains(componentName + ":")) {
+                    contains = true;
+                    break;
+                }
+            }
+            return contains;
+        }
+
+        @Override
+        public void onAlreadyDownloadedDependency(String groupId, String artifactId, String version) {
+        }
+
+        private Set<String> getDependencies() {
+            return dependencies;
         }
     }
 

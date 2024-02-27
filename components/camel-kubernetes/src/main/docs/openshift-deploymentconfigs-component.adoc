@@ -47,7 +47,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Openshift Deployment Configs Producer Examples
 
-- listDeploymentConfigs: this operation list the deployments on a Openshift cluster
+- listDeploymentConfigs: this operation lists the deployments on an Openshift cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -56,9 +56,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of Deployment Configs from your cluster
+This operation returns a List of Deployment Configs from your cluster
 
-- listDeploymentConfigsByLabels:  this operation list the deployment configs by labels on a Openshift cluster
+- listDeploymentConfigsByLabels:  this operation lists the deployment configs by labels on an Openshift cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of Deployment Configs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a List of Deployment Configs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 == Openshift Deployment Configs Consumer Example
 

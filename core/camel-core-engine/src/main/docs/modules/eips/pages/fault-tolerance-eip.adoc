@@ -6,16 +6,14 @@ xref:others:microprofile-fault-tolerance.adoc[MicroProfile Fault Tolerance] libr
 
 == Options
 
-// eip options: START
-The Fault Tolerance EIP supports 2 options which are listed below:
+The Fault Tolerance EIP supports two options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *faultToleranceConfiguration* | Configures the Fault Tolerance EIP Use end when configuration is complete, to return back to the Fault Tolerance EIP. |  | FaultToleranceConfigurationDefinition
+| *faultToleranceConfiguration* | Configure the Fault Tolerance EIP. When the configuration is complete, use `end()` to return to the Fault Tolerance EIP. |  | `FaultToleranceConfigurationDefinition`
 | *faultToleranceConfigurationRef* | Refers to a Fault Tolerance configuration to use for configuring the Fault Tolerance EIP. |  | String
 |===
-// eip options: END
 
 See xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] for all the configuration options
 on the Fault Tolerance xref:circuitBreaker-eip.adoc[Circuit Breaker].
@@ -59,18 +57,18 @@ XML::
 ----
 ====
 
-In case the calling the downstream HTTP service is failing, and an exception is thrown
+In case the calling the downstream HTTP service is failing, and an exception is thrown,
 then the circuit breaker will react and execute the fallback route instead.
 
 If there was no fallback, then the circuit breaker will throw an exception.
 
-TIP: For more information about fallback see xref:onFallback-eip.adoc[onFallback].
+TIP: For more information about fallback, see xref:onFallback-eip.adoc[onFallback].
 
 === Configuring Fault Tolerance
 
 You can fine-tune the Fault Tolerance EIP by the many xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] options.
 
-For example to use 2 second execution timeout, you can do as follows:
+For example, to use a 2-second execution timeout, you can do as follows:
 
 [tabs]
 ====
@@ -80,7 +78,7 @@ Java::
 ----
 from("direct:start")
     .circuitBreaker()
-        // use 2 second timeout
+        // use a 2-second timeout
         .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
         .log("Fault Tolerance processing start: ${threadName}")
         .to("http://fooservice.com/faulty")
@@ -106,7 +104,7 @@ XML::
 ----
 ====
 
-In this example if calling the downstream service does not return a response within 2 seconds,
+In this example, if calling the downstream service does not return a response within 2 seconds,
 a timeout is triggered, and the exchange will fail with a TimeoutException.
 
 == Camel's Error Handler and Circuit Breaker EIP
@@ -138,7 +136,7 @@ This example is from a test, where you can see the Circuit Breaker EIP block has
 to always fail by throwing an exception. Because the `inheritErrorHandler` has been enabled,
 then Camel's error handler will attempt to call the Circuit Breaker EIP block again.
 
-That means the `mock:a` endpoint will receive the message again, and a total of 1 + 3 = 4 message
+That means the `mock:a` endpoint will receive the message again, and a total of `1 + 3 = 4` message
 (first time + 3 redeliveries).
 
 If we turn off the `inheritErrorHandler` option (default) then the Circuit Breaker EIP will only be
@@ -149,7 +147,7 @@ executed once because it handled the error itself.
 [NOTE]
 ====
 Camel provides the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP in the route model,
-which allows to plugin different implementations.
+which allows to plug in different implementations.
 MicroProfile Fault Tolerance is one such implementation.
 ====
 

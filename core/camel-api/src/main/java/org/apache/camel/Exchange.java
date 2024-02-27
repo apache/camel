@@ -83,16 +83,16 @@ public interface Exchange extends VariableAware {
     String AGGREGATED_COLLECTION_GUARD = "CamelAggregatedCollectionGuard";
     String AGGREGATION_STRATEGY = "CamelAggregationStrategy";
     @Metadata(label = "consumer,aggregate",
-              description = "Set to true to force completing the current group. This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group.",
+              description = "Input property. Set to true to force completing the current group. This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group.",
               javaType = "boolean")
     String AGGREGATION_COMPLETE_CURRENT_GROUP = "CamelAggregationCompleteCurrentGroup";
     @Metadata(label = "consumer,aggregate",
-              description = "Set to true to force completing all the groups (excluding this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group."
+              description = "Input property. Set to true to force completing all the groups (excluding this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group."
                             + " This message is considered a signal message only, the message headers/contents will not be processed otherwise. Instead use CamelAggregationCompleteAllGroupsInclusive if this message should be included in the aggregator.",
               javaType = "boolean")
     String AGGREGATION_COMPLETE_ALL_GROUPS = "CamelAggregationCompleteAllGroups";
     @Metadata(label = "consumer,aggregate",
-              description = "Set to true to force completing all the groups (including this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group.",
+              description = "Input property. Set to true to force completing all the groups (including this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group.",
               javaType = "boolean")
     String AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE = "CamelAggregationCompleteAllGroupsInclusive";
     String ASYNC_WAIT = "CamelAsyncWait";
@@ -300,7 +300,7 @@ public interface Exchange extends VariableAware {
     String TIMER_PERIOD = "CamelTimerPeriod";
     String TIMER_TIME = "CamelTimerTime";
 
-    @Metadata(label = "multicast,pollEnrich,recipientList,routingSlip,toD,to,wireTap",
+    @Metadata(label = "enrich,multicast,pollEnrich,recipientList,routingSlip,toD,to,wireTap",
               description = "Endpoint URI where this Exchange is being sent to", javaType = "String")
     String TO_ENDPOINT = "CamelToEndpoint";
     @Deprecated

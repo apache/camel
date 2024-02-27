@@ -42,13 +42,6 @@
             <artifactId>camel-util-json</artifactId>
         </dependency>
 
-        <!-- jolokia -->
-        <dependency>
-            <groupId>org.jolokia</groupId>
-            <artifactId>jolokia-agent-jvm</artifactId>
-            <version>${jolokia-version}</version>
-        </dependency>
-
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>

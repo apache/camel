@@ -7,8 +7,7 @@
 :tabs-sync-option:
 
 The
-http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
-Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
+http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content-Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] allows you to route messages to the correct destination based
 on the contents of the message exchanges.
 
@@ -19,6 +18,12 @@ image::eip/ContentBasedRouter.gif[image]
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Example
 
@@ -88,12 +93,12 @@ YAML::
 ----
 ====
 
-=== Why can I not use otherwise in Java DSL
+=== Why can I not use otherwise in Java DSL?
 
 When using the Choice EIP in the Java DSL you may have a situation where the compiler will not accept
 `when()` or `otherwise()` statements.
 
-For example as shown in the route below where we use the
+For example, as shown in the route below where we use the
 xref:loadBalance-eip.adoc[Load Balancer] EIP inside the Choice EIP in the first when:
 
 *Code will not compile*
@@ -108,9 +113,9 @@ from("direct:start")
             .to("mock:result");
 ----
 
-Well the first issue is that the xref:loadBalance-eip.adoc[Load Balancer] EIP
+Well, the first issue is that the xref:loadBalance-eip.adoc[Load Balancer] EIP
 uses the additional routing to know what to use in the load balancing.
-In this example that would be the:
+In this example, that would be:
 
 [source,java]
 ----
@@ -118,7 +123,8 @@ In this example that would be the:
 ----
 
 To indicate when the balancing stops, you should use `.end()` to denote
-the end. So the route is updates as follows:
+the end.
+So the route is updated as follows:
 
 *Code will still not compile*
 
@@ -157,9 +163,10 @@ from("direct:start")
 
 You only need to use `.endChoice()` when using certain
 xref:eips:enterprise-integration-patterns.adoc[EIP]s which often have additional
-methods to configure or as part of the EIP itself. For example the
-xref:split-eip.adoc[Split] EIP has a sub-route which denotes the
-routing of each _split_ message. You would also have to use
+methods to configure or as part of the EIP itself.
+For example, the xref:split-eip.adoc[Split] EIP has a sub-route which denotes the
+routing of each _split_ message.
+You would also have to use
 `.endChoice()` to indicate the end of the sub-route and to return
 to the Choice EIP.
 
@@ -175,9 +182,11 @@ generics you can do in Java programming language.
 
 == Precondition Mode
 
-In precondition mode, the Choice EIP is an optimized http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
-Based Router] which selects a single branch (when/otherwise) during startup, and
-always executes the same branch. This allows to optimize the runtime Camel to avoid
+In precondition mode,
+the Choice EIP is an optimized http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content-Based Router]
+that selects a single branch (when/otherwise) during startup,
+and always executes the same branch.
+This allows optimizing the runtime Camel to avoid
 this evaluation process for every message; because they are supposed
 to always be routed on the same branch.
 
@@ -186,8 +195,9 @@ cannot be based on the content of the message. Therefore, the predicates would o
 be based on property placeholders, JVM system properties, or OS Environment variables.
 
 The Choice EIP in precondition mode combined with xref:manual:ROOT:route-template.adoc[Route Templates] allows
-for more flexible templates, as the template parameters can be used as the predicates in the Choice EIP;
-meaning that the Choice EIP in precondition mode is fully parameterized, but is optimized for best runtime performance.
+for more flexible templates, as the template parameters can be used as the predicates in the Choice EIP.
+This means that the Choice EIP in precondition mode is fully parameterized,
+but is optimized for the best runtime performance.
 
 === Example
 
@@ -256,4 +266,4 @@ YAML::
 ----
 ====
 
-TIP: Otherwise, is optional, and if none of the predicates would match, then no branches is selected.
+TIP: Otherwise, it is optional, and if none of the predicate matches, then no branches are selected.

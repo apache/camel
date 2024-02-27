@@ -20,6 +20,12 @@ image::eip/DynamicRouter.gif[image]
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Dynamic Router
 
 The Dynamic Router is similar to the xref:routingSlip-eip.adoc[Routing Slip] EIP,
@@ -130,7 +136,7 @@ public String slip(String body, @ExchangeProperties Map<String, Object> properti
     int invoked = 0;
     Object current = properties.get("invoked");
     if (current != null) {
-        invoked = Integer.valueOf(current.toString());
+        invoked = Integer.parseInt(current.toString());
     }
     invoked++;
     // and store the state back on the properties
@@ -173,7 +179,7 @@ public class MyDynamicRouter {
     @Consume(uri = "activemq:foo")
     @DynamicRouter
     public String route(@XPath("/customer/id") String customerId, @Header("Location") String location, Document body) {
-        // query a database to find the best match of the endpoint based on the input parameters
+        // Query a database to find the best match of the endpoint based on the input parameters
         // return the next endpoint uri, where to go. Return null to indicate the end.
     }
 }

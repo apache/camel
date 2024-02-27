@@ -7,8 +7,7 @@
 :tabs-sync-option:
 
 The
-http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent
-Consumer] from the xref:enterprise-integration-patterns.adoc[EIP
+http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent Consumer] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] is used to filter out duplicate messages.
 
 The Idempotent Consumer essentially acts like a
@@ -24,6 +23,12 @@ the xref:manual::exchange.adoc[Exchange] failed, otherwise it stays there.
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Idempotent Consumer implementations
 
@@ -53,4 +58,4 @@ xref:ROOT:sql-component.adoc[JdbcOrphanLockAwareIdempotentRepository]
 
 == Example
 
-For example see the above implementations for more details.
+For example, see the above implementations for more details.

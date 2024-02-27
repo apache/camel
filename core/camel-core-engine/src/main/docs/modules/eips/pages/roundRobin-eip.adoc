@@ -1,7 +1,7 @@
 = Round Robin EIP
 :doctitle: Round Robin
 :shortname: roundRobin
-:description: The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.
+:description: The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -16,6 +16,12 @@ This is a well known and classic policy, which spreads the load evenly.
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Example
 
@@ -33,7 +39,7 @@ from("direct:start")
     .end();
 ----
 
-In XML you'll have a route like this:
+In XML, you'll have a route like this:
 
 [source,xml]
 ----

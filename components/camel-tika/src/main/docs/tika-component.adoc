@@ -14,12 +14,12 @@
 
 *{component-header}*
 
-The *Tika*: components provides the ability to detect and parse documents with 
+The Tika component provides the ability to detect and parse documents with
 Apache Tika. This component uses
-https://tika.apache.org/[Apache Tika] as underlying library to work
+https://tika.apache.org/[Apache Tika] as the underlying library to work
 with documents.
 
-In order to use the Tika component, Maven users will need to add the
+To use the Tika component, Maven users will need to add the
 following dependency to their `pom.xml`:
 
 *pom.xml*

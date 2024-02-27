@@ -15,9 +15,9 @@ With Camel, you can group your processing across multiple independent EIPs
 which can then be chained together in a logical unit, called a _step_.
 
 A step groups together the child processors into a single composite unit.
-This allows to capture metrics at a group level which can make management and monitoring
+This allows capturing metrics at a group level which can make management and monitoring
 of Camel routes easier by using higher-level abstractions. You can also
-think this as a middle-level between the route and each individual processors in the routes.
+think this as a middle-level between the route and each processor in the routes.
 
 You may want to do this when you have large routes and want to break up the routes into
 logical steps.
@@ -34,6 +34,13 @@ This means you can monitor your Camel applications and gather statistics at 4-ti
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 
 == Using Step EIP
 
@@ -52,7 +59,7 @@ from("activemq:SomeQueue")
 As you can see this groups together `.bean("foo")` and `.to("activemq:OutputQueue")`
 into a logical unit with the name foo.
 
-In XML you use the `<step>` tag:
+In XML, you use the `<step>` tag:
 
 [source,xml]
 ----
@@ -105,6 +112,6 @@ XML::
 
 === JMX Management of Step EIP
 
-Each Step EIP is registered in JMX under the `type=steps` tree, which allows to monitor
+Each Step EIP is registered in JMX under the `type=steps` tree, which allows monitoring
 all the steps in the CamelContext. It is also possible to dump statistics in XML format
 by the `dumpStepStatsAsXml` operations on the `CamelContext` or `Route` mbeans.

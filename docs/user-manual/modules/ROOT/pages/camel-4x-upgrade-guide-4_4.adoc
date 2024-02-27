@@ -163,7 +163,7 @@ With the SHARED_KEY_CREDENTIAL mode the user could explicitly set the sharedKey 
 With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
 With the AZURE_SAS mode the user could explicitly set the sasSignature or sasCredential parameter.
 With the CLIENT_SECRET mode the user could explicitly set clientId, clientSecret and tenantId or specify a ClientSecretCredential instance.
-With the SERVICE_CLIENT_INSTANCE the user could explicity set a serviceClient parameter by passing a DataLakeServiceClient instance.
+With the SERVICE_CLIENT_INSTANCE the user could explicitly set a serviceClient parameter by passing a DataLakeServiceClient instance.
 This is part of the effort explained in CAMEL-18590.
 
 === camel-azure-storage-queue

@@ -6,7 +6,7 @@
 :supportlevel: Stable
 :tabs-sync-option:
 
-How can I stop continue routing a message?
+How can I stop routing a message?
 
 image::eip/MessageExpirationIcon.gif[image]
 
@@ -18,10 +18,16 @@ Use a special filter to mark the message to be stopped.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using Stop
 
 We want to stop routing a message if the message body contains the word Bye.
-In the xref:choice-eip.adoc[Content Based Router] below we use `stop` in such case.
+In the xref:choice-eip.adoc[Content-Based Router] below we use `stop` in such a case.
 
 [tabs]
 ====

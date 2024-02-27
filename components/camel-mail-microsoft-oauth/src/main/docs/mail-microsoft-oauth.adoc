@@ -28,7 +28,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Importing `camel-mail-microsoft-oauth` it will automatically import camel-mail component.
+Importing `camel-mail-microsoft-oauth` it will automatically import the camel-mail component.
 
 
 == Microsoft Exchange Online OAuth2 Mail Authenticator IMAP sample
@@ -36,7 +36,7 @@ To use OAuth, an application must be registered with Azure Active Directory.
 Follow the instructions listed in https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app[Register an application with the Microsoft identity platform] guide to register a new application. +
 Enable application to access Exchange mailboxes via client credentials flow. Instructions https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth[here] +
 Once everything is set up, declare and register in the registry, an instance of `+org.apache.camel.component.mail.MicrosoftExchangeOnlineOAuth2MailAuthenticator+`. +
-For Example in a Spring Boot application:
+For example, in a Spring Boot application:
 
 [source,java]
 ---------------------------------------------------------------------------------

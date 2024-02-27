@@ -7,18 +7,19 @@
 :tabs-sync-option:
 
 Kamelets (Kamel route snippets) allow users to connect to external systems via a simplified interface,
-hiding all the low level details about how those connections are implemented.
+hiding all the low-level details about how those connections are implemented.
 
 [IMPORTANT]
 By default, calling kamelets should be done as xref:message-endpoint.adoc[endpoints] with
 the xref:components::kamelet-component.adoc[kamelet] component, such as `to("kamelet:mykamelet")`.
 
-The Kamelet EIP allows calling Kamelets (i.e. xref:manual::route-template.adoc[Route Template]),
+The Kamelet EIP allows calling Kamelets (i.e., xref:manual::route-template.adoc[Route Template]),
 **for special use-cases**.
 
 When a Kamelet is designed for a special use-case such as aggregating messages, and returning
-a response message only when a group of aggregated message is completed. In other words the kamelet
-does not return a response message for every incoming message. In special situations like these,
+a response message only when a group of aggregated messages is completed.
+In other words, kamelet does not return a response message for every incoming message.
+In special situations like these,
 then you **must** use this Kamelet EIP instead of using the xref:components::kamelet-component.adoc[kamelet] component.
 
 Given the following Kamelet (as a route template):
@@ -61,14 +62,26 @@ from("direct:start")
     .to("mock:result");
 ----
 
-When calling a Kamelet you may just refer to the name (template id) of the Kamelet in the EIP as shown below:
+When calling a Kamelet, you may refer to the name (template id) of the Kamelet in the EIP as shown below:
 
 == Options
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using Kamelet EIP
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -77,8 +90,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -87,6 +100,8 @@ And in XML
     <to uri="mock:result"/>
 </route>
 ----
+
+====
 
 Camel will then, when starting:
 

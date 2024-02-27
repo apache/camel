@@ -105,7 +105,7 @@ XML (Spring)::
 -----------------------------------------------------------------------------------------
 ====
 
-The preceding example declares a regular Sun based LDAP `DirContext`
+The preceding example declares a regular Sun-based LDAP `DirContext`
 that connects anonymously to a locally hosted LDAP server.
 
 [NOTE]
@@ -117,7 +117,7 @@ For Camel Quarkus applications, you can achieve similar behavior by using the `@
 
 == Security concerns related to LDAP injection
 
-IMPORTANT: The camel-ldap component uses the message body as filter the search results.
+IMPORTANT: The camel-ldap component uses the message body to filter the search results.
 Therefore, the message body should be protected from LDAP injection. To assist with this,
 you can use `org.apache.camel.component.ldap.LdapHelper` utility class that has method(s)
 to escape string values to be LDAP injection safe.

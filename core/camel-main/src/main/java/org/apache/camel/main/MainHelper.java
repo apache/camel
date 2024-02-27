@@ -241,7 +241,8 @@ public final class MainHelper {
 
     public static String optionKey(String key) {
         // as we ignore case for property names we should use keys in same case and without dashes
-        key = StringHelper.dashToCamelCase(key);
+        // we need to preserve inside [] and quotes
+        key = StringHelper.dashToCamelCase(key, true);
         return key;
     }
 

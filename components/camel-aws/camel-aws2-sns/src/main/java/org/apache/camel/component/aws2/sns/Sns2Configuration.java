@@ -347,7 +347,7 @@ public class Sns2Configuration implements Cloneable {
     /**
      * Only for FIFO Topic. Strategy for setting the messageGroupId on the message. It can be one of the following
      * options: *useConstant*, *useExchangeId*, *usePropertyValue*. For the *usePropertyValue* option, the value of
-     * property "CamelAwsMessageGroupId" will be used.
+     * property "CamelAwsSnsMessageGroupId" will be used.
      */
     public void setMessageGroupIdStrategy(String strategy) {
         if ("useConstant".equalsIgnoreCase(strategy)) {

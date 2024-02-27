@@ -42,16 +42,19 @@ specified queue.
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-Java DSL :
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 --------------------------
 from("direct:foo")
 .to("hazelcast-seda:foo");
 --------------------------
 
-Spring DSL :
-
+Spring XML::
++
 [source,xml]
 ----------------------------------
 <route>
@@ -60,21 +63,26 @@ Spring DSL :
 </route>
 ----------------------------------
 
+====
+
 == SEDA consumer – from(“hazelcast-seda:foo”)
 
 The SEDA consumer provides no operations. You only retrieve data from
 the specified queue.
 
-Java DSL :
+[tabs]
+====
 
+Java DSL::
++
 [source,java]
 --------------------------
 from("hazelcast-seda:foo")
 .to("mock:result");
 --------------------------
 
-Spring DSL:
-
+Spring XML::
++
 [source,xml]
 -----------------------------------
 <route>
@@ -83,5 +91,6 @@ Spring DSL:
 </route>
 -----------------------------------
 
+====
 
 include::spring-boot:partial$starter.adoc[]

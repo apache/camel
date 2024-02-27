@@ -12,9 +12,15 @@ The ConvertBodyTo EIP allows you to transform the message body to a different ty
 include::partial$eip-options.adoc[]
 // eip options: END
 
-The type is a FQN classname (fully qualified), so for example `java.lang.String`, `com.foo.MyBean` etc.
+NOTE: The type is a FQN class name (fully qualified), so for example `java.lang.String`, `com.foo.MyBean` etc.
 However, Camel has shorthand for common Java types, most noticeable `String` can be used instead of `java.lang.String`.
 You can also use `byte[]` for a byte array.
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Example
 

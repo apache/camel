@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-Stitch is a cloud ETL service, developer-focused platform for rapidly moving and replicates data from more than 90
+Stitch is a cloud ETL service, a developer-focused platform for rapidly moving and replicates data from more than 90
 applications and databases. It integrates various data sources into a central data warehouse. Stitch has integrations
 for many enterprise software data sources, and can receive data via WebHooks and an API (Stitch Import API) which
 Camel Stitch Component uses to produce the data to Stitch ETL.
@@ -70,7 +70,7 @@ This allows camel route to consume and produce events asynchronously without blo
 
 == Usage
 
-For example in order to produce data to Stitch from a custom processor:
+For example, to produce data to Stitch from a custom processor:
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ can be type of `StitchMessage`, `StitchRequestBody` or `Map` but this Map here i
 
 === Examples
 
-Here are list of examples of data that can be proceeded to Stitch:
+Here is list of examples of data that can be proceeded to Stitch:
 
 ==== Input body type `org.apache.camel.component.stitch.client.models.StitchRequestBody`:
 [source,java]
@@ -232,16 +232,17 @@ from("direct:sendStitch")
 
 === Development Notes (Important)
 
-When developing on this component, you will need to obtain your Stitch token in order to run the integration tests. In addition to the mocked unit tests
+When developing on this component, you will need to obtain your Stitch token to run the integration tests.
+In addition to the mocked unit tests,
 you *will need to run the integration tests with every change you make*
-To run the integration tests, on this component directory, run the following maven command:
+To run the integration tests, in this component directory, run the following maven command:
 
 [source,bash]
 ----
 mvn verify -Dtoken=stitchToken
 ----
 
-Whereby `token` is your Stitch token that is generated for Stitch Import API integration.
+Whereby `token` is your Stitch token generated for Stitch Import API integration.
 
 
 

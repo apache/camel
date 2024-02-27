@@ -22,16 +22,21 @@ The Camel implementation of this EIP pattern stores the message content temporar
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Claim Check Operation
 
-When using this EIP you must specify the operation to use which can be of the following:
+When using this EIP, you must specify the operation to use which can be of the following:
 
-* *Get* - Gets (does not remove) the claim check by the given key.
-* *GetAndRemove* - Gets and removes the claim check by the given key.
-* *Set* - Sets a new (will override if key already exists) claim check with the given key.
-* *Push* - Sets a new claim check on the stack (does not use key).
-* *Pop* - Gets the latest claim check from the stack (does not use key).
+* `*Get*`: Gets (does not remove) the claim check by the given key.
+* `*GetAndRemove*`: Gets and removes the claim check by the given key.
+* `*Set*`: Sets a new (will override if key already exists) claim check with the given key.
+* `*Push*`: Sets a new claim check on the stack (does not use key).
+* `*Pop*`: Gets the latest claim check from the stack (does not use key).
 
 When using the `Get`, `GetAndRemove`, or `Set` operation you must specify a key.
 These operations will then store and retrieve the data using this key. You can use this to store multiple data in different keys.
@@ -47,10 +52,10 @@ The default strategy uses the `filter` option to easily specify what data to mer
 
 The `filter` option takes a `String` value with the following syntax:
 
-* `body` - to aggregate the message body.
-* `attachments` - to aggregate all the message attachments.
-* `headers` - to aggregate all the message headers.
-* `header:pattern` - to aggregate all the message headers that matches the pattern.
+* `body`: to aggregate the message body.
+* `attachments`: to aggregate all the message attachments.
+* `headers`: to aggregate all the message headers.
+* `header:pattern`: to aggregate all the message headers that match the pattern.
 
 The pattern rule supports wildcards and regular expressions:
 
@@ -61,7 +66,7 @@ You can specify multiple rules separated by comma.
 
 === Basic filter examples
 
-For example to include the message body and all headers starting with _foo_:
+For example, to include the message body and all headers starting with _foo_:
 
 [source,text]
 ----
@@ -96,19 +101,19 @@ To only merge back a header name foo:
 header:foo
 ----
 
-If the filter rule is specified as empty or as wildcard then everything is merged.
+If the filter rule is specified as empty or as wildcard, then everything is merged.
 
 Notice that when merging back data, any data in the Message that is not overwritten is preserved.
 
 === Filtering with include and exclude patterns
 
-The syntax also supports the following prefixes which can be used to specify include, exclude, or remove
+The syntax also supports the following prefixes which can be used to specify include, exclude, or remove patterns:
 
 * `+` to include (which is the default mode)
 * `-` to exclude (exclude takes precedence over include)
 * `--` to remove (remove takes precedence)
 
-For example to skip the message body, and merge back everything else
+For example, to skip the message body, and merge back everything else
 
 [source,text]
 ----

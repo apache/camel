@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-This component allows you to interact with http://infinispan.org/[Infinispan] distributed data grid / cache using the Hot Rod procol.
+This component allows you to interact with http://infinispan.org/[Infinispan] distributed data grid / cache using the Hot Rod protocol.
 Infinispan is an extremely scalable, highly available key/value data store and data grid platform written in Java.
 
 If you use Maven, you must add the following dependency to your `pom.xml`:
@@ -62,148 +62,148 @@ This section lists all available operations, along with their header information
 [cols="40%,60%a", frame="all", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.PUT | Puts a key/value pair in the cache, optionally with expiration
-| InfinispanOperation.PUTASYNC | Asynchronously puts a key/value pair in the cache, optionally with expiration
-| InfinispanOperation.PUTIFABSENT | Puts a key/value pair in the cache if it did not exist, optionally with expiration
-| InfinispanOperation.PUTIFABSENTASYNC | Asynchronously puts a key/value pair in the cache if it did not exist, optionally with expiration
+| `InfinispanOperation.PUT` | Put a key/value pair in the cache, optionally with expiration
+| `InfinispanOperation.PUTASYNC` | Asynchronously puts a key/value pair in the cache, optionally with expiration
+| `InfinispanOperation.PUTIFABSENT` | Put a key/value pair in the cache if it did not exist, optionally with expiration
+| `InfinispanOperation.PUTIFABSENTASYNC` | Asynchronously puts a key/value pair in the cache if it did not exist, optionally with expiration
 |===
 
 * *Required Headers*: 
-** CamelInfinispanKey
-** CamelInfinispanValue
+** `CamelInfinispanKey`
+** `CamelInfinispanValue`
 * *Optional Headers*: 
-** CamelInfinispanLifespanTime
-** CamelInfinispanLifespanTimeUnit
-** CamelInfinispanMaxIdleTime
-** CamelInfinispanMaxIdleTimeUnit
+** `CamelInfinispanLifespanTime`
+** `CamelInfinispanLifespanTimeUnit`
+** `CamelInfinispanMaxIdleTime`
+** `CamelInfinispanMaxIdleTimeUnit`
 * *Result Header*: 
-** CamelInfinispanOperationResult
+** `CamelInfinispanOperationResult`
 
 .Put All Operations
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.PUTALL | Adds multiple entries to a cache, optionally with expiration
-| CamelInfinispanOperation.PUTALLASYNC | Asynchronously adds multiple entries to a cache, optionally with expiration
+| `InfinispanOperation.PUTALL` | Adds multiple entries to a cache, optionally with expiration
+| `CamelInfinispanOperation.PUTALLASYNC` | Asynchronously adds multiple entries to a cache, optionally with expiration
 |===
 
 * *Required Headers*: 
-** CamelInfinispanMap
+** `CamelInfinispanMap`
 * *Optional Headers*: 
-** CamelInfinispanLifespanTime
-** CamelInfinispanLifespanTimeUnit
-** CamelInfinispanMaxIdleTime
-** CamelInfinispanMaxIdleTimeUnit
+** `CamelInfinispanLifespanTime`
+** `CamelInfinispanLifespanTimeUnit`
+** `CamelInfinispanMaxIdleTime`
+** `CamelInfinispanMaxIdleTimeUnit`
 
 .Get Operations
 [cols="40%,60%a", frame="all", options="header"]
 |===
 |Operation Name |Description
-| InfinispanOperation.GET | Retrieves the value associated with a specific key from the cache
-| InfinispanOperation.GETORDEFAULT | Retrieves the value, or default value, associated with a specific key from the cache
+| `InfinispanOperation.GET` | Retrieve the value associated with a specific key from the cache
+| `InfinispanOperation.GETORDEFAULT` | Retrieves the value, or default value, associated with a specific key from the cache
 |===
 
 * *Required Headers*: 
-** CamelInfinispanKey
-Resulting value is returned in the exchange *body*.
+** `CamelInfinispanKey`
+The resulting value is returned in the exchange *body*.
 
 .Contains Key Operation
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.CONTAINSKEY | Determines whether a cache contains a specific key
+| `InfinispanOperation.CONTAINSKEY` | Determines whether a cache contains a specific key
 |===
 
 * *Required Headers*
-** CamelInfinispanKey
+** `CamelInfinispanKey`
 * *Result Header*
-** CamelInfinispanOperationResult
+** `CamelInfinispanOperationResult`
 
 .Contains Value Operation
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.CONTAINSVALUE | Determines whether a cache contains a specific value
+| `InfinispanOperation.CONTAINSVALUE` | Determines whether a cache contains a specific value
 |===
 
 * *Required Headers*: 
-** CamelInfinispanValue
+** `CamelInfinispanValue`
 * *Result Header*
-** CamelInfinispanOperationResult
+** `CamelInfinispanOperationResult`
 
 .Remove Operations
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.REMOVE | Removes an entry from a cache, optionally only if the value matches a given one
-| InfinispanOperation.REMOVEASYNC | Asynchronously removes an entry from a cache, optionally only if the value matches a given one
+| `InfinispanOperation.REMOVE` | Removes an entry from a cache, optionally only if the value matches a given one
+| `InfinispanOperation.REMOVEASYNC` | Asynchronously removes an entry from a cache, optionally only if the value matches a given one
 |===
 
 * *Required Headers*:
-** CamelInfinispanKey
+** `CamelInfinispanValue`
 * *Optional Headers*: 
-** CamelInfinispanValue
+** `CamelInfinispanValue`
 * *Result Header*: 
-** CamelInfinispanOperationResult
+** `CamelInfinispanOperationResult`
 
 .Replace Operations
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.REPLACE | Conditionally replaces an entry in the cache, optionally with expiration
-| InfinispanOperation.REPLACEASYNC |  Asynchronously conditionally replaces an entry in the cache, optionally with expiration
+| `InfinispanOperation.REPLACE` | Conditionally replaces an entry in the cache, optionally with expiration
+| `InfinispanOperation.REPLACEASYNC` |  Asynchronously conditionally replaces an entry in the cache, optionally with expiration
 |===
 
 * *Required Headers*: 
-** CamelInfinispanKey
-** CamelInfinispanValue
-** CamelInfinispanOldValue
+** `CamelInfinispanKey`
+** `CamelInfinispanValue`
+** `CamelInfinispanOldValue`
 * *Optional Headers*:
-** CamelInfinispanLifespanTime
-** CamelInfinispanLifespanTimeUnit
-** CamelInfinispanMaxIdleTime
-** CamelInfinispanMaxIdleTimeUnit
+** `CamelInfinispanLifespanTime`
+** `CamelInfinispanLifespanTimeUnit`
+** `CamelInfinispanMaxIdleTime`
+** `CamelInfinispanMaxIdleTimeUnit`
 * *Result Header*: 
-** CamelInfinispanOperationResult
+** `CamelInfinispanOperationResult`
 
 .Clear Operations
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.CLEAR | Clears the cache
-| InfinispanOperation.CLEARASYNC | Asynchronously clears the cache
+| `InfinispanOperation.CLEAR` | Clears the cache
+| `InfinispanOperation.CLEARASYNC` | Asynchronously clears the cache
 |===
 
 .Size Operation
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.SIZE | Returns the number of entries in the cache
+| `InfinispanOperation.SIZE` | Returns the number of entries in the cache
 |===
 
 * *Result Header*
-** CamelInfinispanOperationResult
+** `CamelInfinispanOperationResult`
 
 .Stats Operation
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.STATS | Returns statistics about the cache
+| `InfinispanOperation.STATS` | Returns statistics about the cache
 |===
 
 * *Result Header*:
-** CamelInfinispanOperationResult
+** `CamelInfinispanOperationResult`
 
 .Query Operation
 [cols="40%,60%a", options="header"]
 |===
 | Operation Name | Description
-| InfinispanOperation.QUERY | Executes a query on the cache
+| `InfinispanOperation.QUERY` | Executes a query on the cache
 |===
 
 * *Required Headers*:
-** CamelInfinispanQueryBuilder
-Resulting value is returned in the exchange *body*.
+** `CamelInfinispanQueryBuilder`
+The resulting value is returned in the exchange *body*.
 
 [NOTE]
 ====
@@ -269,18 +269,22 @@ from("infinispan://?cacheContainer=#cacheManager&customListener=#myCustomListene
 ----
 +
 The instance of `myCustomListener` must exist and Camel should be able to look it up from the  `Registry`.
-Users are encouraged to extend the `org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener` class and annotate the resulting class with `@ClientListener` which can be found found in package `org.infinispan.client.hotrod.annotation`.
+Users are encouraged to extend the `org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener` class and annotate the resulting class with `@ClientListener` which can be found in the package `org.infinispan.client.hotrod.annotation`.
 
 
 == Using the Infinispan based idempotent repository
 
-In this section we will use the Infinispan based idempotent repository.
+In this section, we will use the Infinispan based idempotent repository.
 
-.Java Example
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 InfinispanRemoteConfiguration conf = new InfinispanRemoteConfiguration(); // <1> 
-conf.setHosts("localhost:1122")
+conf.setHosts("localhost:1122");
 
 InfinispanRemoteIdempotentRepository repo = new InfinispanRemoteIdempotentRepository("idempotent");  // <2> 
 repo.setConfiguration(conf);
@@ -294,11 +298,13 @@ context.addRoutes(new RouteBuilder() {
     }
 });
 ----
-<1> Configure the cache
-<2> Configure the repository bean
-<3> Set the repository to the route
++
+1. Configure the cache
+2. Configure the repository bean
+3. Set the repository to the route
 
-.XML Example
+XML::
++
 [source,xml]
 ----
 <bean id="infinispanRepo" class="org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository" destroy-method="stop">
@@ -320,19 +326,26 @@ context.addRoutes(new RouteBuilder() {
     </route>
 </camelContext>
 ----
-<1> Set the name of the cache that will be used by the repository
-<2> Configure the repository bean
-<3> Set the repository to the route
++
+1. Set the name of the cache that will be used by the repository
+2. Configure the repository bean
+3. Set the repository to the route
+
+====
 
 == Using the Infinispan based aggregation repository
 
-In this section we will use the Infinispan based aggregation repository.
+In this section, we will use the Infinispan based aggregation repository.
 
-.Java Example
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 InfinispanRemoteConfiguration conf = new InfinispanRemoteConfiguration(); // <1> 
-conf.setHosts("localhost:1122")
+conf.setHosts("localhost:1122");
 
 InfinispanRemoteAggregationRepository repo = new InfinispanRemoteAggregationRepository();  // <2> 
 repo.setCacheName("aggregation");
@@ -350,11 +363,13 @@ context.addRoutes(new RouteBuilder() {
     }
 });
 ----
-<1> Configure the cache
-<2> Create the repository bean
-<3> Set the repository to the route
++
+1. Configure the cache
+2. Create the repository bean
+3. Set the repository to the route
 
-.XML Example
+XML::
++
 [source,xml]
 ----
 <bean id="infinispanRepo" class="org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository" destroy-method="stop">
@@ -380,16 +395,17 @@ context.addRoutes(new RouteBuilder() {
     </route>
 </camelContext>
 ----
-<1> Set the name of the cache that will be used by the repository
-<2> Configure the repository bean
-<3> Set the repository to the route
++
+1. Set the name of the cache that will be used by the repository
+2. Configure the repository bean
+3. Set the repository to the route
+====
 
 [NOTE]
 ====
 With the release of Infinispan 11, it is required to set the encoding configuration on any cache created. This is critical for consuming events too.
-For more information have a look at https://infinispan.org/docs/stable/titles/developing/developing.html#data_encoding[Data Encoding and MediaTypes] in the official Infinispan documentation.
+For more information, have a look at https://infinispan.org/docs/stable/titles/developing/developing.html#data_encoding[Data Encoding and MediaTypes] in the official Infinispan documentation.
 ====
-
 
 
 include::spring-boot:partial$starter.adoc[]

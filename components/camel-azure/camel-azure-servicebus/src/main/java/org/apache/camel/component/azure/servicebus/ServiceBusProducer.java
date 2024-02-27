@@ -149,20 +149,23 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
             final Object inputBody = exchange.getMessage().getBody();
             final Map<String, Object> applicationProperties
                     = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+            final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
 
             Mono<Void> sendMessageAsync;
 
             if (inputBody instanceof Iterable<?>) {
                 sendMessageAsync
                         = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<?>) inputBody),
-                                configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
+                                configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties,
+                                correlationId);
             } else {
                 Object convertedBody = inputBody instanceof BinaryData ? inputBody
                         : getConfiguration().isBinary() ? convertBodyToBinary(exchange)
                         : exchange.getMessage().getBody(String.class);
 
                 sendMessageAsync = serviceBusSenderOperations.sendMessages(convertedBody,
-                        configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
+                        configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties,
+                        correlationId);
             }
 
             subscribeToMono(sendMessageAsync, exchange, noop -> {
@@ -176,6 +179,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
             final Object inputBody = exchange.getMessage().getBody();
             final Map<String, Object> applicationProperties
                     = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+            final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
 
             Mono<List<Long>> scheduleMessagesAsync;
 
@@ -184,7 +188,8 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                         = serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<?>) inputBody),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
-                                applicationProperties);
+                                applicationProperties,
+                                correlationId);
             } else {
                 Object convertedBody = inputBody instanceof BinaryData ? inputBody
                         : getConfiguration().isBinary() ? convertBodyToBinary(exchange)
@@ -193,7 +198,8 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                         = serviceBusSenderOperations.scheduleMessages(convertedBody,
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                                 configurationOptionsProxy.getServiceBusTransactionContext(exchange),
-                                applicationProperties);
+                                applicationProperties,
+                                correlationId);
             }
 
             subscribeToMono(scheduleMessagesAsync, exchange,

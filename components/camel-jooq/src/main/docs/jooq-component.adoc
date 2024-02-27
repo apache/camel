@@ -36,12 +36,14 @@ Result<Record> result = resultQuery.fetch();
 
 == Plain SQL
 SQL could be executed using JOOQ's objects "Query" or "ResultQuery".
-Also SQL query could be specified inside URI:
+Also, the SQL query could be specified inside URI:
+
 [source,java]
 ----
 from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'").to("bean:myBusinessLogic");
 ----
-See examples below.
+
+See the examples below.
 
 == Consuming from endpoint
 

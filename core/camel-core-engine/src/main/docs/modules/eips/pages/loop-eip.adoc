@@ -16,15 +16,9 @@ include::partial$eip-options.adoc[]
 
 == Exchange properties
 
-For each iteration two exchange properties are set on the `Exchange`.
-Processors can rely on these properties to process the message in different ways.
-
-[width="100%",cols="3,1m,6",options="header"]
-|===
-| Property | Type | Description
-| `CamelLoopSize` | `int` | Total number of loops. This is not available if running the loop in while loop mode.
-| `CamelLoopIndex` | `int` | Index of the current iteration (0 based).
-|===
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Looping modes
 
@@ -115,7 +109,7 @@ from("direct:c")
 == Using copy mode
 
 Now suppose we send a message to direct:start endpoint containing the letter A.
-The output of processing this route will be that, each mock:loop endpoint will receive AB as message.
+The output of processing this route will be that, each mock:loop endpoint will receive AB as the message.
 
 [tabs]
 ====
@@ -152,13 +146,13 @@ XML::
 ----
 ====
 
-However, if we do *not* enable copy mode then mock:loop will receive "AB", "ABB", "ABBB", etc. messages.
+However, if we do *not* enable copy mode, then mock:loop will receive `_"AB"_`, `_"ABB"_`, `_"ABBB"_`, etc. messages.
 
 == Looping using while
 
 The loop can act like a while loop that loops until the expression evaluates to `false` or `null`.
 
-For example the route below loops while the length of the message body is 5 or fewer characters.
+For example, the route below loops while the length of the message body is five or fewer characters.
 Notice that the DSL uses `loopDoWhile`.
 
 [tabs]

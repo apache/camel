@@ -81,7 +81,7 @@ from("seda:c")
 
 The scheduled consumers has been improved to mark the consumer as _ready_ sooner, when possible. Previously a consumer,
 would mark as ready after the first poll was completed. For example, a FTP consumer downloading a big file on first poll,
-could take soo long time, that the readiness check would timeout and fail during startup of your Camel application.
+could take so long time, that the readiness check would timeout and fail during startup of your Camel application.
 
 The following components is now marking the consumer as ready sooner:
 
@@ -152,7 +152,7 @@ the behavior described in the documentation.
 
 === camel-yaml-dsl
 
-Using kebab-case in general has been deprecated, and you will se a WARN logs. Please migrate to camelCase.
+Using kebab-case in general has been deprecated, and you will see a WARN logs. Please migrate to camelCase.
 
 The language for exchange property now only supports camelCase style, i.e. `exchange-property` is now `exchangeProperty`.
 

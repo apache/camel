@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The Ignite Messaging endpoint is one of camel-ignite endpoints which allows you to send and consume messages from an https://apacheignite.readme.io/docs/messaging[Ignite topic].
+The Ignite Messaging endpoint is one of camel-ignite endpoints that allow you to send and consume messages from an https://apacheignite.readme.io/docs/messaging[Ignite topic].
 
 // component-configure options: START
 

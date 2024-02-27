@@ -33,7 +33,7 @@ public class QuartzTwoCamelContextSameNameClashTest {
     @BeforeEach
     public void setUp() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("myCamel");
+        camel1.getCamelContextExtension().setName("myCamel");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -45,7 +45,7 @@ public class QuartzTwoCamelContextSameNameClashTest {
         camel1.start();
 
         camel2 = new DefaultCamelContext();
-        camel2.setName("myCamel");
+        camel2.getCamelContextExtension().setName("myCamel");
         camel2.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {

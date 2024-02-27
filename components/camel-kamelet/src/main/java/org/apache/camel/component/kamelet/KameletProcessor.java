@@ -123,6 +123,9 @@ public class KameletProcessor extends AsyncProcessorSupport
         if (producer == null) {
             producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
         }
+        if (producer != null) {
+            ((RouteIdAware) producer).setRouteId(getRouteId());
+        }
         ServiceHelper.buildService(processor, producer);
 
         // we use the kamelet component (producer) to call the kamelet

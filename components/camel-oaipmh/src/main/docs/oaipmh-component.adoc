@@ -14,7 +14,8 @@
 
 *{component-header}*
 
-The oaipmh component is used for harvest OAI-PMH data providers. It allows do request to OAI-PMH endpoint using all verbs supported by the protocol.
+The OAI-PMH component is used for harvest OAI-PMH data providers.
+It allows doing requests to OAI-PMH endpoints using all verbs supported by the protocol.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -56,12 +57,12 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-The OAIPMH component supports both consumer and producer endpoints.
+The OAI-PMH component supports both consumer and producer endpoints.
 
 
 == Producer Example
 
-The following is a basic example of how to send a request to a OAIPMH Server.
+The following is a basic example of how to send a request to an OAI-PMH Server.
 
 in Java DSL
 
@@ -74,7 +75,7 @@ The result is a set of pages in XML format with all the records of the consulted
 
 == Consumer Example
 
-The following is a basic example of how to receive all messages from a OAIPMH Server.
+The following is a basic example of how to receive all messages from an OAI-PMH Server.
 In Java DSL
 
 [source,java]
@@ -85,6 +86,6 @@ from("oaipmh:baseUrlRepository/oai/request")
 
 == More Information
 
-For more details about OAI-PMH see the documentation: http://www.openarchives.org/pmh/
+For more details see the http://www.openarchives.org/pmh/[OAI-PMH documentation].
 
 include::spring-boot:partial$starter.adoc[]

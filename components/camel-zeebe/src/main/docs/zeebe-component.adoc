@@ -2,7 +2,7 @@
 :doctitle: Zeebe
 :shortname: zeebe
 :artifactid: camel-zeebe
-:description: Zeebe component which does integrage with Camunda Zeebe to interact with the API.
+:description: Zeebe component which integrates with Camunda Zeebe to interact with the API.
 :since: 3.21
 :supportlevel: Experimental
 :tabs-sync-option:
@@ -16,7 +16,7 @@
 
 The *Zeebe*: components provides the ability to interact with business processes in https://github.com/camunda/zeebe[Zeebe].
 
-In order to use the Zeebe component, Maven users will need to add the
+To use the Zeebe component, Maven users will need to add the
 following dependency to their `pom.xml`:
 
 [NOTE]
@@ -72,7 +72,7 @@ include::partial$component-endpoint-options.adoc[]
 
 |=======================================================================
 
-The endpoints accept either Java request objects as shown in the examples below or JSON. In JSON camel case for property names is replaced with all lower case seperated by underscores, e.g. processId becomes process_id.
+The endpoints accept either Java request objects as shown in the examples below or JSON. In JSON camel case for property names is replaced with all lower case separated by underscores, e.g., processId becomes process_id.
 
 *Examples*
 

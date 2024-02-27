@@ -74,13 +74,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/aggregator2.html">Aggregator</a> pattern where a batch of
- * messages is processed (up to a maximum amount or until some timeout is reached) and messages for the same
- * correlation key are combined using some kind of {@link AggregationStrategy} (by default the latest message
- * is used) to compress many message exchanges into a smaller number of exchanges.
+ * messages is processed (up to a maximum amount or until some timeout is reached) and messages for the same correlation
+ * key are combined using some kind of {@link AggregationStrategy} (by default the latest message is used) to compress
+ * many message exchanges into a smaller number of exchanges.
  * <p/>
- * A good example of this is stock market data; you may be receiving 30,000 messages/second, and you may want to throttle
- * it right down so that multiple messages for the same stock are combined (or just the latest message is used and older
- * prices to be discarded). Another idea is to combine line item messages together into a single invoice message.
+ * A good example of this is stock market data; you may be receiving 30,000 messages/second, and you may want to
+ * throttle it right down so that multiple messages for the same stock are combined (or just the latest message is used
+ * and older prices to be discarded). Another idea is to combine line item messages together into a single invoice
+ * message.
  */
 public class AggregateProcessor extends AsyncProcessorSupport
         implements Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware, RouteIdAware {

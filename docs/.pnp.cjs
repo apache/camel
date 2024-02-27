@@ -1472,7 +1472,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/d-npm-1.0.1-64afbbc689-49ca0639c7.zip/node_modules/d/",\
           "packageDependencies": [\
             ["d", "npm:1.0.1"],\
-            ["es5-ext", "npm:0.10.62"],\
+            ["es5-ext", "npm:0.10.63"],\
             ["type", "npm:1.2.0"]\
           ],\
           "linkType": "HARD"\
@@ -1852,12 +1852,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["es5-ext", [\
-        ["npm:0.10.62", {\
-          "packageLocation": "./.yarn/unplugged/es5-ext-npm-0.10.62-f20aca46cb/node_modules/es5-ext/",\
+        ["npm:0.10.63", {\
+          "packageLocation": "./.yarn/unplugged/es5-ext-npm-0.10.63-6a78b50e16/node_modules/es5-ext/",\
           "packageDependencies": [\
-            ["es5-ext", "npm:0.10.62"],\
+            ["es5-ext", "npm:0.10.63"],\
             ["es6-iterator", "npm:2.0.3"],\
             ["es6-symbol", "npm:3.1.3"],\
+            ["esniff", "npm:2.0.1"],\
             ["next-tick", "npm:1.1.0"]\
           ],\
           "linkType": "HARD"\
@@ -1869,7 +1870,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["es6-iterator", "npm:2.0.3"],\
             ["d", "npm:1.0.1"],\
-            ["es5-ext", "npm:0.10.62"],\
+            ["es5-ext", "npm:0.10.63"],\
             ["es6-symbol", "npm:3.1.3"]\
           ],\
           "linkType": "HARD"\
@@ -1892,7 +1893,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["es6-weak-map", "npm:2.0.3"],\
             ["d", "npm:1.0.1"],\
-            ["es5-ext", "npm:0.10.62"],\
+            ["es5-ext", "npm:0.10.63"],\
             ["es6-iterator", "npm:2.0.3"],\
             ["es6-symbol", "npm:3.1.3"]\
           ],\
@@ -2291,6 +2292,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["esniff", [\
+        ["npm:2.0.1", {\
+          "packageLocation": "./.yarn/cache/esniff-npm-2.0.1-26cea8766c-d814c0e5c3.zip/node_modules/esniff/",\
+          "packageDependencies": [\
+            ["esniff", "npm:2.0.1"],\
+            ["d", "npm:1.0.1"],\
+            ["es5-ext", "npm:0.10.63"],\
+            ["event-emitter", "npm:0.3.5"],\
+            ["type", "npm:2.7.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["espree", [\
         ["npm:9.6.0", {\
           "packageLocation": "./.yarn/cache/espree-npm-9.6.0-8f679a5d0a-1287979510.zip/node_modules/espree/",\
@@ -2337,6 +2351,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/esutils-npm-2.0.3-f865beafd5-22b5b08f74.zip/node_modules/esutils/",\
           "packageDependencies": [\
             ["esutils", "npm:2.0.3"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["event-emitter", [\
+        ["npm:0.3.5", {\
+          "packageLocation": "./.yarn/cache/event-emitter-npm-0.3.5-f1e8b8edb5-27c1399557.zip/node_modules/event-emitter/",\
+          "packageDependencies": [\
+            ["event-emitter", "npm:0.3.5"],\
+            ["d", "npm:1.0.1"],\
+            ["es5-ext", "npm:0.10.63"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -3396,10 +3421,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["ip", [\
-        ["npm:2.0.0", {\
-          "packageLocation": "./.yarn/cache/ip-npm-2.0.0-204facb3cc-cfcfac6b87.zip/node_modules/ip/",\
+        ["npm:2.0.1", {\
+          "packageLocation": "./.yarn/cache/ip-npm-2.0.1-ee48691f03-d765c9fd21.zip/node_modules/ip/",\
           "packageDependencies": [\
-            ["ip", "npm:2.0.0"]\
+            ["ip", "npm:2.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -5711,7 +5736,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/socks-npm-2.7.1-17f2b53052-259d9e3e8e.zip/node_modules/socks/",\
           "packageDependencies": [\
             ["socks", "npm:2.7.1"],\
-            ["ip", "npm:2.0.0"],\
+            ["ip", "npm:2.0.1"],\
             ["smart-buffer", "npm:4.2.0"]\
           ],\
           "linkType": "HARD"\

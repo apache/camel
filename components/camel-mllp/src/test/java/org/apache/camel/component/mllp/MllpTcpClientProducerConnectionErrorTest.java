@@ -67,7 +67,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         context.setUseMDCLogging(true);
-        context.setName(this.getClass().getSimpleName());
+        context.getCamelContextExtension().setName(this.getClass().getSimpleName());
 
         return context;
     }

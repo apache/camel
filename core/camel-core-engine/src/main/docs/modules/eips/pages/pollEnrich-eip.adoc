@@ -23,13 +23,13 @@ In Camel the Content Enricher can be done in several ways:
 The most natural Camel approach is using xref:enrich-eip.adoc[Enrich] EIP,
 which comes as two kinds:
 
-* xref:enrich-eip.adoc[Enrich] EIP - This is the most common content enricher that uses a `Producer` to obtain the data.
-It is usually used for xref:requestReply-eip.adoc[Request Reply] messaging, for instance to invoke an external web service.
+* xref:enrich-eip.adoc[Enrich] EIP: This is the most common content enricher that uses a `Producer` to obtain the data.
+It is usually used for xref:requestReply-eip.adoc[Request Reply] messaging, for instance, to invoke an external web service.
 
-* xref:pollEnrich-eip.adoc[Poll Enrich] EIP - Uses a xref:polling-consumer.adoc[Polling
+* xref:pollEnrich-eip.adoc[Poll Enrich] EIP: Uses a xref:polling-consumer.adoc[Polling
 Consumer] to obtain the additional data. It is usually used for
-xref:event-message.adoc[Event Message] messaging, for instance to read a
-file or download a xref:ROOT:ftp-component.adoc[FTP] file.
+xref:event-message.adoc[Event Message] messaging, for instance, to read a
+file or download a file using xref:ROOT:ftp-component.adoc[FTP].
 
 NOTE: This page documents the Poll Enrich EIP.
 
@@ -39,24 +39,32 @@ NOTE: This page documents the Poll Enrich EIP.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Content enrichment using Poll Enrich EIP
 
 `pollEnrich` uses a xref:polling-consumer.adoc[Polling Consumer] to obtain the additional data.
-It is usually used for xref:event-message.adoc[Event Message] messaging, for instance to read a file or download a FTP file.
+It is usually used for xref:event-message.adoc[Event Message] messaging,
+for instance, to read a file or download a file using FTP.
 
 The `pollEnrich` works just the same as `enrich`,
-however as it uses a xref:polling-consumer.adoc[Polling Consumer] we have three methods when polling:
+however, as it uses a xref:polling-consumer.adoc[Polling Consumer], we have three methods when polling:
 
-* `receive` - Waits until a message is available and then returns it. *Warning* that this method could block indefinitely if no messages are available.
-* `receiveNoWait` - Attempts to receive a message exchange immediately without waiting and returning `null` if a message exchange is not available yet.
-* `receive(timeout)` - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns the message or `null` if the timeout expired.
+* `receive`: Waits until a message is available and then returns it. *Warning* that this method could block indefinitely if no messages are available.
+* `receiveNoWait`: Attempts to receive a message exchange immediately without waiting and returning `null` if a message exchange is not available yet.
+* `receive(timeout)`: Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns the message or `null` if the timeout expired.
 
 === Poll Enrich with timeout
 
 It is good practice to use timeout value.
 
 By default, Camel will use the `receive` which may block until there is a message available.
-It is therefore recommended to always provide a timeout value, to make this clear that we may wait for a message, until the timeout is hit.
+It is therefore recommended to always provide a timeout value,
+to make this clear that we may wait for a message until the timeout is hit.
 
 You can pass in a timeout value that determines which method to use:
 
@@ -64,7 +72,7 @@ You can pass in a timeout value that determines which method to use:
 * if timeout is `0` then `receiveNoWait` is selected
 * otherwise, `receive(timeout)` is selected
 
-The timeout values is in millis.
+The timeout values are in milliseconds.
 
 === Using Poll Enrich
 
@@ -106,7 +114,7 @@ from("direct:start")
   .to("mock:result");
 ----
 
-In the example Camel will poll a file (timeout 10 seconds).
+In the example, Camel will poll a file (timeout 10 seconds).
 The `AggregationStrategy` is then used to merge the file with the existing `Exchange`.
 
 In XML DSL you use `pollEnrich` as follows:
@@ -128,8 +136,8 @@ In XML DSL you use `pollEnrich` as follows:
 
 === Using Poll Enrich with Rest DSL
 
-You can also use `pollEnrich` with xref:manual::rest-dsl.adoc[Rest DSL] to
-for example download a file from xref:ROOT:aws2-s3-component.adoc[AWS S3] as the response of an API call.
+You can also use `pollEnrich` with xref:manual::rest-dsl.adoc[Rest DSL] to,
+for example, download a file from xref:ROOT:aws2-s3-component.adoc[AWS S3] as the response of an API call.
 
 [source,xml]
 ----
@@ -145,7 +153,7 @@ for example download a file from xref:ROOT:aws2-s3-component.adoc[AWS S3] as the
 </rest>
 ----
 
-Notice that the enriched endpoint is a constant, however Camel also supports dynamic endpoints which is covered next.
+Notice that the enriched endpoint is a constant, however, Camel also supports dynamic endpoints which is covered next.
 
 === Poll Enrich with Dynamic Endpoints
 

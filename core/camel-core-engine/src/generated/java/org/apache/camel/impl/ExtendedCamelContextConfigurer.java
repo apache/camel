@@ -39,6 +39,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": target.setExchangeFactoryManager(property(camelContext, org.apache.camel.spi.ExchangeFactoryManager.class, value)); return true;
         case "headersmapfactory":
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
+        case "managementmbeanassembler":
+        case "ManagementMBeanAssembler": target.setManagementMBeanAssembler(property(camelContext, org.apache.camel.spi.ManagementMBeanAssembler.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "processorexchangefactory":
@@ -74,6 +76,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return org.apache.camel.spi.ExchangeFactoryManager.class;
         case "headersmapfactory":
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
+        case "managementmbeanassembler":
+        case "ManagementMBeanAssembler": return org.apache.camel.spi.ManagementMBeanAssembler.class;
         case "name":
         case "Name": return java.lang.String.class;
         case "processorexchangefactory":
@@ -110,6 +114,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return target.getExchangeFactoryManager();
         case "headersmapfactory":
         case "HeadersMapFactory": return target.getHeadersMapFactory();
+        case "managementmbeanassembler":
+        case "ManagementMBeanAssembler": return target.getManagementMBeanAssembler();
         case "name":
         case "Name": return target.getName();
         case "processorexchangefactory":

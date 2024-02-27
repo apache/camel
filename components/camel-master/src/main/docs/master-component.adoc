@@ -15,10 +15,10 @@
 *{component-header}*
 
 The Camel-Master endpoint provides a way to ensure only a single consumer in a cluster consumes from a given endpoint;
-with automatic failover if that JVM dies.
+with automatic fail over if that JVM dies.
 
-This can be very useful if you need to consume from some legacy back end which either doesn't support concurrent
-consumption or due to commercial or stability reasons you can only have a single connection at any point in time.
+This can be handy if you need to consume from some legacy back end that either doesn't support concurrent
+consumption or due to commercial or stability reasons, you can only have a single connection at any point in time.
 
 == Using the master endpoint
 
@@ -31,13 +31,13 @@ from("master:cheese:jms:foo")
   .to("activemq:wine");
 ----
 
-In this example, there master component ensures that the route is only active in one node, at any given time, in the cluster.
+In this example, the master component ensures that the route is only active in one node, at any given time, in the cluster.
 So if there are 8 nodes in the cluster, then the master component will elect one route to be the leader, and only
 this route will be active, and hence only this route will consume messages from `jms:foo`.
-In case this route is stopped or unexpected terminated, then the master component will detect this,
+In case this route is stopped or unexpectedly terminated, then the master component will detect this,
 and re-elect another node to be active, which will then become active and start consuming messages from `jms:foo`.
 
-TIP: Apache ActiveMQ 5.x has such feature out of the box called https://activemq.apache.org/exclusive-consumer.html[Exclusive Consumers].
+TIP: Apache ActiveMQ 5.x has such a feature out of the box called https://activemq.apache.org/exclusive-consumer.html[Exclusive Consumers].
 
 == URI format
 
@@ -45,7 +45,7 @@ TIP: Apache ActiveMQ 5.x has such feature out of the box called https://activemq
 master:namespace:endpoint[?options]
 ----
 
-Where endpoint is any Camel endpoint you want to run in master/slave mode.
+Where endpoint is any Camel endpoint, you want to run in master/slave mode.
 
 
 // component-configure options: START

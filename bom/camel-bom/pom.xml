@@ -123,6 +123,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws-bedrock</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-cloudtrail</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -144,6 +149,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-athena</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws2-bedrock</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1490,6 +1500,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-openapi-java</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-openapi-rest-dsl-generator</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

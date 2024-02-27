@@ -80,7 +80,7 @@ public class ConsulMasterIT {
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
-            context.setName("context-" + id);
+            context.getCamelContextExtension().setName("context-" + id);
             context.addService(consulClusterService);
             context.addRoutes(new RouteBuilder() {
                 @Override

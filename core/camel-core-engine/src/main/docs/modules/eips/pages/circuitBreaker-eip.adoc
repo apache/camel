@@ -16,17 +16,23 @@ image::eip/CircuitBreaker.png[image]
 
 The states are as follows:
 
-* *Closed* — When operating successfully.
-* *Open* — When failure is detected, and the breaker opens to short-circuit and fail
+* *Closed*: When operating successfully.
+* *Open*: When failure is detected, and the breaker opens to short-circuit and fails
   fast. In this state, the circuit breaker avoids invoking the protected operation and
-  avoids putting additional load on the struggling service.
-* *Half Open* — After a short period in the open state, an operation is attempted to
+  avoids putting the additional load on the struggling service.
+* *Half-Open*: After a short period in the open state, an operation is attempted to
   see whether it can complete successfully, and depending on the outcome, it will
   transfer to either open or closed state.
 
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Example
 
@@ -73,5 +79,5 @@ XML::
 
 Camel provides two implementations of this pattern:
 
-* xref:resilience4j-eip.adoc[Resilience4j] - Using the Resilience4j implementation
-* xref:fault-tolerance-eip.adoc[Fault Tolerance] - Using the MicroProfile Fault Tolerance implementation
+* xref:resilience4j-eip.adoc[Resilience4j]: Using the Resilience4j implementation
+* xref:fault-tolerance-eip.adoc[Fault Tolerance]: Using the MicroProfile Fault Tolerance implementation

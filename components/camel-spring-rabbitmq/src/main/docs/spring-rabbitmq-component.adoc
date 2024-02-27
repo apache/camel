@@ -2,7 +2,7 @@
 :doctitle: Spring RabbitMQ
 :shortname: spring-rabbitmq
 :artifactid: camel-spring-rabbitmq
-:description: Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+:description: Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
 :since: 3.8
 :supportlevel: Stable
 :tabs-sync-option:
@@ -60,18 +60,18 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Using a connection factory
 
-To connect to RabbitMQ you need to setup a `ConnectionFactory` (same as with JMS) with the login details such as:
+To connect to RabbitMQ, you need to set up a `ConnectionFactory` (same as with JMS) with the login details such as:
 
 TIP: It is recommended to use `CachingConnectionFactory` from spring-rabbit as it comes with connection pooling out of the box.
 
 [source,xml]
 ----
 <bean id="rabbitConnectionFactory" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
-  <property name="uri" value="amqp://lolcalhost:5672"/>
+  <property name="uri" value="amqp://localhost:5672"/>
 </bean>
 ----
 
-The `ConnectionFactory` is auto-detected by default, so you can just do
+The `ConnectionFactory` is auto-detected by default, so you can do:
 
 [source,xml]
 ----
@@ -97,14 +97,15 @@ to("spring-rabbitmq:default?routingKey=foo")
 
 Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
 
-In development mode it may be desirable to let Camel automatic do this.
+In development mode, it may be desirable to let Camel automatic do this.
 You can enable this by setting `autoDeclare=true` on the `SpringRabbitMQComponent`.
 
-Then Spring RabbitMQ will automatic necessary declare the elements and setup the binding between the exchange, queue and routing keys.
+Then Spring RabbitMQ will automatically declare the necessary elements and set up the binding between the exchange,
+queue and routing keys.
 
-The elements can be configured using the multi-valued `args` option.
+The elements can be configured using the multivalued `args` option.
 
-For example to specify the queue as durable and exclusive, you can configure the endpoint uri with `arg.queue.durable=true&arg.queue.exclusive=true`.
+For example, to specify the queue as durable and exclusive, you can configure the endpoint uri with `arg.queue.durable=true&arg.queue.exclusive=true`.
 
 *Exchanges*
 
@@ -127,8 +128,8 @@ See details in the RabbitMQ documentation.
 | autoDelete | boolean | True if the server should delete the exchange when it is no longer in use (if all bindings are deleted). | false
 | durable | boolean | A durable queue will survive a server restart. | false
 | exclusive | boolean | Whether the queue is exclusive | false
-| x-dead-letter-exchange | String | The name of the dead letter exchange. If none configured then the component configured value is used. |
-| x-dead-letter-routing-key | String | The routing key for the dead letter exchange. If none configured then the component configured value is used. |
+| x-dead-letter-exchange | String | The name of the dead letter exchange. If none configured, then the component configured value is used. |
+| x-dead-letter-routing-key | String | The routing key for the dead letter exchange. If none configured, then the component configured value is used. |
 |=====================================================================
 
 You can also configure any additional `x-` arguments, such as the message time to live, via `x-message-ttl`, and many others.
@@ -137,26 +138,27 @@ See details in the RabbitMQ documentation.
 == Mapping from Camel to RabbitMQ
 
 The message body is mapped from Camel Message body to a `byte[]` which is the type that RabbitMQ uses for message body.
-Camel wil use its type converter to convert the message body to byte array.
+Camel will use its type converter to convert the message body to a byte array.
 
-Spring Rabbit comes out of the box with support for mapping Java serialized objects but Camel Spring RabbitMQ
+Spring Rabbit comes out of the box with support for mapping Java serialized objects, but Camel Spring RabbitMQ
 does *not* support this due to security vulnerabilities and using Java objects is a bad design as it enforces strong coupling.
 
-Custom message headers is mapped from Camel Message headers to RabbitMQ headers. This behaviour can be customized by configuring
+Custom message headers are mapped from Camel Message headers to RabbitMQ headers.
+This behaviour can be customized by configuring
 a new implementation of `HeaderFilterStrategy` on the Camel component.
 
 == Request / Reply
 
 Request and reply messaging is supported using https://www.rabbitmq.com/direct-reply-to.html[RabbitMQ direct reply-to].
 
-The example below will do request/reply, where the message is sent via the cheese exchange name and routing key _foo.bar_,
-which is being consumed by the 2nd Camel route, that prepends the message with `Hello `, and then sends back the message.
+The example below will do request/reply, where the message is sent via the cheese exchange name and routing key `foo.bar`,
+which is being consumed by the second Camel route, that prepends the message with `Hello `, and then sends back the message.
 
 So if we send `World` as message body to _direct:start_ then, we will se the message being logged
 
-- log:request => World
-- log:input => World
-- log:response => Hello World
+- `log:request -> World`
+- `log:input -> World`
+- `log:response -> Hello World`
 
 [source,java]
 ----
@@ -173,7 +175,7 @@ from("spring-rabbitmq:cheese?queues=myqueue&routingKey=foo.bar")
 == Reuse endpoint and send to different destinations computed at runtime
 
 If you need to send messages to a lot of different RabbitMQ exchanges, it
-makes sense to reuse a endpoint and specify the real destination in
+makes sense to reuse an endpoint and specify the real destination in
 a message header. This allows Camel to reuse the same endpoint, but send
 to different exchanges. This greatly reduces the number of endpoints
 created and economizes on memory and thread resources.
@@ -220,18 +222,18 @@ the message to `spring-rabbitmq:order-emea`, assuming the `region` value was `em
 
 Keep in mind that the producer removes both `CamelSpringRabbitmqExchangeOverrideName` and `CamelSpringRabbitmqRoutingOverrideKey`
 headers from the exchange and do not propagate them to the created Rabbitmq
-message in order to avoid the accidental loops
-in the routes (in scenarios when the message will be forwarded to the
+message to avoid the accidental loops
+in the routes (in scenarios when the message will be forwarded to
 another RabbitMQ endpoint).
 
 == Using toD
 
 If you need to send messages to a lot of different exchanges, it
-makes sense to reuse a endpoint and specify the dynamic destinations
+makes sense to reuse an endpoint and specify the dynamic destinations
 with simple language using xref:eips:toD-eip.adoc[toD].
 
-For example suppose you need to send messages to exchanges with order types,
-then using toD could for example be done as follows:
+For example, suppose you need to send messages to exchanges with order types,
+then using toD could, for example, be done as follows:
 
 [source,java]
 ----
@@ -241,7 +243,7 @@ from("direct:order")
 
 == Manual Acknowledgement 
 
-If we need to manually acknowledge a message for some use case  we can
+If we need to manually acknowledge a message for some use case, we can
 do it by setting and acknowledgeMode to Manual and using the below snippet
 of code to get Channel and deliveryTag to manually acknowledge the message:
 

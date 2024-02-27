@@ -12,7 +12,7 @@ image::eip/MessagingAdapterIcon.gif[image]
 
 Submit the message to a thread pool, which then is responsible for the continued routing of the message.
 
-In Camel this is implemented as the Threads EIP.
+In Camel, this is implemented as the Threads EIP.
 
 == Options
 
@@ -20,9 +20,15 @@ In Camel this is implemented as the Threads EIP.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Using Threads EIP
 
-The example below will add a Thread pool with a pool size of 5 threads before sending to mock:result.
+The example below will add a Thread pool with a pool size of five threads before sending to `mock:result`.
 
 [tabs]
 ====
@@ -118,13 +124,13 @@ IMPORTANT: The reject policy options `Discard` and `DiscardOldest` is deprecated
 === Default values
 
 The Threads EIP uses the default values from the default xref:manual:ROOT:threading-model.adoc[Thread Pool Profile].
-If the profile has not been altered, then the default profile are as follows:
+If the profile has not been altered, then the default profile is as follows:
 
 [width="100%",cols="25%,25%,50%",options="header",]
 |===
 | Option | Default | Description
-| *poolSize* | `10` | Sets the default core pool size (threads to keep minimum in pool)
-| *keepAliveTime* | `60` | Sets the default keep alive time (in seconds) for inactive threads
+| *poolSize* | `10` | Sets the default core pool size (minimum number of threads to keep in pool)
+| *keepAliveTime* | `60` | Sets the default keep-alive time (in seconds) for inactive threads
 | *maxPoolSize* | `20` | Sets the default maximum pool size
 | *maxQueueSize* | `1000` | Sets the default maximum number of tasks in the work queue. Use -1 for an unbounded queue.
 | *allowCoreThreadTimeOut* | `true` | Sets default whether to allow core threads to timeout

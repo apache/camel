@@ -12,7 +12,7 @@ from the xref:enterprise-integration-patterns.adoc[EIP patterns] in various ways
 image::eip/PipesAndFilters.gif[image]
 
 With Camel, you can separate your processing across multiple independent
-xref:manual::endpoint.adoc[Endpoint]'s which can then be chained
+xref:manual::endpoint.adoc[Endpoints] which can then be chained
 together.
 
 == Options
@@ -20,6 +20,12 @@ together.
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using pipeline
 
@@ -55,7 +61,7 @@ XML::
 ----
 ====
 
-Though pipeline is the default mode of operation when you specify
+Though a pipeline is the default mode of operation when you specify
 multiple outputs in Camel. Therefore, it's much more common to see this with Camel:
 
 [tabs]
@@ -87,16 +93,18 @@ XML::
 
 The opposite to `pipeline` is xref:multicast-eip.adoc[`multicast`].
 A xref:multicast-eip.adoc[Multicast] EIP routes a copy of the same message into each of its outputs,
-where these messages are processed independently. Pipeline EIP however, will route the same message
-sequentially in the pipeline where the output from the previous step is input to the next. The same principle
+where these messages are processed independently.
+Pipeline EIP, however, will route the same message
+sequentially in the pipeline where the output from the previous step is input to the next.
+The same principle
 from the Linux shell with chaining commands together with pipe (`|`).
 
-=== When using pipeline is necessary
+=== When using a pipeline is necessary
 
-Using pipeline becomes necessary when you need to group together a series of steps into a single logical step.
-For example in the example below where xref:multicast-eip.adoc[Multicast] EIP is in use, to process the same
+Using a pipeline becomes necessary when you need to group together a series of steps into a single logical step.
+For example, in the example below where xref:multicast-eip.adoc[Multicast] EIP is in use, to process the same
 message in two different pipelines. The first pipeline calls the something bean, and the second pipeline
-calls the foo and bar beans and then route the message to another queue.
+calls the foo and bar beans and then routes the message to another queue.
 
 [tabs]
 ====

@@ -11,7 +11,7 @@
 
 *Since Camel {since}*
 
-Jackson is a Data Format which uses the
+Jackson is a Data Format that uses the
 https://github.com/FasterXML/jackson-core[Jackson Library]
 
 [source,java]
@@ -33,8 +33,8 @@ include::partial$dataformat-options.adoc[]
 
 You can configure `JacksonDataFormat` to use a custom `ObjectMapper` in case you need more control of the mapping configuration.
 
-If you setup a single `ObjectMapper` in the registry, then Camel will automatic lookup and use this `ObjectMapper`.
-For example if you use Spring Boot, then Spring Boot can provide a default `ObjectMapper` for you if you have Spring MVC enabled.
+If you set up a single `ObjectMapper` in the registry, then Camel will automatic lookup and use this `ObjectMapper`.
+For example, if you use Spring Boot, then Spring Boot can provide a default `ObjectMapper` for you if you have Spring MVC enabled.
 And this would allow Camel to detect that there is one bean of `ObjectMapper` class type in the Spring Boot bean registry
 and then use it. When this happens you should set a `INFO` logging from Camel.
 
@@ -43,7 +43,7 @@ and then use it. When this happens you should set a `INFO` logging from Camel.
 The `camel-jackson` module allows integrating Jackson as a xref:manual::type-converter.adoc[Type Converter].
 
 This gives a set of out of the box converters to/from the Jackson type `JSonNode`, such as converting
-from `JSonNode` to `String` or vice-versa.
+from `JSonNode` to `String` or vice versa.
 
 === Enabling more type converters and support for POJOs
 
@@ -55,22 +55,21 @@ which is done by setting the following options on the `CamelContext` global opti
 // Enable Jackson JSON type converter for more types.
 camelContext.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
 // Allow Jackson JSON to convert to pojo types also
-// (by default Jackson only converts to String and other simple types)
+// (by default, Jackson only converts to String and other simple types)
 getContext().getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
 ----
 
 The `camel-jackson` type converter integrates with xref:dataformats:jaxb-dataformat.adoc[JAXB]
 which means you can annotate POJO class with `JAXB` annotations that Jackson can use.
-You can also use Jacksons own annotations on your POJO classes.
+You can also use Jackson's own annotations in your POJO classes.
 
 == Dependencies
 
-To use Jackson in your camel routes you need to add the dependency
-on *camel-jackson* which implements this data format.
+To use Jackson in your Camel routes, you need to add the dependency
+on *camel-jackson*, which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release:
 
 [source,xml]
 ----------------------------------------------------------

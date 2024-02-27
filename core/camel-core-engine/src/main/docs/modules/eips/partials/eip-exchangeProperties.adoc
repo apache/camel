@@ -1,0 +1,26 @@
+:tablespec: width="100%",cols="2,5a,^1,2",options="header"
+:cellformats: '`[#_option_${path[2]}]*${path[2]}*` \
+|util.description(value) \
+|util.valueAsString(value.defaultValue) \
+|util.javaSimpleName(value.javaType)'
+:requires: 'util=util/jsonpath-util.js'
+include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.exchangeProperties.*']
+
+ifeval::[{optioncount} == 0]
+The {doctitle} eip has no exchange properties.
+endif::[]
+ifeval::[{optioncount} != 0]
+The {doctitle} eip supports {optioncount} exchange properties, which are listed below.
+
+The exchange properties are set on the `Exchange` by the EIP, unless otherwise specified in the description.
+This means those properties are available after this EIP has completed processing the `Exchange`.
+
+
+[{tablespec}]
+|===
+| Name | Description | Default | Type
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.exchangeProperties.*',{cellformats},{requires}]
+endif::[]
+

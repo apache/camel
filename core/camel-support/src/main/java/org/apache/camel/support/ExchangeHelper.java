@@ -374,6 +374,7 @@ public final class ExchangeHelper {
         resultExtension.setNotifyEvent(sourceExtension.isNotifyEvent());
         resultExtension.setRedeliveryExhausted(sourceExtension.isRedeliveryExhausted());
         resultExtension.setErrorHandlerHandled(sourceExtension.getErrorHandlerHandled());
+        resultExtension.setFailureHandled(sourceExtension.isFailureHandled());
 
         result.setException(source.getException());
     }

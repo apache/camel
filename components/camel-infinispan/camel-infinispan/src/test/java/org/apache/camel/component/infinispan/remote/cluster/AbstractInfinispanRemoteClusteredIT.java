@@ -120,7 +120,7 @@ public class AbstractInfinispanRemoteClusteredIT {
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.disableJMX();
-            context.setName("context-" + id);
+            context.getCamelContextExtension().setName("context-" + id);
             context.addService(clusterService);
 
             RunnerEnv contextEnv = new RunnerEnv();

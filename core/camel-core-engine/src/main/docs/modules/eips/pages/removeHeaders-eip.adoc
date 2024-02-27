@@ -15,6 +15,12 @@ based on pattern syntax.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Remove Headers by pattern
 
 The Remove Headers EIP supports pattern
@@ -106,7 +112,7 @@ YAML::
 
 Camel provides the following EIPs for removing headers or exchange properties:
 
-- xref:removeHeader-eip.adoc[Remove Header] - To remove a single header
-- xref:removeHeaders-eip.adoc[Remove Headers] - To remove one or more message headers
-- xref:removeProperty-eip.adoc[Remove Property] - To remove a single exchange property
-- xref:removeProperties-eip.adoc[Remove Properties] - To remove one or more exchange properties
+- xref:removeHeader-eip.adoc[Remove Header]: To remove a single header
+- xref:removeHeaders-eip.adoc[Remove Headers]: To remove one or more message headers
+- xref:removeProperty-eip.adoc[Remove Property]: To remove a single exchange property
+- xref:removeProperties-eip.adoc[Remove Properties]: To remove one or more exchange properties

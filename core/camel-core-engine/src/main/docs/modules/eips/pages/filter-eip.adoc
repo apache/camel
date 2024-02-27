@@ -25,6 +25,12 @@ in Java. The filter will *include* the message if the predicate evaluated to `tr
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 The Camel xref:languages:simple-language.adoc[Simple] language
@@ -111,7 +117,7 @@ public static class MyBean {
 }
 ----
 
-And in XML we can call the bean in `<method>` where we can specify the FQN classname
+And in XML we can call the bean in `<method>` where we can specify the FQN class name
 of the bean as shown:
 
 [source,xml]
@@ -166,7 +172,7 @@ whether it was `true` or `false`.
 
 When using the Message Filter EIP, then it only applies to its children.
 
-For example in the previous example:
+For example, in the previous example:
 
 [source,xml]
 ----
@@ -180,11 +186,11 @@ For example in the previous example:
 </route>
 ----
 
-Then for a message that is a gold customer will be routed to both mock:gold and mock:all (predicate is true).
+Then for a message that is a gold customer will be routed to both `mock:gold` and `mock:all` (predicate is true).
 However, for a non-gold message (predicate is false) then the message will not be routed in the filter block,
 but will be routed to mock:all.
 
-Sometimes you may want to stop continue routing for messages that was filtered.
+Sometimes you may want to stop routing for messages that were filtered.
 To do this, you can use the xref:stop-eip.adoc[Stop] EIP as shown:
 
 [source,xml]

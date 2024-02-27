@@ -99,7 +99,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
 
     /**
-     * Sets a reference to an exiting bean to use, which is looked up from the registry
+     * Sets a reference to an existing bean to use, which is looked up from the registry
      */
     public void setRef(String ref) {
         this.ref = ref;

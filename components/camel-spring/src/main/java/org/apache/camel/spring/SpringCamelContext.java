@@ -70,7 +70,7 @@ public class SpringCamelContext extends DefaultCamelContext
 
     public SpringCamelContext() {
         super(false);
-        setManagementMBeanAssembler(new SpringManagementMBeanAssembler(this));
+        getCamelContextExtension().setManagementMBeanAssembler(new SpringManagementMBeanAssembler(this));
     }
 
     public SpringCamelContext(ApplicationContext applicationContext) {

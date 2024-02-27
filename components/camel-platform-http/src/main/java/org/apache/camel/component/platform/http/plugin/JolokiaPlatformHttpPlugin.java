@@ -17,7 +17,6 @@
 package org.apache.camel.component.platform.http.plugin;
 
 import org.apache.camel.component.platform.http.spi.PlatformHttpPlugin;
-import org.jolokia.server.core.http.HttpRequestHandler;
 
 /**
  * Plugin for Jolokia
@@ -26,5 +25,8 @@ public interface JolokiaPlatformHttpPlugin extends PlatformHttpPlugin {
 
     String NAME = "jolokia";
 
-    HttpRequestHandler getRequestHandler();
+    /**
+     * The VertX Handler (io.vertx.core.Handler) that handles the HTTP requests to service Jolokia
+     */
+    Object getHandler();
 }

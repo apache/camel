@@ -12,7 +12,7 @@
 *Since Camel {since}*
 
 This data format that can convert a Camel message with attachments into
-a Camel message having a MIME-Multipart message as message body (and no
+a Camel message that has a MIME-Multipart message as message body (and no
 attachments).
 
 The use case for this is to enable the user to send attachments over
@@ -26,28 +26,26 @@ receiving the message from the JMS queue and unmarshalling it again
 
 The marshal option of the mimeMultipart data format will convert a
 message with attachments into a MIME-Multipart message. If the parameter
-"multipartWithoutAttachment" is set to true it will also marshal
+`multipartWithoutAttachment` is set to true, it will also marshal
 messages without attachments into a multipart message with a single
 part, if the parameter is set to false it will leave the message alone.
 
-MIME headers of the mulitpart as "MIME-Version" and "Content-Type" are
+MIME headers of the multipart as "MIME-Version" and "Content-Type" are
 set as camel headers to the message. If the parameter "headersInline" is
-set to true it will also create a MIME multipart message in any case.  +
-Furthermore the MIME headers of the multipart are written as part of the
+set to true, it will also create a MIME multipart message in any case.  +
+Furthermore, the MIME headers of the multipart are written as part of the
 message body, not as camel headers.
 
 The unmarshal option of the mimeMultipart data format will convert a
-MIME-Multipart message into a camel message with attachments and leaves
+MIME-Multipart message into a camel message with attachments and leave
 other messages alone. MIME-Headers of the MIME-Multipart message have to
 be set as Camel headers. The unmarshalling will only take place if the
 "Content-Type" header is set to a "multipart" type. If the option
 "headersInline" is set to true, the body is always parsed as a MIME
-message.As a consequence if the message body is a stream and stream
+message. As a consequence, if the message body is a stream and stream
 caching is not enabled, a message body that is actually not a MIME
 message with MIME headers in the message body will be replaced by an
-empty message. Up to Camel version 2.17.1 this will happen all message
-bodies that do not contain a MIME multipart message regardless of body
-type and stream cache setting.
+empty message.
 
 == Options
 
@@ -69,13 +67,13 @@ version (1.0) if the "headersInline" parameter is set to false.
 
 |Content-Type |String |The content of this header will be used as a content type for the
 message body part. If no content type is set, "application/octet-stream"
-is assumed. After the marshal operation the content type is set to
+is assumed. After the marshal operation, the content type is set to
 "multipart/related" or empty if the "headersInline" parameter is set to
 true.
 
 |Content-Encoding |String |If the incoming content type is "text/*" the content encoding will be
 set to the encoding parameter of the Content-Type MIME header of the
-body part. Furthermore the given charset is applied for text to binary
+body part. Furthermore, the given charset is applied for text to binary
 conversions.
 |=======================================================================
 
@@ -85,18 +83,18 @@ conversions.
 |=======================================================================
 |Name |Type |Description
 
-|Content-Type |String |If this header is not set to "multipart/*" the unmarshal operation will
-not do anything. In other cases the multipart will be parsed into a
+|Content-Type |String |If this header is not set to `multipart/*` the unmarshal operation will
+not do anything. In other cases, the multipart will be parsed into a
 camel message with attachments and the header is set to the Content-Type
 header of the body part, except if this is application/octet-stream. In
-the latter case the header is removed.
+the latter case, the header is removed.
 
-|Content-Encoding |String |If the content-type of the body part contains an encoding parameter this
+|Content-Encoding |String |If the content-type of the body part contains an encoding parameter, this
 header will be set to the value of this encoding parameter (converted
-from MIME endoding descriptor to Java encoding descriptor)
+from MIME encoding descriptor to Java encoding descriptor)
 
 |MIME-Version |String |The unmarshal operation will read this header and use it for parsing the
-MIME multipart. The header is removed afterwards
+MIME multipart. The header is removed afterward
 |=======================================================================
 
 == Examples
@@ -176,10 +174,10 @@ Content-Disposition: attachment; filename="Attachment File Name"
 
 == Dependencies
 
-To use MIME-Multipart in your Camel routes you need to add a dependency
-on *camel-mail* which implements this data format.
+To use MIME-Multipart in your Camel routes, you need to add a dependency
+on *camel-mail*, which implements this data format.
 
-If you use Maven you can just add the following to your pom.xml:
+If you use Maven, you can add the following to your pom.xml:
 
 [source,xml]
 -----------------------------------------------------------------------------------

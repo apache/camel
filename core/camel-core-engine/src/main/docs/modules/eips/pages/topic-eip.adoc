@@ -7,7 +7,7 @@
 :tabs-sync-option:
 
 Topic mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
-With this policy then all destination is selected.
+With this policy, then all destinations are selected.
 
 == Options
 
@@ -15,10 +15,22 @@ With this policy then all destination is selected.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
 == Examples
 
-In this example we send the message to all three endpoints:
+In this example, we send the message to all three endpoints:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -29,8 +41,8 @@ from("direct:start")
     .end();
 ----
 
-In XML you'll have a route like this:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -43,3 +55,5 @@ In XML you'll have a route like this:
     </loadBalance> 
 </route>
 ----
+
+====

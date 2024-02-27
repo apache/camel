@@ -44,7 +44,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public final class CamelContextHelper {
 
-    public static final String MODEL_DOCUMENTATION_PREFIX = "org/apache/camel/model/";
+    public static final String MODEL_DOCUMENTATION_PREFIX = "META-INF/org/apache/camel/model/";
 
     /**
      * Utility classes should not have a public constructor.

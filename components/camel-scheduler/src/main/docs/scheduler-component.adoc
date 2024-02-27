@@ -109,11 +109,11 @@ keep firing all the time. So use this with caution.
 == Forcing the scheduler to be idle
 
 There can be use cases where you want the scheduler to trigger and be
-greedy. But sometimes you want "tell the scheduler" that there was no
+greedy. But sometimes you want to "tell the scheduler" that there was no
 task to poll, so the scheduler can change into idle mode using the
-backoff options. To do this you would need to set a property on the
+backoff options. To do this, you would need to set a property on the
 exchange with the key `Exchange.SCHEDULER_POLLED_MESSAGES` to a boolean
-value of false. This will cause the consumer to indicate that there was
+value of false. This will cause the consumer to indicate that there were
 no messages polled. 
 
 The consumer will otherwise as by default return 1 message polled to the

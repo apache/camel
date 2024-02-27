@@ -126,7 +126,9 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
     protected Exchange createExchange(Record record) {
         Exchange ex = createExchange(true);
-        ex.getIn().setBody(record, Record.class);
+        ex.getMessage().setBody(record, Record.class);
+        ex.getMessage().setHeader(Ddb2StreamConstants.EVENT_SOURCE, record.eventSource());
+        ex.getMessage().setHeader(Ddb2StreamConstants.EVENT_ID, record.eventID());
         return ex;
     }
 

@@ -12,6 +12,12 @@ This EIP allows you to use your own xref:loadBalance-eip.adoc[Load Balancer] imp
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
 An example using Java DSL:
@@ -54,7 +60,7 @@ XML::
 ----
 ====
 
-To implement a custom load balancer you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
+To implement a custom load balancer, you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
 The former supports the asynchronous routing engine, and the latter does not. Here is an example of a custom load balancer implementation:
 
 [source,java]

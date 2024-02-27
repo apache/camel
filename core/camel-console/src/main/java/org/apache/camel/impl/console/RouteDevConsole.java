@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
@@ -359,6 +360,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
             routes.stream()
                     .map(route -> mcc.getManagedRoute(route.getRouteId()))
+                    .filter(Objects::nonNull)
                     .filter(r -> accept(r, filter))
                     .filter(r -> accept(r, subPath))
                     .sorted(RouteDevConsole::sort)
@@ -378,8 +380,7 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
-        // sort by id
-        return o1.getRouteId().compareTo(o2.getRouteId());
+        return o1.getRouteId().compareToIgnoreCase(o2.getRouteId());
     }
 
     private String getLoad1(ManagedRouteMBean mrb) {

@@ -14,9 +14,9 @@
 
 *{component-header}*
 
-The Servlet component provides HTTP based
+The Servlet component provides HTTP-based
 endpoints for consuming HTTP requests that arrive at
-a HTTP endpoint that is bound to a published Servlet.
+an HTTP endpoint that is bound to a published Servlet.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -36,11 +36,11 @@ for this component:
 ====
 *Stream*
 
-Servlet is stream based, which means the input it receives is submitted
+Servlet is stream-based, which means the input it receives is submitted
 to Camel as a stream. That means you will only be able to read the
 content of the stream *once*. If you find a situation where the message
-body appears to be empty or you need to access the data multiple times
-(eg: doing multicasting, or redelivery error handling) you should use
+body appears to be empty, or you need to access the data multiple times
+(eg: doing multicasting, or redelivery error handling), you should use
 Stream caching or convert the message body to
 a `String` which is safe to be read multiple times.
 ====
@@ -75,7 +75,7 @@ component.
 Camel will also populate *all* `request.parameter` and
 `request.headers`. For example, if a client request has the URL,
 http://myserver/myserver?orderid=123, the exchange will contain a
-header named `orderid` with the value 123.
+header named `orderid` with the value `123`.
 
 == Usage
 
@@ -87,7 +87,7 @@ xref:http-component.adoc[HTTP Component].
 == Putting Camel JARs in the app server boot classpath
 
 If you put the Camel JARs such as `camel-core`, `camel-servlet`, etc. in
-the boot classpath of your application server (eg usually in its lib
+the boot classpath of your application server (e.g., usually in its lib
 directory), then mind that the servlet mapping list is now shared
 between multiple deployed Camel application in the app server.
 
@@ -95,7 +95,7 @@ Mind that putting Camel JARs in the boot classpath of the application
 server is generally not best practice!
 
 So in those situations you *must* define a custom and unique servlet
-name in each of your Camel application, eg in the `web.xml` define:
+name in each of your Camel applications, e.g., in the `web.xml` define:
 
 [source,xml]
 ---------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ And in your Camel endpoints then include the servlet name as well
 </route>
 ---------------------------------------------------
 
-Camel detects this duplicate and fail to
+Camel detects this duplicate and fails to
 start the application. You can control to ignore this duplicate by
 setting the servlet init-parameter ignoreDuplicateServletName to true as
 follows:
@@ -141,14 +141,14 @@ follows:
 
 But it is *strongly advised* to use unique `servlet-name` for each Camel
 application to avoid this duplication clash, as well any unforeseen
-side-effects.
+side effects.
 
 == Servlet >= 3.0 and AsyncContext
 
-To enable Camel to benefit from Servlet asynchronous support you must:
+To enable Camel to benefit from Servlet asynchronous support, you must:
 
 . Enable `async` boolean init parameter by setting it to `true`
-. Without more configuration it will reuse servlet thread pool to handle the processing but you can set `executorRef` to an executor service reference to let another pool handle the processing of the exchange.
+. Without more configuration it will reuse servlet thread pool to handle the processing, but you can set `executorRef` to an executor service reference to let another pool handle the processing of the exchange.
 It will use camel context registry by default and potentially fallback on an executor policy or default executor service if no bean matches this name.
 
 Note that to force camel to get back pre-3.7.0 behavior which was to wait in another container background thread, you can set `forceAwait` boolean init parameter to `true`.
@@ -176,7 +176,7 @@ Sample async configuration:
 == Sample
 
 Use xref:servlet-component.adoc[Servlet] in Spring web applications for simplicity's sake.
-In this sample, we define a route that exposes a HTTP service at
+In this sample, we define a route that exposes an HTTP service at
 http://localhost:8080/camel/services/hello.
 
 First, you need to publish the
@@ -240,7 +240,7 @@ address: `("http://localhost:8080/camel/services") + RELATIVE_PATH("/hello")`
 
 === Sample when using Spring
 
-When using the Servlet component in a Camel/Spring application it's
+When using the Servlet component in a Camel/Spring application, it's
 often required to load the Spring ApplicationContext _after_ the Servlet
 component has started. This can be accomplished by using Spring's
 `ContextLoaderServlet` instead of `ContextLoaderListener`. In that case

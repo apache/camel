@@ -23,13 +23,14 @@ In Camel the Content Enricher can be done in several ways:
 The most natural Camel approach is using xref:enrich-eip.adoc[Enrich] EIP,
 which comes as two kinds:
 
-* xref:enrich-eip.adoc[Enrich] EIP - This is the most common content enricher that uses a `Producer` to obtain the data.
-It is usually used for xref:requestReply-eip.adoc[Request Reply] messaging, for instance to invoke an external web service.
+* xref:enrich-eip.adoc[Enrich] EIP: This is the most common content enricher that uses a `Producer` to obtain the data.
+It is usually used for xref:requestReply-eip.adoc[Request Reply] messaging,
+for instance, to invoke an external web service.
 
-* xref:pollEnrich-eip.adoc[Poll Enrich] EIP - Uses a xref:polling-consumer.adoc[Polling
+* xref:pollEnrich-eip.adoc[Poll Enrich] EIP: Uses a xref:polling-consumer.adoc[Polling
 Consumer] to obtain the additional data. It is usually used for
-xref:event-message.adoc[Event Message] messaging, for instance to read a
-file or download a xref:ROOT:ftp-component.adoc[FTP] file.
+xref:event-message.adoc[Event Message] messaging, for instance, to read a
+file or download one using xref:ROOT:ftp-component.adoc[FTP].
 
 NOTE: This page documents the Enrich EIP.
 
@@ -37,16 +38,22 @@ NOTE: This page documents the Enrich EIP.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Content enrichment using Enrich EIP
 
 Enrich EIP is the most common content enricher that uses a `Producer` to obtain the data.
 
-The content enricher (`enrich`) retrieves additional data from a _resource endpoint_ in order to enrich an incoming message (contained in the _original exchange_).
+The content enricher (`enrich`) retrieves additional data from a _resource endpoint_
+to enrich an incoming message (contained in the _original exchange_).
 
 An `AggregationStrategy` is used to combine the original exchange and the _resource exchange_. The first parameter of the `AggregationStrategy.aggregate(Exchange, Exchange)` method corresponds to the original exchange, the second parameter the resource exchange.
 
-Here's an example for implementing an `AggregationStrategy`, which merges the two data together
+Here's an example for implementing an `AggregationStrategy`, which merges the two data
 as a `String` with colon separator:
 
 [source,java]
@@ -124,7 +131,7 @@ YAML::
 === Aggregation Strategy is optional
 
 The aggregation strategy is optional.
-If not provided then Camel will just use the result exchange as the result.
+If not provided, then Camel will just use the result exchange as the result.
 
 The following example:
 
@@ -207,7 +214,7 @@ YAML::
 
 === Using dynamic uris
 
-Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to enrich from a HTTP endpoint where the header with key orderId is used as part of the content-path of the HTTP url:
+Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example, to enrich from a HTTP endpoint where the header with key orderId is used as part of the content-path of the HTTP url:
 
 [tabs]
 ====
@@ -250,12 +257,12 @@ YAML::
 
 TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
 
-=== Using out of the box Aggregation Strategies
+=== Using out-of-the-box Aggregation Strategies
 
 The `org.apache.camel.builder.AggregationStrategies` is a builder that can
 be used for creating commonly used aggregation strategies without having to create a class.
 
-For example the `ExampleAggregationStrategy` from previously can be built as follows:
+For example, the `ExampleAggregationStrategy` from previously can be built as follows:
 
 [source,java]
 ----

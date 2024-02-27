@@ -28,7 +28,7 @@ by just executing `camel` (see more next).
 
 == Container Image
 
-There is also a container image availabe in https://hub.docker.com/r/apache/camel-jbang/[Dockerhub]
+There is also a container image available in https://hub.docker.com/r/apache/camel-jbang/[Dockerhub]
 
 [source,bash]
 ----
@@ -1856,7 +1856,7 @@ And these annotations should work on all runtimes
 - `@org.apache.camel.BindToRegistry` on a method to create a bean by invoking the method.
 - `@org.apache.camel.Converter` on class level to auto-register the xref:type-converter.adoc[type converters] from the class.
 
-IMPORTANT: You can use `@BeanInject` annotation to refer to existing bean annotated with `@BindToRegistry`, however this is possibe if the dependency is registered before the dependant.
+IMPORTANT: You can use `@BeanInject` annotation to refer to existing bean annotated with `@BindToRegistry`, however this is possible if the dependency is registered before the dependant.
 
 ==== Using Spring Boot dependency injection
 
@@ -2207,7 +2207,7 @@ $ camel dependency update --source=foo.java
 
 TIP: You can use `--clean` to not keep any existing dependencies and generate a clean fresh list.
 
-This will then automatic insert or update the JBang depencies (`//DEPS`) in the top of the source file.
+This will then automatic insert or update the JBang dependencies (`//DEPS`) in the top of the source file.
 
 You may want to use this for making it easier to load the source into an IDE editor to do coding.
 See previous section for more details.
@@ -2605,7 +2605,7 @@ This can be suppressed by setting the option `suppressExceptions` to `true` as s
 
 === Transforming message using Components
 
-Some components can also be used for message transformation such as Flatpack, Velocity, Freemarker, Thymaleaf, and good old XSLT.
+Some components can also be used for message transformation such as FlatPack, Velocity, FreeMarker, Thymeleaf, and good old XSLT.
 
 TIP: You can use `camel catalog component --filter=transform` to see which components can be transformation.
 
@@ -2665,7 +2665,7 @@ NOTE: The transform message with component is limited as some components require
 
 === Transforming message using Data Formats
 
-Some data-formats can also be used for message transformation such as Base64, Csv, Flatpack.
+Some data-formats can also be used for message transformation such as Base64, Csv, FlatPack.
 
 TIP: You can use `camel catalog dataformat --filter=transform` to see which components can be transformation.
 
@@ -2701,7 +2701,7 @@ This will then output:
  playing with Rantanplan], [Lucky Luke,  120,  capturing the Daltons]]
 ----
 
-As you can see Camel CSV dataformat will then unarmshal the input (from CSV file) to a `java.util.ArrayList` object
+As you can see Camel CSV dataformat will then unmarshal the input (from CSV file) to a `java.util.ArrayList` object
 with 5 elements (one per row), and each row is another List of the columns.
 
 You can configure options that the CSV data format should use, such as shown below:
@@ -3338,6 +3338,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.metrics`
 | Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) when running standalone Camel
 
+|`camel.jbang.open-api`
+| File name of open-api spec file (json or yaml) that are used when using `--open-api` to generate routes from swagger/openapi API spec file.
+
 |`camel.jbang.ignoreLoadingError`
 | Whether to ignore route loading and compilation errors (use this with care!)
 
@@ -3346,7 +3349,7 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |===
 
-NOTE: These are options from the export command, so you can see mor details and default values using `camel export --help`.
+NOTE: These are options from the export command, so you can see more details and default values using `camel export --help`.
 
 == Configuration
 

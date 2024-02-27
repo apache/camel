@@ -151,11 +151,6 @@ public class MetricsMessageHistoryFactory extends ServiceSupport
     }
 
     @Override
-    public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp, Exchange exchange) {
-        return newMessageHistory(routeId, node, exchange);
-    }
-
-    @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode node, Exchange exchange) {
         if (nodePattern != null) {
             String name = node.getShortName();

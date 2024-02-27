@@ -125,6 +125,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementMBeansLevel": target.setJmxManagementMBeansLevel(property(camelContext, org.apache.camel.ManagementMBeansLevel.class, value)); return true;
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": target.setJmxManagementNamePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "jmxmanagementregisterroutescreatebykamelet":
+        case "JmxManagementRegisterRoutesCreateByKamelet": target.setJmxManagementRegisterRoutesCreateByKamelet(property(camelContext, boolean.class, value)); return true;
+        case "jmxmanagementregisterroutescreatebytemplate":
+        case "JmxManagementRegisterRoutesCreateByTemplate": target.setJmxManagementRegisterRoutesCreateByTemplate(property(camelContext, boolean.class, value)); return true;
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": target.setJmxManagementStatisticsLevel(property(camelContext, org.apache.camel.ManagementStatisticsLevel.class, value)); return true;
         case "jmxupdaterouteenabled":
@@ -366,6 +370,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementMBeansLevel": return org.apache.camel.ManagementMBeansLevel.class;
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": return java.lang.String.class;
+        case "jmxmanagementregisterroutescreatebykamelet":
+        case "JmxManagementRegisterRoutesCreateByKamelet": return boolean.class;
+        case "jmxmanagementregisterroutescreatebytemplate":
+        case "JmxManagementRegisterRoutesCreateByTemplate": return boolean.class;
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
         case "jmxupdaterouteenabled":
@@ -608,6 +616,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementMBeansLevel": return target.getJmxManagementMBeansLevel();
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": return target.getJmxManagementNamePattern();
+        case "jmxmanagementregisterroutescreatebykamelet":
+        case "JmxManagementRegisterRoutesCreateByKamelet": return target.isJmxManagementRegisterRoutesCreateByKamelet();
+        case "jmxmanagementregisterroutescreatebytemplate":
+        case "JmxManagementRegisterRoutesCreateByTemplate": return target.isJmxManagementRegisterRoutesCreateByTemplate();
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": return target.getJmxManagementStatisticsLevel();
         case "jmxupdaterouteenabled":

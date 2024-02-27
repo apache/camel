@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The camel Etcd component allows you to work with Etcd, a distributed reliable key-value store.
+The Etcd v3 component allows you to work with Etcd, a distributed reliable key-value store.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -54,53 +54,54 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Producer Operations (Since 3.20)
 
-The following ETCD operations are currently supported. Simply
-set the exchange header with a key of "CamelEtcdAction"
-and a value set to one of the following.
+Apache Camel supports different etcd operations.
+
+To define the operation, set the exchange header with a key of `CamelEtcdAction`
+and a value set to one of the following:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
 |operation |input message body | output message body |description
 
-|set |*String* value of the key-value pair to put |*PutResponse* result of a put operation| Puts a new key-value pair into etcd where the option "path" or the exchange header "CamelEtcdPath" is the key.
+|set |*String* value of the key-value pair to put |`PutResponse` result of a put operation| Puts a new key-value pair into etcd where the option `path` or the exchange header `CamelEtcdPath` is the key.
 You can set the key charset by setting the exchange header with
-the key "CamelEtcdKeyCharset".
+the key `CamelEtcdKeyCharset`.
 You can set the value charset by setting the exchange header with
-the key "CamelEtcdValueCharset".
+the key `CamelEtcdValueCharset`.
 
-|get |None |*GetResponse* result of the get operation | Retrieves the key-value pair(s) that match with the key corresponding to
-the option "path" or the exchange header "CamelEtcdPath".
+|get |None |`GetResponse` result of the get operation | Retrieve the key-value pair(s) that match with the key corresponding to
+the option `path` or the exchange header `CamelEtcdPath`.
 You can set the key charset by setting the exchange header with
-the key "CamelEtcdKeyCharset".
+the key `CamelEtcdKeyCharset`.
 You indicate if the key is a prefix by setting the exchange header with
-the key "CamelEtcdIsPrefix" to true.
+the key `CamelEtcdIsPrefix` to `true`.
 
-|delete |None |*DeleteResponse* result of the delete operation |Deletes the key-value pair(s) that match with the key corresponding to
-the option "path" or the exchange header "CamelEtcdPath".
+|delete |None |`DeleteResponse` result of the delete operation |Delete the key-value pair(s) that match with the key corresponding to
+the option `path` or the exchange header `CamelEtcdPath`.
 You can set the key charset by setting the exchange header with
-the key "CamelEtcdKeyCharset".
+the key `CamelEtcdKeyCharset`.
 You indicate if the key is a prefix by setting the exchange header with
-the key "CamelEtcdIsPrefix" to true.
+the key `CamelEtcdIsPrefix` to `true`.
 
 == Consumer (Since 3.20)
 
-The consumer of the etcd components allows to watch changes on the matching key-value pair(s). One exchange is created per event with the header "CamelEtcdPath" set to the path of the corresponding key-value pair and the body
-of type *WatchEvent*.
+The consumer of the etcd components allows watching changes on the matching key-value pair(s). One exchange is created per event with the header `CamelEtcdPath` set to the path of the corresponding key-value pair and the body
+of type `WatchEvent`.
 
 You can set the key charset by setting the exchange header with
-the key "CamelEtcdKeyCharset".
+the key `CamelEtcdKeyCharset`.
 You indicate if the key is a prefix by setting the exchange header with
-the key "CamelEtcdIsPrefix" to true.
+the key `CamelEtcdIsPrefix` to `true`.
 
-By default, the consumer receives only the latest changes, but it is also possible to start watching events from a specific revision by setting the option "fromIndex" to the expected starting index.
+By default, the consumer receives only the latest changes, but it is also possible to start watching events from a specific revision by setting the option `fromIndex` to the expected starting index.
 
 == AggregationRepository
 
-The Etcd3 component provides an `AggregationStrategy` to use Etcd as the backend datastore.
+The Etcd v3 component provides an `AggregationStrategy` to use etcd as the backend datastore.
 
 == RoutePolicy (Since 3.20)
 
-The Etcd3 component provides a `RoutePolicy` to use Etcd as clustered lock.
+The Etcd v3 component provides a `RoutePolicy` to use etcd as clustered lock.
 
 |===
 

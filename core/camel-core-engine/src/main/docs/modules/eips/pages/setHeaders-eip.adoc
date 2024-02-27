@@ -1,7 +1,7 @@
 = Set Headers EIP
 :doctitle: Set Headers
 :shortname: setHeaders
-:description: Allows to set multiple headers on the message at the same time.
+:description: Allows setting multiple headers on the message at the same time.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
@@ -13,6 +13,13 @@ The SetHeaders EIP is used for setting multiple xref:message.adoc[message] heade
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 
 == Using Set Headers
 
@@ -65,7 +72,7 @@ YAML::
 ----
 ====
 
-In the example the header values are xref:components:languages:constant-language.adoc[constants].
+For example, the header values are xref:components:languages:constant-language.adoc[constants].
 
 Any of the Camel languages can be used, such as xref:components:languages:simple-language.adoc[Simple].
 
@@ -120,7 +127,7 @@ YAML::
 
 You can also set several headers where later ones depend on earlier ones.
 
-In the example we first set the header foo to the body and then set bar based on comparing foo with a value.
+In the example, we first set the header foo to the body and then set bar based on comparing foo with a value.
 [tabs]
 ====
 Java::

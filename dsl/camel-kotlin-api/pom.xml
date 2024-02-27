@@ -57,6 +57,13 @@
             <artifactId>camel-core-model</artifactId>
         </dependency>
 
+        <!-- used at build time -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>

@@ -11,7 +11,7 @@ How can I log the processing of a xref:message.adoc[Message]?
 Camel provides many ways to log the fact that you are processing a message. Here are just a few examples:
 
 * You can use the xref:ROOT:log-component.adoc[Log] component which logs the Message content.
-* You can use the xref:manual::tracer.adoc[Tracer] which trace logs message flow.
+* You can use the xref:manual::tracer.adoc[Tracer] that traces logs message flow.
 * You can also use a xref:manual::processor.adoc[Processor] or xref:manual::bean-binding.adoc[Bean] and log from Java code.
 * You can use this log EIP.
 
@@ -21,12 +21,18 @@ Camel provides many ways to log the fact that you are processing a message. Here
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 === Difference between Log EIP and Log component
 
 This log EIP is much lighter and meant for logging human logs such as `Starting to do ...` etc.
 It can only log a message based on the xref:languages:simple-language.adoc[Simple] language.
 
-The xref:ROOT:log-component.adoc[log] component is meant for logging the message content (body, headers, etc.).
+The xref:ROOT:log-component.adoc[log] component is meant for logging the message content (body, headers, etc).
 There are many options on the log component to configure what content to log.
 
 == Example
@@ -35,6 +41,12 @@ You can use the log EIP which allows you to use xref:languages:simple-language.a
 
 For example, you can do
 
+[tabs]
+====
+
+Java::
++
+
 [source,java]
 ----
 from("direct:start")
@@ -42,8 +54,8 @@ from("direct:start")
     .to("bean:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -53,14 +65,16 @@ And in XML:
 </route>
 ----
 
+====
+
 This will be evaluated using the xref:languages:simple-language.adoc[Simple]
-to construct the `String` containg the message to be logged.
+to construct the `String` containing the message to be logged.
 
 === Logging message body with streaming
 
-If the message body is stream based, then logging the message body, may cause the message body to be empty afterwards. See this xref:manual:faq:why-is-my-message-body-empty.adoc[FAQ]. For streamed messages you can use Stream caching to allow logging the message body and be able to read the message body afterwards again.
+If the message body is stream based, then logging the message body may cause the message body to be empty afterward. See this xref:manual:faq:why-is-my-message-body-empty.adoc[FAQ]. For streamed messages, you can use Stream caching to allow logging the message body and be able to read the message body afterward again.
 
-The log DSL have overloaded methods to set the logging level and/or name as well.
+The log DSL has overloaded methods to set the logging level and/or name as well.
 [source,java]
 ----
 from("direct:start")
@@ -84,7 +98,7 @@ from("direct:start")
     .to("bean:foo");
 ----
 
-For example you can use this to log the file name being processed if you consume files.
+For example, you can use this to log the file name being processed if you consume files.
 [source,java]
 ----
 from("file://target/files")
@@ -92,7 +106,7 @@ from("file://target/files")
     .to("bean:foo");
 ----
 
-In XML DSL it is also easy to use log DSL as shown below:
+In XML DSL, it is also easy to use log DSL as shown below:
 [source,xml]
 ----
 <route id="foo">
@@ -136,6 +150,12 @@ So for example, if you have not assigned an id to the route, then Camel will use
 
 To use "fooRoute" as the route id, you can do:
 
+[tabs]
+====
+
+Java::
++
+
 [source,java]
 ----
 from("direct:start").routeId("fooRoute")
@@ -143,8 +163,8 @@ from("direct:start").routeId("fooRoute")
     .to("bean:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route id="fooRoute">
@@ -154,16 +174,18 @@ And in XML:
 </route>
 ----
 
+====
+
 TIP: If you enable `sourceLocationEnabled=true` on `CamelContext` then Camel will use source file:line as logger name,
 instead of the route id. This is for example what `camel-jbang` do, to make it easy to see where in the source code the log is located.
 
 ==== Using custom logger from the Registry
 
 If the Log EIP has not been configured with a specific logger to use,
-then Camel will will lookup in the xref:manual::registry.adoc[Registry]
+then Camel will look up in the xref:manual::registry.adoc[Registry]
 if there is a single instance of `org.slf4j.Logger`.
 
-If such an instance exists then this logger is used,
+If such an instance exists, then this logger is used
 if not the behavior defaults to creating a new instance of logger.
 
 === Configuring logging name globally
@@ -171,15 +193,21 @@ if not the behavior defaults to creating a new instance of logger.
 You can configure a global log name that is used instead of the route id,
 by setting the global option on the `CamelContext`.
 
-In Java you can do:
+In Java, you can do:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
 camelContext.getGlobalOptions().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -189,28 +217,45 @@ And in XML:
 </camelContext>
 ----
 
+====
+
 == Masking sensitive information like password
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
-Note that this option also affects xref:ROOT:log-component.adoc[Log] component.
+Note that this option also affects the xref:ROOT:log-component.adoc[Log] component.
 
 To enable mask in Java DSL at CamelContext level:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
 camelContext.setLogMask(true);
 ----
 
-And in XML you set the option on `<camelContext>`:
+XML::
++
 
+.And in XML you set the option on `<camelContext>`:
 [source,xml]
 ----
 <camelContext logMask="true">
 
 </camelContext>
 ----
+====
 
-You can also turn it on|off at route level. To enable mask in Java DSL at route level:
+You can also turn it on|off at route level. To enable mask in at route level:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -219,8 +264,8 @@ from("direct:start").logMask()
     .to("bean:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route logMask="true">
@@ -228,15 +273,17 @@ And in XML:
 </route>
 ----
 
+====
+
 === Using custom masking formatter
 
 `org.apache.camel.support.processor.DefaultMaskingFormatter` is used for the masking by default.
 If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
 Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
 
-The know set of keywords to mask is gathered from all the different component options, that are marked as secret.
+The know set of keywords to mask is gathered from all the different component options that are marked as secret.
 The list is generated into the source code in `org.apache.camel.util.SensitiveUtils`.
-At this time of writing there is more than 65 different keywords.
+At this time of writing, there are more than 65 different keywords.
 
 Custom keywords can be added as shown:
 

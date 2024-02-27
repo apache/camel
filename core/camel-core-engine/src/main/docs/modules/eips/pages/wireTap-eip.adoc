@@ -19,6 +19,12 @@ image::eip/WireTap.gif[image]
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Wire Tap
 
 Camel's Wire Tap will copy the original
@@ -33,8 +39,9 @@ copies could share objects from the original `Exchange`.
 
 === Using Wire Tap
 
-In the example below the exchange is wire tapped to the direct:tap route.
-This route delays the message 1 second before continuing. This is because
+In the example below, the exchange is wire tapped to the direct:tap route.
+This route delays message 1 second before continuing.
+This is because
 it allows you to see that the tapped message is routed independently of the original
 route, so that you would see log:result happens before log:tap
 
@@ -95,11 +102,11 @@ YAML::
 
 === Wire tapping with dynamic URIs
 
-For example to wire tap to a dynamic URI, then the URI
+For example, to wire tap to a dynamic URI, then the URI
 uses the  xref:components:languages:simple-language.adoc[Simple] language that
 allows to construct dynamic URIs.
 
-For example to wire tap to a JMS queue where the header ID is part of the queue name:
+For example, to wire tap to a JMS queue where the header ID is part of the queue name:
 
 [tabs]
 ====
@@ -141,16 +148,16 @@ YAML::
 
 The WireTap uses a thread pool to process the
 tapped messages. This thread pool will by default use the settings
-detailed at xref:manual::threading-model.adoc[Threading Model].
+detailed in the xref:manual::threading-model.adoc[Threading Model].
 
-In particular, when the pool is exhausted (with all threads utilized), further wiretaps
+In particular, when the pool is exhausted (with all threads used), further wiretaps
 will be executed synchronously by the calling thread. To remedy this,
 you can configure an explicit thread pool on the Wire Tap having either
 a different rejection policy, a larger worker queue, or more worker threads.
 
 == Wire tapping Streaming based messages
 
-If you Wire Tap a stream message body then you
+If you Wire Tap a stream message body, then you
 should consider enabling xref:manual::stream-caching.adoc[Stream caching] to
 ensure the message body can be read at each endpoint.
 

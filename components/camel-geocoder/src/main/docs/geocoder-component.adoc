@@ -18,7 +18,7 @@ The Geocoder component is used for looking up geocodes (latitude and
 longitude) for a given address, or reverse lookup.
 
 The component uses either a hosted https://github.com/openstreetmap/Nominatim[Nominatim server] or
-the https://code.google.com/p/geocoder-java/[Java  API for Google Geocoder] library.
+the https://code.google.com/p/geocoder-java/[Java API for Google Geocoder] library.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -61,7 +61,7 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 Notice not all headers may be provided depending on available data and
-mode in use (address vs latlng).
+mode in use (`address` vs. `latlng`).
 
 === Body using a Nominatim Server
 
@@ -80,7 +80,7 @@ Exchange.
 
 == Samples
 
-In the example below we get the latitude and longitude for Paris, France
+In the example below, we get the latitude and longitude for Paris, France
 
 [source,java]
 -----------------------------------------

@@ -34,12 +34,18 @@ This page is documenting the first approach by using Transform EIP.
 include::partial$eip-options.adoc[]
 // eip options: END
 
-=== Using Transform EIP
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using Transform EIP
 
 You can use a xref:transform-eip.adoc[Transform] which uses an
 xref:manual::expression.adoc[Expression] to do the transformation:
 
-In the example below we prepend Hello to the message body using the
+In the example below, we prepend Hello to the message body using the
 xref:components:languages:simple-language.adoc[Simple] language:
 
 [tabs]
@@ -124,7 +130,7 @@ The given data type may reference a xref:manual::transformer.adoc[Transformer] t
 
 Users may also specify `fromType` in order to reference a very specific transformation from a given data type to a given data type.
 
-=== What is the difference between Transform and Set Body
+== What is the difference between Transform and Set Body?
 
 The Transform EIP always sets the result on the OUT message body.
 

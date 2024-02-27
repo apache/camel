@@ -10,7 +10,7 @@ The Script EIP is used for executing a coding script.
 
 image::eip/MessagingGatewayIcon.gif[image]
 
-This is useful when you need to invoke some logic that are not in Java code such as JavaScript,
+This is useful when you need to invoke some logic not in Java code such as JavaScript,
 Groovy or any of the other Languages.
 
 NOTE: The returned value from the script is discarded and not used. If the returned value should be set as the new message body, then use the xref:message-translator.adoc[Message Translator] EIP instead.
@@ -20,6 +20,12 @@ NOTE: The returned value from the script is discarded and not used. If the retur
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Using Script EIP
 
@@ -70,7 +76,7 @@ The scripting context has access to the current `Exchange` and can essentially c
 === Using external script files
 
 You can refer to external script files instead of inlining the script.
-For example to load a groovy script from the classpath you need to prefix the value with `resource:` as shown:
+For example, to load a groovy script from the classpath, you need to prefix the value with `resource:` as shown:
 
 [source,xml]
 ----

@@ -14,10 +14,10 @@
 
 *{component-header}*
 
-The StAX component allows messages to be process through a SAX
+The StAX component allows messages to be processed through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
 Another feature of this component is to allow iterating over JAXB
-records using StAX, for example using the xref:eips:split-eip.adoc[Split EIP].
+records using StAX, for example, using the xref:eips:split-eip.adoc[Split EIP].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -44,7 +44,7 @@ example:
 stax:org.superbiz.FooContentHandler
 -----------------------------------
 
-You can lookup a `org.xml.sax.ContentHandler` bean from the Registry
+You can look up a `org.xml.sax.ContentHandler` bean from the Registry
 using the # syntax as shown:
 
 ---------------
@@ -72,7 +72,7 @@ include::partial$component-endpoint-options.adoc[]
 
 The message body after the handling is the handler itself.
 
-Here an example:
+Here is an example:
 
 [source,java]
 --------------------------------------------------------------------------------------------------------
@@ -90,9 +90,9 @@ from("file:target/in")
 
 == Iterate over a collection using JAXB and StAX
 
-First we suppose you have JAXB objects.
+First, we suppose you have JAXB objects.
 
-For instance a list of records in a wrapper object:
+For instance, a list of records in a wrapper object:
 
 [source,java]
 -------------------------------------------------
@@ -154,7 +154,7 @@ public class Record {
 }
 ---------------------------------------------------------
 
-Then you get a XML file to process:
+Then you get an XML file to process:
 
 [source,xml]
 -------------------------------------------------------
@@ -213,7 +213,7 @@ The example above could be implemented as follows in Spring XML
         <!-- split the file using StAX (ref to bean above) -->
         <!-- and use streaming mode in the splitter -->
         <ref>staxRecord</ref>
-        <!-- and send each splitted to a mock endpoint, which will be a Record POJO instance -->
+        <!-- and send each split to a mock endpoint, which will be a Record POJO instance -->
         <to uri="mock:records"/>
       </split>
     </route>

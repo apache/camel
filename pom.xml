@@ -253,11 +253,13 @@
                                     <exclude>**/*.cer</exclude>
                                     <exclude>**/*.chtml</exclude>
                                     <exclude>**/*.csv</exclude>
+                                    <exclude>**/*.gif</exclude>
                                     <exclude>**/*.gpg</exclude>
                                     <exclude>**/*.graphql*</exclude>
                                     <exclude>**/*.ics</exclude>
                                     <exclude>**/*.joor</exclude>
                                     <exclude>**/*.jpeg</exclude>
+                                    <exclude>**/*.jpg</exclude>
                                     <exclude>**/*.jslt</exclude>
                                     <exclude>**/*.key</exclude>
                                     <exclude>**/*.keystore</exclude>

@@ -2098,6 +2098,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("logMask", def.getLogMask());
         doWriteAttribute("nodePrefixId", def.getNodePrefixId());
         doWriteAttribute("messageHistory", def.getMessageHistory());
+        doWriteAttribute("kamelet", toString(def.isKamelet()));
         doWriteAttribute("autoStartup", def.getAutoStartup());
         doWriteAttribute("delayer", def.getDelayer());
         doWriteAttribute("group", def.getGroup());

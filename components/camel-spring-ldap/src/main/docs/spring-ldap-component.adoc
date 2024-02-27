@@ -109,16 +109,16 @@ This operation allows dynamic invocation of LdapTemplate methods that are not co
 
 *Key definitions*
 
-In order to avoid spelling errors, the following constants are defined
+To avoid spelling errors, the following constants are defined
 in `org.apache.camel.springldap.SpringLdapProducer`:
 
-* public static final String DN = "dn"
-* public static final String FILTER = "filter"
-* public static final String ATTRIBUTES = "attributes"
-* public static final String PASSWORD = "password";
-* public static final String MODIFICATION_ITEMS = "modificationItems";
-* public static final String FUNCTION = "function";
-* public static final String REQUEST = "request";
+* `public static final String DN = "dn"`
+* `public static final String FILTER = "filter"`
+* `public static final String ATTRIBUTES = "attributes"`
+* `public static final String PASSWORD = "password";`
+* `public static final String MODIFICATION_ITEMS = "modificationItems";`
+* `public static final String FUNCTION = "function";`
+* `public static final String REQUEST = "request";`
 
 
 include::spring-boot:partial$starter.adoc[]

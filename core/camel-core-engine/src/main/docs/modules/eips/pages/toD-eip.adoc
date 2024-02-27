@@ -29,20 +29,26 @@ The xref:to-eip.adoc[To] and ToD EIPs are the most common patterns to use in Cam
 include::partial$eip-options.adoc[]
 // eip options: END
 
-=== Different between To and ToD
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Different between To and ToD
 
 The `to` is used for sending messages to a static xref:message-endpoint.adoc[endpoint].
-In other words `to` sends message only to the *same* endpoint.
+In other words `to` sends messages only to the *same* endpoint.
 
-The `toD` is used for sending message to a dynamic xref:message-endpoint.adoc[endpoint].
+The `toD` is used for sending messages to a dynamic xref:message-endpoint.adoc[endpoint].
 The dynamic endpoint is evaluated _on-demand_ by an xref:manual::expression.adoc[Expression].
 By default, the xref:languages:simple-language.adoc[Simple] expression is used to compute
 the dynamic endpoint URI.
 
 == Using ToD
 
-For example to send a message to an endpoint which is dynamic determined by a
-xref:message.adoc[message header] you can do as shown below:
+For example, to send a message to an endpoint which is dynamically determined by a
+xref:message.adoc[message header], you can do as shown below:
 
 [tabs]
 ====
@@ -89,16 +95,16 @@ XML::
 ----
 ====
 
-In the example above we compute the dynamic endpoint with a prefix "mock:" and
-then the header foo is appended. So for example if the header foo has
+In the example above, we compute the dynamic endpoint with a prefix "mock:" and
+then the header foo is appended. So, for example, if the header foo has
 value order, then the endpoint is computed as "mock:order".
 
 === Using other languages with toD
 
 You can also use other languages such as xref:languages:xpath-language.adoc[XPath].
-Doing this requires to start with `language:` as shown below. If you do not
+Doing this requires starting with `language:` as shown below. If you do not
 specify `language:` then the endpoint is a component name. And in some
-cases there is both a component and language with the same name such as
+ cases, there is both a component and language with the same name such as
 xquery.
 
 [tabs]
@@ -122,12 +128,12 @@ XML::
 ----
 ====
 
-=== Avoid creating endless dynamic endpoints which takes up resources
+=== Avoid creating endless dynamic endpoints that take up resources
 
 When using dynamic computed endpoints with `toD` then you may compute a lot of dynamic endpoints,
 which results in an overhead of resources in use, by each dynamic endpoint uri, and its associated producer.
 
-For example HTTP based endpoints where you may have dynamic values in URI parameters when calling the HTTP service, such as:
+For example, HTTP-based endpoints where you may have dynamic values in URI parameters when calling the HTTP service, such as:
 
 [source,java]
 ----
@@ -135,8 +141,8 @@ from("direct:login")
   .toD("http:myloginserver:8080/login?userid=${header.userName}");
 ----
 
-In the example above then the parameter `userid` is dynamic computed, and would result in one instance of endpoint and producer
-for each different userid. To avoid having too many dynamic endpoints you can configure `toD` to reduce its cache size, for example
+In the example above then the parameter `userid` is dynamically computed, and would result in one instance of endpoint and producer
+for each different userid. To avoid having too many dynamic endpoints you can configure `toD` to reduce its cache size, for example,
 to use a cache size of 10:
 
 [tabs]
@@ -162,13 +168,13 @@ XML::
 
 IMPORTANT: this will only reduce the endpoint cache of the `toD` that has a chance
 of being reused in case a message is routed with the same `userName` header. Therefore, reducing the cache size
-will not solve the _endless dynamic endpoint`s_ problem. Instead, you should use static endpoints with `to` and
+will not solve the _endless dynamic endpoint_ problem. Instead, you should use static endpoints with `to` and
 provide the dynamic parts in Camel message headers (if possible).
 
 ==== Using static endpoints to avoid endless dynamic endpoints
 
-In the example above then the parameter `userid` is dynamic computed, and would result in one instance of endpoint and producer
-for each different userid. To avoid having too dynamic endpoints you use a single static endpoint and use headers to provide the dynamic parts:
+In the example above then the parameter `userid` is dynamically computed, and would result in one instance of endpoint and producer
+for each different userid. To avoid having too dynamic endpoints, you use a single static endpoint and use headers to provide the dynamic parts:
 
 [source,java]
 ----
@@ -178,13 +184,13 @@ from("direct:login")
   .toD("http:myloginserver:8080");
 ----
 
-However, you can use optimised components for `toD` that can _solve_ this out of the box,
+However, you can use optimized components for `toD` that can _solve_ this out of the box,
 as documented next.
 
-=== Using optimised components with toD
+=== Using optimized components with toD
 
-A better solution would be if the HTTP component could be optimised to handle the variations of dynamic computed endpoint uris.
-This is with among the following components, which have been optimised for `toD`:
+A better solution would be if the HTTP component could be optimized to handle the variations of dynamic computed endpoint uris.
+This is with among the following components, which have been optimized for `toD`:
 
 - camel-http
 - camel-jetty
@@ -192,7 +198,7 @@ This is with among the following components, which have been optimised for `toD`
 - camel-undertow
 - camel-vertx-http
 
-A number of non-HTTP components has been optimised as well:
+A number of non-HTTP components has been optimized as well:
 
 - camel-amqp
 - camel-file
@@ -207,14 +213,14 @@ A number of non-HTTP components has been optimised as well:
 
 For the optimisation to work, then:
 
-. The optimisation is detected and activated during startup of the Camel routes with `toD`.
+. The optimization is detected and activated during startup of the Camel routes with `toD`.
 . The dynamic uri in `toD` must provide the component name as either static or resolved via xref:manual::using-propertyplaceholder.adoc[property placeholders].
 . The supported components must be on the classpath.
 
-The HTTP based components will be optimised to use the same hostname:port for each endpoint, and the dynamic values
+The HTTP based components will be optimized to use the same hostname:port for each endpoint, and the dynamic values
 for context-path and query parameters will be provided as headers:
 
-For example this route:
+For example, this route:
 
 [source,java]
 ----
@@ -222,7 +228,7 @@ from("direct:login")
   .toD("http:myloginserver:8080/login?userid=${header.userName}");
 ----
 
-Will essentially be optimised to (pseudo route):
+It Will essentially be optimized to (pseudo route):
 
 [source,java]
 ----
@@ -235,18 +241,18 @@ from("direct:login")
 ----
 
 Where _expression_ will be evaluated dynamically. Notice how the uri in `toD` is now static (`http:myloginserver:8080`).
-This optimisation allows Camel to reuse the same endpoint and its associated producer for all dynamic variations.
-This yields much lower resource overhead as the same http producer will be used for all the different variations of userid's.
+This optimization allows Camel to reuse the same endpoint and its associated producer for all dynamic variations.
+This yields much lower resource overhead as the same http producer will be used for all the different variations of `userids`.
 
 [NOTE]
 ====
-When the optimised component is in use, then you cannot use the headers `Exchange.HTTP_PATH` and `Exchange.HTTP_QUERY`
+When the optimized component is in use, then you cannot use the headers `Exchange.HTTP_PATH` and `Exchange.HTTP_QUERY`
 to provide dynamic values to override the uri in `toD`. If you want to use these headers, then use the plain `to` DSL instead.
 In other words these headers are used internally by `toD` to carry the dynamic details of the endpoint.
 ====
 
 In case of problems then you can turn on DEBUG logging level on `org.apache.camel.processor.SendDynamicProcessor` which will log
-during startup if `toD` was optimised, or if there was a failure loading the optimised component, with a stacktrace logged.
+during startup if `toD` was optimized, or if there was a failure loading the optimized component, with a stacktrace logged.
 
 [source,text]
 ----

@@ -6,7 +6,7 @@
 :supportlevel: Stable
 :tabs-sync-option:
 
-The SetProperty EIP is used for setting a xref:manual:ROOT:exchange.adoc[Exchange] property.
+The SetProperty EIP is used for setting an xref:manual:ROOT:exchange.adoc[Exchange] property.
 
 NOTE: An `Exchange` property is a key/value set as a `Map` on the `org.apache.camel.Exchange` instance.
 This is *not* for setting xref:manual:ROOT:using-propertyplaceholder.adoc[property placeholders].
@@ -16,6 +16,12 @@ This is *not* for setting xref:manual:ROOT:using-propertyplaceholder.adoc[proper
 // eip options: START
 include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Example
 
@@ -50,7 +56,7 @@ XML::
 
 You can also set an exchange property with the value from another exchange property.
 
-In the example we set the exchange property foo with the value from an existing exchange property named bar.
+In the example, we set the exchange property foo with the value from an existing exchange property named bar.
 
 [tabs]
 ====
@@ -79,7 +85,7 @@ XML::
 
 === Setting an exchange property with the current message body
 
-It is of course also possible to set an exchange property with a value
+It is also possible to set an exchange property with a value
 from anything on the `Exchange` such as the message body:
 
 [tabs]

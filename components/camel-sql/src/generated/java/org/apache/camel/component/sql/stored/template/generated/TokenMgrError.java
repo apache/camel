@@ -47,7 +47,7 @@ public class TokenMgrError extends Error
    * Replaces unprintable characters by their escaped (or unicode escaped)
    * equivalents in the given string
    */
-  protected static String addEscapes(String str) {
+  protected static final String addEscapes(String str) {
     StringBuilder retval = new StringBuilder();
     char ch;
     for (int i = 0; i < str.length(); i++) {
@@ -107,7 +107,7 @@ public class TokenMgrError extends Error
           errorLine + ", column " + //
           errorColumn + ".  Encountered: " + //
           (EOFSeen ? "<EOF>" : ("'" + addEscapes(String.valueOf(curChar)) + "' (" + curChar + "),")) + //
-          (errorAfter == null || errorAfter.isEmpty() ? "" : " after prefix \"" + addEscapes(errorAfter) + "\"")) + //
+          (errorAfter == null || errorAfter.length() == 0 ? "" : " after prefix \"" + addEscapes(errorAfter) + "\"")) + //
           (lexState == 0 ? "" : " (in lexical state " + lexState + ")");
   }
 

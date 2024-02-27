@@ -6,7 +6,7 @@
 :supportlevel: Stable
 :tabs-sync-option:
 
-This EIP allows using fail-over (in case of failures the exchange will be tried on the next endpoint)
+This EIP allows using fail-over (in case of failures, the exchange will be tried on the next endpoint)
 with the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 
 == Options
@@ -15,10 +15,21 @@ with the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 == Example
 
-In the example below calling the three http services is done with the load balancer.
+In the example below, calling the three http services is done with the load balancer:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -29,8 +40,8 @@ from("direct:start")
     .end();
 ----
 
-In XML you'll have a route like this:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -44,9 +55,11 @@ In XML you'll have a route like this:
 </route>
 ----
 
-In the default mode the fail-over load balancer will always start with the first processor (i.e. "http:service1").
+====
+
+In the default mode, the fail-over load balancer will always start with the first processor (i.e., "http:service1").
 And in case this fails, then try the next, until either it succeeded or all of them failed.
-If all failed then Camel will throw the caused exception which means the Exchange is failed.
+If all failed, then Camel will throw the caused exception which means the Exchange is failed.
 
 === Using round-robin mode
 
@@ -71,10 +84,11 @@ from("direct:start")
 .failover(10, false, true)
 ----
 
-Where `10` is the maximum failover attempts, And `false` is a special feature
-related to inheriting error handler. The last parameter `true` is to use round robin mode.
+Where `10` is the maximum fail over attempts, And `false` is a special feature
+related to inheriting error handler.
+The last parameter `true` is to use round-robin mode.
 
-In XML it is straightforward as shown:
+In XML, it is straightforward as shown:
 
 [source,xml]
 ----
@@ -94,15 +108,20 @@ In XML it is straightforward as shown:
 The sticky mode is used for remember the last known good endpoint, so the next exchange
 will start from there, instead from the beginning.
 
-For example support that http:service1 is down, and that service2 is up.
+For example, support that http:service1 is down, and that service2 is up.
 With sticky mode enabled, then Camel will keep starting from service2 until it
 fails, and then try service3.
 
-If sticky mode is not enabled (default) then Camel will always start from the beginning, which
+If sticky mode is not enabled (it's disabled by default), then Camel will always start from the beginning, which
 means calling service1.
 
-Setting sticky mode in Java DSL is not _pretty_ as there are four parameters:
+[tabs]
+====
 
+Java::
++
+Setting sticky mode in Java DSL is not _pretty_ as there are four parameters.
++
 [source,java]
 ----
 from("direct:start")
@@ -112,11 +131,11 @@ from("direct:start")
         .to("http:service3")
     .end();
 ----
++
+NOTE: The last `true` argument is to enable sticky mode.
 
-The last `true` is to enable sticky mode.
-
-In XML it is straightforward as shown:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -129,6 +148,8 @@ In XML it is straightforward as shown:
     </loadBalance>
 </route>
 ----
+
+====
 
 === Fail-over on specific exceptions
 

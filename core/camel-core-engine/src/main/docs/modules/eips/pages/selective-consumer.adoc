@@ -13,7 +13,7 @@ Make the consumer a Selective Consumer, one that filteres the messages delivered
 
 == Using Selecting Consumer
 
-In Camel the Selective Consumer EIP is implemented in two ways:
+In Camel, the Selective Consumer EIP is implemented in two ways:
 
 - Using xref:components::index.adoc[Components] which supports message selecting.
 - Using the xref:filter-eip.adoc[Filter] EIP as message selecting.
@@ -21,7 +21,7 @@ In Camel the Selective Consumer EIP is implemented in two ways:
 === Selective Consumer using Components
 
 The first solution is to provide a Message Selector to the underlying URIs when creating your consumer.
-For example when using xref:components::jms-component.adoc[JMS] you can specify a
+For example, when using xref:components::jms-component.adoc[JMS], you can specify a
 JMS selector parameter so that the message broker will only deliver messages matching your criteria.
 
 [tabs]
@@ -48,7 +48,7 @@ XML::
 === Selective Consumer using Filter EIP
 
 The other approach is to use a xref:filter-eip.adoc[Message Filter] which is applied;
-if the filter matches the message your "consumer" is invoked as shown in the following example:
+if the filter matches the message, your "consumer" is invoked as shown in the following example:
 
 [tabs]
 ====

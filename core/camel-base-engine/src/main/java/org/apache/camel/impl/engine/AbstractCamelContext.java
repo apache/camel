@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -119,12 +120,10 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
-import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -1384,7 +1383,7 @@ public abstract class AbstractCamelContext extends BaseService
     private static String toResourcePath(Package clazz, String languageName) {
         String packageName = clazz.getName();
         packageName = packageName.replace('.', '/');
-        return packageName + "/" + languageName + ".json";
+        return "META-INF/" + packageName + "/" + languageName + ".json";
     }
 
     private String doLoadResource(String resourceName, String path, String resourceType) throws IOException {
@@ -1602,27 +1601,6 @@ public abstract class AbstractCamelContext extends BaseService
         return camelContextExtension.getTypeConverter();
     }
 
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setTypeConverter(TypeConverter typeConverter) {
-        camelContextExtension.setTypeConverter(typeConverter);
-    }
-
-    /**
-     * Get a type converter or create a new one if unset
-     *
-     * @deprecated use DefaultCamelContextExtension#getOrCreateTypeConverter()
-     * @return     A type converter instance
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    protected TypeConverter getOrCreateTypeConverter() {
-        return camelContextExtension.getOrCreateTypeConverter();
-    }
-
     @Override
     public TypeConverterRegistry getTypeConverterRegistry() {
         return camelContextExtension.getTypeConverterRegistry();
@@ -1651,16 +1629,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
         camelContextExtension.setPropertiesComponent(propertiesComponent);
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    protected void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
-        camelContextExtension.setManagementMBeanAssembler(managementMBeanAssembler);
     }
 
     public void setAutoCreateComponents(boolean autoCreateComponents) {
@@ -2567,7 +2535,17 @@ public abstract class AbstractCamelContext extends BaseService
                 && LOG.isInfoEnabled()) {
             int started = 0;
             int total = 0;
+            int kamelets = 0;
+            int templates = 0;
+            int rests = 0;
             int disabled = 0;
+            boolean registerKamelets = false;
+            boolean registerTemplates = true;
+            ManagementStrategy ms = getManagementStrategy();
+            if (ms != null && ms.getManagementAgent() != null) {
+                registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+                registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+            }
             List<String> lines = new ArrayList<>();
             List<String> configs = new ArrayList<>();
             routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder));
@@ -2575,9 +2553,20 @@ public abstract class AbstractCamelContext extends BaseService
                 total++;
                 String id = order.getRoute().getRouteId();
                 String status = getRouteStatus(id).name();
-                if (ServiceStatus.Started.name().equals(status)) {
+                if (order.getRoute().isCreatedByKamelet()) {
+                    kamelets++;
+                } else if (order.getRoute().isCreatedByRouteTemplate()) {
+                    templates++;
+                } else if (order.getRoute().isCreatedByRestDsl()) {
+                    rests++;
+                }
+                boolean skip = order.getRoute().isCreatedByRestDsl()
+                        || (!registerKamelets && order.getRoute().isCreatedByKamelet())
+                        || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
+                if (!skip && ServiceStatus.Started.name().equals(status)) {
                     started++;
                 }
+
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
@@ -2585,7 +2574,9 @@ public abstract class AbstractCamelContext extends BaseService
                 if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
                     lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
                 } else {
-                    lines.add(String.format("    %s %s (%s)", status, id, uri));
+                    if (!skip) {
+                        lines.add(String.format("    %s %s (%s)", status, id, uri));
+                    }
                 }
                 String cid = order.getRoute().getConfigurationId();
                 if (cid != null) {
@@ -2601,6 +2592,15 @@ public abstract class AbstractCamelContext extends BaseService
                     if (ServiceStatus.Stopped.name().equals(status)) {
                         status = "Disabled";
                     }
+                    if (route.isCreatedByKamelet()) {
+                        kamelets++;
+                    } else if (route.isCreatedByRouteTemplate()) {
+                        templates++;
+                    } else if (route.isCreatedByRestDsl()) {
+                        rests++;
+                    }
+                    boolean skip = route.isCreatedByRestDsl() || (!registerKamelets && route.isCreatedByKamelet())
+                            || (!registerTemplates && route.isCreatedByRouteTemplate());
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
@@ -2608,7 +2608,9 @@ public abstract class AbstractCamelContext extends BaseService
                     if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
                         lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
                     } else {
-                        lines.add(String.format("    %s %s (%s)", status, id, uri));
+                        if (!skip) {
+                            lines.add(String.format("    %s %s (%s)", status, id, uri));
+                        }
                     }
 
                     String cid = route.getConfigurationId();
@@ -2617,19 +2619,38 @@ public abstract class AbstractCamelContext extends BaseService
                     }
                 }
             }
-            if (disabled > 0) {
-                LOG.info("Routes startup (total:{} started:{} disabled:{})", total, started, disabled);
-            } else if (total != started) {
-                LOG.info("Routes startup (total:{} started:{})", total, started);
-            } else {
-                LOG.info("Routes startup (started:{})", started);
+            int newTotal = total;
+            if (!registerKamelets) {
+                newTotal -= kamelets;
             }
+            if (!registerTemplates) {
+                newTotal -= templates;
+            }
+            newTotal -= rests;
+            StringJoiner sj = new StringJoiner(" ");
+            sj.add("total:" + newTotal);
+            if (total != started) {
+                sj.add("started:" + started);
+            }
+            if (kamelets > 0) {
+                sj.add("kamelets:" + kamelets);
+            }
+            if (templates > 0) {
+                sj.add("templates:" + templates);
+            }
+            if (rests > 0) {
+                sj.add("rest-dsl:" + rests);
+            }
+            if (disabled > 0) {
+                sj.add("disabled:" + disabled);
+            }
+            LOG.info(String.format("Routes startup (%s)", sj));
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
                 for (String line : lines) {
                     LOG.info(line);
                 }
-                if (startupSummaryLevel == StartupSummaryLevel.Verbose) {
+                if (startupSummaryLevel == StartupSummaryLevel.Verbose && !configs.isEmpty()) {
                     LOG.info("Routes configuration:");
                     for (String line : configs) {
                         LOG.info(line);
@@ -3024,6 +3045,16 @@ public abstract class AbstractCamelContext extends BaseService
             int total = 0;
             int stopped = 0;
             int forced = 0;
+            int kamelets = 0;
+            int templates = 0;
+            int rests = 0;
+            boolean registerKamelets = false;
+            boolean registerTemplates = true;
+            ManagementStrategy ms = getManagementStrategy();
+            if (ms != null && ms.getManagementAgent() != null) {
+                registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+                registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+            }
             List<String> lines = new ArrayList<>();
 
             final ShutdownStrategy shutdownStrategy = camelContextExtension.getShutdownStrategy();
@@ -3036,7 +3067,17 @@ public abstract class AbstractCamelContext extends BaseService
                 total++;
                 String id = order.getRoute().getRouteId();
                 String status = getRouteStatus(id).name();
-                if (ServiceStatus.Stopped.name().equals(status)) {
+                if (order.getRoute().isCreatedByKamelet()) {
+                    kamelets++;
+                } else if (order.getRoute().isCreatedByRouteTemplate()) {
+                    templates++;
+                } else if (order.getRoute().isCreatedByRestDsl()) {
+                    rests++;
+                }
+                boolean skip = order.getRoute().isCreatedByRestDsl()
+                        || (!registerKamelets && order.getRoute().isCreatedByKamelet())
+                        || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
+                if (!skip && ServiceStatus.Stopped.name().equals(status)) {
                     stopped++;
                 }
                 if (order.getRoute().getProperties().containsKey("forcedShutdown")) {
@@ -3046,15 +3087,36 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("    %s %s (%s)", status, id, uri));
+                if (startupSummaryLevel == StartupSummaryLevel.Verbose || !skip) {
+                    lines.add(String.format("    %s %s (%s)", status, id, uri));
+                }
+            }
+            int newTotal = total;
+            if (!registerKamelets) {
+                newTotal -= kamelets;
+            }
+            if (!registerTemplates) {
+                newTotal -= templates;
+            }
+            newTotal -= rests;
+            StringJoiner sj = new StringJoiner(" ");
+            sj.add("total:" + newTotal);
+            if (total != stopped) {
+                sj.add("stopped:" + stopped);
+            }
+            if (kamelets > 0) {
+                sj.add("kamelets:" + kamelets);
+            }
+            if (templates > 0) {
+                sj.add("templates:" + templates);
+            }
+            if (rests > 0) {
+                sj.add("rest-dsl:" + rests);
             }
             if (forced > 0) {
-                logger.log(String.format("Routes stopped (total:%s stopped:%s forced:%s)", total, stopped, forced));
-            } else if (total != stopped) {
-                logger.log(String.format("Routes stopped (total:%s stopped:%s)", total, stopped));
-            } else {
-                logger.log(String.format("Routes stopped (stopped:%s)", stopped));
+                sj.add("forced:" + forced);
             }
+            logger.log(String.format("Routes stopped (%s)", sj));
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
                 for (String line : lines) {
@@ -3785,28 +3847,8 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected RestRegistry createRestRegistry() {
-        RestRegistryFactory factory = getRestRegistryFactory();
+        RestRegistryFactory factory = camelContextExtension.getRestRegistryFactory();
         return factory.createRegistry();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public RestRegistryFactory getRestRegistryFactory() {
-        return camelContextExtension.getRestRegistryFactory();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
-        camelContextExtension.setRestRegistryFactory(restRegistryFactory);
     }
 
     @Override
@@ -3837,16 +3879,6 @@ public abstract class AbstractCamelContext extends BaseService
         return camelContextExtension.getTransformerRegistry();
     }
 
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setTransformerRegistry(TransformerRegistry transformerRegistry) {
-        camelContextExtension.setTransformerRegistry(transformerRegistry);
-    }
-
     @Override
     public Validator resolveValidator(DataType type) {
         return getValidatorRegistry().resolveValidator(new ValidatorKey(type));
@@ -3855,16 +3887,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public ValidatorRegistry getValidatorRegistry() {
         return camelContextExtension.getValidatorRegistry();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
-        camelContextExtension.setValidatorRegistry(validatorRegistry);
     }
 
     @Override
@@ -4063,84 +4085,14 @@ public abstract class AbstractCamelContext extends BaseService
         return camelContextExtension;
     }
 
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setName(String name) {
-        camelContextExtension.setName(name);
-    }
-
     @Override
     public String getName() {
         return camelContextExtension.getName();
     }
 
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setDescription(String description) {
-        camelContextExtension.setDescription(description);
-    }
-
     @Override
     public String getDescription() {
         return camelContextExtension.getDescription();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public FactoryFinder getBootstrapFactoryFinder() {
-        return camelContextExtension.getBootstrapFactoryFinder();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public FactoryFinder getFactoryFinder(String path) {
-        return camelContextExtension.getFactoryFinder(path);
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
-        camelContextExtension.addInterceptStrategy(interceptStrategy);
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public StartupStepRecorder getStartupStepRecorder() {
-        return camelContextExtension.getStartupStepRecorder();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
-        camelContextExtension.setStartupStepRecorder(startupStepRecorder);
     }
 
     public void addRoute(Route route) {
@@ -4153,36 +4105,6 @@ public abstract class AbstractCamelContext extends BaseService
         synchronized (routes) {
             routes.remove(route);
         }
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
-        return camelContextExtension.resolvePropertyPlaceholders(text, keepUnresolvedOptional);
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public String getBasePackageScan() {
-        return camelContextExtension.getBasePackageScan();
-    }
-
-    /**
-     * Deprecated API.
-     *
-     * @deprecated Use methods from the {@link ExtendedCamelContext}
-     */
-    @Deprecated(since = "4.2.0", forRemoval = true)
-    public void setBasePackageScan(String basePackageScan) {
-        camelContextExtension.setBasePackageScan(basePackageScan);
     }
 
     byte getStatusPhase() {
