@@ -52,6 +52,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 
 @ManagedResource(description = "Managed CamelContext")
@@ -161,12 +162,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String getUptime() {
-        return context.getUptime();
+        return CamelContextHelper.getUptime(context);
     }
 
     @Override
     public long getUptimeMillis() {
-        return context.getUptimeMillis();
+        return context.getUptime().toMillis();
     }
 
     @Override

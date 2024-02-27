@@ -18,11 +18,11 @@ package org.apache.camel.impl.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -74,6 +74,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.clock.Clock;
 import org.apache.camel.clock.ContextClock;
 import org.apache.camel.clock.EventClock;
 import org.apache.camel.console.DevConsoleRegistry;
@@ -1879,22 +1880,15 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public String getUptime() {
-        long delta = getUptimeMillis();
-        if (delta == 0) {
-            return "";
+    public Duration getUptime() {
+        EventClock<ContextEvents> contextClock = getClock();
+
+        final Clock startClock = contextClock.get(ContextEvents.START);
+        if (startClock == null) {
+            return Duration.ZERO;
         }
-        return TimeUtils.printDuration(delta);
-    }
 
-    @Override
-    public long getUptimeMillis() {
-        return clock.elapsed(ContextEvents.START, 0);
-    }
-
-    @Override
-    public Date getStartDate() {
-        return clock.asDate(ContextEvents.START, null);
+        return startClock.asDuration();
     }
 
     @Override
@@ -3008,7 +3002,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (LOG.isInfoEnabled()) {
                 String taken = TimeUtils.printDuration(stopWatch.taken(), true);
                 LOG.info("Apache Camel {} ({}) shutdown in {} (uptime:{})", getVersion(), camelContextExtension.getName(),
-                        taken, getUptime());
+                        taken, CamelContextHelper.getUptime(this));
             }
         }
 

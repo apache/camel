@@ -57,9 +57,9 @@ public class DefaultCamelContextTest extends TestSupport {
     @Test
     public void testStartDate() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
-        assertNull(ctx.getStartDate());
+        assertNull(CamelContextHelper.getStartDate(ctx));
         ctx.start();
-        assertNotNull(ctx.getStartDate());
+        assertNotNull(CamelContextHelper.getStartDate(ctx));
     }
 
     @Test
