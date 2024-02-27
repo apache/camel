@@ -1,10 +1,10 @@
-= AWS Elastic Kubernetes Service (EKS) Component
-:doctitle: AWS Elastic Kubernetes Service (EKS)
-:shortname: aws2-eks
-:artifactid: camel-aws2-eks
+= AWS Bedrock Component
+:doctitle: AWS Bedrock
+:shortname: aws-bedrock
+:artifactid: camel-aws2-bedrock
 :description: Manage AWS EKS cluster instances.
-:since: 3.1
-:supportlevel: Stable
+:since: 4.5
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -15,20 +15,20 @@
 
 *{component-header}*
 
-The AWS2 EKS component supports create, delete, describe and list clusters
-https://aws.amazon.com/eks/[AWS EKS] clusters instances.
+The AWS2 Bedrock component supports invoking a supported LLM model from
+https://aws.amazon.com/bedrock/[AWS Bedrock] service.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
-signed up to use Amazon EKS. More information is available at
-https://aws.amazon.com/eks/[Amazon EKS].
+signed up to use Amazon Bedrock. More information is available at
+https://aws.amazon.com/bedrock/[Amazon Bedrock].
 
 
 == URI Format
 
 -------------------------
-aws2-eks://label[?options]
+aws-bedrock://label[?options]
 -------------------------
 
 You can append query options to the URI in the following format:
@@ -50,11 +50,11 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-Required EKS component options
+Required Bedrock component options
 
-You have to provide the amazonEKSClient in the
+You have to provide the bedrockRuntimeClient in the
 Registry or your accessKey and secretKey to access
-the https://aws.amazon.com/eks/[Amazon EKS] service.
+the https://aws.amazon.com/bedrock/[Amazon Bedrock] service.
 
 == Usage
 
@@ -81,38 +81,48 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== EKS Producer operations
+=== Bedrock Producer operations
 
-Camel-AWS EKS component provides the following operation on the producer side:
+Camel-AWS Bedrock component provides the following operation on the producer side:
 
-- listClusters
-- createCluster
-- describeCluster
-- deleteCluster
+- invokeModel
 
 == Producer Examples
 
-- listClusters: this operation will list the available clusters in EKS
+- invokeModel: this operation will invoke a model from Bedrock
 
 [source,java]
 --------------------------------------------------------------------------------
-from("direct:listClusters")
-    .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters")
+from("direct:invoke")
+    .to("aws-bedrock://test?bedrockRuntimeClient=#amazonBedrockRuntimeClient&operation=invokeModel&modelId="
+                            + BedrockModels.TITAN_TEXT_EXPRESS_V1.model))
 --------------------------------------------------------------------------------
 
-== Using a POJO as body
-
-Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as a body.
-In AWS EKS there are multiple operations you can submit, as an example for List cluster request, you can do something like:
+and you can the send to the direct endpoint something like
 
 [source,java]
-------------------------------------------------------------------------------------------------------
-from("direct:start")
-  .setBody(ListClustersRequest.builder().maxResults(12).build())
-  .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:invoke", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.put("inputText",
+                    "User: Generate synthetic data for daily product sales in various categories - include row number, product name, category, date of sale and price. Produce output in JSON format. Count records and ensure there are no more than 5.");
 
-In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+            ArrayNode stopSequences = mapper.createArrayNode();
+            stopSequences.add("User:");
+            ObjectNode childNode = mapper.createObjectNode();
+            childNode.put("maxTokenCount", 1024);
+            childNode.put("stopSequences", stopSequences);
+            childNode.put("temperature", 0).put("topP", 1);
+
+            rootNode.put("textGenerationConfig", childNode);
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+--------------------------------------------------------------------------------
+
+where template is a ProducerTemplate.
 
 == Dependencies
 
@@ -124,7 +134,7 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws2-eks</artifactId>
+    <artifactId>camel-aws-bedrock</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
