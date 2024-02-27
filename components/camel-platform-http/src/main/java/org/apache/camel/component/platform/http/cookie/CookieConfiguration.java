@@ -16,57 +16,111 @@
  */
 package org.apache.camel.component.platform.http.cookie;
 
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+
 /**
  * Attributes that are set when creating Cookies.
  */
+@UriParams
+@Configurer(extended = true)
 public class CookieConfiguration {
 
     public static final String DEFAULT_PATH = "/";
     public static final boolean DEFAULT_SECURE_FLAG = false;
     public static final boolean DEFAULT_HTTP_ONLY_FLAG = false;
     public static final CookieSameSite DEFAULT_SAME_SITE = CookieSameSite.LAX;
-    private String path = DEFAULT_PATH;
-    private String domain;
-    private Long maxAge;
-    private boolean secure = DEFAULT_SECURE_FLAG;
-    private boolean httpOnly = DEFAULT_HTTP_ONLY_FLAG;
-    private CookieSameSite sameSite = DEFAULT_SAME_SITE;
+    @UriParam(defaultValue = "/")
+    private String cookiePath = DEFAULT_PATH;
+    @UriParam
+    private String cookieDomain;
+    @UriParam
+    private Long cookieMaxAge;
+    @UriParam(defaultValue = "false")
+    private boolean cookieSecure = DEFAULT_SECURE_FLAG;
+    @UriParam(defaultValue = "false")
+    private boolean cookieHttpOnly = DEFAULT_HTTP_ONLY_FLAG;
+    @UriParam(defaultValue = "Lax")
+    private CookieSameSite cookieSameSite = DEFAULT_SAME_SITE;
 
     public CookieConfiguration() {
     }
 
-    public CookieConfiguration(String path, String domain, Long maxAge,
-                               boolean secure, boolean httpOnly, CookieSameSite sameSite) {
-        this.path = path;
-        this.domain = domain;
-        this.maxAge = maxAge;
-        this.secure = secure;
-        this.httpOnly = httpOnly;
-        this.sameSite = sameSite;
+    public CookieConfiguration(String cookiePath, String cookieDomain, Long cookieMaxAge,
+                               boolean cookieSecure, boolean cookieHttpOnly, CookieSameSite cookieSameSite) {
+        this.cookiePath = cookiePath;
+        this.cookieDomain = cookieDomain;
+        this.cookieMaxAge = cookieMaxAge;
+        this.cookieSecure = cookieSecure;
+        this.cookieHttpOnly = cookieHttpOnly;
+        this.cookieSameSite = cookieSameSite;
     }
 
-    public String getPath() {
-        return path;
+    /**
+     * Sets the URL path that must exist in the requested URL in order to send the Cookie.
+     */
+    public void setCookiePath(String cookiePath) {
+        this.cookiePath = cookiePath;
     }
 
-    public String getDomain() {
-        return domain;
+    public String getCookiePath() {
+        return cookiePath;
     }
 
-    public Long getMaxAge() {
-        return maxAge;
+    /**
+     * Sets which server can receive cookies.
+     */
+    public void setCookieDomain(String cookieDomain) {
+        this.cookieDomain = cookieDomain;
     }
 
-    public boolean isSecure() {
-        return secure;
+    public String getCookieDomain() {
+        return cookieDomain;
     }
 
-    public boolean isHttpOnly() {
-        return httpOnly;
+    /**
+     * Sets the maximum cookie age in seconds.
+     */
+    public void setCookieMaxAge(Long cookieMaxAge) {
+        this.cookieMaxAge = cookieMaxAge;
     }
 
-    public CookieSameSite getSameSite() {
-        return sameSite;
+    public Long getCookieMaxAge() {
+        return cookieMaxAge;
+    }
+
+    /**
+     * Sets whether the cookie is only sent to the server with an encrypted request over HTTPS.
+     */
+    public void setCookieSecure(boolean cookieSecure) {
+        this.cookieSecure = cookieSecure;
+    }
+
+    public boolean isCookieSecure() {
+        return cookieSecure;
+    }
+
+    /**
+     * Sets whether to prevent client side scripts from accessing created cookies.
+     */
+    public void setCookieHttpOnly(boolean cookieHttpOnly) {
+        this.cookieHttpOnly = cookieHttpOnly;
+    }
+
+    public boolean isCookieHttpOnly() {
+        return cookieHttpOnly;
+    }
+
+    /**
+     * Sets whether to prevent the browser from sending cookies along with cross-site requests.
+     */
+    public void setCookieSameSite(CookieSameSite cookieSameSite) {
+        this.cookieSameSite = cookieSameSite;
+    }
+
+    public CookieSameSite getCookieSameSite() {
+        return cookieSameSite;
     }
 
     public static class Builder {
@@ -100,7 +154,7 @@ public class CookieConfiguration {
         /**
          * Sets the maximum cookie age in seconds.
          */
-        public Builder setMaxAge(long maxAge) {
+        public Builder setMaxAge(Long maxAge) {
             this.maxAge = maxAge;
             return this;
         }

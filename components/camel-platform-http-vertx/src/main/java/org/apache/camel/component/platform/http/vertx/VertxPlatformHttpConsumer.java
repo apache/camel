@@ -358,13 +358,13 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         @Override
         public void addCookie(String name, String value) {
             Cookie cookie = Cookie.cookie(name, value)
-                    .setPath(cookieConfiguration.getPath())
-                    .setDomain(cookieConfiguration.getDomain())
-                    .setSecure(cookieConfiguration.isSecure())
-                    .setHttpOnly(cookieConfiguration.isHttpOnly())
-                    .setSameSite(getSameSite(cookieConfiguration.getSameSite()));
-            if (cookieConfiguration.getMaxAge() != null) {
-                cookie.setMaxAge(cookieConfiguration.getMaxAge());
+                    .setPath(cookieConfiguration.getCookiePath())
+                    .setDomain(cookieConfiguration.getCookieDomain())
+                    .setSecure(cookieConfiguration.isCookieSecure())
+                    .setHttpOnly(cookieConfiguration.isCookieHttpOnly())
+                    .setSameSite(getSameSite(cookieConfiguration.getCookieSameSite()));
+            if (cookieConfiguration.getCookieMaxAge() != null) {
+                cookie.setMaxAge(cookieConfiguration.getCookieMaxAge());
             }
             routingContext.response().addCookie(cookie);
         }

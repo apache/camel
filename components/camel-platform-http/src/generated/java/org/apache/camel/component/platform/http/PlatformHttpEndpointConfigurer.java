@@ -24,8 +24,18 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
-        case "cookieconfiguration":
-        case "cookieConfiguration": target.setCookieConfiguration(property(camelContext, org.apache.camel.component.platform.http.cookie.CookieConfiguration.class, value)); return true;
+        case "cookiedomain":
+        case "cookieDomain": target.getCookieConfiguration().setCookieDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookiehttponly":
+        case "cookieHttpOnly": target.getCookieConfiguration().setCookieHttpOnly(property(camelContext, boolean.class, value)); return true;
+        case "cookiemaxage":
+        case "cookieMaxAge": target.getCookieConfiguration().setCookieMaxAge(property(camelContext, java.lang.Long.class, value)); return true;
+        case "cookiepath":
+        case "cookiePath": target.getCookieConfiguration().setCookiePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookiesamesite":
+        case "cookieSameSite": target.getCookieConfiguration().setCookieSameSite(property(camelContext, org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite.class, value)); return true;
+        case "cookiesecure":
+        case "cookieSecure": target.getCookieConfiguration().setCookieSecure(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -57,8 +67,18 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "consumes": return java.lang.String.class;
-        case "cookieconfiguration":
-        case "cookieConfiguration": return org.apache.camel.component.platform.http.cookie.CookieConfiguration.class;
+        case "cookiedomain":
+        case "cookieDomain": return java.lang.String.class;
+        case "cookiehttponly":
+        case "cookieHttpOnly": return boolean.class;
+        case "cookiemaxage":
+        case "cookieMaxAge": return java.lang.Long.class;
+        case "cookiepath":
+        case "cookiePath": return java.lang.String.class;
+        case "cookiesamesite":
+        case "cookieSameSite": return org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite.class;
+        case "cookiesecure":
+        case "cookieSecure": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -91,8 +111,18 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumes": return target.getConsumes();
-        case "cookieconfiguration":
-        case "cookieConfiguration": return target.getCookieConfiguration();
+        case "cookiedomain":
+        case "cookieDomain": return target.getCookieConfiguration().getCookieDomain();
+        case "cookiehttponly":
+        case "cookieHttpOnly": return target.getCookieConfiguration().isCookieHttpOnly();
+        case "cookiemaxage":
+        case "cookieMaxAge": return target.getCookieConfiguration().getCookieMaxAge();
+        case "cookiepath":
+        case "cookiePath": return target.getCookieConfiguration().getCookiePath();
+        case "cookiesamesite":
+        case "cookieSameSite": return target.getCookieConfiguration().getCookieSameSite();
+        case "cookiesecure":
+        case "cookieSecure": return target.getCookieConfiguration().isCookieSecure();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

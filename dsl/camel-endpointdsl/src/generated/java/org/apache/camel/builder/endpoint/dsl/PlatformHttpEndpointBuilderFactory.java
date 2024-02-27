@@ -61,37 +61,164 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The properties set on a Cookies when a Cookie is added (currently
-         * only supported by camel-platform-http-vertx).
+         * Sets which server can receive cookies.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.CookieConfiguration&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
-         * @param cookieConfiguration the value to set
+         * @param cookieDomain the value to set
          * @return the dsl builder
          */
-        default PlatformHttpEndpointBuilder cookieConfiguration(
-                org.apache.camel.component.platform.http.cookie.CookieConfiguration cookieConfiguration) {
-            doSetProperty("cookieConfiguration", cookieConfiguration);
+        default PlatformHttpEndpointBuilder cookieDomain(String cookieDomain) {
+            doSetProperty("cookieDomain", cookieDomain);
             return this;
         }
         /**
-         * The properties set on a Cookies when a Cookie is added (currently
-         * only supported by camel-platform-http-vertx).
+         * Sets whether to prevent client side scripts from accessing created
+         * cookies.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.CookieConfiguration&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param cookieHttpOnly the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieHttpOnly(
+                boolean cookieHttpOnly) {
+            doSetProperty("cookieHttpOnly", cookieHttpOnly);
+            return this;
+        }
+        /**
+         * Sets whether to prevent client side scripts from accessing created
+         * cookies.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param cookieHttpOnly the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieHttpOnly(String cookieHttpOnly) {
+            doSetProperty("cookieHttpOnly", cookieHttpOnly);
+            return this;
+        }
+        /**
+         * Sets the maximum cookie age in seconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
-         * @param cookieConfiguration the value to set
+         * @param cookieMaxAge the value to set
          * @return the dsl builder
          */
-        default PlatformHttpEndpointBuilder cookieConfiguration(
-                String cookieConfiguration) {
-            doSetProperty("cookieConfiguration", cookieConfiguration);
+        default PlatformHttpEndpointBuilder cookieMaxAge(Long cookieMaxAge) {
+            doSetProperty("cookieMaxAge", cookieMaxAge);
+            return this;
+        }
+        /**
+         * Sets the maximum cookie age in seconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param cookieMaxAge the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieMaxAge(String cookieMaxAge) {
+            doSetProperty("cookieMaxAge", cookieMaxAge);
+            return this;
+        }
+        /**
+         * Sets the URL path that must exist in the requested URL in order to
+         * send the Cookie.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: /
+         * Group: consumer
+         * 
+         * @param cookiePath the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookiePath(String cookiePath) {
+            doSetProperty("cookiePath", cookiePath);
+            return this;
+        }
+        /**
+         * Sets whether to prevent the browser from sending cookies along with
+         * cross-site requests.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite&lt;/code&gt; type.
+         * 
+         * Default: Lax
+         * Group: consumer
+         * 
+         * @param cookieSameSite the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieSameSite(
+                org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite cookieSameSite) {
+            doSetProperty("cookieSameSite", cookieSameSite);
+            return this;
+        }
+        /**
+         * Sets whether to prevent the browser from sending cookies along with
+         * cross-site requests.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite&lt;/code&gt; type.
+         * 
+         * Default: Lax
+         * Group: consumer
+         * 
+         * @param cookieSameSite the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieSameSite(String cookieSameSite) {
+            doSetProperty("cookieSameSite", cookieSameSite);
+            return this;
+        }
+        /**
+         * Sets whether the cookie is only sent to the server with an encrypted
+         * request over HTTPS.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param cookieSecure the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieSecure(boolean cookieSecure) {
+            doSetProperty("cookieSecure", cookieSecure);
+            return this;
+        }
+        /**
+         * Sets whether the cookie is only sent to the server with an encrypted
+         * request over HTTPS.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param cookieSecure the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder cookieSecure(String cookieSecure) {
+            doSetProperty("cookieSecure", cookieSecure);
             return this;
         }
         /**
