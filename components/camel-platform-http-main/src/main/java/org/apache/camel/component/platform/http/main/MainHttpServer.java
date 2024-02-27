@@ -327,27 +327,39 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 // log only if changed
                 if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
                     LOG.info("HTTP endpoints summary");
+                    int longestEndpoint = 0;
                     for (HttpEndpointModel u : endpoints) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + u.getUri());
-                        if (u.getVerbs() != null || u.getProduces() != null || u.getConsumes() != null) {
-                            sb.append("   ");
+                        String endpoint = getEndpoint(u);
+                        if (endpoint.length() > longestEndpoint) {
+                            longestEndpoint = endpoint.length();
                         }
+                    }
+
+                    int spacing = 3;
+                    String formatTemplate = "%-" + (longestEndpoint + spacing) + "s %-8s %s";
+                    for (HttpEndpointModel u : endpoints) {
+                        String endpoint = getEndpoint(u);
+                        String formattedVerbs = "";
                         if (u.getVerbs() != null) {
-                            sb.append("(" + u.getVerbs() + ")");
+                            formattedVerbs = "(" + u.getVerbs() + ")";
                         }
+                        String formattedMediaTypes = "";
                         if (u.getConsumes() != null || u.getProduces() != null) {
-                            sb.append(String.format(" (%s%s%s)",
+                            formattedMediaTypes = String.format("(%s%s%s)",
                                     u.getConsumes() != null ? "accept:" + u.getConsumes() : "",
                                     u.getProduces() != null && u.getConsumes() != null ? " " : "",
-                                    u.getProduces() != null ? "produce:" + u.getProduces() : ""));
+                                    u.getProduces() != null ? "produce:" + u.getProduces() : "");
                         }
-                        LOG.info("    {}", sb);
+                        LOG.info("    {}", String.format(formatTemplate, endpoint, formattedVerbs, formattedMediaTypes));
                     }
                 }
 
                 // use a defensive copy of last known endpoints
                 last = new HashSet<>(endpoints);
+            }
+
+            private String getEndpoint(HttpEndpointModel httpEndpointModel) {
+                return "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + httpEndpointModel.getUri();
             }
 
             @Override
