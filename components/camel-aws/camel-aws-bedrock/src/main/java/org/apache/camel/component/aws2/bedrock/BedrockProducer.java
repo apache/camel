@@ -120,7 +120,7 @@ public class BedrockProducer extends DefaultProducer {
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            message.setBody(result.body().asUtf8String());
         }
     }
 
