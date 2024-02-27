@@ -79,7 +79,7 @@ public class VertxPlatformHttpCookieTest {
                         .setHttpOnly(true)
                         .setSecure(true)
                         .setMaxAge(cookieMaxAge)
-                        .setSameSite(CookieConfiguration.CookieSameSite.LAX)
+                        .setSameSite(CookieConfiguration.CookieSameSite.STRICT)
                         .build());
 
         try {
@@ -108,7 +108,7 @@ public class VertxPlatformHttpCookieTest {
                                     .secured(true)
                                     .httpOnly(true)
                                     .maxAge(cookieMaxAge)
-                                    .sameSite("Lax"))
+                                    .sameSite("Strict"))
                     .body(equalTo("add-custom"));
         } finally {
             context.stop();
