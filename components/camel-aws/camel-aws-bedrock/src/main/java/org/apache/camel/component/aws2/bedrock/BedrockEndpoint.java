@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
  * Invoke Model of AWS Bedrock service.
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock", title = "AWS Bedrock",
-             syntax = "aws-bedrock:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
+             syntax = "aws-bedrock:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = BedrockConstants.class)
 public class BedrockEndpoint extends ScheduledPollEndpoint {
 

@@ -6,7 +6,7 @@
     "description": "Invoke Model of AWS Bedrock service.",
     "deprecated": false,
     "firstVersion": "4.5.0",
-    "label": "cloud,management",
+    "label": "ai,cloud",
     "javaType": "org.apache.camel.component.aws2.bedrock.BedrockComponent",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
