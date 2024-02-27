@@ -751,11 +751,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-aws2-bedrock</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-aws2-cw</artifactId>
                 <version>${project.version}</version>
             </dependency>
