@@ -67,6 +67,12 @@ public class TransformRoute extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // Automatically transform to xml if all files are yaml
+        if (files.stream().allMatch(file -> file.endsWith(".yaml"))) {
+            format = "xml";
+        } else {
+            format = "yaml";
+        }
 
         String dump = output;
         // if no output then we want to print to console, so we need to write to a hidden file, and dump that file afterwards
