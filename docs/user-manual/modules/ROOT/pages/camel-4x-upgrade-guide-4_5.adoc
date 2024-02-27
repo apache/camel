@@ -26,3 +26,7 @@ After:
 ----
 String uri = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
 ----
+
+=== camel-platform-http-vertx
+
+Added a Cookie Handler allowing the addition, retrieval and expiry of Cookies.
