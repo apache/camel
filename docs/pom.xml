@@ -93,7 +93,7 @@
             </properties>
         </profile>
         <profile>
-            <id>full</id>
+            <id>regen</id>
             <activation>
                 <property>
                     <name>!quickly</name>

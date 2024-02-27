@@ -16,46 +16,14 @@
 # limitations under the License.
 #
 
-if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
-    echo "Error: Bash 4 or higher is required to run this script, but found ${BASH_VERSINFO}"
-    exit 1
-fi
-
-shopt -s globstar
-
-CAMEL_DIR=$(cd `dirname "$0"`/../..; pwd)
-cd $CAMEL_DIR
+# Move to top directory
+cd `dirname "$0"`/../..
 
 # Force clean
 git clean -fdx
 rm -Rf **/src/generated/
 
 # Regenerate everything
-./mvnw -Pfull,update-camel-releases -DskipTests package
+./mvnw --batch-mode -Pupdate-camel-releases,regen -DskipTests install
 # One additional pass to get the info for the 'others' jars
-./mvnw -Pfull,update-camel-releases -DskipTests package -f catalog/camel-catalog
-
-# Update links
-find docs/components/modules/ROOT/examples/json -type l -delete
-for json_file in components/**/src/generated/resources/META-INF/**/*.json ; do
-    # Get relative path of json file
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        rel_path=$(realpath --relative-to=docs/components/modules/ROOT/examples/json $json_file)
-    else 
-        rel_path=$(grealpath --relative-to=docs/components/modules/ROOT/examples/json $json_file)
-    fi
-    # Create symbolic link in dir-b
-    ln -sf $rel_path docs/components/modules/ROOT/examples/json/$(basename $json_file)
-done
-
-find core/camel-core-engine/src/main/docs/modules/eips/examples/json -type l -delete
-for json_file in core/camel-core-model/src/generated/resources/META-INF/org/apache/camel/model/*.json ; do
-    # Get relative path of json file
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        rel_path=$(realpath --relative-to=core/camel-core-engine/src/main/docs/modules/eips/examples/json $json_file)
-    else
-        rel_path=$(grealpath --relative-to=core/camel-core-engine/src/main/docs/modules/eips/examples/json $json_file)
-    fi
-    # Create symbolic link in dir-b
-    ln -sf $rel_path core/camel-core-engine/src/main/docs/modules/eips/examples/json/$(basename $json_file)
-done
+./mvnw --batch-mode install -f catalog/camel-catalog
