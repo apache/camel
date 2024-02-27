@@ -53,7 +53,7 @@ public class BedrockComponent extends HealthCheckComponent {
                 && configuration.getBedrockRuntimeClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, useSessionCredentials is set to false, Amazon eks client or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, useSessionCredentials is set to false, Amazon Bedrock runtime client or accessKey and secretKey must be specified");
         }
 
         return endpoint;
