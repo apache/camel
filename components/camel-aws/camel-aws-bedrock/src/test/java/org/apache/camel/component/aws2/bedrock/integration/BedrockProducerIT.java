@@ -47,10 +47,36 @@ class BedrockProducerIT extends CamelTestSupport {
     private MockEndpoint result;
 
     @Test
-    public void testInvokeModel() throws InterruptedException {
+    public void testInvokeTitanExpressModel() throws InterruptedException {
 
         result.expectedMessageCount(1);
-        final Exchange result = template.send("direct:send", exchange -> {
+        final Exchange result = template.send("direct:send_titan_express", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.put("inputText",
+                    "User: Generate synthetic data for daily product sales in various categories - include row number, product name, category, date of sale and price. Produce output in JSON format. Count records and ensure there are no more than 5.");
+
+            ArrayNode stopSequences = mapper.createArrayNode();
+            stopSequences.add("User:");
+            ObjectNode childNode = mapper.createObjectNode();
+            childNode.put("maxTokenCount", 1024);
+            childNode.put("stopSequences", stopSequences);
+            childNode.put("temperature", 0).put("topP", 1);
+
+            rootNode.put("textGenerationConfig", childNode);
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeTitanLiteModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_titan_lite", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
             rootNode.put("inputText",
@@ -77,9 +103,14 @@ class BedrockProducerIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:send")
-                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=eu-central-1&operation=invokeModel&modelId="
+                from("direct:send_titan_express")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=eu-central-1&operation=invokeTextModel&modelId="
                             + BedrockModels.TITAN_TEXT_EXPRESS_V1.model)
+                        .to(result);
+
+                from("direct:send_titan_lite")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.TITAN_TEXT_LITE_V1.model)
                         .to(result);
             }
         };

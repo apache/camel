@@ -18,7 +18,8 @@ package org.apache.camel.component.aws2.bedrock;
 
 public enum BedrockModels {
 
-    TITAN_TEXT_EXPRESS_V1("amazon.titan-text-express-v1");
+    TITAN_TEXT_EXPRESS_V1("amazon.titan-text-express-v1"),
+    TITAN_TEXT_LITE_V1("amazon.titan-text-lite-v1");
 
     public final String model;
 
