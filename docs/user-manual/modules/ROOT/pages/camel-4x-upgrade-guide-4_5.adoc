@@ -35,6 +35,18 @@ The following deprecated methods from the `AbstractCamelContext`, deprecated on 
 Users of these methods should use the respective operations from the `ExtendedCamelContext` (accessed via `getCamelContextExtension()`),
 instead.
 
+The following deprecated methods from the `CamelContext`, deprecated on 4.4 as part of CAMEL-20225, were finally removed and/or modified:
+
+* `getUptime`: modified to return a regular `Duration` instance.
+* `getUptimeMillis`: removed.
+* `getStartDate` removed.
+
+Users of this method should proceed as following:
+
+* `getUptime`: use `ContextHelper.getUptime`.
+* `getUptimeMillis`: use `getUptime().toMillis()`.
+* `getStartDate`: use `ContextHelper.getStartDate`.
+
 === Rest DSL
 
 Camel has changed the default value for `inlineRoutes=false` to `inlineRoutes=true` in `restConfiguration`.

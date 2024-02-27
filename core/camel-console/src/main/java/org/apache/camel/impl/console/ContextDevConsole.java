@@ -41,7 +41,7 @@ public class ContextDevConsole extends AbstractDevConsole {
 
         sb.append(String.format("Apache Camel %s %s (%s) uptime %s", getCamelContext().getVersion(),
                 getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
-                getCamelContext().getUptime()));
+                getCamelContext().getUptime().toMillis()));
         if (getCamelContext().getDescription() != null) {
             sb.append(String.format("\n    %s", getCamelContext().getDescription()));
         }
@@ -115,7 +115,8 @@ public class ContextDevConsole extends AbstractDevConsole {
         root.put("version", getCamelContext().getVersion());
         root.put("state", getCamelContext().getStatus().name());
         root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
-        root.put("uptime", getCamelContext().getUptime());
+
+        root.put("uptime", getCamelContext().getUptime().toMillis());
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
