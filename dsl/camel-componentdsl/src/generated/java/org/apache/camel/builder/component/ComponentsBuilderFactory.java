@@ -150,6 +150,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
+     * AWS Bedrock (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsBedrockComponentBuilderFactory.AwsBedrockComponentBuilder awsBedrock() {
+        return org.apache.camel.builder.component.dsl.AwsBedrockComponentBuilderFactory.awsBedrock();
+    }
+    /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
      * 
