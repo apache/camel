@@ -17,6 +17,7 @@
 package org.apache.camel.kotlin.components
 
 import kotlin.Boolean
+import kotlin.Int
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
@@ -48,6 +49,42 @@ public class PlatformHttpUriDsl(
     it.property("consumes", consumes)
   }
 
+  public fun cookieDomain(cookieDomain: String) {
+    it.property("cookieDomain", cookieDomain)
+  }
+
+  public fun cookieHttpOnly(cookieHttpOnly: String) {
+    it.property("cookieHttpOnly", cookieHttpOnly)
+  }
+
+  public fun cookieHttpOnly(cookieHttpOnly: Boolean) {
+    it.property("cookieHttpOnly", cookieHttpOnly.toString())
+  }
+
+  public fun cookieMaxAge(cookieMaxAge: String) {
+    it.property("cookieMaxAge", cookieMaxAge)
+  }
+
+  public fun cookieMaxAge(cookieMaxAge: Int) {
+    it.property("cookieMaxAge", cookieMaxAge.toString())
+  }
+
+  public fun cookiePath(cookiePath: String) {
+    it.property("cookiePath", cookiePath)
+  }
+
+  public fun cookieSameSite(cookieSameSite: String) {
+    it.property("cookieSameSite", cookieSameSite)
+  }
+
+  public fun cookieSecure(cookieSecure: String) {
+    it.property("cookieSecure", cookieSecure)
+  }
+
+  public fun cookieSecure(cookieSecure: Boolean) {
+    it.property("cookieSecure", cookieSecure.toString())
+  }
+
   public fun httpMethodRestrict(httpMethodRestrict: String) {
     it.property("httpMethodRestrict", httpMethodRestrict)
   }
@@ -70,6 +107,14 @@ public class PlatformHttpUriDsl(
 
   public fun produces(produces: String) {
     it.property("produces", produces)
+  }
+
+  public fun useCookieHandler(useCookieHandler: String) {
+    it.property("useCookieHandler", useCookieHandler)
+  }
+
+  public fun useCookieHandler(useCookieHandler: Boolean) {
+    it.property("useCookieHandler", useCookieHandler.toString())
   }
 
   public fun useStreaming(useStreaming: String) {
