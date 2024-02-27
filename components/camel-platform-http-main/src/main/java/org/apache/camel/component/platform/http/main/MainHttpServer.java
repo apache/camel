@@ -328,24 +328,21 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
                     LOG.info("HTTP endpoints summary");
                     for (HttpEndpointModel u : endpoints) {
-                        String line = "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + u.getUri();
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + u.getUri());
+                        if (u.getVerbs() != null || u.getProduces() != null || u.getConsumes() != null) {
+                            sb.append("   ");
+                        }
                         if (u.getVerbs() != null) {
-                            line += "    (" + u.getVerbs() + ")";
+                            sb.append("(" + u.getVerbs() + ")");
                         }
                         if (u.getConsumes() != null || u.getProduces() != null) {
-                            line += "    (";
-                            if (u.getConsumes() != null) {
-                                line += "accept:" + u.getConsumes();
-                                if (u.getProduces() != null) {
-                                    line += " ";
-                                }
-                            }
-                            if (u.getProduces() != null) {
-                                line += "produce:" + u.getProduces();
-                            }
-                            line += ")";
+                            sb.append(String.format(" (%s%s%s)",
+                                    u.getConsumes() != null ? "accept:" + u.getConsumes() : "",
+                                    u.getProduces() != null && u.getConsumes() != null ? " " : "",
+                                    u.getProduces() != null ? "produce:" + u.getProduces() : ""));
                         }
-                        LOG.info("    {}", line);
+                        LOG.info("    {}", sb);
                     }
                 }
 
