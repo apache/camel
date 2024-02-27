@@ -39,7 +39,7 @@ rm -Rf **/src/generated/
 find docs/components/modules/ROOT/examples/json -type l -delete
 for json_file in components/**/src/generated/resources/META-INF/**/*.json ; do
     # Get relative path of json file
-    rel_path=$(grealpath --relative-to=docs/components/modules/ROOT/examples/json $json_file)
+    rel_path=$(realpath --relative-to=docs/components/modules/ROOT/examples/json $json_file)
     # Create symbolic link in dir-b
     ln -sf $rel_path docs/components/modules/ROOT/examples/json/$(basename $json_file)
 done
@@ -47,7 +47,7 @@ done
 find core/camel-core-engine/src/main/docs/modules/eips/examples/json -type l -delete
 for json_file in core/camel-core-model/src/generated/resources/META-INF/org/apache/camel/model/*.json ; do
     # Get relative path of json file
-    rel_path=$(grealpath --relative-to=core/camel-core-engine/src/main/docs/modules/eips/examples/json $json_file)
+    rel_path=$(realpath --relative-to=core/camel-core-engine/src/main/docs/modules/eips/examples/json $json_file)
     # Create symbolic link in dir-b
     ln -sf $rel_path core/camel-core-engine/src/main/docs/modules/eips/examples/json/$(basename $json_file)
 done
