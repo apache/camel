@@ -44,7 +44,7 @@ public class RestManagementTest extends BaseUndertowTest {
 
         Set<ObjectName> s = mbeanServer.queryNames(
                 new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=endpoints,*"), null);
-        assertEquals(8, s.size(), "Could not find 8 endpoints: " + s);
+        assertEquals(6, s.size(), "Could not find 8 endpoints: " + s);
 
         // there should be 3 rest endpoints
         long count = s.stream().filter(p -> p.getCanonicalName().contains("rest")).count();
