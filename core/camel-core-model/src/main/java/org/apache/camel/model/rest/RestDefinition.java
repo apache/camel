@@ -1139,15 +1139,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     private String buildUri(CamelContext camelContext, VerbDefinition verb) {
+        String answer;
         if (path != null && verb.getPath() != null) {
-            return path + ":" + parseText(camelContext, verb.getPath());
+            answer = path + ":" + verb.getPath();
         } else if (path != null) {
-            return path;
+            answer = path;
         } else if (verb.getPath() != null) {
-            return parseText(camelContext, verb.getPath());
+            answer = verb.getPath();
         } else {
-            return "";
+            answer = "";
         }
+        return parseText(camelContext, answer);
     }
 
     private ParamDefinition findParam(VerbDefinition verb, String name) {

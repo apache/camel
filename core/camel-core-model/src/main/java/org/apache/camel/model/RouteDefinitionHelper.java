@@ -19,11 +19,9 @@ package org.apache.camel.model;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -200,9 +198,11 @@ public final class RouteDefinitionHelper {
                     String endpointUri = fromDefinition.getEndpointUri();
                     if (ObjectHelper.isNotEmpty(endpointUri)
                             && (endpointUri.startsWith("rest:") || endpointUri.startsWith("rest-api:"))) {
-                        Map<String, Object> options = new HashMap<>(1);
-                        options.put("routeId", route.getId());
-                        endpointUri = URISupport.appendParametersToURI(endpointUri, options);
+
+                        // append route id as a new option
+                        String query = URISupport.extractQuery(endpointUri);
+                        String separator = query == null ? "?" : "&";
+                        endpointUri += separator + "routeId=" + route.getId();
 
                         // replace uri with new routeId
                         fromDefinition.setUri(endpointUri);
