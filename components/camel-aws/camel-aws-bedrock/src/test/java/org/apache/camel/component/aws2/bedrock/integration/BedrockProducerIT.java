@@ -18,7 +18,9 @@ package org.apache.camel.component.aws2.bedrock.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -53,17 +55,19 @@ class BedrockProducerIT extends CamelTestSupport {
         final Exchange result = template.send("direct:send_titan_express", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
-            rootNode.put("inputText",
-                    "User: Generate synthetic data for daily product sales in various categories - include row number, product name, category, date of sale and price. Produce output in JSON format. Count records and ensure there are no more than 5.");
+            rootNode.putIfAbsent("inputText",
+                    new TextNode(
+                            "User: Generate synthetic data for daily product sales in various categories - include row number, product name, category, date of sale and price. Produce output in JSON format. Count records and ensure there are no more than 5."));
 
             ArrayNode stopSequences = mapper.createArrayNode();
             stopSequences.add("User:");
             ObjectNode childNode = mapper.createObjectNode();
-            childNode.put("maxTokenCount", 1024);
-            childNode.put("stopSequences", stopSequences);
-            childNode.put("temperature", 0).put("topP", 1);
+            childNode.putIfAbsent("maxTokenCount", new IntNode(1024));
+            childNode.putIfAbsent("stopSequences", stopSequences);
+            childNode.putIfAbsent("temperature", new IntNode(0));
+            childNode.putIfAbsent("topP", new IntNode(1));
 
-            rootNode.put("textGenerationConfig", childNode);
+            rootNode.putIfAbsent("textGenerationConfig", childNode);
             exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
             exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
@@ -79,17 +83,19 @@ class BedrockProducerIT extends CamelTestSupport {
         final Exchange result = template.send("direct:send_titan_lite", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
-            rootNode.put("inputText",
-                    "User: Generate synthetic data for daily product sales in various categories - include row number, product name, category, date of sale and price. Produce output in JSON format. Count records and ensure there are no more than 5.");
+            rootNode.putIfAbsent("inputText",
+                    new TextNode(
+                            "User: Generate synthetic data for daily product sales in various categories - include row number, product name, category, date of sale and price. Produce output in JSON format. Count records and ensure there are no more than 5."));
 
             ArrayNode stopSequences = mapper.createArrayNode();
             stopSequences.add("User:");
             ObjectNode childNode = mapper.createObjectNode();
-            childNode.put("maxTokenCount", 1024);
-            childNode.put("stopSequences", stopSequences);
-            childNode.put("temperature", 0).put("topP", 1);
+            childNode.putIfAbsent("maxTokenCount", new IntNode(1024));
+            childNode.putIfAbsent("stopSequences", stopSequences);
+            childNode.putIfAbsent("temperature", new IntNode(0));
+            childNode.putIfAbsent("topP", new IntNode(1));
 
-            rootNode.put("textGenerationConfig", childNode);
+            rootNode.putIfAbsent("textGenerationConfig", childNode);
             exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
             exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
@@ -101,21 +107,24 @@ class BedrockProducerIT extends CamelTestSupport {
     @Test
     public void testInvokeTitanImageModel() throws InterruptedException {
 
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(3);
         final Exchange result = template.send("direct:send_titan_image", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
             ObjectNode textParameter = mapper.createObjectNode();
-            textParameter.put("text",
-                    "A ancient time camel running in the desert");
-            rootNode.put("textToImageParams", textParameter);
-            rootNode.put("taskType", "TEXT_IMAGE");
+            textParameter.putIfAbsent("text",
+                    new TextNode("A Sci-fi camel running in the desert"));
+            rootNode.putIfAbsent("textToImageParams", textParameter);
+            rootNode.putIfAbsent("taskType", new TextNode("TEXT_IMAGE"));
             ObjectNode childNode = mapper.createObjectNode();
-            childNode.put("numberOfImages", 1);
-            childNode.put("quality", "standard");
-            childNode.put("cfgScale", 8).put("height", 512).put("width", 512).put("seed", 0);
+            childNode.putIfAbsent("numberOfImages", new IntNode(3));
+            childNode.putIfAbsent("quality", new TextNode("standard"));
+            childNode.putIfAbsent("cfgScale", new IntNode(8));
+            childNode.putIfAbsent("height", new IntNode(512));
+            childNode.putIfAbsent("width", new IntNode(512));
+            childNode.putIfAbsent("seed", new IntNode(0));
 
-            rootNode.put("imageGenerationConfig", childNode);
+            rootNode.putIfAbsent("imageGenerationConfig", childNode);
 
             exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
@@ -143,8 +152,9 @@ class BedrockProducerIT extends CamelTestSupport {
                 from("direct:send_titan_image")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeImageModel&modelId="
                             + BedrockModels.TITAN_IMAGE_GENERATOR_V1.model)
+                        .split(body())
                         .unmarshal().base64()
-                        .setHeader("CamelFileName", constant("image.png")).to("file:target/generated_images")
+                        .setHeader("CamelFileName", simple("image-${random(128)}.png")).to("file:target/generated_images")
                         .to(result);
             }
         };

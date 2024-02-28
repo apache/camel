@@ -181,7 +181,7 @@ public class BedrockProducer extends DefaultProducer {
     private static void setBase64Image(InvokeModelResponse result, Message message) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
-        message.setBody(jsonString.get("images").get(0));
+        message.setBody(jsonString.get("images"));
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
