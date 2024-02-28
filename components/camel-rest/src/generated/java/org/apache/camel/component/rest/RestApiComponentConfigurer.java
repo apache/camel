@@ -25,6 +25,8 @@ public class RestApiComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "consumercomponentname":
+        case "consumerComponentName": target.setConsumerComponentName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -36,6 +38,8 @@ public class RestApiComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "consumercomponentname":
+        case "consumerComponentName": return java.lang.String.class;
         default: return null;
         }
     }
@@ -48,6 +52,8 @@ public class RestApiComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "consumercomponentname":
+        case "consumerComponentName": return target.getConsumerComponentName();
         default: return null;
         }
     }

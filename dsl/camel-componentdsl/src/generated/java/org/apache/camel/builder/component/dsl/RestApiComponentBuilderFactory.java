@@ -80,6 +80,26 @@ public interface RestApiComponentBuilderFactory {
             return this;
         }
         /**
+         * The Camel Rest API component to use for the consumer REST transport,
+         * such as jetty, servlet, undertow. If no component has been explicitly
+         * configured, then Camel will lookup if there is a Camel component that
+         * integrates with the Rest DSL, or if a
+         * org.apache.camel.spi.RestApiConsumerFactory is registered in the
+         * registry. If either one is found, then that is being used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param consumerComponentName the value to set
+         * @return the dsl builder
+         */
+        default RestApiComponentBuilder consumerComponentName(
+                java.lang.String consumerComponentName) {
+            doSetProperty("consumerComponentName", consumerComponentName);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -118,6 +138,7 @@ public interface RestApiComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((RestApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "consumerComponentName": ((RestApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;
             case "autowiredEnabled": ((RestApiComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
