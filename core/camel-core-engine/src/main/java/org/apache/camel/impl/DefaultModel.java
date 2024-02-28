@@ -225,6 +225,10 @@ public class DefaultModel implements Model {
                             RouteDefinition toBeInlined = directs.get(toUri);
                             if (toBeInlined != null) {
                                 toBeRemoved.add(toBeInlined);
+                                // inline the source loc:line as starting from this direct input
+                                FromDefinition inlinedFrom = toBeInlined.getInput();
+                                from.setLocation(inlinedFrom.getLocation());
+                                from.setLineNumber(inlinedFrom.getLineNumber());
                                 // inline by replacing the outputs
                                 r.getOutputs().clear();
                                 r.getOutputs().addAll(toBeInlined.getOutputs());

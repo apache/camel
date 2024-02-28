@@ -89,7 +89,9 @@ public class SourceDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
                 }
                 if (!code.isEmpty()) {
+                    sb.append("\n");
                     sb.append(code);
+                    sb.append("\n\n");
                 }
             }
             sb.append("\n");
