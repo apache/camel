@@ -1153,7 +1153,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Is a custom error handler been set
      */
-    boolean isErrorHandlerFactorySet() {
+    public boolean isErrorHandlerFactorySet() {
         return errorHandlerFactory != null;
     }
 

@@ -41,7 +41,8 @@ public class FromRestGetTest extends ContextTestSupport {
     }
 
     protected int getExpectedNumberOfRoutes() {
-        return 2 + 3;
+        // routes are inlined
+        return 3;
     }
 
     @Test
