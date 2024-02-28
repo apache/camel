@@ -45,16 +45,23 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
 
     protected final EmbeddedActiveMQ embeddedBrokerService;
     private final Configuration artemisConfiguration;
+    private Consumer<Configuration> customConfigurator;
+    private final int port;
 
     public AbstractArtemisEmbeddedService() {
         this(AvailablePortFinder.getNextAvailable());
     }
 
+    /**
+     * This is needed for some tests that check reliability of the components by defining the port in advance, trying to connect
+     * first starting the service later
+     * @param port the port to use
+     */
     protected AbstractArtemisEmbeddedService(int port) {
         embeddedBrokerService = new EmbeddedActiveMQ();
         artemisConfiguration = new ConfigurationImpl();
 
-        embeddedBrokerService.setConfiguration(configure(port));
+        this.port = port;
     }
 
     private synchronized Configuration configure(int port) {
@@ -67,13 +74,18 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
         artemisConfiguration.setJMXManagementEnabled(false);
         artemisConfiguration.setMaxDiskUsage(98);
 
-        return configure(artemisConfiguration, port, brokerId);
+        final Configuration config = configure(artemisConfiguration, port, brokerId);
+        if (customConfigurator != null) {
+            customConfigurator.accept(config);
+        }
+
+        return config;
     }
 
     protected abstract Configuration configure(Configuration artemisConfiguration, int port, int brokerId);
 
-    public void customConfiguration(Consumer<Configuration> configuration) {
-        configuration.accept(artemisConfiguration);
+    public void customConfiguration(Consumer<Configuration> configurator) {
+        this.customConfigurator = configurator;
     }
 
     @Override
@@ -103,6 +115,8 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
     public synchronized void initialize() {
         try {
             if (embeddedBrokerService.getActiveMQServer() == null || !embeddedBrokerService.getActiveMQServer().isStarted()) {
+                embeddedBrokerService.setConfiguration(configure(port));
+
                 embeddedBrokerService.start();
 
                 embeddedBrokerService.getActiveMQServer().waitForActivation(20, TimeUnit.SECONDS);
