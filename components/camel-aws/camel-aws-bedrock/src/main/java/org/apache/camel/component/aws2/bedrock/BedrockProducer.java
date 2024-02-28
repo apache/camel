@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.bedrock;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -49,6 +52,9 @@ public class BedrockProducer extends DefaultProducer {
         switch (determineOperation(exchange)) {
             case invokeTextModel:
                 invokeTextModel(getEndpoint().getBedrockRuntimeClient(), exchange);
+                break;
+            case invokeImageModel:
+                invokeImageModel(getEndpoint().getBedrockRuntimeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -122,6 +128,60 @@ public class BedrockProducer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result.body().asUtf8String());
         }
+    }
+
+    private void invokeImageModel(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof InvokeModelRequest) {
+                InvokeModelResponse result;
+                try {
+                    result = bedrockRuntimeClient.invokeModel((InvokeModelRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Invoke Image Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockConstants.MODEL_CONTENT_TYPE))) {
+                String contentType = exchange.getIn().getHeader(BedrockConstants.MODEL_CONTENT_TYPE, String.class);
+                builder.contentType(contentType);
+            } else {
+                throw new IllegalArgumentException("Model Content Type must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE))) {
+                String acceptContentType = exchange.getIn().getHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, String.class);
+                builder.accept(acceptContentType);
+            } else {
+                throw new IllegalArgumentException("Model Accept Content Type must be specified");
+            }
+            InvokeModelRequest request = builder
+                    .body(SdkBytes.fromUtf8String(String.valueOf(exchange.getMessage().getBody())))
+                    .modelId(getConfiguration().getModelId())
+                    .build();
+            InvokeModelResponse result;
+            try {
+                result = bedrockRuntimeClient.invokeModel(request);
+            } catch (AwsServiceException ase) {
+                LOG.trace("Invoke Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            try {
+                setBase64Image(result, message);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private static void setBase64Image(InvokeModelResponse result, Message message) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        message.setBody(jsonString.get("images").get(0));
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
