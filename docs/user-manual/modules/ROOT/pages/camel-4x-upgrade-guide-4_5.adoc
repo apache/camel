@@ -40,9 +40,36 @@ instead.
 Camel has changed the default value for `inlineRoutes=false` to `inlineRoutes=false` in `restConfiguration`.
 It is very typical to define Rest DSL and for each service api, then call a Camel route via `direct` endpoints.
 By inlining these two, then you only have 1 route in Camel instead of 2. This helps reduce the clutter of routes
-that otherwise is in use when using Rest DSL and many services.
+that otherwise is in use when using Rest DSL and many services. You can restore to old behaviour by setting the option back to `inlineRoutes=false`.
 
-You can restore to old behaviour by setting the option back to `inlineRoutes=false`.
+Rest DSL will now eager resolve property placeholders that are used during building the `rest:` endpoint.
+
+For example with a Rest DSL using a placeholder (`app.mypath = helloapp`) in the `path`:
+
+[source,yaml]
+----
+- rest:
+    path: "{{app.mypath}}"
+    post:
+      - to: direct:demo
+----
+
+Will not be resolved in the `rest` endpoint which can be seen during startup logging:
+
+[source,text]
+----
+Routes startup (total:2)
+Started demo (rest://post:%7B%7Bapp.mypath%7D%7D)
+----
+
+The placeholder is now resolved eager and you will see _nicer_ startup logs such as:
+
+[source,text]
+----
+Routes startup (total:2)
+Started demo (rest://post:helloapp)
+----
+
 
 === Intercept EIP
 
