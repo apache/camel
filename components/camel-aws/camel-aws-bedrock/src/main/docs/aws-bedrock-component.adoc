@@ -133,20 +133,140 @@ Json schema for request
 }
 --------------------------------------------------------------------------------
 
+- Titan Text Lite V1 with id `amazon.titan-text-lite-v1`
+Lite is a light weight efficient model, ideal for fine-tuning of English-language tasks.
+
+Json schema for request
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "inputText": {
+      "type": "string"
+    },
+    "textGenerationConfig": {
+      "type": "object",
+      "properties": {
+        "maxTokenCount": {
+          "type": "integer"
+        },
+        "stopSequences": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "temperature": {
+          "type": "integer"
+        },
+        "topP": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maxTokenCount",
+        "stopSequences",
+        "temperature",
+        "topP"
+      ]
+    }
+  },
+  "required": [
+    "inputText",
+    "textGenerationConfig"
+  ]
+}
+--------------------------------------------------------------------------------
+
+- Titan Image Generator G1 with id `amazon.titan-image-generator-v1`
+It generates images from text, and allows users to upload and edit an existing image. Users can edit an image with a text prompt (without a mask) or parts of an image with an image mask. You can extend the boundaries of an image with outpainting, and fill in an image with inpainting. 
+
+Json schema for request
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "textToImageParams": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "negativeText": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "negativeText"
+      ]
+    },
+    "taskType": {
+      "type": "string"
+    },
+    "imageGenerationConfig": {
+      "type": "object",
+      "properties": {
+        "cfgScale": {
+          "type": "integer"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "quality": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "numberOfImages": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cfgScale",
+        "seed",
+        "quality",
+        "width",
+        "height",
+        "numberOfImages"
+      ]
+    }
+  },
+  "required": [
+    "textToImageParams",
+    "taskType",
+    "imageGenerationConfig"
+  ]
+}
+--------------------------------------------------------------------------------
+
 === Bedrock Producer operations
 
 Camel-AWS Bedrock component provides the following operation on the producer side:
 
-- invokeModel
+- invokeTextModel
+- invokeImageModel
 
 == Producer Examples
 
-- invokeModel: this operation will invoke a model from Bedrock
+- invokeTextModel: this operation will invoke a model from Bedrock. This is an example for both Titan Express and Titan Lite.
 
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:invoke")
-    .to("aws-bedrock://test?bedrockRuntimeClient=#amazonBedrockRuntimeClient&operation=invokeModel&modelId="
+    .to("aws-bedrock://test?bedrockRuntimeClient=#amazonBedrockRuntimeClient&operation=invokeTextModel&modelId="
                             + BedrockModels.TITAN_TEXT_EXPRESS_V1.model))
 --------------------------------------------------------------------------------
 
@@ -168,6 +288,48 @@ and you can the send to the direct endpoint something like
             childNode.put("temperature", 0).put("topP", 1);
 
             rootNode.put("textGenerationConfig", childNode);
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+--------------------------------------------------------------------------------
+
+where template is a ProducerTemplate.
+
+- invokeImageModel: this operation will invoke a model from Bedrock. This is an example for both Titan Express and Titan Lite.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:invoke")
+    .to("aws-bedrock://test?bedrockRuntimeClient=#amazonBedrockRuntimeClient&operation=invokeImageModel&modelId="
+                            + BedrockModels.TITAN_IMAGE_GENERATOR_V1.model))
+                        .split(body())
+                        .unmarshal().base64()
+                        .setHeader("CamelFileName", simple("image-${random(128)}.png")).to("file:target/generated_images")
+--------------------------------------------------------------------------------
+
+and you can the send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:send_titan_image", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            ObjectNode textParameter = mapper.createObjectNode();
+            textParameter.putIfAbsent("text",
+                    new TextNode("A Sci-fi camel running in the desert"));
+            rootNode.putIfAbsent("textToImageParams", textParameter);
+            rootNode.putIfAbsent("taskType", new TextNode("TEXT_IMAGE"));
+            ObjectNode childNode = mapper.createObjectNode();
+            childNode.putIfAbsent("numberOfImages", new IntNode(3));
+            childNode.putIfAbsent("quality", new TextNode("standard"));
+            childNode.putIfAbsent("cfgScale", new IntNode(8));
+            childNode.putIfAbsent("height", new IntNode(512));
+            childNode.putIfAbsent("width", new IntNode(512));
+            childNode.putIfAbsent("seed", new IntNode(0));
+
+            rootNode.putIfAbsent("imageGenerationConfig", childNode);
+
             exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
             exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
