@@ -45,7 +45,7 @@ public class TransformRoute extends CamelCommand {
     private String output;
 
     @CommandLine.Option(names = { "--format" },
-                        description = "Output format (xml or yaml)", defaultValue = "yaml")
+                        description = "Output format (xml or yaml), if only yaml files are provided, the format defaults to xml and vice versa", defaultValue = "yaml")
     String format = "yaml";
 
     @CommandLine.Option(names = { "--resolve-placeholders" }, defaultValue = "false",
@@ -67,6 +67,12 @@ public class TransformRoute extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // Automatically transform to xml if all files are yaml
+        if (files.stream().allMatch(file -> file.endsWith(".yaml"))) {
+            format = "xml";
+        } else {
+            format = "yaml";
+        }
 
         String dump = output;
         // if no output then we want to print to console, so we need to write to a hidden file, and dump that file afterwards

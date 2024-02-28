@@ -2715,6 +2715,77 @@ TIP: You can specify multiple options by repeating the `--option` argument.
 
 NOTE: The transform message with dataformat is limited as some dataformat requires configuring complex options that cannot be set from command line.
 
+== Transforming routes DSL
+
+Camel offers different DSLs, such as Java, XML, YAML, and more. Many graphical editors and code generators use XML and YAML Camel DSL, therefore, for some use cases it may be required to use one DSL or the other.
+The `camel transform route` command can be used to transform a YAML route into an XML and vice versa, the command takes a list of files as input and transforms the DSL.
+
+For example, given the following YAML content, in a file named route.yaml
+
+[source:yaml]
+----
+- route:
+    id: route-b785
+    nodePrefixId: route-14b
+    from:
+      id: from-959e
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - choice:
+            id: choice-52fe
+            when:
+              - id: when-b126
+                expression:
+                  simple:
+                    id: simple-576d
+                    expression: ${header.foo} == 'bar'
+                steps:
+                  - to:
+                      id: to-65f9
+                      uri: jms
+                      parameters:
+                        destinationName: queue
+            otherwise:
+              id: otherwise-c07f
+              steps:
+                - to:
+                    id: to-dc76
+                    uri: log
+                    parameters:
+                      loggerName: default
+----
+
+The following command
+
+[source:bash]
+----
+camel transform route --format=xml /path/to/route.yaml
+----
+
+Automatically transform the route in XML DSL (Camel XML IO DSL)
+
+[source:xml]
+----
+<camel>
+    <route id="route-b785" nodePrefixId="route-14b">
+        <from id="from-959e" uri="direct:start"/>
+        <choice id="choice-52fe">
+            <when id="when-b126">
+                <simple>${header.foo} == 'bar'</simple>
+                <to id="to-65f9" uri="jms:queue"/>
+            </when>
+            <otherwise id="otherwise-c07f">
+                <to id="to-dc76" uri="log:default"/>
+            </otherwise>
+        </choice>
+    </route>
+</camel>
+----
+
+TIP: If all the input files have the same extension and are written with the same DSL, for example, `.yaml`, the transformation will default to the XML DSL and vice versa.
+
 == Listing what Camel components is available
 
 Camel comes with a lot of artifacts out of the box which comes as:
