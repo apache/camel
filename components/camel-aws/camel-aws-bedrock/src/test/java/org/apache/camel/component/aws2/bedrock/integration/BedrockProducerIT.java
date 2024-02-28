@@ -98,6 +98,33 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testInvokeTitanImageModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_titan_image", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            ObjectNode textParameter = mapper.createObjectNode();
+            textParameter.put("text",
+                    "A ancient time camel running in the desert");
+            rootNode.put("textToImageParams", textParameter);
+            rootNode.put("taskType", "TEXT_IMAGE");
+            ObjectNode childNode = mapper.createObjectNode();
+            childNode.put("numberOfImages", 1);
+            childNode.put("quality", "standard");
+            childNode.put("cfgScale", 8).put("height", 512).put("width", 512).put("seed", 0);
+
+            rootNode.put("imageGenerationConfig", childNode);
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -111,6 +138,13 @@ class BedrockProducerIT extends CamelTestSupport {
                 from("direct:send_titan_lite")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
                             + BedrockModels.TITAN_TEXT_LITE_V1.model)
+                        .to(result);
+
+                from("direct:send_titan_image")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeImageModel&modelId="
+                            + BedrockModels.TITAN_IMAGE_GENERATOR_V1.model)
+                        .unmarshal().base64()
+                        .setHeader("CamelFileName", constant("image.png")).to("file:target/generated_images")
                         .to(result);
             }
         };

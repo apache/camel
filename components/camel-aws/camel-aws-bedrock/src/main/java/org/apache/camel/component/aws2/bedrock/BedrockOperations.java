@@ -18,5 +18,7 @@ package org.apache.camel.component.aws2.bedrock;
 
 public enum BedrockOperations {
 
-    invokeTextModel
+    invokeTextModel,
+
+    invokeImageModel
 }
