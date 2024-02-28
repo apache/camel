@@ -254,8 +254,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     escapedSubstringToHandle += pattern.split(substring).length - 1;
                 }
 
-                String[] tokens = pattern.split(trimmedLine, factory.getAutospanLine() ?
-                        factory.getMaxpos() + escapedSubstringToHandle : -1);
+                String[] tokens = pattern.split(trimmedLine,
+                        factory.getAutospanLine() ? factory.getMaxpos() + escapedSubstringToHandle : -1);
 
                 List<String> result = Arrays.asList(tokens);
 
