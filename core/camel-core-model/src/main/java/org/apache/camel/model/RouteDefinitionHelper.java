@@ -148,7 +148,7 @@ public final class RouteDefinitionHelper {
             } else {
                 RestDefinition rest = route.getRestDefinition();
                 if (rest != null && route.isRest()) {
-                    VerbDefinition verb = findVerbDefinition(rest, route.getInput().getEndpointUri());
+                    VerbDefinition verb = findVerbDefinition(context, rest, route.getInput().getEndpointUri());
                     if (verb != null) {
                         String id = context.resolvePropertyPlaceholders(verb.getId());
                         if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
@@ -216,12 +216,13 @@ public final class RouteDefinitionHelper {
     /**
      * Find verb associated with the route by mapping uri
      */
-    private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) throws Exception {
+    private static VerbDefinition findVerbDefinition(CamelContext camelContext, RestDefinition rest, String endpointUri)
+            throws Exception {
         VerbDefinition ret = null;
         String preVerbUri = "";
         String target = URISupport.normalizeUri(endpointUri);
         for (VerbDefinition verb : rest.getVerbs()) {
-            String verbUri = URISupport.normalizeUri(rest.buildFromUri(verb));
+            String verbUri = URISupport.normalizeUri(rest.buildFromUri(camelContext, verb));
             if (target.startsWith(verbUri) && preVerbUri.length() < verbUri.length()) {
                 // if there are multiple verb uri match, select the most specific one
                 // for example if the endpoint Uri is
