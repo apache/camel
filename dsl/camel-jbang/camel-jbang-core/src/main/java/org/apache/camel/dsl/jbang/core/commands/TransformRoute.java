@@ -45,7 +45,8 @@ public class TransformRoute extends CamelCommand {
     private String output;
 
     @CommandLine.Option(names = { "--format" },
-                        description = "Output format (xml or yaml), if only yaml files are provided, the format defaults to xml and vice versa", defaultValue = "yaml")
+                        description = "Output format (xml or yaml), if only yaml files are provided, the format defaults to xml and vice versa",
+                        defaultValue = "yaml")
     String format = "yaml";
 
     @CommandLine.Option(names = { "--resolve-placeholders" }, defaultValue = "false",
