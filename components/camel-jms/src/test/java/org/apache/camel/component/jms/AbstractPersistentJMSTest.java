@@ -33,7 +33,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Tags({ @Tag("jms") })
 public abstract class AbstractPersistentJMSTest extends CamelTestSupport {
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonPersistentVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonPersistentVMService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

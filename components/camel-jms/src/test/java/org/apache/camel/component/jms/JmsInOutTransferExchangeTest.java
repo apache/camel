@@ -27,6 +27,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.support.SerializableRequestDto;
+import org.apache.camel.component.jms.support.SerializableResponseDto;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.test.infra.core.CamelContextExtension;
