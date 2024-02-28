@@ -4,6 +4,37 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+== Upgrading Camel 4.4.0 to 4.4.1
+
+=== Rest DSL
+
+Rest DSL will now eager resolve property placeholders that are used during building the `rest:` endpoint.
+For example with a Rest DSL using a placeholder (`app.mypath = helloapp`) in the `path`:
+
+[source,yaml]
+----
+- rest:
+    path: "{{app.mypath}}"
+    post:
+      - to: direct:demo
+----
+
+Will not be resolved in the `rest` endpoint which can be seen during startup logging:
+
+[source,text]
+----
+Routes startup (total:2)
+Started demo (rest://post:%7B%7Bapp.mypath%7D%7D)
+----
+
+The placeholder is now resolved eager, and you will see _nicer_ startup logs such as:
+
+[source,text]
+----
+Routes startup (total:2)
+Started demo (rest://post:helloapp)
+----
+
 == Upgrading Camel 4.3 to 4.4
 
 === camel-core
