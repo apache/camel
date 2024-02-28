@@ -35,8 +35,7 @@ public class FromRestPathPlaceholderTest extends ContextTestSupport {
     }
 
     protected int getExpectedNumberOfRoutes() {
-        // routes are inlined
-        return 1;
+        return 2;
     }
 
     @Test
