@@ -327,30 +327,39 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 // log only if changed
                 if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
                     LOG.info("HTTP endpoints summary");
+                    int longestEndpoint = 0;
                     for (HttpEndpointModel u : endpoints) {
-                        String line = "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + u.getUri();
+                        String endpoint = getEndpoint(u);
+                        if (endpoint.length() > longestEndpoint) {
+                            longestEndpoint = endpoint.length();
+                        }
+                    }
+
+                    int spacing = 3;
+                    String formatTemplate = "%-" + (longestEndpoint + spacing) + "s %-8s %s";
+                    for (HttpEndpointModel u : endpoints) {
+                        String endpoint = getEndpoint(u);
+                        String formattedVerbs = "";
                         if (u.getVerbs() != null) {
-                            line += "    (" + u.getVerbs() + ")";
+                            formattedVerbs = "(" + u.getVerbs() + ")";
                         }
+                        String formattedMediaTypes = "";
                         if (u.getConsumes() != null || u.getProduces() != null) {
-                            line += "    (";
-                            if (u.getConsumes() != null) {
-                                line += "accept:" + u.getConsumes();
-                                if (u.getProduces() != null) {
-                                    line += " ";
-                                }
-                            }
-                            if (u.getProduces() != null) {
-                                line += "produce:" + u.getProduces();
-                            }
-                            line += ")";
+                            formattedMediaTypes = String.format("(%s%s%s)",
+                                    u.getConsumes() != null ? "accept:" + u.getConsumes() : "",
+                                    u.getProduces() != null && u.getConsumes() != null ? " " : "",
+                                    u.getProduces() != null ? "produce:" + u.getProduces() : "");
                         }
-                        LOG.info("    {}", line);
+                        LOG.info("    {}", String.format(formatTemplate, endpoint, formattedVerbs, formattedMediaTypes));
                     }
                 }
 
                 // use a defensive copy of last known endpoints
                 last = new HashSet<>(endpoints);
+            }
+
+            private String getEndpoint(HttpEndpointModel httpEndpointModel) {
+                return "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + httpEndpointModel.getUri();
             }
 
             @Override
