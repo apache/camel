@@ -59,7 +59,7 @@ public class QuartzCronRouteWithStartDateEndDateTest extends BaseQuartzTest {
                 // triggers every 1th second at precise 00,01,02,03..59 with startAt and endAt exactly 2 second apart.
                 // configuration will create a maximum of three messages
                 fromF("quartz://myGroup/myTimerName?cron=0/1 * * * * ?&trigger.startAt=%s&trigger.endAt=%s",
-						dateFormat.format(startDate), dateFormat.format(endDate)).to("mock:result");
+                        dateFormat.format(startDate), dateFormat.format(endDate)).to("mock:result");
             }
         };
     }

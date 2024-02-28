@@ -18,13 +18,13 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * This not only set SimpleTrigger as a timer endpoint in a route, and also test the trigger.XXX properties setter.
@@ -38,16 +38,14 @@ public class QuartzSimpleRouteTest extends BaseQuartzTest {
 
         MockEndpoint.assertIsSatisfied(context);
         Trigger trigger = mock.getReceivedExchanges().get(0).getIn().getHeader("trigger", Trigger.class);
-        assertThat(trigger instanceof SimpleTrigger, CoreMatchers.is(true));
+        assertInstanceOf(SimpleTrigger.class, trigger, "trigger should be a CronTrigger");
 
         JobDetail detail = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
-        assertThat(detail.getJobClass().equals(CamelJob.class), CoreMatchers.is(true));
+        assertEquals(CamelJob.class, detail.getJobClass());
 
-        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE).equals("simple"), CoreMatchers.is(true));
-        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER).equals("-1"),
-                CoreMatchers.is(true));
-        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL).equals("100"),
-                CoreMatchers.is(true));
+        assertEquals("simple", detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE));
+        assertEquals("-1", detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER));
+        assertEquals("100", detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL));
     }
 
     @Override

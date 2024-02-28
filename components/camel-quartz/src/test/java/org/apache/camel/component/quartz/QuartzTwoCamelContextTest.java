@@ -23,6 +23,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class QuartzTwoCamelContextTest {
 
     private DefaultCamelContext camel1;
@@ -64,11 +66,11 @@ public class QuartzTwoCamelContextTest {
         mock2.expectedMinimumMessageCount(6);
         mock1.assertIsSatisfied();
 
-        camel1.stop();
+        assertDoesNotThrow(() -> camel1.stop());
 
         mock2.assertIsSatisfied();
 
-        camel2.stop();
+        assertDoesNotThrow(() -> camel2.stop());
     }
 
     @Test
@@ -84,13 +86,13 @@ public class QuartzTwoCamelContextTest {
                 from("quartz://myThirdGroup/myThirdTimerName?cron=0/1+*+*+*+*+?").to("mock:three");
             }
         });
-        camel3.start();
+        assertDoesNotThrow(camel3::start);
 
         MockEndpoint mock3 = camel3.getEndpoint("mock:three", MockEndpoint.class);
         mock3.expectedMinimumMessageCount(2);
 
         mock3.assertIsSatisfied();
-        camel3.stop();
+        assertDoesNotThrow(camel3::stop);
     }
 
 }
