@@ -29,9 +29,6 @@ public class ArtemisAMQPService extends AbstractArtemisEmbeddedService {
     private String brokerURL;
     private int amqpPort;
 
-    public ArtemisAMQPService() {
-    }
-
     @Override
     protected Configuration configure(Configuration artemisConfiguration, int port, int brokerId) {
         amqpPort = port;
