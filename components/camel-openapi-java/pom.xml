@@ -35,8 +35,6 @@
     <properties>
         <firstVersion>3.1.0</firstVersion>
         <label>rest,api</label>
-
-
         <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
@@ -56,30 +54,15 @@
             <artifactId>camel-tooling-util</artifactId>
         </dependency>
 
-        <!-- json -->
+        <!-- openapi -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-joda</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
-            <artifactId>jackson-jakarta-rs-json-provider</artifactId>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core-jakarta</artifactId>
+            <version>${swagger-openapi3-version}</version>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-models</artifactId>
+            <artifactId>swagger-models-jakarta</artifactId>
             <version>${swagger-openapi3-version}</version>
         </dependency>
         <dependency>
@@ -88,24 +71,71 @@
             <version>${swagger-openapi3-java-parser-version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-core</artifactId>
+                    <groupId>io.swagger.parser.v3</groupId>
+                    <artifactId>swagger-parser-v2-converter</artifactId>
                 </exclusion>
-            </exclusions>        
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-models</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
+        <!-- json -->
         <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-core-jakarta</artifactId>
-            <version>${swagger-openapi3-version}</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-models-jakarta</artifactId>
+                    <artifactId>*</artifactId>
                 </exclusion>
-            </exclusions>  
+            </exclusions>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+            <artifactId>jackson-jakarta-rs-json-provider</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- servlet api -->
         <dependency>

@@ -86,7 +86,7 @@ with `api.xxx` is configured using `apiProperty` dsl.
 browser, and not the actual access to the REST services. The default is
 false.
 
-|openapi.version |String |OpenApi spec version. Is default 3.0.
+|openapi.version |String |OpenApi spec version. Only spec version 3.x is supported. Is default 3.0.
 
 |host |String |To set up the hostname. If not configured, camel-openapi-java will
 calculate the name as localhost based.

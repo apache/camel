@@ -336,13 +336,7 @@ public class RestOpenApiSupport {
 
     public static <T extends Object> T getFromOpenAPI(OpenAPI openApi, BeanConfig config, Class<T> type, boolean json) {
         if (config.isOpenApi2()) {
-            OpenAPI3to2 converter = new OpenAPI3to2();
-            converter.convertOpenAPI3to2(openApi);
-            byte[] bytes = converter.getSwaggerAsJson();
-            if (type.equals(String.class)) {
-                return type.cast(new String(bytes, StandardCharsets.UTF_8));
-            }
-            return type.cast(bytes);
+            throw new IllegalArgumentException("OpenAPI 2.x is not supported");
         } else {
             ObjectMapper mapper = json ? config.isOpenApi31() ? Json31.mapper() : Json.mapper()
                     : config.isOpenApi31() ? Yaml31.mapper() : Yaml.mapper();

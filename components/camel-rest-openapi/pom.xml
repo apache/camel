@@ -51,13 +51,34 @@
 
          <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-models</artifactId>
+            <artifactId>swagger-core-jakarta</artifactId>
+            <version>${swagger-openapi3-version}</version>
+        </dependency>
+         <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models-jakarta</artifactId>
             <version>${swagger-openapi3-version}</version>
         </dependency>
         <dependency>
             <groupId>io.swagger.parser.v3</groupId>
-            <artifactId>swagger-parser</artifactId>
+            <artifactId>swagger-parser-v3</artifactId>
             <version>${swagger-openapi3-java-parser-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-models</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- swagger requires javax.xml.bind.annotation.XmlElement -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
         </dependency>
 
         <dependency>
@@ -69,6 +90,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson2-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
