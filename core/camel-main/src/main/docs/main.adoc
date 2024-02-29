@@ -168,7 +168,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 12 options, which are listed below.
+The camel.server supports 13 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -177,6 +177,7 @@ The camel.server supports 12 options, which are listed below.
 | *camel.server.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
 | *camel.server.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health | false | boolean
 | *camel.server.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String
+| *camel.server.infoEnabled* | Whether to enable info console. If enabled then you can see some basic Camel information at /q/info | false | boolean
 | *camel.server.jolokiaEnabled* | Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia | false | boolean
 | *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
 | *camel.server.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics | false | boolean

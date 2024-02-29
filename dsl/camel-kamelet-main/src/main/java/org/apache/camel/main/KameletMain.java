@@ -452,6 +452,7 @@ public class KameletMain extends MainCommandLineSupport {
         boolean console = "true".equals(getInitialProperties().get("camel.jbang.console"));
         if (console) {
             configure().httpServer().withEnabled(true);
+            configure().httpServer().withInfoEnabled(true); // also enable info if console is enabled
             configure().httpServer().withDevConsoleEnabled(true);
         }
 
@@ -473,6 +474,11 @@ public class KameletMain extends MainCommandLineSupport {
         boolean tracing = "true".equals(getInitialProperties().get("camel.jbang.backlogTracing"));
         if (tracing) {
             configure().withBacklogTracing(true);
+        }
+        boolean infoConsole = "true".equals(getInitialProperties().get("camel.jbang.info"));
+        if (infoConsole) {
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withInfoEnabled(true);
         }
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health) {

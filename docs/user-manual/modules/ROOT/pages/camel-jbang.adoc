@@ -3403,6 +3403,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.console`
 | Developer console at /q/dev on local HTTP server (port 8080 by default) when running standalone Camel
 
+|`camel.jbang.info`
+| Info console at /q/info on local HTTP server (port 8080 by default) when running standalone Camel
+
 |`camel.jbang.health`
 | Health check at /q/health on local HTTP server (port 8080 by default) when running standalone Camel
 
