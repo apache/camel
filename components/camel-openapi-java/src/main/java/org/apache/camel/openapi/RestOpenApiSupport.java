@@ -146,13 +146,11 @@ public class RestOpenApiSupport {
                         parseVariables(openapi.getServers().get(0).getUrl(),
                                 openapi.getServers().get(0)));
                 host = serverUrl.getHost();
-
             } catch (MalformedURLException e) {
-                LOG.info("error when parsing OpenApi 3.0 doc server url", e);
+                LOG.debug("Error when parsing OpenApi 3.0 doc server url. This exception is ignored.", e);
             }
         }
         return host;
-
     }
 
     public static String getBasePathFromOasDocument(final OpenAPI openapi) {
