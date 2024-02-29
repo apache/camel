@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -228,34 +229,12 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         String pn = fqn.substring(0, fqn.lastIndexOf('.'));
         String cn = fqn.substring(fqn.lastIndexOf('.') + 1);
 
-        StringBuilder w = new StringBuilder();
-        w.append("/* ").append(GENERATED_MSG).append(" */\n");
-        w.append("package ").append(pn).append(";\n");
-        w.append("\n");
-        w.append("import java.util.HashMap;\n");
-        w.append("import java.util.Map;\n");
-        w.append("\n");
-        w.append("/**\n");
-        w.append(" * ").append(GENERATED_MSG).append("\n");
-        w.append(" */\n");
-        w.append("public class ").append(cn).append(" {\n");
-        w.append("\n");
-        w.append("    private static final Map<String, String> MAP;\n");
-        w.append("    static {\n");
-        w.append("        Map<String, String> map = new HashMap<>(").append(fields.size()).append(");\n");
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            w.append("        map.put(\"").append(entry.getKey()).append("\", \"").append(entry.getValue()).append("\");\n");
-        }
-        w.append("        MAP = map;\n");
-        w.append("    }\n");
-        w.append("\n");
-        w.append("    public static String lookup(String key) {\n");
-        w.append("        return MAP.get(key);\n");
-        w.append("    }\n");
-        w.append("}\n");
-        w.append("\n");
-
-        return w.toString();
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("pn", pn);
+        ctx.put("cn", cn);
+        ctx.put("fields", fields);
+        ctx.put("mojo", this);
+        return velocity("velocity/constant-provider.vm", ctx);
     }
 
 }

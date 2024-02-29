@@ -70,6 +70,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
         invoke(ValidateComponentMojo.class);
         // update-readme
         invoke(UpdateReadmeMojo.class);
+        // santity-check
+        invoke(SanityCheckGeneratedClassesMojo.class);
     }
 
 }
