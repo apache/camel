@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1654,9 +1655,24 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         try {
             boolean extended = model.isApi(); // if the component is api then the generated configurer should be an extended configurer
-            String source = PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component,
-                    extended, false,
-                    options, model);
+
+            options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
+
+            Map<String, Object> ctx = new HashMap<>();
+            ctx.put("generatorClass", getClass().getName());
+            ctx.put("package", pn);
+            ctx.put("className", cn);
+            ctx.put("type", en);
+            ctx.put("pfqn", pfqn);
+            ctx.put("psn", psn);
+            ctx.put("hasSuper", hasSuper);
+            ctx.put("component", component);
+            ctx.put("extended", extended);
+            ctx.put("bootstrap", false);
+            ctx.put("options", options);
+            ctx.put("model", model);
+            ctx.put("mojo", this);
+            String source = velocity("velocity/property-configurer.vm", ctx);
 
             updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", source);
         } catch (Exception e) {
