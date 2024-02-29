@@ -19,12 +19,12 @@ package org.apache.camel.openapi;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
@@ -86,7 +86,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
     }
 
     OpenAPI loadOpenApiModel(String apiDoc) throws Exception {
-        final OpenAPIParser openApiParser = new OpenAPIParser();
+        final OpenAPIV3Parser openApiParser = new OpenAPIV3Parser();
         final SwaggerParseResult openApi = openApiParser.readLocation(apiDoc, null, null);
 
         if (openApi != null && openApi.getOpenAPI() != null) {

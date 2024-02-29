@@ -78,10 +78,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     @BeforeAll
     public static void startWireMockServer() throws Exception {
         wireMockServer.start();
-        setUpPetStoreStubs("/openapi.json", "/v2/pet");
         setUpPetStoreStubs("/openapi-v3.json", "/api/v3/pet");
         setUpPetStoreStubs("/petstore-3.1.yaml", "/api/v31/pet");
-        setUpFruitsApiStubs("/fruits-2.0.yaml");
         setUpFruitsApiStubs("/fruits-3.0.yaml");
     }
 
@@ -348,7 +346,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "petStoreV2", "petStoreV3" })
+    @ValueSource(strings = { "petStoreV3" })
     void requestValidationWithBinaryBody(String petStoreVersion) throws IOException {
         Map<String, Object> headers = Map.of(
                 "petId", 1,
@@ -460,10 +458,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("petStoreV2", createRestOpenApiComponent("openapi.json"));
         camelContext.addComponent("petStoreV3", createRestOpenApiComponent("openapi-v3.json"));
         camelContext.addComponent("petStoreV31", createRestOpenApiComponent("petstore-3.1.yaml"));
-        camelContext.addComponent("fruitsV2", createRestOpenApiComponent("fruits-2.0.yaml"));
         camelContext.addComponent("fruitsV3", createRestOpenApiComponent("fruits-3.0.yaml"));
         camelContext.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
         camelContext.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
@@ -471,11 +467,11 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     }
 
     public static Iterable<String> petStoreVersions() {
-        return List.of("petStoreV2", "petStoreV3", "petStoreV31");
+        return List.of("petStoreV3", "petStoreV31");
     }
 
     public static Iterable<String> fruitsApiVersions() {
-        return List.of("fruitsV2", "fruitsV3");
+        return List.of("fruitsV3");
     }
 
     @Override

@@ -32,7 +32,7 @@ public class BeanConfig {
 
     String[] schemes;
     String title;
-    Version version = new Version("3.0.1");
+    Version version = OPENAPI_VERSION_30;
     String licenseUrl;
     String license;
 

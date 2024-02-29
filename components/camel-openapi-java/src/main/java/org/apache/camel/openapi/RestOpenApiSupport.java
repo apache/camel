@@ -146,13 +146,11 @@ public class RestOpenApiSupport {
                         parseVariables(openapi.getServers().get(0).getUrl(),
                                 openapi.getServers().get(0)));
                 host = serverUrl.getHost();
-
             } catch (MalformedURLException e) {
-                LOG.info("error when parsing OpenApi 3.0 doc server url", e);
+                LOG.debug("Error when parsing OpenApi 3.0 doc server url. This exception is ignored.", e);
             }
         }
         return host;
-
     }
 
     public static String getBasePathFromOasDocument(final OpenAPI openapi) {
@@ -336,13 +334,7 @@ public class RestOpenApiSupport {
 
     public static <T extends Object> T getFromOpenAPI(OpenAPI openApi, BeanConfig config, Class<T> type, boolean json) {
         if (config.isOpenApi2()) {
-            OpenAPI3to2 converter = new OpenAPI3to2();
-            converter.convertOpenAPI3to2(openApi);
-            byte[] bytes = converter.getSwaggerAsJson();
-            if (type.equals(String.class)) {
-                return type.cast(new String(bytes, StandardCharsets.UTF_8));
-            }
-            return type.cast(bytes);
+            throw new IllegalArgumentException("OpenAPI 2.x is not supported");
         } else {
             ObjectMapper mapper = json ? config.isOpenApi31() ? Json31.mapper() : Json.mapper()
                     : config.isOpenApi31() ? Yaml31.mapper() : Yaml.mapper();

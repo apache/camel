@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
@@ -66,38 +65,6 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
                         .to("bean:userService?method=listUsers");
             }
         };
-    }
-
-    @Test
-    public void testReaderRead() throws Exception {
-        BeanConfig config = new BeanConfig();
-        config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
-        config.setBasePath("/api");
-        config.setTitle("Camel User store");
-        config.setLicense("Apache 2.0");
-        config.setVersion("2.0");
-        config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
-        RestOpenApiReader reader = new RestOpenApiReader();
-
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
-        assertNotNull(openApi);
-
-        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
-
-        log.info(json);
-
-        assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-        assertTrue(json.contains("\"description\" : \"The user returned\""));
-        assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
-        assertFalse(json.contains("\"$ref\" : \"#/definitions/org.apache.camel.openapi.User\""));
-        assertTrue(json.contains("\"x-className\""));
-        assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.User\""));
-        assertTrue(json.contains("\"type\" : \"string\""));
-        assertTrue(json.contains("\"format\" : \"date\""));
-        assertFalse(json.contains("\"enum\""));
-        context.stop();
     }
 
     @ParameterizedTest

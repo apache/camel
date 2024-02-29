@@ -46,10 +46,16 @@ public class RestOpenApiProducer extends DelegateAsyncProcessor implements Async
         }
 
         if (requestValidator != null) {
-            Set<String> validationErrors = requestValidator.validate(exchange);
-            if (!validationErrors.isEmpty()) {
-                RestOpenApiValidationException exception = new RestOpenApiValidationException(validationErrors);
-                exchange.setException(exception);
+            try {
+                Set<String> validationErrors = requestValidator.validate(exchange);
+                if (!validationErrors.isEmpty()) {
+                    RestOpenApiValidationException exception = new RestOpenApiValidationException(validationErrors);
+                    exchange.setException(exception);
+                    callback.done(true);
+                    return true;
+                }
+            } catch (Exception e) {
+                exchange.setException(e);
                 callback.done(true);
                 return true;
             }

@@ -2,7 +2,7 @@
 :doctitle: REST OpenApi
 :shortname: rest-openapi
 :artifactid: camel-rest-openapi
-:description: Configure REST producers based on an OpenAPI specification document delegating to a component implementing the RestProducerFactory interface.
+:description: To call REST services using OpenAPI specification as contract.
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
@@ -24,6 +24,8 @@ interface. Currently, known working components are:
 * xref:netty-http-component.adoc[netty-http]
 * xref:undertow-component.adoc[undertow]
 * xref:vertx-http-component.adoc[vertx-http]
+
+IMPORTANT: Only OpenAPI spec version 3.x is supported. You cannot use the old Swagger 2.0 spec.
 
 Maven users will need to add the following dependency to their
 `pom.xml` for this component:

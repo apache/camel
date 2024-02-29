@@ -58,7 +58,7 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    @ValueSource(strings = { "3.1", "3.0" })
     public void testReaderRead(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
