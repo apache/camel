@@ -473,7 +473,7 @@ public class KameletMain extends MainCommandLineSupport {
 
         boolean tracing = "true".equals(getInitialProperties().get("camel.jbang.backlogTracing"));
         if (tracing) {
-            configure().withBacklogTracing(true);
+            configure().tracerConfig().withEnabled(true);
         }
         boolean infoConsole = "true".equals(getInitialProperties().get("camel.jbang.info"));
         if (infoConsole) {

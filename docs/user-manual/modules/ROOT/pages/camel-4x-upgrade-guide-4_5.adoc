@@ -102,6 +102,13 @@ After:
 String uri = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
 ----
 
+=== camel-main
+
+The options `camel.main.backlogTracing`, `"camel.main.backlogTracingStandby`, and `camel.main.backlogTracingTemplates` has been
+moved into a new group `camel.debug` with more options to configure the backlog tracer.
+
+To enable backlog tracing you should now set `camel.trace.enabled=true` instead of `camel.main.backlogTracing=true`.
+
 === camel-kamelet
 
 Routes created by Kamelets are no longer registered as JMX MBeans to avoid cluttering up with unwanted MBeans, as a Kamelet

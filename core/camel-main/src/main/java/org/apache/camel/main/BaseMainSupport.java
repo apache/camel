@@ -57,6 +57,7 @@ import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.BacklogDebugger;
+import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelMetricsService;
@@ -991,6 +992,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties httpServerProperties = new OrderedLocationProperties();
         OrderedLocationProperties sslProperties = new OrderedLocationProperties();
         OrderedLocationProperties debuggerProperties = new OrderedLocationProperties();
+        OrderedLocationProperties tracerProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeControllerProperties = new OrderedLocationProperties();
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
@@ -1102,6 +1104,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(12);
                 validateOptionAndValue(key, option, value);
                 debuggerProperties.put(loc, optionKey(option), value);
+            } else if (key.startsWith("camel.trace.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(12);
+                validateOptionAndValue(key, option, value);
+                tracerProperties.put(loc, optionKey(option), value);
             } else if (key.startsWith("camel.routeController.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1203,6 +1211,12 @@ public abstract class BaseMainSupport extends BaseService {
         if (!debuggerProperties.isEmpty() || mainConfigurationProperties.hasDebuggerConfiguration()) {
             LOG.debug("Auto-configuring Debugger from loaded properties: {}", debuggerProperties.size());
             setDebuggerProperties(camelContext, debuggerProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!tracerProperties.isEmpty() || mainConfigurationProperties.hasTracerConfiguration()) {
+            LOG.debug("Auto-configuring Tracer from loaded properties: {}", tracerProperties.size());
+            setTracerProperties(camelContext, tracerProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
@@ -1672,6 +1686,47 @@ public abstract class BaseMainSupport extends BaseService {
         });
 
         camelContext.addService(debugger);
+    }
+
+    private void setTracerProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        TracerConfigurationProperties config = mainConfigurationProperties.tracerConfig();
+        setPropertiesOnTarget(camelContext, config, properties, "camel.tracer.",
+                failIfNotSet, true, autoConfiguredProperties);
+
+        if (!config.isEnabled() && !config.isStandby()) {
+            return;
+        }
+
+        // must enable source location so tracer tooling knows to map breakpoints to source code
+        camelContext.setSourceLocationEnabled(true);
+
+        // enable tracer on camel
+        camelContext.setBacklogTracing(config.isEnabled());
+        camelContext.setBacklogTracingStandby(config.isStandby());
+        camelContext.setBacklogTracingTemplates(config.isTraceTemplates());
+
+        BacklogTracer tracer = org.apache.camel.impl.debugger.BacklogTracer.createTracer(camelContext);
+        tracer.setEnabled(config.isEnabled());
+        tracer.setStandby(config.isStandby());
+        tracer.setBacklogSize(config.getBacklogSize());
+        tracer.setRemoveOnDump(config.isRemoveOnDump());
+        tracer.setBodyMaxChars(config.getBodyMaxChars());
+        tracer.setBodyIncludeStreams(config.isBodyIncludeStreams());
+        tracer.setBodyIncludeFiles(config.isBodyIncludeFiles());
+        tracer.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
+        tracer.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
+        tracer.setIncludeException(config.isIncludeException());
+        tracer.setTraceRests(config.isTraceRests());
+        tracer.setTraceTemplates(config.isTraceTemplates());
+        tracer.setTracePattern(config.getTracePattern());
+        tracer.setTraceFilter(config.getTraceFilter());
+
+        camelContext.getCamelContextExtension().addContextPlugin(BacklogTracer.class, tracer);
+        camelContext.addService(tracer);
     }
 
     private void setRouteControllerProperties(

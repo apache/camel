@@ -37,12 +37,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
-        case "backlogtracing":
-        case "BacklogTracing": target.setBacklogTracing(property(camelContext, boolean.class, value)); return true;
-        case "backlogtracingstandby":
-        case "BacklogTracingStandby": target.setBacklogTracingStandby(property(camelContext, boolean.class, value)); return true;
-        case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": target.setBacklogTracingTemplates(property(camelContext, boolean.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "basepackagescanenabled":
@@ -282,12 +276,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoStartup": return boolean.class;
         case "autowiredenabled":
         case "AutowiredEnabled": return boolean.class;
-        case "backlogtracing":
-        case "BacklogTracing": return boolean.class;
-        case "backlogtracingstandby":
-        case "BacklogTracingStandby": return boolean.class;
-        case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": return boolean.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
         case "basepackagescanenabled":
@@ -528,12 +516,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoStartup": return target.isAutoStartup();
         case "autowiredenabled":
         case "AutowiredEnabled": return target.isAutowiredEnabled();
-        case "backlogtracing":
-        case "BacklogTracing": return target.isBacklogTracing();
-        case "backlogtracingstandby":
-        case "BacklogTracingStandby": return target.isBacklogTracingStandby();
-        case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": return target.isBacklogTracingTemplates();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
         case "basepackagescanenabled":
