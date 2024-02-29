@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 119 options, which are listed below.
+The camel.main supports 116 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -32,9 +32,6 @@ The camel.main supports 119 options, which are listed below.
 | *camel.main.autoConfiguration{zwsp}SystemPropertiesEnabled* | Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D camel.main.shutdown-timeout=5. Note that JVM system properties take precedence over OS environment variables. This option is default enabled. | true | boolean
 | *camel.main.autoStartup* | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes are started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up. | true | boolean
 | *camel.main.autowiredEnabled* | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. Default is true. | true | boolean
-| *camel.main.backlogTracing* | Sets whether backlog tracing is enabled or not. Default is false. | false | boolean
-| *camel.main.backlogTracing{zwsp}Standby* | Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available. Then the backlog tracer can be enabled later at runtime via JMX or via Java API. Default is false. | false | boolean
-| *camel.main.backlogTracing{zwsp}Templates* | Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this on increases the verbosity of tracing by including events from internal routes in the templates or kamelets. Default is false. | false | boolean
 | *camel.main.basePackageScan* | Package name to use as base (offset) for classpath scanning of RouteBuilder , org.apache.camel.TypeConverter , CamelConfiguration classes, and also classes annotated with org.apache.camel.Converter , or org.apache.camel.BindToRegistry . If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode. |  | String
 | *camel.main.basePackageScan{zwsp}Enabled* | Whether base package scan is enabled. | true | boolean
 | *camel.main.beanIntrospection{zwsp}ExtendedStatistics* | Sets whether bean introspection uses extended statistics. The default is false. | false | boolean
@@ -208,6 +205,29 @@ The camel.debug supports 13 options, which are listed below.
 | *camel.debug.singleStepInclude{zwsp}StartEnd* | In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception etc). | false | boolean
 | *camel.debug.standby* | To set the debugger in standby mode, where the debugger will be installed by not automatic enabled. The debugger can then later be enabled explicit from Java, JMX or tooling. | false | boolean
 | *camel.debug.waitForAttach* | Whether the debugger should suspend on startup, and wait for a remote debugger to attach. This is what the IDEA and VSCode tooling is using. | false | boolean
+|===
+
+
+=== Camel Tracer configurations
+The camel.trace supports 14 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.trace.backlogSize* | Defines how many of the last messages to keep in the tracer. | 1000 | int
+| *camel.trace.bodyIncludeFiles* | Whether to include the message body of file based messages. The overhead is that the file content has to be read from the file. | true | boolean
+| *camel.trace.bodyIncludeStreams* | Whether to include the message body of stream based messages. If enabled then beware the stream may not be re-readable later. See more about Stream Caching. | false | boolean
+| *camel.trace.bodyMaxChars* | To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size. | 131072 | int
+| *camel.trace.enabled* | Enables tracer in your Camel application. | false | boolean
+| *camel.trace.includeException* | Trace messages to include exception if the message failed | true | boolean
+| *camel.trace.includeExchange{zwsp}Properties* | Whether to include the exchange properties in the traced message | true | boolean
+| *camel.trace.includeExchange{zwsp}Variables* | Whether to include the exchange variables in the traced message | true | boolean
+| *camel.trace.removeOnDump* | Whether all traced messages should be removed when the tracer is dumping. By default, the messages are removed, which means that dumping will not contain previous dumped messages. | true | boolean
+| *camel.trace.standby* | To set the tracer in standby mode, where the tracer will be installed by not automatic enabled. The tracer can then later be enabled explicit from Java, JMX or tooling. | false | boolean
+| *camel.trace.traceFilter* | Filter for tracing messages |  | String
+| *camel.trace.tracePattern* | Filter for tracing by route or node id |  | String
+| *camel.trace.traceRests* | Whether to trace routes that is created from Rest DSL. | false | boolean
+| *camel.trace.traceTemplates* | Whether to trace routes that is created from route templates or kamelets. | false | boolean
 |===
 
 
