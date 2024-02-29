@@ -57,7 +57,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             String endpointPath = endpoint.getConfiguration().getDirectory();
 
             StopWatch watch = new StopWatch();
-            deleteLockFiles(file, endpoint.isRecursive(), endpoint.isHiddenFilesEnabled(), endpointPath, endpoint.getFilter(),
+            deleteLockFiles(file, endpoint.isRecursive(), endpoint.getMinDepth(), endpoint.getMaxDepth(), 1,
+                    endpoint.isHiddenFilesEnabled(), endpointPath, endpoint.getFilter(),
                     endpoint.getAntFilter(),
                     excludePattern, includePattern);
 
@@ -170,10 +171,16 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     private static <T> void deleteLockFiles(
-            File dir, boolean recursive, boolean hiddenFilesEnabled, String endpointPath, GenericFileFilter<T> filter,
+            File dir, boolean recursive, int minDepth, int maxDepth, int depth, boolean hiddenFilesEnabled, String endpointPath,
+            GenericFileFilter<T> filter,
             GenericFileFilter<T> antFilter,
             Pattern excludePattern,
             Pattern includePattern) {
+
+        if (recursive) {
+            LOG.info("checking: depth {}, minDepth {}, maxDepth {}, directory: {}", depth, minDepth, maxDepth, dir);
+        }
+
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
             return;
@@ -210,11 +217,13 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                 }
             }
 
-            if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
+            if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX) && (depth >= minDepth)) {
                 LOG.warn("Deleting orphaned lock file: {}", file);
                 FileUtil.deleteFile(file);
-            } else if (recursive && file.isDirectory()) {
-                deleteLockFiles(file, true, hiddenFilesEnabled, endpointPath, filter, antFilter, excludePattern,
+            } else if (recursive && file.isDirectory() && (depth < maxDepth)) {
+                deleteLockFiles(file, true, minDepth, maxDepth, depth + 1, hiddenFilesEnabled, endpointPath, filter,
+                        antFilter,
+                        excludePattern,
                         includePattern);
             }
         }
