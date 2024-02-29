@@ -76,10 +76,9 @@ public final class Strings {
         // remove generics
         int pos = className.indexOf('<');
         if (pos != -1) {
-            return className.substring(0, pos);
-        } else {
-            return className;
+            className = className.substring(0, pos);
         }
+        return className.replace('$', '.');
     }
 
     /**
