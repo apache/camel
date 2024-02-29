@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class KafkaServiceFactory {
     static class SingletonKafkaService extends SingletonService<KafkaService> implements KafkaService {
@@ -30,6 +31,17 @@ public final class KafkaServiceFactory {
         public String getBootstrapServers() {
             return getService().getBootstrapServers();
         }
+
+        @Override
+        public final void beforeAll(ExtensionContext extensionContext) {
+            super.beforeAll(extensionContext);
+        }
+
+        @Override
+        public final void afterAll(ExtensionContext extensionContext) {
+
+        }
+
     }
 
     private KafkaServiceFactory() {
