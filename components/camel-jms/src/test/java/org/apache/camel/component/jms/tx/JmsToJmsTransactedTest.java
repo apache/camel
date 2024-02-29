@@ -17,20 +17,35 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
-public class JmsToJmsTransactedTest extends AbstractSpringJMSTestSupport {
+public final class JmsToJmsTransactedTest extends CamelSpringTestSupport {
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+
+    /**
+     * Used by spring xml configurations
+     *
+     * @return
+     */
+    public static String getServiceAddress() {
+        return service.serviceAddress();
+    }
 
     @BeforeEach
     public void beforeEach() {
