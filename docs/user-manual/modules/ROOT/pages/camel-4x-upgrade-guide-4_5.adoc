@@ -107,22 +107,10 @@ micrometer and metrics no longer include statistics for those Kamelet routes.
 The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
 on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentation.
 
-=== camel-kamelet
+=== camel-openapi-java and camel-rest-openapi
 
-Routes created by Kamelets are no longer registered as JMX MBeans to avoid cluttering up with unwanted MBeans, as a Kamelet
-is intended to act like a Camel component, despite its implementation is Camel routes. This means that the number of routes
-listed from JMX will no longer include Kamelet routes.
-
-The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
-on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentation.
-
-=== camel-micrometer and camel-metrics
-
-Due to Kamelets are changed to act more like a Camel component, and not expose internal details as JMX MBeans, then
-micrometer and metrics no longer include statistics for those Kamelet routes.
-
-The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
-on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentation.
+Dropped support for the old Swagger 2.0 spec. Only OpenAPI v3 specs is supported now.
+Fixed maven dependencies to be JakartaEE compatible.
 
 === camel-platform-http-vertx
 
