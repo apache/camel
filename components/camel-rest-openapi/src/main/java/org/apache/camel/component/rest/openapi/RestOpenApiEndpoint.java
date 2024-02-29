@@ -72,6 +72,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -100,8 +101,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
      */
     Map<String, Object> parameters = Collections.emptyMap();
 
-    @UriParam(
-              description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in"
+    @UriParam(description = "API basePath, for example \"`/v3`\". Default is unset, if set overrides the value present in"
                             + " OpenApi specification and in the component configuration.",
               defaultValue = "", label = "producer")
     private String basePath;
@@ -113,8 +113,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
               label = "producer")
     private String componentName;
 
-    @UriParam(
-              description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
+    @UriParam(description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
                             + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
                             + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification and."
                             + " in the component configuration",
@@ -828,7 +827,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                     "The given OpenApi specification could not be loaded from `" + uri + "`.", e);
         } finally {
             if (tmpFileToDelete != null) {
-                tmpFileToDelete.delete();
+                FileUtil.deleteFile(tmpFileToDelete);
             }
         }
 

@@ -45,7 +45,7 @@ public interface RestOpenApiEndpointBuilderFactory {
             return (AdvancedRestOpenApiEndpointBuilder) this;
         }
         /**
-         * API basePath, for example /v2. Default is unset, if set overrides the
+         * API basePath, for example /v3. Default is unset, if set overrides the
          * value present in OpenApi specification and in the component
          * configuration.
          * 
