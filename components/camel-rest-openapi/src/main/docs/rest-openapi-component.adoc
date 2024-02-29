@@ -2,7 +2,7 @@
 :doctitle: REST OpenApi
 :shortname: rest-openapi
 :artifactid: camel-rest-openapi
-:description: Configure REST producers based on an OpenAPI specification document delegating to a component implementing the RestProducerFactory interface.
+:description: To call REST services using OpenAPI specification as contract.
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:

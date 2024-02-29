@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "rest-openapi",
     "title": "REST OpenApi",
-    "description": "Configure REST producers based on an OpenAPI specification document delegating to a component implementing the RestProducerFactory interface.",
+    "description": "To call REST services using OpenAPI specification as contract.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "rest,api",

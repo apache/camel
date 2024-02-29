@@ -12511,8 +12511,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * Configure REST producers based on an OpenAPI specification document
-     * delegating to a component implementing the RestProducerFactory interface.
+     * To call REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
@@ -12549,8 +12548,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * Configure REST producers based on an OpenAPI specification document
-     * delegating to a component implementing the RestProducerFactory interface.
+     * To call REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
