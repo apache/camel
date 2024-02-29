@@ -166,7 +166,7 @@ public abstract class HttpsV3Test extends CamelTestSupport {
     @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
         petstore.stubFor(get(urlEqualTo("/openapi-v3.json")).willReturn(aResponse().withBody(
-                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/openapi-v3.json").toURI())))));
+                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsV3Test.class.getResource("/openapi-v3.json").toURI())))));
         petstore.stubFor(
                 get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
                         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
