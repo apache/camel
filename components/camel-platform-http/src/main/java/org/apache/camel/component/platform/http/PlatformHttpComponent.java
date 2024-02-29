@@ -86,7 +86,8 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             throws Exception {
 
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
-        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration,
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, "application/json,text/yaml",
+                configuration,
                 parameters, true);
     }
 
