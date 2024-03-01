@@ -66,7 +66,8 @@ public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
             public void configure() {
                 from("seda:start")
                         .log("Sending ${body}")
-                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutPersistentReplyQueueTest?replyTo=myReplies")
+                        .to(ExchangePattern.InOut,
+                                "activemq:queue:JmsInOutPersistentReplyQueueTest?replyTo=JmsInOutPersistentReplyQueueTest.myReplies")
                         // process the remainder of the route concurrently
                         .threads(5)
                         .log("Reply ${body}")
