@@ -178,7 +178,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             Pattern includePattern) {
 
         if (recursive) {
-            LOG.info("checking: depth {}, minDepth {}, maxDepth {}, directory: {}", depth, minDepth, maxDepth, dir);
+            LOG.trace("checking: depth {}, minDepth {}, maxDepth {}, directory: {}", depth, minDepth, maxDepth, dir);
         }
 
         File[] files = dir.listFiles();
