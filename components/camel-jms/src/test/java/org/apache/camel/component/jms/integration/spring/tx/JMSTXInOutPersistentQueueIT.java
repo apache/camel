@@ -70,7 +70,8 @@ public class JMSTXInOutPersistentQueueIT extends AbstractSpringJMSITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(ExchangePattern.InOut, "activemq:queue:JMSTXInOutPersistentQueueTest?replyTo=myReplies")
+                from("direct:start").to(ExchangePattern.InOut,
+                        "activemq:queue:JMSTXInOutPersistentQueueTest?replyTo=JmsInOutPersistentReplyQueueTest.myReplies")
                         .to("mock:reply")
                         .process(exchange -> {
                             if (counter++ < 2) {
