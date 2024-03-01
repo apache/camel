@@ -82,6 +82,9 @@ Routes startup (total:2)
 Started demo (rest://post:helloapp)
 ----
 
+=== Avro Data Format
+
+The default library for the `avro` data format has changed from Apache Avro to Jackson Avro. We also use Jackson as default for the JSon dataformat.
 
 === Intercept EIP
 

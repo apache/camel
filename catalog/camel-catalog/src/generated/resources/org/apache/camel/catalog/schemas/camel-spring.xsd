@@ -7228,7 +7228,7 @@ Class name to use for marshal and unmarshalling.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Which Avro library to use. Default value: ApacheAvro
+Which Avro library to use. Default value: avroJackson
 ]]>
             </xs:documentation>
           </xs:annotation>
