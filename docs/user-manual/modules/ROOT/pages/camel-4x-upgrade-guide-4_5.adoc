@@ -82,6 +82,8 @@ Routes startup (total:2)
 Started demo (rest://post:helloapp)
 ----
 
+The `restConfiguration` has changed default value in the `useXForwardHeaders` option from `true` to `false`.
+Using X-Forward headers is only used in special use-cases such as involving reverse proxies.
 
 === Intercept EIP
 

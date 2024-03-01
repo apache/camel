@@ -312,7 +312,7 @@ The camel.rest supports 28 options, which are listed below.
 | *camel.rest.producerComponent* | Sets the name of the Camel component to use as the REST producer |  | String
 | *camel.rest.scheme* | Sets the scheme to use by the REST consumer |  | String
 | *camel.rest.skipBindingOnError{zwsp}Code* | Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true. | true | boolean
-| *camel.rest.useXForwardHeaders* | Whether to use X-Forward headers to set host etc. for Swagger. This option is default true. | true | boolean
+| *camel.rest.useXForwardHeaders* | Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc. Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema that camel-openapi-java generates from Rest DSL routes. | false | boolean
 | *camel.rest.xmlDataFormat* | Sets a custom xml data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 |===
 
