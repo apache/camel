@@ -9805,7 +9805,7 @@
               "type" : "string",
               "title" : "Library",
               "description" : "Which Avro library to use.",
-              "default" : "ApacheAvro",
+              "default" : "avroJackson",
               "enum" : [ "ApacheAvro", "Jackson" ]
             },
             "moduleClassNames" : {
