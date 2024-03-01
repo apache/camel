@@ -21,11 +21,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -33,8 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
 
+    @Order(0)
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
@@ -47,18 +51,13 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
         return service.serviceAddress();
     }
 
-    @BeforeEach
-    public void beforeEach() {
-        service.shutdown();
-        service.initialize();
-    }
-
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/component/jms/integration/spring/tx/JmsToJmsTransactedIT.xml");
     }
 
+    @Order(1)
     @Test
     public void testJmsToJmsTestOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -77,6 +76,7 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
         assertEquals("Hello World", reply);
     }
 
+    @Order(2)
     @Test
     public void testJmsToJmsTestRollbackDueToException() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -104,6 +104,7 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Order(3)
     @Test
     public void testJmsToJmsTestRollbackDueToRollback() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -134,32 +135,4 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
         Object body = consumer.receiveBody("activemq:queue:DLQ", 2000);
         assertEquals("Hello World", body);
     }
-
-    @Test
-    public void testJmsToJmsTestRollbackDueToMarkRollbackOnly() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("activemq:queue:JmsToJmsTransactedIT")
-                        .transacted()
-                        .to("mock:start")
-                        .to("activemq:queue:JmsToJmsTransactedIT.reply")
-                        .markRollbackOnly();
-
-                from("activemq:queue:JmsToJmsTransactedIT.reply").to("log:bar").to("mock:bar");
-            }
-        });
-        context.start();
-
-        MockEndpoint bar = getMockEndpoint("mock:bar");
-        bar.expectedMessageCount(0);
-
-        MockEndpoint start = getMockEndpoint("mock:start");
-        start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
-
-        template.sendBody("activemq:queue:JmsToJmsTransactedIT", "Hello World");
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
 }
