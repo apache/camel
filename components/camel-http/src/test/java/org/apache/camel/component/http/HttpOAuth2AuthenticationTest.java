@@ -42,7 +42,7 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
-        expectedHeaders.put("Authorization", FAKE_TOKEN);
+        expectedHeaders.put("Authorization", "Bearer " + FAKE_TOKEN);
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
