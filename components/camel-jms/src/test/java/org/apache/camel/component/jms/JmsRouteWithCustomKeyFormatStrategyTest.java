@@ -18,10 +18,12 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.util.StringHelper;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
- * With the passthrough option
+ * With the pass-through option
  */
+@Isolated("Shares the context with the parent class")
 public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 
     @BindToRegistry("myJmsKeyStrategy")

@@ -59,7 +59,7 @@ public class RestConfigurationDefinition {
     @Metadata(label = "consumer,advanced")
     private String apiHost;
     @XmlAttribute
-    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean")
     private String useXForwardHeaders;
     @XmlAttribute
     @Metadata(label = "producer,advanced")
@@ -491,9 +491,11 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Whether to use X-Forward headers for Host and related setting.
-     * <p/>
-     * The default value is true.
+     * Whether to use X-Forward headers to set host etc. for OpenApi.
+     *
+     * This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc.
+     * Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema
+     * that camel-openapi-java generates from Rest DSL routes.
      */
     public void setUseXForwardHeaders(String useXForwardHeaders) {
         this.useXForwardHeaders = useXForwardHeaders;
@@ -867,14 +869,18 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Shortcut for setting the {@code Access-Control-Allow-Credentials} header.
+     * Shortcut for setting the Access-Control-Allow-Credentials header.
      */
     public RestConfigurationDefinition corsAllowCredentials(boolean corsAllowCredentials) {
         return corsHeaderProperty("Access-Control-Allow-Credentials", String.valueOf(corsAllowCredentials));
     }
 
     /**
-     * To specify whether to use X-Forward headers for Host and related setting
+     * Whether to use X-Forward headers to set host etc. for OpenApi.
+     *
+     * This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc.
+     * Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema
+     * that camel-openapi-java generates from Rest DSL routes.
      */
     public RestConfigurationDefinition useXForwardHeaders(boolean useXForwardHeaders) {
         setUseXForwardHeaders(useXForwardHeaders ? "true" : "false");
@@ -882,7 +888,11 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * To specify whether to use X-Forward headers for Host and related setting
+     * Whether to use X-Forward headers to set host etc. for OpenApi.
+     *
+     * This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc.
+     * Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema
+     * that camel-openapi-java generates from Rest DSL routes.
      */
     public RestConfigurationDefinition useXForwardHeaders(String useXForwardHeaders) {
         setUseXForwardHeaders(useXForwardHeaders);
