@@ -18,9 +18,16 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
 
+import jakarta.jms.ConnectionFactory;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -28,14 +35,33 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tags({ @Tag("not-parallel") })
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
+public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        createConnectionFactory(camelContext);
+
+        return camelContext;
+    }
+
+    protected void createConnectionFactory(CamelContext camelContext) {
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
+        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+    }
 
     @Test
     public void testTwoConsumerOnSameQueue() throws Exception {
