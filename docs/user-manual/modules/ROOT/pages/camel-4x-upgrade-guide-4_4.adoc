@@ -125,7 +125,7 @@ And the option `camel.main.routeControllerSuperviseEnabled` has been renamed to 
 
 All kamelets are now turned off error handling in the route templates. This is done to make using kamelets
 the same as calling a regular Camel component endpoint. Backwards mode can be enabled by setting `noErrorHandler=false`
-on the `KameletComponent` or as URI parameter `to("kamelet:http-sink?noErrorHandler=true&uri=xxxxx")`.
+on the `KameletComponent` or as URI parameter `to("kamelet:http-sink?noErrorHandler=false&uri=xxxxx")`.
 
 === camel-azure-cosmosdb
 
