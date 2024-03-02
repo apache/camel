@@ -52,7 +52,6 @@ public interface TransformerResolver<K> {
     default String normalize(K key) {
         String keyString = key.toString();
         keyString = StringHelper.after(keyString, DataType.DEFAULT_SCHEME + ":", keyString);
-
         return StringHelper.sanitize(keyString).toLowerCase(Locale.US);
     }
 
