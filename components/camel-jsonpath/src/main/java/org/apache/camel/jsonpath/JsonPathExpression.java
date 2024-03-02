@@ -171,7 +171,7 @@ public class JsonPathExpression extends ExpressionAdapter {
                     if (resultTypeIsCollection && !resultIsCollection) {
                         var list = new LinkedList<>();
                         list.add(result);
-                        return list;
+                        result = list;
                     }
                 }
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
