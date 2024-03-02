@@ -251,10 +251,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         final CamelContext ecc = getCamelContext();
         final FactoryFinder finder = ecc.getCamelContextExtension().getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
-        // the marker files are generated with dot as dash
-        String sanitized = extension.replace(".", "-");
         RoutesBuilderLoader answer
-                = ResolverHelper.resolveService(getCamelContext(), finder, sanitized, RoutesBuilderLoader.class).orElse(null);
+                = ResolverHelper.resolveService(getCamelContext(), finder, extension, RoutesBuilderLoader.class).orElse(null);
 
         // if it's a multi-extension then fallback to parent
         if (answer == null && extension.contains(".")) {
