@@ -38,7 +38,7 @@ public final class RouteTemplateHelper {
 
     /**
      * Loads the route template with the given template id from a given location. After the template is loaded, it is
-     * automatic added to the {@link CamelContext}.
+     * automatically added to the {@link CamelContext}.
      *
      * @param  camelContext the camel context
      * @param  listener     optional listener for when a route template is being loaded
@@ -50,6 +50,7 @@ public final class RouteTemplateHelper {
             CamelContext camelContext, RouteTemplateLoaderListener listener,
             String templateId, String location)
             throws Exception {
+
         if (location == null) {
             throw new IllegalArgumentException("Location is empty");
         }
