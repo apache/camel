@@ -163,7 +163,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^A-Za-z0-9+-/]", "-");
+        return fileName.replaceAll("[^A-Za-z0-9+-/.]", "-");
     }
 
     private boolean isLocal(String className) {
