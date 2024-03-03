@@ -17,6 +17,7 @@
 package org.apache.camel.jsonpath;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.jayway.jsonpath.Option;
@@ -156,12 +157,21 @@ public class JsonPathExpression extends ExpressionAdapter {
                 if (unpackArray) {
                     // in some cases we get a single element that is wrapped in a List, so unwrap that
                     // if we for example want to grab the single entity and convert that to a int/boolean/String etc
-                    boolean resultIsCollection = Collection.class.isAssignableFrom(resultType);
+                    boolean resultTypeIsCollection = Collection.class.isAssignableFrom(resultType);
                     boolean singleElement = result instanceof List && ((List<?>) result).size() == 1;
-                    if (singleElement && !resultIsCollection) {
+                    if (singleElement && !resultTypeIsCollection) {
                         result = ((List<?>) result).get(0);
                         LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result,
                                 resultType);
+                    }
+                } else {
+                    // special for List
+                    boolean resultTypeIsCollection = Collection.class.isAssignableFrom(resultType);
+                    boolean resultIsCollection = result instanceof List;
+                    if (resultTypeIsCollection && !resultIsCollection) {
+                        var list = new LinkedList<>();
+                        list.add(result);
+                        result = list;
                     }
                 }
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
