@@ -20,5 +20,7 @@ public enum BedrockOperations {
 
     invokeTextModel,
 
-    invokeImageModel
+    invokeImageModel,
+
+    invokeEmbeddingsModel
 }

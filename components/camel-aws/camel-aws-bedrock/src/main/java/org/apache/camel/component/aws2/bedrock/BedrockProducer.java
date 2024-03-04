@@ -56,6 +56,9 @@ public class BedrockProducer extends DefaultProducer {
             case invokeImageModel:
                 invokeImageModel(getEndpoint().getBedrockRuntimeClient(), exchange);
                 break;
+            case invokeEmbeddingsModel:
+                invokeEmbeddingsModel(getEndpoint().getBedrockRuntimeClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -175,6 +178,51 @@ public class BedrockProducer extends DefaultProducer {
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void invokeEmbeddingsModel(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange)
+            throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof InvokeModelRequest) {
+                InvokeModelResponse result;
+                try {
+                    result = bedrockRuntimeClient.invokeModel((InvokeModelRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Invoke Image Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockConstants.MODEL_CONTENT_TYPE))) {
+                String contentType = exchange.getIn().getHeader(BedrockConstants.MODEL_CONTENT_TYPE, String.class);
+                builder.contentType(contentType);
+            } else {
+                throw new IllegalArgumentException("Model Content Type must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE))) {
+                String acceptContentType = exchange.getIn().getHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, String.class);
+                builder.accept(acceptContentType);
+            } else {
+                throw new IllegalArgumentException("Model Accept Content Type must be specified");
+            }
+            InvokeModelRequest request = builder
+                    .body(SdkBytes.fromUtf8String(String.valueOf(exchange.getMessage().getBody())))
+                    .modelId(getConfiguration().getModelId())
+                    .build();
+            InvokeModelResponse result;
+            try {
+                result = bedrockRuntimeClient.invokeModel(request);
+            } catch (AwsServiceException ase) {
+                LOG.trace("Invoke Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
