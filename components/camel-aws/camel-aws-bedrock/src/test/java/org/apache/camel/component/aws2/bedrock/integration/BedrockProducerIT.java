@@ -134,6 +134,24 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testInvokeTitanEmbeddingsModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_titan_embeddings", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("inputText",
+                    new TextNode("A Sci-fi camel running in the desert"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "*/*");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -155,6 +173,11 @@ class BedrockProducerIT extends CamelTestSupport {
                         .split(body())
                         .unmarshal().base64()
                         .setHeader("CamelFileName", simple("image-${random(128)}.png")).to("file:target/generated_images")
+                        .to(result);
+
+                from("direct:send_titan_embeddings")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeEmbeddingsModel&modelId="
+                            + BedrockModels.TITAN_EMBEDDINGS_G1.model)
                         .to(result);
             }
         };
