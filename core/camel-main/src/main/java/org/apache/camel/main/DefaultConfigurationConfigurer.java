@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.CompileStrategy;
@@ -605,6 +607,14 @@ public final class DefaultConfigurationConfigurer {
             vault.setHashicorpVaultConfiguration(hashicorp);
         }
         configureVault(camelContext);
+
+        // apply custom configurations if any
+        Set<CamelContextCustomizer> customizers = registry.findByType(CamelContextCustomizer.class);
+        if (!customizers.isEmpty()) {
+            customizers.stream()
+                    .sorted(Comparator.comparing(CamelContextCustomizer::getOrder))
+                    .forEach(c -> c.configure(camelContext));
+        }
     }
 
     /**
