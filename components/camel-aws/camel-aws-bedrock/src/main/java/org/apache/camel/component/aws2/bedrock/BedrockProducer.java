@@ -101,7 +101,7 @@ public class BedrockProducer extends DefaultProducer {
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
-                message.setBody(result);
+                setResponseText(result, message);
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -129,7 +129,7 @@ public class BedrockProducer extends DefaultProducer {
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
-            message.setBody(result.body().asUtf8String());
+            setResponseText(result, message);
         }
     }
 
@@ -230,6 +230,30 @@ public class BedrockProducer extends DefaultProducer {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("images"));
+    }
+
+    protected void setResponseText(InvokeModelResponse result, Message message) {
+        switch (getConfiguration().getModelId()) {
+            case "amazon.titan-text-express-v1", "amazon.titan-text-lite-v1" -> setTitanText(result, message);
+            case "ai21.j2-ultra-v1" -> {
+                try {
+                    setAi21Text(result, message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + getConfiguration().getModelId());
+        }
+    }
+
+    private void setTitanText(InvokeModelResponse result, Message message) {
+        message.setBody(result.body().asUtf8String());
+    }
+
+    private void setAi21Text(InvokeModelResponse result, Message message) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        message.setBody(jsonString.get("completions"));
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

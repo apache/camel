@@ -43,9 +43,8 @@ public class BedrockEndpointUriFactory extends org.apache.camel.support.componen
         props.add("useProfileCredentialsProvider");
         props.add("useSessionCredentials");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
+        Set<String> secretProps = new HashSet<>(3);
         secretProps.add("accessKey");
-        secretProps.add("modelId");
         secretProps.add("secretKey");
         secretProps.add("sessionToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
