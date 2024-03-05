@@ -145,7 +145,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
 
         Expression expression = language.createExpression("$.store.book",
-                new Object[] { String.class, null, null, null, null, null, true });
+                new Object[] { null, null, null, null, null, null, true, true });
         String json = expression.evaluate(exchange, String.class);
 
         // check that a single json object is returned, not an array
@@ -155,12 +155,12 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     @Test
     public void testDontUnpackJsonArray() {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
+        exchange.getIn().setBody(new File("src/test/resources/books.json"));
 
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
 
         Expression expression = language.createExpression("$.store.book",
-                new Object[] { String.class, null, null, null, false });
+                new Object[] { null, null, null, null, false, true });
         String json = expression.evaluate(exchange, String.class);
 
         // check that an array is returned, not a single object
