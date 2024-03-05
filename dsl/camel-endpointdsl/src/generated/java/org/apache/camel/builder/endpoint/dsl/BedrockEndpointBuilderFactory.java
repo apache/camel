@@ -46,6 +46,7 @@ public interface BedrockEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: producer
          * 
          * @param modelId the value to set

@@ -39,7 +39,8 @@ public class BedrockConfiguration implements Cloneable {
     private String secretKey;
     @UriParam(label = "security", secret = true)
     private String sessionToken;
-    @UriParam(secret = true)
+    @UriParam
+    @Metadata(required = true)
     private String modelId;
     @UriParam
     @Metadata(required = true)
