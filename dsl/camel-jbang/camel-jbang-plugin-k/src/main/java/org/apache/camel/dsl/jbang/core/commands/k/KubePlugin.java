@@ -27,10 +27,13 @@ public class KubePlugin implements Plugin {
 
     @Override
     public void customize(CommandLine commandLine, CamelJBangMain main) {
-        commandLine.addSubcommand("k", new picocli.CommandLine(new KubeCommand(main))
+        var cmd = new picocli.CommandLine(new KubeCommand(main))
+                .addSubcommand(Agent.ID, new picocli.CommandLine(new Agent(main)))
                 .addSubcommand("get", new picocli.CommandLine(new IntegrationGet(main)))
                 .addSubcommand("run", new picocli.CommandLine(new IntegrationRun(main)))
                 .addSubcommand("delete", new picocli.CommandLine(new IntegrationDelete(main)))
-                .addSubcommand("logs", new picocli.CommandLine(new IntegrationLogs(main))));
+                .addSubcommand("logs", new picocli.CommandLine(new IntegrationLogs(main)));
+
+        commandLine.addSubcommand("k", cmd);
     }
 }
