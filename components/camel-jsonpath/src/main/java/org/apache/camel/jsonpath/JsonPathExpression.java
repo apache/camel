@@ -19,6 +19,8 @@ package org.apache.camel.jsonpath;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.jayway.jsonpath.Option;
 import org.apache.camel.CamelContext;
@@ -153,31 +155,40 @@ public class JsonPathExpression extends ExpressionAdapter {
     public Object evaluate(Exchange exchange) {
         try {
             Object result = evaluateJsonPath(exchange, engine);
-            if (resultType != null) {
-                if (unpackArray) {
-                    // in some cases we get a single element that is wrapped in a List, so unwrap that
-                    // if we for example want to grab the single entity and convert that to a int/boolean/String etc
-                    boolean resultTypeIsCollection = Collection.class.isAssignableFrom(resultType);
-                    boolean singleElement = result instanceof List && ((List<?>) result).size() == 1;
-                    if (singleElement && !resultTypeIsCollection) {
-                        result = ((List<?>) result).get(0);
-                        LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result,
-                                resultType);
-                    }
-                } else {
-                    // special for List
-                    boolean resultTypeIsCollection = Collection.class.isAssignableFrom(resultType);
-                    boolean resultIsCollection = result instanceof List;
-                    if (resultTypeIsCollection && !resultIsCollection) {
-                        var list = new LinkedList<>();
-                        list.add(result);
-                        result = list;
-                    }
+            boolean resultTypeIsCollection = resultType != null && Collection.class.isAssignableFrom(resultType);
+            if (unpackArray) {
+                // in some cases we get a single element that is wrapped in a List, so unwrap that
+                // if we for example want to grab the single entity and convert that to an int/boolean/String etc
+                boolean singleElement = result instanceof List && ((List<?>) result).size() == 1;
+                if (singleElement && !resultTypeIsCollection) {
+                    result = ((List<?>) result).get(0);
+                    LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result,
+                            resultType);
                 }
-                return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
-            } else {
+            }
+            if (resultType == null) {
                 return result;
             }
+            if (resultTypeIsCollection) {
+                // we want a list as output
+                boolean resultIsCollection = result instanceof List;
+                if (!resultIsCollection) {
+                    var list = new LinkedList<>();
+                    list.add(result);
+                    result = list;
+                }
+                return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
+            } else if (result instanceof Collection<?> col) {
+                // convert each element in the list
+                result = col.stream()
+                        .filter(Objects::nonNull) // skip null
+                        .map(item -> exchange.getContext().getTypeConverter().convertTo(resultType, exchange, item))
+                        .collect(Collectors.toList());
+            }
+            if (result instanceof Collection<?> col && col.size() == 1) {
+                result = col.stream().findFirst().get();
+            }
+            return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
