@@ -35,7 +35,8 @@ public class CxfEndpointJMSConsumerTest extends CamelSpringTestSupport {
 
     @RegisterExtension
     private static ArtemisService broker = ArtemisServiceFactory.createVMService();
-    static {
+
+    CxfEndpointJMSConsumerTest() {
         System.setProperty("CxfEndpointJMSConsumerTest.serviceAddress", broker.serviceAddress());
     }
 
