@@ -151,6 +151,22 @@ micrometer and metrics no longer include statistics for those Kamelet routes.
 The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
 on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentation.
 
+Added context level metrics to `camel-micrometer`. The metrics with key `camel.route.policy` now include
+tag `eventType` that specifies if the metrics is for a route or the entire camel context.
+You can turn off context level metrics, by setting `contenxtEnabled=false` on the factory such as:
+
+[source,java]
+----
+factory.getPolicyConfiguration().setContextEnabled(false);
+----
+
+This can also be done easily from `application.properties` such as:
+
+[source,properties]
+----
+camel.metrics.routePolicyLevel=route
+----
+
 === camel-openapi-java and camel-rest-openapi
 
 Dropped support for the old Swagger 2.0 spec. Only OpenAPI v3 specs is supported now.

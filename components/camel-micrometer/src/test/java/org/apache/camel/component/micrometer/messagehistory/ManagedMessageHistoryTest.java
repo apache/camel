@@ -64,6 +64,16 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
     }
 
     @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (meterRegistry != null) {
+            meterRegistry.clear();
+            meterRegistry.close();
+            meterRegistry = null;
+        }
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         addRegistry();
@@ -71,7 +81,6 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         factory.setPrettyPrint(true);
         factory.setMeterRegistry(meterRegistry);
         context.setMessageHistoryFactory(factory);
-
         return context;
     }
 

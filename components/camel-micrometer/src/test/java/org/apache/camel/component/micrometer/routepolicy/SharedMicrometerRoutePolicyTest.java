@@ -34,7 +34,7 @@ public class SharedMicrometerRoutePolicyTest extends CamelTestSupport {
 
     protected MeterRegistry meterRegistry = new SimpleMeterRegistry();
 
-    protected MicrometerRoutePolicy singletonPolicy = new MicrometerRoutePolicy();
+    protected MicrometerRoutePolicy singletonPolicy = new MicrometerRoutePolicy(null);
 
     @Test
     public void testSharedPolicy() throws Exception {

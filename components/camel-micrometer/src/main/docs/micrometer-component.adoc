@@ -407,6 +407,8 @@ following options:
 [width="100%",options="header"]
 |=======================================================================
 |Name |Default |Description
+|contextEnabled | true | whether to include counter for context level metrics
+|routeEnabled | true | whether to include counter for route level metrics
 |additionalCounters | true | activates all additional counters
 |exchangesSucceeded | true | activates counter for succeeded exchanges
 |exchangesFailed | true | activates counter for failed exchanges

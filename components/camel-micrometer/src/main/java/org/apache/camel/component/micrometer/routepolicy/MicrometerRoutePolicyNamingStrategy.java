@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.component.micrometer.MicrometerUtils;
 
@@ -87,13 +88,31 @@ public interface MicrometerRoutePolicyNamingStrategy {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
                 SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
-                ROUTE_ID_TAG, route.getId());
+                ROUTE_ID_TAG, route.getId(),
+                EVENT_TYPE_TAG, "route");
+    }
+
+    default Tags getTags(CamelContext camelContext) {
+        return Tags.of(
+                CAMEL_CONTEXT_TAG, camelContext.getName(),
+                SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                ROUTE_ID_TAG, "",
+                EVENT_TYPE_TAG, "context");
     }
 
     default Tags getExchangeStatusTags(Route route) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
                 SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
-                ROUTE_ID_TAG, route.getId());
+                ROUTE_ID_TAG, route.getId(),
+                EVENT_TYPE_TAG, "route");
+    }
+
+    default Tags getExchangeStatusTags(CamelContext camelContext) {
+        return Tags.of(
+                CAMEL_CONTEXT_TAG, camelContext.getName(),
+                SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                ROUTE_ID_TAG, "",
+                EVENT_TYPE_TAG, "context");
     }
 }
