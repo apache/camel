@@ -16,14 +16,14 @@
  */
 package org.apache.camel.language;
 
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathConstants;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import javax.xml.namespace.QName;
-import javax.xml.xpath.XPathConstants;
 
 public class XPathLanguageEndpointTest extends ContextTestSupport {
 
