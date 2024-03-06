@@ -22,7 +22,8 @@ public enum BedrockModels {
     TITAN_TEXT_LITE_V1("amazon.titan-text-lite-v1"),
     TITAN_IMAGE_GENERATOR_V1("amazon.titan-image-generator-v1"),
     TITAN_EMBEDDINGS_G1("amazon.titan-embed-text-v1"),
-    JURASSIC2_ULTRA("ai21.j2-ultra-v1"),;
+    JURASSIC2_ULTRA("ai21.j2-ultra-v1"),
+    JURASSIC2_MID("ai21.j2-mid-v1");
 
     public final String model;
 
