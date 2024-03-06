@@ -136,7 +136,8 @@ public class ListMetric extends ProcessWatchCommand {
                                     if (!all && getNumber(row.count).isEmpty()) {
                                         continue;
                                     }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter) || row.tags.contains(filter)) {
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
+                                            || row.tags.contains(filter)) {
                                         rows.add(row);
                                     }
                                 }
