@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.artemis.services;
 
 import java.io.File;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
@@ -70,7 +71,10 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
 
         // Base configuration
         artemisConfiguration.setSecurityEnabled(false);
-        artemisConfiguration.setBrokerInstance(new File("target", "artemis-" + brokerId));
+
+        final File instanceDir = createInstance(brokerId);
+
+        artemisConfiguration.setBrokerInstance(instanceDir);
         artemisConfiguration.setJMXManagementEnabled(false);
         artemisConfiguration.setMaxDiskUsage(98);
 
@@ -80,6 +84,28 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
         }
 
         return config;
+    }
+
+    private static File createInstance(int brokerId) {
+        File instanceDir = null;
+        final File target = new File("target");
+        final File brokerDir = new File(target, "artemis");
+        do {
+            final String subPath = getRandomSubPath();
+
+            instanceDir = new File(brokerDir, brokerId + "-" + subPath);
+        } while (instanceDir.exists());
+
+        return instanceDir;
+    }
+
+    private static String getRandomSubPath() {
+        final int size = 12;
+
+        return ThreadLocalRandom.current().ints(97, 122)
+                .limit(size)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
     protected abstract Configuration configure(Configuration artemisConfiguration, int port, int brokerId);
