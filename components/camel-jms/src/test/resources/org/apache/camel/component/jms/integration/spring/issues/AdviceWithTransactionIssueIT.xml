@@ -30,7 +30,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
 
   <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
     <property name="brokerURL">
-      <bean class="org.apache.camel.component.jms.integration.spring.CamelBrokerClientITSupport" factory-method="getServiceAddress"/>
+      <bean class="org.apache.camel.component.jms.integration.spring.SpringJMSBasic" factory-method="getServiceAddress"/>
     </property>
   </bean>
 

@@ -16,27 +16,13 @@
  */
 package org.apache.camel.component.jms.integration.spring;
 
-import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
-import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
-public abstract class CamelBrokerClientITSupport extends CamelSpringTestSupport {
-
-    @RegisterExtension
-    public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
-            .withCustomConfiguration(configuration -> {
-                AddressSettings addressSettings = new AddressSettings();
-                addressSettings.setMaxSizeMessages(50);
-                configuration.addAddressSetting("#", addressSettings);
-            })
-            .build();
+/**
+ * For tests that need a basic Spring camel context without additional configuration
+ */
+public abstract class SpringJMSBasic extends AbstractSpringJMSITSupport {
 
     public static String getServiceAddress() {
         return service.serviceAddress();
@@ -46,6 +32,6 @@ public abstract class CamelBrokerClientITSupport extends CamelSpringTestSupport 
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 new String[] {
-                        "classpath:org/apache/camel/component/jms/integration/spring/camelBrokerClient.xml" });
+                        "classpath:org/apache/camel/component/jms/integration/spring/SpringJMSBasic.xml" });
     }
 }

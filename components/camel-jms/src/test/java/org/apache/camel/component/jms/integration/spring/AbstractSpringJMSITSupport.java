@@ -29,7 +29,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 public abstract class AbstractSpringJMSITSupport extends CamelSpringTestSupport {
 
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     /**
      * Used by spring xml configurations

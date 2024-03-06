@@ -18,7 +18,7 @@ package org.apache.camel.component.jms.integration.spring.issues;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.jms.JmsConstants;
-import org.apache.camel.component.jms.integration.spring.CamelBrokerClientITSupport;
+import org.apache.camel.component.jms.integration.spring.SpringJMSBasic;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 // This one does not run well in parallel: it becomes flaky
 @Tags({ @Tag("not-parallel") })
-public class JmsSendToMultipleDestinationsWithSameEndpointIT extends CamelBrokerClientITSupport {
+public class JmsSendToMultipleDestinationsWithSameEndpointIT extends SpringJMSBasic {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsSendToMultipleDestinationsWithSameEndpointIT.class);
     private static final String URI = "activemq:queue:JmsSendToMultipleDestinationsWithSameEndpointIT?autoStartup=false";
