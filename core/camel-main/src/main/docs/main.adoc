@@ -386,7 +386,7 @@ The camel.opentelemetry supports 4 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 9 options, which are listed below.
+The camel.metrics supports 10 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -399,6 +399,7 @@ The camel.metrics supports 9 options, which are listed below.
 | *camel.metrics.enableRouteEvent{zwsp}Notifier* | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
 | *camel.metrics.enableRoute{zwsp}Policy* | Set whether to enable the MicrometerRoutePolicyFactory for capturing metrics on route processing times. | true | boolean
 | *camel.metrics.namingStrategy* | Controls the name style to use for metrics. Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase) | default | String
+| *camel.metrics.routePolicyLevel* | Sets the level of information to capture. all = both context and routes. | all | String
 | *camel.metrics.textFormat{zwsp}Version* | The text-format version to use with Prometheus scraping. 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8 | 0.0.4 | String
 |===
 

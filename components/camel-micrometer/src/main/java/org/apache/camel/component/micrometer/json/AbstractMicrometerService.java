@@ -137,6 +137,6 @@ public class AbstractMicrometerService extends ServiceSupport {
 
     @Override
     protected void doStop() {
-
+        // noop
     }
 }

@@ -24,7 +24,8 @@ import org.apache.camel.spi.Metadata;
  * Global configuration for OpenTelemetry
  */
 @Configurer(bootstrap = true)
-public class OtelConfigurationProperties implements BootstrapCloseable {
+public class
+OtelConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
 

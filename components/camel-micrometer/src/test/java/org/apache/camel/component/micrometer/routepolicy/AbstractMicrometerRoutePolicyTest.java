@@ -21,7 +21,6 @@ import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.core.instrument.util.HierarchicalNameMapper;
 import io.micrometer.jmx.JmxMeterRegistry;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
@@ -39,16 +38,10 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
         return true;
     }
 
-    @BindToRegistry(MicrometerConstants.METRICS_REGISTRY_NAME)
-    public CompositeMeterRegistry addRegistry() {
-        meterRegistry = new CompositeMeterRegistry();
-        meterRegistry.add(new SimpleMeterRegistry());
-        meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
-        return meterRegistry;
-    }
-
     protected MicrometerRoutePolicyFactory createMicrometerRoutePolicyFactory() {
-        return new MicrometerRoutePolicyFactory();
+        MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
+        factory.getPolicyConfiguration().setContextEnabled(false);
+        return factory;
     }
 
     protected String formatMetricName(String name) {
@@ -57,10 +50,16 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        meterRegistry = new CompositeMeterRegistry();
+        meterRegistry.add(new SimpleMeterRegistry());
+        meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
+
         CamelContext context = super.createCamelContext();
         MicrometerRoutePolicyFactory factory = createMicrometerRoutePolicyFactory();
+        factory.setCamelContext(context);
         factory.setMeterRegistry(meterRegistry);
         context.addRoutePolicyFactory(factory);
+        context.getRegistry().bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
         return context;
     }
 

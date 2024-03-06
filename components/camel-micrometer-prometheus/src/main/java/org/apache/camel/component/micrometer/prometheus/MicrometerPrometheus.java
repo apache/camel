@@ -84,6 +84,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private String namingStrategy;
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
+    @Metadata(defaultValue = "all", enums = "all,route,context")
+    private String routePolicyLevel = "all";
     @Metadata(defaultValue = "false")
     private boolean enableMessageHistory;
     @Metadata(defaultValue = "true")
@@ -129,6 +131,17 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
      */
     public void setEnableRoutePolicy(boolean enableRoutePolicy) {
         this.enableRoutePolicy = enableRoutePolicy;
+    }
+
+    public String getRoutePolicyLevel() {
+        return routePolicyLevel;
+    }
+
+    /**
+     * Sets the level of information to capture. all = both context and routes.
+     */
+    public void setRoutePolicyLevel(String routePolicyLevel) {
+        this.routePolicyLevel = routePolicyLevel;
     }
 
     public boolean isEnableMessageHistory() {
@@ -239,6 +252,16 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
                 factory.setNamingStrategy(MicrometerRoutePolicyNamingStrategy.LEGACY);
+            }
+            if ("all".equalsIgnoreCase(routePolicyLevel)) {
+                factory.getPolicyConfiguration().setContextEnabled(true);
+                factory.getPolicyConfiguration().setRouteEnabled(true);
+            } else if ("context".equalsIgnoreCase(routePolicyLevel)) {
+                factory.getPolicyConfiguration().setContextEnabled(true);
+                factory.getPolicyConfiguration().setRouteEnabled(false);
+            } else {
+                factory.getPolicyConfiguration().setContextEnabled(false);
+                factory.getPolicyConfiguration().setRouteEnabled(true);
             }
             factory.setMeterRegistry(meterRegistry);
             camelContext.addRoutePolicyFactory(factory);
