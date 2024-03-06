@@ -39,7 +39,7 @@ public class BedrockConfiguration implements Cloneable {
     private String secretKey;
     @UriParam(label = "security", secret = true)
     private String sessionToken;
-    @UriParam
+    @UriParam(enums = "amazon.titan-text-express-v1,amazon.titan-text-lite-v1,amazon.titan-image-generator-v1,amazon.titan-embed-text-v1,ai21.j2-ultra-v1,ai21.j2-mid-v1")
     @Metadata(required = true)
     private String modelId;
     @UriParam
