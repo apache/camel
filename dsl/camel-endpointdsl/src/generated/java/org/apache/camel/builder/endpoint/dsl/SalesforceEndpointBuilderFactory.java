@@ -2780,10 +2780,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * EXPANDED: Apache Avro format but doesnt strictly adhere to the record
-         * complex type. COMPACT: Apache Avro, adheres to the specification for
-         * the record complex type. This parameter is available in API version
-         * 43.0 and later.
+         * EXPANDED: Apache Avro format but doesn't strictly adhere to the
+         * record complex type. COMPACT: Apache Avro, adheres to the
+         * specification for the record complex type. This parameter is
+         * available in API version 43.0 and later.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum&lt;/code&gt; type.
@@ -2799,10 +2799,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * EXPANDED: Apache Avro format but doesnt strictly adhere to the record
-         * complex type. COMPACT: Apache Avro, adheres to the specification for
-         * the record complex type. This parameter is available in API version
-         * 43.0 and later.
+         * EXPANDED: Apache Avro format but doesn't strictly adhere to the
+         * record complex type. COMPACT: Apache Avro, adheres to the
+         * specification for the record complex type. This parameter is
+         * available in API version 43.0 and later.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum&lt;/code&gt; type.
