@@ -20,7 +20,6 @@ import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
@@ -29,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Must run last
  */
-@Isolated
 public class ZMicrometerContextOnlyPolicyTest extends AbstractMicrometerRoutePolicyTest {
 
     private static final long DELAY_FOO = 20;
