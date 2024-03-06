@@ -244,7 +244,7 @@
                                 </goals>
                                 <configuration>
                                     <forkCount>4</forkCount>
-                                    <reuseForks>true</reuseForks>
+                                    <reuseForks>false</reuseForks>
                                     <groups>not-parallel</groups>
                                     <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
                                 </configuration>
