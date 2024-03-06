@@ -46,7 +46,7 @@ public class ListMetric extends ProcessWatchCommand {
     String sort;
 
     @CommandLine.Option(names = { "--filter" },
-                        description = "Filter metric by type or name")
+                        description = "Filter metric by type, name or tags")
     String filter;
 
     @CommandLine.Option(names = { "--tags" },
@@ -136,7 +136,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     if (!all && getNumber(row.count).isEmpty()) {
                                         continue;
                                     }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter) || row.tags.contains(filter)) {
                                         rows.add(row);
                                     }
                                 }
