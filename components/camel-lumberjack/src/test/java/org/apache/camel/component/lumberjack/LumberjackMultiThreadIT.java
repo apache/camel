@@ -27,54 +27,50 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated
-public class LumberjackMultiThreadTest extends CamelTestSupport {
+public class LumberjackMultiThreadIT extends CamelTestSupport {
 
-    private static int port;
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    private static final int CONCURRENCY_LEVEL = Math.min(Runtime.getRuntime().availableProcessors(), 4);
 
-    @BeforeAll
-    public static void beforeClass() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
+    private volatile boolean interrupted;
+
+    // create a number of threads
+    private final List<LumberjackThreadTest> threads = new ArrayList<>();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // Lumberjack configured with a specific port
-                from("lumberjack:0.0.0.0:" + port).to("mock:output");
+                from("lumberjack:0.0.0.0:" + PORT).to("mock:output");
             }
         };
     }
 
-    @Test
-    public void shouldListenToMessages() throws Exception {
-        int concurrencyLevel = Math.min(Runtime.getRuntime().availableProcessors(), 4);
-
-        // We're expecting 25 messages with Maps for each thread
-        MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedMessageCount(25 * concurrencyLevel);
-        mock.allMessages().body().isInstanceOf(Map.class);
-
-        // When sending messages
-        List<Integer> windows = Arrays.asList(15, 10);
-
-        // create a number of threads
-        List<LumberjackThreadTest> threads = new ArrayList<>();
-
-        for (int i = 0; i < concurrencyLevel; i++) {
+    @BeforeEach
+    void setupTest() {
+        for (int i = 0; i < CONCURRENCY_LEVEL; i++) {
             threads.add(new LumberjackThreadTest());
         }
 
         // sending messages on all parallel sessions
         threads.stream().forEach(thread -> thread.start());
+    }
+
+    @Test
+    public void shouldListenToMessages() throws Exception {
+        // We're expecting 25 messages with Maps for each thread
+        MockEndpoint mock = getMockEndpoint("mock:output");
+        mock.expectedMessageCount(25 * CONCURRENCY_LEVEL);
+        mock.allMessages().body().isInstanceOf(Map.class);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();
@@ -85,8 +81,11 @@ public class LumberjackMultiThreadTest extends CamelTestSupport {
         assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
                 first.get("source"));
 
+        List<Integer> windows = Arrays.asList(15, 10);
         Awaitility.await().atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> threads.stream().forEach(thread -> assertEquals(windows, thread.responses)));
+
+        Assertions.assertFalse(interrupted, "Should not have been interrupted");
     }
 
     class LumberjackThreadTest extends Thread {
@@ -95,9 +94,10 @@ public class LumberjackMultiThreadTest extends CamelTestSupport {
         @Override
         public void run() {
             try {
-                this.responses = LumberjackUtil.sendMessages(port, null, Arrays.asList(15, 10));
+                this.responses = LumberjackUtil.sendMessages(PORT, null, Arrays.asList(15, 10));
             } catch (InterruptedException e) {
-                fail(e);
+                Thread.currentThread().interrupt();
+                interrupted = true;
             }
         }
 
