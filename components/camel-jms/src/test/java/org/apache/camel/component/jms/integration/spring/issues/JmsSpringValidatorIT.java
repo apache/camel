@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.jms.integration.spring.issues;
 
-import org.apache.camel.component.jms.integration.spring.CamelBrokerClientITSupport;
+import org.apache.camel.component.jms.integration.spring.SpringJMSBasic;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JmsSpringValidatorIT extends CamelBrokerClientITSupport {
+public class JmsSpringValidatorIT extends SpringJMSBasic {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {

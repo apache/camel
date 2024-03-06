@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.jms.integration.spring.CamelBrokerClientITSupport;
+import org.apache.camel.component.jms.integration.spring.SpringJMSBasic;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring") })
-public class JmsPollingConsumerSpringIT extends CamelBrokerClientITSupport {
+public class JmsPollingConsumerSpringIT extends SpringJMSBasic {
 
     @Produce("jms:JmsPollingConsumerSpringITStartConsumer")
     protected ProducerTemplate startConsumer;

@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.jms.integration.spring.tx;
 
-import org.apache.camel.component.jms.integration.spring.CamelBrokerClientITSupport;
+import org.apache.camel.component.jms.integration.spring.SpringJMSBasic;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JMSNestedTransactionRollbackIT extends CamelBrokerClientITSupport {
+public class JMSNestedTransactionRollbackIT extends SpringJMSBasic {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {

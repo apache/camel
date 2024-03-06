@@ -18,7 +18,7 @@ package org.apache.camel.component.jms.integration.spring.issues;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.jms.integration.spring.CamelBrokerClientITSupport;
+import org.apache.camel.component.jms.integration.spring.SpringJMSBasic;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring") })
-public class FileToJmsIssueIT extends CamelBrokerClientITSupport {
+public class FileToJmsIssueIT extends SpringJMSBasic {
 
     @EndpointInject("mock:result")
     protected MockEndpoint result;
