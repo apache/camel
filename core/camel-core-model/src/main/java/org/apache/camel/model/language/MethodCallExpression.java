@@ -295,6 +295,24 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         }
 
         /**
+         * Scope of bean.
+         *
+         * When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime
+         * of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same
+         * time. When using request scope the bean is created or looked up once per request (exchange). This can be used
+         * if you want to store state on a bean while processing a request and you want to call the same bean instance
+         * multiple times while processing the request. The bean does not have to be thread-safe as the instance is only
+         * called from the same request. When using prototype scope, then the bean will be looked up or created per
+         * call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in
+         * use), which depends on their configuration can act as either singleton or prototype scope. So when using
+         * prototype scope then this depends on the bean registry implementation.
+         */
+        public Builder scope(Scope scope) {
+            this.scope = scope == null ? null : scope.value;
+            return this;
+        }
+
+        /**
          * Whether to validate the bean has the configured method.
          */
         public Builder validate(String validate) {
@@ -313,6 +331,22 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         @Override
         public MethodCallExpression end() {
             return new MethodCallExpression(this);
+        }
+    }
+
+    /**
+     * {@code Scope} defines the possible bean scopes that can be used.
+     */
+    @XmlTransient
+    public enum Scope {
+        SINGLETON("Singleton"),
+        REQUEST("Request"),
+        PROTOTYPE("Prototype");
+
+        private final String value;
+
+        Scope(String value) {
+            this.value = value;
         }
     }
 }
