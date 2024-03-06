@@ -102,6 +102,11 @@ public final class MongoDbBasicConverters {
     }
 
     @Converter
+    public static Bson fromInputStreamToBson(InputStream is, Exchange exchange) throws Exception {
+        return fromInputStreamToDocument(is, exchange);
+    }
+
+    @Converter
     public static Document fromInputStreamToDocument(InputStream is, Exchange exchange) throws Exception {
         Document answer = null;
         try {
