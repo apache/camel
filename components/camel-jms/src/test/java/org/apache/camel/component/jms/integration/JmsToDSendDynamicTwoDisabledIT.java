@@ -18,10 +18,17 @@ package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractPersistentJMSTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * This test computes the number of components, so it could be affected by other tests. Therefore, it's run in
+ * isolation.
+ */
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
 public class JmsToDSendDynamicTwoDisabledIT extends AbstractPersistentJMSTest {
 
     @Test

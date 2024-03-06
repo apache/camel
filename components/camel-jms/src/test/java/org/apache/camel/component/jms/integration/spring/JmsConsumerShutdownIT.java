@@ -26,11 +26,17 @@ import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilde
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
+/**
+ * This test configures the context shutdown strategy, so we run it in isolation to avoid messing up with others
+ */
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
 public final class JmsConsumerShutdownIT extends CamelSpringTestSupport {
     @RegisterExtension
     public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()

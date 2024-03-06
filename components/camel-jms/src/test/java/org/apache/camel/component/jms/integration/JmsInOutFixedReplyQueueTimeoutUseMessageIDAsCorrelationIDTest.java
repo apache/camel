@@ -21,7 +21,10 @@ import java.time.Duration;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsInOutFixedReplyQueueTimeoutTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
 public class JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest extends JmsInOutFixedReplyQueueTimeoutTest {
 
     @Override
