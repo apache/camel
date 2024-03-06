@@ -389,6 +389,23 @@ public final class JsonMapper {
         return model;
     }
 
+    public static String createParameterJsonSchema(TransformerModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static JsonObject asJsonObject(TransformerModel model) {
+        JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.put("from", model.getFrom());
+        obj.put("to", model.getTo());
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("transformer", obj);
+        return wrapper;
+    }
+
     public static OtherModel generateOtherModel(String json) {
         JsonObject obj = deserialize(json);
         return generateOtherModel(obj);
