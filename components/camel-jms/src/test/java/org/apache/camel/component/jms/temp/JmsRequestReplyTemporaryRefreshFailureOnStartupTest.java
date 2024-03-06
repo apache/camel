@@ -26,32 +26,38 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Tags({ @Tag("not-parallel") })
-public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTestSupport {
+public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTestSupport {
 
-    @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = new ArtemisVMService.ReusableArtemisVMService();
 
-    private String brokerName;
     private final Long recoveryInterval = 1000L;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        brokerName = "test-broker-" + System.currentTimeMillis();
+        service.initialize();
+
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
+
+        service.shutdown();
 
         return camelContext;
     }
@@ -73,26 +79,39 @@ public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTe
         };
     }
 
+    @DisplayName("Test that throws and exception on connection failure")
     @Test
+    @Order(1)
     public void testTemporaryRefreshFailureOnStartup() throws Exception {
         //the first message will fail
         //the second message must be handled
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
+        mockEndpoint.expectedMessageCount(0);
 
         //the first request will return with an error
         //because the broker is not started yet
-        try {
-            template.requestBody("direct:start", "ping");
-        } catch (Exception exception) {
+        Assertions.assertThrows(Exception.class,
+                () -> template.requestBody("direct:start", "ping"));
 
-        }
+        mockEndpoint.assertIsSatisfied();
+    }
 
-        Awaitility.await().untilAsserted(() -> {
-            template.asyncRequestBody("direct:start", "ping");
+    @DisplayName("Test that reconnects after dealing with an exception on connection failure")
+    @Test
+    @Order(2)
+    public void testTemporaryRefreshFailureOnStartupReconnect() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.reset();
+        mockEndpoint.expectedMessageCount(1);
 
-            MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
-        });
+        service.initialize();
 
+        Awaitility.await()
+                .atMost(15, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Assertions.assertDoesNotThrow(() -> template.requestBody("direct:start", "ping"));
+                });
+
+        mockEndpoint.assertIsSatisfied();
     }
 }

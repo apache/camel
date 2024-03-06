@@ -54,8 +54,9 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
     }
 
     /**
-     * This is needed for some tests that check reliability of the components by defining the port in advance, trying to connect
-     * first starting the service later
+     * This is needed for some tests that check reliability of the components by defining the port in advance, trying to
+     * connect first starting the service later
+     *
      * @param port the port to use
      */
     protected AbstractArtemisEmbeddedService(int port) {
@@ -66,8 +67,7 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
     }
 
     private synchronized Configuration configure(int port) {
-        final int brokerId = BROKER_COUNT.intValue();
-        BROKER_COUNT.increment();
+        final int brokerId = computeBrokerId();
 
         // Base configuration
         artemisConfiguration.setSecurityEnabled(false);
@@ -84,6 +84,17 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
         }
 
         return config;
+    }
+
+    /**
+     * Computes the current broker ID to use.
+     *
+     * @return the broker ID to use
+     */
+    protected int computeBrokerId() {
+        final int brokerId = BROKER_COUNT.intValue();
+        BROKER_COUNT.increment();
+        return brokerId;
     }
 
     private static File createInstance(int brokerId) {
