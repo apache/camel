@@ -65,8 +65,6 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -140,11 +138,13 @@ public abstract class CamelTestSupport
     public void beforeEach(ExtensionContext context) throws Exception {
         currentTestName = context.getDisplayName();
         globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
+        setUp();
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         DefaultCamelContext.clearOptions();
+        tearDown();
     }
 
     @Override
@@ -341,7 +341,6 @@ public abstract class CamelTestSupport
         THREAD_SERVICE.set(camelContextService);
     }
 
-    @BeforeEach
     public void setUp() throws Exception {
         LOG.info(SEPARATOR);
         LOG.info("Testing: {} ({})", currentTestName, getClass().getName());
@@ -563,7 +562,6 @@ public abstract class CamelTestSupport
         return System.getProperty(ROUTE_COVERAGE_ENABLED, "false").equalsIgnoreCase("true") || isDumpRouteCoverage();
     }
 
-    @AfterEach
     public void tearDown() throws Exception {
         long time = watch.taken();
 
