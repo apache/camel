@@ -25,7 +25,7 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_
 import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MicrometerContextPolicyTest extends AbstractMicrometerRoutePolicyTest {
+public class ZMicrometerContextOnlyPolicyTest extends AbstractMicrometerRoutePolicyTest {
 
     private static final long DELAY_FOO = 20;
     private static final long DELAY_BAR = 50;
@@ -34,6 +34,7 @@ public class MicrometerContextPolicyTest extends AbstractMicrometerRoutePolicyTe
     protected MicrometerRoutePolicyFactory createMicrometerRoutePolicyFactory() {
         MicrometerRoutePolicyFactory factory = super.createMicrometerRoutePolicyFactory();
         factory.getPolicyConfiguration().setContextEnabled(true);
+        factory.getPolicyConfiguration().setRouteEnabled(false);
         return factory;
     }
 

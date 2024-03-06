@@ -264,6 +264,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
                 factory.getPolicyConfiguration().setRouteEnabled(true);
             }
             factory.setMeterRegistry(meterRegistry);
+            // ensure factory will be started and stopped
+            camelContext.addService(factory);
             camelContext.addRoutePolicyFactory(factory);
         }
 

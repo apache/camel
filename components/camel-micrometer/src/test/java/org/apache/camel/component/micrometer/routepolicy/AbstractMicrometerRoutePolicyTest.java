@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
-import io.micrometer.core.instrument.Clock;
-import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import io.micrometer.core.instrument.util.HierarchicalNameMapper;
-import io.micrometer.jmx.JmxMeterRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
@@ -31,17 +27,22 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected CompositeMeterRegistry meterRegistry;
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
+    protected MeterRegistry meterRegistry;
 
     protected MicrometerRoutePolicyFactory createMicrometerRoutePolicyFactory() {
         MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
         factory.getPolicyConfiguration().setContextEnabled(false);
         return factory;
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (meterRegistry != null) {
+            meterRegistry.clear();
+            meterRegistry.close();
+            meterRegistry = null;
+        }
     }
 
     protected String formatMetricName(String name) {
@@ -50,16 +51,14 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        meterRegistry = new CompositeMeterRegistry();
-        meterRegistry.add(new SimpleMeterRegistry());
-        meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
-
+        meterRegistry = new SimpleMeterRegistry();
         CamelContext context = super.createCamelContext();
         MicrometerRoutePolicyFactory factory = createMicrometerRoutePolicyFactory();
         factory.setCamelContext(context);
         factory.setMeterRegistry(meterRegistry);
         context.addRoutePolicyFactory(factory);
         context.getRegistry().bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
+        context.addService(factory);
         return context;
     }
 
