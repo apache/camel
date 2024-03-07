@@ -262,11 +262,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private boolean fresh;
     private boolean offline;
     private RemoteArtifactDownloadListener remoteArtifactDownloadListener;
-
     private boolean apacheSnapshotsIncluded;
-
     private AtomicInteger customRepositoryCounter = new AtomicInteger(1);
-
     private Settings settings;
 
     public MavenDownloaderImpl() {
@@ -322,7 +319,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         defaultPolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
 
         // process repositories - both from settings.xml and from --repos option. All are subject to
-        // mirrorring and proxying (handled by org.eclipse.aether.RepositorySystem#newResolutionRepositories())
+        // mirroring and proxying (handled by org.eclipse.aether.RepositorySystem#newResolutionRepositories())
         List<RemoteRepository> originalRepositories = configureDefaultRepositories(settings);
 
         remoteRepositories.addAll(repositorySystem.newResolutionRepositories(repositorySystemSession,
