@@ -106,6 +106,23 @@ public class DefaultModelineParser implements ModelineParser {
                     // skip @pom
                     continue;
                 }
+                // in case DEPS uses jbang ${ } style that refer to JVM system properties
+                if (part.contains("${") && part.contains("}")) {
+                    String target = StringHelper.between(part, "${", "}");
+                    String value = StringHelper.before(target, ":", target);
+                    if (target.contains(":")) {
+                        String def = StringHelper.after(target, ":");
+                        value = System.getProperty(value, def);
+                    } else {
+                        String found = System.getProperty(value);
+                        if (found == null) {
+                            throw new IllegalArgumentException(
+                                    "Cannot find JVM system property: " + value + " for dependency: " + part);
+                        }
+                        value = found;
+                    }
+                    part = part.replace("${" + target + "}", value);
+                }
                 CamelContextCustomizer customizer = dep.parseTrait(resource, part);
                 if (customizer != null) {
                     answer.add(customizer);
