@@ -17942,6 +17942,39 @@ An optional certificate alias to use. This is useful when the keystore has multi
       <xs:enumeration value="regexp"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="option">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DEFAULT_PATH_LEAF_TO_NULL"/>
+      <xs:enumeration value="ALWAYS_RETURN_LIST"/>
+      <xs:enumeration value="AS_PATH_LIST"/>
+      <xs:enumeration value="SUPPRESS_EXCEPTIONS"/>
+      <xs:enumeration value="REQUIRE_PROPERTIES"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="scope">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SINGLETON"/>
+      <xs:enumeration value="REQUEST"/>
+      <xs:enumeration value="PROTOTYPE"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="mode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="INJECTING_CONTEXTUAL_NAMESPACE_BINDINGS"/>
+      <xs:enumeration value="WRAPPING_EXTRACTED_TOKEN"/>
+      <xs:enumeration value="UNWRAPPING_EXTRACTED_TOKEN"/>
+      <xs:enumeration value="EXTRACTING_TEXT_CONTENT"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="resultQName">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NUMBER"/>
+      <xs:enumeration value="STRING"/>
+      <xs:enumeration value="BOOLEAN"/>
+      <xs:enumeration value="NODESET"/>
+      <xs:enumeration value="NODE"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:simpleType name="collectionFormat">
     <xs:restriction base="xs:string">
       <xs:enumeration value="csv"/>
