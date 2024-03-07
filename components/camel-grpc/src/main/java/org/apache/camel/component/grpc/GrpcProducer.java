@@ -139,7 +139,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
     protected void initializeChannel() throws Exception {
         NettyChannelBuilder channelBuilder;
 
-        if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getHost()) && configuration.getPort() > 0) {
             LOG.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
             channelBuilder = NettyChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
         } else {
