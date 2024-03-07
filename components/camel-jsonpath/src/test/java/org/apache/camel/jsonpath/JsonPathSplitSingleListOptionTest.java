@@ -19,9 +19,9 @@ package org.apache.camel.jsonpath;
 import java.io.File;
 import java.util.Map;
 
-import com.jayway.jsonpath.Option;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,8 @@ public class JsonPathSplitSingleListOptionTest extends CamelTestSupport {
             public void configure() {
                 // use option to force returning a list even for a single element selected
                 var jsonpath
-                        = expression().jsonpath().option(Option.ALWAYS_RETURN_LIST.name()).expression("$.store.book[0]").end();
+                        = expression().jsonpath().option(JsonPathExpression.Option.ALWAYS_RETURN_LIST)
+                                .expression("$.store.book[0]").end();
 
                 from("direct:start")
                         .split(jsonpath)
