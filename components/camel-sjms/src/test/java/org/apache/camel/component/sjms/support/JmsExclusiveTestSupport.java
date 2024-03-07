@@ -18,23 +18,23 @@ package org.apache.camel.component.sjms.support;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A support class that builds up and tears down an ActiveMQ instance to be used for unit testing.
+ * A support class that builds up and tears down an ActiveMQ instance to be used for unit testing. This is meant for
+ * tests that need exclusive access to the broker, so that they can manage their lifecycle and do other harmful
+ * operations.
  */
-public abstract class JmsTestSupport extends JmsCommonTestSupport {
-    @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+public abstract class JmsExclusiveTestSupport extends JmsCommonTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    protected abstract ArtemisService getService();
+
     @Override
     protected String getBrokerUri() {
-        return service.serviceAddress();
+        return getService().serviceAddress();
     }
 
     /**
@@ -55,7 +55,26 @@ public abstract class JmsTestSupport extends JmsCommonTestSupport {
 
     @Override
     protected void setupFactoryExternal(ActiveMQConnectionFactory factory) {
-        setupFactoryExternal(factory, service);
+        setupFactoryExternal(factory, getService());
+    }
+
+    public void reconnect() throws Exception {
+        reconnect(0);
+    }
+
+    public void reconnect(int waitingMillis) throws Exception {
+        log.info("Closing JMS Session");
+        getSession().close();
+        log.info("Closing JMS Connection");
+        getConnection().stop();
+        log.info("Stopping the ActiveMQ Broker");
+        getService().restart();
+        brokerUri = getService().serviceAddress();
+        Thread.sleep(waitingMillis);
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUri);
+        setupFactoryExternal(connectionFactory);
+
+        connect();
     }
 
 }
