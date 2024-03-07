@@ -518,7 +518,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         // use blocking handler as the task can take longer time to complete
         info.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/info", null, null,
+        platformHttpComponent.addHttpEndpoint("/q/info", "GET", null,
                 "application/json", null);
     }
 
@@ -592,7 +592,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         live.handler(new BlockingHandlerDecorator(handler, true));
         ready.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/health", null, null,
+        platformHttpComponent.addHttpEndpoint("/q/health", "GET", null,
                 "application/json", null);
     }
 
@@ -609,7 +609,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         Handler<RoutingContext> handler = (Handler<RoutingContext>) jolokiaPlugin.getHandler();
         jolokia.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/jolokia", null, null,
+        platformHttpComponent.addHttpEndpoint("/q/jolokia", "GET,POST", null,
                 "text/plain,application/json", null);
     }
 
@@ -856,7 +856,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         dev.handler(new BlockingHandlerDecorator(handler, true));
         devSub.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/dev", null, null,
+        platformHttpComponent.addHttpEndpoint("/q/dev", "GET", null,
                 "text/plain,application/json", null);
     }
 
