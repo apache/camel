@@ -54,6 +54,9 @@ public class RestOpenApiLicenseInfoTest {
         RestConfiguration restConfiguration = context.getRestConfiguration();
         RestOpenApiProcessor processor
                 = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        processor.setCamelContext(context);
+        processor.start();
+
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 

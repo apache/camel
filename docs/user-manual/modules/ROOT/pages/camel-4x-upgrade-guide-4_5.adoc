@@ -172,6 +172,10 @@ camel.metrics.routePolicyLevel=route
 Dropped support for the old Swagger 2.0 spec. Only OpenAPI v3 specs is supported now.
 Fixed maven dependencies to be JakartaEE compatible.
 
+When using Rest DSL and have `api-doc` enabled via `camel-rest` and `camel-openapi-java`, then
+the OpenAPI specification is now generated once during startup instead of on-demand when a client
+calls the `/api-doc` endpoint.
+
 === camel-platform-http-vertx
 
 Added a Cookie Handler allowing the addition, retrieval and expiry of Cookies.

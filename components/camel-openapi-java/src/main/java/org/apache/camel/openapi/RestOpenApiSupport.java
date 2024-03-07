@@ -105,22 +105,17 @@ public class RestOpenApiSupport {
     }
 
     static void setupXForwardedHeaders(OpenAPI openApi, Map<String, Object> headers) {
-
         String basePath = getBasePathFromOasDocument(openApi);
-
         String host = (String) headers.get(HEADER_HOST);
-
         String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
 
         if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
             basePath = URISupport.joinPaths(forwardedPrefix, basePath);
         }
-
         String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
         if (ObjectHelper.isNotEmpty(forwardedHost)) {
             host = forwardedHost;
         }
-
         String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
         if (openApi.getServers() != null) {
             openApi.getServers().clear();
@@ -290,12 +285,17 @@ public class RestOpenApiSupport {
                         () -> new IllegalArgumentException("Cannot find camel-openapi-java on classpath."));
     }
 
+    public void setupXForwardHeaders(RestApiResponseAdapter response, Exchange exchange) {
+        setupXForwardedHeaders(response.getOpenApi(), exchange.getMessage().getHeaders());
+    }
+
     public void renderResourceListing(
             CamelContext camelContext, RestApiResponseAdapter response,
             BeanConfig openApiConfig, boolean json,
-            Map<String, Object> headers, ClassResolver classResolver,
+            ClassResolver classResolver,
             RestConfiguration configuration)
             throws Exception {
+
         LOG.trace("renderResourceListing");
 
         if (cors) {
@@ -303,7 +303,6 @@ public class RestOpenApiSupport {
         }
 
         List<RestDefinition> rests = getRestDefinitions(camelContext);
-
         if (rests != null) {
             final Map<String, Object> apiProperties = configuration.getApiProperties() != null
                     ? configuration.getApiProperties() : new HashMap<>();
@@ -311,14 +310,14 @@ public class RestOpenApiSupport {
             String defaultValue = json ? "application/json" : "text/yaml";
             response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties.getOrDefault(key, defaultValue));
             // read the rest-dsl into openApi model
-            OpenAPI openApi = reader.read(
-                    camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
-            if (configuration.isUseXForwardHeaders()) {
-                setupXForwardedHeaders(openApi, headers);
+            OpenAPI openApi = response.getOpenApi();
+            if (openApi == null) {
+                openApi = reader.read(camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
+                if (!configuration.isApiVendorExtension()) {
+                    clearVendorExtensions(openApi);
+                }
             }
-            if (!configuration.isApiVendorExtension()) {
-                clearVendorExtensions(openApi);
-            }
+            response.setOpenApi(openApi);
             byte[] bytes = getFromOpenAPI(openApi, openApiConfig, byte[].class, json);
             int len = bytes.length;
             response.setHeader(Exchange.CONTENT_LENGTH, Integer.toString(len));
