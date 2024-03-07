@@ -60,7 +60,7 @@ public interface BedrockEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.BedrockOperations&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
@@ -69,7 +69,7 @@ public interface BedrockEndpointBuilderFactory {
          * @return the dsl builder
          */
         default BedrockEndpointBuilder operation(
-                org.apache.camel.component.aws2.bedrock.BedrockOperations operation) {
+                org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -77,7 +77,7 @@ public interface BedrockEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.BedrockOperations&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer

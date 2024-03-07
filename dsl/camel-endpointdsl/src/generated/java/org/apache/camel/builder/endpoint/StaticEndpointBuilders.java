@@ -1508,6 +1508,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BedrockEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent-runtime:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder("aws-bedrock-agent-runtime", path);
+    }
+    /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent-runtime:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
      * 

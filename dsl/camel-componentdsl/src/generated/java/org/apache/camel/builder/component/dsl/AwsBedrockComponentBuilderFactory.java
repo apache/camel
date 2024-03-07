@@ -20,7 +20,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.aws2.bedrock.BedrockComponent;
+import org.apache.camel.component.aws2.bedrock.runtime.BedrockComponent;
 
 /**
  * Invoke Model of AWS Bedrock service.
@@ -54,7 +54,7 @@ public interface AwsBedrockComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.BedrockConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -62,7 +62,7 @@ public interface AwsBedrockComponentBuilderFactory {
          * @return the dsl builder
          */
         default AwsBedrockComponentBuilder configuration(
-                org.apache.camel.component.aws2.bedrock.BedrockConfiguration configuration) {
+                org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -108,7 +108,7 @@ public interface AwsBedrockComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.BedrockOperations&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -116,7 +116,7 @@ public interface AwsBedrockComponentBuilderFactory {
          * @return the dsl builder
          */
         default AwsBedrockComponentBuilder operation(
-                org.apache.camel.component.aws2.bedrock.BedrockOperations operation) {
+                org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -445,10 +445,10 @@ public interface AwsBedrockComponentBuilderFactory {
         protected BedrockComponent buildConcreteComponent() {
             return new BedrockComponent();
         }
-        private org.apache.camel.component.aws2.bedrock.BedrockConfiguration getOrCreateConfiguration(
-                org.apache.camel.component.aws2.bedrock.BedrockComponent component) {
+        private org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.bedrock.runtime.BedrockComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.aws2.bedrock.BedrockConfiguration());
+                component.setConfiguration(new org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration());
             }
             return component.getConfiguration();
         }
@@ -458,10 +458,10 @@ public interface AwsBedrockComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((BedrockComponent) component).setConfiguration((org.apache.camel.component.aws2.bedrock.BedrockConfiguration) value); return true;
+            case "configuration": ((BedrockComponent) component).setConfiguration((org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration) value); return true;
             case "lazyStartProducer": ((BedrockComponent) component).setLazyStartProducer((boolean) value); return true;
             case "modelId": getOrCreateConfiguration((BedrockComponent) component).setModelId((java.lang.String) value); return true;
-            case "operation": getOrCreateConfiguration((BedrockComponent) component).setOperation((org.apache.camel.component.aws2.bedrock.BedrockOperations) value); return true;
+            case "operation": getOrCreateConfiguration((BedrockComponent) component).setOperation((org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((BedrockComponent) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((BedrockComponent) component).setPojoRequest((boolean) value); return true;
             case "profileCredentialsName": getOrCreateConfiguration((BedrockComponent) component).setProfileCredentialsName((java.lang.String) value); return true;
