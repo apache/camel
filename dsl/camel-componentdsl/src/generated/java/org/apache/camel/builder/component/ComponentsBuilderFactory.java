@@ -163,6 +163,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsBedrockComponentBuilderFactory.awsBedrock();
     }
     /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsBedrockAgentRuntimeComponentBuilderFactory.AwsBedrockAgentRuntimeComponentBuilder awsBedrockAgentRuntime() {
+        return org.apache.camel.builder.component.dsl.AwsBedrockAgentRuntimeComponentBuilderFactory.awsBedrockAgentRuntime();
+    }
+    /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
      * 
