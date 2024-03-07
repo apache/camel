@@ -17,29 +17,54 @@
 package org.apache.camel.openapi;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.Exchange;
 
-public class ExchangeRestApiResponseAdapter implements RestApiResponseAdapter {
+/**
+ * A {@link RestApiResponseAdapter} that caches the response.
+ */
+public class DefaultRestApiResponseAdapter implements RestApiResponseAdapter {
 
-    private final Exchange exchange;
+    private final Map<String, String> headers = new LinkedHashMap<>();
+    private byte[] body;
+    private boolean noContent;
+    private OpenAPI openApi;
 
-    public ExchangeRestApiResponseAdapter(Exchange exchange) {
-        this.exchange = exchange;
+    public OpenAPI getOpenApi() {
+        return openApi;
+    }
+
+    public void setOpenApi(OpenAPI openApi) {
+        this.openApi = openApi;
     }
 
     @Override
     public void setHeader(String name, String value) {
-        exchange.getIn().setHeader(name, value);
+        headers.put(name, value);
     }
 
     @Override
     public void writeBytes(byte[] bytes) throws IOException {
-        exchange.getIn().setBody(bytes);
+        this.body = bytes;
     }
 
     @Override
     public void noContent() {
-        exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+        this.noContent = true;
+    }
+
+    public void copyResult(Exchange exchange) {
+        if (!headers.isEmpty()) {
+            exchange.getMessage().getHeaders().putAll(headers);
+        }
+        if (body != null) {
+            exchange.getMessage().setBody(body);
+        }
+        if (noContent) {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+        }
     }
 }

@@ -174,9 +174,8 @@ is using OAuth security with permitted scopes of read and write pets.
 == JSon or Yaml
 
 The camel-openapi-java module supports both JSon and Yaml out of the
-box. You can specify in the request url what you want returned by using
-`/openapi.json` or `/openapi.yaml` for either one. If none is specified, then
-the HTTP Accept header is used to detect if json or yaml can be
+box. You can specify in the request url what you want by using `.json` or `.yaml` as suffix in the context-path
+If none is specified, then the HTTP Accept header is used to detect if json or yaml can be
 accepted. If either both are accepted or none was set as accepted, then
 json is returned as the default format.
 
