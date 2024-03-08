@@ -119,6 +119,14 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
+    @CommandLine.Option(names = { "--maven-central-enabled" },
+            description = "Whether downloading JARs from Maven Central repository is enabled")
+    boolean mavenCentralEnabled = true;
+
+    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
+            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    boolean mavenApacheSnapshotEnabled = true;
+
     @CommandLine.Option(names = { "--main-classname" },
                         description = "The class name of the Camel Main application class",
                         defaultValue = "CamelApplication")
