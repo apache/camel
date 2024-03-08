@@ -18,5 +18,7 @@ package org.apache.camel.component.aws2.bedrock.agent;
 
 public enum BedrockAgentOperations {
 
-    startIngestionJob
+    startIngestionJob,
+
+    listIngestionJobs
 }

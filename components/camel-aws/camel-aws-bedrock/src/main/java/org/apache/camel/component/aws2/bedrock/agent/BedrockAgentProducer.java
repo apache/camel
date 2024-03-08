@@ -27,9 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
+import software.amazon.awssdk.services.bedrockagent.model.ListIngestionJobsRequest;
+import software.amazon.awssdk.services.bedrockagent.model.ListIngestionJobsResponse;
 import software.amazon.awssdk.services.bedrockagent.model.StartIngestionJobRequest;
 import software.amazon.awssdk.services.bedrockagent.model.StartIngestionJobResponse;
-import software.amazon.awssdk.services.bedrockagentruntime.model.*;
 
 /**
  * A Producer which sends messages to the Amazon Bedrock Agent Service <a href="http://aws.amazon.com/bedrock/">AWS
@@ -49,6 +50,9 @@ public class BedrockAgentProducer extends DefaultProducer {
         switch (determineOperation(exchange)) {
             case startIngestionJob:
                 startIngestionJob(getEndpoint().getBedrockAgentClient(), exchange);
+                break;
+            case listIngestionJobs:
+                listIngestionJobs(getEndpoint().getBedrockAgentClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -95,7 +99,7 @@ public class BedrockAgentProducer extends DefaultProducer {
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
-                prepareResponse(result, message);
+                prepareIngestionJobResponse(result, message);
             }
         } else {
             String knowledgeBaseId;
@@ -123,12 +127,64 @@ public class BedrockAgentProducer extends DefaultProducer {
             builder.dataSourceId(dataSourceId);
             StartIngestionJobResponse output = bedrockAgentClient.startIngestionJob(builder.build());
             Message message = getMessageForResponse(exchange);
-            prepareResponse(output, message);
+            prepareIngestionJobResponse(output, message);
         }
     }
 
-    private void prepareResponse(StartIngestionJobResponse result, Message message) {
+
+    private void listIngestionJobs(BedrockAgentClient bedrockAgentClient, Exchange exchange)
+            throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof ListIngestionJobsRequest) {
+                ListIngestionJobsResponse result;
+                try {
+                    result = bedrockAgentClient.listIngestionJobs((ListIngestionJobsRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Start Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                prepareListIngestionJobsResponse(result, message);
+            }
+        } else {
+            String knowledgeBaseId;
+            String dataSourceId;
+            ListIngestionJobsRequest.Builder builder = ListIngestionJobsRequest.builder();
+            if (ObjectHelper.isEmpty(getConfiguration().getKnowledgeBaseId())) {
+                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID))) {
+                    knowledgeBaseId = exchange.getIn().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID, String.class);
+                } else {
+                    throw new IllegalArgumentException("KnowledgeBaseId must be specified");
+                }
+            } else {
+                knowledgeBaseId = getConfiguration().getKnowledgeBaseId();
+            }
+            if (ObjectHelper.isEmpty(getConfiguration().getDataSourceId())) {
+                if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.DATASOURCE_ID))) {
+                    dataSourceId = exchange.getIn().getHeader(BedrockAgentConstants.DATASOURCE_ID, String.class);
+                } else {
+                    throw new IllegalArgumentException("DataSourceId must be specified");
+                }
+            } else {
+                dataSourceId = getConfiguration().getDataSourceId();
+            }
+            builder.knowledgeBaseId(knowledgeBaseId);
+            builder.dataSourceId(dataSourceId);
+            ListIngestionJobsResponse output = bedrockAgentClient.listIngestionJobs(builder.build());
+            Message message = getMessageForResponse(exchange);
+            prepareListIngestionJobsResponse(output, message);
+        }
+    }
+
+    private void prepareIngestionJobResponse(StartIngestionJobResponse result, Message message) {
         message.setBody(result.ingestionJob().ingestionJobId());
+    }
+
+    private void prepareListIngestionJobsResponse(ListIngestionJobsResponse result, Message message) {
+        if (result.hasIngestionJobSummaries()) {
+            message.setBody(result.ingestionJobSummaries());
+        }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
