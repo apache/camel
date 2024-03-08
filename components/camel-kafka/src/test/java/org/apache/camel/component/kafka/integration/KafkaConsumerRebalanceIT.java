@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerRebalanceIT extends BaseKafkaTestSupport {
     private static final String TOPIC = "offset-rebalance";
 
     private final CountDownLatch messagesLatch = new CountDownLatch(1);

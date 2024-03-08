@@ -28,7 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class KafkaConsumerBatchSizeIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerBatchSizeIT extends BaseKafkaTestSupport {
 
     public static final String TOPIC = "test-batch";
 

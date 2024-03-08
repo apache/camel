@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This IT is based on {@link KafkaConsumerFullIT}
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KafkaConsumerStopIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerStopIT extends BaseKafkaTestSupport {
 
     public static final String TOPIC = "test-full";
 
