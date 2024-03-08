@@ -155,7 +155,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.8.1")
+                        defaultValue = "3.8.2")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
