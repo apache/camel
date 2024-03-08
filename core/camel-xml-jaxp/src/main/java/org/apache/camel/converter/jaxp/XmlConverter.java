@@ -57,6 +57,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPathConstants;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -146,6 +147,17 @@ public class XmlConverter {
      */
     @Converter(order = 1)
     public QName toQName(String str) {
+        if ("NUMBER".equalsIgnoreCase(str)) {
+            return XPathConstants.NUMBER;
+        } else if ("STRING".equalsIgnoreCase(str)) {
+            return XPathConstants.STRING;
+        } else if ("BOOLEAN".equalsIgnoreCase(str)) {
+            return XPathConstants.BOOLEAN;
+        } else if ("NODESET".equalsIgnoreCase(str)) {
+            return XPathConstants.NODESET;
+        } else if ("NODE".equalsIgnoreCase(str)) {
+            return XPathConstants.NODE;
+        }
         return QName.valueOf(str);
     }
 

@@ -40,7 +40,7 @@ public class GrpcConfiguration {
 
     @UriPath
     @Metadata(required = true)
-    private int port;
+    private int port = -1;
 
     @UriPath
     @Metadata(required = true)

@@ -105,22 +105,17 @@ public class RestOpenApiSupport {
     }
 
     static void setupXForwardedHeaders(OpenAPI openApi, Map<String, Object> headers) {
-
         String basePath = getBasePathFromOasDocument(openApi);
-
         String host = (String) headers.get(HEADER_HOST);
-
         String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
 
         if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
             basePath = URISupport.joinPaths(forwardedPrefix, basePath);
         }
-
         String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
         if (ObjectHelper.isNotEmpty(forwardedHost)) {
             host = forwardedHost;
         }
-
         String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
         if (openApi.getServers() != null) {
             openApi.getServers().clear();
@@ -146,13 +141,11 @@ public class RestOpenApiSupport {
                         parseVariables(openapi.getServers().get(0).getUrl(),
                                 openapi.getServers().get(0)));
                 host = serverUrl.getHost();
-
             } catch (MalformedURLException e) {
-                LOG.info("error when parsing OpenApi 3.0 doc server url", e);
+                LOG.debug("Error when parsing OpenApi 3.0 doc server url. This exception is ignored.", e);
             }
         }
         return host;
-
     }
 
     public static String getBasePathFromOasDocument(final OpenAPI openapi) {
@@ -292,12 +285,17 @@ public class RestOpenApiSupport {
                         () -> new IllegalArgumentException("Cannot find camel-openapi-java on classpath."));
     }
 
+    public void setupXForwardHeaders(RestApiResponseAdapter response, Exchange exchange) {
+        setupXForwardedHeaders(response.getOpenApi(), exchange.getMessage().getHeaders());
+    }
+
     public void renderResourceListing(
             CamelContext camelContext, RestApiResponseAdapter response,
             BeanConfig openApiConfig, boolean json,
-            Map<String, Object> headers, ClassResolver classResolver,
+            ClassResolver classResolver,
             RestConfiguration configuration)
             throws Exception {
+
         LOG.trace("renderResourceListing");
 
         if (cors) {
@@ -305,7 +303,6 @@ public class RestOpenApiSupport {
         }
 
         List<RestDefinition> rests = getRestDefinitions(camelContext);
-
         if (rests != null) {
             final Map<String, Object> apiProperties = configuration.getApiProperties() != null
                     ? configuration.getApiProperties() : new HashMap<>();
@@ -313,14 +310,14 @@ public class RestOpenApiSupport {
             String defaultValue = json ? "application/json" : "text/yaml";
             response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties.getOrDefault(key, defaultValue));
             // read the rest-dsl into openApi model
-            OpenAPI openApi = reader.read(
-                    camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
-            if (configuration.isUseXForwardHeaders()) {
-                setupXForwardedHeaders(openApi, headers);
+            OpenAPI openApi = response.getOpenApi();
+            if (openApi == null) {
+                openApi = reader.read(camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
+                if (!configuration.isApiVendorExtension()) {
+                    clearVendorExtensions(openApi);
+                }
             }
-            if (!configuration.isApiVendorExtension()) {
-                clearVendorExtensions(openApi);
-            }
+            response.setOpenApi(openApi);
             byte[] bytes = getFromOpenAPI(openApi, openApiConfig, byte[].class, json);
             int len = bytes.length;
             response.setHeader(Exchange.CONTENT_LENGTH, Integer.toString(len));
@@ -336,13 +333,7 @@ public class RestOpenApiSupport {
 
     public static <T extends Object> T getFromOpenAPI(OpenAPI openApi, BeanConfig config, Class<T> type, boolean json) {
         if (config.isOpenApi2()) {
-            OpenAPI3to2 converter = new OpenAPI3to2();
-            converter.convertOpenAPI3to2(openApi);
-            byte[] bytes = converter.getSwaggerAsJson();
-            if (type.equals(String.class)) {
-                return type.cast(new String(bytes, StandardCharsets.UTF_8));
-            }
-            return type.cast(bytes);
+            throw new IllegalArgumentException("OpenAPI 2.x is not supported");
         } else {
             ObjectMapper mapper = json ? config.isOpenApi31() ? Json31.mapper() : Json.mapper()
                     : config.isOpenApi31() ? Yaml31.mapper() : Yaml.mapper();

@@ -6,11 +6,11 @@ from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
 
 image::eip/MessageDispatcher.gif[image]
 
-In Camel the Message Dispatcher can be achieved in different ways such as:
+In Apache Camel, the Message Dispatcher can be achieved in different ways such as:
 
 * You can use a component like xref:ROOT:jms-component.adoc[JMS] with selectors
 to implement a xref:selective-consumer.adoc[Selective Consumer] as the Message Dispatcher implementation.
 
 * Or you can use a xref:message-endpoint.adoc[Message Endpoint] as the Message Dispatcher itself, or
-  combine this with the xref:choice-eip.adoc[Content Based Router] as the Message Dispatcher.
+  combine this with the xref:choice-eip.adoc[Content-Based Router] as the Message Dispatcher.
 

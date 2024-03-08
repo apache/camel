@@ -27,12 +27,12 @@ include::partial$language-options.adoc[]
 
 == Namespaces
 
-You can easily use namespaces with XPath expressions using the
-`Namespaces` helper class.
+You can use namespaces with XPath expressions using the `Namespaces` helper class.
 
 == Variables
 
-Variables in XPath is defined in different namespaces. The default
+Variables in XPath are defined in different namespaces.
+The default
 namespace is `\http://camel.apache.org/schema/spring`.
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -53,14 +53,14 @@ Camel will resolve variables according to either:
 
 === Namespace given
 
-If the namespace is given then Camel is instructed exactly what to
+If the namespace is given, then Camel is instructed exactly what to
 return. However, when resolving Camel will try to
 resolve a header with the given local part first, and return it. If the
-local part has the value *body* then the body is returned instead.
+local part has the value *body,* then the body is returned instead.
 
 === No namespace given
 
-If there is no namespace given then Camel resolves only based on the
+If there is no namespace given, then Camel resolves only based on the
 local part. Camel will try to resolve a variable in the following steps:
 
 * from `variables` that has been set using the `variable(name, value)` fluent builder
@@ -91,7 +91,7 @@ Here's an example showing some of these functions in use.
 === Functions example
 
 If you prefer to configure your routes in your Spring
-XML file then you can use XPath expressions as follows
+XML file, then you can use XPath expressions as follows
 
 [source,xml]
 ----
@@ -115,18 +115,19 @@ XML file then you can use XPath expressions as follows
 ----
 
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
-the XPath expression for easier namespace based XPath expressions.
+the XPath expression for easier namespace-based XPath expressions.
 
-== Stream based message bodies
+== Stream-based message bodies
 
 If the message body is stream based, which means the input it receives
 is submitted to Camel as a stream. That means you will only be able to
-read the content of the stream *once*. So often when you use
-xref:xpath-language.adoc[XPath] as xref:xpath-language.adoc[Message Filter] or
-Content Based Router then you need to
-access the data multiple times, and you should use
-Stream Caching or convert the message body to
-a `String` prior which is safe to be re-read multiple times.
+read the content of the stream *once*.
+
+You often need to access the data multiple times when you use
+xref:xpath-language.adoc[XPath] as a xref:xpath-language.adoc[Message Filter] or
+Content-Based Router.
+Then, you should use Stream Caching or convert the message body to
+a `String` prior, which is safe to be re-read multiple times.
 
 [source,java]
 ----
@@ -142,11 +143,11 @@ from("queue:foo").
   otherwise().to("queue:others");
 ----
 
-== Setting result type
+== Setting a result type
 
 The XPath expression will return a result type using
 native XML objects such as `org.w3c.dom.NodeList`. However, many times you
-want a result type to be a `String`. To do this you have to instruct the
+want a result type to be a `String`. To do this, you have to instruct the
 XPath which result type to use.
 
 In Java DSL:
@@ -179,14 +180,14 @@ type, so the concat function works.
 == Using XPath on Headers
 
 Some users may have XML stored in a header. To apply an XPath to a
-header's value you can do this by defining the 'headerName' attribute.
+header's value, you can do this by defining the 'headerName' attribute.
 
 [source,xml]
 ----
 <xpath headerName="invoiceDetails">/invoice/@orderType = 'premium'</xpath>
 ----
 
-And in Java DSL you specify the headerName as the 2nd parameter as shown:
+And in Java DSL you specify the headerName as the second parameter as shown:
 
 [source,java]
 ----
@@ -222,7 +223,7 @@ And in XML
 == Using namespaces
 
 If you have a standard set of namespaces you wish to work with and wish
-to share them across many XPath expressions you can use the
+to share them across many XPath expressions, you can use the
 `org.apache.camel.support.builder.Namespaces` when using Java DSL as shown:
 
 [source,java]
@@ -235,10 +236,10 @@ from("direct:start")
 ----
 
 Notice how the namespaces are provided to `xpath` with the `ns` variable
-that are passed in as the 2nd parameter.
+that are passed in as the second parameter.
 
 Each namespace is a key=value pair, where the prefix is the key.
-In the XPath expression then the namespace is used by its prefix, eg:
+In the XPath expression then the namespace is used by its prefix, e.g.:
 
 [source,xpath]
 ----
@@ -254,7 +255,7 @@ Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
                      .add("b", "http://acme.com/beer");
 ----
 
-When using namespaces in XML DSL then its different, as you setup the namespaces
+When using namespaces in XML DSL then its different, as you set up the namespaces
 in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
 
 In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,
@@ -361,7 +362,7 @@ a custom XPathFactory to use.
 
 This unit test shows how this can be done to use Saxon instead:
 
-Camel will log at `INFO` level if it uses a non default XPathFactory
+Camel will log at `INFO` level if it uses a non-default `XPathFactory`
 such as:
 
 [source]
@@ -370,7 +371,7 @@ XPathBuilder  INFO  Using system property javax.xml.xpath.XPathFactory:http://sa
                     net.sf.saxon.xpath.XPathFactoryImpl when creating XPathFactory
 ----
 
-To use Apache Xerces you can configure the system property
+To use Apache Xerces, you can configure the system property
 
 [source]
 ----
@@ -379,7 +380,7 @@ To use Apache Xerces you can configure the system property
 
 === Enabling Saxon from XML DSL
 
-Similarly to Java DSL, to enable Saxon from XML DSL you have three
+Similarly to Java DSL, to enable Saxon from XML DSL, you have three
 options:
 
 Referring to a custom factory:
@@ -414,15 +415,15 @@ And the recommended approach is to set `saxon=true` as shown:
 
 Many XPath-related issues that users frequently face are
 linked to the usage of namespaces. You may have some misalignment
-between the namespaces present in your message, and those that your XPath
+between the namespaces present in your message and those that your XPath
 expression is aware of or referencing. XPath predicates or expressions
 that are unable to locate the XML elements and attributes due to
-namespaces issues may simply look like _they are not working_, when in
+namespaces issues may look like _they are not working_, when in
 reality all there is to it is a lack of namespace definition.
 
 Namespaces in XML are completely necessary, and while we would love to
 simplify their usage by implementing some magic or voodoo to wire
-namespaces automatically, truth is that any action down this path would
+namespaces automatically, the truth is that any action down this path would
 disagree with the standards and would greatly hinder interoperability.
 
 Therefore, the utmost we can do is assist you in debugging such issues
@@ -455,13 +456,13 @@ in which case the logging will occur on the INFO level
 
 Camel is able to discover and dump all namespaces present on every
 incoming message before evaluating an XPath expression, providing all
-the richness of information you need to help you analyse and pinpoint
+the richness of information you need to help you analyze and pinpoint
 possible namespace issues.
 
 To achieve this, it in turn internally uses another specially tailored
 XPath expression to extract all namespace mappings that appear in the
 message, displaying the prefix and the full namespace URI(s) for each
-individual mapping.
+mapping.
 
 Some points to take into account:
 
@@ -503,10 +504,10 @@ xmlns:b=[http://apache.org/camelA, http://apache.org/camelB]}
 
 == Loading script from external resource
 
-You can externalize the script and have Camel load it from a resource
+You can externalize the script and have Apache Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
-eg to refer to a file on the classpath you can do:
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 ----
@@ -515,7 +516,7 @@ eg to refer to a file on the classpath you can do:
 
 == Transforming a XML message
 
-For basic XML transformation where you have a fixed structure you can represent with a combination of using
+For basic XML transformation where you have a fixed structure, you can represent with a combination of using
 Camel simple and XPath language as:
 
 Given this XML body
@@ -561,7 +562,7 @@ from("direct:start")
 Notice how we use `${xpath(exp}` syntax in the simple template to use xpath that will be evaluated on the message body,
 to extract the content to be used in the output (see previous for output).
 
-Since the simple language can output anything you can also use this to output in plain text or JSon etc.
+Since the simple language can output anything, you can also use this to output in plain text or JSon, etc.
 
 [source,java]
 ----
@@ -572,12 +573,11 @@ from("direct:start")
 
 == Dependencies
 
-To use XPath in your camel routes you need to add the dependency on
-*camel-xpath* which implements the XPath language.
+To use XPath in your camel routes, you need to add the dependency on
+*camel-xpath*, which implements the XPath language.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 --------------------------------------

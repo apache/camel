@@ -51,6 +51,7 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             server.setMaxBodySize(configuration.getMaxBodySize());
         }
         server.setUseGlobalSslContextParameters(configuration.isUseGlobalSslContextParameters());
+        server.setInfoEnabled(configuration.isInfoEnabled());
         server.setDevConsoleEnabled(configuration.isDevConsoleEnabled());
         server.setHealthCheckEnabled(configuration.isHealthCheckEnabled());
         server.setJolokiaEnabled(configuration.isJolokiaEnabled());

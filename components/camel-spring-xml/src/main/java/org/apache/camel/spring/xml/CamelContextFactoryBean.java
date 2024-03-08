@@ -517,7 +517,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     protected SpringCamelContext createContext() {
         SpringCamelContext ctx = newCamelContext();
         ctx.setApplicationContext(getApplicationContext());
-        ctx.setName(getId());
+        ctx.getCamelContextExtension().setName(getId());
 
         return ctx;
     }

@@ -22,6 +22,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.platform.http.cookie.CookieConfiguration;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -72,6 +73,15 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     @UriParam(label = "consumer",
               description = "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
     private boolean useStreaming;
+
+    @UriParam(label = "consumer", description = "The properties set on a Cookies when a Cookie is added via the"
+                                                + " Cookie Handler (currently only supported by camel-platform-http-vertx)")
+    private CookieConfiguration cookieConfiguration = new CookieConfiguration();
+
+    @UriParam(label = "consumer",
+              description = "Whether to enable the Cookie Handler that allows Cookie addition, expiry, and retrieval"
+                            + " (currently only supported by camel-platform-http-vertx)")
+    private boolean useCookieHandler;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -177,6 +187,22 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
+    }
+
+    public CookieConfiguration getCookieConfiguration() {
+        return cookieConfiguration;
+    }
+
+    public void setCookieConfiguration(CookieConfiguration cookieConfiguration) {
+        this.cookieConfiguration = cookieConfiguration;
+    }
+
+    public boolean isUseCookieHandler() {
+        return useCookieHandler;
+    }
+
+    public void setUseCookieHandler(boolean useCookieHandler) {
+        this.useCookieHandler = useCookieHandler;
     }
 
     PlatformHttpEngine getOrCreateEngine() {

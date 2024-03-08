@@ -138,9 +138,9 @@
         <jaxb-core-version>4.0.4</jaxb-core-version>
         <jaxb-impl-version>4.0.4</jaxb-impl-version>
         <jaxb-osgi-version>4.0.4</jaxb-osgi-version>
-        <jaxb-xjc-version>4.0.4</jaxb-xjc-version>
+        <jaxb-xjc-version>4.0.5</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.4</jaxb-jxc-version>
-        <groovy-version>4.0.18</groovy-version>
+        <groovy-version>4.0.19</groovy-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
 
@@ -253,11 +253,13 @@
                                     <exclude>**/*.cer</exclude>
                                     <exclude>**/*.chtml</exclude>
                                     <exclude>**/*.csv</exclude>
+                                    <exclude>**/*.gif</exclude>
                                     <exclude>**/*.gpg</exclude>
                                     <exclude>**/*.graphql*</exclude>
                                     <exclude>**/*.ics</exclude>
                                     <exclude>**/*.joor</exclude>
                                     <exclude>**/*.jpeg</exclude>
+                                    <exclude>**/*.jpg</exclude>
                                     <exclude>**/*.jslt</exclude>
                                     <exclude>**/*.key</exclude>
                                     <exclude>**/*.keystore</exclude>

@@ -144,9 +144,14 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
         List<ComponentModel> models = new ArrayList<>();
 
-        for (File file : jsonDir.listFiles()) {
-            BaseModel<?> model = JsonMapper.generateModel(file.toPath());
-            models.add((ComponentModel) model);
+        File[] files = jsonDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                BaseModel<?> model = JsonMapper.generateModel(file.toPath());
+                models.add((ComponentModel) model);
+            }
+        } else {
+            throw new IllegalStateException("Error listing directory: " + jsonDir);
         }
         models.sort((o1, o2) -> o1.getScheme().compareToIgnoreCase(o2.getScheme()));
 

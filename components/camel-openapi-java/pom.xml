@@ -35,8 +35,6 @@
     <properties>
         <firstVersion>3.1.0</firstVersion>
         <label>rest,api</label>
-
-
         <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
@@ -54,6 +52,37 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-tooling-util</artifactId>
+        </dependency>
+
+        <!-- openapi -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core-jakarta</artifactId>
+            <version>${swagger-openapi3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models-jakarta</artifactId>
+            <version>${swagger-openapi3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.parser.v3</groupId>
+            <artifactId>swagger-parser</artifactId>
+            <version>${swagger-openapi3-java-parser-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.parser.v3</groupId>
+                    <artifactId>swagger-parser-v2-converter</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-models</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- json -->
@@ -77,35 +106,6 @@
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>${swagger-openapi3-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.parser.v3</groupId>
-            <artifactId>swagger-parser</artifactId>
-            <version>${swagger-openapi3-java-parser-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-core</artifactId>
-                </exclusion>
-            </exclusions>        
-        </dependency>
-
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-core-jakarta</artifactId>
-            <version>${swagger-openapi3-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-models-jakarta</artifactId>
-                </exclusion>
-            </exclusions>  
-        </dependency>
-
 
         <!-- servlet api -->
         <dependency>

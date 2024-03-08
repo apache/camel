@@ -32,6 +32,7 @@ public class MicrometerRoutePolicyConfigrationTest extends AbstractMicrometerRou
     protected MicrometerRoutePolicyFactory createMicrometerRoutePolicyFactory() {
         MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
         MicrometerRoutePolicyConfiguration policyConfiguration = new MicrometerRoutePolicyConfiguration();
+        policyConfiguration.setContextEnabled(false);
         policyConfiguration.setExchangesSucceeded(false);
         policyConfiguration.setExchangesFailed(false);
         policyConfiguration.setExchangesTotal(false);

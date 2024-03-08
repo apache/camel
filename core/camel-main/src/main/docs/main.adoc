@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 117 options, which are listed below.
+The camel.main supports 116 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -32,9 +32,6 @@ The camel.main supports 117 options, which are listed below.
 | *camel.main.autoConfiguration{zwsp}SystemPropertiesEnabled* | Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D camel.main.shutdown-timeout=5. Note that JVM system properties take precedence over OS environment variables. This option is default enabled. | true | boolean
 | *camel.main.autoStartup* | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes are started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up. | true | boolean
 | *camel.main.autowiredEnabled* | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. Default is true. | true | boolean
-| *camel.main.backlogTracing* | Sets whether backlog tracing is enabled or not. Default is false. | false | boolean
-| *camel.main.backlogTracing{zwsp}Standby* | Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available. Then the backlog tracer can be enabled later at runtime via JMX or via Java API. Default is false. | false | boolean
-| *camel.main.backlogTracing{zwsp}Templates* | Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this on increases the verbosity of tracing by including events from internal routes in the templates or kamelets. Default is false. | false | boolean
 | *camel.main.basePackageScan* | Package name to use as base (offset) for classpath scanning of RouteBuilder , org.apache.camel.TypeConverter , CamelConfiguration classes, and also classes annotated with org.apache.camel.Converter , or org.apache.camel.BindToRegistry . If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode. |  | String
 | *camel.main.basePackageScan{zwsp}Enabled* | Whether base package scan is enabled. | true | boolean
 | *camel.main.beanIntrospection{zwsp}ExtendedStatistics* | Sets whether bean introspection uses extended statistics. The default is false. | false | boolean
@@ -76,6 +73,8 @@ The camel.main supports 117 options, which are listed below.
 | *camel.main.jmxEnabled* | Enable JMX in your Camel application. | true | boolean
 | *camel.main.jmxManagementMBeans{zwsp}Level* | Sets the mbeans registration level. The default value is Default. | Default | ManagementMBeansLevel
 | *camel.main.jmxManagementName{zwsp}Pattern* | The naming pattern for creating the CamelContext JMX management name. The default pattern is #name# | #name# | String
+| *camel.main.jmxManagement{zwsp}RegisterRoutesCreateByKamelet* | Whether routes created by Kamelets should be registered for JMX management. Enabling this allows to have fine-grained monitoring and management of every route created via Kamelets. This is default disabled as a Kamelet is intended as a component (black-box) and its implementation details as Camel route makes the overall management and monitoring of Camel applications more verbose. During development of Kamelets then enabling this will make it possible for developers to do fine-grained performance inspection and identify potential bottlenecks in the Kamelet routes. However, for production usage then keeping this disabled is recommended. | false | boolean
+| *camel.main.jmxManagement{zwsp}RegisterRoutesCreateByTemplate* | Whether routes created by route templates (not Kamelets) should be registered for JMX management. Enabling this allows to have fine-grained monitoring and management of every route created via route templates. This is default enabled (unlike Kamelets) as routes created via templates is regarded as standard routes, and should be available for management and monitoring. | true | boolean
 | *camel.main.jmxManagement{zwsp}StatisticsLevel* | Sets the JMX statistics level, the level can be set to Extended to gather additional information The default value is Default. | Default | ManagementStatisticsLevel
 | *camel.main.jmxUpdateRoute{zwsp}Enabled* | Whether to allow updating routes at runtime via JMX using the ManagedRouteMBean. This is disabled by default, but can be enabled for development and troubleshooting purposes, such as updating routes in an existing running Camel via JMX and other tools. | false | boolean
 | *camel.main.lightweight* | Configure the context to be lightweight. This will trigger some optimizations and memory reduction options. Lightweight context have some limitations. At this moment, dynamic endpoint destinations are not supported. | false | boolean
@@ -166,7 +165,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 12 options, which are listed below.
+The camel.server supports 13 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -175,6 +174,7 @@ The camel.server supports 12 options, which are listed below.
 | *camel.server.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
 | *camel.server.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health | false | boolean
 | *camel.server.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String
+| *camel.server.infoEnabled* | Whether to enable info console. If enabled then you can see some basic Camel information at /q/info | false | boolean
 | *camel.server.jolokiaEnabled* | Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia | false | boolean
 | *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
 | *camel.server.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics | false | boolean
@@ -205,6 +205,29 @@ The camel.debug supports 13 options, which are listed below.
 | *camel.debug.singleStepInclude{zwsp}StartEnd* | In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception etc). | false | boolean
 | *camel.debug.standby* | To set the debugger in standby mode, where the debugger will be installed by not automatic enabled. The debugger can then later be enabled explicit from Java, JMX or tooling. | false | boolean
 | *camel.debug.waitForAttach* | Whether the debugger should suspend on startup, and wait for a remote debugger to attach. This is what the IDEA and VSCode tooling is using. | false | boolean
+|===
+
+
+=== Camel Tracer configurations
+The camel.trace supports 14 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.trace.backlogSize* | Defines how many of the last messages to keep in the tracer. | 1000 | int
+| *camel.trace.bodyIncludeFiles* | Whether to include the message body of file based messages. The overhead is that the file content has to be read from the file. | true | boolean
+| *camel.trace.bodyIncludeStreams* | Whether to include the message body of stream based messages. If enabled then beware the stream may not be re-readable later. See more about Stream Caching. | false | boolean
+| *camel.trace.bodyMaxChars* | To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size. | 131072 | int
+| *camel.trace.enabled* | Enables tracer in your Camel application. | false | boolean
+| *camel.trace.includeException* | Trace messages to include exception if the message failed | true | boolean
+| *camel.trace.includeExchange{zwsp}Properties* | Whether to include the exchange properties in the traced message | true | boolean
+| *camel.trace.includeExchange{zwsp}Variables* | Whether to include the exchange variables in the traced message | true | boolean
+| *camel.trace.removeOnDump* | Whether all traced messages should be removed when the tracer is dumping. By default, the messages are removed, which means that dumping will not contain previous dumped messages. | true | boolean
+| *camel.trace.standby* | To set the tracer in standby mode, where the tracer will be installed by not automatic enabled. The tracer can then later be enabled explicit from Java, JMX or tooling. | false | boolean
+| *camel.trace.traceFilter* | Filter for tracing messages |  | String
+| *camel.trace.tracePattern* | Filter for tracing by route or node id |  | String
+| *camel.trace.traceRests* | Whether to trace routes that is created from Rest DSL. | false | boolean
+| *camel.trace.traceTemplates* | Whether to trace routes that is created from route templates or kamelets. | false | boolean
 |===
 
 
@@ -282,14 +305,14 @@ The camel.rest supports 28 options, which are listed below.
 | *camel.rest.endpointProperties* | Sets additional options on endpoint level |  | Map
 | *camel.rest.host* | Sets the hostname to use by the REST consumer |  | String
 | *camel.rest.hostNameResolver* | Sets the resolver to use for resolving hostname | RestHostNameResolver.allLocalIp | RestHostNameResolver
-| *camel.rest.inlineRoutes* | Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. This option is default false. | false | boolean
+| *camel.rest.inlineRoutes* | Inline routes in rest-dsl which are linked using direct endpoints. Each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). By inlining (default) allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. If a route is not using direct endpoint then the rest-dsl is not inlined, and will become an individual route. This option is default true. | true | boolean
 | *camel.rest.jsonDataFormat* | Sets a custom json data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 | *camel.rest.port* | Sets the port to use by the REST consumer |  | int
 | *camel.rest.producerApiDoc* | Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-openapi-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url. |  | String
 | *camel.rest.producerComponent* | Sets the name of the Camel component to use as the REST producer |  | String
 | *camel.rest.scheme* | Sets the scheme to use by the REST consumer |  | String
 | *camel.rest.skipBindingOnError{zwsp}Code* | Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true. | true | boolean
-| *camel.rest.useXForwardHeaders* | Whether to use X-Forward headers to set host etc. for Swagger. This option is default true. | true | boolean
+| *camel.rest.useXForwardHeaders* | Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc. Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema that camel-openapi-java generates from Rest DSL routes. | false | boolean
 | *camel.rest.xmlDataFormat* | Sets a custom xml data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 |===
 
@@ -363,7 +386,7 @@ The camel.opentelemetry supports 4 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 9 options, which are listed below.
+The camel.metrics supports 10 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -376,6 +399,7 @@ The camel.metrics supports 9 options, which are listed below.
 | *camel.metrics.enableRouteEvent{zwsp}Notifier* | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
 | *camel.metrics.enableRoute{zwsp}Policy* | Set whether to enable the MicrometerRoutePolicyFactory for capturing metrics on route processing times. | true | boolean
 | *camel.metrics.namingStrategy* | Controls the name style to use for metrics. Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase) | default | String
+| *camel.metrics.routePolicyLevel* | Sets the level of information to capture. all = both context and routes. | all | String
 | *camel.metrics.textFormat{zwsp}Version* | The text-format version to use with Prometheus scraping. 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8 | 0.0.4 | String
 |===
 

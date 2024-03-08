@@ -13,14 +13,12 @@
 
 
 Camel provides a Data Format to serialize between
-Java and the Apache Thrift . The project's site details why
-you may wish to
-https://thrift.apache.org/.
+Java and the https://thrift.apache.org/[Apache Thrift].
 Apache Thrift is language-neutral and
 platform-neutral, so messages produced by your Camel routes may be
 consumed by other language implementations.
 
-https://github.com/apache/thrift[Apache Thrift Implementation] +
+NOTE: Check the https://github.com/apache/thrift[Apache Thrift Implementation] for additional details.
 
 == Thrift Options
 
@@ -30,9 +28,9 @@ include::partial$dataformat-options.adoc[]
 
 == Content type format
 
-It's possible to parse JSON message to convert it to the Thrift format and unparse it back using native util converter.
+It's possible to parse JSON message to convert it to the Thrift format and serialize it back using native util converter.
 To use this option, set contentTypeFormat value to 'json' or call thrift with second parameter.
-If default instance is not specified, always use native binary Thrift format.
+If the default instance is not specified, always use the native binary Thrift format.
 The simple JSON format is write-only (marshal) and produces a simple output format suitable for parsing by scripting languages.
 The sample code shows below:
 
@@ -46,7 +44,8 @@ from("direct:marshal")
 
 == Thrift overview
 
-This quick overview of how to use Thrift. For more detail see the
+This quick overview of how to use Thrift.
+For more details, see the
 https://thrift.apache.org/tutorial/[complete tutorial]
 
 == Defining the thrift format
@@ -56,7 +55,7 @@ This is defined in a .thrift file as so:
 
 *tutorial.thrift*
 
-[source,java]
+[source,text]
 ----
 namespace java org.apache.camel.dataformat.thrift.generated
 
@@ -85,9 +84,10 @@ You can also run the compiler for any additional supported languages you require
 `thrift -r --gen java -out ../java/ ./tutorial-dataformat.thrift`
 
 This will generate separate Java class for each type defined in .thrift 
-file, i.e. struct or enum.
+file, i.e., struct or enum.
 The generated classes implement org.apache.thrift.TBase which is required
-by the serialization mechanism. For this reason it important that only
+by the serialization mechanism.
+For this reason, it is important that only
 these classes are used in the body of your exchanges.
 Camel will throw an exception on route creation if you attempt to tell 
 the Data Format to use a class that does not implement 
@@ -125,7 +125,7 @@ default instance class name like this.
 The following example shows how to use Thrift to unmarshal using Spring
 configuring the thrift data type
 
-[source,java]
+[source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
@@ -140,8 +140,8 @@ configuring the thrift data type
 
 == Dependencies
 
-To use Thrift in your camel routes you need to add the a dependency on
-*camel-thrift* which implements this data format.
+To use Thrift in your Camel routes, you need to add a dependency on
+*camel-thrift*, which implements this data format.
 
 [source,xml]
 ----

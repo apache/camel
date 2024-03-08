@@ -85,6 +85,33 @@ public enum CloudEventProcessors implements CloudEventProcessor {
                 message.setHeader(key.toLowerCase(Locale.US), val);
             });
         }
+    }),
+    v1_0_2(new AbstractCloudEventProcessor(CloudEvents.v1_0_2) {
+        @Override
+        protected void decodeStructuredContent(Exchange exchange, Map<String, Object> content) {
+            final CloudEvent ce = cloudEvent();
+            final Message message = exchange.getIn();
+
+            // body
+            ifNotEmpty(content.remove("data"), message::setBody);
+
+            ifNotEmpty(content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json()), val -> {
+                message.setHeader(Exchange.CONTENT_TYPE, val);
+            });
+
+            for (CloudEvent.Attribute attribute : ce.attributes()) {
+                ifNotEmpty(content.remove(attribute.json()), val -> {
+                    message.setHeader(attribute.id(), val);
+                });
+            }
+
+            //
+            // Map every remaining field as it is (extensions).
+            //
+            content.forEach((key, val) -> {
+                message.setHeader(key.toLowerCase(Locale.US), val);
+            });
+        }
     });
 
     private final CloudEventProcessor instance;
@@ -115,6 +142,6 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             }
         }
 
-        throw new IllegalArgumentException("Unable to find an implementation fo CloudEvents spec: " + version);
+        throw new IllegalArgumentException("Unable to find an implementation for CloudEvents spec: " + version);
     }
 }

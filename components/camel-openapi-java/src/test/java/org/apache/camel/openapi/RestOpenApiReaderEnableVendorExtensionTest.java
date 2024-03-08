@@ -70,7 +70,7 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    @ValueSource(strings = { "3.1", "3.0" })
     public void testEnableVendorExtension(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
@@ -91,13 +91,8 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
 
         String camelId = context.getName();
 
-        if (config.isOpenApi2()) {
-            assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-            assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
-        } else {
-            assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
-            assertTrue(json.contains("\"$ref\" : \"#/components/schemas/User\""));
-        }
+        assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
+        assertTrue(json.contains("\"$ref\" : \"#/components/schemas/User\""));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertFalse(json.contains("\"enum\""));
         assertTrue(json.contains("\"x-camelContextId\" : \"" + camelId + "\""));

@@ -1465,6 +1465,135 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Bedrock (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockEndpointBuilderFactory.BedrockEndpointBuilder awsBedrock(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockEndpointBuilderFactory.endpointBuilder("aws-bedrock", path);
+    }
+    /**
+     * AWS Bedrock (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockEndpointBuilderFactory.BedrockEndpointBuilder awsBedrock(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Operate on AWS Bedrock through its Agent.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.endpointBuilder("aws-bedrock-agent", path);
+    }
+    /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Operate on AWS Bedrock through its Agent.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent-runtime:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder("aws-bedrock-agent-runtime", path);
+    }
+    /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent-runtime:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
      * 
@@ -1904,8 +2033,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Azure Storage Datalake Service (camel-azure-storage-datalake)
-     * Sends and receives files to/from Azure DataLake Storage.
+     * Azure Storage Data Lake Service (camel-azure-storage-datalake)
+     * Sends and receives files to/from Azure Data Lake Storage.
      * 
      * Category: cloud,file,bigdata
      * Since: 3.8
@@ -1927,8 +2056,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DataLakeEndpointBuilderFactory.endpointBuilder("azure-storage-datalake", path);
     }
     /**
-     * Azure Storage Datalake Service (camel-azure-storage-datalake)
-     * Sends and receives files to/from Azure DataLake Storage.
+     * Azure Storage Data Lake Service (camel-azure-storage-datalake)
+     * Sends and receives files to/from Azure Data Lake Storage.
      * 
      * Category: cloud,file,bigdata
      * Since: 3.8
@@ -8182,7 +8311,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JSLT (camel-jslt)
-     * Query or transform JSON payloads using an JSLT.
+     * Query or transform JSON payloads using JSLT.
      * 
      * Category: transformation
      * Since: 3.1
@@ -8208,7 +8337,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JSLT (camel-jslt)
-     * Query or transform JSON payloads using an JSLT.
+     * Query or transform JSON payloads using JSLT.
      * 
      * Category: transformation
      * Since: 3.1
@@ -12468,8 +12597,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * Configure REST producers based on an OpenAPI specification document
-     * delegating to a component implementing the RestProducerFactory interface.
+     * To call REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
@@ -12506,8 +12634,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * Configure REST producers based on an OpenAPI specification document
-     * delegating to a component implementing the RestProducerFactory interface.
+     * To call REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
@@ -13678,7 +13805,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Splunk HEC (camel-splunk-hec)
-     * The splunk component allows to publish events in Splunk using the HTTP
+     * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
      * 
      * Category: monitoring
@@ -13699,7 +13826,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Splunk HEC (camel-splunk-hec)
-     * The splunk component allows to publish events in Splunk using the HTTP
+     * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
      * 
      * Category: monitoring
@@ -13901,7 +14028,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
-     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
      * 
      * Category: messaging
      * Since: 3.8
@@ -13924,7 +14051,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
-     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
      * 
      * Category: messaging
      * Since: 3.8
@@ -14325,7 +14452,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stomp (camel-stomp)
-     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
+     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
      * Protocol) compliant message brokers.
      * 
      * Category: messaging
@@ -14346,7 +14473,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stomp (camel-stomp)
-     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
+     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
      * Protocol) compliant message brokers.
      * 
      * Category: messaging
@@ -14517,7 +14644,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Telegram (camel-telegram)
-     * Send and receive messages acting as a Telegram Bot Telegram Bot API.
+     * Send and receive messages using the Telegram Bot API.
      * 
      * Category: cloud,api,chat
      * Since: 2.18
@@ -14538,7 +14665,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Telegram (camel-telegram)
-     * Send and receive messages acting as a Telegram Bot Telegram Bot API.
+     * Send and receive messages using the Telegram Bot API.
      * 
      * Category: cloud,api,chat
      * Since: 2.18
@@ -14778,16 +14905,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
+     * There are 54 enums and the value can be one of: ACCOUNT, ADDRESS,
      * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
      * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
      * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
      * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
      * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
      * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
-     * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
-     * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
+     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_NOTIFICATION,
+     * CALL_RECORDING, CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
      * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
      * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT,
      * RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD,
@@ -14823,16 +14949,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
+     * There are 54 enums and the value can be one of: ACCOUNT, ADDRESS,
      * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
      * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
      * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
      * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
      * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
      * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
-     * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
-     * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
+     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_NOTIFICATION,
+     * CALL_RECORDING, CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
      * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
      * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT,
      * RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD,
@@ -15510,8 +15635,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Wordpress (camel-wordpress)
-     * Manage posts and users using Wordpress API.
+     * WordPress (camel-wordpress)
+     * Manage posts and users using the WordPress API.
      * 
      * Category: cloud,api,cms
      * Since: 2.21
@@ -15536,8 +15661,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.WordpressEndpointBuilderFactory.endpointBuilder("wordpress", path);
     }
     /**
-     * Wordpress (camel-wordpress)
-     * Manage posts and users using Wordpress API.
+     * WordPress (camel-wordpress)
+     * Manage posts and users using the WordPress API.
      * 
      * Category: cloud,api,cms
      * Since: 2.21

@@ -19,6 +19,8 @@ package org.apache.camel.component.kafka.integration.common;
 
 import java.util.Properties;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -40,7 +42,7 @@ public final class KafkaTestUtil {
     }
 
     public static void setServiceProperties(KafkaService service) {
-        LOG.info("### Embedded Kafka cluster broker list: {}", service.getBootstrapServers());
+        LOG.info("### Kafka cluster broker list: {}", service.getBootstrapServers());
         System.setProperty("bootstrapServers", service.getBootstrapServers());
     }
 
@@ -64,5 +66,16 @@ public final class KafkaTestUtil {
 
     public static Properties getDefaultProperties(KafkaService service) {
         return getDefaultProperties(service.getBootstrapServers());
+    }
+
+    public static void configureKafkaComponent(CamelContext context, String bootstrapServers) {
+        LOG.info("Configuring Kafka using bootstrap address {}", bootstrapServers);
+
+        context.getPropertiesComponent().setLocation("ref:prop");
+
+        KafkaComponent kafka = new KafkaComponent(context);
+        kafka.init();
+        kafka.getConfiguration().setBrokers(bootstrapServers);
+        context.addComponent("kafka", kafka);
     }
 }

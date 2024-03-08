@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
+import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTestSupport implements ConfigurableContext {
+public class KafkaIdempotentRepositoryPersistenceIT extends BaseKafkaTestSupport implements ConfigurableContext {
 
     private KafkaIdempotentRepository kafkaIdempotentRepository;
 

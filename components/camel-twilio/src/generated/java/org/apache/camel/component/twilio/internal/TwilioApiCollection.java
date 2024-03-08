@@ -35,8 +35,6 @@ import org.apache.camel.component.twilio.AddressDependentPhoneNumberEndpointConf
 import org.apache.camel.component.twilio.AvailablePhoneNumberCountryLocalEndpointConfiguration;
 import org.apache.camel.component.twilio.AvailablePhoneNumberCountryMobileEndpointConfiguration;
 import org.apache.camel.component.twilio.AvailablePhoneNumberCountryTollFreeEndpointConfiguration;
-import org.apache.camel.component.twilio.CallFeedbackEndpointConfiguration;
-import org.apache.camel.component.twilio.CallFeedbackSummaryEndpointConfiguration;
 import org.apache.camel.component.twilio.CallNotificationEndpointConfiguration;
 import org.apache.camel.component.twilio.CallRecordingEndpointConfiguration;
 import org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration;
@@ -334,26 +332,6 @@ public final class TwilioApiCollection extends ApiCollection<TwilioApiName, Twil
         nullableArgs = Arrays.asList();
         apiHelpers.put(TwilioApiName.AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, new ApiMethodHelper<>(AvailablePhoneNumberCountryTollFreeApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AvailablePhoneNumberCountryTollFreeApiMethod.class, TwilioApiName.AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE);
-
-        aliases.clear();
-        aliases.put("^creator$", "create");
-        aliases.put("^deleter$", "delete");
-        aliases.put("^fetcher$", "fetch");
-        aliases.put("^reader$", "read");
-        aliases.put("^updater$", "update");
-        nullableArgs = Arrays.asList();
-        apiHelpers.put(TwilioApiName.CALL_FEEDBACK, new ApiMethodHelper<>(CallFeedbackApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(CallFeedbackApiMethod.class, TwilioApiName.CALL_FEEDBACK);
-
-        aliases.clear();
-        aliases.put("^creator$", "create");
-        aliases.put("^deleter$", "delete");
-        aliases.put("^fetcher$", "fetch");
-        aliases.put("^reader$", "read");
-        aliases.put("^updater$", "update");
-        nullableArgs = Arrays.asList();
-        apiHelpers.put(TwilioApiName.CALL_FEEDBACK_SUMMARY, new ApiMethodHelper<>(CallFeedbackSummaryApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(CallFeedbackSummaryApiMethod.class, TwilioApiName.CALL_FEEDBACK_SUMMARY);
 
         aliases.clear();
         aliases.put("^creator$", "create");
@@ -726,12 +704,6 @@ public final class TwilioApiCollection extends ApiCollection<TwilioApiName, Twil
                 break;
             case AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE:
                 result = new AvailablePhoneNumberCountryTollFreeEndpointConfiguration();
-                break;
-            case CALL_FEEDBACK:
-                result = new CallFeedbackEndpointConfiguration();
-                break;
-            case CALL_FEEDBACK_SUMMARY:
-                result = new CallFeedbackSummaryEndpointConfiguration();
                 break;
             case CALL_NOTIFICATION:
                 result = new CallNotificationEndpointConfiguration();

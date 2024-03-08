@@ -115,6 +115,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Show exchange properties in traced messages")
     boolean showExchangeProperties;
 
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
+                        description = "Show exchange variables in traced messages")
+    boolean showExchangeVariables = true;
+
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in traced messages")
     boolean showHeaders = true;
@@ -168,6 +172,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         tableHelper.setPretty(pretty);
         tableHelper.setLoggingColor(loggingColor);
         tableHelper.setShowExchangeProperties(showExchangeProperties);
+        tableHelper.setShowExchangeVariables(showExchangeVariables);
         tableHelper.setExchangeIdColorChooser(value -> {
             Ansi.Color color = exchangeIdColors.get(value);
             if (color == null) {

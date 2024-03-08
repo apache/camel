@@ -37,12 +37,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
-        case "backlogtracing":
-        case "BacklogTracing": target.setBacklogTracing(property(camelContext, boolean.class, value)); return true;
-        case "backlogtracingstandby":
-        case "BacklogTracingStandby": target.setBacklogTracingStandby(property(camelContext, boolean.class, value)); return true;
-        case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": target.setBacklogTracingTemplates(property(camelContext, boolean.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "basepackagescanenabled":
@@ -125,6 +119,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementMBeansLevel": target.setJmxManagementMBeansLevel(property(camelContext, org.apache.camel.ManagementMBeansLevel.class, value)); return true;
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": target.setJmxManagementNamePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "jmxmanagementregisterroutescreatebykamelet":
+        case "JmxManagementRegisterRoutesCreateByKamelet": target.setJmxManagementRegisterRoutesCreateByKamelet(property(camelContext, boolean.class, value)); return true;
+        case "jmxmanagementregisterroutescreatebytemplate":
+        case "JmxManagementRegisterRoutesCreateByTemplate": target.setJmxManagementRegisterRoutesCreateByTemplate(property(camelContext, boolean.class, value)); return true;
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": target.setJmxManagementStatisticsLevel(property(camelContext, org.apache.camel.ManagementStatisticsLevel.class, value)); return true;
         case "jmxupdaterouteenabled":
@@ -278,12 +276,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoStartup": return boolean.class;
         case "autowiredenabled":
         case "AutowiredEnabled": return boolean.class;
-        case "backlogtracing":
-        case "BacklogTracing": return boolean.class;
-        case "backlogtracingstandby":
-        case "BacklogTracingStandby": return boolean.class;
-        case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": return boolean.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
         case "basepackagescanenabled":
@@ -366,6 +358,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementMBeansLevel": return org.apache.camel.ManagementMBeansLevel.class;
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": return java.lang.String.class;
+        case "jmxmanagementregisterroutescreatebykamelet":
+        case "JmxManagementRegisterRoutesCreateByKamelet": return boolean.class;
+        case "jmxmanagementregisterroutescreatebytemplate":
+        case "JmxManagementRegisterRoutesCreateByTemplate": return boolean.class;
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
         case "jmxupdaterouteenabled":
@@ -520,12 +516,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoStartup": return target.isAutoStartup();
         case "autowiredenabled":
         case "AutowiredEnabled": return target.isAutowiredEnabled();
-        case "backlogtracing":
-        case "BacklogTracing": return target.isBacklogTracing();
-        case "backlogtracingstandby":
-        case "BacklogTracingStandby": return target.isBacklogTracingStandby();
-        case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": return target.isBacklogTracingTemplates();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
         case "basepackagescanenabled":
@@ -608,6 +598,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JmxManagementMBeansLevel": return target.getJmxManagementMBeansLevel();
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": return target.getJmxManagementNamePattern();
+        case "jmxmanagementregisterroutescreatebykamelet":
+        case "JmxManagementRegisterRoutesCreateByKamelet": return target.isJmxManagementRegisterRoutesCreateByKamelet();
+        case "jmxmanagementregisterroutescreatebytemplate":
+        case "JmxManagementRegisterRoutesCreateByTemplate": return target.isJmxManagementRegisterRoutesCreateByTemplate();
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": return target.getJmxManagementStatisticsLevel();
         case "jmxupdaterouteenabled":

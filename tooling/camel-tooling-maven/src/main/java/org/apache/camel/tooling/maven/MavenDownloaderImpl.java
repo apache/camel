@@ -233,6 +233,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private static final RepositoryPolicy POLICY_DISABLED = new RepositoryPolicy(
             false, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
 
+    private boolean mavenCentralEnabled = true;
+    private boolean mavenApacheSnapshotEnabled = true;
+
     private RepositoryResolver repositoryResolver;
 
     private RepositorySystem repositorySystem;
@@ -262,11 +265,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private boolean fresh;
     private boolean offline;
     private RemoteArtifactDownloadListener remoteArtifactDownloadListener;
-
     private boolean apacheSnapshotsIncluded;
-
     private AtomicInteger customRepositoryCounter = new AtomicInteger(1);
-
     private Settings settings;
 
     public MavenDownloaderImpl() {
@@ -322,16 +322,26 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         defaultPolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
 
         // process repositories - both from settings.xml and from --repos option. All are subject to
-        // mirrorring and proxying (handled by org.eclipse.aether.RepositorySystem#newResolutionRepositories())
+        // mirroring and proxying (handled by org.eclipse.aether.RepositorySystem#newResolutionRepositories())
         List<RemoteRepository> originalRepositories = configureDefaultRepositories(settings);
 
         remoteRepositories.addAll(repositorySystem.newResolutionRepositories(repositorySystemSession,
                 originalRepositories));
 
         // mirroring/proxying Maven Central
-        centralResolutionRepository = remoteRepositories.get(0);
+        if (centralRepository == null && !remoteRepositories.isEmpty()) {
+            for (RemoteRepository repo : remoteRepositories) {
+                if ("central".equals(repo.getId())) {
+                    centralRepository = repo;
+                    break;
+                } else if (repo.getHost().startsWith("repo1.maven.org") || repo.getHost().startsWith("repo2.maven.org")) {
+                    centralRepository = repo;
+                    break;
+                }
+            }
+        }
 
-        if (!apacheSnapshotsIncluded) {
+        if (mavenApacheSnapshotEnabled && !apacheSnapshotsIncluded) {
             // process apache snapshots even if it's not present in remoteRepositories, because it
             // may be used on demand for each download/resolution request
             apacheSnapshotsResolutionRepository = repositorySystem.newResolutionRepositories(repositorySystemSession,
@@ -374,7 +384,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             repositories.addAll(repositorySystem.newResolutionRepositories(repositorySystemSession,
                     extraRemoteRepositories));
         }
-        if (useApacheSnapshots && !apacheSnapshotsIncluded) {
+        if (mavenApacheSnapshotEnabled && useApacheSnapshots && !apacheSnapshotsIncluded) {
             repositories.add(apacheSnapshotsResolutionRepository);
         }
 
@@ -1174,18 +1184,22 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // a set to prevent duplicates, but do not store URLs directly (hashCode() may lead to DNS resolution!)
         Set<String> repositoryURLs = new HashSet<>();
 
-        // add maven central first - always
-        centralRepository = new RemoteRepository.Builder("central", "default", MAVEN_CENTRAL_REPO)
-                .setReleasePolicy(defaultPolicy)
-                .setSnapshotPolicy(POLICY_DISABLED)
-                .build();
-        repositories.add(centralRepository);
+        if (mavenCentralEnabled) {
+            // add maven central first - always
+            centralRepository = new RemoteRepository.Builder("central", "default", MAVEN_CENTRAL_REPO)
+                    .setReleasePolicy(defaultPolicy)
+                    .setSnapshotPolicy(POLICY_DISABLED)
+                    .build();
+            repositories.add(centralRepository);
+        }
 
-        // configure Apache snapshots - to be used if needed
-        apacheSnapshotsRepository = new RemoteRepository.Builder("apache-snapshot", "default", APACHE_SNAPSHOT_REPO)
-                .setReleasePolicy(POLICY_DISABLED)
-                .setSnapshotPolicy(defaultPolicy)
-                .build();
+        if (mavenApacheSnapshotEnabled) {
+            // configure Apache snapshots - to be used if needed
+            apacheSnapshotsRepository = new RemoteRepository.Builder("apache-snapshot", "default", APACHE_SNAPSHOT_REPO)
+                    .setReleasePolicy(POLICY_DISABLED)
+                    .setSnapshotPolicy(defaultPolicy)
+                    .build();
+        }
 
         // and custom repos and remember URLs to not duplicate the repositories from the settings
         if (repos != null) {
@@ -1209,7 +1223,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 try {
                     URL url = new URL(r.getUrl());
                     if (repositoryURLs.add(r.getUrl())) {
-                        if (url.getHost().equals("repository.apache.org") && url.getPath().startsWith("/snapshots")) {
+                        if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
+                                && url.getPath().startsWith("/snapshots")) {
                             // record that Apache Snapshots repository is included in default (always used)
                             // repositories and used preconfigured instance of o.e.aether.repository.RemoteRepository
                             apacheSnapshotsIncluded = true;
@@ -1255,7 +1270,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     /**
      * Helper method to translate a collection of Strings for remote repository URLs into actual instances of
-     * {@link RemoteRepository} added to the passed {@code repositories}. We don't detected duplicates here and we don't
+     * {@link RemoteRepository} added to the passed {@code repositories}. We don't detect duplicates here, and we don't
      * do mirror/proxy processing of the repositories.
      */
     private void configureRepositories(List<RemoteRepository> repositories, Set<String> urls) {
@@ -1263,11 +1278,12 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             try {
                 repo = repositoryResolver.resolveRepository(repo);
                 URL url = new URL(repo);
-                if (url.getHost().equals("repo1.maven.org")) {
+                if (mavenCentralEnabled && url.getHost().equals("repo1.maven.org")) {
                     // Maven Central is always used, so skip it
                     return;
                 }
-                if (url.getHost().equals("repository.apache.org") && url.getPath().contains("/snapshots")) {
+                if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
+                        && url.getPath().contains("/snapshots")) {
                     // Apache Snapshots added, so we'll use our own definition of this repository
                     repositories.add(apacheSnapshotsRepository);
                 } else {
@@ -1317,6 +1333,26 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     @Override
     public void setOffline(boolean offline) {
         this.offline = offline;
+    }
+
+    @Override
+    public boolean isMavenCentralEnabled() {
+        return mavenCentralEnabled;
+    }
+
+    @Override
+    public void setMavenCentralEnabled(boolean mavenCentralEnabled) {
+        this.mavenCentralEnabled = mavenCentralEnabled;
+    }
+
+    @Override
+    public boolean isMavenApacheSnapshotEnabled() {
+        return mavenApacheSnapshotEnabled;
+    }
+
+    @Override
+    public void setMavenApacheSnapshotEnabled(boolean mavenApacheSnapshotEnabled) {
+        this.mavenApacheSnapshotEnabled = mavenApacheSnapshotEnabled;
     }
 
     private static class AcceptAllDependencyFilter implements DependencyFilter {

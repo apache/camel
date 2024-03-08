@@ -39,6 +39,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private Long maxBodySize;
     private boolean useGlobalSslContextParameters;
 
+    private boolean infoEnabled;
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
     private boolean jolokiaEnabled;
@@ -123,6 +124,17 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public boolean isInfoEnabled() {
+        return infoEnabled;
+    }
+
+    /**
+     * Whether to enable info console. If enabled then you can see some basic Camel information at /q/info
+     */
+    public void setInfoEnabled(boolean infoEnabled) {
+        this.infoEnabled = infoEnabled;
     }
 
     public boolean isDevConsoleEnabled() {
@@ -243,6 +255,14 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+        return this;
+    }
+
+    /**
+     * Whether to enable info console. If enabled then you can see some basic Camel information at /q/info
+     */
+    public HttpServerConfigurationProperties withInfoEnabled(boolean infoEnabled) {
+        this.infoEnabled = infoEnabled;
         return this;
     }
 

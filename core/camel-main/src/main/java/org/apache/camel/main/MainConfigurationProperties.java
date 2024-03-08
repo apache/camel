@@ -63,6 +63,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
     private SSLConfigurationProperties sslConfigurationProperties;
     private DebuggerConfigurationProperties debuggerConfigurationProperties;
+    private TracerConfigurationProperties tracerConfigurationProperties;
     private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
 
     @Override
@@ -114,6 +115,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (debuggerConfigurationProperties != null) {
             debuggerConfigurationProperties.close();
             debuggerConfigurationProperties = null;
+        }
+        if (tracerConfigurationProperties != null) {
+            tracerConfigurationProperties.close();
+            tracerConfigurationProperties = null;
         }
         if (routeControllerConfigurationProperties != null) {
             routeControllerConfigurationProperties.close();
@@ -251,6 +256,24 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasDebuggerConfiguration() {
         return debuggerConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Tracer.
+     */
+    public TracerConfigurationProperties tracerConfig() {
+        if (tracerConfigurationProperties == null) {
+            tracerConfigurationProperties = new TracerConfigurationProperties(this);
+        }
+
+        return tracerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Tracer configuration specified.
+     */
+    public boolean hasTracerConfiguration() {
+        return tracerConfigurationProperties != null;
     }
 
     /**

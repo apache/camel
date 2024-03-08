@@ -219,6 +219,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.ssl.";
                 } else if (file.getName().contains("DebuggerConfigurationProperties")) {
                     prefix = "camel.debug.";
+                } else if (file.getName().contains("TracerConfigurationProperties")) {
+                    prefix = "camel.trace.";
                 } else if (file.getName().contains("RouteControllerConfigurationProperties")) {
                     prefix = "camel.routecontroller.";
                 } else {
@@ -299,6 +301,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     .add(new MainGroupModel(
                             "camel.debug", "Camel Debugger configurations",
                             "org.apache.camel.main.DebuggerConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.trace", "Camel Tracer configurations",
+                            "org.apache.camel.main.TracerConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
                             "camel.ssl", "Camel SSL configurations",

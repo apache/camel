@@ -7,7 +7,12 @@
 
 The resume strategies allow users to implement strategies that point the consumer part of the routes to the last point of consumption. This allows Camel to skip reading and processing data that has already been consumed.
 
-The resume strategies can be used to allow quicker stop and resume operations when consuming large data sources. For instance, imagine a scenario where the file consumer is reading a large file. Without a resume strategy, stopping and starting Camel would cause the consumer in the File component to read all the bytes of the given file at the initial offset (offset 0). The resume strategy allow integrations can point the consumer to the exact offset to resume the operations.
+The resume strategies can be used to allow quicker stop and resume operations when consuming large data sources.
+For instance, imagine a scenario where the file consumer is reading a large file.
+Without a resume strategy,
+stopping and starting Camel would cause the consumer in the File component
+to read all the bytes of the given file at the initial offset (that is,
+offset 0). The resume strategy allows integrations can point the consumer to the exact offset to resume the operations.
 
 Support for resume varies according to the component. Initially, the support is available for the following components:
 
@@ -20,10 +25,10 @@ Support for resume varies according to the component. Initially, the support is 
 * xref:components::kafka-component.adoc[camel-kafka]
 * xref:components::rss-component.adoc[camel-rss]
 
-The resume strategies comes in 3 parts:
+The resume strategies comes in three parts:
 
 * A DSL method that marks the route as supporting resume operations and points to an instance of a strategy implementation.
-* A set of core infrastructure that allow integrations to implement different types of strategies
+* A set of core infrastructure that allows integrations to implement different types of strategies
 * Basic strategies implementations that can be extended to implement the specific resume strategies required by the integrations
 
 == The DSL method
@@ -82,7 +87,8 @@ In some circumstances, such as when dealing with File I/O, it may be necessary t
 
 === Intermittent Mode
 
-In some cases it may be necessary to avoid updating the offset for every exchange. You can enable the intermittent mode to modify the route behavior so that missing offsets will not cause an exception:
+In some cases, it may be necessary to avoid updating the offset for every exchange.
+You can enable the intermittent mode to modify the route behavior so that missing offsets will not cause an exception:
 
 [source,java]
 ----
@@ -95,8 +101,8 @@ from("some:component")
 
 Camel comes with a few builtin strategies that can be used to store, retrieve and update the offsets. The following strategies are available:
 
-* `SingleNodeKafkaResumeStrategy` - a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets and is suitable for single node integrations.
-* `MultiNodeKafkaResumeStrategy` - a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets and is suitable for multi node integrations (i.e.: integrations running on clusters using the xref:components::master-component.adoc[camel-master] component.
+* `SingleNodeKafkaResumeStrategy`: a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets and is suitable for single node integrations.
+* `MultiNodeKafkaResumeStrategy`: a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets and is suitable for multi node integrations (i.e.: integrations running on clusters using the xref:components::master-component.adoc[camel-master] component.
 
 === Configuring the Strategies
 
@@ -136,7 +142,7 @@ from("file:{{input.dir}}?noop=true&fileName={{input.file}}")
     .process(this::process);
 ----
 
-Is different from the behavior of:
+It is different from the behavior of:
 
 [source,java]
 ----
@@ -152,7 +158,7 @@ from("file:{{input.dir}}?noop=true&fileName={{input.file}}")
 == Pausable Consumers API
 
 The Pausable consumers API is a subset of the resume API that provides pause and resume features for supported components.
-With this API it is possible to implement logic that controls the behavior of the consumer based on conditions that are
+With this API, it is possible to implement logic that controls the behavior of the consumer based on conditions that are
 external to the component. For instance, it makes it possible to pause the consumer if an external system becomes unavailable.
 
 Currently, support for pausable consumers is available for the following components:
@@ -161,7 +167,7 @@ Currently, support for pausable consumers is available for the following compone
 
 To use the API, it needs an instance of a Consumer listener along with a predicate that tests whether to continue.
 
-* `org.apache.camel.resume.ConsumerListener` - the consumer listener interface. Camel already comes with pre-built consumer listeners, but users in need of more complex behaviors can create their own listeners.
+* `org.apache.camel.resume.ConsumerListener`: the consumer listener interface. Camel already comes with pre-built consumer listeners, but users in need of more complex behaviors can create their own listeners.
 * a predicate that returns true if data consumption should resume or false if consumption should be put on pause
 
 Usage example:
@@ -178,7 +184,9 @@ You can also integrate the pausable API and the consumer listener with the circu
 possible to configure the circuit breaker so that it can manipulate the state of the listener based on success or on
 error conditions on the circuit.
 
-One example, would be to create a event watcher that checks for a downstream system availability. It watches for error events and, when they happen, it triggers a scheduled check. On success, it shuts down the scheduled check.
+One example would be to create an event watcher that checks for a downstream system availability.
+It watches for error events and, when they happen, it triggers a scheduled check.
+On success, it shuts down the scheduled check.
 
 An example implementation of this approach would be similar to this:
 

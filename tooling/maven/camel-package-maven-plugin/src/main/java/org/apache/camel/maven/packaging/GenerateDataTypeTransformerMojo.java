@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -171,7 +172,7 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                     JsonObject jo = asJsonObject(model);
                     String json = jo.toJson();
                     json = Jsoner.prettyPrint(json, 2);
-                    String fn = sanitizeFileName(model.getName()) + ".json";
+                    String fn = sanitizeFileName(model.getName()) + PackageHelper.JSON_SUFIX;
                     boolean updated = updateResource(resourcesOutputDir.toPath(),
                             "META-INF/services/org/apache/camel/transformer/" + fn,
                             json + NL);
@@ -219,7 +220,7 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
     }
 
     private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^A-Za-z0-9-/]", "-");
+        return fileName.replaceAll("[^A-Za-z0-9+-/]", "-");
     }
 
     private String asTitle(String name) {

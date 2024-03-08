@@ -84,6 +84,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private String namingStrategy;
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
+    @Metadata(defaultValue = "all", enums = "all,route,context")
+    private String routePolicyLevel = "all";
     @Metadata(defaultValue = "false")
     private boolean enableMessageHistory;
     @Metadata(defaultValue = "true")
@@ -129,6 +131,17 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
      */
     public void setEnableRoutePolicy(boolean enableRoutePolicy) {
         this.enableRoutePolicy = enableRoutePolicy;
+    }
+
+    public String getRoutePolicyLevel() {
+        return routePolicyLevel;
+    }
+
+    /**
+     * Sets the level of information to capture. all = both context and routes.
+     */
+    public void setRoutePolicyLevel(String routePolicyLevel) {
+        this.routePolicyLevel = routePolicyLevel;
     }
 
     public boolean isEnableMessageHistory() {
@@ -240,7 +253,19 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
                 factory.setNamingStrategy(MicrometerRoutePolicyNamingStrategy.LEGACY);
             }
+            if ("all".equalsIgnoreCase(routePolicyLevel)) {
+                factory.getPolicyConfiguration().setContextEnabled(true);
+                factory.getPolicyConfiguration().setRouteEnabled(true);
+            } else if ("context".equalsIgnoreCase(routePolicyLevel)) {
+                factory.getPolicyConfiguration().setContextEnabled(true);
+                factory.getPolicyConfiguration().setRouteEnabled(false);
+            } else {
+                factory.getPolicyConfiguration().setContextEnabled(false);
+                factory.getPolicyConfiguration().setRouteEnabled(true);
+            }
             factory.setMeterRegistry(meterRegistry);
+            // ensure factory will be started and stopped
+            camelContext.addService(factory);
             camelContext.addRoutePolicyFactory(factory);
         }
 
@@ -385,6 +410,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         // use blocking handler as the task can take longer time to complete
         metrics.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/metrics", null, null);
+        platformHttpComponent.addHttpEndpoint("/q/metrics", null,
+                null, format, null);
     }
 }

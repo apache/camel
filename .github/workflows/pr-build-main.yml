@@ -21,6 +21,7 @@ on:
   pull_request:
     branches:
       - main
+      - camel-4.4.x
     paths-ignore:
       - .github/**
       - README.md
@@ -54,7 +55,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ./mvnw -l build.log -Dquickly install
+        run: ./etc/scripts/regen.sh > build.log 2>&1
       - name: archive logs
         uses: actions/upload-artifact@v4
         if: always()

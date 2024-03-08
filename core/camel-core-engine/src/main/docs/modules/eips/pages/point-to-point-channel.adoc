@@ -5,7 +5,7 @@ Camel supports the
 http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Point
 to Point Channel] from the xref:enterprise-integration-patterns.adoc[EIP patterns].
 
-An application is using Messaging to make remote procedure calls (RPC’s) or transfer documents.
+An application is using Messaging to make remote procedure calls (RPC) or transfer documents.
 
 How can the caller be sure that exactly one receiver will receive the document or perform the call?
 
@@ -20,7 +20,7 @@ The Point to Point Channel is supported in Camel by messaging based xref:ROOT:in
 * xref:ROOT:seda-component.adoc[SEDA] for internal Camel seda queue based messaging
 * xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] for working with AMQP Queues (RabbitMQ)
 
-There are also messaging based in the cloud from cloud providers such as Amazon, Google and Azure.
+There is also messaging based in the cloud from cloud providers such as Amazon, Google and Azure.
 
 TIP: See also the related xref:publish-subscribe-channel.adoc[Publish Scribe Channel] EIP
 

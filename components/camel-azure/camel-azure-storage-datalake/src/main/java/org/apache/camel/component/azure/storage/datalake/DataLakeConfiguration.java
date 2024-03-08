@@ -39,7 +39,7 @@ public class DataLakeConfiguration implements Cloneable {
     private String accountName;
     @UriPath(description = "name of filesystem to be used")
     private String fileSystemName;
-    @UriParam(description = "shared key credential for azure datalake gen2")
+    @UriParam(description = "shared key credential for azure data lake gen2")
     private StorageSharedKeyCredential sharedKeyCredential;
     @UriParam(description = "directory of the file to be handled in component")
     private String directoryName;
@@ -47,7 +47,7 @@ public class DataLakeConfiguration implements Cloneable {
     private String fileName;
     @UriParam(label = "security", secret = true, description = "client secret credential for authentication")
     private ClientSecretCredential clientSecretCredential;
-    @UriParam(description = "datalake service client for azure storage datalake")
+    @UriParam(description = "data lake service client for azure storage data lake")
     @Metadata(autowired = true)
     private DataLakeServiceClient serviceClient;
     @UriParam(label = "security", secret = true, description = "account key for authentication")
@@ -60,7 +60,7 @@ public class DataLakeConfiguration implements Cloneable {
     private String tenantId;
     @UriParam(description = "Timeout for operation")
     private Duration timeout;
-    @UriParam(description = "path in azure datalake for operations")
+    @UriParam(description = "path in azure data lake for operations")
     private String path = "/";
     @UriParam(description = "recursively include all paths")
     private Boolean recursive = false;

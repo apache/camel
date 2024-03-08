@@ -533,6 +533,10 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
     }
 
     private void appendPropertyBuilder(TypeSpec.Builder typeBuilder, String propertyName, TypeName javaType, Boolean toString) {
+        // skip org.apache.camel.component (as we can only depend on general java and camel types from camel-api and camel-core)
+        if (javaType.toString().startsWith("org.apache.camel.component")) {
+            return;
+        }
         FunSpec.Builder propertyBuilder = FunSpec.builder(propertyName);
         propertyBuilder.addParameter(propertyName, javaType);
         String code = "def.%s = %s".formatted(propertyName, propertyName);

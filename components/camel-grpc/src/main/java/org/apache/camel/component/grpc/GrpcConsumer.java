@@ -93,7 +93,7 @@ public class GrpcConsumer extends DefaultConsumer {
         BindableService bindableService = getBindableServiceFactory().createBindableService(this);
         ServerInterceptor headerInterceptor = new GrpcHeaderInterceptor();
 
-        if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getHost()) && configuration.getPort() > 0) {
             LOG.debug("Building gRPC server on {}:{}", configuration.getHost(), configuration.getPort());
             serverBuilder
                     = NettyServerBuilder.forAddress(new InetSocketAddress(configuration.getHost(), configuration.getPort()));

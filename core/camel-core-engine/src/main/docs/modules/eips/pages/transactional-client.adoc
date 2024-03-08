@@ -13,9 +13,9 @@ Use a Transactional Client—make the client’s session with the messaging syst
 
 Transactions are supported by Spring Transactions and also with a JTA Transaction Manager.
 
-Traditionally a JTA Transaction Manager are included in JEE application servers.
+Traditionally, a JTA Transaction Manager is included in JEE application servers.
 However, when running microservice applications with Spring Boot, or Quarkus, then
-a 3rd-party JTA transaction manager can be embedded and used.
+a third-party JTA transaction manager can be embedded and used.
 
 In Camel transactions are supported by JMS messaging components:
 
@@ -35,7 +35,7 @@ And all the SQL database components, such as:
 A transaction is a series of events. The start of a transaction is often named begin, and
 the end is commit (or rollback if the transaction isn’t successfully completed).
 
-If you were to write in Java a locally managed transaction then it could be something like:
+If you were to write in Java a locally managed transaction, then it could be something like:
 
 [source,java]
 ----
@@ -69,7 +69,7 @@ and the latter as global transactions
 
 ==== Local Transactions
 
-If you only have a single resource (such as one database, or one messaging system) then
+If you only have a single resource (such as one database, or one messaging system), then
 transactions can be simpler to orchestrate by the transaction manager. This is known as local transactions.
 
 When using local transactions with Spring Transactions, then you can use the dedicated transaction manager
@@ -85,21 +85,20 @@ TIP: Consult the Spring documentation for more local transaction managers.
 The situation changes when you need to span multiple resources in the
 same transaction, such as JMS and JDBC resources together.
 
-To support multiple resources you need to use a JTA (XA) capable transaction manager,
+To support multiple resources, you need to use a JTA (XA) capable transaction manager,
 which means using `org.springframework.transaction.jta.JtaTransactionManager` with Spring Transactions.
 
-NOTE: For more information on JTA, see the Wikipedia page on the subject:
-http://en.wikipedia.org/wiki/Java_Transaction_API. XA is also briefly discussed
-here: http://en.wikipedia.org/wiki/X/Open_XA.
+NOTE: For more information on JTA, see the http://en.wikipedia.org/wiki/Java_Transaction_API[Wikipedia page on the subject].
+here: http://en.wikipedia.org/wiki/X/Open_XA[XA] is also briefly discussed.
 
 That is not all, you also need to use a JTA transaction implementation such as:
 
-- Atomikos - https://www.atomikos.com/
-- Narayana - https://narayana.io/
-- JEE Application Server with JTA
+- https://www.atomikos.com/[Atomikos]
+- https://narayana.io/[Narayana]
+- A JEE Application Server with JTA
 
 And all of this must be configured correctly to have JTA transaction working.
-You may also need to do special configuration from the vendors of the resources (i.e. database or messaging system)
+You may also need to do special configuration from the vendors of the resources (i.e., database or messaging system)
 to have this work properly with JTA/XA transactions. Consult the documentation of those systems for more details.
 
 === About Spring Transactions
@@ -135,8 +134,13 @@ You will later in the two transactional examples further below, see how to set u
 When using transactions (JTA or Spring Transaction) in Camel then you enable this on routes by using `transacted`
 right after `from` in the routes.
 
-For example in Java that would be:
+For example, that would be:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("jms:cheese")
@@ -144,8 +148,8 @@ from("jms:cheese")
     .to("bean:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -155,11 +159,14 @@ And in XML:
 </route>
 ----
 
+====
+
 When you specify `<transacted/>` in a route, Camel uses transactions for that particular
 route and any other routes that the message may undertake.
 
 When a route is specified as `<transacted/>`, then under the hood Camel looks up
-the Spring/JTA transaction manager and uses it. This is convention over configuration.
+the Spring/JTA transaction manager and uses it.
+This is a convention over configuration.
 
 The convention over configuration applies only when you have a single Spring/JTA transaction
 manager configured. In more complex scenarios, where you either use multiple
@@ -170,11 +177,11 @@ configuration.
 
 In some rare situations, you may need to use multiple transactions with the same exchange.
 
-For example an exchange starts off using `PROPAGATION_REQUIRED`, and then you need
+For example, an exchange starts off using `PROPAGATION_REQUIRED`, and then you need
 to use another transaction that’s independent of the existing transaction. You can
-do this by using PROPAGATION_REQUIRES_NEW, which will start a new transaction.
+do this by using `PROPAGATION_REQUIRES_NEW`, which will start a new transaction.
 
-NOTE: In Camel a route can only have exactly one transaction policy, which means, that if
+NOTE: In Camel, a route can only have exactly one transaction policy, which means that if
 you need to change transaction propagation, then you must use a new route.
 
 When the exchange completes, the transaction manager will issue commits
@@ -203,7 +210,7 @@ as shown in the following XML snippets:
 </bean>
 ----
 
-Then we have routes, where each of the route use their different policy:
+Then we have routes where each of the routes uses their different policy:
 
 [source,xml]
 ----
@@ -236,24 +243,25 @@ TIP: **Keep it simple:** Although you can use multiple propagation behaviors wit
 so with care. Try to design your solutions with as few propagations as possible, because
 complexity increases dramatically when you introduce new propagation behaviors
 
+== Transaction example with a database
 
-== Transaction example with database
-
-In this sample we want to ensure that two endpoints is under transaction
-control. These two endpoints inserts data into a database.
+In this sample, we want to ensure that two endpoints are under transaction
+control.
+These two endpoints insert data into a database.
 
 The sample is in its full as a
 https://github.com/apache/camel/tree/main/components/camel-spring-xml/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceMinimalConfigurationTest.java[unit test].
 
-First we set up the usual spring stuff in its configuration file.
-Here we have defined a DataSource to the HSQLDB and a most
+First, we set up the usual spring stuff in its configuration file.
+Here we have defined a DataSource to the HSQLDB and most
 importantly the Spring `DataSourceTransactionManager` that is doing the
 heavy lifting of ensuring our transactional policies.
 
-As we use the new convention over configuration we do *not* need to
+As we use the new convention over configuration, we do *not* need to
 configure a transaction policy bean, so we do not have any
-`PROPAGATION_REQUIRED` beans. All the beans needed to be configured is
-*standard* Spring beans only, there are no Camel specific configuration at all.
+`PROPAGATION_REQUIRED` beans.
+All the beans needed to be configured are
+*standard* Spring beans only, there is no Camel specific configuration at all.
 
 [source,xml]
 ----
@@ -277,7 +285,7 @@ configure a transaction policy bean, so we do not have any
 Then we are ready to define our Camel routes. We have two routes: 1 for
 success conditions, and 1 for a forced rollback condition.
 
-This is after all based on a unit test. Notice that we mark each route
+This is, after all, based on a unit test. Notice that we mark each route
 as transacted using the `<transacted/>` XML tag.
 
 [source,xml]
@@ -286,9 +294,9 @@ as transacted using the `<transacted/>` XML tag.
 
     <route>
         <from uri="direct:okay"/>
-        <!-- we mark this route as transacted. Camel will lookup the spring transaction manager
+        <!-- we mark this route as transacted. Camel will look up the spring transaction manager
              and use it by default. We can optimally pass in arguments to specify a policy to use
-             that is configured with a spring transaction manager of choice. However Camel supports
+             that is configured with a spring transaction manager of choice. However, Camel supports
              convention over configuration as we can just use the defaults out of the box and Camel
              that suites in most situations -->
         <transacted/>
@@ -320,23 +328,19 @@ as transacted using the `<transacted/>` XML tag.
 ----
 
 That is all that is needed to configure a Camel route as being transacted.
-Just remember to use `<transacted/>`. The rest is standard Spring
+Remember to use `<transacted/>`.
+The rest is standard Spring
 XML to set up the transaction manager.
 
 == Transaction example with JMS
 
-In this sample we want to listen for messages on a queue and process the
+In this sample, we want to listen for messages in a queue and process the
 messages with our business logic java code and send them along. Since
 it is based on a
-https://github.com/apache/camel/tree/main/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[unit test]
+https://github.com/apache/camel/tree/main/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[unit test],
 the destination is a mock endpoint.
 
-[NOTE]
-====
-The following steps use the ActiveMQ component which is not yet supported on Camel 4.
-====
-
-First we configure the standard Spring XML to declare a JMS connection
+First, we configure the standard Spring XML to declare a JMS connection
 factory, a JMS transaction manager and our ActiveMQ component that we
 use in our routing.
 
@@ -362,9 +366,9 @@ use in our routing.
     <property name="connectionFactory" ref="poolConnectionFactory"/>
     <!-- define the jms consumer/producer as transacted -->
     <property name="transacted" value="true"/>
-    <!-- setup the transaction manager to use -->
-    <!-- if not provided then Camel will automatic use a JmsTransactionManager, however if you
-         for instance use a JTA transaction manager then you must configure it -->
+    <!-- set up the transaction manager to use -->
+    <!-- if not provided, then Camel will automatically use a JmsTransactionManager, however, if you
+         for instance use a JTA transaction manager, then you must configure it -->
     <property name="transactionManager" ref="jmsTransactionManager"/>
 </bean>
 ----

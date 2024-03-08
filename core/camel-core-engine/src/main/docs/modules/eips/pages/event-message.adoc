@@ -20,7 +20,8 @@ The default behaviour of many xref:ROOT:index.adoc[Components] is `InOnly`
 such as for xref:ROOT:jms-component.adoc[JMS], xref:ROOT:jms-component.adoc[File] or
 xref:ROOT:seda-component.adoc[SEDA].
 
-Some components support both `InOnly` and `InOut` and act accordingly. For example the xref:ROOT:jms-component.adoc[JMS]
+Some components support both `InOnly` and `InOut` and act accordingly.
+For example, the xref:ROOT:jms-component.adoc[JMS]
 can send messages as one-way (`InOnly`) or use request/reply messaging (`InOut`).
 
 TIP: See the related xref:requestReply-eip.adoc[Request Reply] message.
@@ -36,7 +37,7 @@ the pattern property.
 foo:bar?exchangePattern=InOnly
 ----
 
-IMPORTANT: This is only possible on endpoints used by consumers (i.e. in `<from>`).
+IMPORTANT: This is only possible on endpoints used by consumers (i.e., in `<from>`).
 
 In the example below the message will be forced as an event message as the consumer
 is in `InOnly` mode.
@@ -62,7 +63,7 @@ XML::
 ----
 ====
 
-== Using setExchangePattern EIP
+== Using `setExchangePattern` EIP
 
 You can specify the
 xref:manual::exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
@@ -109,14 +110,14 @@ NOTE: Using `setExchangePattern` to change the xref:manual::exchange-pattern.ado
 is often only used in special use-cases where you must
 force to be using either `InOnly` or `InOut` mode when using components that support both modes (such as messaging components like ActiveMQ, JMS, RabbitMQ etc.)
 
-== JMS component and InOnly vs InOut
+== JMS component and InOnly vs. InOut
 
 When consuming messages from xref:ROOT:jms-component.adoc[JMS] a Request Reply is
 indicated by the presence of the `JMSReplyTo` header. This means the JMS component automatic
 detects whether to use `InOnly` or `InOut` in the consumer.
 
 Likewise, the JMS producer will check the current xref:manual::exchange-pattern.adoc[Exchange Pattern]
-on the xref:manual::exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e. one-way vs request/reply messaging)
+on the xref:manual::exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e., one-way vs. request/reply messaging)
 
 
 == Other Implementation Details

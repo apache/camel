@@ -163,7 +163,8 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^A-Za-z0-9-/]", "-");
+        // dot should be replaced with dash (camel.yaml -> camel-yaml) for marker files
+        return fileName.replaceAll("[^A-Za-z0-9+-/]", "-").replace('.', '-');
     }
 
     private boolean isLocal(String className) {

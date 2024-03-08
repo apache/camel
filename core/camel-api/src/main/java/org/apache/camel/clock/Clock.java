@@ -16,6 +16,7 @@
  */
 package org.apache.camel.clock;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -57,5 +58,14 @@ public interface Clock {
      */
     default Date asDate() {
         return new Date(getCreated());
+    }
+
+    /**
+     * Get the elapsed duration for this clock in the standard Java Duration
+     *
+     * @return A new Duration instance representing the elapsed duration for this clock
+     */
+    default Duration asDuration() {
+        return Duration.ofMillis(elapsed());
     }
 }

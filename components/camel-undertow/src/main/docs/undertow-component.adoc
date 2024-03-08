@@ -18,11 +18,11 @@ The Undertow component provides HTTP and WebSocket based endpoints for consuming
 and producing HTTP/WebSocket requests.
 
 That is, the Undertow component behaves as a simple Web server.
-Undertow can also be used as a http client which mean you can also use
+Undertow can also be used as a http client that means you can also use
 it with Camel as a producer.
 
 Since the component also supports WebSocket
-connections, it can serve as a drop-in replacement for Camel websocket
+connections, it can serve as a drop-in replacement for the Camel websocket
 component or atmosphere-websocket component.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -40,9 +40,14 @@ for this component:
 
 == URI format
 
+.HTTP
 ----
 undertow:http://hostname[:port][/resourceUri][?options]
 undertow:https://hostname[:port][/resourceUri][?options]
+----
+
+.WebSocket
+----
 undertow:ws://hostname[:port][/resourceUri][?options]
 undertow:wss://hostname[:port][/resourceUri][?options]
 ----
@@ -71,26 +76,29 @@ Camel uses the same message headers as the xref:http-component.adoc[HTTP]
 component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
 the chunked encoding on the camel-undertow consumer.
 
-Camel also populates *all* request.parameter and request.headers. For
-example, given a client request with the URL,
+Camel also populates *all* `request.parameter` and `request.headers`.
+For example, given a client request with the URL,
 `\http://myserver/myserver?orderid=123`, the exchange will contain a
-header named `orderid` with the value 123.
+header named `orderid` with the value `123`.
 
 == HTTP Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
 
-in Java DSL
+[tabs]
+====
 
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("undertow:http://www.google.com");
 ----
 
-or in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -98,6 +106,8 @@ or in XML
     <to uri="undertow:http://www.google.com"/>
 </route>
 ----
+
+====
 
 == HTTP Consumer Example
 
@@ -138,7 +148,7 @@ If you need to expose an Undertow endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
 To listen across an entire URI prefix, see
-xref:manual:faq:how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
+xref:manual:faq:how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards?].
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
@@ -146,15 +156,16 @@ xref:servlet-component.adoc[Servlet Transport].
 
 == Security provider
 
-To plugin security provider for endpoint authentication, implement SPI interface
+To plug in a security provider for endpoint authentication, implement SPI interface
 `org.apache.camel.component.undertow.spi.UndertowSecurityProvider`.
 
-Undertow components locates all implementations of `UndertowSecurityProvider` using
-Java SPI (Service Provider Interfaces). If there is an object passed to component
-as parameter `securityConfiguration` and provider accepts it. Provider will be used
+Undertow component locates all implementations of `UndertowSecurityProvider` using
+Java SPI (Service Provider Interfaces).
+If there is an object passed to the component as parameter `securityConfiguration` and provider accepts it.
+Provider will be used
 for authentication of all requests.
 
-Property `requireServletContext` of security providers forces udertow server to start
+Property `requireServletContext` of security providers forces the Undertow server to start
 with servlet context. There will be no servlet actually handled. This feature is meant only
 for use with servlet filters, which needs servlet context for their functionality.
 

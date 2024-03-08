@@ -9,12 +9,12 @@ consumers to be decoupled.
 
 image::eip/MessageBusSolution.gif[image]
 
-A messaging system such as Apache ActiveMQ can be used as Message Bus.
+A messaging system such as Apache ActiveMQ can be used as a Message Bus.
 
 == Example
 
 The following demonstrates how the Camel message bus can be used to
-ingest message into the bus with the xref:ROOT:jms-component.adoc[JMS] component.
+ingest a message into the bus with the xref:ROOT:jms-component.adoc[JMS] component.
 
 [tabs]
 ====

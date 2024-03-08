@@ -338,7 +338,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         return managementMBeanAssembler;
     }
 
-    void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
+    @Override
+    public void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
         this.managementMBeanAssembler
                 = camelContext.getInternalServiceManager().addService(camelContext, managementMBeanAssembler, false);
     }
@@ -790,11 +791,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             synchronized (lock) {
                 if (typeConverterRegistry == null) {
                     setTypeConverterRegistry(camelContext.createTypeConverterRegistry());
-
-                    // some registries are also a type converter implementation
-                    if (typeConverterRegistry instanceof TypeConverter newTypeConverter) {
-                        setTypeConverter(newTypeConverter);
-                    }
                 }
             }
         }
@@ -803,6 +799,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
         this.typeConverterRegistry = camelContext.getInternalServiceManager().addService(camelContext, typeConverterRegistry);
+        // some registries are also a type converter implementation
+        if (typeConverterRegistry instanceof TypeConverter newTypeConverter) {
+            setTypeConverter(newTypeConverter);
+        }
     }
 
     void stopTypeConverter() {

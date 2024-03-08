@@ -131,7 +131,7 @@ public class CamelCatalogTest {
     public void testFindTransformerNames() {
         List<String> names = catalog.findTransformerNames();
 
-        assertTrue(names.contains("application-cloudevents-json"));
+        assertTrue(names.contains("application-cloudevents+json"));
         assertTrue(names.contains("application-x-java-object"));
         assertTrue(names.contains("aws-cloudtrail-application-cloudevents"));
         assertTrue(names.contains("azure-storage-queue-application-cloudevents"));

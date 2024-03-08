@@ -83,7 +83,7 @@ from("vertx-websocket:localhost:8080/chat/{user}")
     .log("New message from ${header.user} >>> ${body}")
 ----
 
-Similarly you can retrieve any query parameter values that were used by the WebSocket client to connect to the server endpoint:
+Similarly, you can retrieve any query parameter values used by the WebSocket client to connect to the server endpoint:
 
 [source,java]
 ----

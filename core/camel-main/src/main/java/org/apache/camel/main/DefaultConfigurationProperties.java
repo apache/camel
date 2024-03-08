@@ -71,9 +71,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
-    private boolean backlogTracing;
-    private boolean backlogTracingStandby;
-    private boolean backlogTracingTemplates;
     private boolean typeConverterStatisticsEnabled;
     private boolean tracing;
     private boolean tracingStandby;
@@ -101,6 +98,9 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "Default")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
+    private boolean jmxUpdateRouteEnabled;
+    private boolean jmxManagementRegisterRoutesCreateByKamelet;
+    private boolean jmxManagementRegisterRoutesCreateByTemplate = true;
     private boolean camelEventsTimestampEnabled;
     private boolean useMdcLogging;
     private String mdcLoggingKeysPattern;
@@ -131,7 +131,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
-    private boolean jmxUpdateRouteEnabled;
     @Metadata(enums = "xml,yaml")
     private String dumpRoutes;
     private String dumpRoutesInclude = "routes";
@@ -687,47 +686,6 @@ public abstract class DefaultConfigurationProperties<T> {
         tracingLoggingFormat = format;
     }
 
-    public boolean isBacklogTracing() {
-        return backlogTracing;
-    }
-
-    /**
-     * Sets whether backlog tracing is enabled or not.
-     *
-     * Default is false.
-     */
-    public void setBacklogTracing(boolean backlogTracing) {
-        this.backlogTracing = backlogTracing;
-    }
-
-    public boolean isBacklogTracingStandby() {
-        return backlogTracingStandby;
-    }
-
-    /**
-     * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
-     * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
-     *
-     * Default is false.
-     */
-    public void setBacklogTracingStandby(boolean backlogTracingStandby) {
-        this.backlogTracingStandby = backlogTracingStandby;
-    }
-
-    public boolean isBacklogTracingTemplates() {
-        return backlogTracingTemplates;
-    }
-
-    /**
-     * Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this on increases
-     * the verbosity of tracing by including events from internal routes in the templates or kamelets.
-     *
-     * Default is false.
-     */
-    public void setBacklogTracingTemplates(boolean backlogTracingTemplates) {
-        this.backlogTracingTemplates = backlogTracingTemplates;
-    }
-
     public boolean isMessageHistory() {
         return messageHistory;
     }
@@ -995,6 +953,41 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
+    }
+
+    public boolean isJmxManagementRegisterRoutesCreateByKamelet() {
+        return jmxManagementRegisterRoutesCreateByKamelet;
+    }
+
+    /**
+     * Whether routes created by Kamelets should be registered for JMX management. Enabling this allows to have
+     * fine-grained monitoring and management of every route created via Kamelets.
+     *
+     * This is default disabled as a Kamelet is intended as a component (black-box) and its implementation details as
+     * Camel route makes the overall management and monitoring of Camel applications more verbose.
+     *
+     * During development of Kamelets then enabling this will make it possible for developers to do fine-grained
+     * performance inspection and identify potential bottlenecks in the Kamelet routes.
+     *
+     * However, for production usage then keeping this disabled is recommended.
+     */
+    public void setJmxManagementRegisterRoutesCreateByKamelet(boolean jmxManagementRegisterRoutesCreateByKamelet) {
+        this.jmxManagementRegisterRoutesCreateByKamelet = jmxManagementRegisterRoutesCreateByKamelet;
+    }
+
+    public boolean isJmxManagementRegisterRoutesCreateByTemplate() {
+        return jmxManagementRegisterRoutesCreateByTemplate;
+    }
+
+    /**
+     * Whether routes created by route templates (not Kamelets) should be registered for JMX management. Enabling this
+     * allows to have fine-grained monitoring and management of every route created via route templates.
+     *
+     * This is default enabled (unlike Kamelets) as routes created via templates is regarded as standard routes, and
+     * should be available for management and monitoring.
+     */
+    public void setJmxManagementRegisterRoutesCreateByTemplate(boolean jmxManagementRegisterRoutesCreateByTemplate) {
+        this.jmxManagementRegisterRoutesCreateByTemplate = jmxManagementRegisterRoutesCreateByTemplate;
     }
 
     public boolean isCamelEventsTimestampEnabled() {
@@ -1969,38 +1962,6 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Sets whether backlog tracing is enabled or not.
-     *
-     * Default is false.
-     */
-    public T withBacklogTracing(boolean backlogTracing) {
-        this.backlogTracing = backlogTracing;
-        return (T) this;
-    }
-
-    /**
-     * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
-     * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
-     *
-     * Default is false.
-     */
-    public T withBacklogTracingStandby(boolean backlogTracingStandby) {
-        this.backlogTracingStandby = backlogTracingStandby;
-        return (T) this;
-    }
-
-    /**
-     * Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this on increases
-     * the verbosity of tracing by including events from internal routes in the templates or kamelets.
-     *
-     * Default is false.
-     */
-    public T withBacklogTracingTemplates(boolean backlogTracingTemplates) {
-        this.backlogTracingTemplates = backlogTracingTemplates;
-        return (T) this;
-    }
-
-    /**
      * Sets whether message history is enabled or not.
      *
      * Default is false.
@@ -2198,6 +2159,35 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
+        return (T) this;
+    }
+
+    /**
+     * Whether routes created by Kamelets should be registered for JMX management. Enabling this allows to have
+     * fine-grained monitoring and management of every route created via Kamelets.
+     *
+     * This is default disabled as a Kamelet is intended as a component (black-box) and its implementation details as
+     * Camel route makes the overall management and monitoring of Camel applications more verbose.
+     *
+     * During development of Kamelets then enabling this will make it possible for developers to do fine-grained
+     * performance inspection and identify potential bottlenecks in the Kamelet routes.
+     *
+     * However, for production usage then keeping this disabled is recommended.
+     */
+    public T withJmxManagementRegisterRoutesCreateByKamelet(boolean jmxManagementRegisterRoutesCreateByKamelet) {
+        this.jmxManagementRegisterRoutesCreateByKamelet = jmxManagementRegisterRoutesCreateByKamelet;
+        return (T) this;
+    }
+
+    /**
+     * Whether routes created by route templates (not Kamelets) should be registered for JMX management. Enabling this
+     * allows to have fine-grained monitoring and management of every route created via route templates.
+     *
+     * This is default enabled (unlike Kamelets) as routes created via templates is regarded as standard routes, and
+     * should be available for management and monitoring.
+     */
+    public T withJmxManagementRegisterRoutesCreateByTemplate(boolean jmxManagementRegisterRoutesCreateByTemplate) {
+        this.jmxManagementRegisterRoutesCreateByTemplate = jmxManagementRegisterRoutesCreateByTemplate;
         return (T) this;
     }
 

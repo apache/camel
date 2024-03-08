@@ -225,9 +225,38 @@ public class DefaultModel implements Model {
                             RouteDefinition toBeInlined = directs.get(toUri);
                             if (toBeInlined != null) {
                                 toBeRemoved.add(toBeInlined);
+                                // inline the source loc:line as starting from this direct input
+                                FromDefinition inlinedFrom = toBeInlined.getInput();
+                                from.setLocation(inlinedFrom.getLocation());
+                                from.setLineNumber(inlinedFrom.getLineNumber());
                                 // inline by replacing the outputs
                                 r.getOutputs().clear();
                                 r.getOutputs().addAll(toBeInlined.getOutputs());
+                                // and copy over various configurations
+                                if (toBeInlined.getRouteId() != null) {
+                                    r.setId(toBeInlined.getRouteId());
+                                }
+                                r.setNodePrefixId(toBeInlined.getNodePrefixId());
+                                r.setGroup(toBeInlined.getGroup());
+                                r.setAutoStartup(toBeInlined.getAutoStartup());
+                                r.setDelayer(toBeInlined.getDelayer());
+                                r.setInputType(toBeInlined.getInputType());
+                                r.setOutputType(toBeInlined.getOutputType());
+                                r.setLogMask(toBeInlined.getLogMask());
+                                r.setMessageHistory(toBeInlined.getMessageHistory());
+                                r.setStreamCache(toBeInlined.getStreamCache());
+                                r.setTrace(toBeInlined.getTrace());
+                                r.setStartupOrder(toBeInlined.getStartupOrder());
+                                r.setRoutePolicyRef(toBeInlined.getRoutePolicyRef());
+                                r.setRouteConfigurationId(toBeInlined.getRouteConfigurationId());
+                                r.setRoutePolicies(toBeInlined.getRoutePolicies());
+                                r.setShutdownRoute(toBeInlined.getShutdownRoute());
+                                r.setShutdownRunningTask(toBeInlined.getShutdownRunningTask());
+                                r.setErrorHandlerRef(toBeInlined.getErrorHandlerRef());
+                                r.setPrecondition(toBeInlined.getPrecondition());
+                                if (toBeInlined.isErrorHandlerFactorySet()) {
+                                    r.setErrorHandlerFactory(toBeInlined.getErrorHandlerFactory());
+                                }
                             }
                         }
                     }

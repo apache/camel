@@ -29,6 +29,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "HealthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "host":
         case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "infoenabled":
+        case "InfoEnabled": target.setInfoEnabled(property(camelContext, boolean.class, value)); return true;
         case "jolokiaenabled":
         case "JolokiaEnabled": target.setJolokiaEnabled(property(camelContext, boolean.class, value)); return true;
         case "maxbodysize":
@@ -60,6 +62,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "HealthCheckEnabled": return boolean.class;
         case "host":
         case "Host": return java.lang.String.class;
+        case "infoenabled":
+        case "InfoEnabled": return boolean.class;
         case "jolokiaenabled":
         case "JolokiaEnabled": return boolean.class;
         case "maxbodysize":
@@ -92,6 +96,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "HealthCheckEnabled": return target.isHealthCheckEnabled();
         case "host":
         case "Host": return target.getHost();
+        case "infoenabled":
+        case "InfoEnabled": return target.isInfoEnabled();
         case "jolokiaenabled":
         case "JolokiaEnabled": return target.isJolokiaEnabled();
         case "maxbodysize":

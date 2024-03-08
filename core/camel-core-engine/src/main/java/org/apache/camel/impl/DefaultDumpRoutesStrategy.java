@@ -45,7 +45,7 @@ import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.annotations.ServiceFactory;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceSupport;
 import org.apache.camel.support.service.ServiceSupport;
@@ -60,7 +60,7 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
 /**
  * Default {@link DumpRoutesStrategy} that dumps the routes to standard logger.
  */
-@ServiceFactory("default-" + DumpRoutesStrategy.FACTORY)
+@JdkService("default-" + DumpRoutesStrategy.FACTORY)
 public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRoutesStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDumpRoutesStrategy.class);

@@ -150,6 +150,45 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
+     * AWS Bedrock (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsBedrockComponentBuilderFactory.AwsBedrockComponentBuilder awsBedrock() {
+        return org.apache.camel.builder.component.dsl.AwsBedrockComponentBuilderFactory.awsBedrock();
+    }
+    /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Operate on AWS Bedrock through its Agent.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsBedrockAgentComponentBuilderFactory.AwsBedrockAgentComponentBuilder awsBedrockAgent() {
+        return org.apache.camel.builder.component.dsl.AwsBedrockAgentComponentBuilderFactory.awsBedrockAgent();
+    }
+    /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsBedrockAgentRuntimeComponentBuilderFactory.AwsBedrockAgentRuntimeComponentBuilder awsBedrockAgentRuntime() {
+        return org.apache.camel.builder.component.dsl.AwsBedrockAgentRuntimeComponentBuilderFactory.awsBedrockAgentRuntime();
+    }
+    /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
      * 
@@ -580,8 +619,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
     }
     /**
-     * Azure Storage Datalake Service (camel-azure-storage-datalake)
-     * Sends and receives files to/from Azure DataLake Storage.
+     * Azure Storage Data Lake Service (camel-azure-storage-datalake)
+     * Sends and receives files to/from Azure Data Lake Storage.
      * 
      * Category: cloud,file,bigdata
      * Since: 3.8
@@ -2365,7 +2404,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JSLT (camel-jslt)
-     * Query or transform JSON payloads using an JSLT.
+     * Query or transform JSON payloads using JSLT.
      * 
      * Category: transformation
      * Since: 3.1
@@ -3484,8 +3523,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * Configure REST producers based on an OpenAPI specification document
-     * delegating to a component implementing the RestProducerFactory interface.
+     * To call REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
@@ -3818,7 +3856,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Splunk HEC (camel-splunk-hec)
-     * The splunk component allows to publish events in Splunk using the HTTP
+     * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
      * 
      * Category: monitoring
@@ -3884,7 +3922,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
-     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
      * 
      * Category: messaging
      * Since: 3.8
@@ -3989,7 +4027,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Stomp (camel-stomp)
-     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
+     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
      * Protocol) compliant message brokers.
      * 
      * Category: messaging
@@ -4042,7 +4080,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Telegram (camel-telegram)
-     * Send and receive messages acting as a Telegram Bot Telegram Bot API.
+     * Send and receive messages using the Telegram Bot API.
      * 
      * Category: cloud,api,chat
      * Since: 2.18
@@ -4305,8 +4343,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.WhatsappComponentBuilderFactory.whatsapp();
     }
     /**
-     * Wordpress (camel-wordpress)
-     * Manage posts and users using Wordpress API.
+     * WordPress (camel-wordpress)
+     * Manage posts and users using the WordPress API.
      * 
      * Category: cloud,api,cms
      * Since: 2.21

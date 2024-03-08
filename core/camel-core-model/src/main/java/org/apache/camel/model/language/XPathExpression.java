@@ -265,8 +265,18 @@ public class XPathExpression extends NamespaceAwareExpression {
          * <p/>
          * The default result type is NodeSet
          */
-        public Builder resultQName(String resultTypeName) {
+        public Builder resultQName(String resultQName) {
             this.resultQName = resultQName;
+            return this;
+        }
+
+        /**
+         * Sets the class name of the result type (type from output)
+         * <p/>
+         * The default result type is NodeSet
+         */
+        public Builder resultQName(ResultQName resultQName) {
+            this.resultQName = resultQName == null ? null : resultQName.name();
             return this;
         }
 
@@ -376,5 +386,17 @@ public class XPathExpression extends NamespaceAwareExpression {
         public XPathExpression end() {
             return new XPathExpression(this);
         }
+    }
+
+    /**
+     * {@code ResultQName} defines the possible class name of the result types that can be used.
+     */
+    @XmlTransient
+    public enum ResultQName {
+        NUMBER,
+        STRING,
+        BOOLEAN,
+        NODESET,
+        NODE
     }
 }

@@ -7,9 +7,9 @@ xref:manual::exchange.adoc[Exchange]'s' while they are being routed.
 
 Camel supports three kinds of interceptors:
 
-* `intercept` that intercepts every processing step as they happen during routing
-* `interceptFrom` that intercepts only the incoming step (i.e. xref:from-eip.adoc[from])
-* `interceptSendToEndpoint` that intercepts only when an
+* <<Intercept-Intercept, `intercept`>> that intercepts every processing step as they happen during routing
+* <<Intercept-InterceptFrom, `interceptFrom`>> that intercepts only the incoming step (i.e., xref:from-eip.adoc[from])
+* <<Intercept-InterceptSendToEndpoint, `interceptSendToEndpoint`>> that intercepts only when an
 xref:manual::exchange.adoc[Exchange] is about to be sent to the given xref:message-endpoint.adoc[endpoint].
 
 The `interceptSendToEndpoint` is dynamic hence it will also trigger if a
@@ -29,7 +29,13 @@ xref:manual::route-configuration.adoc[Route Configuration].
 This means multiple interceptors can be _triggered_.
 
 Most of the examples in this page are on global scope.
-To use route scope, then it is similar, but it is done on the route as shown in the following example.
+To use route scope, then it is similar, but it is done on the route as shown in the following example:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 -------------------------------------------------------------------------
@@ -39,8 +45,8 @@ from("jms:queue:order")
   .to("bean:processOrder");
 -------------------------------------------------------------------------
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
   <route>
@@ -53,6 +59,8 @@ And in XML:
   </route>
 ----
 
+====
+
 === Common features of the interceptors
 
 All these interceptors support the following features:
@@ -61,18 +69,25 @@ All these interceptors support the following features:
 * `stop` forces stopping continue routing the Exchange and mark it as completed successful (it's actually the xref:stop-eip.adoc[Stop] EIP).
 * `skip` when used with `interceptSendToEndpoint` will *skip* sending the message to the original intended endpoint.
 * `afterUri` when used with `interceptSendToEndpoint` allows to send
-the message to an xref:message-endpoint.adoc[endpoint] afterwards.
+the message to an xref:message-endpoint.adoc[endpoint] afterward.
 * `interceptFrom` and `interceptSendToEndpoint` support endpoint
 URI pattern matching by exact uri, wildcard and regular expression. See further below for more details.
 * The intercepted endpoint uri is stored as exchange property with the key
 `Exchange.INTERCEPTED_ENDPOINT`.
 
-=== Using intercept
+[[Intercept-Intercept]]
+== Using `intercept`
 
 The `Intercept` is intercepting the xref:manual::exchange.adoc[Exchange]
-on every processing steps during routing.
+on every processing step during routing.
 
 Given the following example:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 -------------------------------------------------------------------------
@@ -84,17 +99,8 @@ from("jms:queue:order")
   .to("bean:processOrder");
 -------------------------------------------------------------------------
 
-What happens is that the `Exchange` is intercepted
-before each processing step, that means that it will be intercepted
-before
-
-* `.to("bean:validateOrder")`
-* `.to("bean:processOrder")`
-
-So in this example we intercept the `Exchange` twice.
-
-The example is as follows in XML:
-
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -112,13 +118,29 @@ The example is as follows in XML:
 
 </camelContext>
 ----
+====
+
+What happens is that the `Exchange` is intercepted
+before each processing step, that means that it will be intercepted
+before
+
+* `.to("bean:validateOrder")`
+* `.to("bean:processOrder")`
+
+So in this example we intercept the `Exchange` twice.
 
 === Controlling when to intercept using a predicate
 
 If you only want to intercept "sometimes", then you can use a xref:manual::predicate.adoc[predicate].
 
-For instance in the sample below we only intercept if the message body
+For instance, in the sample below, we only intercept if the message body
 contains the string word Hello:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -129,7 +151,8 @@ from("jms:queue:order")
   .to("bean:processOrder");
 ----
 
-And in XML:
+XML::
++
 
 [source,xml]
 ----
@@ -151,10 +174,18 @@ And in XML:
 </camelContext>
 ----
 
+====
+
 === Stop routing after being intercepted
 
-It is also possible to stop continue routing after being intercepted.
+It is also possible to stop routing after being intercepted.
 Now suppose that if the message body contains the word Hello we want to log and stop, then we can do:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -167,7 +198,8 @@ from("jms:queue:order")
   .to("bean:processOrder");
 ----
 
-And in XML:
+XML::
++
 
 [source,xml]
 ----
@@ -190,18 +222,27 @@ And in XML:
 </camelContext>
 ----
 
-== Using intercept from
+====
+
+[[Intercept-InterceptFrom]]
+== Using `interceptFrom`
 
 The `interceptFrom` is for intercepting any incoming
-Exchange, in any route (it intercepts all the xref:from-eip.adoc[from] EIPs)
+Exchange, in any route (it intercepts all the xref:from-eip.adoc[`from`] EIPs)
 
 This allows you to do some custom behavior for received Exchanges.
 You can provide a specific uri for a given Endpoint then it only
 applies for that particular route.
 
-So lets start with the logging example. We want to log all the
-incoming messages, so we use `interceptFrom` to route to the
+So let's start with the logging example.
+We want to log all the incoming messages, so we use `interceptFrom` to route to the
 xref:ROOT:log-component.adoc[Log] component.
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -213,7 +254,8 @@ from("jms:queue:order")
   .to("bean:processOrder");
 ----
 
-And in XML:
+XML::
++
 
 [source,xml]
 ----
@@ -232,8 +274,16 @@ And in XML:
 </camelContext>
 ----
 
+====
+
 If you want to only apply a specific endpoint, such as all jms endpoints,
 you can do:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -248,12 +298,8 @@ from("file:inbox")
   .to("ftp:someserver/backup")
 ----
 
-In this example then only messages from the JMS route are intercepted, because
-we specified a pattern in the `interceptFrom` as `jms*` (uses a wildcard).
-
-The pattern syntax is documented in more details later.
-
-And in XML:
+XML::
++
 
 [source,xml]
 ----
@@ -276,14 +322,22 @@ And in XML:
 </camelContext>
 ----
 
-== Using intercept when sending to an endpoint
+====
 
-You can also intercept when Camel is sending a message to an xref:message-endpoint.adoc[endpoint].
+In this example then only messages from the JMS route are intercepted, because
+we specified a pattern in the `interceptFrom` as `jms*` (uses a wildcard).
+
+The pattern syntax is documented in more details later.
+
+[[Intercept-InterceptSendToEndpoint]]
+== Using `interceptSendToEndpoint`
+
+You can also intercept when Apache Camel is sending a message to an xref:message-endpoint.adoc[endpoint].
 
 This can be used to do some custom processing before the
 message is sent to the intended destination.
 
-The interceptor can also be configured to not send to the destination (skip)
+The interceptor can also be configured to not send to the destination (`skip`)
 which means the message is detoured instead.
 
 A xref:manual::predicate.adoc[Predicate] can also be used
@@ -291,10 +345,16 @@ to control when to intercept, which has been previously covered.
 
 The `afterUri` option, is used when you need to process
 the response message from the intended destination. This functionality
-was added later to the interceptor, in a form of sending to yet another xref:message-endpoint.adoc[endpoint].
+was added later to the interceptor, in a way of sending to yet another xref:message-endpoint.adoc[endpoint].
 
 Let's start with a basic example, where we want to intercept when a
 message is being sent to xref:ROOT:kafka-component.adoc[kafka]:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -307,7 +367,8 @@ from("jms:queue:order")
   .to("kafka:order");
 ----
 
-And in XML:
+XML::
++
 
 [source,xml]
 ----
@@ -327,8 +388,16 @@ And in XML:
 </camelContext>
 ----
 
+====
+
 When you also want to process the message after it has been sent to the intended destination,
 then the example is slightly _odd_ because you have to use the `afterUri` as shown:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -342,7 +411,8 @@ from("jms:queue:order")
   .to("kafka:order");
 ----
 
-And in XML:
+XML::
++
 
 [source,xml]
 ----
@@ -362,12 +432,20 @@ And in XML:
 </camelContext>
 ----
 
+====
+
 === Skip sending to original endpoint
 
 Sometimes you want to *intercept and skip* sending messages to a specific endpoint.
 
-For example to avoid sending any message to kafka, but detour them to a
+For example, to avoid sending any message to kafka, but detour them to a
 xref:ROOT:mock-component.adoc[mock] endpoint, it can be done as follows:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -380,7 +458,8 @@ from("jms:queue:order")
   .to("kafka:order");
 ----
 
-And in XML:
+XML::
++
 
 [source,xml]
 ----
@@ -400,11 +479,19 @@ And in XML:
 </camelContext>
 ----
 
+====
+
 === Conditional skipping sending to endpoint
 
 You can combine both a xref:manual::predicate.adoc[predicate] and skip sending to the original endpoint.
-For example suppose you have some "test" messages that sometimes occur, and that you
+For example, suppose you have some "test" messages that sometimes occur, and that you
 want to avoid sending these messages to a downstream kafka system, then this can be done as shown:
+
+[tabs]
+====
+
+Java::
++
 
 [source,java]
 ----
@@ -418,7 +505,8 @@ from("jms:queue:order")
   .to("kafka:order");
 ----
 
-And in XML:
+XML::
++
 
 [source,xml]
 ----
@@ -439,6 +527,8 @@ And in XML:
 </camelContext>
 ----
 
+====
+
 == Intercepting endpoints using pattern matching
 
 The `interceptFrom` and `interceptSendToEndpoint` support endpoint pattern
@@ -452,7 +542,7 @@ matching by the following rules in the given order:
 
 This matches only a specific endpoint with exactly the same URI.
 
-For example to intercept messages being sent to a specific JMS queue you can do:
+For example, to intercept messages being sent to a specific JMS queue, you can do:
 
 [source,java]
 -------------------------------------
@@ -462,7 +552,8 @@ interceptSendToEndpoint("jms:queue:cheese").to("log:smelly");
 === Intercepting when matching endpoints by wildcard
 
 Match by wildcard allows you to match a range of endpoints or all of a
-given type. For instance use `file:*` will match all xref:ROOT:file-component.adoc[file] based endpoints.
+given type.
+For instance use `file:*` will match all xref:ROOT:file-component.adoc[file-based] endpoints.
 
 [source,java]
 -------------------------------------
@@ -484,7 +575,7 @@ interceptFrom("file:order/inbox/*").to("log:new-file-orders");
 
 Match by regular expression is just like match by wildcard but using
 regex instead. So if we want to intercept incoming messages from gold
-and silver JMS queues we can do:
+and silver JMS queues, we can do:
 
 [source,java]
 -----------------------------------------------------------

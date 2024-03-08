@@ -15,6 +15,8 @@ This component provides a dataformat for avro, which allows
 serialization and deserialization of messages using Apache Avro's binary
 dataformat. Since Camel 3.2 rpc functionality was moved into separate `camel-avro-rpc` component.
 
+TIP: There is also `camel-jackson-avro` which is a more powerful Camel dataformat for using Avro.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -65,7 +67,7 @@ or in XML
         <route>
             <from uri="direct:in"/>
             <marshal>
-                <avro instanceClass="org.apache.camel.dataformat.avro.Message"/>
+                <avro instanceClass="org.apache.camel.dataformat.avro.Message" library="ApacheAvro"/>
             </marshal>
             <to uri="log:out"/>
         </route>
@@ -79,7 +81,7 @@ reference it from your route.
 --------------------------------------------------------------------------------------
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
          <dataFormats>
-            <avro id="avro" instanceClass="org.apache.camel.dataformat.avro.Message"/>
+            <avro id="avro" instanceClass="org.apache.camel.dataformat.avro.Message" library="ApacheAvro"/>
         </dataFormats>
         <route>
             <from uri="direct:in"/>

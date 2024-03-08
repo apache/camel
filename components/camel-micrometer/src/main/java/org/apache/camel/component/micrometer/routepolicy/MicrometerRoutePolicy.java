@@ -26,11 +26,13 @@ import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerUtils;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -47,6 +49,7 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_
  */
 public class MicrometerRoutePolicy extends RoutePolicySupport implements NonManagedService {
 
+    private final MicrometerRoutePolicyFactory factory;
     private MeterRegistry meterRegistry;
     private boolean prettyPrint;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
@@ -54,9 +57,13 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     private MicrometerRoutePolicyConfiguration configuration = MicrometerRoutePolicyConfiguration.DEFAULT;
 
     private final Map<Route, MetricsStatistics> statisticsMap = new HashMap<>();
+    private RouteMetric contextStatistic;
+    boolean registerKamelets;
+    boolean registerTemplates = true;
 
-    private static final class MetricsStatistics {
+    static class MetricsStatistics implements RouteMetric {
         private final MeterRegistry meterRegistry;
+        private final CamelContext camelContext;
         private final Route route;
         private final MicrometerRoutePolicyNamingStrategy namingStrategy;
         private final MicrometerRoutePolicyConfiguration configuration;
@@ -68,12 +75,13 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         private Timer timer;
         private LongTaskTimer longTaskTimer;
 
-        private MetricsStatistics(MeterRegistry meterRegistry, Route route,
-                                  MicrometerRoutePolicyNamingStrategy namingStrategy,
-                                  MicrometerRoutePolicyConfiguration configuration) {
+        MetricsStatistics(MeterRegistry meterRegistry, CamelContext camelContext, Route route,
+                          MicrometerRoutePolicyNamingStrategy namingStrategy,
+                          MicrometerRoutePolicyConfiguration configuration) {
             this.configuration = ObjectHelper.notNull(configuration, "MicrometerRoutePolicyConfiguration", this);
             this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
+            this.camelContext = camelContext;
             this.route = route;
             if (configuration.isAdditionalCounters()) {
                 initAdditionalCounters();
@@ -103,8 +111,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             }
             if (configuration.isLongTask()) {
                 LongTaskTimer.Builder builder = LongTaskTimer.builder(namingStrategy.getLongTaskName(route))
-                        .tags(namingStrategy.getTags(route))
-                        .description("Route long task metric");
+                        .tags(route != null ? namingStrategy.getTags(route) : namingStrategy.getTags(camelContext))
+                        .description(route != null ? "Route long task metric" : "CamelContext long task metric");
                 if (configuration.getLongTaskInitiator() != null) {
                     configuration.getLongTaskInitiator().accept(builder);
                 }
@@ -125,8 +133,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             if (sample != null) {
                 if (timer == null) {
                     Timer.Builder builder = Timer.builder(namingStrategy.getName(route))
-                            .tags(namingStrategy.getTags(route))
-                            .description("Route performance metrics");
+                            .tags(route != null ? namingStrategy.getTags(route) : namingStrategy.getTags(camelContext))
+                            .description(route != null ? "Route performance metrics" : "CamelContext performance metrics");
                     if (configuration.getTimerInitiator() != null) {
                         configuration.getTimerInitiator().accept(builder);
                     }
@@ -141,6 +149,30 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             }
             if (configuration.isAdditionalCounters()) {
                 updateAdditionalCounters(exchange);
+            }
+        }
+
+        public void remove() {
+            if (exchangesSucceeded != null) {
+                meterRegistry.remove(exchangesSucceeded);
+            }
+            if (exchangesFailed != null) {
+                meterRegistry.remove(exchangesFailed);
+            }
+            if (exchangesTotal != null) {
+                meterRegistry.remove(exchangesTotal);
+            }
+            if (externalRedeliveries != null) {
+                meterRegistry.remove(externalRedeliveries);
+            }
+            if (failuresHandled != null) {
+                meterRegistry.remove(failuresHandled);
+            }
+            if (timer != null) {
+                meterRegistry.remove(timer);
+            }
+            if (longTaskTimer != null) {
+                meterRegistry.remove(longTaskTimer);
             }
         }
 
@@ -166,15 +198,30 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         }
 
         private String propertyName(Exchange exchange) {
-            return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, route.getId(), exchange.getExchangeId());
+            String id;
+            if (route != null) {
+                id = route.getId();
+            } else {
+                id = "context:" + camelContext.getName();
+            }
+            return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, id, exchange.getExchangeId());
         }
 
         private Counter createCounter(String meterName, String description) {
             return Counter.builder(meterName)
-                    .tags(namingStrategy.getExchangeStatusTags(route))
+                    .tags(route != null
+                            ? namingStrategy.getExchangeStatusTags(route) : namingStrategy.getExchangeStatusTags(camelContext))
                     .description(description)
                     .register(meterRegistry);
         }
+    }
+
+    public MicrometerRoutePolicy() {
+        this.factory = null;
+    }
+
+    public MicrometerRoutePolicy(MicrometerRoutePolicyFactory factory) {
+        this.factory = factory;
     }
 
     public MeterRegistry getMeterRegistry() {
@@ -221,6 +268,12 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     public void onInit(Route route) {
         super.onInit(route);
 
+        ManagementStrategy ms = route.getCamelContext().getManagementStrategy();
+        if (ms != null && ms.getManagementAgent() != null) {
+            registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+            registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+        }
+
         if (getMeterRegistry() == null) {
             setMeterRegistry(MicrometerUtils.getOrCreateMeterRegistry(
                     route.getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
@@ -240,6 +293,18 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+
+        if (factory != null && configuration.isContextEnabled() && contextStatistic == null) {
+            contextStatistic = factory.createOrGetContextMetric(this);
+        }
+    }
+
+    boolean isRegisterKamelets() {
+        return registerKamelets;
+    }
+
+    boolean isRegisterTemplates() {
+        return registerTemplates;
     }
 
     @Override
@@ -248,7 +313,19 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // for now we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
         statisticsMap.computeIfAbsent(route,
-                it -> new MetricsStatistics(getMeterRegistry(), it, getNamingStrategy(), configuration));
+                it -> {
+                    boolean skip = !configuration.isRouteEnabled();
+                    // skip routes that should not be included
+                    if (!skip) {
+                        skip = (it.isCreatedByKamelet() && !registerKamelets)
+                                || (it.isCreatedByRouteTemplate() && !registerTemplates);
+                    }
+                    if (skip) {
+                        return null;
+                    }
+                    return new MetricsStatistics(
+                            getMeterRegistry(), it.getCamelContext(), it, getNamingStrategy(), configuration);
+                });
     }
 
     @Override
@@ -256,38 +333,24 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // route is removed, so remove metrics from micrometer
         MetricsStatistics stats = statisticsMap.remove(route);
         if (stats != null) {
-            if (stats.exchangesSucceeded != null) {
-                meterRegistry.remove(stats.exchangesSucceeded);
-            }
-            if (stats.exchangesFailed != null) {
-                meterRegistry.remove(stats.exchangesFailed);
-            }
-            if (stats.exchangesTotal != null) {
-                meterRegistry.remove(stats.exchangesTotal);
-            }
-            if (stats.externalRedeliveries != null) {
-                meterRegistry.remove(stats.externalRedeliveries);
-            }
-            if (stats.failuresHandled != null) {
-                meterRegistry.remove(stats.failuresHandled);
-            }
-            if (stats.timer != null) {
-                meterRegistry.remove(stats.timer);
-            }
-            if (stats.longTaskTimer != null) {
-                meterRegistry.remove(stats.longTaskTimer);
-            }
+            stats.remove();
         }
     }
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
+        if (contextStatistic != null) {
+            contextStatistic.onExchangeBegin(exchange);
+        }
         Optional.ofNullable(statisticsMap.get(route))
                 .ifPresent(statistics -> statistics.onExchangeBegin(exchange));
     }
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
+        if (contextStatistic != null) {
+            contextStatistic.onExchangeDone(exchange);
+        }
         Optional.ofNullable(statisticsMap.get(route))
                 .ifPresent(statistics -> statistics.onExchangeDone(exchange));
     }

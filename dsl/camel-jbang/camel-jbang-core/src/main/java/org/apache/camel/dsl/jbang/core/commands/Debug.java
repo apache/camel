@@ -91,9 +91,9 @@ public class Debug extends Run {
                         description = "Show exchange properties in traced messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
                         description = "Show exchange variables in traced messages")
-    boolean showExchangeVariables;
+    boolean showExchangeVariables = true;
 
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in traced messages")

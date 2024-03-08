@@ -52,6 +52,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 
 @ManagedResource(description = "Managed CamelContext")
@@ -61,10 +62,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     private final LoadTriplet load = new LoadTriplet();
     private final LoadThroughput thp = new LoadThroughput();
     private final String jmxDomain;
+    private final boolean includeRouteTemplates;
+    private final boolean includeKamelets;
 
     public ManagedCamelContext(CamelContext context) {
         this.context = context;
         this.jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
+        this.includeRouteTemplates = context.getManagementStrategy().getManagementAgent().getRegisterRoutesCreateByTemplate();
+        this.includeKamelets = context.getManagementStrategy().getManagementAgent().getRegisterRoutesCreateByKamelet();
     }
 
     @Override
@@ -83,7 +88,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // we should only count this as 1 instead of 3.
         UnitOfWork uow = exchange.getUnitOfWork();
         if (uow != null) {
-            int level = uow.routeStackLevel();
+            int level = uow.routeStackLevel(includeRouteTemplates, includeKamelets);
             if (level <= 1) {
                 super.completedExchange(exchange, time);
             }
@@ -100,7 +105,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // we should only count this as 1 instead of 3.
         UnitOfWork uow = exchange.getUnitOfWork();
         if (uow != null) {
-            int level = uow.routeStackLevel();
+            int level = uow.routeStackLevel(includeRouteTemplates, includeKamelets);
             if (level <= 1) {
                 super.failedExchange(exchange);
             }
@@ -117,7 +122,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // we should only count this as 1 instead of 3.
         UnitOfWork uow = exchange.getUnitOfWork();
         if (uow != null) {
-            int level = uow.routeStackLevel();
+            int level = uow.routeStackLevel(includeRouteTemplates, includeKamelets);
             if (level <= 1) {
                 super.processExchange(exchange, type);
             }
@@ -157,12 +162,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String getUptime() {
-        return context.getUptime();
+        return CamelContextHelper.getUptime(context);
     }
 
     @Override
     public long getUptimeMillis() {
-        return context.getUptimeMillis();
+        return context.getUptime().toMillis();
     }
 
     @Override
@@ -787,17 +792,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         @Override
         public int compare(ManagedProcessorMBean o1, ManagedProcessorMBean o2) {
             return o1.getIndex().compareTo(o2.getIndex());
-        }
-    }
-
-    /**
-     * Used for sorting the routes mbeans accordingly to their ids.
-     */
-    private static final class RouteMBeans implements Comparator<ManagedRouteMBean> {
-
-        @Override
-        public int compare(ManagedRouteMBean o1, ManagedRouteMBean o2) {
-            return o1.getRouteId().compareToIgnoreCase(o2.getRouteId());
         }
     }
 

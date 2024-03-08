@@ -26,6 +26,7 @@ public class LegacyMicrometerRoutePolicyTest extends MicrometerRoutePolicyTest {
     @Override
     protected MicrometerRoutePolicyFactory createMicrometerRoutePolicyFactory() {
         MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
+        factory.getPolicyConfiguration().setContextEnabled(false);
         factory.setNamingStrategy(MicrometerRoutePolicyNamingStrategy.LEGACY);
         return factory;
     }

@@ -88,6 +88,26 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
     void setMavenSettingsSecurity(String mavenSettingsSecurity);
 
     /**
+     * Whether downloading JARs from Maven Central repository is enabled
+     */
+    boolean isMavenCentralEnabled();
+
+    /**
+     * Whether downloading JARs from Maven Central repository is enabled
+     */
+    void setMavenCentralEnabled(boolean mavenCentralEnabled);
+
+    /**
+     * Whether downloading JARs from ASF Maven Snapshot repository is enabled
+     */
+    boolean isMavenApacheSnapshotEnabled();
+
+    /**
+     * Whether downloading JARs from ASF Maven Snapshot repository is enabled
+     */
+    void setMavenApacheSnapshotEnabled(boolean mavenApacheSnapshotEnabled);
+
+    /**
      * Downloads the dependency incl transitive dependencies
      *
      * @param groupId    maven group id

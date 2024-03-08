@@ -1,7 +1,11 @@
+
 {
-  "swagger" : "2.0",
-  "host" : "localhost:8080",
-  "basePath" : "/api",
+  "openapi": "3.0.2",
+  "servers": [
+    {
+      "url": "localhost:8080/api"
+    }
+  ],
   "tags" : [ {
     "name" : "hello"
   } ],

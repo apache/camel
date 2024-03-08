@@ -8,7 +8,8 @@ The Message History from the EIP patterns allows for analyzing and debugging the
 
 image::eip/MessageHistory.gif[image]
 
-Attaching a Message History to the message will provide a list of all applications that the message passed through since its origination.
+Attaching a Message History to the message will provide a list of all applications
+that the message has passed through since its origination.
 
 == Enabling Message History
 
@@ -21,13 +22,18 @@ in a `java.util.concurrent.CopyOnWriteArrayList` due to the need of being thread
 The Message History can be enabled or disabled per CamelContext or per route (disabled by default).
 For example, you can turn it on with:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 camelContext.setMessageHistory(true);
 ----
 
-Or in XML
-
+XML::
++
 [source,xml]
 ----
 <camelContext messageHistory="true">
@@ -35,26 +41,37 @@ Or in XML
 </camelContext>
 ----
 
+====
+
 Or when using Spring Boot or Quarkus, you can enable this in the configuration file:
+
+[tabs]
+====
+
+Quarkus::
++
+[source,properties]
+----
+camel.quarkus.message-history = true
+----
+
+Spring Boot::
++
 
 [source,properties]
 ----
 camel.springboot.message-history = true
 ----
 
-And in Quarkus:
-
-[source,properties]
-----
-camel.quarkus.message-history = true
-----
+====
 
 === Route level Message History
 
 You can also enable or disable message history per route.
-When doing this then Camel can only gather message history in the routes where this is enabled,
-which means you may not have full coverage. You may still want to do this, for example to capture
-the history in a critical route to help pin-point where the route is slow.
+When doing this, then Camel can only gather message history in the routes where this is enabled,
+which means you may not have full coverage.
+You may still want to do this, for example, to capture
+the history in a critical route to help pinpoint where the route is slow.
 
 A route level configuration overrides the global configuration.
 
@@ -71,6 +88,11 @@ from("jms:cheese")
 
 You can also turn off message history per route:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("jms:cheese")
@@ -80,8 +102,8 @@ from("jms:cheese")
   .to("jms:wine");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route messageHistory="true">
@@ -92,6 +114,8 @@ And in XML:
 </route>
 ----
 
+====
+
 === Enabling source location information
 
 Camel is capable of gathering precise source file:line-number for each EIPs in the routes.
@@ -99,13 +123,19 @@ When enabled, then the message history will output this information in the route
 
 To enable source location:
 
+[tabs]
+====
+
+Java::
++
+
 [source,java]
 ----
 camelContext.setSourceLocationEnabled(true);
 ----
 
-Or in XML
-
+XML::
++
 [source,xml]
 ----
 <camelContext sourceLocationEnabled="true">
@@ -113,19 +143,30 @@ Or in XML
 </camelContext>
 ----
 
+====
+
 Or when using Spring Boot or Quarkus, you can enable this in the configuration file:
+
+[tabs]
+====
+
+Quarkus::
++
+[source,properties]
+----
+camel.quarkus.source-location-enabled = true
+----
+
+Spring Boot::
++
 
 [source,properties]
 ----
 camel.springboot.source-location-enabled = true
 ----
 
-And in Quarkus:
+====
 
-[source,properties]
-----
-camel.quarkus.source-location-enabled = true
-----
 
 == Route stack-trace in exceptions logged by error handler
 
@@ -157,10 +198,10 @@ java.lang.IllegalArgumentException: The number is too low
 	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.20.0.jar:3.20.0]
 ----
 
-When Message History is enabled then the full history is logged as shown above. Here we can see the full path
+When Message History is enabled, then the full history is logged as shown above. Here we can see the full path
 the message has been routed.
 
-When Message History is disabled (by default) then the error handler logs a brief history with the last node
+When Message History is disabled, as it is by default, then the error handler logs a brief history with the last node
 where the exception occurred as shown below:
 
 [source,text]
@@ -186,7 +227,7 @@ java.lang.IllegalArgumentException: The number is too low
 Here you can see the Message History only outputs the input (route1) and the last step
 where the exception occurred (throwException1).
 
-Notice that the source column is empty, because source location is not enabled.
+Notice that the source column is empty because the source location is not enabled.
 When enabled then, you can see exactly which source file and line number the message routed:
 
 [source,text]
@@ -197,7 +238,7 @@ Message History
 ---------------------------------------------------------------------------------------------------------------------------------------
 Source                                   ID                             Processor                                          Elapsed (ms)
 MyJavaRouteBuilder:29                    route1/route1                  from[timer://java?period=2s]                                 10
-MyJavaRouteBuilder:32                    route1/setBody1                setBody[bean[MyJavaRouteBuilder method:randomNumbe            1
+MyJavaRouteBuilder:32                    route1/setBody1                setBody[bean[MyJavaRouteBuilder method:randomNumber           1
 MyJavaRouteBuilder:33                    route1/log1                    log                                                           1
 MyJavaRouteBuilder:34                    route1/filter1                 filter[simple{${body} < 30}]                                  0
 MyJavaRouteBuilder:35                    route1/throwException1         throwException[java.lang.IllegalArgumentException]            0
@@ -227,14 +268,21 @@ The xref:manual::error-handler.adoc[Error Handler] does not log the
 message body/header details (to avoid logging sensitive message body details).
 You can enable this with `logExhaustedMessageBody` on the error handler as shown:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 errorHandler(defaultErrorHandler().logExhaustedMessageBody(true));
 ----
 
+XML::
++
 In XML configuring this is a bit different, as you configure this in the `redeliveryPolicy`
 of the `<errorHandler>` as shown:
-
++
 [source,xml]
 ----
 <camelContext messageHistory="true" errorHandlerRef="myErrorHandler" xmlns="http://camel.apache.org/schema/spring">
@@ -251,6 +299,8 @@ of the `<errorHandler>` as shown:
     </route>
 </camelContext>
 ----
+
+====
 
 == MessageHistory API
 

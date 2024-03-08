@@ -80,6 +80,13 @@ public interface ExtendedCamelContext {
      */
     void setRegistry(Registry registry);
 
+    /**
+     * Sets the assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean}
+     *
+     * @param managementMBeanAssembler the assembler to use
+     */
+    void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler);
+
     default Registry getRegistry() {
         return null;
     }

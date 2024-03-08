@@ -84,11 +84,11 @@ from("activemq:My.Queue").
   to("activemq:Another.Queue");
 ----
 
-== Getting Useable Parameters into the XSLT 
+== Getting Usable Parameters into the XSLT
 
 By default, all headers are added as parameters which are then available in
 the XSLT. +
-To make the parameters useable, you will need to declare them.
+To make the parameters usable, you will need to declare them.
 
 [source,xml]
 ----

@@ -31,6 +31,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -78,12 +79,13 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         // and we should have rest in the routes that indicate its from a rest dsl
         assertTrue(xml2.contains("rest=\"true\""));
 
-        assertTrue(xml2.matches("[\\S\\s]* <to id=\"to[0-9]+\" uri=\"direct:hello\"/>[\\S\\s]*"));
-        assertTrue(xml2.matches("[\\S\\s]*<to id=\"to[0-9]+\" uri=\"direct:bye\"/>[\\S\\s]*"));
+        // routes are inlined
+        assertFalse(xml2.matches("[\\S\\s]* <to id=\"to[0-9]+\" uri=\"direct:hello\"/>[\\S\\s]*"));
+        assertFalse(xml2.matches("[\\S\\s]*<to id=\"to[0-9]+\" uri=\"direct:bye\"/>[\\S\\s]*"));
         assertTrue(xml2.matches("[\\S\\s]*<to id=\"to[0-9]+\" uri=\"mock:update\"/>[\\S\\s]*"));
 
-        // there should be 3 + 2 routes
-        assertEquals(3 + 2, context.getRouteDefinitions().size());
+        // there should be 3 routes
+        assertEquals(3, context.getRouteDefinitions().size());
     }
 
     @Override

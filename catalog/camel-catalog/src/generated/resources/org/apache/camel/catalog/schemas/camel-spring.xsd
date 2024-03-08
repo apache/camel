@@ -1215,7 +1215,7 @@ Evaluates a Python expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The destination endpoints are selected by random.
+The destination endpoints are selected randomly.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1431,7 +1431,7 @@ Forces a rollback by stopping routing the message
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads
+The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads
 the load evenly.
 ]]>
       </xs:documentation>
@@ -1720,7 +1720,7 @@ Sets the value of a message header
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Allows to set multiple headers on the message at the same time.
+Allows setting multiple headers on the message at the same time.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -3947,7 +3947,7 @@ Enables random backoff. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a reference to an exiting bean to use, which is looked up from the registry.
+Sets a reference to an existing bean to use, which is looked up from the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5714,7 +5714,7 @@ Sets the back off multiplier. Default value: 2.0
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Turn on exponential backk off. Default value: false
+Turn on exponential back off. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7228,7 +7228,7 @@ Class name to use for marshal and unmarshalling.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Which Avro library to use. Default value: ApacheAvro
+Which Avro library to use. Default value: avroJackson
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12258,6 +12258,7 @@ XML. May be null.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="kamelet" type="xs:boolean"/>
         <xs:attribute name="logMask" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -16636,7 +16637,10 @@ generated host with this configured hostname.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to use X-Forward headers for Host and related setting. The default value is true. Default value: true
+Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving
+reverse-proxy and networking going from HTTP to HTTPS etc. Then the proxy can send X-Forward headers (X-Forwarded-Proto)
+that influences the host names in the OpenAPI schema that camel-openapi-java generates from Rest DSL routes. Default
+value: false
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16759,10 +16763,11 @@ default value is false. Default value: false
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual
-route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl).
-Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints,
-which must be unique per service. This option is default false. Default value: false
+Inline routes in rest-dsl which are linked using direct endpoints. Each service in Rest DSL is an individual route,
+meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). By inlining
+(default) allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints,
+which must be unique per service. If a route is not using direct endpoint then the rest-dsl is not inlined, and will
+become an individual route. This option is default true. Default value: true
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -17935,6 +17940,39 @@ An optional certificate alias to use. This is useful when the keystore has multi
     <xs:restriction base="xs:string">
       <xs:enumeration value="type"/>
       <xs:enumeration value="regexp"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="option">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DEFAULT_PATH_LEAF_TO_NULL"/>
+      <xs:enumeration value="ALWAYS_RETURN_LIST"/>
+      <xs:enumeration value="AS_PATH_LIST"/>
+      <xs:enumeration value="SUPPRESS_EXCEPTIONS"/>
+      <xs:enumeration value="REQUIRE_PROPERTIES"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="scope">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SINGLETON"/>
+      <xs:enumeration value="REQUEST"/>
+      <xs:enumeration value="PROTOTYPE"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="mode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="INJECTING_CONTEXTUAL_NAMESPACE_BINDINGS"/>
+      <xs:enumeration value="WRAPPING_EXTRACTED_TOKEN"/>
+      <xs:enumeration value="UNWRAPPING_EXTRACTED_TOKEN"/>
+      <xs:enumeration value="EXTRACTING_TEXT_CONTENT"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="resultQName">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NUMBER"/>
+      <xs:enumeration value="STRING"/>
+      <xs:enumeration value="BOOLEAN"/>
+      <xs:enumeration value="NODESET"/>
+      <xs:enumeration value="NODE"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="collectionFormat">

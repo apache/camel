@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 @Component("azure-storage-datalake")
 public class DataLakeComponent extends HealthCheckComponent {
 
-    @Metadata(description = "configuration object for datalake")
+    @Metadata(description = "configuration object for data lake")
     private DataLakeConfiguration configuration = new DataLakeConfiguration();
 
     public DataLakeComponent() {

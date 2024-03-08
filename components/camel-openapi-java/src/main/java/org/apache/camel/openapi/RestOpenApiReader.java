@@ -179,9 +179,7 @@ public class RestOpenApiReader {
 
     private void checkCompatOpenApi2(OpenAPI openApi, BeanConfig config) {
         if (config.isOpenApi2()) {
-            // Verify that the OpenAPI 3 model can be downgraded to OpenApi 2
-            OpenAPI3to2 converter = new OpenAPI3to2();
-            converter.convertOpenAPI3to2(openApi);
+            throw new IllegalArgumentException("OpenAPI 2.x is not supported");
         }
     }
 

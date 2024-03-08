@@ -20,6 +20,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class QuartzInterruptTest extends BaseQuartzTest {
     protected MockEndpoint resultEndpoint;
 
@@ -32,7 +35,9 @@ public class QuartzInterruptTest extends BaseQuartzTest {
         resultEndpoint.assertIsSatisfied();
 
         QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
-        quartz.stop();
+        assertDoesNotThrow(quartz::stop);
+        assertTrue(quartz.isStopped());
+
     }
 
     @Override

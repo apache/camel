@@ -22,7 +22,7 @@ import java.util.Properties;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
+import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-abstract class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport {
+abstract class BaseManualCommitTestSupport extends BaseKafkaTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint to;

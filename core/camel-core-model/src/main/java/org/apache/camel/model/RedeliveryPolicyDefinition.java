@@ -57,10 +57,11 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     @Metadata(javaType = "java.time.Duration", defaultValue = "60000")
     private String maximumRedeliveryDelay;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
+              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String retriesExhaustedLogLevel;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG")
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String retryAttemptedLogLevel;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "1")
@@ -531,7 +532,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     }
 
     /**
-     * Turn on exponential backk off
+     * Turn on exponential back off
      *
      * @return the builder
      */

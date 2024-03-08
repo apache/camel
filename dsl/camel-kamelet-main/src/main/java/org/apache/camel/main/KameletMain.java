@@ -110,6 +110,8 @@ public class KameletMain extends MainCommandLineSupport {
     private boolean verbose;
     private String mavenSettings;
     private String mavenSettingsSecurity;
+    boolean mavenCentralEnabled = true;
+    boolean mavenApacheSnapshotEnabled = true;
     private String stubPattern;
     private boolean silent;
     private DownloadListener downloadListener;
@@ -267,6 +269,28 @@ public class KameletMain extends MainCommandLineSupport {
         return downloadListener;
     }
 
+    public boolean isMavenCentralEnabled() {
+        return mavenCentralEnabled;
+    }
+
+    /**
+     * Whether downloading JARs from Maven Central repository is enabled
+     */
+    public void setMavenCentralEnabled(boolean mavenCentralEnabled) {
+        this.mavenCentralEnabled = mavenCentralEnabled;
+    }
+
+    public boolean isMavenApacheSnapshotEnabled() {
+        return mavenApacheSnapshotEnabled;
+    }
+
+    /**
+     * Whether downloading JARs from ASF Maven Snapshot repository is enabled
+     */
+    public void setMavenApacheSnapshotEnabled(boolean mavenApacheSnapshotEnabled) {
+        this.mavenApacheSnapshotEnabled = mavenApacheSnapshotEnabled;
+    }
+
     /**
      * Sets a custom download listener
      */
@@ -384,6 +408,8 @@ public class KameletMain extends MainCommandLineSupport {
         downloader.setFresh(fresh);
         downloader.setMavenSettings(mavenSettings);
         downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
+        downloader.setMavenCentralEnabled(mavenCentralEnabled);
+        downloader.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
         if (downloadListener != null) {
             downloader.addDownloadListener(downloadListener);
         }
@@ -452,6 +478,7 @@ public class KameletMain extends MainCommandLineSupport {
         boolean console = "true".equals(getInitialProperties().get("camel.jbang.console"));
         if (console) {
             configure().httpServer().withEnabled(true);
+            configure().httpServer().withInfoEnabled(true); // also enable info if console is enabled
             configure().httpServer().withDevConsoleEnabled(true);
         }
 
@@ -472,7 +499,12 @@ public class KameletMain extends MainCommandLineSupport {
 
         boolean tracing = "true".equals(getInitialProperties().get("camel.jbang.backlogTracing"));
         if (tracing) {
-            configure().withBacklogTracing(true);
+            configure().tracerConfig().withEnabled(true);
+        }
+        boolean infoConsole = "true".equals(getInitialProperties().get("camel.jbang.info"));
+        if (infoConsole) {
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withInfoEnabled(true);
         }
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health) {
@@ -734,6 +766,7 @@ public class KameletMain extends MainCommandLineSupport {
      */
     protected void configureInitialProperties(String location) {
         addInitialProperty("camel.component.kamelet.location", location);
+        addInitialProperty("camel.component.rest-api.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
         addInitialProperty("came.main.jmxUpdateRouteEnabled", "true");

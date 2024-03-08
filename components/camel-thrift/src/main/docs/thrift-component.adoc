@@ -58,8 +58,9 @@ include::partial$component-endpoint-headers.adoc[]
 == Thrift method parameters mapping
 
 Parameters in the called procedure must be passed as a list of objects inside the message body. The primitives are converted from the objects on the fly.
-In order to correctly find the corresponding method, all types must be transmitted regardless of the values. Please see an example below, how to pass
-different parameters to the method with the Camel body
+To correctly find the corresponding method, all types must be transmitted regardless of the values. Please see an example below, how to pass
+different parameters to the method with the Camel body:
+
 [source,java]
 -------------------------------------------------------------------------------
 List requestBody = new ArrayList();
@@ -73,7 +74,7 @@ requestBody.add((double)THRIFT_TEST_NUM1);
 requestBody.add("empty"); // String parameter
 requestBody.add(ByteBuffer.allocate(10)); // binary parameter
 requestBody.add(new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY)); // Struct parameter
-requestBody.add(new ArrayList<Integer>()); // list paramater 
+requestBody.add(new ArrayList<Integer>()); // list parameter
 requestBody.add(new HashSet<String>()); // set parameter
 requestBody.add(new HashMap<String, Long>()); // map parameter 
 

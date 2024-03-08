@@ -348,6 +348,30 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public void setExchangeVariableOnBreakpoint(String nodeId, String variableName, Object value) {
+        try {
+            backlogDebugger.setExchangeVariableOnBreakpoint(nodeId, variableName, value);
+        } catch (NoTypeConversionAvailableException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    @Override
+    public void setExchangeVariableOnBreakpoint(String nodeId, String variableName, Object value, String type) {
+        try {
+            Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
+            backlogDebugger.setExchangeVariableOnBreakpoint(nodeId, variableName, value, classType);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    @Override
+    public void removeExchangeVariableOnBreakpoint(String nodeId, String variableName) {
+        backlogDebugger.removeExchangeVariableOnBreakpoint(nodeId, variableName);
+    }
+
+    @Override
     public Object evaluateExpressionAtBreakpoint(String nodeId, String language, String expression, String resultType) {
         Exchange suspendedExchange;
         try {

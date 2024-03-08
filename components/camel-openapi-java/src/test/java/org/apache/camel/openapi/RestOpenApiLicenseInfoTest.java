@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RestOpenApiLicenseInfoTest {
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    @ValueSource(strings = { "3.1", "3.0" })
     public void testLicenseInfo(String openApiVersion) throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
@@ -54,6 +54,9 @@ public class RestOpenApiLicenseInfoTest {
         RestConfiguration restConfiguration = context.getRestConfiguration();
         RestOpenApiProcessor processor
                 = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        processor.setCamelContext(context);
+        processor.start();
+
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 

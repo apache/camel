@@ -33,14 +33,14 @@ public final class DataLakeConstants {
               javaType = "org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition")
     public static final String DATALAKE_OPERATION = HEADER_PREFIX + "Operation";
     @Metadata(label = "producer",
-              description = "Name of the file system in azure datalake on which operation is to be performed. Please make sure that filesystem name is all lowercase.",
+              description = "Name of the file system in azure data lake on which operation is to be performed. Please make sure that filesystem name is all lowercase.",
               javaType = "String")
     public static final String FILESYSTEM_NAME = HEADER_PREFIX + "FileSystemName";
     @Metadata(label = "producer",
-              description = "Name of the directory in azure datalake on which operation is to be performed.",
+              description = "Name of the directory in azure data lake on which operation is to be performed.",
               javaType = "String")
     public static final String DIRECTORY_NAME = HEADER_PREFIX + "DirectoryName";
-    @Metadata(label = "producer", description = "Name of the file in azure datalake on which operation is to be performed.",
+    @Metadata(label = "producer", description = "Name of the file in azure data lake on which operation is to be performed.",
               javaType = "String")
     public static final String FILE_NAME = HEADER_PREFIX + "FileName";
     @Metadata(label = "from both", description = "The metadata to associate with the file.",
@@ -161,7 +161,7 @@ public final class DataLakeConstants {
     public static final String SERVER_ENCRYPTED = HEADER_PREFIX + "ServerEncrypted";
     @Metadata(label = "producer", description = "Set the Expiration time of the download link.", javaType = "Long")
     public static final String DOWNLOAD_LINK_EXPIRATION = HEADER_PREFIX + "DownloadLinkExpiration";
-    @Metadata(label = "consumer", description = "The link that can be used to download the file from datalake.",
+    @Metadata(label = "consumer", description = "The link that can be used to download the file from data lake.",
               javaType = "String")
     public static final String DOWNLOAD_LINK = HEADER_PREFIX + "DownloadLink";
     @Metadata(label = "producer", description = "The position where the data is to be appended.", javaType = "Long")
