@@ -3394,6 +3394,12 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.mavenSettingsSecurity`
 |Optional location of Maven settings-security.xml file to decrypt settings.xml
 
+|`camel.jbang.mavenCentralEnabled`
+|Whether downloading JARs from Maven Central repository is enabled
+
+|`camel.jbang.mavenApacheSnapshotEnabled`
+|Whether downloading JARs from ASF Maven Snapshot repository is enabled
+
 |`camel.jbang.exportDir`
 |Directory where the project will be exported
 
