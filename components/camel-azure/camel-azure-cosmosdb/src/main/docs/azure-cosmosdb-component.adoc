@@ -2,7 +2,7 @@
 :doctitle: Azure CosmosDB
 :shortname: azure-cosmosdb
 :artifactid: camel-azure-cosmosdb
-:description: To read and write records to the CosmosDB database on the Azure cloud platform.
+:description: To read and write records to the CosmosDB database on Azure cloud platform.
 :since: 3.10
 :supportlevel: Stable
 :tabs-sync-option:
