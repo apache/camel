@@ -42,7 +42,14 @@
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
         <camel.surefire.parallel.strategy>dynamic</camel.surefire.parallel.strategy>
+        <camel.failsafe.fork.vmargs>-XX:+ExitOnOutOfMemoryError -Xmx3G</camel.failsafe.fork.vmargs>
+        <camel.failsafe.forkCount>1</camel.failsafe.forkCount>
         <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
+        <camel.failsafe.reuseForks>true</camel.failsafe.reuseForks>
+        <camel.failsafe.parallel>false</camel.failsafe.parallel>
+        <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
+        <camel.failsafe.parallel.strategy>dynamic</camel.failsafe.parallel.strategy>
+
         <cxf.xjc.jvmArgs />
         <trimStackTrace>false</trimStackTrace>
         <sourcecheckExcludes />
