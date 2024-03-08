@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-bedrock-agent",
     "title": "AWS Bedrock Agent",
-    "description": "Invoke Model of AWS Bedrock Agent Runtime service.",
+    "description": "Operate on AWS Bedrock through its Agent.",
     "deprecated": false,
     "firstVersion": "4.5.0",
     "label": "ai,cloud",

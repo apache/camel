@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
 
 /**
- * Invoke Model of AWS Bedrock Agent Runtime service.
+ * Operate on AWS Bedrock through its Agent.
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent", title = "AWS Bedrock Agent",
              syntax = "aws-bedrock-agent:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
