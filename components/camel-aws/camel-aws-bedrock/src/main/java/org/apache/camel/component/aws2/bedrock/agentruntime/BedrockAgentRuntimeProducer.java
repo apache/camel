@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,9 +93,10 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
-                setGeneratedText(result, message);
+                prepareResponse(result, message);
             }
         } else {
+            String inputText = exchange.getMessage().getMandatoryBody(String.class);
             KnowledgeBaseVectorSearchConfiguration knowledgeBaseVectorSearchConfiguration
                     = KnowledgeBaseVectorSearchConfiguration.builder()
                             .build();
@@ -113,17 +115,23 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
                     = RetrieveAndGenerateConfiguration.builder().knowledgeBaseConfiguration(configuration).type(type).build();
 
             RetrieveAndGenerateInput input = RetrieveAndGenerateInput.builder()
-                    .text(exchange.getMessage().getBody(String.class)).build();
+                    .text(inputText).build();
 
             RetrieveAndGenerateResponse retrieveAndGenerateResponse = bedrockAgentRuntimeClient.retrieveAndGenerate(
                     RetrieveAndGenerateRequest.builder().retrieveAndGenerateConfiguration(build).input(input).build());
 
             Message message = getMessageForResponse(exchange);
-            setGeneratedText(retrieveAndGenerateResponse, message);
+            prepareResponse(retrieveAndGenerateResponse, message);
         }
     }
 
-    private void setGeneratedText(RetrieveAndGenerateResponse result, Message message) {
+    private void prepareResponse(RetrieveAndGenerateResponse result, Message message) {
+        if (result.hasCitations()) {
+            message.setHeader(BedrockAgentRuntimeConstants.CITATIONS, result.citations());
+        }
+        if (ObjectHelper.isNotEmpty(result.sessionId())) {
+            message.setHeader(BedrockAgentRuntimeConstants.SESSION_ID, result.sessionId());
+        }
         message.setBody(result.output().text());
     }
 
