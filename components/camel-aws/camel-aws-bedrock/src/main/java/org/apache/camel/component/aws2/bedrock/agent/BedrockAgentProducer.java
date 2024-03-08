@@ -131,7 +131,6 @@ public class BedrockAgentProducer extends DefaultProducer {
         }
     }
 
-
     private void listIngestionJobs(BedrockAgentClient bedrockAgentClient, Exchange exchange)
             throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
