@@ -66,6 +66,10 @@ public class Export extends ExportBaseCommand {
             this.repos = prop.getProperty("camel.jbang.repos", this.repos);
             this.mavenSettings = prop.getProperty("camel.jbang.maven-settings", this.mavenSettings);
             this.mavenSettingsSecurity = prop.getProperty("camel.jbang.maven-settings-security", this.mavenSettingsSecurity);
+            this.mavenCentralEnabled = "true"
+                    .equals(prop.getProperty("camel.jbang.maven-central-enabled", mavenCentralEnabled ? "true" : "false"));
+            this.mavenApacheSnapshotEnabled = "true".equals(prop.getProperty("camel.jbang.maven-apache-snapshot-enabled",
+                    mavenApacheSnapshotEnabled ? "true" : "false"));
             this.exclude = prop.getProperty("camel.jbang.exclude", this.exclude);
         }
 
@@ -100,6 +104,8 @@ public class Export extends ExportBaseCommand {
         cmd.gav = this.gav;
         cmd.mavenSettings = this.mavenSettings;
         cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
+        cmd.mavenCentralEnabled = this.mavenCentralEnabled;
+        cmd.mavenApacheSnapshotEnabled = this.mavenApacheSnapshotEnabled;
         cmd.exportDir = this.exportDir;
         cmd.fresh = this.fresh;
         cmd.download = this.download;

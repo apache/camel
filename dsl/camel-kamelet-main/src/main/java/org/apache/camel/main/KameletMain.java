@@ -110,6 +110,8 @@ public class KameletMain extends MainCommandLineSupport {
     private boolean verbose;
     private String mavenSettings;
     private String mavenSettingsSecurity;
+    boolean mavenCentralEnabled = true;
+    boolean mavenApacheSnapshotEnabled = true;
     private String stubPattern;
     private boolean silent;
     private DownloadListener downloadListener;
@@ -267,6 +269,28 @@ public class KameletMain extends MainCommandLineSupport {
         return downloadListener;
     }
 
+    public boolean isMavenCentralEnabled() {
+        return mavenCentralEnabled;
+    }
+
+    /**
+     * Whether downloading JARs from Maven Central repository is enabled
+     */
+    public void setMavenCentralEnabled(boolean mavenCentralEnabled) {
+        this.mavenCentralEnabled = mavenCentralEnabled;
+    }
+
+    public boolean isMavenApacheSnapshotEnabled() {
+        return mavenApacheSnapshotEnabled;
+    }
+
+    /**
+     * Whether downloading JARs from ASF Maven Snapshot repository is enabled
+     */
+    public void setMavenApacheSnapshotEnabled(boolean mavenApacheSnapshotEnabled) {
+        this.mavenApacheSnapshotEnabled = mavenApacheSnapshotEnabled;
+    }
+
     /**
      * Sets a custom download listener
      */
@@ -384,6 +408,8 @@ public class KameletMain extends MainCommandLineSupport {
         downloader.setFresh(fresh);
         downloader.setMavenSettings(mavenSettings);
         downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
+        downloader.setMavenCentralEnabled(mavenCentralEnabled);
+        downloader.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
         if (downloadListener != null) {
             downloader.addDownloadListener(downloadListener);
         }

@@ -167,6 +167,14 @@ public class Run extends CamelCommand {
             description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
+    @Option(names = { "--maven-central-enabled" },
+            description = "Whether downloading JARs from Maven Central repository is enabled")
+    boolean mavenCentralEnabled = true;
+
+    @Option(names = { "--maven-apache-snapshot-enabled" },
+            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    boolean mavenApacheSnapshotEnabled = true;
+
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
 
@@ -441,6 +449,8 @@ public class Run extends CamelCommand {
         main.setFresh(fresh);
         main.setMavenSettings(mavenSettings);
         main.setMavenSettingsSecurity(mavenSettingsSecurity);
+        main.setMavenCentralEnabled(mavenCentralEnabled);
+        main.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
         main.setDownloadListener(new RunDownloadListener());
         main.setAppName("Apache Camel (JBang)");
 
@@ -858,6 +868,10 @@ public class Run extends CamelCommand {
             repos = answer.getProperty("camel.jbang.repos", repos);
             mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
             mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
+            mavenCentralEnabled = "true"
+                    .equals(answer.getProperty("camel.jbang.maven-central-enabled", mavenCentralEnabled ? "true" : "false"));
+            mavenApacheSnapshotEnabled = "true".equals(answer.getProperty("camel.jbang.maven-apache-snapshot-enabled",
+                    mavenApacheSnapshotEnabled ? "true" : "false"));
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
