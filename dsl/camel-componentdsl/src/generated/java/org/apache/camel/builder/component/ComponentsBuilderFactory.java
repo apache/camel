@@ -163,6 +163,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsBedrockComponentBuilderFactory.awsBedrock();
     }
     /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsBedrockAgentComponentBuilderFactory.AwsBedrockAgentComponentBuilder awsBedrockAgent() {
+        return org.apache.camel.builder.component.dsl.AwsBedrockAgentComponentBuilderFactory.awsBedrockAgent();
+    }
+    /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock Agent Runtime service.
      * 

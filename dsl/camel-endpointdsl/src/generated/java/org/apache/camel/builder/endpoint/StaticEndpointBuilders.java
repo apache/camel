@@ -1508,6 +1508,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BedrockEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.endpointBuilder("aws-bedrock-agent", path);
+    }
+    /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock Agent Runtime service.
      * 
