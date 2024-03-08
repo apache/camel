@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerTopicIsPatternIT extends BaseKafkaTestSupport {
 
     public static final String TOPIC = "vess123d";
     public static final String TOPIC_PATTERN = "v.*d";

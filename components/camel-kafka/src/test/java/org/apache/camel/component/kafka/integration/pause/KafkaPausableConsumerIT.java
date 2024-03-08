@@ -30,7 +30,7 @@ import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
-import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
+import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KafkaPausableConsumerIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaPausableConsumerIT extends BaseKafkaTestSupport {
     public static final String SOURCE_TOPIC = "pause-source";
     private static final Logger LOG = LoggerFactory.getLogger(KafkaPausableConsumerIT.class);
     private static final int RETRY_COUNT = 10;

@@ -20,7 +20,6 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.integration.common.KafkaAdminUtil;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -35,7 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public abstract class BaseEmbeddedKafkaTestSupport implements ConfigurableRoute {
+public abstract class BaseKafkaTestSupport implements ConfigurableRoute {
     @Order(1)
     @RegisterExtension
     protected static KafkaService service = KafkaServiceFactory.createSingletonService();
@@ -60,12 +59,7 @@ public abstract class BaseEmbeddedKafkaTestSupport implements ConfigurableRoute 
 
     @ContextFixture
     public void configureKafka(CamelContext context) {
-        context.getPropertiesComponent().setLocation("ref:prop");
-
-        KafkaComponent kafka = new KafkaComponent(context);
-        kafka.init();
-        kafka.getConfiguration().setBrokers(service.getBootstrapServers());
-        context.addComponent("kafka", kafka);
+        KafkaTestUtil.configureKafkaComponent(context, service.getBootstrapServers());
     }
 
     @RouteFixture

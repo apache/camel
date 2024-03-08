@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KafkaTransactionIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaTransactionIT extends BaseKafkaTestSupport {
     public static final String SEQUENTIAL_TRANSACTION_URI = "direct:startTransaction";
     public static final String CONCURRENT_TRANSACTION_URI = "seda:startTransaction";
 

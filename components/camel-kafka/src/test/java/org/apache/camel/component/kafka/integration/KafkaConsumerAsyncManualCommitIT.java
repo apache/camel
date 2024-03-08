@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
     public static final String TOPIC = "testManualCommitTest";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerAsyncManualCommitIT.class);
