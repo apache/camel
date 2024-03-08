@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.bedrock.BedrockModels;
-import org.apache.camel.component.aws2.bedrock.runtime.BedrockConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -49,8 +48,6 @@ class BedrockAgentRuntimeProducerIT extends CamelTestSupport {
         result.expectedMessageCount(1);
         final Exchange result = template.send("direct:send_knowledge_base", exchange -> {
             exchange.getMessage().setBody("What is the average price of natural gas between 1998 and 1999?");
-            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
-            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
         });
 
         MockEndpoint.assertIsSatisfied(context);
@@ -64,7 +61,6 @@ class BedrockAgentRuntimeProducerIT extends CamelTestSupport {
                 from("direct:send_knowledge_base")
                         .to("aws-bedrock-agent-runtime:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=retrieveAndGenerate&knowledgeBaseId=QOZ68KOXTS&modelId="
                             + BedrockModels.ANTROPHIC_CLAUDE_INSTANT_V1.model)
-                        .log("Answer ${body}")
                         .to(result);
             }
         };

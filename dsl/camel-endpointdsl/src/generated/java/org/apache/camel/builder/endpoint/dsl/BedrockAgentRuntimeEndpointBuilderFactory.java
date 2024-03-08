@@ -226,9 +226,9 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Bedrock client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
+         * Set whether the Bedrock Agent Runtime client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -244,9 +244,9 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Bedrock client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
+         * Set whether the Bedrock Agent Runtime client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -263,8 +263,8 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Bedrock client should expect to load credentials
-         * through a profile credentials provider.
+         * Set whether the Bedrock Agent Runtime client should expect to load
+         * credentials through a profile credentials provider.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -280,8 +280,8 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Bedrock client should expect to load credentials
-         * through a profile credentials provider.
+         * Set whether the Bedrock Agent Runtime client should expect to load
+         * credentials through a profile credentials provider.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -298,7 +298,8 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the Bedrock client.
+         * To define a proxy host when instantiating the Bedrock Agent Runtime
+         * client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -312,7 +313,8 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the Bedrock client.
+         * To define a proxy port when instantiating the Bedrock Agent Runtime
+         * client.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -326,7 +328,8 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the Bedrock client.
+         * To define a proxy port when instantiating the Bedrock Agent Runtime
+         * client.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -341,7 +344,8 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the Bedrock client.
+         * To define a proxy protocol when instantiating the Bedrock Agent
+         * Runtime client.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
@@ -358,7 +362,8 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the Bedrock client.
+         * To define a proxy protocol when instantiating the Bedrock Agent
+         * Runtime client.
          * 
          * The option will be converted to a
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
@@ -669,16 +674,34 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
         }
 
         /**
-         * The model accept content type.
+         * When retrieving and generating a response, this header will contain
+         * the citations.
          * 
          * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AwsBedrockAcceptContentType}.
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeCitations}.
          */
-        public String awsBedrockAcceptContentType() {
-            return "CamelAwsBedrockAcceptContentType";
+        public String awsBedrockAgentRuntimeCitations() {
+            return "CamelAwsBedrockAgentRuntimeCitations";
+        }
+
+        /**
+         * When retrieving and generating a response, this header will contain
+         * he unique identifier of the session. Reuse the same value to continue
+         * the same session with the knowledge base.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeSessionId}.
+         */
+        public String awsBedrockAgentRuntimeSessionId() {
+            return "CamelAwsBedrockAgentRuntimeSessionId";
         }
     }
     static BedrockAgentRuntimeEndpointBuilder endpointBuilder(

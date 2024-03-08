@@ -221,9 +221,9 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Bedrock client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
+         * Set whether the Bedrock Agent Runtime client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -239,8 +239,8 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Bedrock client should expect to load credentials
-         * through a profile credentials provider.
+         * Set whether the Bedrock Agent Runtime client should expect to load
+         * credentials through a profile credentials provider.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -329,7 +329,8 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the Bedrock client.
+         * To define a proxy host when instantiating the Bedrock Agent Runtime
+         * client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -344,7 +345,8 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the Bedrock client.
+         * To define a proxy port when instantiating the Bedrock Agent Runtime
+         * client.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -359,7 +361,8 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the Bedrock client.
+         * To define a proxy protocol when instantiating the Bedrock Agent
+         * Runtime client.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.

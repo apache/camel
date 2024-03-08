@@ -39,7 +39,7 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable {
     private String secretKey;
     @UriParam(label = "security", secret = true)
     private String sessionToken;
-    @UriParam(enums = "amazon.titan-text-express-v1,amazon.titan-text-lite-v1,amazon.titan-image-generator-v1,amazon.titan-embed-text-v1,ai21.j2-ultra-v1,ai21.j2-mid-v1")
+    @UriParam(enums = "anthropic.claude-instant-v1,anthropic.claude-v2,anthropic.claude-v2:1")
     @Metadata(required = true)
     private String modelId;
     @UriParam
@@ -133,7 +133,7 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy protocol when instantiating the Bedrock client
+     * To define a proxy protocol when instantiating the Bedrock Agent Runtime client
      */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
@@ -144,7 +144,7 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the Bedrock client
+     * To define a proxy host when instantiating the Bedrock Agent Runtime client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -155,7 +155,7 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the Bedrock client
+     * To define a proxy port when instantiating the Bedrock Agent Runtime client
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -220,8 +220,8 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable {
     }
 
     /**
-     * Set whether the Bedrock client should expect to load credentials through a default credentials provider or to
-     * expect static credentials to be passed in.
+     * Set whether the Bedrock Agent Runtime client should expect to load credentials through a default credentials
+     * provider or to expect static credentials to be passed in.
      */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
@@ -236,7 +236,8 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable {
     }
 
     /**
-     * Set whether the Bedrock client should expect to load credentials through a profile credentials provider.
+     * Set whether the Bedrock Agent Runtime client should expect to load credentials through a profile credentials
+     * provider.
      */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;

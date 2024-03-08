@@ -24,6 +24,14 @@ import org.apache.camel.spi.Metadata;
 public interface BedrockAgentRuntimeConstants {
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsBedrockAgentRuntimeOperation";
-    @Metadata(description = "The model accept content type", javaType = "String")
-    String MODEL_ACCEPT_CONTENT_TYPE = "CamelAwsBedrockAcceptContentType";
+
+    @Metadata(description = "When retrieving and generating a response, this header will contain the citations",
+              javaType = "String")
+    String CITATIONS = "CamelAwsBedrockAgentRuntimeCitations";
+
+    @Metadata(description = "When retrieving and generating a response, this header will contain he unique identifier of the session. "
+                            +
+                            "Reuse the same value to continue the same session with the knowledge base.",
+              javaType = "String")
+    String SESSION_ID = "CamelAwsBedrockAgentRuntimeSessionId";
 }
