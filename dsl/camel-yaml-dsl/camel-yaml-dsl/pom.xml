@@ -42,6 +42,10 @@
         <sourcecheckExcludesComma>
             ${sourcecheckExcludes},
         </sourcecheckExcludesComma>
+        <annotations>
+            routes.language=yaml
+        </annotations>
+
         <camel-generate-yaml-writer>true</camel-generate-yaml-writer>
     </properties>
 

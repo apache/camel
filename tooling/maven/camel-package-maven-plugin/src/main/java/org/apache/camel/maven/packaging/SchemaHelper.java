@@ -17,6 +17,13 @@
 package org.apache.camel.maven.packaging;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.util.Strings;
+import org.apache.maven.project.MavenProject;
 
 public final class SchemaHelper {
 
@@ -99,4 +106,58 @@ public final class SchemaHelper {
         return answer.toString().toLowerCase(Locale.ENGLISH);
     }
 
+    public static void addModelMetadata(BaseModel<?> model, Metadata metadata) {
+        if (metadata == null) {
+            return;
+        }
+
+        addModelMetadata(model, metadata.annotations());
+    }
+
+    public static void addModelMetadata(BaseModel<?> model, String key, String value) {
+        Map<String, Object> modelMetadata = getModelMetadata(model);
+
+        if (!Strings.isNullOrEmpty(key) && !Strings.isNullOrEmpty(value)) {
+            modelMetadata.put(key, value);
+        }
+    }
+
+    public static void addModelMetadata(BaseModel<?> model, MavenProject project) {
+        if (project == null) {
+            return;
+        }
+
+        String annotations = project.getProperties().getProperty("annotations");
+
+        if (!Strings.isNullOrEmpty(annotations)) {
+            addModelMetadata(model, annotations.split(","));
+        }
+    }
+
+    public static void addModelMetadata(BaseModel<?> model, String[] annotations) {
+        if (annotations == null) {
+            return;
+        }
+
+        Map<String, Object> modelMetadata = getModelMetadata(model);
+
+        for (String annotation : annotations) {
+            String key = Strings.before(annotation, "=");
+            String val = Strings.after(annotation, "=");
+
+            if (!Strings.isNullOrEmpty(key) && !Strings.isNullOrEmpty(val)) {
+                modelMetadata.put(key, val);
+            }
+        }
+    }
+
+    public static Map<String, Object> getModelMetadata(BaseModel<?> model) {
+        Map<String, Object> meta = model.getMetadata();
+        if (meta == null) {
+            meta = new TreeMap<>();
+            model.setMetadata(meta);
+        }
+
+        return meta;
+    }
 }

@@ -9,6 +9,7 @@
     "label": "http",
     "javaType": "org.apache.camel.component.jetty12.JettyHttpComponent12",
     "supportLevel": "Stable",
+    "metadata": { "protocol": "http" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-jetty",
     "version": "4.5.0-SNAPSHOT",

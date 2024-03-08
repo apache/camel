@@ -50,6 +50,9 @@ import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate",
              category = { Category.CORE, Category.REST }, lenientProperties = true, headersClass = RestConstants.class)
+@Metadata(annotations = {
+        "protocol=http",
+})
 public class RestEndpoint extends DefaultEndpoint {
 
     public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS

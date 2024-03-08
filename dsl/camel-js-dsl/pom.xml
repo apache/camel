@@ -43,6 +43,9 @@
         <sourcecheckExcludesComma>
             ${sourcecheckExcludes},
         </sourcecheckExcludesComma>
+        <annotations>
+            routes.language=js
+        </annotations>
     </properties>
 
     <dependencies>

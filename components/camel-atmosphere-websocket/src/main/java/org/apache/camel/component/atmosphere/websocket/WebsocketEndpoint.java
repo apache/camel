@@ -40,7 +40,10 @@ import org.apache.camel.util.StringHelper;
 @Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost,"
                               + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
                               + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
-                              + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort")
+                              + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort",
+          annotations = {
+                  "protocol=http",
+          })
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
