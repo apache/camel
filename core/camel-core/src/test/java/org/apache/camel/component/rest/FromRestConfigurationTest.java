@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class FromRestConfigurationTest extends FromRestGetTest {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myDummy", new FooBar());
         return jndi;
     }

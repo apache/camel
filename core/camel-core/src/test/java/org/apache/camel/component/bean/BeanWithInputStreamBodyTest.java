@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class BeanWithInputStreamBodyTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myBean", new MyCoolBean());
         return jndi;

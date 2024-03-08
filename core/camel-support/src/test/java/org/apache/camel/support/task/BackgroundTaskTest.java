@@ -24,6 +24,8 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * at 0th, 1st, 2nd, 3rd and 4th).
  */
 public class BackgroundTaskTest extends TaskTestSupport {
+    private static Logger LOG = LoggerFactory.getLogger(BackgroundTaskTest.class);
 
     @DisplayName("Test that the task does not run for more than the max duration when using a supplier with no delay")
     @Test
@@ -63,6 +66,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
 
         Duration duration = task.elapsed();
         assertNotNull(duration);
+        LOG.info("duration: " + duration.getSeconds());
         assertFalse(duration.isNegative());
         assertFalse(duration.isZero());
         assertTrue(duration.getSeconds() >= 4);
@@ -93,6 +97,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
 
         Duration duration = task.elapsed();
         assertNotNull(duration);
+        LOG.info("duration: " + duration.getSeconds());
         assertFalse(duration.isNegative());
         assertFalse(duration.isZero());
         assertTrue(duration.getSeconds() >= 4);
@@ -123,6 +128,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
 
         Duration duration = task.elapsed();
         assertNotNull(duration);
+        LOG.info("duration: " + duration.getSeconds());
         assertFalse(duration.isNegative());
         assertFalse(duration.isZero());
         assertTrue(duration.getSeconds() >= 4);
@@ -173,6 +179,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
 
         Duration duration = task.elapsed();
         assertNotNull(duration);
+        LOG.info("duration: " + duration.getSeconds());
         assertFalse(duration.isNegative());
         assertFalse(duration.isZero());
         assertTrue(duration.getSeconds() >= 4);
@@ -201,6 +208,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
         boolean completed = task.run(this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
         Duration duration = task.elapsed();
         assertNotNull(duration);
+        LOG.info("duration: " + duration.getSeconds());
         assertFalse(duration.isNegative());
         assertFalse(duration.isZero());
         assertTrue(duration.getSeconds() >= 4);

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myPrepare", new AnimalDeepClonePrepare());
         return jndi;

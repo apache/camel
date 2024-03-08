@@ -43,7 +43,7 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
             = "seda:foo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=false&timeout=0";
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         SedaComponent component = new SedaComponent();
         component.setDefaultBlockWhenFull(true);
 

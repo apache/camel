@@ -41,7 +41,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;

@@ -37,7 +37,7 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
     private static int invoked;
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myRetryHandler", new MyRetryBean());
         return jndi;

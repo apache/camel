@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SimpleOperatorTest extends LanguageTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("generator", new MyFileNameGenerator());
         return jndi;

@@ -80,7 +80,7 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry registry = super.createRegistry();
         URIResolver customURIResolver = getCustomURIResolver();
         registry.bind("customURIResolver", customURIResolver);

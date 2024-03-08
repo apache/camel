@@ -32,7 +32,7 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
     private static final AtomicBoolean CALLLED = new AtomicBoolean();
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myHandler", new MyExceptionHandler());
         return jndi;

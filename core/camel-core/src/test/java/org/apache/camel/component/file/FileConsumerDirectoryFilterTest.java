@@ -39,7 +39,7 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
     private final Set<String> names = new TreeSet<>();
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myFilter", new MyDirectoryFilter<>());
         return jndi;

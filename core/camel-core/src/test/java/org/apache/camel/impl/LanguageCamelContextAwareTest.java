@@ -35,7 +35,7 @@ public class LanguageCamelContextAwareTest extends ContextTestSupport {
     private MyLanguage my = new MyLanguage();
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry registry = super.createRegistry();
         registry.bind("my", my);
         return registry;

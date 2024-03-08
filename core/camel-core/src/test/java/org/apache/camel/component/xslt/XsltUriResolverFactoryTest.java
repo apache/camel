@@ -114,7 +114,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         jndiContext = createJndiContext();
         jndiContext.bind("uriResolverFactory", new CustomXsltUriResolverFactory());
         return new DefaultRegistry(new JndiBeanRepository(jndiContext));

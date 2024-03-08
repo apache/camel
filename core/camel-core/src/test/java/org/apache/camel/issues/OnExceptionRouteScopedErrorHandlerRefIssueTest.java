@@ -39,7 +39,7 @@ public class OnExceptionRouteScopedErrorHandlerRefIssueTest extends ContextTestS
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myDLC", new DeadLetterChannelBuilder("mock:dead"));
         return jndi;

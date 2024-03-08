@@ -32,7 +32,7 @@ public class FromRestDuplicateTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;

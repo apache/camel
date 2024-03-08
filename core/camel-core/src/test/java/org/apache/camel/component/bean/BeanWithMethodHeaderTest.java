@@ -134,7 +134,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry answer = super.createRegistry();
         bean = new MyBean();
         answer.bind("myBean", bean);

@@ -35,7 +35,7 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
     private Properties myProp = new Properties();
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myProp", myProp);
         return jndi;

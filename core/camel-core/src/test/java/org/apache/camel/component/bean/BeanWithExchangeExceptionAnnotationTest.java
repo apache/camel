@@ -44,7 +44,7 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry answer = super.createRegistry();
         answer.bind("myBean", new MyBean());
         return answer;

@@ -22,7 +22,7 @@ import org.apache.camel.spi.Registry;
 public class CustomRefLoadBalanceTest extends CustomLoadBalanceTest {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myBalancer", new MyLoadBalancer());
         return jndi;

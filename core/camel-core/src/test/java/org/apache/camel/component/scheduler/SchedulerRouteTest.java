@@ -52,7 +52,7 @@ public class SchedulerRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry answer = super.createRegistry();
         answer.bind("myBean", bean);
         return answer;

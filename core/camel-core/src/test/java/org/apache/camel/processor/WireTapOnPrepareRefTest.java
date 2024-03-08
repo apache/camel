@@ -25,7 +25,7 @@ import org.apache.camel.spi.Registry;
 public class WireTapOnPrepareRefTest extends WireTapOnPrepareTest {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("deepClone", new AnimalDeepClonePrepare());
         return jndi;

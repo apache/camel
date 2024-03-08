@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DumpModelAsXmlDanishCharactersTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myCoolBean", new MyBarSingleton());
         return jndi;

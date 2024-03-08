@@ -43,7 +43,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     private File file;
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("generator", new MyFileNameGenerator());
         return jndi;

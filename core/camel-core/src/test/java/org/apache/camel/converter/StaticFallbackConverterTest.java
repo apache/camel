@@ -30,11 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StaticFallbackConverterTest extends ContextTestSupport {
 
-    @Override
-    protected boolean isLoadTypeConverters() {
-        return true;
-    }
-
     @Test
     public void testStaticFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);

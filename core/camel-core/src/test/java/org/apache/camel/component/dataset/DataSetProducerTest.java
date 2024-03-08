@@ -38,7 +38,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     final String resultUri = "mock://result";
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry answer = super.createRegistry();
         answer.bind("foo", dataSet);
         return answer;

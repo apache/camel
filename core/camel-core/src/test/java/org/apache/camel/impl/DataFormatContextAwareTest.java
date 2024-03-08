@@ -38,7 +38,7 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
     private MyDataFormat my = new MyDataFormat();
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry registry = super.createRegistry();
         registry.bind("my", my);
         return registry;

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class MethodCallRefOrBeanPrefixPredicateTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;

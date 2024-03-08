@@ -43,7 +43,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     private static volatile String event = "";
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;

@@ -39,7 +39,7 @@ public class WireTapBeanAsProcessorTest extends ContextTestSupport {
     private MockEndpoint result;
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("tap", myBean);
         return jndi;

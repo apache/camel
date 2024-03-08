@@ -35,7 +35,7 @@ public class MockitoMockForInterfaceTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         MyService mockService = Mockito.mock(MyService.class);
         when(mockService.doSomething(any())).thenReturn("mocked answer");
 

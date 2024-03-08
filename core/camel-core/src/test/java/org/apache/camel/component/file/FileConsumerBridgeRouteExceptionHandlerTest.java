@@ -49,7 +49,7 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myReadLockStrategy", myReadLockStrategy);
         return jndi;

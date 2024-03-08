@@ -32,7 +32,7 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
     private MyComponent my;
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         my = new MyComponent();
 
         Registry jndi = super.createRegistry();

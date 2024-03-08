@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static io.qdrant.client.ConditionFactory.matchKeyword;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class QdrantDeleteTest extends QdrantTestSupport {
+public class QdrantDeleteManualIT extends QdrantTestSupport {
 
     @DisplayName("Tests that trying to delete without passing the action name triggers a failure")
     @Test

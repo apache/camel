@@ -64,7 +64,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry registry = new DefaultRegistry();
 
         registry.bind("A", new Processor() {

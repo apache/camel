@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry registry = super.createRegistry();
         SchemaFactory mySchemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         mySchemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);

@@ -32,7 +32,7 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
     private final int size = 100000;
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myLittleBean", new MyLittleBean());
         return jndi;

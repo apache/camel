@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class RefPredicateTest extends LanguageTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myPredicate", new MyPredicate());
         return jndi;

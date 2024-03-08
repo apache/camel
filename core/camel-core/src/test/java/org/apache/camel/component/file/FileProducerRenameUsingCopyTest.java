@@ -33,6 +33,9 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
 
+        // wait a bit for the file move to be completed
+        Thread.sleep(1000L);
+
         assertMockEndpointsSatisfied();
 
         assertFileExists(testFile("done/hello.txt"));

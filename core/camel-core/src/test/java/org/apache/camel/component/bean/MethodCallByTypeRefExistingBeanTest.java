@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class MethodCallByTypeRefExistingBeanTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyBean("Type Ref "));
         return jndi;

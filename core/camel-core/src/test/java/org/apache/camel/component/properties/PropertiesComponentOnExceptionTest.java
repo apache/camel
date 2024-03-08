@@ -57,7 +57,7 @@ public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
 
         Properties cool = new Properties();

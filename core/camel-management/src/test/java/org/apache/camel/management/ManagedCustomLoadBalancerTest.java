@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry answer = super.createRegistry();
         answer.bind("myBalancer", new MyLoadBalancer());
         return answer;

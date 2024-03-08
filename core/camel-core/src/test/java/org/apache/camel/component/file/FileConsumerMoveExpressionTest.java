@@ -39,7 +39,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myguidgenerator", new MyGuidGenerator());
         return jndi;

@@ -44,7 +44,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("counter", new MyGuidGenerator());
         jndi.bind("myPoll", new MyPollStrategy());

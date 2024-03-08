@@ -38,7 +38,7 @@ public class SplitterMethodCallTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("splitterBean", new SplitWordsBean());
         return jndi;

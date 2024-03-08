@@ -54,7 +54,6 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
         DefaultCamelContext context = new MyCamelContext(false);
         context.disableJMX();
         context.getCamelContextExtension().setRegistry(createRegistry());
-        context.setLoadTypeConverters(isLoadTypeConverters());
         return context;
     }
 

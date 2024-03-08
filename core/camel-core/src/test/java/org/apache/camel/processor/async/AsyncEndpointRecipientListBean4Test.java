@@ -33,7 +33,7 @@ public class AsyncEndpointRecipientListBean4Test extends ContextTestSupport {
     private static String afterThreadName;
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myBean", new MyRecipientBean());
         return jndi;

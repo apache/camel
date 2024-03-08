@@ -40,7 +40,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
     private String uri = "mock:results";
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry answer = super.createRegistry();
         answer.bind("foo", dataSet);
         return answer;

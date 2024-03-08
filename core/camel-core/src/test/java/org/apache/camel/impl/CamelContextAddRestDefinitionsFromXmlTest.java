@@ -42,7 +42,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     protected JAXBContext jaxbContext;
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry registry = super.createRegistry();
         registry.bind("dummy-rest", new DummyRestConsumerFactory());
         registry.bind("dummy-rest-api", new DummyRestProcessorFactory());

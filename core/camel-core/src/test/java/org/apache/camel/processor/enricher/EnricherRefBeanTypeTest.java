@@ -33,7 +33,7 @@ public class EnricherRefBeanTypeTest extends ContextTestSupport {
     private MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("cool", cool);
         jndi.bind("latest", new UseLatestAggregationStrategy());

@@ -34,7 +34,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
     private static int tries;
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("fail", new MyFailBean());
         return jndi;

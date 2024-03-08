@@ -41,7 +41,7 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
     private final CountDownLatch latch = new CountDownLatch(1);
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DefaultErrorHandlerOnExceptionOccurredProcessorTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("myProcessor", new MyProcessor());
         return jndi;

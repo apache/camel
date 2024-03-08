@@ -61,7 +61,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     private Properties myProp = new Properties();
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry jndi = new DefaultRegistry();
         jndi.bind("myProp", myProp);
         jndi.bind("foo", new FooBar());

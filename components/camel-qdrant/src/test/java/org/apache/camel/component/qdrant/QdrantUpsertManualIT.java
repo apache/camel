@@ -17,21 +17,33 @@
 
 package org.apache.camel.component.qdrant;
 
+import java.util.List;
+import java.util.Map;
+
+import io.qdrant.client.VectorsFactory;
+import io.qdrant.client.grpc.Points;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.qdrant.client.PointIdFactory.id;
+import static io.qdrant.client.ValueFactory.value;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class QdrantRetrieveTest extends QdrantTestSupport {
+public class QdrantUpsertManualIT extends QdrantTestSupport {
 
-    @DisplayName("Tests that trying to retrieve without passing the action name triggers a failure")
+    @DisplayName("Tests that trying to upsert without passing the action name triggers a failure")
     @Test
-    public void retrieveWithoutRequiredParameters() {
-        Exchange result = fluentTemplate.to("qdrant:retrieve")
-                .withBody(id(8))
+    public void upsertWithoutRequiredParameters() {
+        Exchange result = fluentTemplate.to("qdrant:upsert")
+                .withBody(
+                        Points.PointStruct.newBuilder()
+                                .setId(id(8))
+                                .setVectors(VectorsFactory.vectors(List.of(3.5f, 4.5f)))
+                                .putAllPayload(Map.of(
+                                        "foo", value("hello"),
+                                        "bar", value(1))))
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();

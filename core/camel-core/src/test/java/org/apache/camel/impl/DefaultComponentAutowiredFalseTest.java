@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public class DefaultComponentAutowiredFalseTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry reg = super.createRegistry();
         reg.bind("mycomponent-component", new MyComponentConfigurer());
         reg.bind("mycomponent-endpoint-configurer", new MyComponentConfigurer());

@@ -271,7 +271,7 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Date bean1 = new Date(10);
         Date bean2 = new Date(11);
         Registry registry = super.createRegistry();
@@ -283,5 +283,4 @@ public class DefaultComponentTest extends ContextTestSupport {
         registry.bind("non-numeric", "abc");
         return registry;
     }
-
 }

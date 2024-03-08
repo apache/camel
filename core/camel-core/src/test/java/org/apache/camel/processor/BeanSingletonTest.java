@@ -46,7 +46,7 @@ public class BeanSingletonTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         context = createJndiContext();
         context.bind("something", new MyBean());
         registry = new DefaultRegistry(new JndiBeanRepository(context));

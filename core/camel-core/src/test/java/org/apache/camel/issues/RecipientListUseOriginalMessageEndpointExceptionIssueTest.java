@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,7 +44,7 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
         template.sendBodyAndHeader(fileUri("inbox"), "A",
                 Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(100, TimeUnit.MILLISECONDS);
     }
 
     @Override
