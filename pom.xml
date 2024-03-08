@@ -138,7 +138,7 @@
         <jaxb-core-version>4.0.4</jaxb-core-version>
         <jaxb-impl-version>4.0.4</jaxb-impl-version>
         <jaxb-osgi-version>4.0.4</jaxb-osgi-version>
-        <jaxb-xjc-version>4.0.4</jaxb-xjc-version>
+        <jaxb-xjc-version>4.0.5</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.4</jaxb-jxc-version>
         <groovy-version>4.0.19</groovy-version>
 
