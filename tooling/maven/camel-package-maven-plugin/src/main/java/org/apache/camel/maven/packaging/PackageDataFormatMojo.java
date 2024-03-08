@@ -193,6 +193,10 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
                         final DataFormatModel dataFormatModel
                                 = extractDataFormatModel(project, json, name, clazz, included, excluded);
+
+                        SchemaHelper.addModelMetadata(dataFormatModel, project);
+                        SchemaHelper.addModelMetadata(dataFormatModel, metadata);
+
                         if (!modelName.equals(name)) {
                             /* Prefer description from the clazz */
                             setDescriptionFromClass(clazz, dataFormatModel);

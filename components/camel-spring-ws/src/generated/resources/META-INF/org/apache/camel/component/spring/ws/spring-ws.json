@@ -9,6 +9,7 @@
     "label": "webservice",
     "javaType": "org.apache.camel.component.spring.ws.SpringWebserviceComponent",
     "supportLevel": "Stable",
+    "metadata": { "protocol": "http" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ws",
     "version": "4.5.0-SNAPSHOT",

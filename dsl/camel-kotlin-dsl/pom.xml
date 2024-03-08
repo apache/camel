@@ -43,6 +43,9 @@
         <sourcecheckExcludesComma>
             ${sourcecheckExcludes},
         </sourcecheckExcludesComma>
+        <annotations>
+            routes.language=kotlin
+        </annotations>
 
         <camel.surefire.reuseForks>false</camel.surefire.reuseForks>
     </properties>

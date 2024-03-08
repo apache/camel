@@ -36,6 +36,9 @@
         <firstVersion>3.9.0</firstVersion>
         <title>XML DSL</title>
         <label>dsl</label>
+        <annotations>
+            routes.language=xml
+        </annotations>
         <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>
 

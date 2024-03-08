@@ -36,6 +36,7 @@ import org.apache.camel.component.knative.ce.CloudEventProcessors;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.component.knative.spi.KnativeTransportConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -54,6 +55,9 @@ import org.slf4j.LoggerFactory;
              syntax = "knative:type/typeId",
              title = "Knative",
              category = Category.CLOUD)
+@Metadata(annotations = {
+        "protocol=http",
+})
 public class KnativeEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KnativeEndpoint.class);
