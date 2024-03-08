@@ -661,7 +661,6 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <skipTests>${skipTests}</skipTests>
-                            <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
