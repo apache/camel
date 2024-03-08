@@ -49,7 +49,6 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.setTracing(true);
                 from(BLOCK_WHEN_FULL_URI).delay(DELAY_LONG).syncDelayed().to(MOCK_URI);
 
                 // use same delay as above on purpose

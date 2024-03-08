@@ -82,7 +82,6 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.setTracing(true);
                 from("seda:foo").routeId("foo").to("log:foo").to("mock:result");
             }
         };

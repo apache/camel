@@ -61,8 +61,6 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -73,7 +71,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public abstract class ContextTestSupport extends TestSupport
         implements BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContextTestSupport.class);
     private static final ThreadLocal<ModelCamelContext> THREAD_CAMEL_CONTEXT = new ThreadLocal<>();
     private static final ThreadLocal<ProducerTemplate> THREAD_TEMPLATE = new ThreadLocal<>();
     private static final ThreadLocal<FluentProducerTemplate> THREAD_FLUENT_TEMPLATE = new ThreadLocal<>();
@@ -305,9 +302,9 @@ public abstract class ContextTestSupport extends TestSupport
     public void setUp() throws Exception {
         super.setUp();
 
-        LOG.info(SEPARATOR);
-        LOG.info("Testing: {} ({})", getCurrentTestName(), getClass().getName());
-        LOG.info(SEPARATOR);
+        log.info(SEPARATOR);
+        log.info("Testing: {} ({})", getCurrentTestName(), getClass().getName());
+        log.info(SEPARATOR);
 
         doSpringBootCheck();
         doQuarkusCheck();
@@ -365,7 +362,7 @@ public abstract class ContextTestSupport extends TestSupport
     }
 
     protected void doSetUp() throws Exception {
-        LOG.debug("setUp test");
+        log.debug("setUp test");
         // jmx is enabled if we have configured to use it or if
         // the component camel-debug is in the classpath
         if (useJmx() || isCamelDebugPresent()) {
@@ -388,7 +385,7 @@ public abstract class ContextTestSupport extends TestSupport
         // set debugger if enabled
         if (isUseDebugger()) {
             if (context.getStatus().equals(ServiceStatus.Started)) {
-                LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
+                log.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
                 // we need to stop the context first to setup the debugger
                 context.stop();
             }
@@ -451,7 +448,7 @@ public abstract class ContextTestSupport extends TestSupport
         String include = getRouteFilterIncludePattern();
         String exclude = getRouteFilterExcludePattern();
         if (include != null || exclude != null) {
-            LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
+            log.info("Route filtering pattern: include={}, exclude={}", include, exclude);
             context.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(include, exclude);
         }
 
@@ -460,32 +457,32 @@ public abstract class ContextTestSupport extends TestSupport
             // add configuration before routes
             for (RoutesBuilder builder : builders) {
                 if (builder instanceof RouteConfigurationsBuilder) {
-                    LOG.debug("Using created route configuration: {}", builder);
+                    log.debug("Using created route configuration: {}", builder);
                     context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
                 }
             }
             for (RoutesBuilder builder : builders) {
-                LOG.debug("Using created route builder to add routes: {}", builder);
+                log.debug("Using created route builder to add routes: {}", builder);
                 context.addRoutes(builder);
             }
             for (RoutesBuilder builder : builders) {
-                LOG.debug("Using created route builder to add templated routes: {}", builder);
+                log.debug("Using created route builder to add templated routes: {}", builder);
                 context.addTemplatedRoutes(builder);
             }
             replaceFromEndpoints();
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
             if (skip) {
-                LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+                log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
             } else if (isUseAdviceWith()) {
-                LOG.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
+                log.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
             } else {
                 startCamelContext();
             }
         } else {
             replaceFromEndpoints();
-            LOG.debug("Using route builder from the created context: {}", context);
+            log.debug("Using route builder from the created context: {}", context);
         }
-        LOG.debug("Routing Rules are: {}", context.getRoutes());
+        log.debug("Routing Rules are: {}", context.getRoutes());
 
         assertValidContext(context);
 
@@ -508,13 +505,13 @@ public abstract class ContextTestSupport extends TestSupport
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        LOG.info(SEPARATOR);
-        LOG.info("Testing done: {} ({})", getCurrentTestName(), getClass().getName());
-        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
+        log.info(SEPARATOR);
+        log.info("Testing done: {} ({})", getCurrentTestName(), getClass().getName());
+        log.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
 
-        LOG.info(SEPARATOR);
+        log.info(SEPARATOR);
 
-        LOG.debug("tearDown()");
+        log.debug("tearDown()");
         doStopTemplates(consumer, template, fluentTemplate);
         doStopCamelContext(context, camelContextService);
         doPostTearDown();
