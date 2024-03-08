@@ -1509,7 +1509,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
-     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * Operate on AWS Bedrock through its Agent.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -1529,7 +1529,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
-     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * Operate on AWS Bedrock through its Agent.
      * 
      * Category: ai,cloud
      * Since: 4.5
