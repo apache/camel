@@ -8,7 +8,7 @@ xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide].
 
 == Java versions
 
-Camel 3 supports Java 11. Support for Java 8 is best effort for early versions of Camel 3. However at some time in the 3.x lifeline we will drop support for Java 8.
+Camel 3 supports Java 11+. Support for Java 8 is best effort for early versions of Camel 3. However at some time in the 3.x lifeline we will drop support for Java 8.
 
 In Java 11 the JAXB modules have been **removed** from the JDK, therefore you will need to add them as Maven dependencies (if you use JAXB such as when using XML DSL or the camel-jaxb component):
 
