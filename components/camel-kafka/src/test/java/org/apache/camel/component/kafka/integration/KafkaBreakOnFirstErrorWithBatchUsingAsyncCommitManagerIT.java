@@ -43,18 +43,18 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * this will test basic breakOnFirstError functionality uses allowManualCommit and set Synch Commit Manager this allows
+ * this will test basic breakOnFirstError functionality uses allowManualCommit and set Sync Commit Manager this allows
  * Camel to handle when to commit an offset
  */
 @Tags({ @Tag("breakOnFirstError") })
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64", "s390x" },
              disabledReason = "This test does not run reliably on ppc64le")
-class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseKafkaTestSupport {
+class KafkaBreakOnFirstErrorWithBatchUsingAsyncCommitManagerIT extends BaseExclusiveKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";
     public static final String TOPIC = "breakOnFirstErrorBatchIT";
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorWithBatchUsingAsyncCommitManagerIT.class);
 
     private final List<String> errorPayloads = new CopyOnWriteArrayList<>();
 
@@ -124,8 +124,8 @@ class KafkaBreakOnFirstErrorWithBatchUsingSynchCommitManagerIT extends BaseKafka
                      + "&pollTimeoutMs=1000"
                      + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                      + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                // synch commit factory
-                     + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory"
+                // asynch commit factory
+                     + "&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory"
                      + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .process(exchange -> {
