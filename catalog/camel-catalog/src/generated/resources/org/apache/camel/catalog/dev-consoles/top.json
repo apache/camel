@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "top",
+    "name": "top",
     "title": "Top Routes",
     "description": "Display the top routes",
     "deprecated": false,

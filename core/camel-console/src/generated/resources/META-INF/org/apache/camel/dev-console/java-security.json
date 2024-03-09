@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "java-security",
+    "name": "java-security",
     "title": "Java Security",
     "description": "Displays Java Security (JSSE) information",
     "deprecated": false,

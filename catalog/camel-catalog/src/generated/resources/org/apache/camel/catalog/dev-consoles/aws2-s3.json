@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "aws2-s3",
+    "name": "aws2-s3",
     "title": "AWS S3",
     "description": "AWS S3 Consumer",
     "deprecated": false,

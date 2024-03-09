@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "type-converters",
+    "name": "type-converters",
     "title": "Type Converters",
     "description": "Camel Type Converter information",
     "deprecated": false,

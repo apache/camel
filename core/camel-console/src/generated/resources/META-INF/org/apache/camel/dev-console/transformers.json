@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "transformers",
+    "name": "transformers",
     "title": "Data Type Transformers",
     "description": "Data-type transformer information",
     "deprecated": false,

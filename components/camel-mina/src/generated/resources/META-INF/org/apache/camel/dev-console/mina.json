@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "mina",
+    "name": "mina",
     "title": "Mina",
     "description": "Embedded Mina Server",
     "deprecated": false,

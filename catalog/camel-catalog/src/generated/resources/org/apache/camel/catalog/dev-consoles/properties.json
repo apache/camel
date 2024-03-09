@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "properties",
+    "name": "properties",
     "title": "Properties",
     "description": "Displays the properties loaded by Camel",
     "deprecated": false,

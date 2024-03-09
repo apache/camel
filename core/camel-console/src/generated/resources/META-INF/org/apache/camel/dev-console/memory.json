@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "memory",
+    "name": "memory",
     "title": "JVM Memory",
     "description": "Displays JVM memory information",
     "deprecated": false,

@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel-jbang",
-    "id": "dependency-downloader",
+    "name": "dependency-downloader",
     "title": "Maven Dependency Downloader",
     "description": "Displays information about dependencies downloaded at runtime",
     "deprecated": false,

@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "log",
+    "name": "log",
     "title": "Log",
     "description": "Logging framework",
     "deprecated": false,

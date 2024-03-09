@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "context",
+    "name": "context",
     "title": "CamelContext",
     "description": "Overall information about the CamelContext",
     "deprecated": false,

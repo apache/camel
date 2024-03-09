@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "jvm",
+    "name": "jvm",
     "title": "JVM",
     "description": "Displays JVM information",
     "deprecated": false,

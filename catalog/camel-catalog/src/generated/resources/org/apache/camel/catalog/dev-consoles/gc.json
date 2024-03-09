@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "gc",
+    "name": "gc",
     "title": "Garbage Collector",
     "description": "Displays Garbage Collector information",
     "deprecated": false,

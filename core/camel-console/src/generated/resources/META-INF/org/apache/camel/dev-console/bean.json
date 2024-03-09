@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "bean",
+    "name": "bean",
     "title": "Bean",
     "description": "Displays Java beans from the registry",
     "deprecated": false,

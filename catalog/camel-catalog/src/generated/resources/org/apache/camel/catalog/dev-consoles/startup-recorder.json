@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "startup-recorder",
+    "name": "startup-recorder",
     "title": "Startup Recorder",
     "description": "Starting recording information",
     "deprecated": false,

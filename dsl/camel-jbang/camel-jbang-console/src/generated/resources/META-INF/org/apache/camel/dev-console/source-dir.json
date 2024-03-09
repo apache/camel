@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel-jbang",
-    "id": "source-dir",
+    "name": "source-dir",
     "title": "Source Directory",
     "description": "Information about Camel JBang source files",
     "deprecated": false,

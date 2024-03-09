@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "inflight",
+    "name": "inflight",
     "title": "Inflight Exchanges",
     "description": "Display inflight exchanges",
     "deprecated": false,

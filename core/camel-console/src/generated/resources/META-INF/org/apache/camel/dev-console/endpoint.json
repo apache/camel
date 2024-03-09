@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "endpoint",
+    "name": "endpoint",
     "title": "Endpoints",
     "description": "Endpoint Registry information",
     "deprecated": false,

@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "route-dump",
+    "name": "route-dump",
     "title": "Route Dump",
     "description": "Dump route in XML or YAML format",
     "deprecated": false,

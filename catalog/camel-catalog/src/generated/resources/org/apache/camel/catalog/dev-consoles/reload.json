@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "reload",
+    "name": "reload",
     "title": "Reload",
     "description": "Console for reloading running Camel",
     "deprecated": false,

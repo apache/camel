@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "quartz",
+    "name": "quartz",
     "title": "Quartz",
     "description": "Quartz Scheduler",
     "deprecated": false,

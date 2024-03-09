@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "route-controller",
+    "name": "route-controller",
     "title": "Route Controller",
     "description": "Route controller information",
     "deprecated": false,

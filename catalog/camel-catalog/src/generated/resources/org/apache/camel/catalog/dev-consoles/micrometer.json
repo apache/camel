@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "micrometer",
+    "name": "micrometer",
     "title": "Micrometer",
     "description": "Display runtime metrics",
     "deprecated": false,

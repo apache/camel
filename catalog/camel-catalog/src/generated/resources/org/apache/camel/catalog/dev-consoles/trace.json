@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "trace",
+    "name": "trace",
     "title": "Camel Tracing",
     "description": "Trace routed messages",
     "deprecated": false,

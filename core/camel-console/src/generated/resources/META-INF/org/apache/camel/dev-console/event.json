@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "event",
+    "name": "event",
     "title": "Camel Events",
     "description": "The most recent Camel events",
     "deprecated": false,

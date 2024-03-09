@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "blocked",
+    "name": "blocked",
     "title": "Blocked Exchanges",
     "description": "Display blocked exchanges",
     "deprecated": false,

@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "stub",
+    "name": "stub",
     "title": "Stub",
     "description": "Browse messages on stub endpoints",
     "deprecated": false,

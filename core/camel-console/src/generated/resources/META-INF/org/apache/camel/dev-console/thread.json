@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "thread",
+    "name": "thread",
     "title": "Thread",
     "description": "Displays JVM Threads information",
     "deprecated": false,

@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "route",
+    "name": "route",
     "title": "Route",
     "description": "Route information",
     "deprecated": false,

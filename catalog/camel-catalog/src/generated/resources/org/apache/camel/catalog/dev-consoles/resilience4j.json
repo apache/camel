@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "resilience4j",
+    "name": "resilience4j",
     "title": "Resilience Circuit Breaker",
     "description": "Display circuit breaker information",
     "deprecated": false,

@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "debug",
+    "name": "debug",
     "title": "Debug",
     "description": "Camel route debugger",
     "deprecated": false,

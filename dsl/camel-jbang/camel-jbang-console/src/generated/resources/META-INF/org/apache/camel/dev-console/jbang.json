@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel-jbang",
-    "id": "jbang",
+    "name": "jbang",
     "title": "Camel JBang",
     "description": "Information about Camel JBang",
     "deprecated": false,

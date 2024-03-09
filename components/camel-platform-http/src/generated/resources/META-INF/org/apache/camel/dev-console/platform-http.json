@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "platform-http",
+    "name": "platform-http",
     "title": "Platform HTTP",
     "description": "Embedded HTTP Server",
     "deprecated": false,

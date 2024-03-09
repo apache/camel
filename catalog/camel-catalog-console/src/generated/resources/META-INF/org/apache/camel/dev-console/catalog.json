@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "catalog",
+    "name": "catalog",
     "title": "Catalog",
     "description": "Information about used Camel artifacts",
     "deprecated": false,

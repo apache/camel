@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "variables",
+    "name": "variables",
     "title": "Variables",
     "description": "Displays variables",
     "deprecated": false,

@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "health",
+    "name": "health",
     "title": "Health Check",
     "description": "Health Check Status",
     "deprecated": false,

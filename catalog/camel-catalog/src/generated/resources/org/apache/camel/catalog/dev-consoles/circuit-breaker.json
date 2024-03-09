@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "circuit-breaker",
+    "name": "circuit-breaker",
     "title": "Circuit Breaker",
     "description": "Display circuit breaker information",
     "deprecated": false,

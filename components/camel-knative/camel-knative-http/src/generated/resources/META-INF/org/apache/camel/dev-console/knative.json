@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "knative",
+    "name": "knative",
     "title": "Knative",
     "description": "Knative HTTP Service",
     "deprecated": false,

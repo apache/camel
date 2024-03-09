@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "mllp",
+    "name": "mllp",
     "title": "MLLP",
     "description": "Embedded MLLP Server",
     "deprecated": false,

@@ -2,7 +2,7 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "id": "consumer",
+    "name": "consumer",
     "title": "Consumers",
     "description": "Display information about Camel consumers",
     "deprecated": false,
