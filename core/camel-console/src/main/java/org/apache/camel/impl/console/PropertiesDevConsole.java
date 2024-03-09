@@ -23,7 +23,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("properties")
+@DevConsole(name = "properties", description = "Displays the properties loaded by Camel")
 public class PropertiesDevConsole extends AbstractDevConsole {
 
     public PropertiesDevConsole() {

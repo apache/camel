@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "type-converters",
+    "title": "Type Converters",
+    "description": "Camel Type Converter information",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.TypeConverterConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

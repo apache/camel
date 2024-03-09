@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "resilience4j",
+    "title": "Resilience Circuit Breaker",
+    "description": "Display circuit breaker information",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.resilience4j.ResilienceConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-resilience4j",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

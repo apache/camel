@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.jandex.AnnotationInstance;
+
 public final class MojoHelper {
 
     private MojoHelper() {
@@ -111,6 +113,22 @@ public final class MojoHelper {
             default:
                 return Collections.singletonList(dir);
         }
+    }
+
+    public static String annotationValue(AnnotationInstance ann, String key) {
+        if (ann == null) {
+            return null;
+        }
+        var v = ann.value(key);
+        if (v == null) {
+            return null;
+        }
+        var o = v.value();
+        if (o == null) {
+            return null;
+        }
+        var s = o.toString();
+        return s == null || s.isBlank() ? null : s;
     }
 
 }

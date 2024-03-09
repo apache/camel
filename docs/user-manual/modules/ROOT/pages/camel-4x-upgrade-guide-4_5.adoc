@@ -139,6 +139,26 @@ moved into a new group `camel.debug` with more options to configure the backlog 
 
 To enable backlog tracing you should now set `camel.trace.enabled=true` instead of `camel.main.backlogTracing=true`.
 
+=== camel-console
+
+The `@DevConsole` annotation has been enhanced to include more information.
+
+Migrate from
+
+[source,java]
+----
+@DevConsole("stub")
+----
+
+To
+
+[source,java]
+----
+@DevConsole(name = "stub", description = "Browse messages on stub endpoints")
+----
+
+We also renamed the `route-curcuit-breaker` console to `circuit-breaker`.
+
 === camel-jsonpath
 
 The `camel-jsonpath` will now work more similar as `camel-jq` when you specify a `resultType` and have a list of entities.

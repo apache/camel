@@ -27,7 +27,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("resilience4j")
+@DevConsole(name = "resilience4j", displayName = "Resilience Circuit Breaker", description = "Display circuit breaker information")
 public class ResilienceConsole extends AbstractDevConsole {
 
     public ResilienceConsole() {

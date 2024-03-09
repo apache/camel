@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "dependency-downloader",
+    "title": "Maven Dependency Downloader",
+    "description": "Displays information about dependencies downloaded at runtime",
+    "deprecated": false,
+    "javaType": "org.apache.camel.main.console.DependencyDownloaderConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kamelet-main",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

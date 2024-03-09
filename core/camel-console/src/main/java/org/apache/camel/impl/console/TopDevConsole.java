@@ -42,7 +42,7 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole("top")
+@DevConsole(name = "top", displayName = "Top Routes", description = "Display the top routes")
 public class TopDevConsole extends AbstractDevConsole {
 
     /**
@@ -56,7 +56,7 @@ public class TopDevConsole extends AbstractDevConsole {
     public static final String LIMIT = "limit";
 
     public TopDevConsole() {
-        super("camel", "top", "Top", "Display the top routes");
+        super("camel", "top", "Top Routes", "Display the top routes");
     }
 
     @Override

@@ -40,7 +40,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole("route")
+@DevConsole(name = "route", description = "Route information")
 public class RouteDevConsole extends AbstractDevConsole {
 
     /**

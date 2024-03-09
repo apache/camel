@@ -28,7 +28,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("gc")
+@DevConsole(name = "gc", displayName = "Garbage Collector", description = "Displays Garbage Collector information")
 @Configurer(bootstrap = true)
 public class GarbageCollectorDevConsole extends AbstractDevConsole {
 

@@ -27,7 +27,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("aws2-s3")
+@DevConsole(name = "aws2-s3", displayName = "AWS S3", description = "AWS S3 Consumer")
 public class AWS2S3Console extends AbstractDevConsole {
 
     public AWS2S3Console() {

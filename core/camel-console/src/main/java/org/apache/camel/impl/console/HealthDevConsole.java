@@ -30,7 +30,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("health")
+@DevConsole(name = "health", displayName = "Health Check", description = "Health Check Status")
 public class HealthDevConsole extends AbstractDevConsole {
 
     public HealthDevConsole() {

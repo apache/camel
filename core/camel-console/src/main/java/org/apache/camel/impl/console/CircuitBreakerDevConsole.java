@@ -28,11 +28,11 @@ import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("route-circuit-breaker")
-public class RouteCircuitBreakerDevConsole extends AbstractDevConsole {
+@DevConsole(name = "circuit-breaker", description = "Display circuit breaker information")
+public class CircuitBreakerDevConsole extends AbstractDevConsole {
 
-    public RouteCircuitBreakerDevConsole() {
-        super("camel", "route-circuit-breaker", "Route Circuit Breaker", "Display circuit breaker information");
+    public CircuitBreakerDevConsole() {
+        super("camel", "circuit-breaker", "Circuit Breaker", "Display circuit breaker information");
     }
 
     @Override

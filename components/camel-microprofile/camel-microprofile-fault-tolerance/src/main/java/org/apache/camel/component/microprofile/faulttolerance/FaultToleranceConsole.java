@@ -27,11 +27,11 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("fault-tolerance")
+@DevConsole(name = "fault-tolerance", displayName = "MicroProfile Circuit Breaker", description = "Display circuit breaker information")
 public class FaultToleranceConsole extends AbstractDevConsole {
 
     public FaultToleranceConsole() {
-        super("camel", "fault-tolerance", "MicroProfile Fault Tolerance Circuit Breaker",
+        super("camel", "fault-tolerance", "MicroProfile Circuit Breaker",
               "Display circuit breaker information");
     }
 

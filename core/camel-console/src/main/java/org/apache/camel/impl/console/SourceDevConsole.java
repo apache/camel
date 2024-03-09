@@ -37,7 +37,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("source")
+@DevConsole(name = "source", description = "Dump route source code")
 public class SourceDevConsole extends AbstractDevConsole {
 
     /**
@@ -51,7 +51,7 @@ public class SourceDevConsole extends AbstractDevConsole {
     public static final String LIMIT = "limit";
 
     public SourceDevConsole() {
-        super("camel", "source", "Source", "Display route source code");
+        super("camel", "source", "Source", "Dump route source code");
     }
 
     @Override

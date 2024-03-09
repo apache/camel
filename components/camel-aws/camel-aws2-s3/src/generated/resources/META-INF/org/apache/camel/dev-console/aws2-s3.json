@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "aws2-s3",
+    "title": "AWS S3",
+    "description": "AWS S3 Consumer",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.aws2.s3.AWS2S3Console",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-s3",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

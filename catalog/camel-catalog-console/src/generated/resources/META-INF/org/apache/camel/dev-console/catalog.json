@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "catalog",
+    "title": "Catalog",
+    "description": "Information about used Camel artifacts",
+    "deprecated": false,
+    "javaType": "org.apache.camel.catalog.console.CatalogConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-catalog-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+
