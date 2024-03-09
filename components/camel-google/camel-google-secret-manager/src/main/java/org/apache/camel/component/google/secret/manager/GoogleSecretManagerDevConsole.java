@@ -33,7 +33,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.vault.GcpVaultConfiguration;
 
-@DevConsole("gcp-secrets")
+@DevConsole(name = "gcp-secrets", displayName = "GCP Secrets", description = "GCP Secret Manager")
 public class GoogleSecretManagerDevConsole extends AbstractDevConsole {
 
     private GoogleSecretManagerPropertiesFunction propertiesFunction;

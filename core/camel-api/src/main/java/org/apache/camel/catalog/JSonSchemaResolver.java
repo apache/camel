@@ -59,6 +59,14 @@ public interface JSonSchemaResolver {
     String getTransformerJSonSchema(String name);
 
     /**
+     * Returns the dev console information as JSON format.
+     *
+     * @param  name the dev console name
+     * @return      dev console details in JSon
+     */
+    String getDevConsoleJSonSchema(String name);
+
+    /**
      * Returns the other (miscellaneous) information as JSON format.
      *
      * @param  name the other (miscellaneous) name

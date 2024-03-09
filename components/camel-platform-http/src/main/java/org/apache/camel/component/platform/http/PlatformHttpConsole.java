@@ -25,7 +25,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("platform-http")
+@DevConsole(name = "platform-http", displayName = "Platform HTTP", description = "Embedded HTTP Server")
 public class PlatformHttpConsole extends AbstractDevConsole {
 
     public PlatformHttpConsole() {

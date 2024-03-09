@@ -27,11 +27,11 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("startup-recorder")
+@DevConsole(name = "startup-recorder", description = "Starting recording information")
 public class StartupRecorderDevConsole extends AbstractDevConsole {
 
     public StartupRecorderDevConsole() {
-        super("camel", "startup-recorder", "Startup Recorder", "Display startup recording");
+        super("camel", "startup-recorder", "Startup Recorder", "Starting recording information");
     }
 
     @Override

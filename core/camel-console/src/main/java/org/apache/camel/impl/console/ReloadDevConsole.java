@@ -26,7 +26,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("reload")
+@DevConsole(name = "reload", description = "Console for reloading running Camel")
 public class ReloadDevConsole extends AbstractDevConsole {
 
     /**

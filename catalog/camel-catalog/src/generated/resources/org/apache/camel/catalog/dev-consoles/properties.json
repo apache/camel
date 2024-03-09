@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "properties",
+    "title": "Properties",
+    "description": "Displays the properties loaded by Camel",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.PropertiesDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

@@ -26,6 +26,7 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
@@ -197,6 +198,11 @@ public interface CamelCatalog {
      * Find all the transformer names from the Camel catalog
      */
     List<String> findTransformerNames();
+
+    /**
+     * Find all the dev-console names from the Camel catalog
+     */
+    List<String> findDevConsoleNames();
 
     /**
      * Find all the model names from the Camel catalog
@@ -509,6 +515,11 @@ public interface CamelCatalog {
     String listTransformersAsJson();
 
     /**
+     * Lists all the dev-consoles summary details in JSon
+     */
+    String listDevConsolesAsJson();
+
+    /**
      * Lists all the models (EIPs) summary details in JSon
      */
     String listModelsAsJson();
@@ -548,6 +559,12 @@ public interface CamelCatalog {
     TransformerModel transformerModel(String name);
 
     /**
+     * @param  name the dev-console name to look up
+     * @return      the requested dev-console or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    DevConsoleModel devConsoleModel(String name);
+
+    /**
      * @param  name the other name to look up
      * @return      the requested other or {@code null} in case it is not available in this {@link CamelCatalog}
      */
@@ -581,6 +598,8 @@ public interface CamelCatalog {
                 return languageModel(name);
             case transformer:
                 return transformerModel(name);
+            case console:
+                return devConsoleModel(name);
             case other:
                 return otherModel(name);
             case eip:

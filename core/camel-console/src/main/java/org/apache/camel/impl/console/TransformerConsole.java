@@ -25,11 +25,11 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("transformers")
+@DevConsole(name = "transformers", displayName = "Data Type Transformers", description = "Data-type transformer information")
 public class TransformerConsole extends AbstractDevConsole {
 
     public TransformerConsole() {
-        super("camel", "transformers", "Data Type Transformers", "Camel Data Type Transformer information");
+        super("camel", "transformers", "Data Type Transformers", "Data-type transformer information");
     }
 
     @Override

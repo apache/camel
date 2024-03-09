@@ -108,7 +108,7 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
                                 }
                             }
                         }
-                        mo = (JsonObject) root.get("route-circuit-breaker");
+                        mo = (JsonObject) root.get("circuit-breaker");
                         if (mo != null) {
                             JsonArray arr = (JsonArray) mo.get("circuitBreakers");
                             if (arr != null) {

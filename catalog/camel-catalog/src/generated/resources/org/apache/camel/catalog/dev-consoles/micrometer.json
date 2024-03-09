@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "micrometer",
+    "title": "Micrometer",
+    "description": "Display runtime metrics",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.micrometer.MicrometerConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-micrometer",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

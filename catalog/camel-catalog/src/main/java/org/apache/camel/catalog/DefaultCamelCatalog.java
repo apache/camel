@@ -38,6 +38,7 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
@@ -64,8 +65,10 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public static final String LIST_DATA_FORMATS_AS_JSON = "listDataFormatsAsJson";
     public static final String FIND_LANGUAGE_NAMES = "findLanguageNames";
     public static final String FIND_TRANSFORMER_NAMES = "findTransformerNames";
+    public static final String FIND_CONSOLE_NAMES = "findConsoleNames";
     public static final String LIST_LANGUAGES_AS_JSON = "listLanguagesAsJson";
     public static final String LIST_TRANSFORMERS_AS_JSON = "listTransformersAsJson";
+    public static final String LIST_CONSOLES_AS_JSON = "listConsolesAsJson";
 
     private final VersionHelper version = new VersionHelper();
 
@@ -232,6 +235,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
+    public List<String> findDevConsoleNames() {
+        return cache(FIND_CONSOLE_NAMES, runtimeProvider::findDevConsoleNames);
+    }
+
+    @Override
     public List<String> findModelNames() {
         return cache("findModelNames", () -> {
             try (InputStream is = versionManager.getResourceAsStream(MODELS_CATALOG)) {
@@ -342,6 +350,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
+    public String devConsoleJSonSchema(String name) {
+        return cache("dev-console-" + name, name, super::devConsoleJSonSchema);
+    }
+
+    @Override
     public LanguageModel languageModel(String name) {
         return cache("language-model-" + name, name, super::languageModel);
     }
@@ -349,6 +362,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public TransformerModel transformerModel(String name) {
         return cache("transformer-model-" + name, name, super::transformerModel);
+    }
+
+    @Override
+    public DevConsoleModel devConsoleModel(String name) {
+        return cache("dev-console-model-" + name, name, super::devConsoleModel);
     }
 
     @Override
@@ -457,6 +475,15 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
+    public String listDevConsolesAsJson() {
+        return cache(LIST_CONSOLES_AS_JSON, () -> JsonMapper.serialize(findDevConsoleNames().stream()
+                .map(this::devConsoleJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("console"))
+                .toList()));
+    }
+
+    @Override
     public String listModelsAsJson() {
         return cache("listModelsAsJson", () -> JsonMapper.serialize(findModelNames().stream()
                 .map(this::modelJSonSchema)
@@ -516,6 +543,12 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
         for (String name : findTransformerNames()) {
             ArtifactModel<?> am = transformerModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        for (String name : findDevConsoleNames()) {
+            ArtifactModel<?> am = devConsoleModel(name);
             if (matchArtifact(am, groupId, artifactId, version)) {
                 return am;
             }

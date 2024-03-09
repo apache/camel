@@ -29,7 +29,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("context")
+@DevConsole(name = "context", displayName = "CamelContext", description = "Overall information about the CamelContext")
 public class ContextDevConsole extends AbstractDevConsole {
 
     public ContextDevConsole() {

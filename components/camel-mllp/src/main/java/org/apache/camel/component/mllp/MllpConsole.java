@@ -27,7 +27,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("mllp")
+@DevConsole(name = "mllp", displayName = "MLLP", description = "Embedded MLLP Server")
 public class MllpConsole extends AbstractDevConsole {
 
     public MllpConsole() {

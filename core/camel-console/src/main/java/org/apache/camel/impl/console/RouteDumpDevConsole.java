@@ -33,7 +33,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("route-dump")
+@DevConsole(name = "route-dump", description = "Dump route in XML or YAML format")
 public class RouteDumpDevConsole extends AbstractDevConsole {
 
     /**
@@ -57,7 +57,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     public static final String URI_AS_PARAMETERS = "uriAsParameters";
 
     public RouteDumpDevConsole() {
-        super("camel", "route-dump", "Route Dump", "Dump route structure in XML or YAML format");
+        super("camel", "route-dump", "Route Dump", "Dump route in XML or YAML format");
     }
 
     @Override

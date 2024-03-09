@@ -27,11 +27,12 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("dependency-downloader")
+@DevConsole(name = "dependency-downloader", group = "camel-jbang", displayName = "Maven Dependency Downloader",
+            description = "Displays information about dependencies downloaded at runtime")
 public class DependencyDownloaderConsole extends AbstractDevConsole {
 
     public DependencyDownloaderConsole() {
-        super("jvm", "dependency-downloader", "Maven Dependency Downloader",
+        super("camel-jbang", "dependency-downloader", "Maven Dependency Downloader",
               "Displays information about dependencies downloaded at runtime");
     }
 

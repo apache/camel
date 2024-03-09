@@ -32,7 +32,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("knative")
+@DevConsole(name = "knative", displayName = "Knative", description = "Knative HTTP Service")
 public class KnativeHttpConsole extends AbstractDevConsole {
 
     public KnativeHttpConsole() {

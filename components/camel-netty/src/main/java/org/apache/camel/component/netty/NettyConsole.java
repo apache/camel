@@ -27,7 +27,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("netty")
+@DevConsole(name = "netty", description = "Embedded Netty Server")
 public class NettyConsole extends AbstractDevConsole {
 
     public NettyConsole() {

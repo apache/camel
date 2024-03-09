@@ -37,6 +37,8 @@ import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 
+import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
+
 /**
  * Factory for generating code for @DataTypeTransformer.
  */
@@ -143,22 +145,10 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                     = a.target().asClass().hasAnnotation(Deprecated.class) || project.getName().contains("(deprecated)");
             model.setClassName(currentClass);
             model.setDeprecated(deprecated);
-            var name = a.value("name");
-            if (name != null) {
-                model.setName(name.value().toString());
-            }
-            var from = a.value("from");
-            if (from != null) {
-                model.setFrom(from.value().toString());
-            }
-            var to = a.value("to");
-            if (to != null) {
-                model.setFrom(to.value().toString());
-            }
-            var desc = a.value("description");
-            if (desc != null) {
-                model.setDescription(desc.value().toString());
-            }
+            model.setName(annotationValue(a, "name"));
+            model.setFrom(annotationValue(a, "from"));
+            model.setTo(annotationValue(a, "to"));
+            model.setDescription(annotationValue(a, "description"));
             models.add(model);
         });
         models.sort(Comparator.comparing(DataTypeTransformerModel::getName));

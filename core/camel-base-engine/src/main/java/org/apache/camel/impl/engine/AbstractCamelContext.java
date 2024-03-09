@@ -1480,6 +1480,17 @@ public abstract class AbstractCamelContext extends BaseService
         return null;
     }
 
+    @Override
+    public String getDevConsoleParameterJsonSchema(String devConsoleName) throws IOException {
+        String name = sanitizeFileName(devConsoleName) + ".json";
+        String path = DefaultDevConsoleResolver.DEV_CONSOLE_RESOURCE_PATH + name;
+        String inputStream = doLoadResource(devConsoleName, path, "console");
+        if (inputStream != null) {
+            return inputStream;
+        }
+        return null;
+    }
+
     // Helper methods
     // -----------------------------------------------------------------------
 

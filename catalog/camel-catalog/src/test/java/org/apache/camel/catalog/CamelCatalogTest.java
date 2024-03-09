@@ -139,6 +139,19 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testFindDevConsoleNames() {
+        List<String> names = catalog.findDevConsoleNames();
+
+        assertTrue(names.contains("aws2-s3"));
+        assertTrue(names.contains("aws-secrets"));
+        assertTrue(names.contains("gc"));
+        assertTrue(names.contains("inflight"));
+        assertTrue(names.contains("mina"));
+        assertTrue(names.contains("platform-http"));
+        assertTrue(names.contains("variables"));
+    }
+
+    @Test
     public void testFindModelNames() {
         List<String> names = catalog.findModelNames();
         assertNotNull(names);
@@ -882,6 +895,17 @@ public class CamelCatalogTest {
     @Test
     public void testListTransformersAsJson() throws Exception {
         String json = catalog.listTransformersAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListDevConsolesAsJson() throws Exception {
+        String json = catalog.listDevConsolesAsJson();
         assertNotNull(json);
 
         // validate we can parse the json
