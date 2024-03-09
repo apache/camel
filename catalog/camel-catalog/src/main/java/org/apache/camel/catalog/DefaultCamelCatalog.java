@@ -38,6 +38,7 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
@@ -364,6 +365,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
+    public DevConsoleModel devConsoleModel(String name) {
+        return cache("dev-console-model-" + name, name, super::devConsoleModel);
+    }
+
+    @Override
     public String otherJSonSchema(String name) {
         return cache("other-" + name, name, super::otherJSonSchema);
     }
@@ -537,6 +543,12 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
         for (String name : findTransformerNames()) {
             ArtifactModel<?> am = transformerModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        for (String name : findDevConsoleNames()) {
+            ArtifactModel<?> am = devConsoleModel(name);
             if (matchArtifact(am, groupId, artifactId, version)) {
                 return am;
             }

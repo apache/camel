@@ -64,7 +64,7 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
     private static class DevConsoleModel {
         private String className;
         private String group;
-        private String id;
+        private String name;
         private String displayName;
         private String description;
         private boolean deprecated;
@@ -85,12 +85,12 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             this.group = group;
         }
 
-        public String getId() {
-            return id;
+        public String getName() {
+            return name;
         }
 
-        public void setId(String id) {
-            this.id = id;
+        public void setName(String name) {
+            this.name = name;
         }
 
         public String getDisplayName() {
@@ -149,16 +149,16 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             model.setClassName(currentClass);
             model.setDeprecated(deprecated);
             model.setGroup(annotationValue(a, "group"));
-            model.setId(annotationValue(a, "name"));
+            model.setName(annotationValue(a, "name"));
             model.setDisplayName(annotationValue(a, "displayName"));
             model.setDescription(annotationValue(a, "description"));
             // skip default registry
-            boolean skip = "default-registry".equals(model.getId());
+            boolean skip = "default-registry".equals(model.getName());
             if (!skip) {
                 models.add(model);
             }
         });
-        models.sort(Comparator.comparing(DevConsoleModel::getId));
+        models.sort(Comparator.comparing(DevConsoleModel::getName));
 
         // remove default-registry as it's special
 
@@ -166,17 +166,17 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             try {
                 StringJoiner ids = new StringJoiner(" ");
                 for (var model : models) {
-                    ids.add(model.getId());
+                    ids.add(model.getName());
 
                     JsonObject jo = asJsonObject(model);
                     String json = jo.toJson();
                     json = Jsoner.prettyPrint(json, 2);
-                    String fn = sanitizeFileName(model.getId()) + PackageHelper.JSON_SUFIX;
+                    String fn = sanitizeFileName(model.getName()) + PackageHelper.JSON_SUFIX;
                     boolean updated = updateResource(resourcesOutputDir.toPath(),
                             "META-INF/org/apache/camel/dev-console/" + fn,
                             json + NL);
                     if (updated) {
-                        getLog().info("Updated dev-console json: " + model.getId());
+                        getLog().info("Updated dev-console json: " + model.getName());
                     }
                 }
 
@@ -202,11 +202,11 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
         } else {
             jo.put("group", "camel");
         }
-        jo.put("id", model.getId());
+        jo.put("name", model.getName());
         if (model.getDisplayName() != null) {
             jo.put("title", asTitle(model.getDisplayName()));
         } else {
-            jo.put("title", asTitle(model.getId()));
+            jo.put("title", asTitle(model.getName()));
         }
         jo.put("description", model.getDescription());
         jo.put("deprecated", model.isDeprecated());
