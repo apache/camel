@@ -64,8 +64,10 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public static final String LIST_DATA_FORMATS_AS_JSON = "listDataFormatsAsJson";
     public static final String FIND_LANGUAGE_NAMES = "findLanguageNames";
     public static final String FIND_TRANSFORMER_NAMES = "findTransformerNames";
+    public static final String FIND_CONSOLE_NAMES = "findConsoleNames";
     public static final String LIST_LANGUAGES_AS_JSON = "listLanguagesAsJson";
     public static final String LIST_TRANSFORMERS_AS_JSON = "listTransformersAsJson";
+    public static final String LIST_CONSOLES_AS_JSON = "listConsolesAsJson";
 
     private final VersionHelper version = new VersionHelper();
 
@@ -232,6 +234,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
+    public List<String> findDevConsoleNames() {
+        return cache(FIND_CONSOLE_NAMES, runtimeProvider::findDevConsoleNames);
+    }
+
+    @Override
     public List<String> findModelNames() {
         return cache("findModelNames", () -> {
             try (InputStream is = versionManager.getResourceAsStream(MODELS_CATALOG)) {
@@ -339,6 +346,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public String transformerJSonSchema(String name) {
         return cache("transformer-" + name, name, super::transformerJSonSchema);
+    }
+
+    @Override
+    public String devConsoleJSonSchema(String name) {
+        return cache("dev-console-" + name, name, super::devConsoleJSonSchema);
     }
 
     @Override
@@ -453,6 +465,15 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::transformerJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("transformer"))
+                .toList()));
+    }
+
+    @Override
+    public String listDevConsolesAsJson() {
+        return cache(LIST_CONSOLES_AS_JSON, () -> JsonMapper.serialize(findDevConsoleNames().stream()
+                .map(this::devConsoleJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("console"))
                 .toList()));
     }
 

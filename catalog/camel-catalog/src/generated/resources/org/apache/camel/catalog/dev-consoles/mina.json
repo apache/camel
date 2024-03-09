@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "mina",
+    "title": "Mina",
+    "description": "Embedded Mina Server",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.mina.MinaConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mina",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

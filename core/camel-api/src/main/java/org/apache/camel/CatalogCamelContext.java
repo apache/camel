@@ -56,6 +56,14 @@ public interface CatalogCamelContext extends CamelContext {
     String getTransformerParameterJsonSchema(String transformerName) throws IOException;
 
     /**
+     * Returns the JSON schema representation of the {@link org.apache.camel.spi.annotations.DevConsole} parameters for the
+     * given dev-console name.
+     *
+     * @return the json or <tt>null</tt> if the dev-console does not exist
+     */
+    String getDevConsoleParameterJsonSchema(String devConsoleName) throws IOException;
+
+    /**
      * Returns the JSON schema representation of the EIP parameters for the given EIP name.
      *
      * @return the json or <tt>null</tt> if the EIP does not exist

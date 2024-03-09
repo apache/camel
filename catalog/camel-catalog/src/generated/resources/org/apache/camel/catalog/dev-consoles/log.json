@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "log",
+    "title": "Log",
+    "description": "Logging framework",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.LogDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

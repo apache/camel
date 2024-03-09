@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "health",
+    "title": "Health Check",
+    "description": "Health Check Status",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.HealthDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

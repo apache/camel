@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "id": "inflight",
+    "title": "Inflight Exchanges",
+    "description": "Display inflight exchanges",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.InflightConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

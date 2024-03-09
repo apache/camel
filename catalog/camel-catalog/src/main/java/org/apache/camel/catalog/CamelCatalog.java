@@ -199,6 +199,11 @@ public interface CamelCatalog {
     List<String> findTransformerNames();
 
     /**
+     * Find all the dev-console names from the Camel catalog
+     */
+    List<String> findDevConsoleNames();
+
+    /**
      * Find all the model names from the Camel catalog
      */
     List<String> findModelNames();
@@ -507,6 +512,11 @@ public interface CamelCatalog {
      * Lists all the transformers summary details in JSon
      */
     String listTransformersAsJson();
+
+    /**
+     * Lists all the dev-consoles summary details in JSon
+     */
+    String listDevConsolesAsJson();
 
     /**
      * Lists all the models (EIPs) summary details in JSon

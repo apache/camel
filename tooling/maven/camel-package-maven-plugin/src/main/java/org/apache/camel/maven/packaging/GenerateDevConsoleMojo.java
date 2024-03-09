@@ -179,6 +179,14 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
                         getLog().info("Updated dev-console json: " + model.getId());
                     }
                 }
+
+                // generate marker file
+                File camelMetaDir = new File(resourcesOutputDir, "META-INF/services/org/apache/camel/");
+                int count = models.size();
+                String properties = createProperties(project, "dev-consoles", ids.toString());
+                updateResource(camelMetaDir.toPath(), "dev-consoles.properties", properties);
+                getLog().info("Generated dev-consoles.properties containing " + count + " Camel "
+                              + (count > 1 ? "consoles: " : "console: ") + ids);
             } catch (Exception e) {
                 throw new MojoExecutionException(e);
             }
