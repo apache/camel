@@ -16,13 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.tooling.model.DevConsoleModel;
-import org.apache.camel.tooling.model.LanguageModel;
-import picocli.CommandLine;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.tooling.model.DevConsoleModel;
+import picocli.CommandLine;
 
 @CommandLine.Command(name = "dev-console",
                      description = "List dev-consoles from the Camel Catalog", sortOptions = false)
