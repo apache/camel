@@ -113,7 +113,7 @@ public interface SpringRabbitmqComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param autoDeclare the value to set
@@ -430,6 +430,25 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether the producer should auto declare binding between
+         * exchange, queue and routing key when starting. Enabling this can be
+         * good for development to make it easy to standup exchanges, queues and
+         * bindings on the broker.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoDeclareProducer the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder autoDeclareProducer(
+                boolean autoDeclareProducer) {
+            doSetProperty("autoDeclareProducer", autoDeclareProducer);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -618,6 +637,7 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "retry": ((SpringRabbitMQComponent) component).setRetry((org.springframework.retry.interceptor.RetryOperationsInterceptor) value); return true;
             case "shutdownTimeout": ((SpringRabbitMQComponent) component).setShutdownTimeout((long) value); return true;
             case "allowNullBody": ((SpringRabbitMQComponent) component).setAllowNullBody((boolean) value); return true;
+            case "autoDeclareProducer": ((SpringRabbitMQComponent) component).setAutoDeclareProducer((boolean) value); return true;
             case "lazyStartProducer": ((SpringRabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "replyTimeout": ((SpringRabbitMQComponent) component).setReplyTimeout((long) value); return true;
             case "args": ((SpringRabbitMQComponent) component).setArgs((java.util.Map) value); return true;

@@ -27,12 +27,14 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.RabbitMessageFuture;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 public class SpringRabbitMQProducer extends DefaultAsyncProducer {
@@ -79,6 +81,16 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
         super.doStart();
         if (getEndpoint().isTestConnectionOnStartup()) {
             testConnectionOnStartup();
+        }
+        if (getEndpoint().isAutoDeclareProducer()) {
+            // auto declare but without spring
+            AmqpAdmin admin = getEndpoint().getComponent().getAmqpAdmin();
+            if (admin == null) {
+                RabbitAdmin ra = new RabbitAdmin(getEndpoint().getConnectionFactory());
+                ra.setIgnoreDeclarationExceptions(getEndpoint().getComponent().isIgnoreDeclarationExceptions());
+                admin = ra;
+            }
+            getEndpoint().declareElements(null, admin);
         }
     }
 

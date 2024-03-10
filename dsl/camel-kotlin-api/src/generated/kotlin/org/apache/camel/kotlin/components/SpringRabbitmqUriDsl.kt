@@ -49,12 +49,32 @@ public class SpringRabbitmqUriDsl(
     it.property("connectionFactory", connectionFactory)
   }
 
+  public fun deadLetterExchange(deadLetterExchange: String) {
+    it.property("deadLetterExchange", deadLetterExchange)
+  }
+
+  public fun deadLetterExchangeType(deadLetterExchangeType: String) {
+    it.property("deadLetterExchangeType", deadLetterExchangeType)
+  }
+
+  public fun deadLetterQueue(deadLetterQueue: String) {
+    it.property("deadLetterQueue", deadLetterQueue)
+  }
+
+  public fun deadLetterRoutingKey(deadLetterRoutingKey: String) {
+    it.property("deadLetterRoutingKey", deadLetterRoutingKey)
+  }
+
   public fun disableReplyTo(disableReplyTo: String) {
     it.property("disableReplyTo", disableReplyTo)
   }
 
   public fun disableReplyTo(disableReplyTo: Boolean) {
     it.property("disableReplyTo", disableReplyTo.toString())
+  }
+
+  public fun queues(queues: String) {
+    it.property("queues", queues)
   }
 
   public fun routingKey(routingKey: String) {
@@ -97,22 +117,6 @@ public class SpringRabbitmqUriDsl(
     it.property("autoStartup", autoStartup.toString())
   }
 
-  public fun deadLetterExchange(deadLetterExchange: String) {
-    it.property("deadLetterExchange", deadLetterExchange)
-  }
-
-  public fun deadLetterExchangeType(deadLetterExchangeType: String) {
-    it.property("deadLetterExchangeType", deadLetterExchangeType)
-  }
-
-  public fun deadLetterQueue(deadLetterQueue: String) {
-    it.property("deadLetterQueue", deadLetterQueue)
-  }
-
-  public fun deadLetterRoutingKey(deadLetterRoutingKey: String) {
-    it.property("deadLetterRoutingKey", deadLetterRoutingKey)
-  }
-
   public fun exchangeType(exchangeType: String) {
     it.property("exchangeType", exchangeType)
   }
@@ -139,10 +143,6 @@ public class SpringRabbitmqUriDsl(
 
   public fun noLocal(noLocal: Boolean) {
     it.property("noLocal", noLocal.toString())
-  }
-
-  public fun queues(queues: String) {
-    it.property("queues", queues)
   }
 
   public fun rejectAndDontRequeue(rejectAndDontRequeue: String) {
@@ -215,6 +215,14 @@ public class SpringRabbitmqUriDsl(
 
   public fun allowNullBody(allowNullBody: Boolean) {
     it.property("allowNullBody", allowNullBody.toString())
+  }
+
+  public fun autoDeclareProducer(autoDeclareProducer: String) {
+    it.property("autoDeclareProducer", autoDeclareProducer)
+  }
+
+  public fun autoDeclareProducer(autoDeclareProducer: Boolean) {
+    it.property("autoDeclareProducer", autoDeclareProducer.toString())
   }
 
   public fun confirm(confirm: String) {
