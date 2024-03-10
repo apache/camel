@@ -18,9 +18,9 @@ package org.apache.camel.component.shiro.security;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.crypto.CipherService;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.crypto.cipher.AesCipherService;
+import org.apache.shiro.crypto.cipher.CipherService;
+import org.apache.shiro.lang.util.ByteSource;
 
 public class ShiroSecurityTokenInjector implements Processor {
     private byte[] passPhrase;
