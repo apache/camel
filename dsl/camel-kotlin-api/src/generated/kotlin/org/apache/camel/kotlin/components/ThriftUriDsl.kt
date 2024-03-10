@@ -23,6 +23,10 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Call and expose remote procedures (RPC) with Apache Thrift data format and serialization
+ * mechanism.
+ */
 public fun UriDsl.thrift(i: ThriftUriDsl.() -> Unit) {
   ThriftUriDsl(this).apply(i)
 }
@@ -44,98 +48,197 @@ public class ThriftUriDsl(
 
   private var service: String = ""
 
+  /**
+   * The Thrift server host name. This is localhost or 0.0.0.0 (if not defined) when being a
+   * consumer or remote server host name when using producer.
+   */
   public fun host(host: String) {
     this.host = host
     it.url("$host:$port/$service")
   }
 
+  /**
+   * The Thrift server port
+   */
   public fun port(port: String) {
     this.port = port
     it.url("$host:$port/$service")
   }
 
+  /**
+   * The Thrift server port
+   */
   public fun port(port: Int) {
     this.port = port.toString()
     it.url("$host:$port/$service")
   }
 
+  /**
+   * Fully qualified service name from the thrift descriptor file (package dot service definition
+   * name)
+   */
   public fun service(service: String) {
     this.service = service
     it.url("$host:$port/$service")
   }
 
+  /**
+   * Protocol compression mechanism type
+   */
   public fun compressionType(compressionType: String) {
     it.property("compressionType", compressionType)
   }
 
+  /**
+   * Exchange protocol serialization type
+   */
   public fun exchangeProtocol(exchangeProtocol: String) {
     it.property("exchangeProtocol", exchangeProtocol)
   }
 
+  /**
+   * Client timeout for consumers
+   */
   public fun clientTimeout(clientTimeout: String) {
     it.property("clientTimeout", clientTimeout)
   }
 
+  /**
+   * Client timeout for consumers
+   */
   public fun clientTimeout(clientTimeout: Int) {
     it.property("clientTimeout", clientTimeout.toString())
   }
 
+  /**
+   * The Thrift server consumer max thread pool size
+   */
   public fun maxPoolSize(maxPoolSize: String) {
     it.property("maxPoolSize", maxPoolSize)
   }
 
+  /**
+   * The Thrift server consumer max thread pool size
+   */
   public fun maxPoolSize(maxPoolSize: Int) {
     it.property("maxPoolSize", maxPoolSize.toString())
   }
 
+  /**
+   * The Thrift server consumer initial thread pool size
+   */
   public fun poolSize(poolSize: String) {
     it.property("poolSize", poolSize)
   }
 
+  /**
+   * The Thrift server consumer initial thread pool size
+   */
   public fun poolSize(poolSize: Int) {
     it.property("poolSize", poolSize.toString())
   }
 
+  /**
+   * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions
+   * (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the
+   * likes, will now be processed as a message and handled by the routing Error Handler. Important:
+   * This is only possible if the 3rd party component allows Camel to be alerted if an exception was
+   * thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not
+   * possible. In other situations we may improve the Camel component to hook into the 3rd party
+   * component and make this possible for future releases. By default the consumer will use the
+   * org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or
+   * ERROR level and ignored.
+   */
   public fun bridgeErrorHandler(bridgeErrorHandler: String) {
     it.property("bridgeErrorHandler", bridgeErrorHandler)
   }
 
+  /**
+   * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions
+   * (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the
+   * likes, will now be processed as a message and handled by the routing Error Handler. Important:
+   * This is only possible if the 3rd party component allows Camel to be alerted if an exception was
+   * thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not
+   * possible. In other situations we may improve the Camel component to hook into the 3rd party
+   * component and make this possible for future releases. By default the consumer will use the
+   * org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or
+   * ERROR level and ignored.
+   */
   public fun bridgeErrorHandler(bridgeErrorHandler: Boolean) {
     it.property("bridgeErrorHandler", bridgeErrorHandler.toString())
   }
 
+  /**
+   * To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is
+   * enabled then this option is not in use. By default the consumer will deal with exceptions, that
+   * will be logged at WARN or ERROR level and ignored.
+   */
   public fun exceptionHandler(exceptionHandler: String) {
     it.property("exceptionHandler", exceptionHandler)
   }
 
+  /**
+   * Sets the exchange pattern when the consumer creates an exchange.
+   */
   public fun exchangePattern(exchangePattern: String) {
     it.property("exchangePattern", exchangePattern)
   }
 
+  /**
+   * The Thrift invoked method name
+   */
   public fun method(method: String) {
     it.property("method", method)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  /**
+   * Sets whether synchronous processing should be strictly used
+   */
   public fun synchronous(synchronous: String) {
     it.property("synchronous", synchronous)
   }
 
+  /**
+   * Sets whether synchronous processing should be strictly used
+   */
   public fun synchronous(synchronous: Boolean) {
     it.property("synchronous", synchronous.toString())
   }
 
+  /**
+   * Security negotiation type
+   */
   public fun negotiationType(negotiationType: String) {
     it.property("negotiationType", negotiationType)
   }
 
+  /**
+   * Configuration parameters for SSL/TLS security negotiation
+   */
   public fun sslParameters(sslParameters: String) {
     it.property("sslParameters", sslParameters)
   }

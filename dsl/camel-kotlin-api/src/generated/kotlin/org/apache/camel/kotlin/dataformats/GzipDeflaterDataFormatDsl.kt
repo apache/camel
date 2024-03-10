@@ -14,40 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.kotlin.languages
+package org.apache.camel.kotlin.dataformats
 
-import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
-import org.apache.camel.model.language.ExchangePropertyExpression
+import org.apache.camel.kotlin.DataFormatDsl
+import org.apache.camel.model.dataformat.GzipDeflaterDataFormat
 
-public fun exchangeProperty(exchangeProperty: String, i: ExchangepropertyLanguageDsl.() -> Unit =
-    {}): ExchangePropertyExpression {
-  val def = ExchangePropertyExpression(exchangeProperty)
-  ExchangepropertyLanguageDsl(def).apply(i)
-  return def
+/**
+ * Compress and decompress messages using java.util.zip.GZIPStream.
+ */
+public fun DataFormatDsl.gzipDeflater(i: GzipDeflaterDataFormatDsl.() -> Unit) {
+  def = GzipDeflaterDataFormatDsl().apply(i).def
 }
 
 @CamelDslMarker
-public class ExchangepropertyLanguageDsl(
-  def: ExchangePropertyExpression,
-) {
-  public val def: ExchangePropertyExpression
+public class GzipDeflaterDataFormatDsl {
+  public val def: GzipDeflaterDataFormat
 
   init {
-    this.def = def
-  }
+    def = GzipDeflaterDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
-  }
-
-  public fun trim(trim: Boolean) {
-    def.trim = trim.toString()
-  }
-
-  public fun trim(trim: String) {
-    def.trim = trim
   }
 }

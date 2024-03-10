@@ -41,7 +41,6 @@ class RootDsl(
     fun route(i: RouteDsl.() -> Unit) {
         val def = routeBuilder.routeCollection.route()
         RouteDsl(def).apply(i)
-        ctx.addRouteDefinition(def)
     }
 
     fun bean(bean: String, value: Any) {

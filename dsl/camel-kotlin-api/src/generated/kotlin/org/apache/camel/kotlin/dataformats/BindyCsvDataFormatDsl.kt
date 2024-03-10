@@ -17,7 +17,6 @@
 package org.apache.camel.kotlin.dataformats
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
@@ -26,49 +25,84 @@ import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.BindyDataFormat
 import org.apache.camel.model.dataformat.BindyType
 
-public fun DataFormatDsl.bindyCsv(i: BindycsvDataFormatDsl.() -> Unit) {
-  def = BindycsvDataFormatDsl().apply(i).def
+/**
+ * Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy
+ */
+public fun DataFormatDsl.bindyCsv(i: BindyCsvDataFormatDsl.() -> Unit) {
+  def = BindyCsvDataFormatDsl().apply(i).def
 }
 
 @CamelDslMarker
-public class BindycsvDataFormatDsl {
+public class BindyCsvDataFormatDsl {
   public val def: BindyDataFormat
 
   init {
     def = BindyDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Whether to use Csv, Fixed, or KeyValue.
+   */
   public fun type(type: BindyType) {
     def.type = type.toString()
   }
 
+  /**
+   * Whether to use Csv, Fixed, or KeyValue.
+   */
   public fun type(type: String) {
     def.type = type
   }
 
-  public fun classType(classType: Class<out Any>) {
+  /**
+   * Name of model class to use.
+   */
+  public fun classType(classType: Class<*>) {
     def.classType = classType
   }
 
+  /**
+   * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown
+   * when a body without records is provided.
+   */
   public fun allowEmptyStream(allowEmptyStream: Boolean) {
     def.allowEmptyStream = allowEmptyStream.toString()
   }
 
+  /**
+   * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown
+   * when a body without records is provided.
+   */
   public fun allowEmptyStream(allowEmptyStream: String) {
     def.allowEmptyStream = allowEmptyStream
   }
 
+  /**
+   * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
+   * java.util.List.
+   */
   public fun unwrapSingleInstance(unwrapSingleInstance: Boolean) {
     def.unwrapSingleInstance = unwrapSingleInstance.toString()
   }
 
+  /**
+   * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
+   * java.util.List.
+   */
   public fun unwrapSingleInstance(unwrapSingleInstance: String) {
     def.unwrapSingleInstance = unwrapSingleInstance
   }
 
+  /**
+   * To configure a default locale to use, such as us for united states. To use the JVM platform
+   * default locale then use the name default
+   */
   public fun locale(locale: String) {
     def.locale = locale
   }

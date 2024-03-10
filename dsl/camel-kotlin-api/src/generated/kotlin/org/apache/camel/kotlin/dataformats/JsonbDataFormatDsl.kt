@@ -17,7 +17,6 @@
 package org.apache.camel.kotlin.dataformats
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
@@ -25,6 +24,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.JsonDataFormat
 
+/**
+ * Marshal POJOs to JSON and back using JSON-B.
+ */
 public fun DataFormatDsl.jsonb(i: JsonbDataFormatDsl.() -> Unit) {
   def = JsonbDataFormatDsl().apply(i).def
 }
@@ -36,19 +38,31 @@ public class JsonbDataFormatDsl {
   init {
     def = JsonDataFormat()}
 
+  /**
+   * Lookup and use the existing Jsonb instance with the given id.
+   */
   public fun objectMapper(objectMapper: String) {
     def.objectMapper = objectMapper
   }
 
+  /**
+   * To enable pretty printing output nicely formatted. Is by default false.
+   */
   public fun prettyPrint(prettyPrint: Boolean) {
     def.prettyPrint = prettyPrint.toString()
   }
 
+  /**
+   * To enable pretty printing output nicely formatted. Is by default false.
+   */
   public fun prettyPrint(prettyPrint: String) {
     def.prettyPrint = prettyPrint
   }
 
-  public fun unmarshalType(unmarshalType: Class<out Any>) {
+  /**
+   * Class name of the java type to use when unmarshalling
+   */
+  public fun unmarshalType(unmarshalType: Class<*>) {
     def.unmarshalType = unmarshalType
   }
 }

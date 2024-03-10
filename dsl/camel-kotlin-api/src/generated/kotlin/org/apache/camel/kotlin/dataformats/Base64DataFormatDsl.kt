@@ -24,6 +24,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.Base64DataFormat
 
+/**
+ * Encode and decode data using Base64.
+ */
 public fun DataFormatDsl.base64(i: Base64DataFormatDsl.() -> Unit) {
   def = Base64DataFormatDsl().apply(i).def
 }
@@ -35,26 +38,46 @@ public class Base64DataFormatDsl {
   init {
     def = Base64DataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * To specific a maximum line length for the encoded data. By default 76 is used.
+   */
   public fun lineLength(lineLength: Int) {
     def.lineLength = lineLength.toString()
   }
 
+  /**
+   * To specific a maximum line length for the encoded data. By default 76 is used.
+   */
   public fun lineLength(lineLength: String) {
     def.lineLength = lineLength
   }
 
+  /**
+   * The line separators to use. Uses new line characters (CRLF) by default.
+   */
   public fun lineSeparator(lineSeparator: String) {
     def.lineSeparator = lineSeparator
   }
 
+  /**
+   * Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to
+   * encode operations. Decoding seamlessly handles both modes. Is by default false.
+   */
   public fun urlSafe(urlSafe: Boolean) {
     def.urlSafe = urlSafe.toString()
   }
 
+  /**
+   * Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to
+   * encode operations. Decoding seamlessly handles both modes. Is by default false.
+   */
   public fun urlSafe(urlSafe: String) {
     def.urlSafe = urlSafe
   }

@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Validate XML payload using the Schematron Library.
+ */
 public fun UriDsl.schematron(i: SchematronUriDsl.() -> Unit) {
   SchematronUriDsl(this).apply(i)
 }
@@ -39,31 +42,63 @@ public class SchematronUriDsl(
 
   private var path: String = ""
 
+  /**
+   * The path to the schematron rules file. Can either be in class path or location in the file
+   * system.
+   */
   public fun path(path: String) {
     this.path = path
     it.url("$path")
   }
 
+  /**
+   * Flag to abort the route and throw a schematron validation exception.
+   */
   public fun abort(abort: String) {
     it.property("abort", abort)
   }
 
+  /**
+   * Flag to abort the route and throw a schematron validation exception.
+   */
   public fun abort(abort: Boolean) {
     it.property("abort", abort.toString())
   }
 
+  /**
+   * To use the given schematron rules instead of loading from the path
+   */
   public fun rules(rules: String) {
     it.property("rules", rules)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  /**
+   * Set the URIResolver to be used for resolving schematron includes in the rules file.
+   */
   public fun uriResolver(uriResolver: String) {
     it.property("uriResolver", uriResolver)
   }

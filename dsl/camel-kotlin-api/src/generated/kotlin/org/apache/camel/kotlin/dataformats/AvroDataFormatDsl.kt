@@ -22,6 +22,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.AvroDataFormat
 
+/**
+ * Serialize and deserialize messages using Apache Avro binary data format.
+ */
 public fun DataFormatDsl.avro(i: AvroDataFormatDsl.() -> Unit) {
   def = AvroDataFormatDsl().apply(i).def
 }
@@ -33,10 +36,16 @@ public class AvroDataFormatDsl {
   init {
     def = AvroDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Class name to use for marshal and unmarshalling
+   */
   public fun instanceClassName(instanceClassName: String) {
     def.instanceClassName = instanceClassName
   }

@@ -14,26 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.kotlin.dataformats
+package org.apache.camel.kotlin.languages
 
+import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
-import org.apache.camel.kotlin.DataFormatDsl
-import org.apache.camel.model.dataformat.GzipDeflaterDataFormat
+import org.apache.camel.model.language.ExchangePropertyExpression
 
-public fun DataFormatDsl.gzipDeflater(i: GzipdeflaterDataFormatDsl.() -> Unit) {
-  def = GzipdeflaterDataFormatDsl().apply(i).def
+/**
+ * Gets a property from the Exchange.
+ */
+public fun exchangeProperty(exchangeProperty: String, i: ExchangePropertyLanguageDsl.() -> Unit =
+    {}): ExchangePropertyExpression {
+  val def = ExchangePropertyExpression(exchangeProperty)
+  ExchangePropertyLanguageDsl(def).apply(i)
+  return def
 }
 
 @CamelDslMarker
-public class GzipdeflaterDataFormatDsl {
-  public val def: GzipDeflaterDataFormat
+public class ExchangePropertyLanguageDsl(
+  def: ExchangePropertyExpression,
+) {
+  public val def: ExchangePropertyExpression
 
   init {
-    def = GzipDeflaterDataFormat()}
+    this.def = def
+  }
 
+  /**
+   * Sets the id of this node
+   */
   public fun id(id: String) {
     def.id = id
+  }
+
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
+  public fun trim(trim: Boolean) {
+    def.trim = trim.toString()
+  }
+
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
+  public fun trim(trim: String) {
+    def.trim = trim
   }
 }

@@ -17,7 +17,6 @@
 package org.apache.camel.kotlin.dataformats
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
@@ -25,33 +24,54 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat
 
-public fun DataFormatDsl.parquetAvro(i: ParquetavroDataFormatDsl.() -> Unit) {
-  def = ParquetavroDataFormatDsl().apply(i).def
+/**
+ * Parquet Avro serialization and de-serialization.
+ */
+public fun DataFormatDsl.parquetAvro(i: ParquetAvroDataFormatDsl.() -> Unit) {
+  def = ParquetAvroDataFormatDsl().apply(i).def
 }
 
 @CamelDslMarker
-public class ParquetavroDataFormatDsl {
+public class ParquetAvroDataFormatDsl {
   public val def: ParquetAvroDataFormat
 
   init {
     def = ParquetAvroDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Compression codec to use when marshalling.
+   */
   public fun compressionCodecName(compressionCodecName: String) {
     def.compressionCodecName = compressionCodecName
   }
 
-  public fun unmarshalType(unmarshalType: Class<out Any>) {
+  /**
+   * Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's
+   * GenericRecords for unmarshalling and input objects are assumed as GenericRecords for marshalling.
+   */
+  public fun unmarshalType(unmarshalType: Class<*>) {
     def.unmarshalType = unmarshalType
   }
 
+  /**
+   * Whether the unmarshalling should produce an iterator of records or read all the records at
+   * once.
+   */
   public fun lazyLoad(lazyLoad: Boolean) {
     def.lazyLoad = lazyLoad.toString()
   }
 
+  /**
+   * Whether the unmarshalling should produce an iterator of records or read all the records at
+   * once.
+   */
   public fun lazyLoad(lazyLoad: String) {
     def.lazyLoad = lazyLoad
   }

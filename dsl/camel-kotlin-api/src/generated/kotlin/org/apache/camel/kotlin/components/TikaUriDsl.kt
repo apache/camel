@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Parse documents and extract metadata and text using Apache Tika.
+ */
 public fun UriDsl.tika(i: TikaUriDsl.() -> Unit) {
   TikaUriDsl(this).apply(i)
 }
@@ -39,31 +42,64 @@ public class TikaUriDsl(
 
   private var operation: String = ""
 
+  /**
+   * Operation type
+   */
   public fun operation(operation: String) {
     this.operation = operation
     it.url("$operation")
   }
 
+  /**
+   * Tika Parse Output Encoding
+   */
   public fun tikaParseOutputEncoding(tikaParseOutputEncoding: String) {
     it.property("tikaParseOutputEncoding", tikaParseOutputEncoding)
   }
 
+  /**
+   * Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns
+   * Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe
+   * library to automatically extract the main content from a web page.
+   */
   public fun tikaParseOutputFormat(tikaParseOutputFormat: String) {
     it.property("tikaParseOutputFormat", tikaParseOutputFormat)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  /**
+   * Tika Config
+   */
   public fun tikaConfig(tikaConfig: String) {
     it.property("tikaConfig", tikaConfig)
   }
 
+  /**
+   * Tika Config Url
+   */
   public fun tikaConfigUri(tikaConfigUri: String) {
     it.property("tikaConfigUri", tikaConfigUri)
   }

@@ -16,32 +16,47 @@
  */
 package org.apache.camel.kotlin.dataformats
 
+import kotlin.Int
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
-import org.apache.camel.model.dataformat.JsonApiDataFormat
+import org.apache.camel.model.dataformat.ZipDeflaterDataFormat
 
-public fun DataFormatDsl.jsonApi(i: JsonapiDataFormatDsl.() -> Unit) {
-  def = JsonapiDataFormatDsl().apply(i).def
+/**
+ * Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.
+ */
+public fun DataFormatDsl.zipDeflater(i: ZipDeflaterDataFormatDsl.() -> Unit) {
+  def = ZipDeflaterDataFormatDsl().apply(i).def
 }
 
 @CamelDslMarker
-public class JsonapiDataFormatDsl {
-  public val def: JsonApiDataFormat
+public class ZipDeflaterDataFormatDsl {
+  public val def: ZipDeflaterDataFormat
 
   init {
-    def = JsonApiDataFormat()}
+    def = ZipDeflaterDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
-  public fun dataFormatTypes(dataFormatTypes: String) {
-    def.dataFormatTypes = dataFormatTypes
+  /**
+   * To specify a specific compression between 0-9. -1 is default compression, 0 is no compression,
+   * and 9 is the best compression.
+   */
+  public fun compressionLevel(compressionLevel: Int) {
+    def.compressionLevel = compressionLevel.toString()
   }
 
-  public fun mainFormatType(mainFormatType: String) {
-    def.mainFormatType = mainFormatType
+  /**
+   * To specify a specific compression between 0-9. -1 is default compression, 0 is no compression,
+   * and 9 is the best compression.
+   */
+  public fun compressionLevel(compressionLevel: String) {
+    def.compressionLevel = compressionLevel
   }
 }

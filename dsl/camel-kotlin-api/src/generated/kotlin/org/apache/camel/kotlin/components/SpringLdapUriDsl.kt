@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Perform searches in LDAP servers using filters as the message payload.
+ */
 public fun UriDsl.`spring-ldap`(i: SpringLdapUriDsl.() -> Unit) {
   SpringLdapUriDsl(this).apply(i)
 }
@@ -39,23 +42,48 @@ public class SpringLdapUriDsl(
 
   private var templateName: String = ""
 
+  /**
+   * Name of the Spring LDAP Template bean
+   */
   public fun templateName(templateName: String) {
     this.templateName = templateName
     it.url("$templateName")
   }
 
+  /**
+   * The LDAP operation to be performed.
+   */
   public fun operation(operation: String) {
     it.property("operation", operation)
   }
 
+  /**
+   * The scope of the search operation.
+   */
   public fun scope(scope: String) {
     it.property("scope", scope)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
