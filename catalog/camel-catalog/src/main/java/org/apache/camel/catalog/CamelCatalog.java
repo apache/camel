@@ -228,6 +228,8 @@ public interface CamelCatalog {
                 return findLanguageNames();
             case transformer:
                 return findTransformerNames();
+            case console:
+                return findDevConsoleNames();
             case other:
                 return findOtherNames();
             case eip:
