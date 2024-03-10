@@ -24,7 +24,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Sends and receives files to/from Azure DataLake Storage.
+ * Sends and receives files to/from Azure Data Lake Storage.
  */
 public fun UriDsl.`azure-storage-datalake`(i: AzureStorageDatalakeUriDsl.() -> Unit) {
   AzureStorageDatalakeUriDsl(this).apply(i)
@@ -118,7 +118,7 @@ public class AzureStorageDatalakeUriDsl(
   }
 
   /**
-   * service client of datalake
+   * service client of data lake
    */
   public fun dataLakeServiceClient(dataLakeServiceClient: String) {
     it.property("dataLakeServiceClient", dataLakeServiceClient)
@@ -216,7 +216,7 @@ public class AzureStorageDatalakeUriDsl(
   }
 
   /**
-   * path in azure datalake for operations
+   * path in azure data lake for operations
    */
   public fun path(path: String) {
     it.property("path", path)
@@ -281,14 +281,14 @@ public class AzureStorageDatalakeUriDsl(
   }
 
   /**
-   * datalake service client for azure storage datalake
+   * data lake service client for azure storage data lake
    */
   public fun serviceClient(serviceClient: String) {
     it.property("serviceClient", serviceClient)
   }
 
   /**
-   * shared key credential for azure datalake gen2
+   * shared key credential for azure data lake gen2
    */
   public fun sharedKeyCredential(sharedKeyCredential: String) {
     it.property("sharedKeyCredential", sharedKeyCredential)

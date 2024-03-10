@@ -91,7 +91,7 @@ public class Aws2SnsUriDsl(
   /**
    * Only for FIFO Topic. Strategy for setting the messageGroupId on the message. It can be one of
    * the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue
-   * option, the value of property CamelAwsMessageGroupId will be used.
+   * option, the value of property CamelAwsSnsMessageGroupId will be used.
    */
   public fun messageGroupIdStrategy(messageGroupIdStrategy: String) {
     it.property("messageGroupIdStrategy", messageGroupIdStrategy)

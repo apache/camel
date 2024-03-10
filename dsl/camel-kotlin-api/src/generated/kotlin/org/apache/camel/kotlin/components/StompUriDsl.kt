@@ -23,7 +23,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant
+ * Send and receive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant
  * message brokers.
  */
 public fun UriDsl.stomp(i: StompUriDsl.() -> Unit) {

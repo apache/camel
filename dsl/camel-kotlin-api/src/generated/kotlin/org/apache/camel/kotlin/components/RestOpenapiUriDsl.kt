@@ -23,8 +23,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Configure REST producers based on an OpenAPI specification document delegating to a component
- * implementing the RestProducerFactory interface.
+ * To call REST services using OpenAPI specification as contract.
  */
 public fun UriDsl.`rest-openapi`(i: RestOpenapiUriDsl.() -> Unit) {
   RestOpenapiUriDsl(this).apply(i)
@@ -71,7 +70,7 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * API basePath, for example /v2. Default is unset, if set overrides the value present in OpenApi
+   * API basePath, for example /v3. Default is unset, if set overrides the value present in OpenApi
    * specification and in the component configuration.
    */
   public fun basePath(basePath: String) {

@@ -24,7 +24,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Manage posts and users using Wordpress API.
+ * Manage posts and users using the WordPress API.
  */
 public fun UriDsl.wordpress(i: WordpressUriDsl.() -> Unit) {
   WordpressUriDsl(this).apply(i)

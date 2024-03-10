@@ -23,7 +23,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Query or transform JSON payloads using an JSLT.
+ * Query or transform JSON payloads using JSLT.
  */
 public fun UriDsl.jslt(i: JsltUriDsl.() -> Unit) {
   JsltUriDsl(this).apply(i)

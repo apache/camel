@@ -529,10 +529,6 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
             TypeName javaType,
             Boolean toString,
             String kdoc) {
-        // skip org.apache.camel.component (as we can only depend on general java and camel types from camel-api and camel-core)
-        if (javaType.toString().startsWith("org.apache.camel.component")) {
-            return;
-        }
         FunSpec.Builder propertyBuilder = FunSpec.builder(propertyName);
         propertyBuilder.addParameter(propertyName, javaType);
         String code = "def.%s = %s".formatted(propertyName, propertyName);
@@ -662,8 +658,9 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                                 "Error while generating DataFormat DSL '%s': java type '%s' for field '%s'"
                                         .formatted(modelName, javaType.toString(), propertyName));
                     }
-                } catch (ClassNotFoundException e) {
-                    throw new MojoFailureException(e);
+                } catch (ClassNotFoundException ignored) {
+                    // ignoring exception cause in that case we must generate String-argument function
+                    // which is done 3 lines below
                 }
             }
             appendPropertyBuilder(typeBuilder, propertyName, TypeNames.STRING, false, description);

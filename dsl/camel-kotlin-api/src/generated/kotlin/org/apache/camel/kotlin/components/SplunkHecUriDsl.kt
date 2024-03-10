@@ -24,7 +24,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
+ * The splunk component allows publishing events in Splunk using the HTTP Event Collector.
  */
 public fun UriDsl.`splunk-hec`(i: SplunkHecUriDsl.() -> Unit) {
   SplunkHecUriDsl(this).apply(i)

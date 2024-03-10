@@ -24,7 +24,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Send and receive messages acting as a Telegram Bot Telegram Bot API.
+ * Send and receive messages using the Telegram Bot API.
  */
 public fun UriDsl.telegram(i: TelegramUriDsl.() -> Unit) {
   TelegramUriDsl(this).apply(i)

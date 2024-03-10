@@ -24,7 +24,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Zeebe component which does integrage with Camunda Zeebe to interact with the API.
+ * Zeebe component which integrates with Camunda Zeebe to interact with the API.
  */
 public fun UriDsl.zeebe(i: ZeebeUriDsl.() -> Unit) {
   ZeebeUriDsl(this).apply(i)
