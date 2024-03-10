@@ -568,7 +568,8 @@ public class JmsProducer extends DefaultAsyncProducer {
 
     protected ReplyManager createReplyManager() throws Exception {
         // use a temporary queue
-        ReplyManager replyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
+        ReplyManager replyManager
+                = new TemporaryQueueReplyManager(getEndpoint().getCamelContext(), getEndpoint().getTemporaryQueueResolver());
         replyManager.setEndpoint(getEndpoint());
 
         String name = "JmsReplyManagerTimeoutChecker[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";

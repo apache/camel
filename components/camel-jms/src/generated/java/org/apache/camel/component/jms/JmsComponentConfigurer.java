@@ -197,6 +197,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "taskexecutor":
         case "taskExecutor": getOrCreateConfiguration(target).setTaskExecutor(property(camelContext, org.springframework.core.task.TaskExecutor.class, value)); return true;
+        case "temporaryqueueresolver":
+        case "temporaryQueueResolver": getOrCreateConfiguration(target).setTemporaryQueueResolver(property(camelContext, org.apache.camel.component.jms.TemporaryQueueResolver.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": getOrCreateConfiguration(target).setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
         case "timetolive":
@@ -397,6 +399,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "synchronous": return boolean.class;
         case "taskexecutor":
         case "taskExecutor": return org.springframework.core.task.TaskExecutor.class;
+        case "temporaryqueueresolver":
+        case "temporaryQueueResolver": return org.apache.camel.component.jms.TemporaryQueueResolver.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
         case "timetolive":
@@ -598,6 +602,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "taskexecutor":
         case "taskExecutor": return getOrCreateConfiguration(target).getTaskExecutor();
+        case "temporaryqueueresolver":
+        case "temporaryQueueResolver": return getOrCreateConfiguration(target).getTemporaryQueueResolver();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return getOrCreateConfiguration(target).isTestConnectionOnStartup();
         case "timetolive":
