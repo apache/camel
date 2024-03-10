@@ -23,6 +23,8 @@ The Camel REST DSL OpenApi Maven Plugin supports the following goals
  YAML source code from OpenApi specification and with DTO model
  classes generated via the swagger-codegen-maven-plugin.
 
+IMPORTANT: Only OpenAPI v3 spec is supported. The older v2 spec (also known as swagger v2)
+is not supported from Camel 4.5 onwards.
 
 == Adding plugin to Maven pom.xml
 
@@ -41,7 +43,7 @@ for example in a Spring Boot application:
     <plugin>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-restdsl-openapi-plugin</artifactId>
-      <version>3.21.0</version> <!-- use the Camel version you are using -->
+      <version>4.4.0</version> <!-- use the Camel version you are using -->
     </plugin>
 
   </plugins>
@@ -90,7 +92,7 @@ from the OpenApi specification.
 
 This plugin has been scoped and limited to only support a good effort set of defaults for
 using the swagger-codegen-maven-plugin to generate the model DTOs. If you need more power
-and flexibility then use the https://github.com/swagger-api/swagger-codegen/tree/3.0.0/modules/swagger-codegen-maven-plugin[Swagger Codegen Maven Plugin]
+and flexibility then use the https://github.com/swagger-api/swagger-codegen/tree/master/modules/swagger-codegen-maven-plugin[Swagger Codegen Maven Plugin]
 directly to generate the DTO and not this plugin.
 
 The DTO classes may require additional dependencies such as:
