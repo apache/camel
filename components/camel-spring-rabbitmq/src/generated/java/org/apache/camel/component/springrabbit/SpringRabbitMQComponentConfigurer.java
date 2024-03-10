@@ -28,6 +28,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "args": target.setArgs(property(camelContext, java.util.Map.class, value)); return true;
         case "autodeclare":
         case "autoDeclare": target.setAutoDeclare(property(camelContext, boolean.class, value)); return true;
+        case "autodeclareproducer":
+        case "autoDeclareProducer": target.setAutoDeclareProducer(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -98,6 +100,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "args": return java.util.Map.class;
         case "autodeclare":
         case "autoDeclare": return boolean.class;
+        case "autodeclareproducer":
+        case "autoDeclareProducer": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
         case "autowiredenabled":
@@ -164,6 +168,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "args": return target.getArgs();
         case "autodeclare":
         case "autoDeclare": return target.isAutoDeclare();
+        case "autodeclareproducer":
+        case "autoDeclareProducer": return target.isAutoDeclareProducer();
         case "autostartup":
         case "autoStartup": return target.isAutoStartup();
         case "autowiredenabled":
