@@ -570,6 +570,10 @@ public class ActivemqUriDsl(
     it.property("synchronous", synchronous.toString())
   }
 
+  public fun temporaryQueueResolver(temporaryQueueResolver: String) {
+    it.property("temporaryQueueResolver", temporaryQueueResolver)
+  }
+
   public fun transferException(transferException: String) {
     it.property("transferException", transferException)
   }

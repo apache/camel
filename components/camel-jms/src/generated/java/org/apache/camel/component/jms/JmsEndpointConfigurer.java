@@ -183,6 +183,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "taskexecutor":
         case "taskExecutor": target.getConfiguration().setTaskExecutor(property(camelContext, org.springframework.core.task.TaskExecutor.class, value)); return true;
+        case "temporaryqueueresolver":
+        case "temporaryQueueResolver": target.getConfiguration().setTemporaryQueueResolver(property(camelContext, org.apache.camel.component.jms.TemporaryQueueResolver.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
         case "timetolive":
@@ -376,6 +378,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "synchronous": return boolean.class;
         case "taskexecutor":
         case "taskExecutor": return org.springframework.core.task.TaskExecutor.class;
+        case "temporaryqueueresolver":
+        case "temporaryQueueResolver": return org.apache.camel.component.jms.TemporaryQueueResolver.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
         case "timetolive":
@@ -570,6 +574,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "synchronous": return target.getConfiguration().isSynchronous();
         case "taskexecutor":
         case "taskExecutor": return target.getConfiguration().getTaskExecutor();
+        case "temporaryqueueresolver":
+        case "temporaryQueueResolver": return target.getConfiguration().getTemporaryQueueResolver();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.getConfiguration().isTestConnectionOnStartup();
         case "timetolive":

@@ -502,6 +502,10 @@ public class JmsEndpoint extends DefaultEndpoint
         return getConfiguration().getDestinationResolver();
     }
 
+    public TemporaryQueueResolver getTemporaryQueueResolver() {
+        return getConfiguration().getTemporaryQueueResolver();
+    }
+
     @ManagedAttribute
     public String getDurableSubscriptionName() {
         return getConfiguration().getDurableSubscriptionName();
@@ -819,6 +823,10 @@ public class JmsEndpoint extends DefaultEndpoint
 
     public void setDestinationResolver(DestinationResolver destinationResolver) {
         getConfiguration().setDestinationResolver(destinationResolver);
+    }
+
+    public void setDestinationResolver(TemporaryQueueResolver temporaryQueueResolver) {
+        getConfiguration().setTemporaryQueueResolver(temporaryQueueResolver);
     }
 
     @ManagedAttribute
