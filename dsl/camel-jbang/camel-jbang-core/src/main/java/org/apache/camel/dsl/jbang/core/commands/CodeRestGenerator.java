@@ -27,6 +27,8 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.apicurio.datamodels.Library;
+import io.apicurio.datamodels.models.Document;
+import io.apicurio.datamodels.models.ModelType;
 import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.RestDslGenerator;
@@ -63,6 +65,9 @@ public class CodeRestGenerator extends CamelCommand {
     @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated Java models",
                         defaultValue = "model")
     private String packageName;
+    @CommandLine.Option(names = { "-v", "--openapi-version" }, description = "Openapi specification 3.0 or 3.1",
+                        defaultValue = "3.0")
+    private String openApiVersion = "3.0";
 
     public CodeRestGenerator(CamelJBangMain main) {
         super(main);
@@ -71,14 +76,19 @@ public class CodeRestGenerator extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         final ObjectNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
-        OpenApi30Document document = (OpenApi30Document) Library.readDocument(node);
+        Document source = Library.readDocument(node);
+        ModelType mt = ModelType.OPENAPI30;
+        if ("3.1".equals(openApiVersion)) {
+            mt = ModelType.OPENAPI31;
+        }
+        OpenApi30Document doc = (OpenApi30Document) Library.transformDocument(source, mt);
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new DefaultCamelContext()) {
             String text = null;
             if ("yaml".equalsIgnoreCase(type)) {
-                text = RestDslGenerator.toYaml(document).generate(context, generateRoutes);
+                text = RestDslGenerator.toYaml(doc).generate(context, generateRoutes);
             } else if ("xml".equalsIgnoreCase(type)) {
-                text = RestDslGenerator.toXml(document).generate(context);
+                text = RestDslGenerator.toXml(doc).generate(context);
             }
             if (text != null) {
                 if (output == null) {
