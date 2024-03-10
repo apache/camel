@@ -41,7 +41,7 @@ public class RestDslYamlGeneratorV3Test {
         try (CamelContext context = new DefaultCamelContext()) {
             final String yaml = RestDslGenerator.toYaml(document).generate(context);
 
-            final URI file = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreYaml.txt").toURI();
+            final URI file = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreYaml.txt").toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
             assertThat(yaml).isEqualTo(expectedContent);
@@ -56,7 +56,7 @@ public class RestDslYamlGeneratorV3Test {
                     .withRestContextPath("/foo")
                     .generate(context);
 
-            final URI file = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreWithRestComponentYaml.txt").toURI();
+            final URI file = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponentYaml.txt").toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertThat(yaml).isEqualTo(expectedContent);
         }

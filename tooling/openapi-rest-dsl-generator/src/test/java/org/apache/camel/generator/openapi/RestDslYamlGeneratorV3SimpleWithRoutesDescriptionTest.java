@@ -52,7 +52,7 @@ public class RestDslYamlGeneratorV3SimpleWithRoutesDescriptionTest {
 
         final String yaml = RestDslGenerator.toYaml(document).generate(context, true);
         final URI file
-                = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreSimpleWithRoutesDescriptionYaml.txt").toURI();
+                = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreSimpleWithRoutesDescriptionYaml.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertThat(yaml).isEqualTo(expectedContent);
