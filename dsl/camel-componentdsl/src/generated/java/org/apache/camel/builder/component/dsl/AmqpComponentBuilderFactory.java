@@ -1680,6 +1680,24 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * A pluggable TemporaryQueueResolver that allows you to use your own
+         * resolver for creating temporary queues (some messaging systems has
+         * special requirements for creating temporary queues).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param temporaryQueueResolver the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder temporaryQueueResolver(
+                org.apache.camel.component.jms.TemporaryQueueResolver temporaryQueueResolver) {
+            doSetProperty("temporaryQueueResolver", temporaryQueueResolver);
+            return this;
+        }
+        /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a jakarta.jms.ObjectMessage. If the
@@ -2088,6 +2106,7 @@ public interface AmqpComponentBuilderFactory {
             case "recoveryInterval": getOrCreateConfiguration((AMQPComponent) component).setRecoveryInterval((long) value); return true;
             case "requestTimeoutCheckerInterval": getOrCreateConfiguration((AMQPComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
             case "synchronous": getOrCreateConfiguration((AMQPComponent) component).setSynchronous((boolean) value); return true;
+            case "temporaryQueueResolver": getOrCreateConfiguration((AMQPComponent) component).setTemporaryQueueResolver((org.apache.camel.component.jms.TemporaryQueueResolver) value); return true;
             case "transferException": getOrCreateConfiguration((AMQPComponent) component).setTransferException((boolean) value); return true;
             case "transferExchange": getOrCreateConfiguration((AMQPComponent) component).setTransferExchange((boolean) value); return true;
             case "useMessageIDAsCorrelationID": getOrCreateConfiguration((AMQPComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
