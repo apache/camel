@@ -40,25 +40,15 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public abstract class RestDslGenerator<G> {
 
     String apiContextPath;
-
     DestinationGenerator destinationGenerator;
-
     String destinationToSyntax;
-
     final OpenApiDocument document;
-
     OperationFilter filter = new OperationFilter();
-
     String restComponent;
-
     String restContextPath;
-
     boolean clientRequestValidation;
-
     boolean springBootProject;
-
     boolean springComponent;
-
     String basePath;
 
     RestDslGenerator(final OpenApiDocument document) {
