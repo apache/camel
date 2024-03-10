@@ -31,9 +31,10 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.Permission;
-import org.apache.shiro.codec.Base64;
+import org.apache.shiro.crypto.cipher.ByteSourceBroker;
+import org.apache.shiro.lang.codec.Base64;
+import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,9 +114,8 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
                     exchange);
         }
 
-        ByteSource decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
-
-        ShiroSecurityToken securityToken = ShiroSecurityHelper.deserialize(decryptedToken.getBytes());
+        ByteSourceBroker decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
+        ShiroSecurityToken securityToken = ShiroSecurityHelper.deserialize(decryptedToken.getClonedBytes());
 
         Subject currentUser = SecurityUtils.getSubject();
 

@@ -222,6 +222,10 @@ calls the `/api-doc` endpoint.
 
 Added a Cookie Handler allowing the addition, retrieval and expiry of Cookies.
 
+=== camel-shiro
+
+Upgraded Apache Shiro from 1.13 to 2.0.
+
 === camel-twilio
 
 Upgraded to Twilio 10.1.0 which removed `call-feedback` and `call-feedback-summary` from the available APIs,
