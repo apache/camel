@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Document;
 import io.apicurio.datamodels.models.ModelType;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.RestDslGenerator;
@@ -75,13 +76,20 @@ public class CodeRestGenerator extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        OpenApiDocument doc;
+
         final ObjectNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
         Document source = Library.readDocument(node);
         ModelType mt = ModelType.OPENAPI30;
         if ("3.1".equals(openApiVersion)) {
             mt = ModelType.OPENAPI31;
         }
-        OpenApi30Document doc = (OpenApi30Document) Library.transformDocument(source, mt);
+        if (!source.root().modelType().equals(mt)) {
+            doc = (OpenApiDocument) Library.transformDocument(source, mt);
+        } else {
+            doc = (OpenApiDocument) source;
+        }
+
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new DefaultCamelContext()) {
             String text = null;
