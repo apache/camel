@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
  * Operate on AWS Bedrock through its Agent.
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent", title = "AWS Bedrock Agent",
-             syntax = "aws-bedrock-agent:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
+             syntax = "aws-bedrock-agent:label", category = { Category.AI, Category.CLOUD },
              headersClass = BedrockAgentRuntimeConstants.class)
 public class BedrockAgentEndpoint extends ScheduledPollEndpoint {
 
@@ -49,7 +49,9 @@ public class BedrockAgentEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+        final BedrockAgentIngestionJobConsumer consumer = new BedrockAgentIngestionJobConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

@@ -34,6 +34,8 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bedrockagentclient":
         case "bedrockAgentClient": getOrCreateConfiguration(target).setBedrockAgentClient(property(camelContext, software.amazon.awssdk.services.bedrockagent.BedrockAgentClient.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.bedrock.agent.BedrockAgentConfiguration.class, value)); return true;
         case "datasourceid":
         case "dataSourceId": getOrCreateConfiguration(target).setDataSourceId(property(camelContext, java.lang.String.class, value)); return true;
@@ -41,6 +43,8 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "ingestionjobid":
+        case "ingestionJobId": getOrCreateConfiguration(target).setIngestionJobId(property(camelContext, java.lang.String.class, value)); return true;
         case "knowledgebaseid":
         case "knowledgeBaseId": getOrCreateConfiguration(target).setKnowledgeBaseId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -93,6 +97,8 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "autowiredEnabled": return boolean.class;
         case "bedrockagentclient":
         case "bedrockAgentClient": return software.amazon.awssdk.services.bedrockagent.BedrockAgentClient.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.bedrock.agent.BedrockAgentConfiguration.class;
         case "datasourceid":
         case "dataSourceId": return java.lang.String.class;
@@ -100,6 +106,8 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "ingestionjobid":
+        case "ingestionJobId": return java.lang.String.class;
         case "knowledgebaseid":
         case "knowledgeBaseId": return java.lang.String.class;
         case "lazystartproducer":
@@ -148,6 +156,8 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bedrockagentclient":
         case "bedrockAgentClient": return getOrCreateConfiguration(target).getBedrockAgentClient();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
         case "datasourceid":
         case "dataSourceId": return getOrCreateConfiguration(target).getDataSourceId();
@@ -155,6 +165,8 @@ public class BedrockAgentComponentConfigurer extends PropertyConfigurerSupport i
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "ingestionjobid":
+        case "ingestionJobId": return getOrCreateConfiguration(target).getIngestionJobId();
         case "knowledgebaseid":
         case "knowledgeBaseId": return getOrCreateConfiguration(target).getKnowledgeBaseId();
         case "lazystartproducer":

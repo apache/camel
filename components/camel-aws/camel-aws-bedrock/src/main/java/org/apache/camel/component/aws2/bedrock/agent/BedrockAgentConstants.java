@@ -36,4 +36,8 @@ public interface BedrockAgentConstants {
     @Metadata(description = "The header could be used to set up a knowledge base Id dynamically while performing operation",
               javaType = "String")
     String KNOWLEDGE_BASE_ID = "CamelAwsBedrockAgentKnowledgeBaseId";
+
+    @Metadata(description = "The header contains the status of the ingestion job",
+              javaType = "String", label = "consumer")
+    String INGESTION_JOB_STATUS = "CamelAwsBedrockAgentIngestionJobStatus";
 }
