@@ -49,6 +49,9 @@ public class BedrockAgentConfiguration implements Cloneable {
     @Metadata
     private String dataSourceId;
     @UriParam
+    @Metadata(label = "consumer")
+    private String ingestionJobId;
+    @UriParam
     @Metadata(required = true)
     private BedrockAgentOperations operation;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
@@ -298,6 +301,17 @@ public class BedrockAgentConfiguration implements Cloneable {
      */
     public void setDataSourceId(String dataSourceId) {
         this.dataSourceId = dataSourceId;
+    }
+
+    public String getIngestionJobId() {
+        return ingestionJobId;
+    }
+
+    /**
+     * Define the Ingestion Job Id we want to track
+     */
+    public void setIngestionJobId(String ingestionJobId) {
+        this.ingestionJobId = ingestionJobId;
     }
 
     // *************************************************
