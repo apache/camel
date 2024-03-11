@@ -56,7 +56,7 @@ public interface AwsBedrockAgentComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.bedrock.agent.BedrockAgentConfiguration&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param configuration the value to set
          * @return the dsl builder
@@ -71,7 +71,7 @@ public interface AwsBedrockAgentComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param dataSourceId the value to set
          * @return the dsl builder
@@ -86,7 +86,7 @@ public interface AwsBedrockAgentComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param knowledgeBaseId the value to set
          * @return the dsl builder
@@ -94,6 +94,195 @@ public interface AwsBedrockAgentComponentBuilderFactory {
         default AwsBedrockAgentComponentBuilder knowledgeBaseId(
                 java.lang.String knowledgeBaseId) {
             doSetProperty("knowledgeBaseId", knowledgeBaseId);
+            return this;
+        }
+        /**
+         * Define the model Id we are going to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param modelId the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder modelId(java.lang.String modelId) {
+            doSetProperty("modelId", modelId);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder operation(
+                org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set the need for overriding the endpoint. This option needs to be
+         * used in combination with the uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * If using a profile credentials provider, this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
+         * The region in which Bedrock Agent client needs to work. When using
+         * this parameter, the configuration will expect the lowercase name of
+         * the region (for example, ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the Bedrock Agent client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Bedrock Agent client should expect to load
+         * credentials through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Define the Ingestion Job Id we want to track.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param ingestionJobId the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder ingestionJobId(
+                java.lang.String ingestionJobId) {
+            doSetProperty("ingestionJobId", ingestionJobId);
             return this;
         }
         /**
@@ -118,153 +307,6 @@ public interface AwsBedrockAgentComponentBuilderFactory {
         default AwsBedrockAgentComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Define the model Id we are going to use.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param modelId the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder modelId(java.lang.String modelId) {
-            doSetProperty("modelId", modelId);
-            return this;
-        }
-        /**
-         * The operation to perform.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param operation the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder operation(
-                org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Set the need for overriding the endpoint. This option needs to be
-         * used in combination with the uriEndpointOverride option.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param overrideEndpoint the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder overrideEndpoint(
-                boolean overrideEndpoint) {
-            doSetProperty("overrideEndpoint", overrideEndpoint);
-            return this;
-        }
-        /**
-         * If we want to use a POJO request as body or not.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param pojoRequest the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder pojoRequest(boolean pojoRequest) {
-            doSetProperty("pojoRequest", pojoRequest);
-            return this;
-        }
-        /**
-         * If using a profile credentials provider, this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder profileCredentialsName(
-                java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * The region in which Bedrock Agent client needs to work. When using
-         * this parameter, the configuration will expect the lowercase name of
-         * the region (for example, ap-east-1) You'll need to use the name
-         * Region.EU_WEST_1.id().
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param region the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Set the overriding uri endpoint. This option needs to be used in
-         * combination with overrideEndpoint option.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param uriEndpointOverride the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder uriEndpointOverride(
-                java.lang.String uriEndpointOverride) {
-            doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Bedrock Agent client should expect to load
-         * credentials through a default credentials provider or to expect
-         * static credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Bedrock Agent client should expect to load
-         * credentials through a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -496,7 +538,6 @@ public interface AwsBedrockAgentComponentBuilderFactory {
             case "configuration": ((BedrockAgentComponent) component).setConfiguration((org.apache.camel.component.aws2.bedrock.agent.BedrockAgentConfiguration) value); return true;
             case "dataSourceId": getOrCreateConfiguration((BedrockAgentComponent) component).setDataSourceId((java.lang.String) value); return true;
             case "knowledgeBaseId": getOrCreateConfiguration((BedrockAgentComponent) component).setKnowledgeBaseId((java.lang.String) value); return true;
-            case "lazyStartProducer": ((BedrockAgentComponent) component).setLazyStartProducer((boolean) value); return true;
             case "modelId": getOrCreateConfiguration((BedrockAgentComponent) component).setModelId((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((BedrockAgentComponent) component).setOperation((org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((BedrockAgentComponent) component).setOverrideEndpoint((boolean) value); return true;
@@ -506,6 +547,9 @@ public interface AwsBedrockAgentComponentBuilderFactory {
             case "uriEndpointOverride": getOrCreateConfiguration((BedrockAgentComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((BedrockAgentComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((BedrockAgentComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
+            case "bridgeErrorHandler": ((BedrockAgentComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "ingestionJobId": getOrCreateConfiguration((BedrockAgentComponent) component).setIngestionJobId((java.lang.String) value); return true;
+            case "lazyStartProducer": ((BedrockAgentComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((BedrockAgentComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "bedrockAgentClient": getOrCreateConfiguration((BedrockAgentComponent) component).setBedrockAgentClient((software.amazon.awssdk.services.bedrockagent.BedrockAgentClient) value); return true;
             case "healthCheckConsumerEnabled": ((BedrockAgentComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
