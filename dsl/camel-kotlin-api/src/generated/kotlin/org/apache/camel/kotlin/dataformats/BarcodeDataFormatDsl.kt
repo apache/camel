@@ -23,6 +23,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.BarcodeDataFormat
 
+/**
+ * Transform strings to various 1D/2D barcode bitmap formats and back.
+ */
 public fun DataFormatDsl.barcode(i: BarcodeDataFormatDsl.() -> Unit) {
   def = BarcodeDataFormatDsl().apply(i).def
 }
@@ -34,30 +37,51 @@ public class BarcodeDataFormatDsl {
   init {
     def = BarcodeDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Barcode format such as QR-Code
+   */
   public fun barcodeFormat(barcodeFormat: String) {
     def.barcodeFormat = barcodeFormat
   }
 
+  /**
+   * Image type of the barcode such as png
+   */
   public fun imageType(imageType: String) {
     def.imageType = imageType
   }
 
+  /**
+   * Width of the barcode
+   */
   public fun width(width: Int) {
     def.width = width.toString()
   }
 
+  /**
+   * Width of the barcode
+   */
   public fun width(width: String) {
     def.width = width
   }
 
+  /**
+   * Height of the barcode
+   */
   public fun height(height: Int) {
     def.height = height.toString()
   }
 
+  /**
+   * Height of the barcode
+   */
   public fun height(height: String) {
     def.height = height
   }

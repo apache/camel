@@ -17,13 +17,15 @@
 package org.apache.camel.kotlin.languages
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.model.language.SpELExpression
 
+/**
+ * Evaluates a Spring expression (SpEL).
+ */
 public fun spel(spel: String, i: SpelLanguageDsl.() -> Unit = {}): SpELExpression {
   val def = SpELExpression(spel)
   SpelLanguageDsl(def).apply(i)
@@ -40,18 +42,30 @@ public class SpelLanguageDsl(
     this.def = def
   }
 
+  /**
+   * Sets the id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
-  public fun resultType(resultType: Class<out Any>) {
+  /**
+   * Sets the class of the result type (type from output)
+   */
+  public fun resultType(resultType: Class<*>) {
     def.resultType = resultType
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: Boolean) {
     def.trim = trim.toString()
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: String) {
     def.trim = trim
   }

@@ -23,6 +23,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * To securely manage users on Huawei Cloud
+ */
 public fun UriDsl.`hwcloud-iam`(i: HwcloudIamUriDsl.() -> Unit) {
   HwcloudIamUriDsl(this).apply(i)
 }
@@ -40,67 +43,125 @@ public class HwcloudIamUriDsl(
 
   private var operation: String = ""
 
+  /**
+   * Operation to be performed
+   */
   public fun operation(operation: String) {
     this.operation = operation
     it.url("$operation")
   }
 
+  /**
+   * Access key for the cloud user
+   */
   public fun accessKey(accessKey: String) {
     it.property("accessKey", accessKey)
   }
 
+  /**
+   * Group ID to perform operation with
+   */
   public fun groupId(groupId: String) {
     it.property("groupId", groupId)
   }
 
+  /**
+   * Ignore SSL verification
+   */
   public fun ignoreSslVerification(ignoreSslVerification: String) {
     it.property("ignoreSslVerification", ignoreSslVerification)
   }
 
+  /**
+   * Ignore SSL verification
+   */
   public fun ignoreSslVerification(ignoreSslVerification: Boolean) {
     it.property("ignoreSslVerification", ignoreSslVerification.toString())
   }
 
+  /**
+   * Proxy server ip/hostname
+   */
   public fun proxyHost(proxyHost: String) {
     it.property("proxyHost", proxyHost)
   }
 
+  /**
+   * Proxy authentication password
+   */
   public fun proxyPassword(proxyPassword: String) {
     it.property("proxyPassword", proxyPassword)
   }
 
+  /**
+   * Proxy server port
+   */
   public fun proxyPort(proxyPort: String) {
     it.property("proxyPort", proxyPort)
   }
 
+  /**
+   * Proxy server port
+   */
   public fun proxyPort(proxyPort: Int) {
     it.property("proxyPort", proxyPort.toString())
   }
 
+  /**
+   * Proxy authentication user
+   */
   public fun proxyUser(proxyUser: String) {
     it.property("proxyUser", proxyUser)
   }
 
+  /**
+   * IAM service region
+   */
   public fun region(region: String) {
     it.property("region", region)
   }
 
+  /**
+   * Secret key for the cloud user
+   */
   public fun secretKey(secretKey: String) {
     it.property("secretKey", secretKey)
   }
 
+  /**
+   * Configuration object for cloud service authentication
+   */
   public fun serviceKeys(serviceKeys: String) {
     it.property("serviceKeys", serviceKeys)
   }
 
+  /**
+   * User ID to perform operation with
+   */
   public fun userId(userId: String) {
     it.property("userId", userId)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }

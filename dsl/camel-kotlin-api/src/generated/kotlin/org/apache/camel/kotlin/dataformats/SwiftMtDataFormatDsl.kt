@@ -23,25 +23,37 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.SwiftMtDataFormat
 
-public fun DataFormatDsl.swiftMt(i: SwiftmtDataFormatDsl.() -> Unit) {
-  def = SwiftmtDataFormatDsl().apply(i).def
+/**
+ * Encode and decode SWIFT MT messages.
+ */
+public fun DataFormatDsl.swiftMt(i: SwiftMtDataFormatDsl.() -> Unit) {
+  def = SwiftMtDataFormatDsl().apply(i).def
 }
 
 @CamelDslMarker
-public class SwiftmtDataFormatDsl {
+public class SwiftMtDataFormatDsl {
   public val def: SwiftMtDataFormat
 
   init {
     def = SwiftMtDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * The flag indicating that messages must be marshalled in a JSON format.
+   */
   public fun writeInJson(writeInJson: Boolean) {
     def.writeInJson = writeInJson.toString()
   }
 
+  /**
+   * The flag indicating that messages must be marshalled in a JSON format.
+   */
   public fun writeInJson(writeInJson: String) {
     def.writeInJson = writeInJson
   }

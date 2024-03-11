@@ -23,6 +23,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Collect various metrics directly from Camel routes using the DropWizard metrics library.
+ */
 public fun UriDsl.metrics(i: MetricsUriDsl.() -> Unit) {
   MetricsUriDsl(this).apply(i)
 }
@@ -42,60 +45,112 @@ public class MetricsUriDsl(
 
   private var metricsName: String = ""
 
+  /**
+   * Type of metrics
+   */
   public fun metricsType(metricsType: String) {
     this.metricsType = metricsType
     it.url("$metricsType:$metricsName")
   }
 
+  /**
+   * Name of metrics
+   */
   public fun metricsName(metricsName: String) {
     this.metricsName = metricsName
     it.url("$metricsType:$metricsName")
   }
 
+  /**
+   * Action when using timer type
+   */
   public fun action(action: String) {
     it.property("action", action)
   }
 
+  /**
+   * Decrement value when using counter type
+   */
   public fun decrement(decrement: String) {
     it.property("decrement", decrement)
   }
 
+  /**
+   * Decrement value when using counter type
+   */
   public fun decrement(decrement: Int) {
     it.property("decrement", decrement.toString())
   }
 
+  /**
+   * Increment value when using counter type
+   */
   public fun increment(increment: String) {
     it.property("increment", increment)
   }
 
+  /**
+   * Increment value when using counter type
+   */
   public fun increment(increment: Int) {
     it.property("increment", increment.toString())
   }
 
+  /**
+   * Mark when using meter type
+   */
   public fun mark(mark: String) {
     it.property("mark", mark)
   }
 
+  /**
+   * Mark when using meter type
+   */
   public fun mark(mark: Int) {
     it.property("mark", mark.toString())
   }
 
+  /**
+   * Subject value when using gauge type
+   */
   public fun subject(subject: String) {
     it.property("subject", subject)
   }
 
+  /**
+   * Value value when using histogram type
+   */
   public fun `value`(`value`: String) {
     it.property("value", value)
   }
 
+  /**
+   * Value value when using histogram type
+   */
   public fun `value`(`value`: Int) {
     it.property("value", value.toString())
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }

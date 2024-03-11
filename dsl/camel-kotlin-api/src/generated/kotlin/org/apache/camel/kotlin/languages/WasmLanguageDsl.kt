@@ -17,13 +17,15 @@
 package org.apache.camel.kotlin.languages
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.model.language.WasmExpression
 
+/**
+ * Call a wasm (web assembly) function.
+ */
 public fun wasm(wasm: String, i: WasmLanguageDsl.() -> Unit = {}): WasmExpression {
   val def = WasmExpression(wasm)
   WasmLanguageDsl(def).apply(i)
@@ -40,22 +42,38 @@ public class WasmLanguageDsl(
     this.def = def
   }
 
+  /**
+   * Sets the id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Set the module (the distributable, loadable, and executable unit of code in WebAssembly)
+   * resource that provides the expression function.
+   */
   public fun module(module: String) {
     def.module = module
   }
 
-  public fun resultType(resultType: Class<out Any>) {
+  /**
+   * Sets the class of the result type (type from output)
+   */
+  public fun resultType(resultType: Class<*>) {
     def.resultType = resultType
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: Boolean) {
     def.trim = trim.toString()
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: String) {
     def.trim = trim
   }

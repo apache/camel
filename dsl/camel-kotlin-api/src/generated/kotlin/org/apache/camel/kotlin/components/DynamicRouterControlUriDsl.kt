@@ -23,6 +23,10 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * The Dynamic Router control endpoint for operations that allow routing participants to subscribe
+ * or unsubscribe to participate in dynamic message routing.
+ */
 public fun UriDsl.`dynamic-router-control`(i: DynamicRouterControlUriDsl.() -> Unit) {
   DynamicRouterControlUriDsl(this).apply(i)
 }
@@ -40,47 +44,90 @@ public class DynamicRouterControlUriDsl(
 
   private var controlAction: String = ""
 
+  /**
+   * Control action
+   */
   public fun controlAction(controlAction: String) {
     this.controlAction = controlAction
     it.url("$controlAction")
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  /**
+   * The destination URI for exchanges that match.
+   */
   public fun destinationUri(destinationUri: String) {
     it.property("destinationUri", destinationUri)
   }
 
+  /**
+   * The subscription predicate language.
+   */
   public fun expressionLanguage(expressionLanguage: String) {
     it.property("expressionLanguage", expressionLanguage)
   }
 
+  /**
+   * The subscription predicate.
+   */
   public fun predicate(predicate: String) {
     it.property("predicate", predicate)
   }
 
+  /**
+   * A Predicate instance in the registry.
+   */
   public fun predicateBean(predicateBean: String) {
     it.property("predicateBean", predicateBean)
   }
 
+  /**
+   * The subscription priority.
+   */
   public fun priority(priority: String) {
     it.property("priority", priority)
   }
 
+  /**
+   * The subscription priority.
+   */
   public fun priority(priority: Int) {
     it.property("priority", priority.toString())
   }
 
+  /**
+   * The channel to subscribe to
+   */
   public fun subscribeChannel(subscribeChannel: String) {
     it.property("subscribeChannel", subscribeChannel)
   }
 
+  /**
+   * The subscription ID; if unspecified, one will be assigned and returned.
+   */
   public fun subscriptionId(subscriptionId: String) {
     it.property("subscriptionId", subscriptionId)
   }

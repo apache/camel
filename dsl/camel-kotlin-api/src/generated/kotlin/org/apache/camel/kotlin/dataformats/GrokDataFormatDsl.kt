@@ -23,6 +23,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.GrokDataFormat
 
+/**
+ * Unmarshal unstructured data to objects using Logstash based Grok patterns.
+ */
 public fun DataFormatDsl.grok(i: GrokDataFormatDsl.() -> Unit) {
   def = GrokDataFormatDsl().apply(i).def
 }
@@ -34,34 +37,62 @@ public class GrokDataFormatDsl {
   init {
     def = GrokDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * The grok pattern to match lines of input
+   */
   public fun pattern(pattern: String) {
     def.pattern = pattern
   }
 
+  /**
+   * Turns on flattened mode. In flattened mode the exception is thrown when there are multiple
+   * pattern matches with same key.
+   */
   public fun flattened(flattened: Boolean) {
     def.flattened = flattened.toString()
   }
 
+  /**
+   * Turns on flattened mode. In flattened mode the exception is thrown when there are multiple
+   * pattern matches with same key.
+   */
   public fun flattened(flattened: String) {
     def.flattened = flattened
   }
 
+  /**
+   * If false, every line of input is matched for pattern only once. Otherwise the line can be
+   * scanned multiple times when non-terminal pattern is used.
+   */
   public fun allowMultipleMatchesPerLine(allowMultipleMatchesPerLine: Boolean) {
     def.allowMultipleMatchesPerLine = allowMultipleMatchesPerLine.toString()
   }
 
+  /**
+   * If false, every line of input is matched for pattern only once. Otherwise the line can be
+   * scanned multiple times when non-terminal pattern is used.
+   */
   public fun allowMultipleMatchesPerLine(allowMultipleMatchesPerLine: String) {
     def.allowMultipleMatchesPerLine = allowMultipleMatchesPerLine
   }
 
+  /**
+   * Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
+   */
   public fun namedOnly(namedOnly: Boolean) {
     def.namedOnly = namedOnly.toString()
   }
 
+  /**
+   * Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
+   */
   public fun namedOnly(namedOnly: String) {
     def.namedOnly = namedOnly
   }

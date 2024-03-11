@@ -16,33 +16,45 @@
  */
 package org.apache.camel.kotlin.dataformats
 
-import kotlin.Int
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
-import org.apache.camel.model.dataformat.ZipDeflaterDataFormat
+import org.apache.camel.model.dataformat.JsonApiDataFormat
 
-public fun DataFormatDsl.zipDeflater(i: ZipdeflaterDataFormatDsl.() -> Unit) {
-  def = ZipdeflaterDataFormatDsl().apply(i).def
+/**
+ * Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
+ */
+public fun DataFormatDsl.jsonApi(i: JsonApiDataFormatDsl.() -> Unit) {
+  def = JsonApiDataFormatDsl().apply(i).def
 }
 
 @CamelDslMarker
-public class ZipdeflaterDataFormatDsl {
-  public val def: ZipDeflaterDataFormat
+public class JsonApiDataFormatDsl {
+  public val def: JsonApiDataFormat
 
   init {
-    def = ZipDeflaterDataFormat()}
+    def = JsonApiDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
-  public fun compressionLevel(compressionLevel: Int) {
-    def.compressionLevel = compressionLevel.toString()
+  /**
+   * The classes to take into account for the marshalling. Multiple classes can be separated by
+   * comma.
+   */
+  public fun dataFormatTypes(dataFormatTypes: String) {
+    def.dataFormatTypes = dataFormatTypes
   }
 
-  public fun compressionLevel(compressionLevel: String) {
-    def.compressionLevel = compressionLevel
+  /**
+   * The class to take into account while unmarshalling.
+   */
+  public fun mainFormatType(mainFormatType: String) {
+    def.mainFormatType = mainFormatType
   }
 }

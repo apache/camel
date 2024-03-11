@@ -22,6 +22,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.SyslogDataFormat
 
+/**
+ * Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
+ */
 public fun DataFormatDsl.syslog(i: SyslogDataFormatDsl.() -> Unit) {
   def = SyslogDataFormatDsl().apply(i).def
 }
@@ -33,6 +36,9 @@ public class SyslogDataFormatDsl {
   init {
     def = SyslogDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }

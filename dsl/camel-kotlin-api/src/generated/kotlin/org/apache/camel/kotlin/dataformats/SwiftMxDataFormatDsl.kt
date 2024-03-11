@@ -23,37 +23,61 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.SwiftMxDataFormat
 
-public fun DataFormatDsl.swiftMx(i: SwiftmxDataFormatDsl.() -> Unit) {
-  def = SwiftmxDataFormatDsl().apply(i).def
+/**
+ * Encode and decode SWIFT MX messages.
+ */
+public fun DataFormatDsl.swiftMx(i: SwiftMxDataFormatDsl.() -> Unit) {
+  def = SwiftMxDataFormatDsl().apply(i).def
 }
 
 @CamelDslMarker
-public class SwiftmxDataFormatDsl {
+public class SwiftMxDataFormatDsl {
   public val def: SwiftMxDataFormat
 
   init {
     def = SwiftMxDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Refers to a specific configuration to use when marshalling a message to lookup from the
+   * registry.
+   */
   public fun writeConfigRef(writeConfigRef: String) {
     def.writeConfigRef = writeConfigRef
   }
 
+  /**
+   * The flag indicating that messages must be marshalled in a JSON format.
+   */
   public fun writeInJson(writeInJson: Boolean) {
     def.writeInJson = writeInJson.toString()
   }
 
+  /**
+   * The flag indicating that messages must be marshalled in a JSON format.
+   */
   public fun writeInJson(writeInJson: String) {
     def.writeInJson = writeInJson
   }
 
+  /**
+   * The type of MX message to produce when unmarshalling an input stream. If not set, it will be
+   * automatically detected from the namespace used.
+   */
   public fun readMessageId(readMessageId: String) {
     def.readMessageId = readMessageId
   }
 
+  /**
+   * Refers to a specific configuration to use when unmarshalling an input stream to lookup from the
+   * registry.
+   */
   public fun readConfigRef(readConfigRef: String) {
     def.readConfigRef = readConfigRef
   }

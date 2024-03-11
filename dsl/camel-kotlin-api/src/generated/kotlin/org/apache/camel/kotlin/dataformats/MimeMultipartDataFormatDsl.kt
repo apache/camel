@@ -23,49 +23,86 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat
 
-public fun DataFormatDsl.mimeMultipart(i: MimemultipartDataFormatDsl.() -> Unit) {
-  def = MimemultipartDataFormatDsl().apply(i).def
+/**
+ * Marshal Camel messages with attachments into MIME-Multipart messages and back.
+ */
+public fun DataFormatDsl.mimeMultipart(i: MimeMultipartDataFormatDsl.() -> Unit) {
+  def = MimeMultipartDataFormatDsl().apply(i).def
 }
 
 @CamelDslMarker
-public class MimemultipartDataFormatDsl {
+public class MimeMultipartDataFormatDsl {
   public val def: MimeMultipartDataFormat
 
   init {
     def = MimeMultipartDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Specify the subtype of the MIME Multipart. Default is mixed.
+   */
   public fun multipartSubType(multipartSubType: String) {
     def.multipartSubType = multipartSubType
   }
 
+  /**
+   * Defines whether a message without attachment is also marshaled into a MIME Multipart (with only
+   * one body part). Default is false.
+   */
   public fun multipartWithoutAttachment(multipartWithoutAttachment: Boolean) {
     def.multipartWithoutAttachment = multipartWithoutAttachment.toString()
   }
 
+  /**
+   * Defines whether a message without attachment is also marshaled into a MIME Multipart (with only
+   * one body part). Default is false.
+   */
   public fun multipartWithoutAttachment(multipartWithoutAttachment: String) {
     def.multipartWithoutAttachment = multipartWithoutAttachment
   }
 
+  /**
+   * Defines whether the MIME-Multipart headers are part of the message body (true) or are set as
+   * Camel headers (false). Default is false.
+   */
   public fun headersInline(headersInline: Boolean) {
     def.headersInline = headersInline.toString()
   }
 
+  /**
+   * Defines whether the MIME-Multipart headers are part of the message body (true) or are set as
+   * Camel headers (false). Default is false.
+   */
   public fun headersInline(headersInline: String) {
     def.headersInline = headersInline
   }
 
+  /**
+   * A regex that defines which Camel headers are also included as MIME headers into the MIME
+   * multipart. This will only work if headersInline is set to true. Default is to include no headers
+   */
   public fun includeHeaders(includeHeaders: String) {
     def.includeHeaders = includeHeaders
   }
 
+  /**
+   * Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64
+   * encoded (false) Default is false.
+   */
   public fun binaryContent(binaryContent: Boolean) {
     def.binaryContent = binaryContent.toString()
   }
 
+  /**
+   * Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64
+   * encoded (false) Default is false.
+   */
   public fun binaryContent(binaryContent: String) {
     def.binaryContent = binaryContent
   }
