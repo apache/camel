@@ -22,12 +22,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 // Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
-/*@EnabledIfSystemProperties({
+@EnabledIfSystemProperties({
         @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
         @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
-})*/
+})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BedrockAgentConsumerIT extends CamelTestSupport {
 
@@ -49,7 +51,7 @@ class BedrockAgentConsumerIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("aws-bedrock-agent:label?useDefaultCredentialsProvider=true&region=us-east-1&knowledgeBaseId=AJHTAIUSJP&dataSourceId=AJX8Z7JX9J&ingestionJobId=YOWE23OBEB")
+                from("aws-bedrock-agent:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&knowledgeBaseId=AJHTAIUSJP&dataSourceId=AJX8Z7JX9J&ingestionJobId=YOWE23OBEB")
                         .log("${body} and ${headers}")
                         .to(result);
             }
