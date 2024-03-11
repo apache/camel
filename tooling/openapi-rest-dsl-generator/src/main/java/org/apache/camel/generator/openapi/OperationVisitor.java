@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import io.apicurio.datamodels.models.Referenceable;
 import io.apicurio.datamodels.models.Schema;
 import io.apicurio.datamodels.models.openapi.OpenApiMediaType;
 import io.apicurio.datamodels.models.openapi.OpenApiOperation;
@@ -48,19 +49,18 @@ import org.apache.camel.util.StringHelper;
 class OperationVisitor<T> {
 
     private final DestinationGenerator destinationGenerator;
-
     private final CodeEmitter<T> emitter;
-
     private final OperationFilter filter;
-
     private final String path;
+    private final String dtoPackageName;
 
     OperationVisitor(final CodeEmitter<T> emitter, final OperationFilter filter, final String path,
-                     final DestinationGenerator destinationGenerator) {
+                     final DestinationGenerator destinationGenerator, final String dtoPackageName) {
         this.emitter = emitter;
         this.filter = filter;
         this.path = path;
         this.destinationGenerator = destinationGenerator;
+        this.dtoPackageName = dtoPackageName;
     }
 
     List<String> asStringList(final List<?> values) {
@@ -238,18 +238,18 @@ class OperationVisitor<T> {
 
             emitter.emit("to", destinationGenerator.generateDestinationFor(operation));
         }
-
     }
 
     private CodeEmitter<T> emitOas30Operation(final OpenApi30Operation operation) {
         if (operation.getRequestBody() != null) {
+            String dto = null;
             boolean foundForm = false;
             final OpenApi30RequestBody requestBody = operation.getRequestBody();
             for (final Entry<String, OpenApiMediaType> entry : requestBody.getContent().entrySet()) {
                 final String ct = entry.getKey();
-                final OpenApi30MediaType mediaType = (OpenApi30MediaType) entry.getValue();
-                if (ct.contains("form") && mediaType.getSchema().getProperties() != null) {
-                    for (final Entry<String, Schema> entrySchema : mediaType.getSchema().getProperties().entrySet()) {
+                OpenApi30MediaType mt = (OpenApi30MediaType) entry.getValue();
+                if (ct.contains("form") && mt.getSchema().getProperties() != null) {
+                    for (final Entry<String, Schema> entrySchema : mt.getSchema().getProperties().entrySet()) {
                         OpenApi30Schema openApi30Schema = (OpenApi30Schema) entrySchema.getValue();
                         foundForm = true;
                         emitter.emit("param");
@@ -261,6 +261,20 @@ class OperationVisitor<T> {
                         emitter.emit("endParam");
                     }
                 }
+                if (dto == null && mt.getSchema() instanceof Referenceable ref) {
+                    OpenApi30Schema schema = (OpenApi30Schema) mt.getSchema();
+                    boolean array = "array".equals(schema.getType());
+                    if (array) {
+                        ref = schema.getItems();
+                    }
+                    String r = ref.get$ref();
+                    if (r != null && r.startsWith("#/components/schemas/")) {
+                        dto = r.substring(21);
+                        if (array) {
+                            dto += "[]";
+                        }
+                    }
+                }
             }
             if (!foundForm) {
                 emitter.emit("param");
@@ -270,9 +284,43 @@ class OperationVisitor<T> {
                 emit("description", requestBody.getDescription());
                 emitter.emit("endParam");
             }
+            if (dtoPackageName != null && dto != null) {
+                emit("type", dtoPackageName + "." + dto);
+            }
+        }
+
+        if (operation.getResponses() != null) {
+            String dto = null;
+            for (String key : operation.getResponses().getItemNames()) {
+                if ("200".equals(key)) {
+                    var response = operation.getResponses().getItem(key);
+                    if (response instanceof OpenApi30Response res30) {
+                        for (final Entry<String, OpenApi30MediaType> entry : res30.getContent().entrySet()) {
+                            final OpenApi30MediaType mediaType = entry.getValue();
+                            if (dto == null && mediaType.getSchema() instanceof Referenceable ref) {
+                                OpenApi30Schema schema = (OpenApi30Schema) mediaType.getSchema();
+                                boolean array = "array".equals(schema.getType());
+                                if (array) {
+                                    ref = schema.getItems();
+                                }
+                                String r = ref.get$ref();
+                                if (r != null && r.startsWith("#/components/schemas/")) {
+                                    dto = r.substring(21);
+                                    if (array) {
+                                        dto += "[]";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (dtoPackageName != null && dto != null) {
+                emit("outType", dtoPackageName + "." + dto);
+            }
         }
 
         return emitter;
-
     }
+
 }

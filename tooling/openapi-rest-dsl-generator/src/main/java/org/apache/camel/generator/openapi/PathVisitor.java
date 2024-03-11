@@ -26,10 +26,9 @@ import org.apache.camel.util.ObjectHelper;
 class PathVisitor<T> {
 
     private final DestinationGenerator destinationGenerator;
-
     private final CodeEmitter<T> emitter;
-
     private final OperationFilter filter;
+    private final String dtoPackageName;
 
     public enum HttpMethod {
         DELETE,
@@ -42,10 +41,11 @@ class PathVisitor<T> {
     }
 
     PathVisitor(final String basePath, final CodeEmitter<T> emitter, final OperationFilter filter,
-                final DestinationGenerator destinationGenerator) {
+                final DestinationGenerator destinationGenerator, final String dtoPackageName) {
         this.emitter = emitter;
         this.filter = filter;
         this.destinationGenerator = destinationGenerator;
+        this.dtoPackageName = dtoPackageName;
 
         if (ObjectHelper.isEmpty(basePath)) {
             emitter.emit("rest");
@@ -55,8 +55,8 @@ class PathVisitor<T> {
     }
 
     void visit(final String path, final OpenApiPathItem definition) {
-        final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, filter, path, destinationGenerator);
-
+        final OperationVisitor<T> restDslOperation
+                = new OperationVisitor<>(emitter, filter, path, destinationGenerator, dtoPackageName);
         operationMapFrom(definition).forEach(restDslOperation::visit);
     }
 

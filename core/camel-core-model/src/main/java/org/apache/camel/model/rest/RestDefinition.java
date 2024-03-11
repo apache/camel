@@ -564,6 +564,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition type(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException(MISSING_VERB);
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setType(classType);
+        return this;
+    }
+
     public RestDefinition type(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -573,6 +584,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setTypeClass(classType);
         verb.setType(asTypeName(classType));
+        return this;
+    }
+
+    public RestDefinition outType(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException(MISSING_VERB);
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutType(classType);
         return this;
     }
 
