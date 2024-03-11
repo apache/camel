@@ -74,11 +74,14 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
         final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(
                 basePath, emitter, filter,
-                destinationGenerator());
+                destinationGenerator(),
+                dtoPackageName);
 
-        for (String name : document.getPaths().getItemNames()) {
-            OpenApiPathItem item = document.getPaths().getItem(name);
-            restDslStatement.visit(name, item);
+        if (document.getPaths() != null) {
+            for (String name : document.getPaths().getItemNames()) {
+                OpenApiPathItem item = document.getPaths().getItem(name);
+                restDslStatement.visit(name, item);
+            }
         }
 
         final RestsDefinition rests = emitter.result();

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RestDslYamlGeneratorV3Test {
+public class RestDslYamlGeneratorV31Test {
 
     static OpenApiDocument document;
 
@@ -41,44 +41,16 @@ public class RestDslYamlGeneratorV3Test {
         try (CamelContext context = new DefaultCamelContext()) {
             final String yaml = RestDslGenerator.toYaml(document).generate(context);
 
-            final URI file = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreYaml.txt").toURI();
+            final URI file = RestDslYamlGeneratorV31Test.class.getResource("/AccountService-v6Yaml.txt").toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
-            assertThat(yaml).isEqualTo(expectedContent);
-        }
-    }
-
-    @Test
-    public void shouldGenerateYamlWithRestComponent() throws Exception {
-        try (CamelContext context = new DefaultCamelContext()) {
-            final String yaml = RestDslGenerator.toYaml(document)
-                    .withRestComponent("servlet")
-                    .withRestContextPath("/foo")
-                    .generate(context);
-
-            final URI file
-                    = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponentYaml.txt").toURI();
-            final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
-            assertThat(yaml).isEqualTo(expectedContent);
-        }
-    }
-
-    @Test
-    public void shouldGenerateYamlWithModel() throws Exception {
-        try (CamelContext context = new DefaultCamelContext()) {
-            final String yaml = RestDslGenerator.toYaml(document)
-                    .withDtoPackageName("model")
-                    .generate(context);
-
-            final URI file = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithModelYaml.txt").toURI();
-            final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertThat(yaml).isEqualTo(expectedContent);
         }
     }
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        try (InputStream is = RestDslYamlGeneratorV3Test.class.getResourceAsStream("openapi-spec.json")) {
+        try (InputStream is = RestDslYamlGeneratorV31Test.class.getResourceAsStream("AccountService-v6.json")) {
             String json = IOHelper.loadText(is);
             document = (OpenApiDocument) Library.readDocumentFromJSONString(json);
         }

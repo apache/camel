@@ -164,6 +164,10 @@ To
 
 We also renamed the `route-curcuit-breaker` console to `circuit-breaker`.
 
+=== camel-jbang
+
+The command `camel generate rest` have removed all the shorthand arguments `such as `-i -o` instead use the long names `--input --output`.
+
 === camel-jsonpath
 
 The `camel-jsonpath` will now work more similar as `camel-jq` when you specify a `resultType` and have a list of entities.

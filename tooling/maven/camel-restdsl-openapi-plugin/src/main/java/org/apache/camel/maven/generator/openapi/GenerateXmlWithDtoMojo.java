@@ -30,7 +30,7 @@ public class GenerateXmlWithDtoMojo extends GenerateXmlMojo {
         if (skip) {
             return;
         }
-        super.execute();
+        super.execute(true);
 
         generateDto("java");
     }
