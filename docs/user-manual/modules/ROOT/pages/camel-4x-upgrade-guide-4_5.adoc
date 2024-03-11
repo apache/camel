@@ -132,6 +132,11 @@ After:
 String uri = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
 ----
 
+=== camel-bom / camel-spring-boot-bom
+
+The Camel Maven BOMs (`camel-bom` and `camel-spring-boot-bom`) has been changed to use hardcoded
+Camel release versions to ensure the BOM is always correct.
+
 === camel-main
 
 The options `camel.main.backlogTracing`, `"camel.main.backlogTracingStandby`, and `camel.main.backlogTracingTemplates` has been
