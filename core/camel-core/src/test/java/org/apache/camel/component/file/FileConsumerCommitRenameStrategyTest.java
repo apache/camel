@@ -40,7 +40,8 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
-        mock.assertIsSatisfied();
+        // wait a bit to give the filesystem time to complete the operation before checking the result
+        mock.assertIsSatisfied(1000L);
     }
 
     @Test
