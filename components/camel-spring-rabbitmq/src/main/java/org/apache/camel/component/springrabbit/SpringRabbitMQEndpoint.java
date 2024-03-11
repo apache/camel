@@ -84,9 +84,9 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     @UriParam(label = "common",
               description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
-    @UriParam(label = "consumer",
-              description = "The queue(s) to use for consuming messages. Multiple queue names can be separated by comma."
-                            + " If none has been configured then Camel will generate an unique id as the queue name for the consumer.")
+    @UriParam(label = "common",
+              description = "The queue(s) to use for consuming or producing messages. Multiple queue names can be separated by comma."
+                            + " If none has been configured then Camel will generate an unique id as the queue name.")
     private String queues;
     @UriParam(label = "consumer", defaultValue = "true",
               description = "Specifies whether the consumer container should auto-startup.")
@@ -130,13 +130,13 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     private boolean exclusive;
     @UriParam(label = "consumer", description = "Set to true for an no-local consumer")
     private boolean noLocal;
-    @UriParam(label = "consumer", description = "The name of the dead letter exchange")
+    @UriParam(label = "common", description = "The name of the dead letter exchange")
     private String deadLetterExchange;
-    @UriParam(label = "consumer", description = "The name of the dead letter queue")
+    @UriParam(label = "common", description = "The name of the dead letter queue")
     private String deadLetterQueue;
-    @UriParam(label = "consumer", description = "The routing key for the dead letter exchange")
+    @UriParam(label = "common", description = "The routing key for the dead letter exchange")
     private String deadLetterRoutingKey;
-    @UriParam(label = "consumer", defaultValue = "direct", enums = "direct,fanout,headers,topic",
+    @UriParam(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic",
               description = "The type of the dead letter exchange")
     private String deadLetterExchangeType = "direct";
     @UriParam(label = "common",
@@ -146,6 +146,9 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
                             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
+    @UriParam(label = "producer",
+              description = "Specifies whether the producer should auto declare binding between exchange, queue and routing key when starting.")
+    private boolean autoDeclareProducer;
     @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "30000",
               description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply (InOut) messaging."
                             + " The default value is 30 seconds. A negative value indicates an indefinite timeout (Beware that this will cause a memory leak if a reply is not received).")
@@ -242,6 +245,14 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
     public void setAutoDeclare(boolean autoDeclare) {
         this.autoDeclare = autoDeclare;
+    }
+
+    public boolean isAutoDeclareProducer() {
+        return autoDeclareProducer;
+    }
+
+    public void setAutoDeclareProducer(boolean autoDeclareProducer) {
+        this.autoDeclareProducer = autoDeclareProducer;
     }
 
     public boolean isAsyncConsumer() {
@@ -610,10 +621,13 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     }
 
     public void declareElements(AbstractMessageListenerContainer container) {
-        AmqpAdmin admin = null;
         if (container instanceof MessageListenerContainer) {
-            admin = ((MessageListenerContainer) container).getAmqpAdmin();
+            AmqpAdmin admin = ((MessageListenerContainer) container).getAmqpAdmin();
+            declareElements(container, admin);
         }
+    }
+
+    public void declareElements(AbstractMessageListenerContainer container, AmqpAdmin admin) {
         if (admin != null && autoDeclare) {
             // bind dead letter exchange
             if (deadLetterExchange != null) {
@@ -711,7 +725,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 String qn = admin.declareQueue(rabbitQueue);
 
                 // if we auto created a new unique queue then the container needs to know the queue name
-                if (generateUniqueQueue) {
+                if (generateUniqueQueue && container != null) {
                     container.setQueueNames(qn);
                 }
 

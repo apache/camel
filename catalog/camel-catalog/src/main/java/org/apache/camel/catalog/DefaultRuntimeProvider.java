@@ -29,11 +29,13 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String DATAFORMAT_DIR = "org/apache/camel/catalog/dataformats";
     private static final String LANGUAGE_DIR = "org/apache/camel/catalog/languages";
     private static final String TRANSFORMER_DIR = "org/apache/camel/catalog/transformers";
+    private static final String CONSOLE_DIR = "org/apache/camel/catalog/dev-consoles";
     private static final String OTHER_DIR = "org/apache/camel/catalog/others";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
     private static final String TRANSFORMER_CATALOG = "org/apache/camel/catalog/transformers.properties";
+    private static final String CONSOLE_CATALOG = "org/apache/camel/catalog/dev-consoles.properties";
     private static final String OTHER_CATALOG = "org/apache/camel/catalog/others.properties";
 
     private CamelCatalog camelCatalog;
@@ -91,6 +93,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     }
 
     @Override
+    public String getDevConsoleJSonSchemaDirectory() {
+        return CONSOLE_DIR;
+    }
+
+    @Override
     public String getOtherJSonSchemaDirectory() {
         return OTHER_DIR;
     }
@@ -109,6 +116,10 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
 
     protected String getTransformerCatalog() {
         return TRANSFORMER_CATALOG;
+    }
+
+    protected String getDevConsoleCatalog() {
+        return CONSOLE_CATALOG;
     }
 
     protected String getOtherCatalog() {
@@ -170,6 +181,23 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     public List<String> findTransformerNames() {
         List<String> names = new ArrayList<>();
         try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getTransformerCatalog())) {
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        } catch (IOException e1) {
+            // ignore
+        }
+        return names;
+    }
+
+    @Override
+    public List<String> findDevConsoleNames() {
+        List<String> names = new ArrayList<>();
+        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getDevConsoleCatalog())) {
             if (is != null) {
                 try {
                     CatalogHelper.loadLines(is, names);

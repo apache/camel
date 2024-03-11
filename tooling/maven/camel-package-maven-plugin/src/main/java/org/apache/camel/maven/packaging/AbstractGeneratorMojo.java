@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -132,6 +133,12 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         if (project.getDescription() != null) {
             properties.append("projectDescription=").append(project.getDescription()).append(NL);
         }
+
+        String annotations = project.getProperties().getProperty("annotations");
+        if (!Strings.isNullOrEmpty(annotations)) {
+            properties.append("annotations=").append(annotations).append(NL);
+        }
+
         data = properties.toString();
         return data;
     }

@@ -68,7 +68,7 @@
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.25.2</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.25.6</aws-java-sdk2-version>
         <aws-xray-version>2.15.1</aws-xray-version>
         <azure-sdk-bom-version>1.2.21</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
@@ -222,7 +222,7 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.2</ivy-version>
         <jackson-jq-version>1.0.0-preview.20240207</jackson-jq-version>
-        <jackson2-version>2.16.1</jackson2-version>
+        <jackson2-version>2.16.2</jackson2-version>
         <jackrabbit-version>2.21.25</jackrabbit-version>
         <jasminb-jsonapi-version>0.13</jasminb-jsonapi-version>
         <jandex-version>3.1.6</jandex-version>
@@ -257,7 +257,7 @@
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
         <jcache-version>1.1.1</jcache-version>
         <jcr-version>2.0</jcr-version>
-        <jedis-client-version>5.1.0</jedis-client-version>
+        <jedis-client-version>5.1.2</jedis-client-version>
         <jetcd-version>0.7.7</jetcd-version>
         <jetty-version>12.0.7</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
@@ -372,7 +372,7 @@
         <opensearch-version>2.11.0</opensearch-version>
         <opensearch-testcontainers-version>2.0.1</opensearch-testcontainers-version>
         <openstack4j-version>3.11</openstack4j-version>
-        <opentelemetry-version>1.35.0</opentelemetry-version>
+        <opentelemetry-version>1.36.0</opentelemetry-version>
         <opentelemetry-alpha-version>1.23.1-alpha</opentelemetry-alpha-version>
         <optaplanner-version>9.44.0.Final</optaplanner-version>
         <paho-version>1.2.5</paho-version>
@@ -393,7 +393,7 @@
         <protostream-version>4.6.5.Final</protostream-version>
         <prowide-version>SRU2023-10.1.4</prowide-version>
         <pubnub-version>6.4.5</pubnub-version>
-        <pulsar-version>3.2.0</pulsar-version>
+        <pulsar-version>3.2.1</pulsar-version>
         <qdrant-client-version>1.8.0</qdrant-client-version>
         <qpid-broker-version>9.2.0</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
@@ -414,7 +414,7 @@
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.4</saxon-version>
         <scala-datasonnet-version>2.13.13</scala-datasonnet-version>
-        <shiro-version>1.13.0</shiro-version>
+        <shiro-version>2.0.0</shiro-version>
         <slack-api-model-version>1.38.1</slack-api-model-version>
         <slf4j-api-version>2.0.12</slf4j-api-version>
         <slf4j-version>2.0.12</slf4j-version>
@@ -444,11 +444,11 @@
         <swagger-java-version>1.6.10</swagger-java-version>
         <swagger-openapi3-version>2.2.20</swagger-openapi3-version>
         <swagger-java-parser-version>1.0.65</swagger-java-parser-version>
-        <swagger-openapi3-java-parser-version>2.1.20</swagger-openapi3-java-parser-version>
+        <swagger-openapi3-java-parser-version>2.1.21</swagger-openapi3-java-parser-version>
         <swagger-request-validator-version>2.40.0</swagger-request-validator-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
-        <testcontainers-version>1.19.6</testcontainers-version>
+        <testcontainers-version>1.19.7</testcontainers-version>
         <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
         <tika-version>2.9.1</tika-version>
         <twilio-version>10.1.0</twilio-version>

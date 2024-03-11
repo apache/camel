@@ -17,7 +17,6 @@
 package org.apache.camel.kotlin.dataformats
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
@@ -25,6 +24,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.JsonDataFormat
 
+/**
+ * Marshal POJOs to JSON and back using Gson
+ */
 public fun DataFormatDsl.gson(i: GsonDataFormatDsl.() -> Unit) {
   def = GsonDataFormatDsl().apply(i).def
 }
@@ -36,26 +38,48 @@ public class GsonDataFormatDsl {
   init {
     def = JsonDataFormat()}
 
+  /**
+   * To enable pretty printing output nicely formatted. Is by default false.
+   */
   public fun prettyPrint(prettyPrint: Boolean) {
     def.prettyPrint = prettyPrint.toString()
   }
 
+  /**
+   * To enable pretty printing output nicely formatted. Is by default false.
+   */
   public fun prettyPrint(prettyPrint: String) {
     def.prettyPrint = prettyPrint
   }
 
-  public fun unmarshalType(unmarshalType: Class<out Any>) {
+  /**
+   * Class name of the java type to use when unmarshalling
+   */
+  public fun unmarshalType(unmarshalType: Class<*>) {
     def.unmarshalType = unmarshalType
   }
 
+  /**
+   * Whether the data format should set the Content-Type header with the type from the data format.
+   * For example application/xml for data formats marshalling to XML, or application/json for data
+   * formats marshalling to JSON
+   */
   public fun contentTypeHeader(contentTypeHeader: Boolean) {
     def.contentTypeHeader = contentTypeHeader.toString()
   }
 
+  /**
+   * Whether the data format should set the Content-Type header with the type from the data format.
+   * For example application/xml for data formats marshalling to XML, or application/json for data
+   * formats marshalling to JSON
+   */
   public fun contentTypeHeader(contentTypeHeader: String) {
     def.contentTypeHeader = contentTypeHeader
   }
 
+  /**
+   * To configure the date format while marshall or unmarshall Date fields in JSON using Gson
+   */
   public fun dateFormatPattern(dateFormatPattern: String) {
     def.dateFormatPattern = dateFormatPattern
   }

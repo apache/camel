@@ -26,11 +26,10 @@ import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.crypto.CipherService;
+import org.apache.shiro.crypto.cipher.AesCipherService;
+import org.apache.shiro.crypto.cipher.CipherService;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,15 +55,15 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
 
     public ShiroSecurityPolicy(String iniResourcePath) {
         this();
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory(iniResourcePath);
-        securityManager = factory.getInstance();
+        Ini ini = new Ini();
+        ini.loadFromPath(iniResourcePath);
+        securityManager = new IniSecurityManagerFactory(ini).getInstance();
         SecurityUtils.setSecurityManager(securityManager);
     }
 
     public ShiroSecurityPolicy(Ini ini) {
         this();
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory(ini);
-        securityManager = factory.getInstance();
+        securityManager = new IniSecurityManagerFactory(ini).getInstance();
         SecurityUtils.setSecurityManager(securityManager);
     }
 

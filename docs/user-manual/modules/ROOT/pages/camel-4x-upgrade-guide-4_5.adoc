@@ -132,12 +132,41 @@ After:
 String uri = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
 ----
 
+=== camel-bom / camel-spring-boot-bom
+
+The Camel Maven BOMs (`camel-bom` and `camel-spring-boot-bom`) has been changed to use hardcoded
+Camel release versions to ensure the BOM is always correct.
+
 === camel-main
 
 The options `camel.main.backlogTracing`, `"camel.main.backlogTracingStandby`, and `camel.main.backlogTracingTemplates` has been
 moved into a new group `camel.debug` with more options to configure the backlog tracer.
 
 To enable backlog tracing you should now set `camel.trace.enabled=true` instead of `camel.main.backlogTracing=true`.
+
+=== camel-console
+
+The `@DevConsole` annotation has been enhanced to include more information.
+
+Migrate from
+
+[source,java]
+----
+@DevConsole("stub")
+----
+
+To
+
+[source,java]
+----
+@DevConsole(name = "stub", description = "Browse messages on stub endpoints")
+----
+
+We also renamed the `route-curcuit-breaker` console to `circuit-breaker`.
+
+=== camel-jbang
+
+The command `camel generate rest` have removed all the shorthand arguments `such as `-i -o` instead use the long names `--input --output`.
 
 === camel-jsonpath
 
@@ -201,6 +230,10 @@ calls the `/api-doc` endpoint.
 === camel-platform-http-vertx
 
 Added a Cookie Handler allowing the addition, retrieval and expiry of Cookies.
+
+=== camel-shiro
+
+Upgraded Apache Shiro from 1.13 to 2.0.
 
 === camel-twilio
 

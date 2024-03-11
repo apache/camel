@@ -21,10 +21,20 @@ public class BedrockAgentEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(42);
         props.add("accessKey");
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
         props.add("bedrockAgentClient");
+        props.add("bridgeErrorHandler");
         props.add("dataSourceId");
+        props.add("delay");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("greedy");
+        props.add("ingestionJobId");
+        props.add("initialDelay");
         props.add("knowledgeBaseId");
         props.add("label");
         props.add("lazyStartProducer");
@@ -32,16 +42,26 @@ public class BedrockAgentEndpointUriFactory extends org.apache.camel.support.com
         props.add("operation");
         props.add("overrideEndpoint");
         props.add("pojoRequest");
+        props.add("pollStrategy");
         props.add("profileCredentialsName");
         props.add("proxyHost");
         props.add("proxyPort");
         props.add("proxyProtocol");
         props.add("region");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
         props.add("secretKey");
+        props.add("sendEmptyMessageWhenIdle");
         props.add("sessionToken");
+        props.add("startScheduler");
+        props.add("timeUnit");
         props.add("trustAllCertificates");
         props.add("uriEndpointOverride");
         props.add("useDefaultCredentialsProvider");
+        props.add("useFixedDelay");
         props.add("useProfileCredentialsProvider");
         props.add("useSessionCredentials");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
@@ -50,7 +70,9 @@ public class BedrockAgentEndpointUriFactory extends org.apache.camel.support.com
         secretProps.add("secretKey");
         secretProps.add("sessionToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override

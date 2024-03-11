@@ -71,6 +71,11 @@ public interface RuntimeProvider {
     String getTransformerJSonSchemaDirectory();
 
     /**
+     * Gets the directory where the dev-console json files are stored in the catalog JAR file
+     */
+    String getDevConsoleJSonSchemaDirectory();
+
+    /**
      * Gets the directory where the other (miscellaneous) json files are stored in the catalog JAR file
      */
     String getOtherJSonSchemaDirectory();
@@ -94,6 +99,11 @@ public interface RuntimeProvider {
      * Find all the transfromer names from the Camel catalog supported by the provider
      */
     List<String> findTransformerNames();
+
+    /**
+     * Find all the dev console names from the Camel catalog supported by the provider
+     */
+    List<String> findDevConsoleNames();
 
     /**
      * Find all the other (miscellaneous) names from the Camel catalog supported by the provider

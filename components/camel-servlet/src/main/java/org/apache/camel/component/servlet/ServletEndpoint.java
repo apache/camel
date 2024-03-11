@@ -37,7 +37,9 @@ import org.apache.camel.spi.UriPath;
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "servlet", extendsScheme = "http", title = "Servlet",
              syntax = "servlet:contextPath", consumerOnly = true, category = { Category.HTTP })
-@Metadata(excludeProperties = "httpUri")
+@Metadata(excludeProperties = "httpUri", annotations = {
+        "protocol=http",
+})
 public class ServletEndpoint extends HttpCommonEndpoint {
 
     private HttpBinding binding;

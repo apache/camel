@@ -27,7 +27,9 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
+import io.apicurio.datamodels.models.Document;
+import io.apicurio.datamodels.models.ModelType;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -47,22 +49,25 @@ import static org.openapitools.codegen.CodegenConstants.SERIALIZABLE_MODEL;
 @CommandLine.Command(name = "rest", description = "Generate REST DSL source code from OpenApi specification")
 public class CodeRestGenerator extends CamelCommand {
 
-    @CommandLine.Option(names = { "-i", "--input" }, required = true, description = "OpenApi specification file name")
+    @CommandLine.Option(names = { "--input" }, required = true, description = "OpenApi specification file name")
     private String input;
-    @CommandLine.Option(names = { "-o", "--output" }, description = "Output REST DSL file name")
+    @CommandLine.Option(names = { "--output" }, description = "Output REST DSL file name")
     private String output;
-    @CommandLine.Option(names = { "-t", "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml")
+    @CommandLine.Option(names = { "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml")
     private String type;
-    @CommandLine.Option(names = { "-r", "--routes" }, description = "Generate routes (only in YAML)")
+    @CommandLine.Option(names = { "--routes" }, description = "Generate routes (only in YAML)")
     private boolean generateRoutes;
-    @CommandLine.Option(names = { "-d", "--dto" }, description = "Generate Java Data Objects")
+    @CommandLine.Option(names = { "--dto" }, description = "Generate Java Data Objects")
     private boolean generateDataObjects;
-    @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, or spring-boot)",
+    @CommandLine.Option(names = { "--runtime" }, description = "Runtime (quarkus, or spring-boot)",
                         defaultValue = "quarkus")
     private String runtime;
-    @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated Java models",
+    @CommandLine.Option(names = { "--package" }, description = "Package for generated Java models",
                         defaultValue = "model")
     private String packageName;
+    @CommandLine.Option(names = { "--openapi-version" }, description = "Openapi specification 3.0 or 3.1",
+                        defaultValue = "3.0")
+    private String openApiVersion = "3.0";
 
     public CodeRestGenerator(CamelJBangMain main) {
         super(main);
@@ -70,15 +75,31 @@ public class CodeRestGenerator extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        OpenApiDocument doc;
+
         final ObjectNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
-        OpenApi30Document document = (OpenApi30Document) Library.readDocument(node);
+        Document source = Library.readDocument(node);
+        ModelType mt = ModelType.OPENAPI30;
+        if ("3.1".equals(openApiVersion)) {
+            mt = ModelType.OPENAPI31;
+        }
+        if (!source.root().modelType().equals(mt)) {
+            doc = (OpenApiDocument) Library.transformDocument(source, mt);
+        } else {
+            doc = (OpenApiDocument) source;
+        }
+
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new DefaultCamelContext()) {
             String text = null;
             if ("yaml".equalsIgnoreCase(type)) {
-                text = RestDslGenerator.toYaml(document).generate(context, generateRoutes);
+                text = RestDslGenerator.toYaml(doc)
+                        .withDtoPackageName(generateDataObjects ? packageName : null)
+                        .generate(context, generateRoutes);
             } else if ("xml".equalsIgnoreCase(type)) {
-                text = RestDslGenerator.toXml(document).generate(context);
+                text = RestDslGenerator.toXml(doc)
+                        .withDtoPackageName(generateDataObjects ? packageName : null)
+                        .generate(context);
             }
             if (text != null) {
                 if (output == null) {

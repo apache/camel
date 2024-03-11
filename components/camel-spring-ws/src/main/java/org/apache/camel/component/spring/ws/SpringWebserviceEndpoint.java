@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -32,6 +33,9 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
              syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
              category = { Category.WEBSERVICE }, headersClass = SpringWebserviceConstants.class)
+@Metadata(annotations = {
+        "protocol=http",
+})
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     @UriParam

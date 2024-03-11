@@ -37,7 +37,7 @@ public class OperationVisitorTest {
     public void shouldEmitCodeForOas2ParameterInQuery() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null, null);
 
         final OpenApi20Parameter parameter = new OpenApi20ParameterImpl();
         parameter.setName("param");
@@ -59,7 +59,8 @@ public class OperationVisitorTest {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
         final OperationVisitor<?> visitor
-                = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DefaultDestinationGenerator());
+                = new OperationVisitor<>(
+                        emitter, new OperationFilter(), "/path/{param}", new DefaultDestinationGenerator(), null);
 
         final OpenApi20Document document = new OpenApi20DocumentImpl();
         final OpenApiPaths paths = document.createPaths();

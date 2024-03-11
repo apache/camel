@@ -44,8 +44,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-            <classifier>jakarta</classifier>
+            <artifactId>shiro-jakarta-ee</artifactId>
+            <version>${shiro-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-crypto-cipher</artifactId>
             <version>${shiro-version}</version>
         </dependency>
 

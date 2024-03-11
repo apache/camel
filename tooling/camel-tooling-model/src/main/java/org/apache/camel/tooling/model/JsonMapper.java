@@ -65,6 +65,8 @@ public final class JsonMapper {
             return generateDataFormatModel(obj);
         } else if (obj.containsKey("transformer")) {
             return generateTransformerModel(obj);
+        } else if (obj.containsKey("console")) {
+            return generateDevConsoleModel(obj);
         } else if (obj.containsKey("other")) {
             return generateOtherModel(obj);
         } else if (obj.containsKey("model")) {
@@ -403,6 +405,36 @@ public final class JsonMapper {
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("transformer", obj);
+        return wrapper;
+    }
+
+    public static DevConsoleModel generateDevConsoleModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateDevConsoleModel(obj);
+    }
+
+    public static DevConsoleModel generateDevConsoleModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("console");
+        DevConsoleModel model = new DevConsoleModel();
+        parseModel(mobj, model);
+        model.setGroup(mobj.getString("group"));
+        parseArtifact(mobj, model);
+        return model;
+    }
+
+    public static String createParameterJsonSchema(DevConsoleModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static JsonObject asJsonObject(DevConsoleModel model) {
+        JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.put("group", model.getGroup());
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("console", obj);
         return wrapper;
     }
 

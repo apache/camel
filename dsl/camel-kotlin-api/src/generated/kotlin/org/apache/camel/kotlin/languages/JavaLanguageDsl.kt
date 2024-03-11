@@ -17,13 +17,15 @@
 package org.apache.camel.kotlin.languages
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.model.language.JavaExpression
 
+/**
+ * Evaluates a Java (Java compiled once at runtime) expression.
+ */
 public fun java(java: String, i: JavaLanguageDsl.() -> Unit = {}): JavaExpression {
   val def = JavaExpression(java)
   JavaLanguageDsl(def).apply(i)
@@ -40,34 +42,62 @@ public class JavaLanguageDsl(
     this.def = def
   }
 
+  /**
+   * Sets the id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Whether the expression should be pre compiled once during initialization phase. If this is
+   * turned off, then the expression is reloaded and compiled on each evaluation.
+   */
   public fun preCompile(preCompile: Boolean) {
     def.preCompile = preCompile.toString()
   }
 
+  /**
+   * Whether the expression should be pre compiled once during initialization phase. If this is
+   * turned off, then the expression is reloaded and compiled on each evaluation.
+   */
   public fun preCompile(preCompile: String) {
     def.preCompile = preCompile
   }
 
+  /**
+   * Whether single quotes can be used as replacement for double quotes. This is convenient when you
+   * need to work with strings inside strings.
+   */
   public fun singleQuotes(singleQuotes: Boolean) {
     def.singleQuotes = singleQuotes.toString()
   }
 
+  /**
+   * Whether single quotes can be used as replacement for double quotes. This is convenient when you
+   * need to work with strings inside strings.
+   */
   public fun singleQuotes(singleQuotes: String) {
     def.singleQuotes = singleQuotes
   }
 
-  public fun resultType(resultType: Class<out Any>) {
+  /**
+   * Sets the class of the result type (type from output)
+   */
+  public fun resultType(resultType: Class<*>) {
     def.resultType = resultType
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: Boolean) {
     def.trim = trim.toString()
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: String) {
     def.trim = trim
   }

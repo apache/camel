@@ -23,6 +23,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.IcalDataFormat
 
+/**
+ * Marshal and unmarshal iCal (.ics) documents to/from model objects.
+ */
 public fun DataFormatDsl.ical(i: IcalDataFormatDsl.() -> Unit) {
   def = IcalDataFormatDsl().apply(i).def
 }
@@ -34,14 +37,23 @@ public class IcalDataFormatDsl {
   init {
     def = IcalDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Whether to validate.
+   */
   public fun validating(validating: Boolean) {
     def.validating = validating.toString()
   }
 
+  /**
+   * Whether to validate.
+   */
   public fun validating(validating: String) {
     def.validating = validating
   }

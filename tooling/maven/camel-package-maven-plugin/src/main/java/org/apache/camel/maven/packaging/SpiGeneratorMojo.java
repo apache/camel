@@ -135,7 +135,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                     continue;
                 }
                 String pvals;
-                // @DataTypeTransformer uses name instead of value
+                // @DataTypeTransformer/@DevConsole uses name instead of value
                 if (annotation.value() == null) {
                     pvals = annotation.values().stream()
                             .filter(annotationValue -> "name".equals(annotationValue.name()))

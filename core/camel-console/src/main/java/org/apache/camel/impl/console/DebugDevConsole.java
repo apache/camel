@@ -39,7 +39,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole("debug")
+@DevConsole(name = "debug", description = "Camel route debugger")
 public class DebugDevConsole extends AbstractDevConsole {
 
     public static final String COMMAND = "command";

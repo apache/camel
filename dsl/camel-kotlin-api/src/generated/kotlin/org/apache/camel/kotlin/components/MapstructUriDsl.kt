@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Type Conversion using Mapstruct
+ */
 public fun UriDsl.mapstruct(i: MapstructUriDsl.() -> Unit) {
   MapstructUriDsl(this).apply(i)
 }
@@ -39,23 +42,48 @@ public class MapstructUriDsl(
 
   private var className: String = ""
 
+  /**
+   * The fully qualified class name of the POJO that mapstruct should convert to (target)
+   */
   public fun className(className: String) {
     this.className = className
     it.url("$className")
   }
 
+  /**
+   * Whether there must exist a mapstruct converter to convert to the POJO.
+   */
   public fun mandatory(mandatory: String) {
     it.property("mandatory", mandatory)
   }
 
+  /**
+   * Whether there must exist a mapstruct converter to convert to the POJO.
+   */
   public fun mandatory(mandatory: Boolean) {
     it.property("mandatory", mandatory.toString())
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }

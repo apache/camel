@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

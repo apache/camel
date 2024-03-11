@@ -171,8 +171,9 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured.
-     * If only one instance of DestinationResolver is found then it will be used. This is enabled by default.
+     * Whether to auto-discover DestinationResolver/TemporaryQueueResolver from the registry, if no destination resolver
+     * has been configured. If only one instance of DestinationResolver/TemporaryQueueResolver is found then it will be
+     * used. This is enabled by default.
      */
     public boolean isAllowAutoWiredDestinationResolver() {
         return allowAutoWiredDestinationResolver;
@@ -707,6 +708,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return JmsConfiguration.createDestinationResolver(destinationEndpoint);
     }
 
+    public TemporaryQueueResolver getTemporaryQueueResolver() {
+        return configuration.getTemporaryQueueResolver();
+    }
+
+    public void setTemporaryQueueResolver(TemporaryQueueResolver temporaryQueueResolver) {
+        configuration.setTemporaryQueueResolver(temporaryQueueResolver);
+    }
+
     public void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint) {
         configuration.configureMessageListenerContainer(container, endpoint);
     }
@@ -1074,7 +1083,17 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
                 DestinationResolver destinationResolver = beans.iterator().next();
                 configuration.setDestinationResolver(destinationResolver);
             } else if (beans.size() > 1) {
-                LOG.debug("Cannot autowire ConnectionFactory as {} instances found in registry.", beans.size());
+                LOG.debug("Cannot autowire DestinationResolver as {} instances found in registry.", beans.size());
+            }
+        }
+
+        if (configuration.getTemporaryQueueResolver() == null && isAllowAutoWiredDestinationResolver()) {
+            Set<TemporaryQueueResolver> beans = getCamelContext().getRegistry().findByType(TemporaryQueueResolver.class);
+            if (beans.size() == 1) {
+                TemporaryQueueResolver destinationResolver = beans.iterator().next();
+                configuration.setTemporaryQueueResolver(destinationResolver);
+            } else if (beans.size() > 1) {
+                LOG.debug("Cannot autowire TemporaryQueueResolver as {} instances found in registry.", beans.size());
             }
         }
 

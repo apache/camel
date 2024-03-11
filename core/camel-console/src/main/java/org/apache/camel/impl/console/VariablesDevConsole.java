@@ -26,7 +26,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("variables")
+@DevConsole(name = "variables", description = "Displays variables")
 public class VariablesDevConsole extends AbstractDevConsole {
 
     public VariablesDevConsole() {

@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Send GraphQL queries and mutations to external systems.
+ */
 public fun UriDsl.graphql(i: GraphqlUriDsl.() -> Unit) {
   GraphqlUriDsl(this).apply(i)
 }
@@ -39,59 +42,111 @@ public class GraphqlUriDsl(
 
   private var httpUri: String = ""
 
+  /**
+   * The GraphQL server URI.
+   */
   public fun httpUri(httpUri: String) {
     this.httpUri = httpUri
     it.url("$httpUri")
   }
 
+  /**
+   * The query or mutation name.
+   */
   public fun operationName(operationName: String) {
     it.property("operationName", operationName)
   }
 
+  /**
+   * The proxy host in the format hostname:port.
+   */
   public fun proxyHost(proxyHost: String) {
     it.property("proxyHost", proxyHost)
   }
 
+  /**
+   * The query text.
+   */
   public fun query(query: String) {
     it.property("query", query)
   }
 
+  /**
+   * The query file name located in the classpath.
+   */
   public fun queryFile(queryFile: String) {
     it.property("queryFile", queryFile)
   }
 
+  /**
+   * The name of a header containing the GraphQL query.
+   */
   public fun queryHeader(queryHeader: String) {
     it.property("queryHeader", queryHeader)
   }
 
+  /**
+   * The JsonObject instance containing the operation variables.
+   */
   public fun variables(variables: String) {
     it.property("variables", variables)
   }
 
+  /**
+   * The name of a header containing a JsonObject instance containing the operation variables.
+   */
   public fun variablesHeader(variablesHeader: String) {
     it.property("variablesHeader", variablesHeader)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  /**
+   * The access token sent in the Authorization header.
+   */
   public fun accessToken(accessToken: String) {
     it.property("accessToken", accessToken)
   }
 
+  /**
+   * The JWT Authorization type. Default is Bearer.
+   */
   public fun jwtAuthorizationType(jwtAuthorizationType: String) {
     it.property("jwtAuthorizationType", jwtAuthorizationType)
   }
 
+  /**
+   * The password for Basic authentication.
+   */
   public fun password(password: String) {
     it.property("password", password)
   }
 
+  /**
+   * The username for Basic authentication.
+   */
   public fun username(username: String) {
     it.property("username", username)
   }

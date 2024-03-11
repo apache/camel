@@ -202,6 +202,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             ComponentModel model = writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias,
                     extendsAlias, label, schemes, parentData);
+
             models.put(classElement, model);
         }
     }
@@ -290,6 +291,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (componentModel.isApi()) {
             enhanceComponentModelWithApiModel(componentModel);
         }
+
+        SchemaHelper.addModelMetadata(componentModel, project);
+        SchemaHelper.addModelMetadata(componentModel, classElement.getAnnotation(Metadata.class));
 
         String json = JsonMapper.createParameterJsonSchema(componentModel);
 

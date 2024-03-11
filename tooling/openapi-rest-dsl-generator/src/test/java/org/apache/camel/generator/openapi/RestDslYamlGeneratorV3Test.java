@@ -41,7 +41,7 @@ public class RestDslYamlGeneratorV3Test {
         try (CamelContext context = new DefaultCamelContext()) {
             final String yaml = RestDslGenerator.toYaml(document).generate(context);
 
-            final URI file = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreYaml.txt").toURI();
+            final URI file = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreYaml.txt").toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
             assertThat(yaml).isEqualTo(expectedContent);
@@ -49,14 +49,28 @@ public class RestDslYamlGeneratorV3Test {
     }
 
     @Test
-    public void shouldGenerateXmlWithRestComponent() throws Exception {
+    public void shouldGenerateYamlWithRestComponent() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             final String yaml = RestDslGenerator.toYaml(document)
                     .withRestComponent("servlet")
                     .withRestContextPath("/foo")
                     .generate(context);
 
-            final URI file = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreWithRestComponentYaml.txt").toURI();
+            final URI file
+                    = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponentYaml.txt").toURI();
+            final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
+            assertThat(yaml).isEqualTo(expectedContent);
+        }
+    }
+
+    @Test
+    public void shouldGenerateYamlWithModel() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            final String yaml = RestDslGenerator.toYaml(document)
+                    .withDtoPackageName("model")
+                    .generate(context);
+
+            final URI file = RestDslYamlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithModelYaml.txt").toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertThat(yaml).isEqualTo(expectedContent);
         }

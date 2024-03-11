@@ -23,7 +23,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("bean")
+@DevConsole(name = "bean", description = "Displays Java beans from the registry")
 public class BeanDevConsole extends AbstractDevConsole {
 
     public BeanDevConsole() {

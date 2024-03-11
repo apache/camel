@@ -170,4 +170,9 @@ public @interface Metadata {
      * This can be used to help tooling to provide a better user experience.
      */
     String inputLanguage() default "";
+
+    /**
+     * Annotations data for Camel concepts such as components, EIP, etc.
+     */
+    String[] annotations() default {};
 }

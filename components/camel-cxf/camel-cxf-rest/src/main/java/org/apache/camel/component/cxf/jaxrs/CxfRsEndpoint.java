@@ -38,6 +38,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -71,6 +72,9 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = SCHEME_CXF_RS, title = "CXF-RS", syntax = "cxfrs:beanId:address",
              category = { Category.REST }, lenientProperties = true, headersClass = CxfConstants.class)
+@Metadata(annotations = {
+        "protocol=http",
+})
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);

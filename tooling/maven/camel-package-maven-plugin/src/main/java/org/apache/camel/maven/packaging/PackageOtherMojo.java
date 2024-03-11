@@ -124,6 +124,8 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             }
             model.setTitle(title);
 
+            SchemaHelper.addModelMetadata(model, project);
+
             // grab level from pom.xml or default to stable
             String level = project.getProperties().getProperty("supportLevel");
             if (level != null) {

@@ -82,6 +82,10 @@ public class JmsConfiguration implements Cloneable {
               description = "A pluggable org.springframework.jms.support.destination.DestinationResolver that allows you to use your own resolver"
                             + " (for example, to lookup the real destination in a JNDI registry).")
     private DestinationResolver destinationResolver;
+    @UriParam(label = "advanced",
+              description = "A pluggable TemporaryQueueResolver that allows you to use your own resolver for creating temporary queues"
+                            + " (some messaging systems has special requirements for creating temporary queues).")
+    private TemporaryQueueResolver temporaryQueueResolver;
     // Used to configure the spring Container
     @UriParam(label = "advanced",
               description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
@@ -1565,6 +1569,18 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setDestinationResolver(DestinationResolver destinationResolver) {
         this.destinationResolver = destinationResolver;
+    }
+
+    public TemporaryQueueResolver getTemporaryQueueResolver() {
+        return temporaryQueueResolver;
+    }
+
+    /**
+     * A pluggable TemporaryQueueResolver that allows you to use your own resolver for creating temporary queues (some
+     * messaging systems has special requirements for creating temporary queues).
+     */
+    public void setTemporaryQueueResolver(TemporaryQueueResolver temporaryQueueResolver) {
+        this.temporaryQueueResolver = temporaryQueueResolver;
     }
 
     // Implementation methods

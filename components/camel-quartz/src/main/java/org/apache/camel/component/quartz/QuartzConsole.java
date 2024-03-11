@@ -29,7 +29,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerMetaData;
 
-@DevConsole("quartz")
+@DevConsole(name = "quartz", description = "Quartz Scheduler")
 public class QuartzConsole extends AbstractDevConsole {
 
     public QuartzConsole() {

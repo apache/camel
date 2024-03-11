@@ -139,7 +139,7 @@ public class BomGeneratorMojo extends AbstractMojo {
         try {
             DependencyManagement mng = project.getDependencyManagement();
 
-            List<Dependency> filteredDependencies = enhance(filter(mng.getDependencies()));
+            List<Dependency> filteredDependencies = filter(mng.getDependencies());
 
             Set<String> externallyManagedDependencies = getExternallyManagedDependencies();
             checkConflictsWithExternalBoms(filteredDependencies, externallyManagedDependencies);
@@ -156,17 +156,6 @@ public class BomGeneratorMojo extends AbstractMojo {
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot generate the output BOM file", ex);
         }
-    }
-
-    private List<Dependency> enhance(List<Dependency> dependencyList) {
-
-        for (Dependency dep : dependencyList) {
-            if (dep.getGroupId().startsWith("org.apache.camel") && project.getVersion().equals(dep.getVersion())) {
-                dep.setVersion("${project.version}");
-            }
-        }
-
-        return dependencyList;
     }
 
     private List<Dependency> filter(List<Dependency> dependencyList) {

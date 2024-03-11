@@ -29,7 +29,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("trace")
+@DevConsole(name = "trace", displayName = "Camel Tracing", description = "Trace routed messages")
 @Configurer(bootstrap = true)
 public class TraceDevConsole extends AbstractDevConsole {
 

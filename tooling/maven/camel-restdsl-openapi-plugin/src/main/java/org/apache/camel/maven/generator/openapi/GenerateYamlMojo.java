@@ -44,6 +44,10 @@ public class GenerateYamlMojo extends AbstractGenerateMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        execute(false);
+    }
+
+    protected void execute(boolean dto) throws MojoExecutionException {
         if (skip) {
             return;
         }
@@ -70,6 +74,11 @@ public class GenerateYamlMojo extends AbstractGenerateMojo {
 
         if (ObjectHelper.isNotEmpty(filterOperation)) {
             generator.withOperationFilter(filterOperation);
+        }
+        if (dto) {
+            if (modelPackage != null) {
+                generator.withDtoPackageName(modelPackage);
+            }
         }
 
         if (ObjectHelper.isNotEmpty(destinationGenerator)) {

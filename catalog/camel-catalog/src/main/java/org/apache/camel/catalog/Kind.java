@@ -24,6 +24,7 @@ public enum Kind {
     dataformat,
     language,
     transformer,
+    console,
     other,
     eip
 }

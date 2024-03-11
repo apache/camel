@@ -30,6 +30,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "asyncConsumer": target.setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
         case "autodeclare":
         case "autoDeclare": target.setAutoDeclare(property(camelContext, boolean.class, value)); return true;
+        case "autodeclareproducer":
+        case "autoDeclareProducer": target.setAutoDeclareProducer(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -105,6 +107,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "asyncConsumer": return boolean.class;
         case "autodeclare":
         case "autoDeclare": return boolean.class;
+        case "autodeclareproducer":
+        case "autoDeclareProducer": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
         case "bridgeerrorhandler":
@@ -181,6 +185,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "asyncConsumer": return target.isAsyncConsumer();
         case "autodeclare":
         case "autoDeclare": return target.isAutoDeclare();
+        case "autodeclareproducer":
+        case "autoDeclareProducer": return target.isAutoDeclareProducer();
         case "autostartup":
         case "autoStartup": return target.isAutoStartup();
         case "bridgeerrorhandler":

@@ -79,6 +79,67 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterExchange the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder deadLetterExchange(
+                String deadLetterExchange) {
+            doSetProperty("deadLetterExchange", deadLetterExchange);
+            return this;
+        }
+        /**
+         * The type of the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: direct
+         * Group: common
+         * 
+         * @param deadLetterExchangeType the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder deadLetterExchangeType(
+                String deadLetterExchangeType) {
+            doSetProperty("deadLetterExchangeType", deadLetterExchangeType);
+            return this;
+        }
+        /**
+         * The name of the dead letter queue.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterQueue the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder deadLetterQueue(
+                String deadLetterQueue) {
+            doSetProperty("deadLetterQueue", deadLetterQueue);
+            return this;
+        }
+        /**
+         * The routing key for the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterRoutingKey the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder deadLetterRoutingKey(
+                String deadLetterRoutingKey) {
+            doSetProperty("deadLetterRoutingKey", deadLetterRoutingKey);
+            return this;
+        }
+        /**
          * Specifies whether Camel ignores the ReplyTo header in messages. If
          * true, Camel does not send a reply back to the destination specified
          * in the ReplyTo header. You can use this option if you want Camel to
@@ -123,6 +184,22 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         default SpringRabbitMQEndpointConsumerBuilder disableReplyTo(
                 String disableReplyTo) {
             doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * The queue(s) to use for consuming or producing messages. Multiple
+         * queue names can be separated by comma. If none has been configured
+         * then Camel will generate an unique id as the queue name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queues the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointConsumerBuilder queues(String queues) {
+            doSetProperty("queues", queues);
             return this;
         }
         /**
@@ -357,67 +434,6 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the dead letter exchange.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param deadLetterExchange the value to set
-         * @return the dsl builder
-         */
-        default SpringRabbitMQEndpointConsumerBuilder deadLetterExchange(
-                String deadLetterExchange) {
-            doSetProperty("deadLetterExchange", deadLetterExchange);
-            return this;
-        }
-        /**
-         * The type of the dead letter exchange.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: direct
-         * Group: consumer
-         * 
-         * @param deadLetterExchangeType the value to set
-         * @return the dsl builder
-         */
-        default SpringRabbitMQEndpointConsumerBuilder deadLetterExchangeType(
-                String deadLetterExchangeType) {
-            doSetProperty("deadLetterExchangeType", deadLetterExchangeType);
-            return this;
-        }
-        /**
-         * The name of the dead letter queue.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param deadLetterQueue the value to set
-         * @return the dsl builder
-         */
-        default SpringRabbitMQEndpointConsumerBuilder deadLetterQueue(
-                String deadLetterQueue) {
-            doSetProperty("deadLetterQueue", deadLetterQueue);
-            return this;
-        }
-        /**
-         * The routing key for the dead letter exchange.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param deadLetterRoutingKey the value to set
-         * @return the dsl builder
-         */
-        default SpringRabbitMQEndpointConsumerBuilder deadLetterRoutingKey(
-                String deadLetterRoutingKey) {
-            doSetProperty("deadLetterRoutingKey", deadLetterRoutingKey);
-            return this;
-        }
-        /**
          * The type of the exchange.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -528,22 +544,6 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          */
         default SpringRabbitMQEndpointConsumerBuilder noLocal(String noLocal) {
             doSetProperty("noLocal", noLocal);
-            return this;
-        }
-        /**
-         * The queue(s) to use for consuming messages. Multiple queue names can
-         * be separated by comma. If none has been configured then Camel will
-         * generate an unique id as the queue name for the consumer.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param queues the value to set
-         * @return the dsl builder
-         */
-        default SpringRabbitMQEndpointConsumerBuilder queues(String queues) {
-            doSetProperty("queues", queues);
             return this;
         }
         /**
@@ -1091,6 +1091,67 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterExchange the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder deadLetterExchange(
+                String deadLetterExchange) {
+            doSetProperty("deadLetterExchange", deadLetterExchange);
+            return this;
+        }
+        /**
+         * The type of the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: direct
+         * Group: common
+         * 
+         * @param deadLetterExchangeType the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder deadLetterExchangeType(
+                String deadLetterExchangeType) {
+            doSetProperty("deadLetterExchangeType", deadLetterExchangeType);
+            return this;
+        }
+        /**
+         * The name of the dead letter queue.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterQueue the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder deadLetterQueue(
+                String deadLetterQueue) {
+            doSetProperty("deadLetterQueue", deadLetterQueue);
+            return this;
+        }
+        /**
+         * The routing key for the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterRoutingKey the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder deadLetterRoutingKey(
+                String deadLetterRoutingKey) {
+            doSetProperty("deadLetterRoutingKey", deadLetterRoutingKey);
+            return this;
+        }
+        /**
          * Specifies whether Camel ignores the ReplyTo header in messages. If
          * true, Camel does not send a reply back to the destination specified
          * in the ReplyTo header. You can use this option if you want Camel to
@@ -1135,6 +1196,22 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         default SpringRabbitMQEndpointProducerBuilder disableReplyTo(
                 String disableReplyTo) {
             doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * The queue(s) to use for consuming or producing messages. Multiple
+         * queue names can be separated by comma. If none has been configured
+         * then Camel will generate an unique id as the queue name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queues the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder queues(String queues) {
+            doSetProperty("queues", queues);
             return this;
         }
         /**
@@ -1230,6 +1307,41 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         default SpringRabbitMQEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
+         * Specifies whether the producer should auto declare binding between
+         * exchange, queue and routing key when starting.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoDeclareProducer the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder autoDeclareProducer(
+                boolean autoDeclareProducer) {
+            doSetProperty("autoDeclareProducer", autoDeclareProducer);
+            return this;
+        }
+        /**
+         * Specifies whether the producer should auto declare binding between
+         * exchange, queue and routing key when starting.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoDeclareProducer the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder autoDeclareProducer(
+                String autoDeclareProducer) {
+            doSetProperty("autoDeclareProducer", autoDeclareProducer);
             return this;
         }
         /**
@@ -1617,6 +1729,67 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterExchange the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointBuilder deadLetterExchange(
+                String deadLetterExchange) {
+            doSetProperty("deadLetterExchange", deadLetterExchange);
+            return this;
+        }
+        /**
+         * The type of the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: direct
+         * Group: common
+         * 
+         * @param deadLetterExchangeType the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointBuilder deadLetterExchangeType(
+                String deadLetterExchangeType) {
+            doSetProperty("deadLetterExchangeType", deadLetterExchangeType);
+            return this;
+        }
+        /**
+         * The name of the dead letter queue.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterQueue the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointBuilder deadLetterQueue(
+                String deadLetterQueue) {
+            doSetProperty("deadLetterQueue", deadLetterQueue);
+            return this;
+        }
+        /**
+         * The routing key for the dead letter exchange.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param deadLetterRoutingKey the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointBuilder deadLetterRoutingKey(
+                String deadLetterRoutingKey) {
+            doSetProperty("deadLetterRoutingKey", deadLetterRoutingKey);
+            return this;
+        }
+        /**
          * Specifies whether Camel ignores the ReplyTo header in messages. If
          * true, Camel does not send a reply back to the destination specified
          * in the ReplyTo header. You can use this option if you want Camel to
@@ -1661,6 +1834,22 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         default SpringRabbitMQEndpointBuilder disableReplyTo(
                 String disableReplyTo) {
             doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * The queue(s) to use for consuming or producing messages. Multiple
+         * queue names can be separated by comma. If none has been configured
+         * then Camel will generate an unique id as the queue name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queues the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointBuilder queues(String queues) {
+            doSetProperty("queues", queues);
             return this;
         }
         /**

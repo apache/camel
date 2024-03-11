@@ -28,12 +28,12 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("thread")
+@DevConsole(name = "thread", description = "Displays JVM Threads information")
 @Configurer(bootstrap = true)
 public class ThreadDevConsole extends AbstractDevConsole {
 
     public ThreadDevConsole() {
-        super("jvm", "thread", "Thread", "Displays Threads information");
+        super("jvm", "thread", "Thread", "Displays JVM Threads information");
     }
 
     @Override

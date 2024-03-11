@@ -48,6 +48,7 @@ import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
@@ -120,6 +121,15 @@ public abstract class AbstractCamelCatalog {
     public TransformerModel transformerModel(String name) {
         String json = transformerJSonSchema(name);
         return json != null ? JsonMapper.generateTransformerModel(json) : null;
+    }
+
+    public String devConsoleJSonSchema(String name) {
+        return getJSonSchemaResolver().getDevConsoleJSonSchema(name);
+    }
+
+    public DevConsoleModel devConsoleModel(String name) {
+        String json = devConsoleJSonSchema(name);
+        return json != null ? JsonMapper.generateDevConsoleModel(json) : null;
     }
 
     public String otherJSonSchema(String name) {

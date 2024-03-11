@@ -340,6 +340,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 }
             }
         }
+        centralResolutionRepository = centralRepository;
 
         if (mavenApacheSnapshotEnabled && !apacheSnapshotsIncluded) {
             // process apache snapshots even if it's not present in remoteRepositories, because it

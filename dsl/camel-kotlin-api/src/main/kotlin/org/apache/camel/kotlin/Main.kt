@@ -24,3 +24,7 @@ annotation class CamelDslMarker
 fun camel(camelContext: ModelCamelContext, i: RootDsl.() -> Unit) {
     RootDsl(camelContext).apply(i).build()
 }
+
+fun camelUri(i: UriDsl.() -> Unit): String {
+    return UriDsl().apply(i).toUri()
+}
