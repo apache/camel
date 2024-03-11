@@ -276,6 +276,19 @@ public class DefaultRegistryTest {
         assertSame(context, lookup.getCamelContext());
     }
 
+    @Test
+    public void testFindSingleByTypeWithMultipleRepositories() {
+        SimpleRegistry sr = new SimpleRegistry();
+        Animal myAnimal = new Animal();
+        sr.bind("myAnimal", myAnimal);
+        registry.addBeanRepository(sr);
+
+        // Retrieve from the first bean repository
+        assertNotNull(registry.findSingleByType(Animal.class));
+        // Retrieve from the second bean repository
+        assertNotNull(registry.findSingleByType(Company.class));
+    }
+
     private static class MyBean implements CamelContextAware {
 
         private CamelContext camelContext;
