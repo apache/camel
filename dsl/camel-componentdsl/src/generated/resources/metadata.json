@@ -756,7 +756,7 @@
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": true,
+    "producerOnly": false,
     "lenientProperties": false,
     "remote": true
   },
