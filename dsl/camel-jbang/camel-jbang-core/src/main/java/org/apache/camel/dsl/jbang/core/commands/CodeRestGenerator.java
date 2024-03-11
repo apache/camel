@@ -30,7 +30,6 @@ import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Document;
 import io.apicurio.datamodels.models.ModelType;
 import io.apicurio.datamodels.models.openapi.OpenApiDocument;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
