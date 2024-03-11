@@ -52,7 +52,6 @@ class BedrockAgentConsumerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("aws-bedrock-agent:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&knowledgeBaseId=AJHTAIUSJP&dataSourceId=AJX8Z7JX9J&ingestionJobId=YOWE23OBEB")
-                        .log("${body} and ${headers}")
                         .to(result);
             }
         };
