@@ -448,7 +448,7 @@
         <swagger-request-validator-version>2.40.0</swagger-request-validator-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
-        <testcontainers-version>1.19.6</testcontainers-version>
+        <testcontainers-version>1.19.7</testcontainers-version>
         <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
         <tika-version>2.9.1</tika-version>
         <twilio-version>10.1.0</twilio-version>
