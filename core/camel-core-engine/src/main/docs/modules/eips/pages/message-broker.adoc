@@ -11,8 +11,9 @@ image::eip/MessageBroker.gif[image]
 Use a central Message Broker that can receive messages from multiple destinations,
 determine the correct destination and route the message to the correct channel.
 
-Camel supports integration with existing message broker systems such as xref:ROOT:kafka-component.adoc[Kafka], xref:ROOT:spring-rabbitmq-component.adoc[RabbitMQ],
-and cloud queue systems such as xref:ROOT:aws2-s3-component.adoc[AWS SQS], and others.
+Camel supports integration with existing message broker systems such as xref:ROOT:activemq-component.adoc[ActiveMQ],
+xref:ROOT:kafka-component.adoc[Kafka], xref:ROOT:spring-rabbitmq-component.adoc[RabbitMQ],
+and cloud queue systems such as xref:ROOT:aws2-sqs-component.adoc[AWS SQS], and others.
 
 These Camel components allow to both send and receive data from message brokers.
 
