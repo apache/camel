@@ -29,6 +29,8 @@ import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import io.apicurio.datamodels.models.openapi.v20.OpenApi20Document;
 import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
 import io.apicurio.datamodels.models.openapi.v30.OpenApi30Server;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Document;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Server;
 import org.apache.camel.model.rest.RestsDefinition;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -179,6 +181,17 @@ public abstract class RestDslGenerator<G> {
             final OpenApi30Server firstServer = servers.get(0);
             final URI serverUrl = URI.create(resolveVariablesIn(firstServer.getUrl(), firstServer));
             return prepareBasePath(serverUrl.getPath());
+        } else if (document instanceof OpenApi31Document) {
+            final OpenApi31Document oas31Document = (OpenApi31Document) document;
+            final List<OpenApi31Server> servers = oas31Document.getServers();
+
+            if (servers == null || servers.get(0) == null) {
+                return "";
+            }
+
+            final OpenApi31Server firstServer = servers.get(0);
+            final URI serverUrl = URI.create(resolveVariablesIn(firstServer.getUrl(), firstServer));
+            return prepareBasePath(serverUrl.getPath());
         }
 
         throw new IllegalArgumentException("Unsupported document type: " + document.getClass().getName());
@@ -222,6 +235,18 @@ public abstract class RestDslGenerator<G> {
     }
 
     public static String resolveVariablesIn(final String url, final OpenApi30Server server) {
+        final Map<String, ServerVariable> variables = Objects.requireNonNull(server, "server").getVariables();
+        String withoutPlaceholders = url;
+        if (variables != null) {
+            for (Map.Entry<String, ServerVariable> entry : variables.entrySet()) {
+                final String name = "{" + entry.getKey() + "}";
+                withoutPlaceholders = withoutPlaceholders.replace(name, entry.getValue().getDefault());
+            }
+        }
+        return withoutPlaceholders;
+    }
+
+    public static String resolveVariablesIn(final String url, final OpenApi31Server server) {
         final Map<String, ServerVariable> variables = Objects.requireNonNull(server, "server").getVariables();
         String withoutPlaceholders = url;
         if (variables != null) {

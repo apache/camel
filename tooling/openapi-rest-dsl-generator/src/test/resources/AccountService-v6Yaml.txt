@@ -1,0 +1,240 @@
+- rest:
+    path: "/cal/services/Account/v6"
+    post:
+    - id: "post-checkAccountHolder"
+      path: "/checkAccountHolder"
+      description: "Triggers the verification of an account holder even if the checks\
+        \ are not yet required for the volume that they are currently processing."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-checkAccountHolder"
+    - id: "post-closeAccount"
+      path: "/closeAccount"
+      description: "Closes an account. If an account is closed, you cannot process\
+        \ transactions, pay out its funds, or reopen it. If payments are made to a\
+        \ closed account, the payments are sent to your liable account."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-closeAccount"
+    - id: "post-closeAccountHolder"
+      path: "/closeAccountHolder"
+      description: "Changes the [status of an account holder](https://docs.adyen.com/marketplaces-and-platforms/classic/account-holders-and-accounts#account-holder-statuses)\
+        \ to **Closed**. This state is final. If an account holder is closed, you\
+        \ can't process transactions, pay out funds, or reopen it. If payments are\
+        \ made to an account of an account holder with a **Closed** [`status`](https://docs.adyen.com/api-explorer/#/Account/latest/post/getAccountHolder__resParam_verification-accountHolder-checks-status),\
+        \ the payments are sent to your liable account."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-closeAccountHolder"
+    - id: "post-closeStores"
+      path: "/closeStores"
+      description: "Closes stores associated with an account holder."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-closeStores"
+    - id: "post-createAccount"
+      path: "/createAccount"
+      description: "Creates an account under an account holder. An account holder\
+        \ can have [multiple accounts](https://docs.adyen.com/marketplaces-and-platforms/classic/account-holders-and-accounts#create-additional-accounts)."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-createAccount"
+    - id: "post-createAccountHolder"
+      path: "/createAccountHolder"
+      description: "Creates an account holder that [represents the sub-merchant's\
+        \ entity](https://docs.adyen.com/marketplaces-and-platforms/classic/account-structure#your-platform)\
+        \ in your platform. The details that you need to provide in the request depend\
+        \ on the sub-merchant's legal entity type. For more information, refer to\
+        \ [Account holder and accounts](https://docs.adyen.com/marketplaces-and-platforms/classic/account-holders-and-accounts#legal-entity-types)."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-createAccountHolder"
+    - id: "post-deleteBankAccounts"
+      path: "/deleteBankAccounts"
+      description: "Deletes bank accounts associated with an account holder. "
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-deleteBankAccounts"
+    - id: "post-deleteLegalArrangements"
+      path: "/deleteLegalArrangements"
+      description: "Deletes legal arrangements and/or legal arrangement entities associated\
+        \ with an account holder."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-deleteLegalArrangements"
+    - id: "post-deletePayoutMethods"
+      path: "/deletePayoutMethods"
+      description: "Deletes payout methods associated with an account holder."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-deletePayoutMethods"
+    - id: "post-deleteShareholders"
+      path: "/deleteShareholders"
+      description: "Deletes shareholders associated with an account holder."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-deleteShareholders"
+    - id: "post-deleteSignatories"
+      path: "/deleteSignatories"
+      description: "Deletes signatories associated with an account holder."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-deleteSignatories"
+    - id: "post-getAccountHolder"
+      path: "/getAccountHolder"
+      description: "Returns the details of an account holder."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-getAccountHolder"
+    - id: "post-getTaxForm"
+      path: "/getTaxForm"
+      description: "Generates a tax form for account holders operating in the US.\
+        \ For more information, refer to [Providing tax forms](https://docs.adyen.com/marketplaces-and-platforms/classic/tax-forms)."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-getTaxForm"
+    - id: "post-getUploadedDocuments"
+      path: "/getUploadedDocuments"
+      description: "Returns documents that were previously uploaded for an account\
+        \ holder. Adyen uses the documents during the [verification process](https://docs.adyen.com/marketplaces-and-platforms/classic/verification-process).\n"
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-getUploadedDocuments"
+    - id: "post-suspendAccountHolder"
+      path: "/suspendAccountHolder"
+      description: "Changes the [status of an account holder](https://docs.adyen.com/marketplaces-and-platforms/classic/account-holders-and-accounts#account-holder-statuses)\
+        \ to **Suspended**."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-suspendAccountHolder"
+    - id: "post-unSuspendAccountHolder"
+      path: "/unSuspendAccountHolder"
+      description: "Changes the [status of an account holder](https://docs.adyen.com/marketplaces-and-platforms/classic/account-holders-and-accounts#account-holder-statuses)\
+        \ from **Suspended** to **Inactive**. \nAccount holders can have a **Suspended**\
+        \ [`status`](https://docs.adyen.com/api-explorer/#/Account/latest/post/getAccountHolder__resParam_verification-accountHolder-checks-status)\
+        \ if you suspend them through the [`/suspendAccountHolder`](https://docs.adyen.com/api-explorer/#/Account/v5/post/suspendAccountHolder)\
+        \ endpoint or if a verification deadline expires.\n\nYou can only unsuspend\
+        \ account holders if they do not have verification checks with a **FAILED**\
+        \ [`status`](https://docs.adyen.com/api-explorer/#/Account/latest/post/getAccountHolder__resParam_verification-accountHolder-checks-status)."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-unSuspendAccountHolder"
+    - id: "post-updateAccount"
+      path: "/updateAccount"
+      description: "Updates the description or payout schedule of an account."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-updateAccount"
+    - id: "post-updateAccountHolder"
+      path: "/updateAccountHolder"
+      description: "Updates the `accountHolderDetails` and `processingTier` of an\
+        \ account holder, and adds bank accounts and shareholders.\n\nWhen updating\
+        \ `accountHolderDetails`, parameters that are not included in the request\
+        \ are left unchanged except for the following object:\n\n* `metadata`: Updating\
+        \ the metadata replaces the entire object. This means that to update an existing\
+        \ key-value pair, you must provide the changes, as well as other existing\
+        \ key-value pairs.\n\nWhen updating any field in the following objects, you\
+        \ must submit all the fields required for validation:\n\n * `address`\n\n\
+        * `fullPhoneNumber`\n\n* `bankAccountDetails.BankAccountDetail`\n\n* `businessDetails.shareholders.ShareholderContact`\n\
+        \n For example, to update the `address.postalCode`, you must also submit the\
+        \ `address.country`, `.city`, `.street`, `.postalCode`, and possibly `.stateOrProvince`\
+        \ so that the address can be validated.\n\nTo add a bank account or shareholder,\
+        \ provide the bank account or shareholder details without a `bankAccountUUID`\
+        \ or a `shareholderCode`.\n\n"
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-updateAccountHolder"
+    - id: "post-updateAccountHolderState"
+      path: "/updateAccountHolderState"
+      description: "Disables or enables the processing or payout state of an account\
+        \ holder."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-updateAccountHolderState"
+    - id: "post-uploadDocument"
+      path: "/uploadDocument"
+      description: "Uploads a document for an account holder. Adyen uses the documents\
+        \ during the [verification process](https://docs.adyen.com/marketplaces-and-platforms/classic/verification-process)."
+      consumes: "application/json"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:post-uploadDocument"
