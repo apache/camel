@@ -166,6 +166,14 @@ We also renamed the `route-curcuit-breaker` console to `circuit-breaker`.
 
 === camel-jbang
 
+The `--profile` option on `export` command has been removed.
+
+The `--profile` option on `run` command is now used by `camel-main` to choose profile mode when running Camel with JBang,
+or standalone with Camel Main. The default mode is `dev` for development which comes with some additional features enabled
+in Camel to gather more information that are relevant for development and the Camel JBang CLI.
+
+You can run with `--profile=prod` to turn off all of this, which makes Camel run more similar to a production situation.
+
 The command `camel generate rest` have removed all the shorthand arguments `such as `-i -o` instead use the long names `--input --output`.
 
 === camel-jsonpath

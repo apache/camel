@@ -151,6 +151,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "producertemplatecachesize":
         case "ProducerTemplateCacheSize": target.setProducerTemplateCacheSize(property(camelContext, int.class, value)); return true;
+        case "profile":
+        case "Profile": target.setProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": target.setRouteFilterExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routefilterincludepattern":
@@ -390,6 +392,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Name": return java.lang.String.class;
         case "producertemplatecachesize":
         case "ProducerTemplateCacheSize": return int.class;
+        case "profile":
+        case "Profile": return java.lang.String.class;
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": return java.lang.String.class;
         case "routefilterincludepattern":
@@ -630,6 +634,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Name": return target.getName();
         case "producertemplatecachesize":
         case "ProducerTemplateCacheSize": return target.getProducerTemplateCacheSize();
+        case "profile":
+        case "Profile": return target.getProfile();
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": return target.getRouteFilterExcludePattern();
         case "routefilterincludepattern":

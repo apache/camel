@@ -35,7 +35,7 @@ public class Export extends ExportBaseCommand {
 
     @Override
     protected Integer export() throws Exception {
-        File profile = new File(getProfile() + ".properties");
+        File profile = new File("application.properties");
         if (profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
@@ -97,7 +97,6 @@ public class Export extends ExportBaseCommand {
     protected Integer export(ExportBaseCommand cmd) throws Exception {
         // copy properties from this to cmd
         cmd.files = this.files;
-        cmd.profile = this.profile;
         cmd.repos = this.repos;
         cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;

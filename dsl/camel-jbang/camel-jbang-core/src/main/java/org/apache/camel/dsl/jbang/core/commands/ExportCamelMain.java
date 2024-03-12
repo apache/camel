@@ -55,7 +55,7 @@ class ExportCamelMain extends Export {
             System.err.println("--build-tool=gradle is not support yet for camel-main runtime.");
         }
 
-        File profile = new File(getProfile() + ".properties");
+        File profile = new File("application.properties");
 
         // the settings file has information what to export
         File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);

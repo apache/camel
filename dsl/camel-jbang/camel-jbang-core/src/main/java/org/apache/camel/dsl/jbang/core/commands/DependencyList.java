@@ -180,8 +180,8 @@ public class DependencyList extends Export {
     }
 
     protected Integer doExport() throws Exception {
-        // read runtime and gav from profile if not configured
-        File profile = new File(getProfile() + ".properties");
+        // read runtime and gav from properties if not configured
+        File profile = new File("application.properties");
         if (profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);

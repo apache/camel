@@ -26,6 +26,7 @@ import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Global configuration for Camel Main to configure context name, stream caching and other global configurations.
@@ -34,6 +35,8 @@ import org.apache.camel.spi.Configurer;
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
         implements BootstrapCloseable {
 
+    @Metadata(enums = "dev,test,prod")
+    private String profile;
     private boolean autoConfigurationEnabled = true;
     private boolean autoConfigurationEnvironmentVariablesEnabled = true;
     private boolean autoConfigurationSystemPropertiesEnabled = true;
@@ -382,6 +385,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // getter and setters
     // --------------------------------------------------------------
 
+    public String getProfile() {
+        return profile;
+    }
+
+    /**
+     * Camel profile to use when running.
+     *
+     * The dev profile is for development, which enables a set of additional developer focus functionality, tracing,
+     * debugging, and gathering additional runtime statistics that are useful during development. However, those
+     * additional features has a slight overhead cost, and are not enabled for production profile.
+     *
+     * The default profile is prod.
+     */
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
     public boolean isAutoConfigurationEnabled() {
         return autoConfigurationEnabled;
     }
@@ -635,6 +655,20 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     // fluent builders
     // --------------------------------------------------------------
+
+    /**
+     * Camel profile to use when running.
+     *
+     * The dev profile is for development, which enables a set of additional developer focus functionality, tracing,
+     * debugging, and gathering additional runtime statistics that are useful during development. However, those
+     * additional features has a slight overhead cost, and are not enabled for production profile.
+     *
+     * The default profile is prod.
+     */
+    public MainConfigurationProperties withProfile(String profile) {
+        this.profile = profile;
+        return this;
+    }
 
     /**
      * Whether auto configuration of components/dataformats/languages is enabled or not. When enabled the configuration

@@ -34,11 +34,8 @@ public class SBOMGenerator extends Export {
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
 
     protected static final String CYCLONEDX_FORMAT = "cyclonedx";
-
     protected static final String SPDX_FORMAT = "spdx";
-
     protected static final String SBOM_JSON_FORMAT = "json";
-
     protected static final String SBOM_XML_FORMAT = "xml";
 
     @CommandLine.Option(names = { "--output-directory" }, description = "Directory where the SBOM will be saved",
@@ -147,8 +144,8 @@ public class SBOMGenerator extends Export {
     }
 
     protected Integer doExport() throws Exception {
-        // read runtime and gav from profile if not configured
-        File profile = new File(getProfile() + ".properties");
+        // read runtime and gav from properties if not configured
+        File profile = new File("application.properties");
         if (profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);

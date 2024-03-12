@@ -528,44 +528,25 @@ curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/ | jq
 
 === Using profiles
 
-Camel JBang have the concept of profiles. A _profile_ is essentially a name (id) that refers
-to which configuration to automatic load with Camel JBang. The default profile is named `application`
-which is a (smart default) to let Camel JBang automatic load `application.properties` (if present).
+*Available from Camel 4.5*
 
-This means that creating profiles matching to a properties file with the same name.
+Camel JBang comes with three set of profiles
 
-For example having a profile named `local`, means that Camel JBang will load `local.properties` instead
-of `application.properties`.
+- `dev` - for development (default)
+- `test` - for testing (currently same as production)
+- `prod` - for production
 
-To use a profile, you specify as command line option `--profile` such as:
+The developer profile will pre-configure Camel JBang with a number of developer assisted features when
+running Camel. For example tracing messages during routing, additional metrics collected, and more.
+This is useful during development and also enhanced the Camel JBang CLI tool.
+
+However, you may want to run Camel JBang in a more production like situation, which you can do with:
 
 [source,bash]
 ----
-camel run hello.java --profile=local
+camel run hello.java --profile=prod
 ----
 
-You can only specify one profile name, i.e. `--profile=local,two` is not valid.
-
-In the `properties` files you can configure all
-the configurations from xref:components:others:main.adoc[Camel Main].
-
-For example to turn off xref:stream-caching.adoc[Stream Caching] and enable log masking you can specify:
-
-[source,properties]
-----
-camel.main.streamCaching=false
-camel.main.logMask=true
-----
-
-And you can also configure Camel components such as camel-kafka to declare the URL to the brokers:
-
-[source,properties]
-----
-camel.component.kafka.brokers=broker1:9092,broker2:9092,broker3:9092
-----
-
-NOTE: Keys starting with `camel.jbang` are reserved keys that are used by Camel JBang internally,
-and as well allow for pre-configuring arguments for Camel JBang commands.
 
 === Downloading JARs over the internet
 
