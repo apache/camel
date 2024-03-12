@@ -31,7 +31,7 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("dummy", new MyDummyBean());
         return jndi;
     }

@@ -66,7 +66,7 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+        Registry registry = super.createCamelRegistry();
         EntityResolver customEntityResolver = getCustomEntityResolver();
         registry.bind("customEntityResolver", customEntityResolver);
         return registry;

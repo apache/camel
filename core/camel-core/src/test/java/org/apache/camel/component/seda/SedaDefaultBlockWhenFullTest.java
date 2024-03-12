@@ -47,7 +47,7 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
         SedaComponent component = new SedaComponent();
         component.setDefaultBlockWhenFull(true);
 
-        Registry registry = super.createRegistry();
+        Registry registry = super.createCamelRegistry();
         registry.bind("seda", component);
 
         return registry;

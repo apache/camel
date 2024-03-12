@@ -72,7 +72,7 @@ public class BeanWithVariablesAndBodyInject3Test extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }

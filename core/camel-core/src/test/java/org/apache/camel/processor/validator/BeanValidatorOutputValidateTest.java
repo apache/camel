@@ -65,7 +65,7 @@ public class BeanValidatorOutputValidateTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+        Registry registry = super.createCamelRegistry();
 
         registry.bind("testValidator", new TestValidator());
 

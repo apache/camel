@@ -33,7 +33,7 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
     }

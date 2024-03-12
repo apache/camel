@@ -39,7 +39,7 @@ public class MockitoSpyForClassTest extends ContextTestSupport {
         MyService mockService = Mockito.spy(new MyService());
         when(mockService.doSomething(any())).thenReturn("mocked answer");
 
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("myService", mockService);
         return answer;
     }

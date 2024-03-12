@@ -40,7 +40,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         AntPathMatcherGenericFileFilter<File> filterNotCaseSensitive = new AntPathMatcherGenericFileFilter<>("**/c*");
         filterNotCaseSensitive.setCaseSensitive(false);
 
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("filter", new AntPathMatcherGenericFileFilter<File>("**/c*"));
         jndi.bind("caseInsensitiveFilter", filterNotCaseSensitive);
         return jndi;

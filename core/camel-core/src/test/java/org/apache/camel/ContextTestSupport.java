@@ -714,10 +714,6 @@ public abstract class ContextTestSupport extends TestSupport
         // noop
     }
 
-    protected Registry createRegistry() throws Exception {
-        return new DefaultRegistry();
-    }
-
     /**
      * Override to use a custom {@link Registry}.
      * <p>

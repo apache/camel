@@ -42,7 +42,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;
     }

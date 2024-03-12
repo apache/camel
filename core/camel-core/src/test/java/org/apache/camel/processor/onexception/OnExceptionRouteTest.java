@@ -110,7 +110,7 @@ public class OnExceptionRouteTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myOwnHandler", myOwnHandlerBean);
         jndi.bind("myServiceBean", myServiceBean);
         return jndi;

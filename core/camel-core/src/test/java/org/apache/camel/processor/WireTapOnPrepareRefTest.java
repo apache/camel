@@ -26,7 +26,7 @@ public class WireTapOnPrepareRefTest extends WireTapOnPrepareTest {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("deepClone", new AnimalDeepClonePrepare());
         return jndi;
     }

@@ -68,7 +68,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myAnimal", new Animal("Donkey", 17));
         return jndi;
     }

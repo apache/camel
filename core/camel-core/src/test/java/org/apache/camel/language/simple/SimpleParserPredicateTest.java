@@ -258,7 +258,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
 
         List<String> list = new ArrayList<>();
         list.add("foo");

@@ -34,7 +34,7 @@ public class BeanInjectRouteBuilderTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+        Registry registry = super.createCamelRegistry();
         registry.bind("foo", new FooBar());
         return registry;
     }

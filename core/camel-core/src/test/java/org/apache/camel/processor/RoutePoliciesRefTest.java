@@ -32,7 +32,7 @@ public class RoutePoliciesRefTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("policy-a", policyA);
         jndi.bind("policy-b", policyB);
         return jndi;

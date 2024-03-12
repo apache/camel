@@ -34,7 +34,7 @@ public class FromRestGetPlaceholderParamTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("dummy-rest", new DummyRestConsumerFactory());
         return answer;
     }

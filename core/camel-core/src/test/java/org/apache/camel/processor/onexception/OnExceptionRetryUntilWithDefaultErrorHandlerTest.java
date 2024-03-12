@@ -38,7 +38,7 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myRetryHandler", new MyRetryBean());
         return jndi;
     }

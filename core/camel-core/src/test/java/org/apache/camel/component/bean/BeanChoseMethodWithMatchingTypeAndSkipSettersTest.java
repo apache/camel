@@ -29,7 +29,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("orderService", service);
         return jndi;
     }

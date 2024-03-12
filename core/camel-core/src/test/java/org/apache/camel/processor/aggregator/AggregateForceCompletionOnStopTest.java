@@ -105,7 +105,7 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myCompletionProcessor", new MyCompletionProcessor());
         return jndi;
     }

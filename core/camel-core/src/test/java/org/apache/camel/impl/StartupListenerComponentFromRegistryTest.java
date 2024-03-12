@@ -35,7 +35,7 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
     protected Registry createCamelRegistry() throws Exception {
         my = new MyComponent();
 
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("my", my);
         return jndi;
     }

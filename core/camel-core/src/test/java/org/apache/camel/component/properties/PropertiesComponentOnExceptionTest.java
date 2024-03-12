@@ -58,7 +58,7 @@ public class PropertiesComponentOnExceptionTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
 
         Properties cool = new Properties();
         cool.put("delay", "25");

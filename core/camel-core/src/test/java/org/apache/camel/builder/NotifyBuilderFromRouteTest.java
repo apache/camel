@@ -32,14 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
-
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        final Registry registry = super.createRegistry();
+        final Registry registry = super.createCamelRegistry();
         registry.bind("proxy", new ProxyComponent());
         return registry;
     }
-
 
     @Test
     public void testDoneFromRoute() throws Exception {

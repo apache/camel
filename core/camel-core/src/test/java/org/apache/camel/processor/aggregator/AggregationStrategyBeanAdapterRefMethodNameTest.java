@@ -25,7 +25,7 @@ public class AggregationStrategyBeanAdapterRefMethodNameTest extends ContextTest
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myAppender", new AggregationStrategyBeanAdapterRefMethodNameTest.MyBodyAppender());
         return jndi;
     }

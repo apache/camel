@@ -35,7 +35,7 @@ public class ManagedProcessTest extends ManagementTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", new MyDummyProcessor());
         return answer;
     }

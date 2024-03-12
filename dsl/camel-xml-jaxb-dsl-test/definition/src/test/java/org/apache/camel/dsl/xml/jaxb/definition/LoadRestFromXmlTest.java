@@ -33,7 +33,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
         return jndi;

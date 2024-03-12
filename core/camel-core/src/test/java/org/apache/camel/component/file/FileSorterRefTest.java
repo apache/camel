@@ -32,7 +32,7 @@ public class FileSorterRefTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("mySorter", new MyFileSorter<>());
         return jndi;
     }

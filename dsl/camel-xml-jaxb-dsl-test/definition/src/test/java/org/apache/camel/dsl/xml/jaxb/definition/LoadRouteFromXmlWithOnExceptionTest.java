@@ -31,7 +31,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myProcessor", new MyProcessor());
         return jndi;
     }

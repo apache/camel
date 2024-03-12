@@ -29,7 +29,7 @@ public class RefTest extends LanguageTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myExp", new MyExpression());
         return jndi;
     }

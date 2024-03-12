@@ -31,7 +31,7 @@ public class SimulatorTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", new MyBean("foo"));
         answer.bind("bar", new MyBean("bar"));
         return answer;

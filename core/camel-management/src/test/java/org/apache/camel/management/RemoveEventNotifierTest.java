@@ -48,7 +48,7 @@ public class RemoveEventNotifierTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = new DefaultCamelContext(createRegistry());
+        DefaultCamelContext context = new DefaultCamelContext(createCamelRegistry());
 
         notifier = new EventNotifierSupport() {
             public void notify(CamelEvent event) throws Exception {

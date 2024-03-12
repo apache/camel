@@ -35,7 +35,7 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry reg = super.createRegistry();
+        Registry reg = super.createCamelRegistry();
         reg.bind("mycomponent-component", new MyComponentConfigurer());
         reg.bind("chf", new MyContentHandlerFactory());
         return reg;

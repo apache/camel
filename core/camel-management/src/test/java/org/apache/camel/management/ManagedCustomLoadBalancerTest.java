@@ -37,7 +37,7 @@ public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBalancer", new MyLoadBalancer());
         return answer;
     }

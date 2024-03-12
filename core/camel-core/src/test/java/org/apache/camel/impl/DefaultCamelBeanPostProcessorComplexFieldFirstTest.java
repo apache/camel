@@ -42,7 +42,7 @@ public class DefaultCamelBeanPostProcessorComplexFieldFirstTest extends ContextT
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("myDS", new DummyDataSource());
         return answer;
     }

@@ -56,7 +56,7 @@ public class EnricherAggregateStreamingTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("b1", new MyProcessor()); // for synchronous call
         return jndi;
     }

@@ -30,7 +30,7 @@ public class DefaultErrorHandlerOnExceptionOccurredProcessorTest extends Context
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myProcessor", new MyProcessor());
         return jndi;
     }

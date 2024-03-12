@@ -27,7 +27,7 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+        Registry registry = super.createCamelRegistry();
         SchemaFactory mySchemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         mySchemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
         registry.bind("MySchemaFactory", mySchemaFactory);

@@ -41,7 +41,7 @@ public class BeanPropagateHeaderTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("order", new MyOrderService());
         return jndi;
     }

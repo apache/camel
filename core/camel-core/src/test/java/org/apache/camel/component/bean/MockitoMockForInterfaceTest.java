@@ -39,7 +39,7 @@ public class MockitoMockForInterfaceTest extends ContextTestSupport {
         MyService mockService = Mockito.mock(MyService.class);
         when(mockService.doSomething(any())).thenReturn("mocked answer");
 
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("myService", mockService);
         return answer;
     }

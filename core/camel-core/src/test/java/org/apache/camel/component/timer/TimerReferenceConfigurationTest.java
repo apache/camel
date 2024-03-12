@@ -65,7 +65,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry reg = super.createRegistry();
+        Registry reg = super.createCamelRegistry();
         reg.bind("refExpectedTimeString", refExpectedTimeString);
         reg.bind("refExpectedPattern", refExpectedPattern);
         reg.bind("refExpectedPeriod", refExpectedPeriod);

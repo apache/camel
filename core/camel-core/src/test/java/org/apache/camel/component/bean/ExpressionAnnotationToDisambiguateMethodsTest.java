@@ -50,7 +50,7 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", myBean);
         answer.bind("myOtherBean", myOtherBean);
         return answer;

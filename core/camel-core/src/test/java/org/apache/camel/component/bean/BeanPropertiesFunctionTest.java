@@ -25,7 +25,7 @@ public class BeanPropertiesFunctionTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+        Registry registry = super.createCamelRegistry();
         registry.bind("fooBean", new BeanPropertiesFunctionTest.FooBean());
         registry.bind("barBean", new BeanPropertiesFunctionTest.BarBean());
         return registry;

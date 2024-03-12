@@ -49,7 +49,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("MyOrderService", new MyOrderService());
         return jndi;
     }

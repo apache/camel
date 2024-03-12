@@ -108,7 +108,7 @@ RouteBuilder builder = new RouteBuilder() {
 
 [source,java]
 -----------------------------------------------------------------
-CamelContext context = new DefaultCamelContext(createRegistry());
+CamelContext context = new DefaultCamelContext(createCamelRegistry());
 Registry registry = context.getRegistry();
 registry.bind("whitespace", new File("./whitespaceIndexDir"));
 registry.bind("load_dir", new File("src/test/resources/sources"));

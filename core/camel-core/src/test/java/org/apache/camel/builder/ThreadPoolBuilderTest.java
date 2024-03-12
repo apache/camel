@@ -34,7 +34,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         ExecutorService someone = Executors.newCachedThreadPool();
         jndi.bind("someonesPool", someone);
         return jndi;

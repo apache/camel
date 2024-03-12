@@ -35,7 +35,7 @@ public class CamelEventsTimestampEnabledTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = new DefaultCamelContext(createRegistry());
+        DefaultCamelContext context = new DefaultCamelContext(createCamelRegistry());
         // enable timestamp
         context.getManagementStrategy().getEventFactory().setTimestampEnabled(true);
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
