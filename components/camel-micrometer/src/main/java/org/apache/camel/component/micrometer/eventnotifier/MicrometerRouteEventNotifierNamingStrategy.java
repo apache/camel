@@ -29,12 +29,13 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_RELOADED;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_RUNNING;
 import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_ROUTE;
 
 public interface MicrometerRouteEventNotifierNamingStrategy {
 
     Predicate<Meter.Id> EVENT_NOTIFIERS
-            = id -> MicrometerEventNotifierService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
+            = id -> KIND_ROUTE.equals(id.getTag(KIND));
 
     /**
      * Default naming strategy that uses micrometer naming convention.
@@ -93,7 +94,7 @@ public interface MicrometerRouteEventNotifierNamingStrategy {
 
     default Tags getTags(CamelContext camelContext) {
         return Tags.of(
-                SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),
+                KIND, KIND_ROUTE,
                 CAMEL_CONTEXT_TAG, camelContext.getName(),
                 EVENT_TYPE_TAG, RouteEvent.class.getSimpleName());
     }
