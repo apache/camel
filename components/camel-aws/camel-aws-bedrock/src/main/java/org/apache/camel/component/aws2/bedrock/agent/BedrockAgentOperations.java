@@ -20,5 +20,7 @@ public enum BedrockAgentOperations {
 
     startIngestionJob,
 
-    listIngestionJobs
+    listIngestionJobs,
+
+    getIngestionJob
 }

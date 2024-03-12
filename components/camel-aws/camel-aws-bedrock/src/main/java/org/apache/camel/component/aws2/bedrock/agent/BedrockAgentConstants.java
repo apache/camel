@@ -40,4 +40,8 @@ public interface BedrockAgentConstants {
     @Metadata(description = "The header contains the status of the ingestion job",
               javaType = "String", label = "consumer")
     String INGESTION_JOB_STATUS = "CamelAwsBedrockAgentIngestionJobStatus";
+
+    @Metadata(description = "The header contains the id of the ingestion job",
+            javaType = "String", label = "producer")
+    String INGESTION_JOB_ID = "CamelAwsBedrockAgentIngestionJobId";
 }

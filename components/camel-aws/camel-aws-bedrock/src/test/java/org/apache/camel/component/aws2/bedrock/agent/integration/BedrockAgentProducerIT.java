@@ -76,7 +76,6 @@ class BedrockAgentProducerIT extends CamelTestSupport {
                         .to(result);
                 from("direct:list_ingestion_jobs")
                         .to("aws-bedrock-agent:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=listIngestionJobs")
-                        .log("${body}")
                         .to(result);
             }
         };
