@@ -432,6 +432,9 @@ public abstract class BaseMainSupport extends BaseService {
         // gathers the properties (key=value) that was auto-configured
         final OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
 
+        // configure the profile with pre-configured settings
+        ProfileConfigurer.configure(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
+
         // need to eager allow to auto-configure properties component
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFailFast(camelContext, autoConfiguredProperties);

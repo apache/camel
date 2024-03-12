@@ -87,10 +87,6 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
-                        description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
-    protected String profile;
-
     @CommandLine.Option(names = { "--repos" },
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repos;
@@ -238,10 +234,6 @@ abstract class ExportBaseCommand extends CamelCommand {
         return export();
     }
 
-    public String getProfile() {
-        return profile;
-    }
-
     protected static String mavenRepositoriesAsPomXml(String repos) {
         StringBuilder sb = new StringBuilder();
         int i = 1;
@@ -293,7 +285,6 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
-        run.profile = profile;
         run.localKameletDir = localKameletDir;
         run.dependencies = dependencies;
         run.files = files;

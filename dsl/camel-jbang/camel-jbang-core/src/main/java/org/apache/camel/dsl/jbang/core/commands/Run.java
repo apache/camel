@@ -142,9 +142,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
-    @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
-            description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
-    String profile = "application";
+    @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
+            description = "Profile to run (dev, test, or prod).")
+    String profile = "dev";
 
     @Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies)")
@@ -288,10 +288,6 @@ public class Run extends CamelCommand {
         super(main);
     }
 
-    public String getProfile() {
-        return profile;
-    }
-
     @Override
     public boolean disarrangeLogging() {
         return false;
@@ -426,11 +422,11 @@ public class Run extends CamelCommand {
                         run = "debug";
                     }
                     System.err
-                            .println("Cannot " + run + " because " + getProfile()
-                                     + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
+                            .println("Cannot " + run
+                                     + " because application.properties file does not exist or camel.main.routesIncludePattern is not configured");
                     return 1;
                 } else {
-                    // silent-run then auto-detect all files (except properties as they are loaded explicit or via profile)
+                    // silent-run then auto-detect all files (except properties as they are loaded explicit)
                     String[] allFiles = new File(".").list((dir, name) -> !name.endsWith(".properties"));
                     if (allFiles != null) {
                         files.addAll(Arrays.asList(allFiles));
@@ -444,6 +440,7 @@ public class Run extends CamelCommand {
         }
 
         final KameletMain main = createMainInstance();
+        main.setProfile(profile);
         main.setRepos(repos);
         main.setDownload(download);
         main.setFresh(fresh);
@@ -474,7 +471,6 @@ public class Run extends CamelCommand {
             main.setStubPattern(stub);
         }
 
-        writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
         if (dev) {
             writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", "true");
             // allow quick shutdown during development
@@ -507,7 +503,9 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.verbose", verbose ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.jbang.backlogTracing", "true");
+        if ("dev".equals(profile)) {
+            writeSetting(main, profileProperties, "camel.jbang.backlogTracing", "true");
+        }
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
 
@@ -848,9 +846,9 @@ public class Run extends CamelCommand {
 
         File profilePropertiesFile;
         if (sourceDir != null) {
-            profilePropertiesFile = new File(sourceDir, getProfile() + ".properties");
+            profilePropertiesFile = new File(sourceDir, "application.properties");
         } else {
-            profilePropertiesFile = new File(getProfile() + ".properties");
+            profilePropertiesFile = new File("application.properties");
         }
         if (profilePropertiesFile.exists()) {
             answer = loadProfileProperties(profilePropertiesFile);
