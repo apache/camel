@@ -927,7 +927,7 @@ public abstract class ContextTestSupport extends TestSupport
      */
     protected Language assertResolveLanguage(String languageName) {
         Language language = context.resolveLanguage(languageName);
-        assertNotNull(language, "Nog language found for name: " + languageName);
+        assertNotNull(language, "No language found for name: " + languageName);
         return language;
     }
 
