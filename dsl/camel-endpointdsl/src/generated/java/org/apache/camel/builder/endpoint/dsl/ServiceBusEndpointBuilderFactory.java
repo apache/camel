@@ -1537,19 +1537,6 @@ public interface ServiceBusEndpointBuilderFactory {
         }
 
         /**
-         * Gets a correlation identifier.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: consumer
-         * 
-         * @return the name of the header {@code AzureServiceBusCorrelationId}.
-         */
-        public String azureServiceBusCorrelationId() {
-            return "CamelAzureServiceBusCorrelationId";
-        }
-
-        /**
          * Gets the description for a message that has been dead-lettered.
          * 
          * The option is a: {@code String} type.
@@ -1848,6 +1835,19 @@ public interface ServiceBusEndpointBuilderFactory {
          */
         public String azureServiceBusProducerOperation() {
             return "CamelAzureServiceBusProducerOperation";
+        }
+
+        /**
+         * Gets or Sets a correlation identifier.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureServiceBusCorrelationId}.
+         */
+        public String azureServiceBusCorrelationId() {
+            return "CamelAzureServiceBusCorrelationId";
         }
     }
     static ServiceBusEndpointBuilder endpointBuilder(
