@@ -196,6 +196,15 @@ on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentatio
 
 === camel-micrometer and camel-metrics
 
+The `camel-micrometer` have renamed tag `serviceName` to `kind` and use naming that indicate that its from Camel:
+
+|===
+|**Before** | **After**
+| serviceName="MicrometerEventNotifierService" | kind="CamelExchangeEvent"
+| serviceName="MicrometerMessageHistoryService" | kind="CamelMessageHistory"
+| serviceName="MicrometerRoutePolicyService" | kind="CamelRoute"
+|===
+
 Due to Kamelets are changed to act more like a Camel component, and not expose internal details as JMX MBeans, then
 micrometer and metrics no longer include statistics for those Kamelet routes.
 

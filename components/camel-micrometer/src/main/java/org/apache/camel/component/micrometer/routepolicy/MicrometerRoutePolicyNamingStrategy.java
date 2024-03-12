@@ -31,8 +31,7 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.*;
  */
 public interface MicrometerRoutePolicyNamingStrategy {
 
-    Predicate<Meter.Id> ROUTE_POLICIES
-            = id -> MicrometerRoutePolicyService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
+    Predicate<Meter.Id> ROUTE_POLICIES = id -> KIND_ROUTE.equals(id.getTag(KIND));
 
     /**
      * Default naming strategy that uses micrometer naming convention.
@@ -87,7 +86,7 @@ public interface MicrometerRoutePolicyNamingStrategy {
     default Tags getTags(Route route) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
-                SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                KIND, KIND_ROUTE,
                 ROUTE_ID_TAG, route.getId(),
                 EVENT_TYPE_TAG, "route");
     }
@@ -95,7 +94,7 @@ public interface MicrometerRoutePolicyNamingStrategy {
     default Tags getTags(CamelContext camelContext) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, camelContext.getName(),
-                SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                KIND, KIND_ROUTE,
                 ROUTE_ID_TAG, "",
                 EVENT_TYPE_TAG, "context");
     }
@@ -103,7 +102,7 @@ public interface MicrometerRoutePolicyNamingStrategy {
     default Tags getExchangeStatusTags(Route route) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
-                SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                KIND, KIND_ROUTE,
                 ROUTE_ID_TAG, route.getId(),
                 EVENT_TYPE_TAG, "route");
     }
@@ -111,7 +110,7 @@ public interface MicrometerRoutePolicyNamingStrategy {
     default Tags getExchangeStatusTags(CamelContext camelContext) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, camelContext.getName(),
-                SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                KIND, KIND_ROUTE,
                 ROUTE_ID_TAG, "",
                 EVENT_TYPE_TAG, "context");
     }

@@ -65,6 +65,11 @@ public final class MicrometerConstants {
     public static final String EVENT_TYPE_TAG = "eventType";
     public static final String METRICS_REGISTRY_NAME = "metricsRegistry";
 
+    public static final String KIND = "kind";
+    public static final String KIND_EXCHANGE = "CamelExchangeEvent";
+    public static final String KIND_ROUTE = "CamelRoute";
+    public static final String KIND_HISTORY = "CamelMessageHistory";
+    @Deprecated
     public static final String SERVICE_NAME = "serviceName";
     public static final String ENDPOINT_NAME = "endpointName";
 

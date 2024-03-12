@@ -35,8 +35,9 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_HISTORY;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 /**
  * A factory to setup and use {@link MicrometerMessageHistory} as message history implementation.
@@ -168,8 +169,7 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
                 messageHistoryService.setMeterRegistry(getMeterRegistry());
                 messageHistoryService.setPrettyPrint(isPrettyPrint());
                 messageHistoryService.setDurationUnit(getDurationUnit());
-                messageHistoryService
-                        .setMatchingTags(Tags.of(SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName()));
+                messageHistoryService.setMatchingTags(Tags.of(KIND, KIND_HISTORY));
                 camelContext.addService(messageHistoryService);
             }
         } catch (Exception e) {

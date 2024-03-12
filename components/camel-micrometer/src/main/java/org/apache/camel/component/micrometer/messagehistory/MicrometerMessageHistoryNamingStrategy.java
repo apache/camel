@@ -26,9 +26,10 @@ import org.apache.camel.component.micrometer.MicrometerUtils;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_HISTORY;
 import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 /**
  * Provides a strategy to derive a meter name from the route and node
@@ -36,7 +37,7 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_
 public interface MicrometerMessageHistoryNamingStrategy {
 
     Predicate<Meter.Id> MESSAGE_HISTORIES
-            = id -> MicrometerMessageHistoryService.class.getSimpleName().equals(id.getTag(SERVICE_NAME));
+            = id -> KIND_HISTORY.equals(id.getTag(KIND));
 
     /**
      * Default naming strategy that uses micrometer naming convention.
@@ -62,7 +63,7 @@ public interface MicrometerMessageHistoryNamingStrategy {
     default Tags getTags(Route route, NamedNode node) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
-                SERVICE_NAME, MicrometerMessageHistoryService.class.getSimpleName(),
+                KIND, KIND_HISTORY,
                 ROUTE_ID_TAG, route.getId(),
                 NODE_ID_TAG, node.getId());
     }

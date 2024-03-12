@@ -39,8 +39,9 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_ROUTE;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
 /**
  * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using {@link MeterRegistry}.
@@ -286,7 +287,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                 registryService.setMeterRegistry(getMeterRegistry());
                 registryService.setPrettyPrint(isPrettyPrint());
                 registryService.setDurationUnit(getDurationUnit());
-                registryService.setMatchingTags(Tags.of(SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName()));
+                registryService.setMatchingTags(Tags.of(KIND, KIND_ROUTE));
                 route.getCamelContext().addService(registryService);
                 ServiceHelper.startService(registryService);
             }
