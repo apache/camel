@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class QdrantCreateCollectionManualIT extends QdrantTestSupport {
+public class QdrantCreateCollectionTest extends QdrantTestSupport {
 
     @DisplayName("Tests that trying to create a collection without passing the action name triggers a failure")
     @Test
