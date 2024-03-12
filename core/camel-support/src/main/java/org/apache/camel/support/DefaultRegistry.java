@@ -365,6 +365,9 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         if (found == null && repositories != null) {
             for (BeanRepository r : repositories) {
                 found = r.findSingleByType(type);
+                if (found != null) {
+                    break;
+                }
             }
         }
 
