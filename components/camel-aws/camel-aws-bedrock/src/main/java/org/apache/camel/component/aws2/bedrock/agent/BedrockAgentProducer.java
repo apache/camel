@@ -243,8 +243,8 @@ public class BedrockAgentProducer extends DefaultProducer {
     }
 
     private void prepareGetIngestionJobResponse(GetIngestionJobResponse result, Message message) {
-            message.setBody(result.ingestionJob().ingestionJobId());
-            message.setHeader(BedrockAgentConstants.INGESTION_JOB_STATUS, result.ingestionJob().status());
+        message.setBody(result.ingestionJob().ingestionJobId());
+        message.setHeader(BedrockAgentConstants.INGESTION_JOB_STATUS, result.ingestionJob().status());
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
