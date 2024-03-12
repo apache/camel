@@ -59,16 +59,34 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
     private static final String MAIN_DIR = "org/apache/camel/catalog/main";
     private static final String BASE_RESOURCE_DIR = "org/apache/camel/catalog";
+
     public static final String FIND_COMPONENT_NAMES = "findComponentNames";
+    public static final String FIND_COMPONENT_LABELS = "findComponentLabels";
     public static final String LIST_COMPONENTS_AS_JSON = "listComponentsAsJson";
+
     public static final String FIND_DATA_FORMAT_NAMES = "findDataFormatNames";
+    public static final String FIND_DATA_FORMAT_LABELS = "findDataFormatLabels";
     public static final String LIST_DATA_FORMATS_AS_JSON = "listDataFormatsAsJson";
+
     public static final String FIND_LANGUAGE_NAMES = "findLanguageNames";
-    public static final String FIND_TRANSFORMER_NAMES = "findTransformerNames";
-    public static final String FIND_CONSOLE_NAMES = "findConsoleNames";
+    public static final String FIND_LANGUAGE_LABELS = "findLanguageLabels";
     public static final String LIST_LANGUAGES_AS_JSON = "listLanguagesAsJson";
+
+    public static final String FIND_TRANSFORMER_NAMES = "findTransformerNames";
     public static final String LIST_TRANSFORMERS_AS_JSON = "listTransformersAsJson";
+
+    public static final String FIND_CONSOLE_NAMES = "findConsoleNames";
     public static final String LIST_CONSOLES_AS_JSON = "listConsolesAsJson";
+
+    public static final String FIND_MODEL_NAMES = "findModelNames";
+    public static final String FIND_MODEL_LABELS = "findModelLabels";
+    public static final String LIST_MODELS_AS_JSON = "listModelsAsJson";
+
+    public static final String FIND_OTHER_NAMES = "findOtherNames";
+    public static final String FIND_OTHER_LABELS = "findOtherLabels";
+    public static final String LIST_OTHERS_AS_JSON = "listOthersAsJson";
+
+    public static final String SUMMARY_AS_JSON = "summaryAsJson";
 
     private final VersionHelper version = new VersionHelper();
 
@@ -113,13 +131,9 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         this.runtimeProvider = runtimeProvider;
         // inject CamelCatalog to the provider
         this.runtimeProvider.setCamelCatalog(this);
+
         // invalidate the cache
-        cache.remove(FIND_COMPONENT_NAMES);
-        cache.remove(LIST_COMPONENTS_AS_JSON);
-        cache.remove(FIND_DATA_FORMAT_NAMES);
-        cache.remove(LIST_DATA_FORMATS_AS_JSON);
-        cache.remove(FIND_LANGUAGE_NAMES);
-        cache.remove(LIST_LANGUAGES_AS_JSON);
+        cache.clear();
     }
 
     @Override
@@ -147,8 +161,10 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         extraComponents.put(name, className);
         // invalidate the cache
         cache.remove(FIND_COMPONENT_NAMES);
-        cache.remove("findComponentLabels");
+        cache.remove(FIND_COMPONENT_LABELS);
         cache.remove(LIST_COMPONENTS_AS_JSON);
+
+        cache.remove(SUMMARY_AS_JSON);
     }
 
     @Override
@@ -164,8 +180,10 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         extraDataFormats.put(name, className);
         // invalidate the cache
         cache.remove(FIND_DATA_FORMAT_NAMES);
-        cache.remove("findDataFormatLabels");
+        cache.remove(FIND_DATA_FORMAT_LABELS);
         cache.remove(LIST_DATA_FORMATS_AS_JSON);
+
+        cache.remove(SUMMARY_AS_JSON);
     }
 
     @Override
@@ -241,7 +259,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public List<String> findModelNames() {
-        return cache("findModelNames", () -> {
+        return cache(FIND_MODEL_NAMES, () -> {
             try (InputStream is = versionManager.getResourceAsStream(MODELS_CATALOG)) {
                 return CatalogHelper.loadLines(is);
             } catch (IOException e) {
@@ -252,7 +270,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public List<String> findOtherNames() {
-        return cache("findOtherNames", runtimeProvider::findOtherNames);
+        return cache(FIND_OTHER_NAMES, runtimeProvider::findOtherNames);
     }
 
     @Override
@@ -391,27 +409,27 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public Set<String> findModelLabels() {
-        return cache("findModelLabels", () -> findLabels(this::findModelNames, this::eipModel));
+        return cache(FIND_MODEL_LABELS, () -> findLabels(this::findModelNames, this::eipModel));
     }
 
     @Override
     public Set<String> findComponentLabels() {
-        return cache("findComponentLabels", () -> findLabels(this::findComponentNames, this::componentModel));
+        return cache(FIND_COMPONENT_LABELS, () -> findLabels(this::findComponentNames, this::componentModel));
     }
 
     @Override
     public Set<String> findDataFormatLabels() {
-        return cache("findDataFormatLabels", () -> findLabels(this::findDataFormatNames, this::dataFormatModel));
+        return cache(FIND_DATA_FORMAT_LABELS, () -> findLabels(this::findDataFormatNames, this::dataFormatModel));
     }
 
     @Override
     public Set<String> findLanguageLabels() {
-        return cache("findLanguageLabels", () -> findLabels(this::findLanguageNames, this::languageModel));
+        return cache(FIND_LANGUAGE_LABELS, () -> findLabels(this::findLanguageNames, this::languageModel));
     }
 
     @Override
     public Set<String> findOtherLabels() {
-        return cache("findOtherLabels", () -> findLabels(this::findOtherNames, this::otherModel));
+        return cache(FIND_OTHER_LABELS, () -> findLabels(this::findOtherNames, this::otherModel));
     }
 
     private SortedSet<String> findLabels(Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> loadModel) {
@@ -485,7 +503,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public String listModelsAsJson() {
-        return cache("listModelsAsJson", () -> JsonMapper.serialize(findModelNames().stream()
+        return cache(LIST_MODELS_AS_JSON, () -> JsonMapper.serialize(findModelNames().stream()
                 .map(this::modelJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("model"))
@@ -494,7 +512,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public String listOthersAsJson() {
-        return cache("listOthersAsJson", () -> JsonMapper.serialize(findOtherNames().stream()
+        return cache(LIST_OTHERS_AS_JSON, () -> JsonMapper.serialize(findOtherNames().stream()
                 .map(this::otherJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("other"))
@@ -503,7 +521,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public String summaryAsJson() {
-        return cache("summaryAsJson", () -> {
+        return cache(SUMMARY_AS_JSON, () -> {
             Map<String, Object> obj = new JsonObject();
             obj.put("version", getCatalogVersion());
             obj.put("models", findModelNames().size());
@@ -613,11 +631,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
     }
 
-    @SuppressWarnings("unchecked")
     private <T> T cache(String key, String name, Function<String, T> loader) {
         return doGetCache(key, name, loader);
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T doGetCache(String key, String name, Function<String, T> loader) {
         if (caching) {
             T t = (T) cache.get(key);
@@ -633,7 +651,6 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
     }
 
-    @SuppressWarnings("unchecked")
     private <T> T cache(String name, Function<String, T> loader) {
         return doGetCache(name, name, loader);
     }

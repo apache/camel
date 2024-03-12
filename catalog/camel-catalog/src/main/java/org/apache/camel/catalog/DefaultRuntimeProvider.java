@@ -128,93 +128,37 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
 
     @Override
     public List<String> findComponentNames() {
-        List<String> names = new ArrayList<>();
-        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getComponentsCatalog())) {
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        } catch (IOException e1) {
-            // ignore
-        }
-        return names;
+        return find(getComponentsCatalog());
     }
 
     @Override
     public List<String> findDataFormatNames() {
-        List<String> names = new ArrayList<>();
-        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getDataFormatsCatalog())) {
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        } catch (IOException e1) {
-            // ignore
-        }
-        return names;
+        return find(getDataFormatsCatalog());
     }
 
     @Override
     public List<String> findLanguageNames() {
-        List<String> names = new ArrayList<>();
-        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getLanguageCatalog())) {
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        } catch (IOException e1) {
-            // ignore
-        }
-        return names;
+        return find(getLanguageCatalog());
     }
 
     @Override
     public List<String> findTransformerNames() {
-        List<String> names = new ArrayList<>();
-        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getTransformerCatalog())) {
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        } catch (IOException e1) {
-            // ignore
-        }
-        return names;
+        return find(getTransformerCatalog());
     }
 
     @Override
     public List<String> findDevConsoleNames() {
-        List<String> names = new ArrayList<>();
-        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getDevConsoleCatalog())) {
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        } catch (IOException e1) {
-            // ignore
-        }
-        return names;
+        return find(getDevConsoleCatalog());
     }
 
     @Override
     public List<String> findOtherNames() {
+        return find(getOtherCatalog());
+    }
+
+    protected List<String> find(String resourceName) {
         List<String> names = new ArrayList<>();
-        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getOtherCatalog())) {
+        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(resourceName)) {
             if (is != null) {
                 try {
                     CatalogHelper.loadLines(is, names);
