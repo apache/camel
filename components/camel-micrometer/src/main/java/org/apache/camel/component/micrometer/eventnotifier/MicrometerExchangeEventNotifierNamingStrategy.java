@@ -22,6 +22,7 @@ import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
@@ -51,6 +52,11 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
         @Override
         public String getName(Exchange exchange, Endpoint endpoint) {
             return formatName(DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME);
+        }
+
+        @Override
+        public String formatName(String name) {
+            return MicrometerUtils.legacyName(name);
         }
     };
 
