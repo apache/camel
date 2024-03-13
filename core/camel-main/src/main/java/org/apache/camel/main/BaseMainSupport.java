@@ -363,9 +363,20 @@ public abstract class BaseMainSupport extends BaseService {
         if (pc.getLocations().isEmpty()) {
             String locations = propertyPlaceholderLocations;
             if (locations == null) {
+                // ENV/SYS takes precedence, then java configured value
                 String profile = MainHelper.lookupPropertyFromSysOrEnv(MainConstants.PROFILE)
                         .orElse(mainConfigurationProperties.getProfile());
+                if (profile == null) {
+                    // fallback to check if application.properties has a profile
+                    Properties prop = new Properties();
+                    try (InputStream is
+                            = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, "application.properties")) {
+                        prop.load(is);
+                    }
+                    profile = prop.getProperty("camel.main.profile");
+                }
                 if (profile != null) {
+                    mainConfigurationProperties.setProfile(profile);
                     String loc = profilePropertyPlaceholderLocation(profile);
                     defaultPropertyPlaceholderLocation = loc + "," + defaultPropertyPlaceholderLocation;
                 }
