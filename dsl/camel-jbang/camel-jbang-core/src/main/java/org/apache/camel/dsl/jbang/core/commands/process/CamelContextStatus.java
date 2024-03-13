@@ -82,6 +82,7 @@ public class CamelContextStatus extends ProcessWatchCommand {
                                 runtime != null ? runtime.getString("platformVersion") : null);
                         row.state = context.getInteger("phase");
                         row.camelVersion = context.getString("version");
+                        row.profile = context.getString("profile");
                         Map<String, ?> stats = context.getMap("statistics");
                         if (stats != null) {
                             Object thp = stats.get("exchangesThroughput");
@@ -147,6 +148,7 @@ public class CamelContextStatus extends ProcessWatchCommand {
                             .with(r -> r.name),
                     new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
                     new Column().header("PLATFORM").dataAlign(HorizontalAlign.LEFT).with(this::getPlatform),
+                    new Column().header("PROFILE").dataAlign(HorizontalAlign.LEFT).with(this::getProfile),
                     new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                     new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> extractState(r.state)),
@@ -214,6 +216,14 @@ public class CamelContextStatus extends ProcessWatchCommand {
         }
     }
 
+    protected String getProfile(Row r) {
+        String s = r.profile;
+        if (s == null || s.isEmpty()) {
+            s = "";
+        }
+        return s;
+    }
+
     protected String getDelta(Row r) {
         if (r.delta != null) {
             if (r.delta.startsWith("-")) {
@@ -250,6 +260,7 @@ public class CamelContextStatus extends ProcessWatchCommand {
         String platform;
         String platformVersion;
         String camelVersion;
+        String profile;
         String name;
         String ready;
         int routeStarted;

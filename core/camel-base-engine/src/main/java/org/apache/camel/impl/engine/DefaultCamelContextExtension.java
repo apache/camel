@@ -99,6 +99,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
 
     private volatile String description;
+    private volatile String profile;
     private volatile ExchangeFactory exchangeFactory;
     private volatile ExchangeFactoryManager exchangeFactoryManager;
     private volatile ProcessorExchangeFactory processorExchangeFactory;
@@ -214,6 +215,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String getProfile() {
+        return profile;
+    }
+
+    @Override
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     @Override

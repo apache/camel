@@ -462,6 +462,12 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
                 jo.put("name", camelContext.getName());
                 jo.put("version", camelContext.getVersion());
+                if (camelContext.getCamelContextExtension().getProfile() != null) {
+                    jo.put("profile", camelContext.getCamelContextExtension().getProfile());
+                }
+                if (camelContext.getCamelContextExtension().getDescription() != null) {
+                    jo.put("description", camelContext.getCamelContextExtension().getDescription());
+                }
                 Collection<HealthCheck.Result> results = HealthCheckHelper.invoke(getCamelContext());
                 boolean up = results.stream().allMatch(h -> HealthCheck.State.UP.equals(h.getState()));
                 jo.put("ready", up ? "1/1" : "0/1");

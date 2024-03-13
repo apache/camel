@@ -45,6 +45,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": target.setProcessorExchangeFactory(property(camelContext, org.apache.camel.spi.ProcessorExchangeFactory.class, value)); return true;
+        case "profile":
+        case "Profile": target.setProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "reactiveexecutor":
         case "ReactiveExecutor": target.setReactiveExecutor(property(camelContext, org.apache.camel.spi.ReactiveExecutor.class, value)); return true;
         case "registry":
@@ -82,6 +84,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Name": return java.lang.String.class;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return org.apache.camel.spi.ProcessorExchangeFactory.class;
+        case "profile":
+        case "Profile": return java.lang.String.class;
         case "reactiveexecutor":
         case "ReactiveExecutor": return org.apache.camel.spi.ReactiveExecutor.class;
         case "registry":
@@ -120,6 +124,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Name": return target.getName();
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return target.getProcessorExchangeFactory();
+        case "profile":
+        case "Profile": return target.getProfile();
         case "reactiveexecutor":
         case "ReactiveExecutor": return target.getReactiveExecutor();
         case "registry":

@@ -32,6 +32,9 @@ public class ProfileConfigurer {
 
     public static void configure(CamelContext camelContext, String profile, MainConfigurationProperties config)
             throws Exception {
+
+        camelContext.getCamelContextExtension().setProfile(profile);
+
         if (profile == null) {
             // no profile is active
             return;

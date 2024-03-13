@@ -156,6 +156,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    public String getProfile() {
+        return context.getCamelContextExtension().getProfile();
+    }
+
+    @Override
     public String getState() {
         return context.getStatus().name();
     }

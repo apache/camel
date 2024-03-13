@@ -25,6 +25,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -41,7 +42,10 @@ public class ContextDevConsole extends AbstractDevConsole {
 
         sb.append(String.format("Apache Camel %s %s (%s) uptime %s", getCamelContext().getVersion(),
                 getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
-                getCamelContext().getUptime().toMillis()));
+                CamelContextHelper.getUptime(getCamelContext())));
+        if (getCamelContext().getCamelContextExtension().getProfile() != null) {
+            sb.append(String.format("\n    Profile: %s", getCamelContext().getCamelContextExtension().getProfile()));
+        }
         if (getCamelContext().getDescription() != null) {
             sb.append(String.format("\n    %s", getCamelContext().getDescription()));
         }
@@ -60,7 +64,7 @@ public class ContextDevConsole extends AbstractDevConsole {
                 String load5 = getLoad5(mb);
                 String load15 = getLoad15(mb);
                 if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
-                    sb.append(String.format("\n    Load Average: %s %s %s\n", load1, load5, load15));
+                    sb.append(String.format("\n    Load Average: %s %s %s", load1, load5, load15));
                 }
                 String thp = getThroughput(mb);
                 if (!thp.isEmpty()) {
@@ -112,10 +116,12 @@ public class ContextDevConsole extends AbstractDevConsole {
         if (getCamelContext().getDescription() != null) {
             root.put("description", getCamelContext().getDescription());
         }
+        if (getCamelContext().getCamelContextExtension().getProfile() != null) {
+            root.put("profile", getCamelContext().getCamelContextExtension().getProfile());
+        }
         root.put("version", getCamelContext().getVersion());
         root.put("state", getCamelContext().getStatus().name());
         root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
-
         root.put("uptime", getCamelContext().getUptime().toMillis());
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
