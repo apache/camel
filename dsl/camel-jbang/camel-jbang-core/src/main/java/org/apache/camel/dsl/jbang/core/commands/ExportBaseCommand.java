@@ -858,6 +858,35 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
     }
 
+    protected void copyApplicationPropertiesFiles(File srcResourcesDir) throws Exception {
+        File[] files = new File(".").listFiles(f -> {
+            if (!f.isFile()) {
+                return false;
+            }
+            String ext = FileUtil.onlyExt(f.getName());
+            String name = FileUtil.onlyName(f.getName());
+            if (!"properties".equals(ext)) {
+                return false;
+            }
+            if (name.equals("application")) {
+                // skip generic as its handled specially
+                return false;
+            }
+            if (profile == null) {
+                // accept all kind of configuration files
+                return name.startsWith("application");
+            } else {
+                // only accept the configuration file that matches the profile
+                return name.equals("application-" + profile);
+            }
+        });
+        if (files != null) {
+            for (File f : files) {
+                safeCopy(f, new File(srcResourcesDir, f.getName()), true);
+            }
+        }
+    }
+
     private MavenDownloader getDownloader() {
         if (downloader == null) {
             init();
