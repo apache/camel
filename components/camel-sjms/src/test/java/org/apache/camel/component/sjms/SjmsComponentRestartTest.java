@@ -23,16 +23,32 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SjmsComponentRestartTest extends CamelTestSupport {
 
-    @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    /*
+     * This one needs a custom lifecycle due to binding to registry via @BindToRegistry.
+     * The broker needs to be started earlier than usual.
+     */
+    public static ArtemisService service;
+
     @BindToRegistry("activemqCF")
     private ActiveMQConnectionFactory connectionFactory
             = new ActiveMQConnectionFactory(service.serviceAddress());
+
+    static {
+        service = ArtemisServiceFactory.createVMService();
+        service.initialize();
+    }
+
+    @AfterAll
+    public static void shutdownBroker() {
+        if (service != null) {
+            service.shutdown();
+        }
+    }
 
     @Override
     protected boolean useJmx() {
