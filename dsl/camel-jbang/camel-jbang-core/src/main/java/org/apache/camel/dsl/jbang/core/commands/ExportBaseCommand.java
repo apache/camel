@@ -139,6 +139,10 @@ abstract class ExportBaseCommand extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version")
     protected String kameletsVersion;
 
+    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
+                        description = "Profile to export (dev, test, or prod).")
+    String profile;
+
     @CommandLine.Option(names = { "--local-kamelet-dir" },
                         description = "Local directory for loading Kamelets (takes precedence)")
     protected String localKameletDir;
@@ -851,6 +855,35 @@ abstract class ExportBaseCommand extends CamelCommand {
             System.err.println("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("Error copying the artifact: " + gav + " due to: " + e.getMessage());
+        }
+    }
+
+    protected void copyApplicationPropertiesFiles(File srcResourcesDir) throws Exception {
+        File[] files = new File(".").listFiles(f -> {
+            if (!f.isFile()) {
+                return false;
+            }
+            String ext = FileUtil.onlyExt(f.getName());
+            String name = FileUtil.onlyName(f.getName());
+            if (!"properties".equals(ext)) {
+                return false;
+            }
+            if (name.equals("application")) {
+                // skip generic as its handled specially
+                return false;
+            }
+            if (profile == null) {
+                // accept all kind of configuration files
+                return name.startsWith("application");
+            } else {
+                // only accept the configuration file that matches the profile
+                return name.equals("application-" + profile);
+            }
+        });
+        if (files != null) {
+            for (File f : files) {
+                safeCopy(f, new File(srcResourcesDir, f.getName()), true);
+            }
         }
     }
 

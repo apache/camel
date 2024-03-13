@@ -35,17 +35,41 @@ public class Export extends ExportBaseCommand {
 
     @Override
     protected Integer export() throws Exception {
-        File profile = new File("application.properties");
-        if (profile.exists()) {
+        // application.properties
+        doLoadAndInitProfileProperties(new File("application.properties"));
+        if (profile != null) {
+            // override from profile specific configuration
+            doLoadAndInitProfileProperties(new File("application-" + profile + ".properties"));
+        }
+
+        if (runtime == null) {
+            System.err.println("The runtime option must be specified");
+            return 1;
+        }
+        if (gav == null) {
+            System.err.println("The gav option must be specified");
+            return 1;
+        }
+
+        if ("spring-boot".equals(runtime) || "camel-spring-boot".equals(runtime)) {
+            return export(new ExportSpringBoot(getMain()));
+        } else if ("quarkus".equals(runtime) || "camel-quarkus".equals(runtime)) {
+            return export(new ExportQuarkus(getMain()));
+        } else if ("main".equals(runtime) || "camel-main".equals(runtime)) {
+            return export(new ExportCamelMain(getMain()));
+        } else {
+            System.err.println("Unknown runtime: " + runtime);
+            return 1;
+        }
+    }
+
+    private void doLoadAndInitProfileProperties(File file) throws Exception {
+        if (file.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(prop, profile);
+            RuntimeUtil.loadProperties(prop, file);
             // read runtime and gav from profile if not configured
-            if (this.runtime == null) {
-                this.runtime = prop.getProperty("camel.jbang.runtime");
-            }
-            if (this.gav == null) {
-                this.gav = prop.getProperty("camel.jbang.gav");
-            }
+            this.runtime = prop.getProperty("camel.jbang.runtime", this.runtime);
+            this.gav = prop.getProperty("camel.jbang.gav", this.gav);
             // allow configuring versions from profile
             this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
             this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
@@ -72,26 +96,6 @@ public class Export extends ExportBaseCommand {
                     mavenApacheSnapshotEnabled ? "true" : "false"));
             this.exclude = prop.getProperty("camel.jbang.exclude", this.exclude);
         }
-
-        if (runtime == null) {
-            System.err.println("The runtime option must be specified");
-            return 1;
-        }
-        if (gav == null) {
-            System.err.println("The gav option must be specified");
-            return 1;
-        }
-
-        if ("spring-boot".equals(runtime) || "camel-spring-boot".equals(runtime)) {
-            return export(new ExportSpringBoot(getMain()));
-        } else if ("quarkus".equals(runtime) || "camel-quarkus".equals(runtime)) {
-            return export(new ExportQuarkus(getMain()));
-        } else if ("main".equals(runtime) || "camel-main".equals(runtime)) {
-            return export(new ExportCamelMain(getMain()));
-        } else {
-            System.err.println("Unknown runtime: " + runtime);
-            return 1;
-        }
     }
 
     protected Integer export(ExportBaseCommand cmd) throws Exception {
@@ -111,6 +115,7 @@ public class Export extends ExportBaseCommand {
         cmd.javaVersion = this.javaVersion;
         cmd.camelVersion = this.camelVersion;
         cmd.kameletsVersion = this.kameletsVersion;
+        cmd.profile = this.profile;
         cmd.localKameletDir = this.localKameletDir;
         cmd.logging = this.logging;
         cmd.loggingLevel = this.loggingLevel;

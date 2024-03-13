@@ -138,6 +138,12 @@ public class RunMojo extends AbstractExecMojo {
     @Parameter(property = "camel.useKamelet")
     protected Boolean useKamelet;
 
+    /**
+     * To run with a specific Camel Main profile (dev,test,prod)
+     */
+    @Parameter(property = "camel.profile")
+    protected String profile;
+
     protected String extendedPluginDependencyArtifactId;
 
     @Component
@@ -341,6 +347,10 @@ public class RunMojo extends AbstractExecMojo {
         }
         if (arguments != null) {
             args.addAll(Arrays.asList(arguments));
+        }
+        if (profile != null) {
+            args.add("-profile");
+            args.add(profile);
         }
 
         if (mainClass == null && usingKameletMain) {

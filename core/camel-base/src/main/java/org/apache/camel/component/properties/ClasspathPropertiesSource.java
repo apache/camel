@@ -31,8 +31,15 @@ import org.apache.camel.util.OrderedProperties;
 
 public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource implements Ordered {
 
+    private final int order;
+
     public ClasspathPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location) {
+        this(propertiesComponent, location, 400);
+    }
+
+    public ClasspathPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, int order) {
         super(propertiesComponent, location);
+        this.order = order;
     }
 
     @Override
@@ -71,6 +78,6 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
 
     @Override
     public int getOrder() {
-        return 300;
+        return order;
     }
 }

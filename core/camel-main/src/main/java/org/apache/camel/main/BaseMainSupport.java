@@ -102,6 +102,7 @@ import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.main.MainConstants.profilePropertyPlaceholderLocation;
 import static org.apache.camel.main.MainHelper.computeProperties;
 import static org.apache.camel.main.MainHelper.optionKey;
 import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
@@ -362,6 +363,23 @@ public abstract class BaseMainSupport extends BaseService {
         if (pc.getLocations().isEmpty()) {
             String locations = propertyPlaceholderLocations;
             if (locations == null) {
+                // ENV/SYS takes precedence, then java configured value
+                String profile = MainHelper.lookupPropertyFromSysOrEnv(MainConstants.PROFILE)
+                        .orElse(mainConfigurationProperties.getProfile());
+                if (profile == null) {
+                    // fallback to check if application.properties has a profile
+                    Properties prop = new Properties();
+                    try (InputStream is
+                            = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, "application.properties")) {
+                        prop.load(is);
+                    }
+                    profile = prop.getProperty("camel.main.profile");
+                }
+                if (profile != null) {
+                    mainConfigurationProperties.setProfile(profile);
+                    String loc = profilePropertyPlaceholderLocation(profile);
+                    defaultPropertyPlaceholderLocation = loc + "," + defaultPropertyPlaceholderLocation;
+                }
                 locations
                         = MainHelper.lookupPropertyFromSysOrEnv(MainConstants.PROPERTY_PLACEHOLDER_LOCATION)
                                 .orElse(defaultPropertyPlaceholderLocation);
@@ -371,11 +389,11 @@ public abstract class BaseMainSupport extends BaseService {
             }
             if (!Objects.equals(locations, "false")) {
                 pc.addLocation(locations);
-                if (MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION.equals(locations)) {
-                    LOG.debug("Using properties from: {}", locations);
+                if (defaultPropertyPlaceholderLocation.equals(locations)) {
+                    LOG.debug("Properties location: {}", locations);
                 } else {
                     // if not default location then log at INFO
-                    LOG.info("Using properties from: {}", locations);
+                    LOG.info("Properties location: {}", locations);
                 }
             }
         }
