@@ -2979,6 +2979,7 @@
     "label": "cloud,cloud",
     "javaType": "org.apache.camel.component.hashicorp.vault.HashicorpVaultComponent",
     "supportLevel": "Stable",
+    "metadata": { "vault": "hashicorp-vault" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-hashicorp-vault",
     "version": "4.5.0-SNAPSHOT",
