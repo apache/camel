@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myCoolBean", new MyBarSingleton());
         return jndi;
     }

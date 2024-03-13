@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class RefTest extends LanguageTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myExp", new MyExpression());
         return jndi;
     }

@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 public class BeanMethodWithStringParameterTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyBean());
         return jndi;
     }

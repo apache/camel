@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AsyncEndpointRoutingSlipBeanTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyRoutingSlipBean());
         return jndi;
     }

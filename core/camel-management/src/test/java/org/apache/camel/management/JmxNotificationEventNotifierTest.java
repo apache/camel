@@ -47,7 +47,7 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
         notifier.setIgnoreRouteEvents(true);
         notifier.setIgnoreServiceEvents(true);
 
-        CamelContext context = new DefaultCamelContext(createRegistry());
+        CamelContext context = new DefaultCamelContext(createCamelRegistry());
         context.getManagementStrategy().addEventNotifier(notifier);
 
         // END SNIPPET: e1

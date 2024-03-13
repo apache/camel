@@ -32,8 +32,8 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
     private MyExceptionHandler eh = new MyExceptionHandler();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("eh", eh);
         return jndi;
     }

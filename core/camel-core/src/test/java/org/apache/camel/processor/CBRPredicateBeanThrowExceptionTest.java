@@ -34,8 +34,8 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
     private static AtomicBoolean check2 = new AtomicBoolean();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("cbrBean", new MyCBRBean());
         return jndi;
     }

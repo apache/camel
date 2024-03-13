@@ -49,8 +49,8 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myRetryBean", new MyRetryBean());
         return jndi;
     }

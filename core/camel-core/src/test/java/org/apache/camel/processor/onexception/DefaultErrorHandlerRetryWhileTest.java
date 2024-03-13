@@ -33,8 +33,8 @@ public class DefaultErrorHandlerRetryWhileTest extends ContextTestSupport {
     private static int invoked;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myRetryHandler", new MyRetryBean());
         return jndi;
     }

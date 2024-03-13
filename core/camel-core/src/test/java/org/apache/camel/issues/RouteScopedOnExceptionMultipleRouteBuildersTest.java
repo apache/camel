@@ -51,7 +51,7 @@ public class RouteScopedOnExceptionMultipleRouteBuildersTest extends ContextTest
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(createRegistry());
+        CamelContext context = new DefaultCamelContext(createCamelRegistry());
         context.getCamelContextExtension().setErrorHandlerFactory(new DeadLetterChannelBuilder("mock:dead"));
         return context;
     }

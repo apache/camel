@@ -40,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestComponentVerifierExtensionTest extends ContextTestSupport {
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = super.createCamelRegistry();
         registry.bind("rest", new RestComponent());
         registry.bind("rest-component", new MyComponent());
         return registry;

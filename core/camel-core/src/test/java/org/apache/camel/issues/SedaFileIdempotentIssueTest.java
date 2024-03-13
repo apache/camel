@@ -54,8 +54,8 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
 
         repository.setFileStore(testFile("repo.txt").toFile());
         jndi.bind("repo", repository);

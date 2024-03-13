@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,7 +52,8 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
 
-        assertMockEndpointsSatisfied();
+        // wait a bit for the file processing to complete
+        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
     }
 
     @Test
@@ -68,7 +71,8 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         MockEndpoint reverse = getMockEndpoint("mock:reverse");
         reverse.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
 
-        assertMockEndpointsSatisfied();
+        // wait a bit for the file processing to complete
+        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
     }
 
 }

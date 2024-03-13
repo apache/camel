@@ -37,8 +37,8 @@ public class EnricherBiFunctionTest extends ContextTestSupport {
             = (Exchange e1, Exchange e2) -> e1.getMessage().getBody(String.class) + "+" + e2.getMessage().getBody(String.class);
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("cool", cool);
         jndi.bind("agg", myAgg);
         return jndi;

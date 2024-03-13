@@ -33,8 +33,8 @@ public class CustomConsumerExceptionHandlerTest extends ContextTestSupport {
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myHandler", new MyExceptionHandler());
         return jndi;
     }

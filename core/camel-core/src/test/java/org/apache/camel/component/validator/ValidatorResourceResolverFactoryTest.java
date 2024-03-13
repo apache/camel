@@ -112,7 +112,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         jndiContext = createJndiContext();
         jndiContext.bind("resourceResolverFactory", new ResourceResolverFactoryImpl());
         return new DefaultRegistry(new JndiBeanRepository(jndiContext));

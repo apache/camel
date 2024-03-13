@@ -49,6 +49,12 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
 
         context.suspend();
 
+        // even though we wait for the route to suspend, there is a race condition where the consumer
+        // may still process messages while it's being suspended due to asynchronous message handling.
+        // as a result, we need to wait a bit longer to ensure that the seda consumer is suspended before
+        // sending the next message.
+        Thread.sleep(1000L);
+
         // need to give seda consumer thread time to idle
         Awaitility.await().atMost(200, TimeUnit.MILLISECONDS)
                 .pollDelay(100, TimeUnit.MILLISECONDS)

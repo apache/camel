@@ -42,9 +42,9 @@ public class ToFileRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         // bind our processor in the registry with the given id
-        Registry reg = super.createRegistry();
+        Registry reg = super.createCamelRegistry();
         reg.bind("processReport", new ProcessReport());
         return reg;
     }

@@ -26,8 +26,8 @@ public class DataSetTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20);
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", dataSet);
         return answer;
     }

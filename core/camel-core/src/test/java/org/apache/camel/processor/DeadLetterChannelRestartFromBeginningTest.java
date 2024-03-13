@@ -30,8 +30,8 @@ import org.junit.jupiter.api.Test;
 public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("retryBean", new RetryBean());
         return jndi;
     }

@@ -60,7 +60,7 @@ public class SimpleLanguageBeanFunctionScopeTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry wrapper = new SimpleRegistry() {
             @Override
             public Object lookupByName(String name) {

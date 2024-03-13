@@ -28,6 +28,7 @@ import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,11 +40,16 @@ public class DefaultCamelBeanPostProcessorComplexFieldFirstTest extends ContextT
 
     private CamelBeanPostProcessor postProcessor;
 
+    @Override
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
+        answer.bind("myDS", new DummyDataSource());
+        return answer;
+    }
+
     @Test
     public void testPostProcessor() throws Exception {
         FooService foo = new FooService();
-
-        context.getRegistry().bind("myDS", new DummyDataSource());
 
         postProcessor.postProcessBeforeInitialization(foo, "foo");
         postProcessor.postProcessAfterInitialization(foo, "foo");

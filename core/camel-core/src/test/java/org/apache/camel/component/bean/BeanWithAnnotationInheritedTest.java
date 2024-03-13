@@ -73,8 +73,8 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
 
         answer.bind("b", new B());
         answer.bind("p", Proxy.newProxyInstance(I1.class.getClassLoader(), new Class[] { I1.class }, new InvocationHandler() {

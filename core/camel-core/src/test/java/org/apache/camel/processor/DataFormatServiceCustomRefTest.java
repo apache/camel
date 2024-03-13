@@ -22,8 +22,8 @@ import org.apache.camel.spi.Registry;
 public class DataFormatServiceCustomRefTest extends DataFormatServiceTest {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myCustomDataFormat", my);
         return jndi;
     }

@@ -58,8 +58,8 @@ public class MethodFilterVariableTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", new MyBean());
         return answer;
     }

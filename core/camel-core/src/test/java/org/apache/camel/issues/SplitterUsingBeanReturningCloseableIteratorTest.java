@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("mySplitter", new MyOtherSplitterBean());
         return jndi;
     }

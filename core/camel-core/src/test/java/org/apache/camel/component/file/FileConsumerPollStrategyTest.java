@@ -40,8 +40,8 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
     private static String event = "";
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;
     }

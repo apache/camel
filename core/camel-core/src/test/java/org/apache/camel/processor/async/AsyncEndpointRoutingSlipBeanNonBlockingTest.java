@@ -43,8 +43,8 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
     private Exchange innerExchange;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyRoutingSlipBean());
         return jndi;
     }

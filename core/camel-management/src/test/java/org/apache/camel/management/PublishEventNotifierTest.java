@@ -36,7 +36,7 @@ public class PublishEventNotifierTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(createRegistry());
+        CamelContext context = new DefaultCamelContext(createCamelRegistry());
 
         PublishEventNotifier notifier = new PublishEventNotifier();
         notifier.setCamelContext(context);

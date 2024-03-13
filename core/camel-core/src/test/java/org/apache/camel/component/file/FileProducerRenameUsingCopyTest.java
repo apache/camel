@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,7 +35,8 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        // wait a bit for the file move to be completed
+        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
 
         assertFileExists(testFile("done/hello.txt"));
         assertFileNotExists(testFile("hello.txt"));

@@ -67,8 +67,8 @@ public class SimpleLanguageBeanFunctionMethodValueWithParenthesisTest extends Co
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyBean());
         return jndi;
     }

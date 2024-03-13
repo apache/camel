@@ -63,6 +63,12 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
                 .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0
                         && context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().size() == 0);
 
+        // even though we wait for the queues to empty, there is a race condition where the consumer
+        // may still process messages while it's being suspended due to asynchronous message handling.
+        // as a result, we need to wait a bit longer to ensure that the seda consumer is suspended before
+        // sending the next message.
+        Thread.sleep(1000L);
+
         template.sendBody("seda:foo", "B");
         // wait a little to ensure seda consumer thread would have tried to poll
         // otherwise
@@ -85,6 +91,7 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
                 from("seda:foo").routeId("foo").to("seda:bar");
 
                 from("seda:bar").routeId("bar").to("mock:bar");
