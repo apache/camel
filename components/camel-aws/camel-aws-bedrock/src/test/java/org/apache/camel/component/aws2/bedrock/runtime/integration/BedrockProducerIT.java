@@ -17,10 +17,7 @@
 package org.apache.camel.component.aws2.bedrock.runtime.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.*;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -220,6 +217,125 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testInvokeAnthropicV1Model() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_anthropic_v1_model", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt",
+                    new TextNode("Human: Can you tell the history of Mayflower? \\n\\Assistant:"));
+
+            ArrayNode stopSequences = mapper.createArrayNode();
+            stopSequences.add("Human:");
+            rootNode.putIfAbsent("max_tokens_to_sample", new IntNode(300));
+            rootNode.putIfAbsent("stop_sequences", stopSequences);
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.5));
+            rootNode.putIfAbsent("top_p", new IntNode(1));
+            rootNode.putIfAbsent("top_k", new IntNode(250));
+            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeAnthropicV2Model() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_anthropic_v2_model", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt",
+                    new TextNode("Human: Can you tell the history of Mayflower? \\n\\Assistant:"));
+
+            ArrayNode stopSequences = mapper.createArrayNode();
+            stopSequences.add("Human:");
+            rootNode.putIfAbsent("max_tokens_to_sample", new IntNode(300));
+            rootNode.putIfAbsent("stop_sequences", stopSequences);
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.5));
+            rootNode.putIfAbsent("top_p", new IntNode(1));
+            rootNode.putIfAbsent("top_k", new IntNode(250));
+            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeAnthropicV21Model() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_anthropic_v21_model", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt",
+                    new TextNode("Human: Can you tell the history of Mayflower? \\n\\Assistant:"));
+
+            ArrayNode stopSequences = mapper.createArrayNode();
+            stopSequences.add("Human:");
+            rootNode.putIfAbsent("max_tokens_to_sample", new IntNode(300));
+            rootNode.putIfAbsent("stop_sequences", stopSequences);
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.5));
+            rootNode.putIfAbsent("top_p", new IntNode(1));
+            rootNode.putIfAbsent("top_k", new IntNode(250));
+            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeAnthropicV3Model() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_anthropic_v3_model", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+
+            ArrayNode content = mapper.createArrayNode();
+
+            ObjectNode textContent = mapper.createObjectNode();
+
+            textContent.putIfAbsent("type", new TextNode("text"));
+            textContent.putIfAbsent("text", new TextNode("Can you tell the history of Mayflower?"));
+
+            content.add(textContent);
+
+            element.putIfAbsent("content", content);
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -257,10 +373,34 @@ class BedrockProducerIT extends CamelTestSupport {
                         .to(result);
 
                 from("direct:send_jurassic2_mid_model")
-                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
+                        .to("aws-bedrock:label?useDefaultCredentialsProvider=true&region=us-east-1&operation=invokeTextModel&modelId="
                             + BedrockModels.JURASSIC2_MID.model)
                         .split(body())
                         .transform().jq(".data.text")
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_anthropic_v1_model")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.ANTROPHIC_CLAUDE_INSTANT_V1.model)
+                        .log("${body}")
+                        .to(result);
+
+                from("direct:send_anthropic_v2_model")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.ANTROPHIC_CLAUDE_V2.model)
+                        .log("${body}")
+                        .to(result);
+
+                from("direct:send_anthropic_v21_model")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.ANTROPHIC_CLAUDE_V2_1.model)
+                        .log("${body}")
+                        .to(result);
+
+                from("direct:send_anthropic_v3_model")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
                         .log("Completions: ${body}")
                         .to(result);
             }

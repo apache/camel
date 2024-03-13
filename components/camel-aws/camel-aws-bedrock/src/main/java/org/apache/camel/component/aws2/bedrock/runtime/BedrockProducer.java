@@ -242,6 +242,20 @@ public class BedrockProducer extends DefaultProducer {
                     throw new RuntimeException(e);
                 }
             }
+            case "anthropic.claude-instant-v1", "anthropic.claude-v2", "anthropic.claude-v2:1" -> {
+                try {
+                    setAnthropicText(result, message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case "anthropic.claude-3-sonnet-20240229-v1:0" -> {
+                try {
+                    setAnthropicV3Text(result, message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             default -> throw new IllegalStateException("Unexpected value: " + getConfiguration().getModelId());
         }
     }
@@ -254,6 +268,18 @@ public class BedrockProducer extends DefaultProducer {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("completions"));
+    }
+
+    private void setAnthropicText(InvokeModelResponse result, Message message) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        message.setBody(jsonString.get("completion"));
+    }
+
+    private void setAnthropicV3Text(InvokeModelResponse result, Message message) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        message.setBody(jsonString);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
