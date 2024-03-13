@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerClientFactory;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -34,6 +35,9 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 @UriEndpoint(firstVersion = "3.9.0", scheme = "aws-secrets-manager", title = "AWS Secrets Manager",
              syntax = "aws-secrets-manager:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = SecretsManagerConstants.class)
+@Metadata(annotations = {
+        "vault=aws-secrets-manager",
+})
 public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
 
     private SecretsManagerClient secretsManagerClient;
