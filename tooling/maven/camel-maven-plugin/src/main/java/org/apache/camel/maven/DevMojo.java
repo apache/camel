@@ -35,8 +35,6 @@ public class DevMojo extends RunMojo {
 
     /**
      * Enable routes reloading
-     *
-     * @throws Exception
      */
     @Override
     protected void beforeBootstrapCamel() throws Exception {
@@ -52,6 +50,7 @@ public class DevMojo extends RunMojo {
         // use absolute path for dir
         dir = new File(dir).getAbsolutePath();
 
+        System.setProperty("camel.main.profile", "dev");
         System.setProperty("camel.main.routesReloadEnabled", "true");
         System.setProperty("camel.main.routesReloadDirectory", dir);
         System.setProperty("camel.main.routesReloadDirectoryRecursive", "true");

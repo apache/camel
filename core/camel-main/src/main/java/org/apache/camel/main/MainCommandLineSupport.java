@@ -169,6 +169,14 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 configure().withCompileWorkDir(parameter);
             }
         });
+        addOption(new ParameterOption(
+                "pro", "profile",
+                "Camel profile to use when running. (dev,test,prod)",
+                "profile") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                configure().withProfile(parameter);
+            }
+        });
     }
 
     /**
