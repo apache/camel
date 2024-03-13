@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms;
+package org.apache.camel.component.jms.integration.consumers;
 
 import java.util.concurrent.TimeUnit;
 
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tags({ @Tag("not-parallel") })
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
+public class TwoConsumerOnSameQueueIT extends CamelTestSupport {
 
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
