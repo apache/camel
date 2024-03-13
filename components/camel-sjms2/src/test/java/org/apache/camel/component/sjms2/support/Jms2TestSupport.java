@@ -31,20 +31,14 @@ import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms2.Sjms2Component;
 import org.apache.camel.component.sjms2.jms.Jms2ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A support class that builds up and tears down an ActiveMQ Artemis instance to be used for unit testing.
  */
-public class Jms2TestSupport extends CamelTestSupport {
-
-    @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
+public abstract class Jms2TestSupport extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -96,7 +90,7 @@ public class Jms2TestSupport extends CamelTestSupport {
         return camelContext;
     }
 
-    protected ConnectionFactory getConnectionFactory() throws Exception {
+    protected static ConnectionFactory getConnectionFactory(String serviceAddress) throws Exception {
         final String protocol = System.getProperty("protocol", "CORE").toUpperCase();
 
         //Currently AMQP and HORENTQ don't operate in exactly the same way on artemis as OPENWIRE
@@ -104,11 +98,13 @@ public class Jms2TestSupport extends CamelTestSupport {
         //of artemis we may be able test against them in an agnostic way.
         switch (protocol) {
             case "OPENWIRE":
-                return new ActiveMQConnectionFactory(service.serviceAddress());
+                return new ActiveMQConnectionFactory(serviceAddress);
             default:
-                return ActiveMQJMSClient.createConnectionFactory(service.serviceAddress(), "test");
+                return ActiveMQJMSClient.createConnectionFactory(serviceAddress, "test");
         }
     }
+
+    protected abstract ConnectionFactory getConnectionFactory() throws Exception;
 
     public void setSession(Session session) {
         this.session = session;

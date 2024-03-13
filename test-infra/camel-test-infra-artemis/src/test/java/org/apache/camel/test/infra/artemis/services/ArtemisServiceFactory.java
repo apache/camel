@@ -74,12 +74,12 @@ public final class ArtemisServiceFactory {
         }
 
         @Override
-        public void afterEach(ExtensionContext extensionContext) {
+        public void afterAll(ExtensionContext extensionContext) {
             // NO-OP
         }
 
         @Override
-        public void beforeEach(ExtensionContext extensionContext) {
+        public void beforeAll(ExtensionContext extensionContext) {
             addToStore(extensionContext);
         }
     }

@@ -16,12 +16,18 @@
  */
 package org.apache.camel.component.sjms.tx;
 
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Test to verify concurrent consumers on a transacted endpoint.
  */
 public class TransactedConcurrentConsumersTest extends TransactedConsumerSupport {
+
+    @RegisterExtension
+    protected static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     /**
      * We want to verify that when consuming from a single destination with multiple routes that we are thread safe and

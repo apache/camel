@@ -51,7 +51,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     private static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
 
     @RegisterExtension
-    public ArtemisService service = new ArtemisEmbeddedServiceBuilder()
+    public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
             .withPersistent(true)
             .withCustomConfiguration(configuration -> configureArtemis(configuration))
             .build();

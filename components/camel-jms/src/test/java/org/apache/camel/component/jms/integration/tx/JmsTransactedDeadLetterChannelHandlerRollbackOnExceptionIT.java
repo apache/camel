@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Tags({ @Tag("not-parallel"), @Tag("transaction") })
 public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT extends CamelTestSupport {
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     public static class BadErrorHandler {
         @Handler

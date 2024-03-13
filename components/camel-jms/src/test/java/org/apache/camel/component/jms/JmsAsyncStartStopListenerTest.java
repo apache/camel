@@ -40,7 +40,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Timeout(30)
 public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
 
     protected final String componentName = "activemq";
 

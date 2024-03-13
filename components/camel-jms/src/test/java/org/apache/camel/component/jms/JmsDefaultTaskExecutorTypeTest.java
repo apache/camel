@@ -57,7 +57,7 @@ class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JmsDefaultTaskExecutorTypeTest.class);
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
 
     @Test
     void testThreadPoolTaskExecutor() throws Exception {
