@@ -547,6 +547,14 @@ However, you may want to run Camel JBang in a more production like situation, wh
 camel run hello.java --profile=prod
 ----
 
+You can have profile specific configuration in configuration files using the naming style `application-<profile>.properties`,
+such as in the following:
+
+- `application.properties` - Common configuration that is always in use (default).
+- `application-dev.properties` - Developer specific configuration for  the `dev` profile.
+- `application-prod.properties` - Developer specific configuration for  the `prod` profile.
+
+The profile specific configuration will override values in the common configuration.
 
 === Downloading JARs over the internet
 
@@ -3111,6 +3119,8 @@ camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=../my
 ----
 
 TIP: See the possible options by running: `camel export --help` for more details.
+
+NOTE: You cannot use `--profile` option when exporting to Camel Quarkus.
 
 === Exporting to Camel Main
 
