@@ -141,6 +141,21 @@ public class MainTest {
     }
 
     @Test
+    public void testProfile() throws Exception {
+        // lets make a simple route
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.configure().withProfile("prod");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        // should load application-prod.properties from classpath
+        assertEquals("Production World", camelContext.resolvePropertyPlaceholders("{{hello}}"));
+
+        main.stop();
+    }
+
+    @Test
     public void testDisableTracing() throws Exception {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());

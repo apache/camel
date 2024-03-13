@@ -353,7 +353,7 @@ public class PropertiesComponent extends ServiceSupport
 
         // we need to re-create the property sources which may have already been created from locations
         this.sources.removeIf(s -> s instanceof LocationPropertiesSource);
-        // ensure order we want as given in the locations
+        // ensure the locations are in the same order as here, and therefore we provide the order number
         int order = 100;
         for (PropertiesLocation loc : locations) {
             addPropertiesLocationsAsPropertiesSource(loc, order++);
@@ -388,8 +388,6 @@ public class PropertiesComponent extends ServiceSupport
     public void addLocation(String location) {
         if (location != null) {
             List<PropertiesLocation> newLocations = new ArrayList<>();
-            // add in reverse order as
-
             for (String loc : location.split(",")) {
                 newLocations.add(new PropertiesLocation(loc));
             }
