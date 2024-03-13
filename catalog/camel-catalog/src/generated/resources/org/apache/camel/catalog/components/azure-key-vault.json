@@ -9,6 +9,7 @@
     "label": "cloud,cloud",
     "javaType": "org.apache.camel.component.azure.key.vault.KeyVaultComponent",
     "supportLevel": "Stable",
+    "metadata": { "vault": "azure-key-vault" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-key-vault",
     "version": "4.5.0-SNAPSHOT",
