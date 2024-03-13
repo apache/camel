@@ -233,6 +233,13 @@ public abstract class MainCommandLineSupport extends MainSupport {
 
     @Override
     protected void configurePropertiesService(CamelContext camelContext) throws Exception {
+        if (mainConfigurationProperties.getProfile() != null) {
+            // setup property placeholder location to include the profile based properties file also
+            defaultPropertyPlaceholderLocation
+                    = String.format("classpath:application-%s.properties;optional=true," + defaultPropertyPlaceholderLocation,
+                            mainConfigurationProperties.getProfile());
+        }
+
         super.configurePropertiesService(camelContext);
 
         PropertiesComponent pc = camelContext.getPropertiesComponent();

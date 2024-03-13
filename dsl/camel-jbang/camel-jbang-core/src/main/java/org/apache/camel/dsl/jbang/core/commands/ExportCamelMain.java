@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -99,6 +100,9 @@ class ExportCamelMain extends Export {
         srcCamelResourcesDir.mkdirs();
         File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
         srcKameletsResourcesDir.mkdirs();
+        // copy application properties files
+        // TODO: spring boot
+        copyApplicationPropertiesFiles(srcResourcesDir);
         // copy source files
         copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
@@ -149,6 +153,35 @@ class ExportCamelMain extends Export {
         FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
+    }
+
+    protected void copyApplicationPropertiesFiles(File srcResourcesDir) throws Exception {
+        File[] files = new File(".").listFiles(f -> {
+            if (!f.isFile()) {
+                return false;
+            }
+            String ext = FileUtil.onlyExt(f.getName());
+            String name = FileUtil.onlyName(f.getName());
+            if (!"properties".equals(ext)) {
+                return false;
+            }
+            if (name.equals("application")) {
+                // skip generic as its handled specially
+                return false;
+            }
+            if (profile == null) {
+                // accept all kind of configuration files
+                return name.startsWith("application");
+            } else {
+                // only accept the configuration file that matches the profile
+                return name.equals("application-" + profile);
+            }
+        });
+        if (files != null) {
+            for (File f : files) {
+                safeCopy(f, new File(srcResourcesDir, f.getName()), true);
+            }
+        }
     }
 
     private void createMavenPom(File settings, File profile, File pom, Set<String> deps, String packageName) throws Exception {
@@ -329,6 +362,7 @@ class ExportCamelMain extends Export {
         context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
         IOHelper.writeText(context, new FileOutputStream(srcJavaDir + "/" + mainClassname + ".java", false));
     }
+
 
     @Override
     protected void copySourceFiles(

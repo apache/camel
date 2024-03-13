@@ -32,7 +32,11 @@ public class ProfileConfigurer {
 
     public static void configure(CamelContext camelContext, String profile, MainConfigurationProperties config)
             throws Exception {
-        if (profile == null || "prod".equals(profile)) {
+        if (profile == null) {
+            // no profile is active
+            return;
+        }
+        if ("prod".equals(profile)) {
             LOG.info("The application is starting with profile: production");
             return; // no need to do special configuration
         }

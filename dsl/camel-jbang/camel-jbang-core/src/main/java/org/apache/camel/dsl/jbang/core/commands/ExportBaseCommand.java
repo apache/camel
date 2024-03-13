@@ -139,6 +139,10 @@ abstract class ExportBaseCommand extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version")
     protected String kameletsVersion;
 
+    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
+                        description = "Profile to export (dev, test, or prod).")
+    String profile;
+
     @CommandLine.Option(names = { "--local-kamelet-dir" },
                         description = "Local directory for loading Kamelets (takes precedence)")
     protected String localKameletDir;

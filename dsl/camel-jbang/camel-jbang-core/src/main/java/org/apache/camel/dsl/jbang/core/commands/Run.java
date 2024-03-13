@@ -503,9 +503,6 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.verbose", verbose ? "true" : "false");
-        if ("dev".equals(profile)) {
-            writeSetting(main, profileProperties, "camel.jbang.backlogTracing", "true");
-        }
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
 
@@ -612,17 +609,19 @@ public class Run extends CamelCommand {
 
             // check for properties files
             if (file.endsWith(".properties")) {
-                if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
-                    file = "file:" + file;
-                }
-                if (ObjectHelper.isEmpty(propertiesFiles)) {
-                    propertiesFiles = file;
-                } else {
-                    propertiesFiles = propertiesFiles + "," + file;
-                }
-                if (dev && file.startsWith("file:")) {
-                    // we can only reload if file based
-                    sjReload.add(file.substring(5));
+                if (acceptPropertiesFile(file)) {
+                    if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+                        file = "file:" + file;
+                    }
+                    if (ObjectHelper.isEmpty(propertiesFiles)) {
+                        propertiesFiles = file;
+                    } else {
+                        propertiesFiles = propertiesFiles + "," + file;
+                    }
+                    if (dev && file.startsWith("file:")) {
+                        // we can only reload if file based
+                        sjReload.add(file.substring(5));
+                    }
                 }
                 continue;
             }
@@ -725,15 +724,26 @@ public class Run extends CamelCommand {
 
         if (propertiesFiles != null) {
             String[] filesLocation = propertiesFiles.split(",");
+            // sort so general application.properties comes first (we should load profile first)
+            List<String> names = new ArrayList<>(List.of(filesLocation));
+            names.sort((o1, o2) -> {
+                // make sure application.properties is last
+                if (o1.endsWith("application.properties")) {
+                    return 1;
+                } else if (o2.endsWith("application.properties")) {
+                    return -1;
+                }
+                return 0;
+            });
             StringBuilder locations = new StringBuilder();
-            for (String file : filesLocation) {
+            for (String file : names) {
                 if (!file.startsWith("file:")) {
                     if (!file.startsWith("/")) {
                         file = FileSystems.getDefault().getPath("").toAbsolutePath() + File.separator + file;
                     }
                     file = "file://" + file;
                 }
-                if (locations.length() > 0) {
+                if (!locations.isEmpty()) {
                     locations.append(",");
                 }
                 locations.append(file);
@@ -745,9 +755,9 @@ public class Run extends CamelCommand {
             } else {
                 loc = locations.toString();
             }
-            // TODO: remove duplicates in loc
             main.addInitialProperty("camel.component.properties.location", loc);
             writeSettings("camel.component.properties.location", loc);
+            main.setPropertyPlaceholderLocations(loc);
         }
 
         // merge existing dependencies with --deps
@@ -803,6 +813,15 @@ public class Run extends CamelCommand {
         }
     }
 
+    private boolean acceptPropertiesFile(String file) {
+        String name = FileUtil.onlyName(file);
+        if (profile != null && name.startsWith("application-")) {
+            // only accept the file that matches the correct profile
+            return ("application-" + profile).equals(name);
+        }
+        return true;
+    }
+
     protected void doAddInitialProperty(KameletMain main) {
         // noop
     }
@@ -844,12 +863,37 @@ public class Run extends CamelCommand {
             return answer;
         }
 
+        // application.properties
         File profilePropertiesFile;
         if (sourceDir != null) {
             profilePropertiesFile = new File(sourceDir, "application.properties");
         } else {
             profilePropertiesFile = new File("application.properties");
         }
+        // based application-profile.properties
+        answer = doLoadAndInitProfileProperties(profilePropertiesFile);
+
+        if (profile != null) {
+            if (sourceDir != null) {
+                profilePropertiesFile = new File(sourceDir, "application-" + profile + ".properties");
+            } else {
+                profilePropertiesFile = new File("application-" + profile + ".properties");
+            }
+            // application-profile.properties should override standard application.properties
+            Properties override = doLoadAndInitProfileProperties(profilePropertiesFile);
+            if (override != null) {
+                answer.putAll(override);
+            }
+        }
+
+        if (kameletsVersion == null) {
+            kameletsVersion = VersionHelper.extractKameletsVersion();
+        }
+        return answer;
+    }
+
+    private Properties doLoadAndInitProfileProperties(File profilePropertiesFile) throws Exception {
+        Properties answer = null;
         if (profilePropertiesFile.exists()) {
             answer = loadProfileProperties(profilePropertiesFile);
             // logging level/color may be configured in the properties file
@@ -858,11 +902,6 @@ public class Run extends CamelCommand {
                     = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
             loggingJson
                     = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            if (propertiesFiles == null) {
-                propertiesFiles = "file:" + profilePropertiesFile.getPath();
-            } else {
-                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getPath();
-            }
             repos = answer.getProperty("camel.jbang.repos", repos);
             mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
             mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
@@ -881,9 +920,6 @@ public class Run extends CamelCommand {
             exclude = answer.getProperty("camel.jbang.exclude", exclude);
         }
 
-        if (kameletsVersion == null) {
-            kameletsVersion = VersionHelper.extractKameletsVersion();
-        }
         return answer;
     }
 
