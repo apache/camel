@@ -46,7 +46,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 /**
  * A support class that builds up and tears down an ActiveMQ instance to be used for unit testing.
  */
-abstract class JmsCommonTestSupport extends CamelTestSupport {
+public abstract class JmsCommonTestSupport extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsLoadBalanceFailOverIT extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @BeforeEach
     void configureTest() {

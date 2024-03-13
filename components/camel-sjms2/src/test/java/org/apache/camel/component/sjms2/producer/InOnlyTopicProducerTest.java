@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms2.producer;
 
+import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.TextMessage;
@@ -23,7 +24,10 @@ import jakarta.jms.TextMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms2.support.Jms2TestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class InOnlyTopicProducerTest extends Jms2TestSupport {
 
     private static final String TEST_DESTINATION_NAME = "test.foo.topic";
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
     public InOnlyTopicProducerTest() {
     }
@@ -82,5 +88,9 @@ public class InOnlyTopicProducerTest extends Jms2TestSupport {
                         .to("log:test.log.1?showBody=true", "mock:result");
             }
         };
+    }
+
+    protected ConnectionFactory getConnectionFactory() throws Exception {
+        return getConnectionFactory(service.serviceAddress());
     }
 }

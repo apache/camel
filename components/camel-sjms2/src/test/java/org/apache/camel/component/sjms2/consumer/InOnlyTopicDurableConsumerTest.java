@@ -16,17 +16,24 @@
  */
 package org.apache.camel.component.sjms2.consumer;
 
+import jakarta.jms.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms2.Sjms2Component;
 import org.apache.camel.component.sjms2.support.Jms2TestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 
 public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
 
     private static final String CONNECTION_ID = "test-connection-1";
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
     @Override
     protected boolean useJmx() {
@@ -75,5 +82,9 @@ public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
                         .to("mock:result2");
             }
         };
+    }
+
+    protected ConnectionFactory getConnectionFactory() throws Exception {
+        return getConnectionFactory(service.serviceAddress());
     }
 }

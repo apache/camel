@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SimpleJms2ComponentTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Test
     public void testHelloWorld() {

@@ -35,7 +35,7 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
     private static final String BEAN_NAME = "not-sjms";
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Override
     protected boolean useJmx() {
