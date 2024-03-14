@@ -365,7 +365,7 @@
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.2</ognl-version>
-        <openapi-generator>7.3.0</openapi-generator>
+        <openapi-generator>7.4.0</openapi-generator>
         <openjpa-version>3.2.2</openjpa-version>
         <opensearch-rest-client-version>2.12.0</opensearch-rest-client-version>
         <opensearch-java-client-version>2.8.3</opensearch-java-client-version>
