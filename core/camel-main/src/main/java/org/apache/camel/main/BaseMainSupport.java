@@ -371,8 +371,10 @@ public abstract class BaseMainSupport extends BaseService {
                     // fallback to check if application.properties has a profile
                     Properties prop = new Properties();
                     try (InputStream is
-                            = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, "application.properties")) {
-                        prop.load(is);
+                            = ResourceHelper.resolveResourceAsInputStream(camelContext, "application.properties")) {
+                        if (is != null) {
+                            prop.load(is);
+                        }
                     }
                     profile = prop.getProperty("camel.main.profile");
                 }
