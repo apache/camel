@@ -276,7 +276,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
 
         if (!model.getOptions().isEmpty()) {
             JsonObject options = JsonMapper.asJsonObject(model.getOptions());
-            jo.put("options", options);
+            jo.put("properties", options);
         }
 
         JsonObject root = new JsonObject();
