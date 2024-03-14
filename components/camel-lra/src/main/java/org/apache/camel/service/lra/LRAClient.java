@@ -80,7 +80,8 @@ public class LRAClient implements Closeable {
         return future.thenApply(res -> {
             if (res.statusCode() >= HttpURLConnection.HTTP_BAD_REQUEST) {
                 LOG.debug("LRA coordinator responded with error code {}. Message: {}", res.statusCode(), res.body());
-                throw new IllegalStateException("Cannot obtain LRA id from LRA coordinator");
+                throw new IllegalStateException(
+                        "Cannot obtain LRA id from LRA coordinator due to response status code " + res.statusCode());
             }
 
             // See if there's a location header containing the LRA URL
