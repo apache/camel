@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-langchain-embeddings/src/main/docs/langchain-embeddings-component.adoc

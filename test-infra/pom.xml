@@ -78,5 +78,6 @@
         <module>camel-test-infra-smb</module>
         <module>camel-test-infra-cli</module>
         <module>camel-test-infra-qdrant</module>
+        <module>camel-test-infra-ollama</module>
     </modules>
 </project>

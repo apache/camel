@@ -75,6 +75,7 @@
 
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
+        <module>camel-ai</module>
         <module>camel-amqp</module>
         <module>camel-arangodb</module>
         <module>camel-as2</module>

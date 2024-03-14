@@ -41,6 +41,12 @@ public final class QdrantConverterLoader implements TypeConverterLoader, CamelCo
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
+        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointId.class, java.lang.Long.class, false,
+            (type, exchange, value) -> org.apache.camel.component.qdrant.QdrantConverter.toPointId((java.lang.Long) value));
+        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointId.class, java.util.UUID.class, false,
+            (type, exchange, value) -> org.apache.camel.component.qdrant.QdrantConverter.toPointId((java.util.UUID) value));
+        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointId.class, long.class, false,
+            (type, exchange, value) -> org.apache.camel.component.qdrant.QdrantConverter.toPointId((long) value));
         addTypeConverter(registry, io.qdrant.client.grpc.Points.PointsSelector.class, io.qdrant.client.grpc.Points.Condition.class, false,
             (type, exchange, value) -> org.apache.camel.component.qdrant.QdrantConverter.toPointSelector((io.qdrant.client.grpc.Points.Condition) value));
         addTypeConverter(registry, io.qdrant.client.grpc.Points.PointsSelector.class, io.qdrant.client.grpc.Points.Filter.class, false,
