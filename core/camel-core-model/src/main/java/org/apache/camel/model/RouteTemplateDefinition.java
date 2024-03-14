@@ -409,7 +409,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         copy.setDelayer(route.getDelayer());
         copy.setGroup(route.getGroup());
         copy.setInheritErrorHandler(route.isInheritErrorHandler());
-        copy.setInput(route.getInput());
+        // make a defensive copy of the input as input can be adviced during testing or other changes
+        copy.setInput(route.getInput().copy());
         copy.setInputType(route.getInputType());
         copy.setLogMask(route.getLogMask());
         copy.setMessageHistory(route.getMessageHistory());
