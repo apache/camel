@@ -26,10 +26,10 @@ import org.apache.camel.spi.Metadata;
  * status messages have no real value. Another example is things like market data prices, where old stock prices are not
  * that relevant, only the current price is.
  */
-@Metadata(label = "bean",
-        description = "An AggregationStrategy which just uses the latest exchange which is useful for status messages where old"
-                      + " status messages have no real value. Another example is things like market data prices, where old stock prices are not"
-                      + " that relevant, only the current price is.")
+@Metadata(label = "bean", title = "Use Latest",
+          description = "An AggregationStrategy which just uses the latest exchange which is useful for status messages where old"
+                        + " status messages have no real value. Another example is things like market data prices, where old stock prices are not"
+                        + " that relevant, only the current price is.")
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 
     @Override
@@ -77,8 +77,8 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
 
         // propagate exception from old exchange if there isn't already an exception
         if (oldExchange.isFailed() || oldExchange.isRollbackOnly() || oldExchange.isRollbackOnlyLast()
-            || oldExchange.getExchangeExtension().isErrorHandlerHandledSet()
-               && oldExchange.getExchangeExtension().isErrorHandlerHandled()) {
+                || oldExchange.getExchangeExtension().isErrorHandlerHandledSet()
+                        && oldExchange.getExchangeExtension().isErrorHandlerHandled()) {
             // propagate failure by using old exchange as the answer
             return oldExchange;
         }

@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "UseLatestAggregationStrategy",
+    "javaType": "org.apache.camel.processor.aggregate.UseLatestAggregationStrategy",
+    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "title": "Use Latest Aggregation Strategy",
+    "description": "An AggregationStrategy which just uses the latest exchange which is useful for status messages where old status messages have no real value. Another example is things like market data prices, where old stock prices are not that relevant, only the current price is.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-processor",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

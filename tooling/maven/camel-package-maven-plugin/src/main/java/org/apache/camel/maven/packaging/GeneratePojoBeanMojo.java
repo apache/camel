@@ -61,6 +61,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
 
     private static class BeanPojoModel {
         private String name;
+        private String title;
         private String className;
         private String interfaceName;
         private String description;
@@ -72,6 +73,14 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getClassName() {
@@ -134,10 +143,15 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
             String label = annotationValue(a, "label");
             if ("bean".equals(label)) {
                 BeanPojoModel model = new BeanPojoModel();
-                String currentClass = a.target().asClass().name().toString();
-                boolean deprecated = a.target().asClass().hasAnnotation(Deprecated.class);
                 model.setName(a.target().asClass().simpleName());
-                model.setClassName(currentClass);
+                boolean deprecated = a.target().asClass().hasAnnotation(Deprecated.class);
+                String title = annotationValue(a, "title");
+                if (title == null) {
+                    title = Strings.camelCaseToDash(model.getName());
+                    title = Strings.camelDashToTitle(title);
+                }
+                model.setTitle(title);
+                model.setClassName(a.target().asClass().name().toString());
                 model.setDeprecated(deprecated);
                 model.setDescription(annotationValue(a, "description"));
                 for (DotName dn : a.target().asClass().interfaceNames()) {
@@ -191,7 +205,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
         if (model.getInterfaceName() != null) {
             jo.put("interfaceType", model.getInterfaceName());
         }
-        jo.put("title", asTitle(model.getClassName()));
+        jo.put("title", asTitle(model.getName()));
         if (model.getDescription() != null) {
             jo.put("description", model.getDescription());
         }
@@ -209,13 +223,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
     }
 
     private String asTitle(String name) {
-        name = Strings.camelDashToTitle(name);
-        String part = Strings.after(name, ":");
-        if (part != null) {
-            part = Strings.capitalize(part);
-            name = Strings.before(name, ":") + " (" + part + ")";
-        }
-        return name;
+        return Strings.asTitle(name);
     }
 
 }
