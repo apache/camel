@@ -455,6 +455,58 @@ Json schema for request
 }
 --------------------------------------------------------------------------------
 
+- Claude 2 with id `anthropic.claude-v2`
+Anthropic's highly capable model across a wide range of tasks from sophisticated dialogue and creative content generation to detailed instruction following.
+
+Json schema for request
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    },
+    "max_tokens_to_sample": {
+      "type": "integer"
+    },
+    "stop_sequences": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "temperature": {
+      "type": "number"
+    },
+    "top_p": {
+      "type": "integer"
+    },
+    "top_k": {
+      "type": "integer"
+    },
+    "anthropic_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "prompt",
+    "max_tokens_to_sample",
+    "stop_sequences",
+    "temperature",
+    "top_p",
+    "top_k",
+    "anthropic_version"
+  ]
+}
+--------------------------------------------------------------------------------
+
+
+
 === Bedrock Producer operations
 
 Camel-AWS Bedrock component provides the following operation on the producer side:

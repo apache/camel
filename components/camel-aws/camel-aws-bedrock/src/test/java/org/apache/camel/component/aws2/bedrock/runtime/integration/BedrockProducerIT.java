@@ -235,7 +235,7 @@ class BedrockProducerIT extends CamelTestSupport {
             rootNode.putIfAbsent("top_p", new IntNode(1));
             rootNode.putIfAbsent("top_k", new IntNode(250));
             rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
-            
+
             exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
             exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
@@ -263,6 +263,7 @@ class BedrockProducerIT extends CamelTestSupport {
             rootNode.putIfAbsent("top_k", new IntNode(250));
             rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
 
+            System.err.println(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
             exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
