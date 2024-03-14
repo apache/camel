@@ -160,17 +160,18 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                         break;
                     }
                 }
+
                 // TODO: getter/setter for options ala EIP/components
                 models.add(model);
             }
         });
-        models.sort(Comparator.comparing(BeanPojoModel::getClassName));
+        models.sort(Comparator.comparing(BeanPojoModel::getName));
 
         if (!models.isEmpty()) {
             try {
                 StringJoiner names = new StringJoiner(" ");
                 for (var model : models) {
-                    names.add(model.getClassName());
+                    names.add(model.getName());
                     JsonObject jo = asJsonObject(model);
                     String json = jo.toJson();
                     json = Jsoner.prettyPrint(json, 2);
@@ -186,9 +187,9 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                 // generate marker file
                 File camelMetaDir = new File(resourcesOutputDir, "META-INF/services/org/apache/camel/");
                 int count = models.size();
-                String properties = createProperties(project, "beans", names.toString());
-                updateResource(camelMetaDir.toPath(), "beans.properties", properties);
-                getLog().info("Generated beans.properties containing " + count + " Camel "
+                String properties = createProperties(project, "bean", names.toString());
+                updateResource(camelMetaDir.toPath(), "bean.properties", properties);
+                getLog().info("Generated bean.properties containing " + count + " Camel "
                               + (count > 1 ? "beans: " : "bean: ") + names);
             } catch (Exception e) {
                 throw new MojoExecutionException(e);
