@@ -38,9 +38,6 @@ public class XmlModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
 
     public static final String WRITER_PACKAGE = "org.apache.camel.xml.out";
 
-    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
-    protected File sourcesOutputDir;
-
     @Parameter(defaultValue = "${camel-generate-xml-writer}")
     protected boolean generateXmlWriter;
 

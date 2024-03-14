@@ -18,7 +18,6 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -550,52 +549,16 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         }
     }
 
-    public static String generatePropertyConfigurer(String pn, String cn, String en, Collection<DataFormatOptionModel> options)
+    public String generatePropertyConfigurer(String pn, String cn, String en, Collection<DataFormatOptionModel> options)
             throws IOException {
 
-        try (StringWriter w = new StringWriter()) {
-            w.write("/* " + GENERATED_MSG + " */\n");
-            w.write("package " + pn + ";\n");
-            w.write("\n");
-            w.write("import java.util.HashMap;\n");
-            w.write("import java.util.Map;\n");
-            w.write("\n");
-            w.write("import org.apache.camel.CamelContext;\n");
-            w.write("import org.apache.camel.spi.GeneratedPropertyConfigurer;\n");
-            w.write("import org.apache.camel.support.component.PropertyConfigurerSupport;\n");
-            w.write("\n");
-            w.write("/**\n");
-            w.write(" * " + GENERATED_MSG + "\n");
-            w.write(" */\n");
-            w.write("@SuppressWarnings(\"unchecked\")\n");
-            w.write("public class " + cn + " extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {\n");
-            w.write("\n");
-            w.write("    @Override\n");
-            w.write("    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {\n");
-            w.write("        " + en + " dataformat = (" + en + ") target;\n");
-            w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
-            for (DataFormatOptionModel option : options) {
-                String name = option.getName();
-                if ("id".equals(name)) {
-                    continue;
-                }
-                String setter = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
-                String type = Strings.canonicalClassName(option.getJavaType());
-                if (!name.toLowerCase().equals(name)) {
-                    w.write(String.format("        case \"%s\":\n", name.toLowerCase()));
-                }
-                w.write(String.format(
-                        "        case \"%s\": dataformat.%s(property(camelContext, %s.class, value)); return true;\n", name,
-                        setter, type));
-            }
-            w.write("        default: return false;\n");
-            w.write("        }\n");
-            w.write("    }\n");
-            w.write("\n");
-            w.write("}\n");
-            w.write("\n");
-            return w.toString();
-        }
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("package", pn);
+        ctx.put("className", cn);
+        ctx.put("type", en);
+        ctx.put("options", options);
+        ctx.put("mojo", this);
+        return velocity("velocity/dataformat-property-configurer.vm", ctx);
     }
 
     public static String generateMetaInfConfigurer(String fqn) {

@@ -27,10 +27,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.Metadata;
@@ -445,8 +449,23 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         String pfqn = fqn;
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
-        String source = PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
-                false, false, extended, bootstrap, options, null);
+        options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
+
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("generatorClass", getClass().getName());
+        ctx.put("package", pn);
+        ctx.put("className", cn);
+        ctx.put("type", en);
+        ctx.put("pfqn", pfqn);
+        ctx.put("psn", psn);
+        ctx.put("hasSuper", false);
+        ctx.put("component", false);
+        ctx.put("extended", extended);
+        ctx.put("bootstrap", bootstrap);
+        ctx.put("options", options);
+        ctx.put("model", null);
+        ctx.put("mojo", this);
+        String source = velocity("velocity/property-configurer.vm", ctx);
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
         outputDir.mkdirs();
