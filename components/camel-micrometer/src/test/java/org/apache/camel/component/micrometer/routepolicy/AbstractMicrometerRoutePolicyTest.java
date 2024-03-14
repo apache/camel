@@ -20,8 +20,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.micrometer.MicrometerConstants;
-import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +36,8 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
         return factory;
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    @AfterEach
+    protected void cleanupMeterRegistry() {
         if (meterRegistry != null) {
             meterRegistry.clear();
             meterRegistry.close();
@@ -60,17 +59,6 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
         context.addRoutePolicyFactory(factory);
         context.getRegistry().bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
         context.addService(factory);
-        // TODO: CAMEL-20522
-        context.addLifecycleStrategy(new LifecycleStrategySupport() {
-            @Override
-            public void onContextStopped(CamelContext context) {
-                if (meterRegistry != null) {
-                    meterRegistry.clear();
-                    meterRegistry.close();
-                    meterRegistry = null;
-                }
-            }
-        });
         return context;
     }
 
