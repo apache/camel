@@ -36,6 +36,7 @@ import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
@@ -51,13 +52,24 @@ import org.apache.camel.util.FileUtil;
  * <b>Note:</b> Please note that this aggregation strategy requires eager completion check to work properly.
  * </p>
  */
+@Metadata(label = "bean",
+          description = "AggregationStrategy to zip together incoming messages into a zip file."
+                        + " Please note that this aggregation strategy requires eager completion check to work properly.")
 public class ZipAggregationStrategy implements AggregationStrategy {
 
+    @Metadata(description = "Sets the prefix that will be used when creating the ZIP filename.")
     private String filePrefix;
+    @Metadata(description = "Sets the suffix that will be used when creating the ZIP filename.", defaultValue = "zip")
     private String fileSuffix = ".zip";
+    @Metadata(label = "advanced",
+              description = "If the incoming message is from a file, then the folder structure of said file can be preserved")
     private boolean preserveFolderStructure;
+    @Metadata(label = "advanced",
+              description = "Whether to use CamelFileName header for the filename instead of using unique message id")
     private boolean useFilenameHeader;
+    @Metadata(label = "advanced", description = "Whether to use temporary files for zip manipulations instead of memory.")
     private boolean useTempFile;
+    @Metadata(label = "advanced", description = "Sets the parent directory to use for writing temporary files")
     private File parentDir = new File(System.getProperty("java.io.tmpdir"));
 
     public ZipAggregationStrategy() {
@@ -148,6 +160,22 @@ public class ZipAggregationStrategy implements AggregationStrategy {
      */
     public void setParentDir(String parentDir) {
         this.parentDir = new File(parentDir);
+    }
+
+    public boolean isPreserveFolderStructure() {
+        return preserveFolderStructure;
+    }
+
+    public void setPreserveFolderStructure(boolean preserveFolderStructure) {
+        this.preserveFolderStructure = preserveFolderStructure;
+    }
+
+    public boolean isUseTempFile() {
+        return useTempFile;
+    }
+
+    public void setUseTempFile(boolean useTempFile) {
+        this.useTempFile = useTempFile;
     }
 
     @Override
