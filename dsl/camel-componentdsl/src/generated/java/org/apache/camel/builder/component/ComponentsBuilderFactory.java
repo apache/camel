@@ -2767,6 +2767,32 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KuduComponentBuilderFactory.kudu();
     }
     /**
+     * langchain 4j chat (camel-langchain-chat)
+     * Langchain4j Chat component
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.LangchainChatComponentBuilderFactory.LangchainChatComponentBuilder langchainChat() {
+        return org.apache.camel.builder.component.dsl.LangchainChatComponentBuilderFactory.langchainChat();
+    }
+    /**
+     * Langchain4j Embeddings (camel-langchain-embeddings)
+     * Langchain4j Embeddings
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.LangchainEmbeddingsComponentBuilderFactory.LangchainEmbeddingsComponentBuilder langchainEmbeddings() {
+        return org.apache.camel.builder.component.dsl.LangchainEmbeddingsComponentBuilderFactory.langchainEmbeddings();
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 
