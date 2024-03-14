@@ -28,7 +28,7 @@
   <artifactId>camel-langchain-chat</artifactId>
   <packaging>jar</packaging>
 
-  <name>Camel Langchain</name>
+  <name>Camel :: Langchain :: Chat</name>
   <description>Langchain4j Chat component</description>
 
   <properties>

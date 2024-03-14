@@ -854,6 +854,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-dsl-support":
                 case "camel-endpointdsl-support":
                     // and components with middle folders
+                case "camel-ai":
                 case "camel-as2":
                 case "camel-avro-rpc":
                 case "camel-aws":

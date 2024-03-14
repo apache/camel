@@ -30,13 +30,14 @@ public final class MojoHelper {
 
     public static List<Path> getComponentPath(Path dir) {
         switch (dir.getFileName().toString()) {
+            case "camel-ai":
+                return Arrays.asList(dir.resolve("camel-langchain-chat"), dir.resolve("camel-langchain-embeddings"));
             case "camel-as2":
                 return Collections.singletonList(dir.resolve("camel-as2-component"));
             case "camel-avro-rpc":
                 return Collections.singletonList(dir.resolve("camel-avro-rpc-component"));
             case "camel-cxf":
-                return Arrays.asList(dir.resolve("camel-cxf-soap"),
-                        dir.resolve("camel-cxf-rest"));
+                return Arrays.asList(dir.resolve("camel-cxf-soap"), dir.resolve("camel-cxf-rest"));
             case "camel-salesforce":
                 return Collections.singletonList(dir.resolve("camel-salesforce-component"));
             case "camel-dhis2":

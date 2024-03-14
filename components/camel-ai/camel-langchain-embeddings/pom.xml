@@ -28,7 +28,7 @@
   <artifactId>camel-langchain-embeddings</artifactId>
   <packaging>jar</packaging>
 
-  <name>Camel :: Langchain4j Embedding</name>
+  <name>Camel :: Langchain :: Embedding</name>
   <description>Langchain4j Embedding</description>
 
   <dependencies>

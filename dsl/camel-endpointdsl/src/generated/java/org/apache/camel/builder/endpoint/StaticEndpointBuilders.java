@@ -9787,6 +9787,92 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * langchain 4j chat (camel-langchain-chat)
+     * Langchain4j Chat component
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * 
+     * Syntax: <code>langchain-chat:chatId</code>
+     * 
+     * Path parameter: chatId (required)
+     * The id
+     * 
+     * @param path chatId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.LangchainChatEndpointBuilderFactory.LangchainChatEndpointBuilder langchainChat(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.LangchainChatEndpointBuilderFactory.endpointBuilder("langchain-chat", path);
+    }
+    /**
+     * langchain 4j chat (camel-langchain-chat)
+     * Langchain4j Chat component
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * 
+     * Syntax: <code>langchain-chat:chatId</code>
+     * 
+     * Path parameter: chatId (required)
+     * The id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path chatId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.LangchainChatEndpointBuilderFactory.LangchainChatEndpointBuilder langchainChat(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.LangchainChatEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Langchain4j Embeddings (camel-langchain-embeddings)
+     * Perform operations on the Qdrant Vector Database.
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * 
+     * Syntax: <code>langchain-embeddings:embeddingId</code>
+     * 
+     * Path parameter: embeddingId (required)
+     * The id
+     * 
+     * @param path embeddingId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.LangchainEmbeddingsEndpointBuilderFactory.LangchainEmbeddingsEndpointBuilder langchainEmbeddings(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.LangchainEmbeddingsEndpointBuilderFactory.endpointBuilder("langchain-embeddings", path);
+    }
+    /**
+     * Langchain4j Embeddings (camel-langchain-embeddings)
+     * Perform operations on the Qdrant Vector Database.
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * 
+     * Syntax: <code>langchain-embeddings:embeddingId</code>
+     * 
+     * Path parameter: embeddingId (required)
+     * The id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path embeddingId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.LangchainEmbeddingsEndpointBuilderFactory.LangchainEmbeddingsEndpointBuilder langchainEmbeddings(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.LangchainEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 
