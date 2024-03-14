@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 
 import org.apache.camel.catalog.impl.CatalogHelper;
 
@@ -37,6 +40,7 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String TRANSFORMER_CATALOG = "org/apache/camel/catalog/transformers.properties";
     private static final String CONSOLE_CATALOG = "org/apache/camel/catalog/dev-consoles.properties";
     private static final String OTHER_CATALOG = "org/apache/camel/catalog/others.properties";
+    private static final String CAPABILITIES_CATALOG = "org/apache/camel/catalog/capabilities.properties";
 
     private CamelCatalog camelCatalog;
 
@@ -126,6 +130,10 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
         return OTHER_CATALOG;
     }
 
+    protected String getCapabilitiesCatalog() {
+        return CAPABILITIES_CATALOG;
+    }
+
     @Override
     public List<String> findComponentNames() {
         return find(getComponentsCatalog());
@@ -154,6 +162,20 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findOtherNames() {
         return find(getOtherCatalog());
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public Map<String, String> findCapabilities() {
+        final Properties properties = new Properties();
+
+        try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getCapabilitiesCatalog())) {
+            properties.load(is);
+        } catch (IOException e) {
+            // ignore
+        }
+
+        return new TreeMap<>((Map<String, String>) (Map) properties);
     }
 
     protected List<String> find(String resourceName) {
