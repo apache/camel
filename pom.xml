@@ -28,7 +28,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.4.1-SNAPSHOT</version>
+    <version>4.4.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -117,7 +117,7 @@
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>2024-02-12T11:55:01Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2024-03-09T18:22:05Z</project.build.outputTimestamp>
 
         <cyclonedx-maven-plugin-version>2.7.11</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.6.0</flatten-maven-plugin-version>
