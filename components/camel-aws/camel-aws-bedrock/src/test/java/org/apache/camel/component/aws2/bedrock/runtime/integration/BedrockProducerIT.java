@@ -175,8 +175,6 @@ class BedrockProducerIT extends CamelTestSupport {
             rootNode.putIfAbsent("presencePenalty", childNode);
             rootNode.putIfAbsent("frequencyPenalty", childNode);
 
-            System.out.println(mapper.writer().writeValueAsString(rootNode));
-
             exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
             exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
