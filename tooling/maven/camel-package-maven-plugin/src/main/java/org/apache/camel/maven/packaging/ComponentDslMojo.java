@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -200,8 +201,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator
                 .generateClass(componentModel, getProjectClassLoader(), componentsDslPackageName);
         boolean updated = writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(),
-                componentsDslFactoriesPackageName.replace('.', '/'),
-                componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
+                componentsDslFactoriesPackageName.replace('.', '/') + "/"
+                + componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
 
         if (updated) {
             getLog().info("Updated ComponentDsl: " + componentModel.getScheme());
@@ -229,7 +230,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator
                 .generateClass(componentCachedModels, getProjectClassLoader(), componentsDslPackageName);
         boolean updated = writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(),
-                componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java",
+                componentsDslPackageName.replace('.', '/') + "/" + componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java",
                 sourcesOutputDir);
 
         if (updated) {
@@ -237,10 +238,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    protected boolean writeSourceIfChanged(String source, String filePath, String fileName, File outputDir)
+    protected boolean writeSourceIfChanged(String source, String filePath, File outputDir)
             throws MojoFailureException {
-        Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
-
         try {
             final String code = joinHeaderAndSource(licenseHeader, source);
 
@@ -248,9 +247,9 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
                 getLog().debug("Source code generated:\n" + code);
             }
 
-            return updateResource(buildContext, target, code);
+            return updateResource(outputDir.toPath(), filePath, code);
         } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + target, e);
+            throw new MojoFailureException("IOError with file " + filePath, e);
         }
     }
 }
