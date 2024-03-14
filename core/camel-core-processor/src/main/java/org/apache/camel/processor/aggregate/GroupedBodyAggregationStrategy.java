@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Aggregate body of input {@link Message} into a single combined Exchange holding all the aggregated bodies in a
@@ -27,6 +28,10 @@ import org.apache.camel.Message;
  *
  * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
  */
+@Metadata(label = "bean",
+          description = "Aggregate body of input Message into a single combined Exchange holding all the aggregated bodies in a List"
+                        + " of type Object as the message body. This aggregation strategy can be used in combination with"
+                        + " Splitter to batch messages.")
 public class GroupedBodyAggregationStrategy extends AbstractListAggregationStrategy<Object> {
 
     @Override
