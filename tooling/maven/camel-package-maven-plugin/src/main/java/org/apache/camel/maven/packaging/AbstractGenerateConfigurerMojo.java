@@ -450,7 +450,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
         outputDir.mkdirs();
-        boolean updated = updateResource(buildContext, outputDir.toPath().resolve(fileName), source);
+        boolean updated = updateResource(outputDir.toPath(), fileName, source);
         if (updated) {
             getLog().info("Updated " + fileName);
         }
@@ -464,7 +464,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             w.append("# ").append(GENERATED_MSG).append("\n");
             w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
             String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;
-            boolean updated = updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());
+            boolean updated = updateResource(resourcesOutputDir.toPath(), fileName, w.toString());
             if (updated) {
                 getLog().info("Updated " + fileName);
             }

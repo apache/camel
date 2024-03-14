@@ -501,21 +501,8 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         }
         String code = codeBuilder.toString();
         String filePath = packageName.replace('.', '/') + "/" + fileName + ".kt";
-        Path fullPath = sourcesOutputDir.toPath().resolve(filePath);
-        boolean update = true;
-        try {
-            if (Files.exists(fullPath)) {
-                String existingCode = Files.readString(fullPath);
-                if (existingCode.equals(code)) {
-                    update = false;
-                }
-            }
-        } catch (IOException e) {
-            throw new MojoFailureException(e);
-        }
-        if (update) {
-            getLog().info("Updating " + what);
-            updateResource(sourcesOutputDir.toPath(), filePath, postProcessing.apply(code));
+        if (updateResource(sourcesOutputDir.toPath(), filePath, postProcessing.apply(code))) {
+            getLog().info("Updated " + what);
         }
     }
 
