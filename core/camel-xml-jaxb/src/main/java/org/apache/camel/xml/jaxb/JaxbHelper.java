@@ -57,6 +57,7 @@ import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
@@ -547,6 +548,29 @@ public final class JaxbHelper {
         }
 
         return answer;
+    }
+
+    public static RestConfigurationDefinition loadRestConfigurationDefinition(CamelContext context, InputStream inputStream)
+            throws Exception {
+        // load rest configuration using JAXB
+        Document dom = newXmlConverter(context).toDOMDocument(inputStream, null);
+
+        if (!CAMEL_NS.equals(dom.getDocumentElement().getNamespaceURI())) {
+            addNamespaceToDom(dom);
+        }
+        Unmarshaller unmarshaller = getJAXBContext(context).createUnmarshaller();
+        Object result = unmarshaller.unmarshal(dom);
+
+        if (result == null) {
+            throw new IOException("Cannot unmarshal to rest configuration using JAXB from input stream: " + inputStream);
+        }
+
+        if (result instanceof RestConfigurationDefinition) {
+            return (RestConfigurationDefinition) result;
+        } else {
+            // ignore not supported type
+            return null;
+        }
     }
 
     private static void removeNoiseFromUris(Element element) {
