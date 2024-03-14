@@ -31,6 +31,8 @@ import java.util.function.Function;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_CANCEL;
 import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_CLOSE;
@@ -47,6 +49,8 @@ public class LRAClient implements Closeable {
     private final LRASagaService sagaService;
     private final HttpClient client;
     private final String lraUrl;
+
+    private static final Logger LOG = LoggerFactory.getLogger(LRAClient.class);
 
     public LRAClient(LRASagaService sagaService) {
         this(sagaService, HttpClient.newHttpClient());
@@ -74,6 +78,11 @@ public class LRAClient implements Closeable {
         CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(res -> {
+            if (res.statusCode() >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                LOG.debug("LRA coordinator responded with error code {}. Message: {}", res.statusCode(), res.body());
+                throw new IllegalStateException("Cannot obtain LRA id from LRA coordinator");
+            }
+
             // See if there's a location header containing the LRA URL
             List<String> location = res.headers().map().get("Location");
             if (ObjectHelper.isNotEmpty(location)) {
