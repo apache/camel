@@ -22,6 +22,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceSupport;
@@ -31,9 +32,13 @@ import org.apache.camel.support.service.ServiceSupport;
  * <p/>
  * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a memory leak.
  */
+@Metadata(label = "bean",
+        description = "A memory based IdempotentRepository.")
 @ManagedResource(description = "Memory based idempotent repository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private Map<String, Object> cache;
+
+    @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "1000")
     private int cacheSize;
 
     public MemoryIdempotentRepository() {

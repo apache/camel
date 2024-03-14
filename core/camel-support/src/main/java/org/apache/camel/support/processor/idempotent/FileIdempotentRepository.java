@@ -29,6 +29,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceSupport;
@@ -50,18 +51,23 @@ import org.slf4j.LoggerFactory;
  * {@link #getDropOldestFileStore()} (is default 1000) number of entries from the file store is dropped to reduce the
  * file store and make room for newer entries.
  */
+@Metadata(label = "bean",
+        description = "A file based IdempotentRepository.")
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileIdempotentRepository.class);
-
     private static final String STORE_DELIMITER = "\n";
 
     private final AtomicBoolean init = new AtomicBoolean();
-
     private Map<String, Object> cache;
+
+    @Metadata(description = "File name of the repository (incl directory)", required = true)
     private File fileStore;
+    @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb", defaultValue = "" + 32 * 1024 * 1000L)
     private long maxFileStoreSize = 32 * 1024 * 1000L; // 32mb store file
+    @Metadata(description = "Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk"
+                            + " space to allow room for new entries.", defaultValue = "1000")
     private long dropOldestFileStore = 1000;
 
     public FileIdempotentRepository() {
