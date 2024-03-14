@@ -505,7 +505,55 @@ Json schema for request
 }
 --------------------------------------------------------------------------------
 
+- Claude 2.1 with id `anthropic.claude-v2:1`
+An update to Claude 2 that features double the context window, plus improvements across reliability, hallucination rates, and evidence-based accuracy in long document and RAG contexts.
 
+Json schema for request
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    },
+    "max_tokens_to_sample": {
+      "type": "integer"
+    },
+    "stop_sequences": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "temperature": {
+      "type": "number"
+    },
+    "top_p": {
+      "type": "integer"
+    },
+    "top_k": {
+      "type": "integer"
+    },
+    "anthropic_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "prompt",
+    "max_tokens_to_sample",
+    "stop_sequences",
+    "temperature",
+    "top_p",
+    "top_k",
+    "anthropic_version"
+  ]
+}
+--------------------------------------------------------------------------------
 
 === Bedrock Producer operations
 
