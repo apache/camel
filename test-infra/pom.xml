@@ -79,5 +79,6 @@
         <module>camel-test-infra-cli</module>
         <module>camel-test-infra-qdrant</module>
         <module>camel-test-infra-ollama</module>
+        <module>camel-test-infra-milvus</module>
     </modules>
 </project>
