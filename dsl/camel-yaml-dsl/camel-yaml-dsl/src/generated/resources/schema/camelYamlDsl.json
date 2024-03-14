@@ -207,6 +207,85 @@
           }
         }
       },
+      "org.apache.camel.ErrorHandlerFactory" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "type" : "object",
+            "required" : [ "deadLetterChannel" ],
+            "properties" : {
+              "deadLetterChannel" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
+              }
+            }
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "deadLetterChannel" ]
+              }, {
+                "required" : [ "defaultErrorHandler" ]
+              }, {
+                "required" : [ "jtaTransactionErrorHandler" ]
+              }, {
+                "required" : [ "noErrorHandler" ]
+              }, {
+                "required" : [ "refErrorHandler" ]
+              }, {
+                "required" : [ "springTransactionErrorHandler" ]
+              } ]
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "defaultErrorHandler" ],
+            "properties" : {
+              "defaultErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "jtaTransactionErrorHandler" ],
+            "properties" : {
+              "jtaTransactionErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "noErrorHandler" ],
+            "properties" : {
+              "noErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "refErrorHandler" ],
+            "properties" : {
+              "refErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.RefErrorHandlerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "springTransactionErrorHandler" ],
+            "properties" : {
+              "springTransactionErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
+              }
+            }
+          } ]
+        } ],
+        "properties" : {
+          "deadLetterChannel" : { },
+          "defaultErrorHandler" : { },
+          "jtaTransactionErrorHandler" : { },
+          "noErrorHandler" : { },
+          "refErrorHandler" : { },
+          "springTransactionErrorHandler" : { }
+        }
+      },
       "org.apache.camel.dsl.yaml.deserializers.BeansDeserializer" : {
         "type" : "array",
         "additionalProperties" : false,
@@ -214,7 +293,7 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
         }
       },
-      "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer" : {
+      "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerDeserializer" : {
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {
@@ -5092,6 +5171,12 @@
             "type" : "boolean"
           },
           "description" : {
+            "type" : "string"
+          },
+          "errorHandler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.ErrorHandlerFactory"
+          },
+          "errorHandlerRef" : {
             "type" : "string"
           },
           "from" : {
@@ -16206,7 +16291,7 @@
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.BeansDeserializer"
       },
       "errorHandler" : {
-        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer"
+        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.ErrorHandlerDeserializer"
       },
       "from" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer"
