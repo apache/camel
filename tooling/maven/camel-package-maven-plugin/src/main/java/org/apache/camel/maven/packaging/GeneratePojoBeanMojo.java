@@ -21,12 +21,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Stream;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -34,10 +36,13 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.jandex.AnnotationInstance;
+import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
+import org.jboss.jandex.FieldInfo;
 import org.jboss.jandex.Index;
 
 import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
+import static org.apache.camel.maven.packaging.MojoHelper.getType;
 
 /**
  * Factory for generating code for Camel pojo beans that are intended for end user to use with Camel EIPs and
@@ -66,6 +71,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
         private String interfaceName;
         private String description;
         private boolean deprecated;
+        private final List<BeanPojoOptionModel> options = new ArrayList<>();
 
         public String getName() {
             return name;
@@ -114,6 +120,18 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
         public void setDeprecated(boolean deprecated) {
             this.deprecated = deprecated;
         }
+
+        public void addOption(BeanPojoOptionModel option) {
+            this.options.add(option);
+        }
+
+        public List<BeanPojoOptionModel> getOptions() {
+            return options;
+        }
+    }
+
+    private static class BeanPojoOptionModel extends BaseOptionModel {
+
     }
 
     public GeneratePojoBeanMojo() {
@@ -143,25 +161,47 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
             String label = annotationValue(a, "label");
             if ("bean".equals(label)) {
                 BeanPojoModel model = new BeanPojoModel();
-                model.setName(a.target().asClass().simpleName());
-                boolean deprecated = a.target().asClass().hasAnnotation(Deprecated.class);
+                ClassInfo ci = a.target().asClass();
+                model.setName(ci.simpleName());
+                boolean deprecated = ci.hasAnnotation(Deprecated.class);
                 String title = annotationValue(a, "title");
                 if (title == null) {
                     title = Strings.camelCaseToDash(model.getName());
                     title = Strings.camelDashToTitle(title);
                 }
                 model.setTitle(title);
-                model.setClassName(a.target().asClass().name().toString());
+                model.setClassName(ci.name().toString());
                 model.setDeprecated(deprecated);
                 model.setDescription(annotationValue(a, "description"));
-                for (DotName dn : a.target().asClass().interfaceNames()) {
-                    if (dn.packagePrefix().startsWith("org.apache.camel")) {
-                        model.setInterfaceName(dn.toString());
-                        break;
+                model.setInterfaceName(interfaceName(index, ci));
+
+                // find all fields with @Metadata as options
+                for (FieldInfo fi : ci.fields()) {
+                    AnnotationInstance ai = fi.annotation(METADATA);
+                    if (ai != null) {
+                        BeanPojoOptionModel o = new BeanPojoOptionModel();
+                        o.setKind("property");
+                        o.setName(fi.name());
+                        o.setLabel(annotationValue(ai, "label"));
+                        o.setDefaultValue(annotationValue(ai, "defaultValue"));
+                        o.setRequired("true".equals(annotationValue(ai, "required")));
+                        String displayName = annotationValue(ai, "title");
+                        if (displayName == null) {
+                            displayName = Strings.asTitle(o.getName());
+                        }
+                        o.setDisplayName(displayName);
+                        o.setDeprecated(fi.hasAnnotation(Deprecated.class));
+                        o.setJavaType(fi.type().name().toString());
+                        o.setType(getType(o.getJavaType(), false, false));
+                        o.setDescription(annotationValue(ai, "description"));
+                        String enums = annotationValue(ai, "enums");
+                        if (enums != null) {
+                            String[] values = enums.split(",");
+                            o.setEnums(Stream.of(values).map(String::trim).toList());
+                        }
+                        model.addOption(o);
                     }
                 }
-
-                // TODO: getter/setter for options ala EIP/components
                 models.add(model);
             }
         });
@@ -173,8 +213,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                 for (var model : models) {
                     names.add(model.getName());
                     JsonObject jo = asJsonObject(model);
-                    String json = jo.toJson();
-                    json = Jsoner.prettyPrint(json, 2);
+                    String json = JsonMapper.serialize(jo);
                     String fn = sanitizeFileName(model.getName()) + PackageHelper.JSON_SUFIX;
                     boolean updated = updateResource(resourcesOutputDir.toPath(),
                             "META-INF/services/org/apache/camel/bean/" + fn,
@@ -197,6 +236,22 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
         }
     }
 
+    private static String interfaceName(Index index, ClassInfo target) {
+        for (DotName dn : target.interfaceNames()) {
+            if (dn.packagePrefix().startsWith("org.apache.camel")) {
+                return dn.toString();
+            }
+        }
+        if (target.superName() != null) {
+            DotName dn = target.superName();
+            ClassInfo ci = index.getClassByName(dn);
+            if (ci != null) {
+                return interfaceName(index, ci);
+            }
+        }
+        return null;
+    }
+
     private JsonObject asJsonObject(BeanPojoModel model) {
         JsonObject jo = new JsonObject();
         // we need to know the maven GAV also
@@ -214,6 +269,12 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
         jo.put("groupId", project.getGroupId());
         jo.put("artifactId", project.getArtifactId());
         jo.put("version", project.getVersion());
+
+        if (!model.getOptions().isEmpty()) {
+            JsonObject options = JsonMapper.asJsonObject(model.getOptions());
+            jo.put("options", options);
+        }
+
         JsonObject root = new JsonObject();
         root.put("bean", jo);
         return root;
