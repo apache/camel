@@ -24,12 +24,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EntityRef;
+import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.junit.jupiter.api.Assertions;
@@ -1616,4 +1619,17 @@ public class CamelCatalogTest {
         Assertions.assertEquals("11", rel.getJdk());
     }
 
+    @Test
+    public void capabilities() {
+        List<String> list = catalog.findCapabilityNames();
+        Assertions.assertEquals(1, list.size());
+
+        Optional<EntityRef> ref = catalog.findCapabilityRef("platform-http");
+        Assertions.assertTrue(ref.isPresent());
+        Assertions.assertEquals(Kind.other, ref.get().kind());
+        Assertions.assertEquals("platform-http-main", ref.get().name());
+
+        Optional<EntityRef> ref2 = catalog.findCapabilityRef("not-implemented");
+        Assertions.assertFalse(ref2.isPresent());
+    }
 }

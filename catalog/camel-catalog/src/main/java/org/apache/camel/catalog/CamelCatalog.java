@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -28,6 +29,8 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.EntityRef;
+import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
@@ -213,6 +216,11 @@ public interface CamelCatalog {
      * Find all the other (miscellaneous) names from the Camel catalog
      */
     List<String> findOtherNames();
+
+    /**
+     * Find all the capability names from the Camel catalog
+     */
+    List<String> findCapabilityNames();
 
     /**
      * @param  kind the kind to look for
@@ -640,4 +648,8 @@ public interface CamelCatalog {
      */
     List<ReleaseModel> camelQuarkusReleases();
 
+    /**
+     * Find the entity the given capability maps to.
+     */
+    Optional<EntityRef> findCapabilityRef(String capability);
 }
