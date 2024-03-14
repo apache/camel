@@ -31,8 +31,15 @@
   <name>Camel :: Langchain :: Embedding</name>
   <description>Langchain4j Embedding</description>
 
+  <properties>
+    <!-- Qdrant is not available on these platforms -->
+    <skipITs.ppc64le>true</skipITs.ppc64le>
+    <skipITs.s390x>true</skipITs.s390x>
+    <skipTests.ppc64le>true</skipTests.ppc64le>
+    <skipTests.s390x>true</skipTests.s390x>
+  </properties>
+
   <dependencies>
-    
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-core</artifactId>
