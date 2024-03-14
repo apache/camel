@@ -42,6 +42,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Configuration;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
@@ -731,41 +732,7 @@ public abstract class BaseMainSupport extends BaseService {
         // we want to log the property placeholder summary after routes has been started,
         // but before camel context logs that it has been started, so we need to use an event listener
         if (standalone && mainConfigurationProperties.isAutoConfigurationLogSummary()) {
-            camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
-                @Override
-                public boolean isEnabled(CamelEvent event) {
-                    return event instanceof CamelEvent.CamelContextRoutesStartedEvent;
-                }
-
-                @Override
-                public void notify(CamelEvent event) throws Exception {
-                    // log summary of configurations
-                    if (!propertyPlaceholders.isEmpty()) {
-                        boolean header = true;
-                        for (var entry : propertyPlaceholders.entrySet()) {
-                            String k = entry.getKey().toString();
-                            Object v = entry.getValue();
-                            Object dv = propertyPlaceholders.getDefaultValue(k);
-                            // skip logging configurations that are using default-value
-                            // or a kamelet that uses templateId as a parameter
-                            boolean same = ObjectHelper.equal(v, dv);
-                            boolean skip = "templateId".equals(k);
-                            if (!same && !skip) {
-                                if (header) {
-                                    LOG.info("Property-placeholders summary");
-                                    header = false;
-                                }
-                                String loc = locationSummary(propertyPlaceholders, k);
-                                if (SensitiveUtils.containsSensitive(k)) {
-                                    LOG.info("    {} {}=xxxxxx", loc, k);
-                                } else {
-                                    LOG.info("    {} {}={}", loc, k, v);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            camelContext.getManagementStrategy().addEventNotifier(new PlaceholderSummaryEventNotifier(propertyPlaceholders));
         }
     }
 
@@ -2324,4 +2291,45 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    private static class PlaceholderSummaryEventNotifier extends SimpleEventNotifierSupport implements NonManagedService {
+        private final OrderedLocationProperties propertyPlaceholders;
+
+        public PlaceholderSummaryEventNotifier(OrderedLocationProperties propertyPlaceholders) {
+            this.propertyPlaceholders = propertyPlaceholders;
+        }
+
+        @Override
+        public boolean isEnabled(CamelEvent event) {
+            return event instanceof CamelEvent.CamelContextRoutesStartedEvent;
+        }
+
+        @Override
+        public void notify(CamelEvent event) throws Exception {
+            // log summary of configurations
+            if (!propertyPlaceholders.isEmpty()) {
+                boolean header = true;
+                for (var entry : propertyPlaceholders.entrySet()) {
+                    String k = entry.getKey().toString();
+                    Object v = entry.getValue();
+                    Object dv = propertyPlaceholders.getDefaultValue(k);
+                    // skip logging configurations that are using default-value
+                    // or a kamelet that uses templateId as a parameter
+                    boolean same = ObjectHelper.equal(v, dv);
+                    boolean skip = "templateId".equals(k);
+                    if (!same && !skip) {
+                        if (header) {
+                            LOG.info("Property-placeholders summary");
+                            header = false;
+                        }
+                        String loc = locationSummary(propertyPlaceholders, k);
+                        if (SensitiveUtils.containsSensitive(k)) {
+                            LOG.info("    {} {}=xxxxxx", loc, k);
+                        } else {
+                            LOG.info("    {} {}={}", loc, k, v);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

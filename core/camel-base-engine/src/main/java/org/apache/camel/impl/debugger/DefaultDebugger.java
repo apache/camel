@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.CamelEvent;
@@ -369,7 +370,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         return "DefaultDebugger";
     }
 
-    private final class DebugEventNotifier extends EventNotifierSupport {
+    private final class DebugEventNotifier extends EventNotifierSupport implements NonManagedService {
 
         private DebugEventNotifier() {
             setIgnoreCamelContextEvents(true);

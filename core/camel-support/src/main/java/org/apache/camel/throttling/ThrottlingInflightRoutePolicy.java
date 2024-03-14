@@ -26,6 +26,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
@@ -285,7 +286,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
      * {@link org.apache.camel.spi.EventNotifier} to keep track on when {@link Exchange} is done, so we can throttle
      * accordingly.
      */
-    private class ContextScopedEventNotifier extends EventNotifierSupport {
+    private class ContextScopedEventNotifier extends EventNotifierSupport implements NonManagedService {
 
         @Override
         public void notify(CamelEvent event) {

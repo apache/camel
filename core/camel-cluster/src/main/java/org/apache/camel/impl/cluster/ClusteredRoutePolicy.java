@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedStartupListener;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -360,7 +361,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
     }
 
-    private class CamelContextStartupListener extends SimpleEventNotifierSupport implements ExtendedStartupListener {
+    private class CamelContextStartupListener extends SimpleEventNotifierSupport
+            implements ExtendedStartupListener, NonManagedService {
         @Override
         public void notify(CamelEvent event) throws Exception {
             onCamelContextStarted();
