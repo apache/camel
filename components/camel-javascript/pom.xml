@@ -39,7 +39,7 @@
 
         <dependency>
             <groupId>org.graalvm.js</groupId>
-            <artifactId>js</artifactId>
+            <artifactId>js-language</artifactId>
             <version>${graaljs-version}</version>
         </dependency>
 
