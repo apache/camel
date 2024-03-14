@@ -9831,7 +9831,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Langchain4j Embeddings (camel-langchain-embeddings)
-     * Langchain4j Embeddings
+     * Perform operations on the Qdrant Vector Database.
      * 
      * Category: ai
      * Since: 4.5
@@ -9851,7 +9851,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Langchain4j Embeddings (camel-langchain-embeddings)
-     * Langchain4j Embeddings
+     * Perform operations on the Qdrant Vector Database.
      * 
      * Category: ai
      * Since: 4.5
