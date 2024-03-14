@@ -23,7 +23,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Perform operations on the Qdrant Vector Database.
+ * Langchain4j Embeddings
  */
 public fun UriDsl.`langchain-embeddings`(i: LangchainEmbeddingsUriDsl.() -> Unit) {
   LangchainEmbeddingsUriDsl(this).apply(i)
