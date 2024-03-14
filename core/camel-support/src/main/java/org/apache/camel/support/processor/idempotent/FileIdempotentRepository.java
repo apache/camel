@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * file store and make room for newer entries.
  */
 @Metadata(label = "bean",
-        description = "A file based IdempotentRepository.")
+          description = "A file based IdempotentRepository.")
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
@@ -64,10 +64,12 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     @Metadata(description = "File name of the repository (incl directory)", required = true)
     private File fileStore;
-    @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb", defaultValue = "" + 32 * 1024 * 1000L)
+    @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb",
+              defaultValue = "" + 32 * 1024 * 1000L)
     private long maxFileStoreSize = 32 * 1024 * 1000L; // 32mb store file
     @Metadata(description = "Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk"
-                            + " space to allow room for new entries.", defaultValue = "1000")
+                            + " space to allow room for new entries.",
+              defaultValue = "1000")
     private long dropOldestFileStore = 1000;
 
     public FileIdempotentRepository() {

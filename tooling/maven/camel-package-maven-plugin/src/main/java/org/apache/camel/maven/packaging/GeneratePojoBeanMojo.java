@@ -191,8 +191,12 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                         }
                         o.setDisplayName(displayName);
                         o.setDeprecated(fi.hasAnnotation(Deprecated.class));
-                        o.setJavaType(fi.type().name().toString());
-                        o.setType(getType(o.getJavaType(), false, false));
+                        String javaType = annotationValue(ai, "javaType");
+                        if (javaType == null) {
+                            javaType = ci.name().toString();
+                        }
+                        o.setJavaType(javaType);
+                        o.setType(getType(javaType, false, false));
                         o.setDescription(annotationValue(ai, "description"));
                         String enums = annotationValue(ai, "enums");
                         if (enums != null) {
