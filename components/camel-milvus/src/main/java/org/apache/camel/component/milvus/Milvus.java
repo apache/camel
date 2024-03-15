@@ -28,9 +28,6 @@ public class Milvus {
         @Metadata(description = "The action to be performed.", javaType = "String", enums = "UPSERT,RETRIEVE,DELETE")
         public static final String ACTION = "CamelMilvusAction";
 
-        @Metadata(description = "Payload Selector.", javaType = "io.qdrant.client.grpc.Points$WithPayloadSelector")
-        public static final String PAYLOAD_SELECTOR = "CamelMilvusPointsPayloadSelector";
-
         @Metadata(description = "Operation ID.", javaType = "long")
         public static final String OPERATION_ID = "CamelMilvusOperationID";
 
@@ -39,9 +36,6 @@ public class Milvus {
 
         @Metadata(description = "Operation Status Value.", javaType = "int")
         public static final String OPERATION_STATUS_VALUE = "CamelMilvusOperationStatusValue";
-
-        @Metadata(description = "Read Consistency.", javaType = "io.qdrant.client.grpc.Points$ReadConsistency")
-        public static final String READ_CONSISTENCY = "CamelMilvusReadConsistency";
 
         @Metadata(description = "Include Payload.", javaType = "boolean", defaultValue = "true")
         public static final String INCLUDE_PAYLOAD = "CamelMilvusWithPayload";

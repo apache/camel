@@ -270,20 +270,6 @@ public interface MilvusEndpointBuilderFactory {
         }
 
         /**
-         * Payload Selector.
-         * 
-         * The option is a: {@code
-         * io.qdrant.client.grpc.Points$WithPayloadSelector} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code MilvusPointsPayloadSelector}.
-         */
-        public String milvusPointsPayloadSelector() {
-            return "CamelMilvusPointsPayloadSelector";
-        }
-
-        /**
          * Operation ID.
          * 
          * The option is a: {@code long} type.
@@ -320,20 +306,6 @@ public interface MilvusEndpointBuilderFactory {
          */
         public String milvusOperationStatusValue() {
             return "CamelMilvusOperationStatusValue";
-        }
-
-        /**
-         * Read Consistency.
-         * 
-         * The option is a: {@code io.qdrant.client.grpc.Points$ReadConsistency}
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code MilvusReadConsistency}.
-         */
-        public String milvusReadConsistency() {
-            return "CamelMilvusReadConsistency";
         }
 
         /**
