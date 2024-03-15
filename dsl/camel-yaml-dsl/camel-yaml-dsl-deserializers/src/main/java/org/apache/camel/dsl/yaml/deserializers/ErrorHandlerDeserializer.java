@@ -16,29 +16,20 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
-import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
-import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
-import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
-import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
+import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.api.ConstructNode;
-import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
-import org.snakeyaml.engine.v2.nodes.NodeTuple;
-
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.*;
 
 @YamlIn
 @YamlType(
-          types = ErrorHandlerFactory.class,
+          inline = false,
+          nodes = { "error-handler", "errorHandler" },
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "deadLetterChannel",
@@ -60,37 +51,21 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.*;
                                 type = "object:org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition",
                                 oneOf = "errorHandler"),
           })
-public class ErrorHandlerBuilderDeserializer implements ConstructNode {
+public class ErrorHandlerDeserializer implements ConstructNode {
+
+    private final ErrorHandlerBuilderDeserializer delegate = new ErrorHandlerBuilderDeserializer();
+
+    private static CamelContextCustomizer customizer(ErrorHandlerFactory builder) {
+        return new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                camelContext.getCamelContextExtension().setErrorHandlerFactory(builder);
+            }
+        };
+    }
 
     @Override
     public Object construct(Node node) {
-        final MappingNode bn = asMappingNode(node);
-        final YamlDeserializationContext dc = getDeserializationContext(node);
-
-        for (NodeTuple tuple : bn.getValue()) {
-            String key = asText(tuple.getKeyNode());
-            Node val = tuple.getValueNode();
-
-            setDeserializationContext(val, dc);
-
-            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
-            switch (key) {
-                case "deadLetterChannel":
-                    return asType(val, DeadLetterChannelDefinition.class);
-                case "defaultErrorHandler":
-                    return asType(val, DefaultErrorHandlerDefinition.class);
-                case "jtaTransactionErrorHandler":
-                case "springTransactionErrorHandler":
-                    return asType(val, JtaTransactionErrorHandlerDefinition.class);
-                case "noErrorHandler":
-                    return asType(val, NoErrorHandlerDefinition.class);
-                case "refErrorHandler":
-                    return asType(val, RefErrorHandlerDefinition.class);
-                default:
-                    throw new UnsupportedFieldException(val, key);
-            }
-        }
-
-        throw new YamlDeserializationException(node, "Unable to determine the error handler type for the node");
+        return customizer((ErrorHandlerFactory) delegate.construct(node));
     }
 }
