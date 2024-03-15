@@ -19,7 +19,6 @@ package org.apache.camel.component.azure.servicebus;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
@@ -235,8 +234,8 @@ public class ServiceBusConsumer extends DefaultConsumer {
             }
 
             if (!getConfiguration().isDisableAutoComplete()) {
-                if (getConfiguration().isEnableDeadLettering() && (Objects.isNull(getConfiguration().getSubQueue()) ||
-                        getConfiguration().getSubQueue().equals(SubQueue.NONE))) {
+                if (getConfiguration().isEnableDeadLettering() && (ObjectHelper.isEmpty(getConfiguration().getSubQueue()) ||
+                        ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
                     DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
                     if (cause != null) {
                         deadLetterOptions
