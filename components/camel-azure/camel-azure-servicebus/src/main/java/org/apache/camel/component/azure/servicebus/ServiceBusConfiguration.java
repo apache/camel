@@ -68,6 +68,8 @@ public class ServiceBusConfiguration implements Cloneable {
     private String subscriptionName;
     @UriParam(label = "consumer")
     private boolean disableAutoComplete;
+    @UriParam(label = "consumer")
+    private boolean enableDeadLettering;
     @UriParam(label = "consumer", defaultValue = "PEEK_LOCK")
     private ServiceBusReceiveMode serviceBusReceiveMode = ServiceBusReceiveMode.PEEK_LOCK;
     @UriParam(label = "consumer", defaultValue = "5m")
@@ -209,6 +211,18 @@ public class ServiceBusConfiguration implements Cloneable {
 
     public void setDisableAutoComplete(boolean disableAutoComplete) {
         this.disableAutoComplete = disableAutoComplete;
+    }
+
+    /**
+     * Enable application level deadlettering to the subscription deadletter subqueue if deadletter related headers are
+     * set.
+     */
+    public boolean isEnableDeadLettering() {
+        return enableDeadLettering;
+    }
+
+    public void setEnableDeadLettering(boolean enableDeadLettering) {
+        this.enableDeadLettering = enableDeadLettering;
     }
 
     /**
