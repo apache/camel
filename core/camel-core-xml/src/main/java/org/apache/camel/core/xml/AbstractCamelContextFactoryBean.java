@@ -538,7 +538,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
 
             // add each rest as route
-            for (RestDefinition rest : getContext().getRestDefinitions()) {
+            for (RestDefinition rest : getRests()) {
                 rest.asRouteDefinition(getContext()).forEach(r -> getRoutes().add(r));
             }
 
