@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
+import com.azure.messaging.servicebus.models.DeadLetterOptions;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -35,6 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.scheduler.Schedulers;
+
 
 public class ServiceBusConsumer extends DefaultConsumer {
 
@@ -228,8 +231,19 @@ public class ServiceBusConsumer extends DefaultConsumer {
             if (cause != null) {
                 getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
             }
+
             if (!getConfiguration().isDisableAutoComplete()) {
-                clientWrapper.abandon(message).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                if (getConfiguration().isEnableDeadLettering()) {
+                    DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
+                    if (cause != null) {
+                        deadLetterOptions.setDeadLetterReason(cause.getClass().getName());
+                        deadLetterOptions.setDeadLetterErrorDescription(cause.getMessage());
+                    }
+                    clientWrapper.deadLetter(message, deadLetterOptions).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                } else {
+                    clientWrapper.abandon(message).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                }
+
             }
         }
     }
