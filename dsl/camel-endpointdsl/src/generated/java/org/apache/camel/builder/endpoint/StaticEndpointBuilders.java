@@ -10450,6 +10450,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Milvus (camel-milvus)
+     * Perform operations on the Milvus Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-milvus
+     * 
+     * Syntax: <code>milvus:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.MilvusEndpointBuilder milvus(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.endpointBuilder("milvus", path);
+    }
+    /**
+     * Milvus (camel-milvus)
+     * Perform operations on the Milvus Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-milvus
+     * 
+     * Syntax: <code>milvus:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.MilvusEndpointBuilder milvus(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
      * 
