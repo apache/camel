@@ -19,11 +19,13 @@ package org.apache.camel.component.azure.servicebus;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.models.DeadLetterOptions;
+import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -38,7 +40,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.scheduler.Schedulers;
-
 
 public class ServiceBusConsumer extends DefaultConsumer {
 
@@ -234,13 +235,15 @@ public class ServiceBusConsumer extends DefaultConsumer {
             }
 
             if (!getConfiguration().isDisableAutoComplete()) {
-                if (getConfiguration().isEnableDeadLettering()) {
+                if (getConfiguration().isEnableDeadLettering() && (Objects.isNull(getConfiguration().getSubQueue()) ||
+                        getConfiguration().getSubQueue().equals(SubQueue.NONE))) {
                     DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
                     if (cause != null) {
-                        deadLetterOptions.setDeadLetterReason(String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
+                        deadLetterOptions
+                                .setDeadLetterReason(String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
                         deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
-                            .map(StackTraceElement::toString)
-                            .collect(Collectors.joining("\n")));
+                                .map(StackTraceElement::toString)
+                                .collect(Collectors.joining("\n")));
                     }
                     clientWrapper.deadLetter(message, deadLetterOptions).subscribeOn(Schedulers.boundedElastic()).subscribe();
                 } else {
