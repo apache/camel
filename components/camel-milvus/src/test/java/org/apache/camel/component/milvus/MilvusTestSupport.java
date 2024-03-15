@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.milvus;
 
+import java.net.URL;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.milvus.services.MilvusService;
 import org.apache.camel.test.infra.milvus.services.MilvusServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MilvusTestSupport extends CamelTestSupport {

@@ -2939,6 +2939,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.micrometer();
     }
     /**
+     * Milvus (camel-milvus)
+     * Perform operations on the Milvus Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-milvus
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.MilvusComponentBuilderFactory.MilvusComponentBuilder milvus() {
+        return org.apache.camel.builder.component.dsl.MilvusComponentBuilderFactory.milvus();
+    }
+    /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
      * 

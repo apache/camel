@@ -1,8 +1,8 @@
-= Qdrant Component
-:doctitle: Qdrant
-:shortname: qdrant
-:artifactid: camel-qdrant
-:description: Perform operations on the Qdrant Vector Database.
+= Milvus Component
+:doctitle: Milvus
+:shortname: milvus
+:artifactid: camel-milvus
+:description: Perform operations on the Milvus Vector Database.
 :since: 4.5
 :supportlevel: Preview
 :tabs-sync-option:

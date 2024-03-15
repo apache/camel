@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.milvus.it;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.DataType;
 import io.milvus.param.IndexType;
@@ -34,10 +38,6 @@ import org.apache.camel.component.milvus.MilvusAction;
 import org.apache.camel.component.milvus.MilvusTestSupport;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -106,7 +106,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        CreateIndexParam createVectorIndexParam  = CreateIndexParam.newBuilder()
+        CreateIndexParam createVectorIndexParam = CreateIndexParam.newBuilder()
                 .withCollectionName("test")
                 .withFieldName("userFace")
                 .withIndexName("userFaceIndex")
@@ -152,7 +152,6 @@ public class MilvusComponentIT extends MilvusTestSupport {
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
     }
-
 
     @Test
     @Order(4)

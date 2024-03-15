@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.milvus;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import io.milvus.client.MilvusClient;
@@ -133,7 +132,6 @@ public class MilvusProducer extends DefaultProducer {
 
     }
 
-
     private void createIndex(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         final CreateIndexParam body = in.getMandatoryBody(CreateIndexParam.class);
@@ -149,7 +147,8 @@ public class MilvusProducer extends DefaultProducer {
         final Message in = exchange.getMessage();
         final SearchSimpleParam body = in.getMandatoryBody(SearchSimpleParam.class);
 
-        this.client.loadCollection(LoadCollectionParam.newBuilder().withCollectionName(getEndpoint().getCollection()).withSyncLoad(true).build());
+        this.client.loadCollection(
+                LoadCollectionParam.newBuilder().withCollectionName(getEndpoint().getCollection()).withSyncLoad(true).build());
         R<SearchResponse> result = this.client.search(body);
 
         handleResponseStatus(result);

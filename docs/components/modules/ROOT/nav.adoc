@@ -223,6 +223,7 @@
 ** xref:master-component.adoc[Master]
 ** xref:metrics-component.adoc[Metrics]
 ** xref:micrometer-component.adoc[Micrometer]
+** xref:milvus-component.adoc[Milvus]
 ** xref:mina-component.adoc[Mina]
 ** xref:minio-component.adoc[Minio]
 ** xref:mllp-component.adoc[MLLP]
