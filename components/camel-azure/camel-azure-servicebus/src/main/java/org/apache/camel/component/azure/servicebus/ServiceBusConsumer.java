@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.servicebus;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
@@ -236,8 +237,10 @@ public class ServiceBusConsumer extends DefaultConsumer {
                 if (getConfiguration().isEnableDeadLettering()) {
                     DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
                     if (cause != null) {
-                        deadLetterOptions.setDeadLetterReason(cause.getClass().getName());
-                        deadLetterOptions.setDeadLetterErrorDescription(cause.getMessage());
+                        deadLetterOptions.setDeadLetterReason(String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
+                        deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
+                            .map(StackTraceElement::toString)
+                            .collect(Collectors.joining("\n")));
                     }
                     clientWrapper.deadLetter(message, deadLetterOptions).subscribeOn(Schedulers.boundedElastic()).subscribe();
                 } else {
