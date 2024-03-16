@@ -2790,7 +2790,7 @@ For example to list all the components
 
 [source,bash]
 ----
-camel catalog components
+camel catalog component
 ----
 
 And to see which Kamelets are available:
