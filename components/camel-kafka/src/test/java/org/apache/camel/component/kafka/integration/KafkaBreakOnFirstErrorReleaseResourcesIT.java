@@ -41,8 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test breakOnFirstError functionality and the issue reported in CAMEL-20563
- * regarding leaking resources, mainly heartbeat-threads, while reconnecting.
+ * Test breakOnFirstError functionality and the issue reported in CAMEL-20563 regarding leaking resources, mainly
+ * heartbeat-threads, while reconnecting.
  *
  */
 @Tags({ @Tag("breakOnFirstError") })
@@ -123,7 +123,7 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
         int count = 0;
 
         for (Thread t : threads) {
-            if (t.getName().contains("heartbeat")){
+            if (t.getName().contains("heartbeat")) {
                 count++;
             }
         }
