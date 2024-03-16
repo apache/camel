@@ -2797,7 +2797,7 @@ And to see which Kamelets are available:
 
 [source,bash]
 ----
-camel catalog kamelets
+camel catalog kamelet
 ----
 
 TIP: Use `camel catalog --help` to see all possible commands.
