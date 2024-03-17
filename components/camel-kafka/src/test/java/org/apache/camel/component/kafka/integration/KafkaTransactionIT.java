@@ -90,6 +90,9 @@ public class KafkaTransactionIT extends BaseEmbeddedKafkaTestSupport {
         topics.add(TOPIC_TRANSACTION);
         topics.add(TOPIC_CONCURRENCY_TRANSACTION);
         kafkaAdminClient.deleteTopics(topics);
+        if(stringsConsumerConn != null){
+            stringsConsumerConn.close(Duration.ZERO);
+        }
     }
 
     @Override
