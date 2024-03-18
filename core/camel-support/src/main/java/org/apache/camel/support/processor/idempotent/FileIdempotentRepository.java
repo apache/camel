@@ -28,6 +28,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.LRUCache;
@@ -53,6 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 @Metadata(label = "bean",
           description = "A file based IdempotentRepository.")
+@Configurer(metadataOnly = true)
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
@@ -62,14 +64,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     private final AtomicBoolean init = new AtomicBoolean();
     private Map<String, Object> cache;
 
-    @Metadata(description = "File name of the repository (incl directory)", required = true)
     private File fileStore;
-    @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb",
-              defaultValue = "" + 32 * 1024 * 1000L)
     private long maxFileStoreSize = 32 * 1024 * 1000L; // 32mb store file
-    @Metadata(description = "Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk"
-                            + " space to allow room for new entries.",
-              defaultValue = "1000")
     private long dropOldestFileStore = 1000;
 
     public FileIdempotentRepository() {
@@ -201,6 +197,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         return fileStore;
     }
 
+    @Metadata(description = "File name of the repository (incl directory)", required = true)
     public void setFileStore(File fileStore) {
         this.fileStore = fileStore;
     }
@@ -229,6 +226,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * <p/>
      * The default is 32mb.
      */
+    @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb",
+            defaultValue = "" + 32 * 1024 * 1000L)
     @ManagedAttribute(description = "The maximum file size for the file store in bytes")
     public void setMaxFileStoreSize(long maxFileStoreSize) {
         this.maxFileStoreSize = maxFileStoreSize;
@@ -244,6 +243,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * <p/>
      * The default is 1000.
      */
+    @Metadata(description = "Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk"
+                            + " space to allow room for new entries.",
+            defaultValue = "1000")
     @ManagedAttribute(description = "Number of oldest elements to drop from file store if maximum file size reached")
     public void setDropOldestFileStore(long dropOldestFileStore) {
         this.dropOldestFileStore = dropOldestFileStore;

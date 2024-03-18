@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.LRUCache;
@@ -34,11 +35,11 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 @Metadata(label = "bean",
           description = "A memory based IdempotentRepository.")
+@Configurer
 @ManagedResource(description = "Memory based idempotent repository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private Map<String, Object> cache;
 
-    @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "1000")
     private int cacheSize;
 
     public MemoryIdempotentRepository() {
@@ -128,6 +129,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         return cache.size();
     }
 
+    @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "1000")
     public void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
     }

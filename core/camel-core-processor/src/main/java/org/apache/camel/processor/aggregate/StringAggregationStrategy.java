@@ -20,6 +20,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -32,9 +33,9 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 @Metadata(label = "bean",
           description = "Aggregate result of pick expression into a single combined Exchange holding all the aggregated bodies in a"
                         + " String as the message body. This aggregation strategy can used in combination with Splitter to batch messages")
+@Configurer(metadataOnly = true)
 public class StringAggregationStrategy implements AggregationStrategy {
 
-    @Metadata(description = "Delimiter used for joining strings together.")
     private String delimiter = "";
     private Expression pickExpression = ExpressionBuilder.bodyExpression();
 
@@ -42,6 +43,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
         return delimiter;
     }
 
+    @Metadata(description = "Delimiter used for joining strings together.")
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }

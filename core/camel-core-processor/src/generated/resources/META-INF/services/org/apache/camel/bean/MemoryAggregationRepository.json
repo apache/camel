@@ -9,8 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-processor",
-    "version": "4.5.0-SNAPSHOT",
-    "properties": { "optimisticLocking": { "index": 0, "kind": "property", "displayName": "Optimistic Locking", "required": false, "type": "object", "javaType": "org.apache.camel.processor.aggregate.MemoryAggregationRepository", "deprecated": false, "autowired": false, "secret": false, "description": "Whether to use optimistic locking" } }
+    "version": "4.5.0-SNAPSHOT"
   }
 }
 
