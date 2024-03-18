@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -41,25 +42,35 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Tags({ @Tag("not-parallel") })
+@Tags({ @Tag("exclusive") })
 public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTestSupport {
 
-    public static ArtemisService service = new ArtemisVMService.ReusableArtemisVMService();
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    public static ArtemisService service = new ArtemisVMService.ReusableArtemisVMService(PORT);
 
     private final Long recoveryInterval = 1000L;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        service.initialize();
+        createBroker();
+        final String address = service.serviceAddress();
+        destroyBroker();
 
         CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(address);
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
-        service.shutdown();
-
         return camelContext;
+    }
+
+    private static void destroyBroker() {
+        service.shutdown();
+        service = null;
+    }
+
+    private static void createBroker() {
+        service = new ArtemisVMService.ReusableArtemisVMService(PORT);
+        service.initialize();
     }
 
     @Override
@@ -68,12 +79,14 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
             @Override
             public void configure() {
                 from("direct:start")
+                        .routeId("route-1")
                         .to(ExchangePattern.InOut,
                                 "jms:queue:JmsRequestReplyTemporaryRefreshFailureOnStartupTest?recoveryInterval="
                                                    + recoveryInterval)
                         .to("mock:result");
 
                 from("jms:queue:JmsRequestReplyTemporaryRefreshFailureOnStartupTest")
+                        .routeId("route-2")
                         .setBody(simple("pong"));
             }
         };
@@ -84,7 +97,6 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
     @Order(1)
     public void testTemporaryRefreshFailureOnStartup() throws Exception {
         //the first message will fail
-        //the second message must be handled
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(0);
 
@@ -99,12 +111,14 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
     @DisplayName("Test that reconnects after dealing with an exception on connection failure")
     @Test
     @Order(2)
-    public void testTemporaryRefreshFailureOnStartupReconnect() throws Exception {
+    public void testReconnect() throws Exception {
+        createBroker();
+
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.reset();
         mockEndpoint.expectedMessageCount(1);
 
-        service.initialize();
+        waitForRoutes();
 
         Awaitility.await()
                 .atMost(15, TimeUnit.SECONDS)
@@ -113,5 +127,10 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
                 });
 
         mockEndpoint.assertIsSatisfied();
+    }
+
+    void waitForRoutes() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 1000);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 1000);
     }
 }

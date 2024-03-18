@@ -194,7 +194,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <excludedGroups>not-parallel</excludedGroups>
+                                    <excludedGroups>not-parallel,exclusive</excludedGroups>
                                 </configuration>
                             </execution>
                             <execution>
@@ -205,6 +205,18 @@
                                 <configuration>
                                     <forkCount>4</forkCount>
                                     <groups>not-parallel</groups>
+                                    <excludedGroups>exclusive</excludedGroups>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>exclusive-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <forkCount>2</forkCount>
+                                    <reuseForks>false</reuseForks>
+                                    <groups>exclusive</groups>
                                 </configuration>
                             </execution>
                         </executions>
