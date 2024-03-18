@@ -24,27 +24,30 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
-import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
-    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
-    @Test
-    public void testJmsInOutRoutingSlip() throws Exception {
+    @BeforeEach
+    void setupMocks() {
         getMockEndpoint("mock:JmsInOutRoutingSlipTest.foo").expectedBodiesReceived("World");
         getMockEndpoint("mock:JmsInOutRoutingSlipTest.result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:end").expectedBodiesReceived("Bye World");
+    }
 
+    @RepeatedTest(5)
+    public void testJmsInOutRoutingSlip() throws Exception {
         template.sendBodyAndHeader("activemq:queue:JmsInOutRoutingSlipTest.start", "World", "slip",
                 "activemq:queue:JmsInOutRoutingSlipTest.foo,activemq:queue:JmsInOutRoutingSlipTest.result");
 
