@@ -367,6 +367,7 @@ public final class JsonMapper {
     public static JsonObject asJsonObject(PojoBeanModel model) {
         JsonObject obj = new JsonObject();
         baseToJson(model, obj);
+        artifactToJson(model, obj);
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("model", obj);

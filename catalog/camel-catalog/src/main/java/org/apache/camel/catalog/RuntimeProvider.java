@@ -112,6 +112,11 @@ public interface RuntimeProvider {
     List<String> findOtherNames();
 
     /**
+     * Find all the pojo beans names from the Camel catalog supported by the provider
+     */
+    List<String> findBeansNames();
+
+    /**
      * Find all the capabilities from the Camel catalog supported by the provider
      */
     Map<String, String> findCapabilities();

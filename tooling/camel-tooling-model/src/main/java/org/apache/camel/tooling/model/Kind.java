@@ -26,5 +26,6 @@ public enum Kind {
     transformer,
     console,
     other,
-    eip
+    eip,
+    bean
 }

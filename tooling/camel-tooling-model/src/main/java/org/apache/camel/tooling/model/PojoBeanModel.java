@@ -19,7 +19,7 @@ package org.apache.camel.tooling.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PojoBeanModel extends BaseModel<PojoBeanModel.PojoBeanOptionModel> {
+public class PojoBeanModel extends ArtifactModel<PojoBeanModel.PojoBeanOptionModel> {
 
     protected final List<PojoBeanModel.PojoBeanOptionModel> options = new ArrayList<>();
 

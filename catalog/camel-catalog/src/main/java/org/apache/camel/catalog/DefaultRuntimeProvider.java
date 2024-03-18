@@ -41,6 +41,7 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String CONSOLE_CATALOG = "org/apache/camel/catalog/dev-consoles.properties";
     private static final String OTHER_CATALOG = "org/apache/camel/catalog/others.properties";
     private static final String CAPABILITIES_CATALOG = "org/apache/camel/catalog/capabilities.properties";
+    private static final String BEANS_CATALOG = "org/apache/camel/catalog/beans.properties";
 
     private CamelCatalog camelCatalog;
 
@@ -134,6 +135,10 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
         return CAPABILITIES_CATALOG;
     }
 
+    protected String getBeansCatalog() {
+        return BEANS_CATALOG;
+    }
+
     @Override
     public List<String> findComponentNames() {
         return find(getComponentsCatalog());
@@ -162,6 +167,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findOtherNames() {
         return find(getOtherCatalog());
+    }
+
+    @Override
+    public List<String> findBeansNames() {
+        return find(getBeansCatalog());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
