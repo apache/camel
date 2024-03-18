@@ -977,7 +977,7 @@ public class Run extends CamelCommand {
         cmds.remove("--background=true");
         cmds.remove("--background");
 
-        cmds.add(0, "camel");
+        addCamelCommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
@@ -1540,6 +1540,15 @@ public class Run extends CamelCommand {
         @Override
         protected boolean failIfEmptyArgs() {
             return false;
+        }
+    }
+
+    protected static void addCamelCommand(List<String> cmds) {
+        if (FileUtil.isWindows()) {
+            String jbangDir = System.getenv().getOrDefault("JBANG_DIR", System.getProperty("user.home") + "\\.jbang");
+            cmds.add(0, jbangDir + "\\bin\\camel.cmd");
+        } else {
+            cmds.add(0, "camel");
         }
     }
 }
