@@ -51,6 +51,7 @@ import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.app.RegistryBeanDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ExchangeFactory;
@@ -194,6 +195,18 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 // in preParseRoute() and possibly registered in
                 // org.apache.camel.main.BaseMainSupport.postProcessCamelRegistry() (if given Main implementation
                 // decides to do so)
+
+                if (app.getRestConfigurations().size() > 1) {
+                    throw new RuntimeException("There should only be one <restConfiguration>");
+                }
+                if (app.getRestConfigurations().size() == 1) {
+                    RestConfigurationDefinition config = app.getRestConfigurations().get(0);
+                    try {
+                        config.asRestConfiguration(getCamelContext(), getCamelContext().getRestConfiguration());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 
                 app.getRests().forEach(r -> {
                     r.setResource(getResource());
