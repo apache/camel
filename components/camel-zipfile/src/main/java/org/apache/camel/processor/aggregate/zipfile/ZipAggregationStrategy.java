@@ -36,6 +36,7 @@ import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ExchangeHelper;
@@ -55,6 +56,7 @@ import org.apache.camel.util.FileUtil;
 @Metadata(label = "bean",
           description = "AggregationStrategy to zip together incoming messages into a zip file."
                         + " Please note that this aggregation strategy requires eager completion check to work properly.")
+@Configurer(metadataOnly = true)
 public class ZipAggregationStrategy implements AggregationStrategy {
 
     @Metadata(description = "Sets the prefix that will be used when creating the ZIP filename.")
@@ -176,6 +178,14 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     public void setUseTempFile(boolean useTempFile) {
         this.useTempFile = useTempFile;
+    }
+
+    public boolean isUseFilenameHeader() {
+        return useFilenameHeader;
+    }
+
+    public void setUseFilenameHeader(boolean useFilenameHeader) {
+        this.useFilenameHeader = useFilenameHeader;
     }
 
     @Override

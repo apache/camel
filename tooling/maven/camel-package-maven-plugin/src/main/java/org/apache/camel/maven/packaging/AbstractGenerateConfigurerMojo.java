@@ -352,9 +352,6 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             if (skipDeprecated && deprecated) {
                 return;
             }
-            if (metadataOnly && !m.isAnnotationPresent(Metadata.class)) {
-                return;
-            }
 
             boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set")
                     && Character.isUpperCase(m.getName().charAt(3));
@@ -383,13 +380,19 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 String t = builder
                         ? Character.toUpperCase(m.getName().charAt(4)) + m.getName().substring(4 + 1)
                         : Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
+                Field field = ReflectionHelper.findField(clazz, Character.toLowerCase(t.charAt(0)) + t.substring(1));
+                // check via the field whether to be included or not if we should only include fields marked up with @Metadata
+                if (metadataOnly && field != null) {
+                    if (!field.isAnnotationPresent(Metadata.class)) {
+                        return;
+                    }
+                }
                 if (names.add(t)) {
                     option = new ConfigurerOption(t, type, getter, builder);
                     answer.add(option);
                 } else {
                     boolean replace = false;
                     // try to find out what the real type is of the correspondent field so we chose among the clash
-                    Field field = ReflectionHelper.findField(clazz, Character.toLowerCase(t.charAt(0)) + t.substring(1));
                     if (field != null && field.getType().equals(type)) {
                         // this is the correct type for the new option
                         replace = true;
