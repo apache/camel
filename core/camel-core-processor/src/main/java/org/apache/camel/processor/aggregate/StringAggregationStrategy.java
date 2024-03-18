@@ -36,6 +36,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 @Configurer(metadataOnly = true)
 public class StringAggregationStrategy implements AggregationStrategy {
 
+    @Metadata(description = "Delimiter used for joining strings together.")
     private String delimiter = "";
     private Expression pickExpression = ExpressionBuilder.bodyExpression();
 
@@ -43,7 +44,6 @@ public class StringAggregationStrategy implements AggregationStrategy {
         return delimiter;
     }
 
-    @Metadata(description = "Delimiter used for joining strings together.")
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }

@@ -40,6 +40,7 @@ import org.apache.camel.support.service.ServiceSupport;
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private Map<String, Object> cache;
 
+    @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "1000")
     private int cacheSize;
 
     public MemoryIdempotentRepository() {
@@ -129,7 +130,6 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         return cache.size();
     }
 
-    @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "1000")
     public void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
     }

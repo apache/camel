@@ -39,6 +39,7 @@ import org.apache.camel.support.service.ServiceSupport;
 public class MemoryAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
     private final ConcurrentMap<String, Exchange> cache = new ConcurrentHashMap<>();
 
+    @Metadata(description = "Whether to use optimistic locking")
     private boolean optimisticLocking;
 
     public MemoryAggregationRepository() {
@@ -53,7 +54,6 @@ public class MemoryAggregationRepository extends ServiceSupport implements Optim
         return optimisticLocking;
     }
 
-    @Metadata(description = "Whether to use optimistic locking")
     public void setOptimisticLocking(boolean optimisticLocking) {
         this.optimisticLocking = optimisticLocking;
     }

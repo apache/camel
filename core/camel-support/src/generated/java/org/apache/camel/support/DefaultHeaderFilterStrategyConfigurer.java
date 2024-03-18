@@ -28,11 +28,11 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
         case "filteronmatch":
         case "FilterOnMatch": target.setFilterOnMatch(property(camelContext, boolean.class, value)); return true;
         case "infilter":
-        case "InFilter": target.setInFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "InFilter": target.setInFilter(property(camelContext, java.util.Set.class, value)); return true;
         case "lowercase":
         case "LowerCase": target.setLowerCase(property(camelContext, boolean.class, value)); return true;
         case "outfilter":
-        case "OutFilter": target.setOutFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "OutFilter": target.setOutFilter(property(camelContext, java.util.Set.class, value)); return true;
         default: return false;
         }
     }
@@ -47,11 +47,11 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
         case "filteronmatch":
         case "FilterOnMatch": return boolean.class;
         case "infilter":
-        case "InFilter": return java.lang.String.class;
+        case "InFilter": return java.util.Set.class;
         case "lowercase":
         case "LowerCase": return boolean.class;
         case "outfilter":
-        case "OutFilter": return java.lang.String.class;
+        case "OutFilter": return java.util.Set.class;
         default: return null;
         }
     }
@@ -72,6 +72,17 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
         case "LowerCase": return target.isLowerCase();
         case "outfilter":
         case "OutFilter": return target.getOutFilter();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "infilter":
+        case "InFilter": return java.lang.String.class;
+        case "outfilter":
+        case "OutFilter": return java.lang.String.class;
         default: return null;
         }
     }
