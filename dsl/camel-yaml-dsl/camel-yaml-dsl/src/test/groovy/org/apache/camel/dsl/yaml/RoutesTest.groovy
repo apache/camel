@@ -19,6 +19,8 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteDefinition
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition
 import org.junit.jupiter.api.Assertions
 
 class RoutesTest extends YamlTestSupport {
@@ -164,6 +166,91 @@ class RoutesTest extends YamlTestSupport {
             }
     }
 
+    def "load route with error handler ref"() {
+        when:
+        loadRoutes '''
+                - route:
+                    errorHandlerRef: "myErrorHandler"
+                    from: 
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            input.endpointUri == 'direct:info'
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+            errorHandlerFactorySet
+            errorHandlerFactory.class == RefErrorHandlerDefinition.class
+            with (errorHandlerFactory, RefErrorHandlerDefinition) {
+                ref == "myErrorHandler"
+            }
+        }
+    }
+
+    def "load route with error handler"() {
+        when:
+        loadRoutes '''
+                - route:
+                    errorHandler: 
+                      refErrorHandler: 
+                        ref: "myErrorHandler"
+                    from: 
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            input.endpointUri == 'direct:info'
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+            errorHandlerFactorySet
+            errorHandlerFactory.class == RefErrorHandlerDefinition.class
+            with (errorHandlerFactory, RefErrorHandlerDefinition) {
+                ref == "myErrorHandler"
+            }
+        }
+    }
+
+    def "load route with error handler properties"() {
+        when:
+        loadRoutes '''
+                - route:
+                    errorHandler: 
+                      deadLetterChannel: 
+                        deadLetterUri: "mock:on-error"
+                        redeliveryPolicy:
+                          maximumRedeliveries: 3
+                    from: 
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            input.endpointUri == 'direct:info'
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+            errorHandlerFactorySet
+            errorHandlerFactory.class == DeadLetterChannelDefinition.class
+            with (errorHandlerFactory, DeadLetterChannelDefinition) {
+                deadLetterUri == 'mock:on-error'
+                redeliveryPolicy.maximumRedeliveries == "3"
+            }
+        }
+    }
+
     def "load route with input/output types"() {
         when:
         loadRoutes '''
@@ -190,7 +277,6 @@ class RoutesTest extends YamlTestSupport {
             }
         }
     }
-
 
     def "load route inlined camelCase"() {
         when:

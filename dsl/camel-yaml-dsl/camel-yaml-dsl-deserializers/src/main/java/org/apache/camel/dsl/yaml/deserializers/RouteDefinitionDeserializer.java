@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
@@ -50,6 +51,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "messageHistory", type = "boolean"),
                   @YamlProperty(name = "logMask", type = "boolean"),
                   @YamlProperty(name = "trace", type = "boolean"),
+                  @YamlProperty(name = "errorHandlerRef", type = "string"),
+                  @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.ErrorHandlerFactory"),
                   @YamlProperty(name = "shutdownRoute", type = "enum:Default,Defer",
                                 defaultValue = "Default",
                                 description = "To control how to shut down the route."),
@@ -127,6 +130,12 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "trace":
                     target.setTrace(asText(val));
+                    break;
+                case "errorHandlerRef":
+                    target.setErrorHandlerRef(asText(val));
+                    break;
+                case "errorHandler":
+                    target.setErrorHandlerFactory(asType(val, ErrorHandlerFactory.class));
                     break;
                 case "inputType":
                     target.setInputType(asType(val, InputTypeDefinition.class));
