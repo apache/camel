@@ -115,6 +115,11 @@ public class KafkaFetchRecords implements Runnable {
 
             if (!isConnected()) {
 
+                // shutdown existing consumer instance to release resources (heartbeat)
+                if (this.consumer != null) {
+                    safeConsumerClose();
+                }
+
                 // task that deals with creating kafka consumer
                 currentBackoffInterval = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffInterval();
                 ForegroundTask task = Tasks.foregroundTask()
