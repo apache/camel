@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class LoadRestConfigurationFromXmlTest extends ContextTestSupport {
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry jndi = super.createCamelRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
         return jndi;
