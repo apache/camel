@@ -43,6 +43,7 @@ import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
 import org.knowm.xchange.dto.meta.InstrumentMetaData;
+import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
@@ -178,6 +179,13 @@ public class XChangeEndpoint extends DefaultEndpoint {
     public Ticker getTicker(CurrencyPair pair) throws IOException {
         Assert.notNull(pair, "Null currency pair");
         MarketDataService marketService = xchange.getMarketDataService();
-        return marketService.getTicker((Instrument) pair);
+        try {
+            return marketService.getTicker((Instrument) pair);
+        } catch (NotYetImplementedForExchangeException e) {
+            // Ignored
+        }
+
+        // Retry service lookup using deprecated (but still in use) MarketDataService.getTicker(CurrencyPair)
+        return marketService.getTicker(pair);
     }
 }
