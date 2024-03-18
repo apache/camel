@@ -16,15 +16,39 @@
  */
 package org.apache.camel.tooling.model;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+
+import org.apache.camel.util.json.Jsonable;
+import org.apache.camel.util.json.Jsoner;
+
 /**
  * Kind of a Camel part, such as component, dataformat, language, etc.
  */
-public enum Kind {
+public enum Kind implements Jsonable {
     component,
     dataformat,
     language,
     transformer,
     console,
     other,
-    eip
+    eip,
+    model;
+
+    @Override
+    public String toJson() {
+        final StringWriter writable = new StringWriter();
+        try {
+            this.toJson(writable);
+        } catch (final IOException caught) {
+            /* See java.io.StringWriter. */
+        }
+        return writable.toString();
+    }
+
+    @Override
+    public void toJson(final Writer writable) throws IOException {
+        writable.write(Jsoner.serialize(name()));
+    }
 }
