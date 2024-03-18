@@ -175,11 +175,8 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                 model.setDescription(annotationValue(a, "description"));
                 model.setInterfaceName(interfaceName(index, ci));
                 if (model.getInterfaceName() == null) {
-                    String av = annotationValue(a, "annotations", 0);
-                    if (av != null) {
-                        av = Strings.after(av, "interfaceName=");
-                    }
-                    model.setInterfaceName(av);
+                    // fallback to use hardcoded from @Metadata/annotations
+                    model.setInterfaceName(annotationValue(a, "annotations", "interfaceName"));
                 }
 
                 // find all fields with @Metadata as options

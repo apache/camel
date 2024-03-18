@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.camel.tooling.util.Strings;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 
@@ -137,7 +138,7 @@ public final class MojoHelper {
         return s == null || s.isBlank() ? null : s;
     }
 
-    public static String annotationValue(AnnotationInstance ann, String key, int index) {
+    public static String annotationValue(AnnotationInstance ann, String key, String subKey) {
         if (ann == null) {
             return null;
         }
@@ -153,8 +154,14 @@ public final class MojoHelper {
         if (arr.length == 0) {
             return null;
         }
-        var s = arr[index].value().toString();
-        return s == null || s.isBlank() ? null : s;
+        for (AnnotationValue av : arr) {
+            String s = av.value().toString();
+            String before = Strings.before(s, "=");
+            if (subKey.equals(before)) {
+                return Strings.after(s, "=");
+            }
+        }
+        return null;
     }
 
     /**
