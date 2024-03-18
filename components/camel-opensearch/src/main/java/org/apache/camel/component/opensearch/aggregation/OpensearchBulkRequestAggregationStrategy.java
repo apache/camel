@@ -21,13 +21,18 @@ import java.util.List;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.bulk.BulkOperation;
 
 /**
  * Aggregates two {@link BulkOperation}s into a single {@link BulkRequest}.
  */
-public class BulkRequestAggregationStrategy implements AggregationStrategy {
+@Metadata(label = "bean",
+        description = "Aggregates two OpenSearch BulkOperation into a single BulkRequest")
+@Configurer(metadataOnly = true)
+public class OpensearchBulkRequestAggregationStrategy implements AggregationStrategy {
 
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

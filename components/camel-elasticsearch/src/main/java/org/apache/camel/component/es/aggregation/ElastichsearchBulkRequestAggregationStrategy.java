@@ -23,11 +23,13 @@ import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 
-/**
- * Aggregates two {@link BulkOperation}s into a single {@link BulkRequest}.
- */
-public class BulkRequestAggregationStrategy implements AggregationStrategy {
+@Metadata(label = "bean",
+        description = "Aggregates two ElasticSearch BulkOperation into a single BulkRequest")
+@Configurer(metadataOnly = true)
+public class ElastichsearchBulkRequestAggregationStrategy implements AggregationStrategy {
 
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
