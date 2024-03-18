@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "TarAggregationStrategy",
+    "javaType": "org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy",
+    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "title": "Tar Aggregation Strategy",
+    "description": "AggregationStrategy to combine together incoming messages into a tar file. Please note that this aggregation strategy requires eager completion check to work properly.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-tarfile",
+    "version": "4.5.0-SNAPSHOT",
+    "properties": { "filePrefix": { "index": 0, "kind": "property", "displayName": "File Prefix", "required": false, "type": "object", "javaType": "org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the prefix that will be used when creating the TAR filename." }, "fileSuffix": { "index": 1, "kind": "property", "displayName": "File Suffix", "required": false, "type": "object", "javaType": "org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "tar", "description": "Sets the suffix that will be used when creating the TAR filename." }, "parentDir": { "index": 2, "kind": "property", "displayName": "Parent Dir", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parent directory to use for writing temporary files" }, "preserveFolderStructure": { "index": 3, "kind": "property", "displayName": "Preserve Folder Structure", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy", "deprecated": false, "autowired": false, "secret": false, "description": "If the incoming message is from a file, then the folder structure of said file can be preserved" }, "useFilenameHeader": { "index": 4, "kind": "property", "displayName": "Use Filename Header", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy", "deprecated": false, "autowired": false, "secret": false, "description": "Whether to use CamelFileName header for the filename instead of using unique message id" } }
+  }
+}
+
