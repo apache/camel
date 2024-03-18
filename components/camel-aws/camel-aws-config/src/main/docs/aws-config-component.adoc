@@ -4,7 +4,7 @@
 :artifactid: camel-aws-config
 :description: Manage AWS Config service.
 :since: 4.3
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
