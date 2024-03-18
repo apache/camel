@@ -31,6 +31,8 @@ import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -59,14 +61,25 @@ import org.slf4j.LoggerFactory;
  * tar file.
  * </p>
  */
+@Metadata(label = "bean",
+          description = "AggregationStrategy to combine together incoming messages into a tar file."
+                        + " Please note that this aggregation strategy requires eager completion check to work properly.")
+@Configurer(metadataOnly = true)
 public class TarAggregationStrategy implements AggregationStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarAggregationStrategy.class);
 
+    @Metadata(description = "Sets the prefix that will be used when creating the TAR filename.")
     private String filePrefix;
+    @Metadata(description = "Sets the suffix that will be used when creating the TAR filename.", defaultValue = "tar")
     private String fileSuffix = ".tar";
+    @Metadata(label = "advanced",
+              description = "If the incoming message is from a file, then the folder structure of said file can be preserved")
     private boolean preserveFolderStructure;
+    @Metadata(label = "advanced",
+              description = "Whether to use CamelFileName header for the filename instead of using unique message id")
     private boolean useFilenameHeader;
+    @Metadata(label = "advanced", description = "Sets the parent directory to use for writing temporary files")
     private File parentDir = new File(System.getProperty("java.io.tmpdir"));
 
     public TarAggregationStrategy() {

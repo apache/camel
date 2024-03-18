@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.jboss.jandex.AnnotationInstance;
+import org.jboss.jandex.AnnotationValue;
 
 public final class MojoHelper {
 
@@ -133,6 +134,26 @@ public final class MojoHelper {
             return null;
         }
         var s = o.toString();
+        return s == null || s.isBlank() ? null : s;
+    }
+
+    public static String annotationValue(AnnotationInstance ann, String key, int index) {
+        if (ann == null) {
+            return null;
+        }
+        var v = ann.value(key);
+        if (v == null) {
+            return null;
+        }
+        var o = v.value();
+        if (o == null) {
+            return null;
+        }
+        AnnotationValue[] arr = (AnnotationValue[]) o;
+        if (arr.length == 0) {
+            return null;
+        }
+        var s = arr[index].value().toString();
         return s == null || s.isBlank() ? null : s;
     }
 

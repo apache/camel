@@ -174,6 +174,13 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                 model.setDeprecated(deprecated);
                 model.setDescription(annotationValue(a, "description"));
                 model.setInterfaceName(interfaceName(index, ci));
+                if (model.getInterfaceName() == null) {
+                    String av = annotationValue(a, "annotations", 0);
+                    if (av != null) {
+                        av = Strings.after(av, "interfaceName=");
+                    }
+                    model.setInterfaceName(av);
+                }
 
                 // find all fields with @Metadata as options
                 for (FieldInfo fi : ci.fields()) {
