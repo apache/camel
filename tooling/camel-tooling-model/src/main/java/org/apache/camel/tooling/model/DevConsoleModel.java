@@ -32,8 +32,8 @@ public class DevConsoleModel extends ArtifactModel<BaseOptionModel> {
     }
 
     @Override
-    public String getKind() {
-        return "console";
+    public Kind getKind() {
+        return Kind.console;
     }
 
 }

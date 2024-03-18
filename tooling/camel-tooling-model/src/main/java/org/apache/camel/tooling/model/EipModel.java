@@ -30,8 +30,8 @@ public class EipModel extends BaseModel<EipModel.EipOptionModel> {
     }
 
     @Override
-    public String getKind() {
-        return "model";
+    public Kind getKind() {
+        return Kind.model;
     }
 
     public boolean isAbstractModel() {

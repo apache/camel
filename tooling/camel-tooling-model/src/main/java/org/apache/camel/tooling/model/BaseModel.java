@@ -42,7 +42,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
         return (m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle());
     }
 
-    public abstract String getKind();
+    public abstract Kind getKind();
 
     public String getName() {
         return name;
