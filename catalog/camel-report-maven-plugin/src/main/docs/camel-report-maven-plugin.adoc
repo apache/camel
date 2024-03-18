@@ -151,6 +151,9 @@ The maven plugin *validate* goal supports the following options which can be con
 | directOrSedaPairCheck | true |Whether to validate direct/seda endpoints sending to non existing consumers.
 | configurationFiles | application.properties | Location of configuration files to validate. The default is application.properties. Multiple values can be separated by comma and use wildcard pattern matching.
 | showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
+| downloadTransitiveArtifacts | false | When sourcesArtifacts are declared, this flag can be used to download transitive dependencies, carefully enable this flag since it will try to download the whole dependency tree.
+| sourcesArtifacts | | List of sources transitive dependencies that contain camel routes, this option can be used to download extra dependencies that contain camel route that your project may depend on.
+| extraMavenRepositories | | List of extra maven repositories.
 |===
 
 For example to turn on ignoring usage of deprecated options from the command line, you can run:
@@ -171,6 +174,37 @@ $cd myproject
 $mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -Dcamel.includeTest=true
 ----
 
+=== Validate Apache Camel routes in transitive dependencies
+
+If your routes use `direct` or `seda` endpoints that are not present in the current project, but the routes are declared into a dependency of your project, you can edit the plugin configuration accordingly so that these routes can be taken into account by the Camel validate plugin.
+In particular, in order to use the validate plugin with transitive dependencies, *sources jars are needed*, for example:
+
+* Given the following Camel route `from("direct:in").to("direct:out")` defined in the current project
+* The route `from("direct:out")` is declared into a dependency of your project, for example `my.company:routes-dependency:1.0`
+* If `routes-dependency` sources are released into a maven repository, the following plugin configuration can be used:
+
+```xml
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-report-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals>
+        <goal>validate</goal>
+      </goals>
+      <configuration>
+        <sourcesArtifacts>
+          <sourcesArtifact>my.company:routes-dependency:jar:sources:1.0</sourcesArtifact>
+        </sourcesArtifacts>
+        <extraMavenRepositories>
+          <extraMavenRepository>http://internal.repo:8080/maven</extraMavenRepository>
+        </extraMavenRepositories>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
 
 == camel-report:route-coverage
 

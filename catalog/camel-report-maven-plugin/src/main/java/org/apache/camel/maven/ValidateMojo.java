@@ -16,23 +16,21 @@
  */
 package org.apache.camel.maven;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.LineNumberReader;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
+import org.apache.camel.catalog.common.FileUtil;
 import org.apache.camel.catalog.lucene.LuceneSuggestionStrategy;
 import org.apache.camel.catalog.maven.MavenVersionManager;
 import org.apache.camel.parser.RouteBuilderParser;
@@ -41,8 +39,12 @@ import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
+import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -94,6 +96,21 @@ public class ValidateMojo extends AbstractExecMojo {
      */
     @Parameter(property = "camel.includeJava", defaultValue = "true")
     private boolean includeJava;
+
+    /**
+     * List of extra maven repositories
+     */
+    @Parameter(property = "camel.extraRepositories")
+    private String[] extraMavenRepositories;
+
+    /**
+     * List of sources transitive dependencies that contains camel routes
+     */
+    @Parameter(property = "camel.sourcesArtifacts")
+    private String[] sourcesArtifacts;
+
+    @Parameter(defaultValue = "${project.build.directory}")
+    private String projectBuildDir;
 
     /**
      * Whether to include XML files to be validated for invalid Camel endpoints
@@ -174,6 +191,13 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean directOrSedaPairCheck;
 
     /**
+     * When sourcesArtifacts are declared, choose to download transitive artifacts or not carefully enable this flag
+     * since it will try to download the whole dependency tree
+     */
+    @Parameter(property = "camel.downloadTransitiveArtifacts", defaultValue = "false")
+    private boolean downloadTransitiveArtifacts;
+
+    /**
      * Location of configuration files to validate. The default is application.properties Multiple values can be
      * separated by comma and use wildcard pattern matching.
      */
@@ -186,8 +210,87 @@ public class ValidateMojo extends AbstractExecMojo {
     @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
     private RepositorySystemSession repositorySystemSession;
 
+    /**
+     * javaFiles in memory cache, useful for multi modules maven project
+     */
+    private static Set<File> javaFiles = new LinkedHashSet<>();
+    /**
+     * xmlFiles in memory cache, useful for multi modules maven project
+     */
+    private static Set<File> xmlFiles = new LinkedHashSet<>();
+
+    private static Set<String> downloadedArtifacts = new LinkedHashSet<>();
+
     @Override
     public void execute() throws MojoExecutionException {
+        // Download extra sources only if artifacts sources are defined and the current project is not a parent project
+        if (!"pom".equals(project.getPackaging()) && sourcesArtifacts != null && sourcesArtifacts.length > 0) {
+            // setup MavenDownloader, it will be used to download and locate artifacts declared via sourcesArtifacts
+
+            List<String> artifacts = Arrays.asList(sourcesArtifacts);
+
+            artifacts
+                    .parallelStream()
+                    .forEach(artifact -> {
+                        if (!artifact.contains(":sources:")) {
+                            getLog().warn("The artifact " + artifact
+                                          + " does not contain sources classifier, and may be excluded in future releases");
+                        }
+                    });
+
+            try (MavenDownloaderImpl downloader
+                    = new MavenDownloaderImpl(repositorySystem, repositorySystemSession, getSession().getSettings())) {
+                downloader.init();
+                Set<String> repositorySet = Arrays.stream(extraMavenRepositories)
+                        .collect(Collectors.toSet());
+                List<String> artifactList = new ArrayList<>(artifacts);
+
+                // Remove already downloaded Artifacts
+                artifactList.removeAll(downloadedArtifacts);
+
+                if (!artifactList.isEmpty()) {
+                    getLog().info("Downloading the following artifacts: " + artifactList);
+                    List<MavenArtifact> mavenSourcesArtifacts
+                            = downloader.resolveArtifacts(artifactList, repositorySet, downloadTransitiveArtifacts, false);
+
+                    // Create folder into the target folder that will be used to unzip
+                    // the downloaded artifacts
+                    Path extraSourcesPath = Paths.get(projectBuildDir, "camel-validate-sources");
+                    if (!Files.exists(extraSourcesPath)) {
+                        Files.createDirectories(extraSourcesPath);
+                    }
+
+                    // Unzip all the downloaded artifacts and add javas and xmls files into the cache
+                    for (MavenArtifact artifact : mavenSourcesArtifacts) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(artifact.getGav().getGroupId()).append(":")
+                                .append(artifact.getGav().getArtifactId()).append(":")
+                                .append(artifact.getGav().getPackaging()).append(":")
+                                .append(artifact.getGav().getClassifier()).append(":")
+                                .append(artifact.getGav().getVersion());
+                        // Avoid downloading the same dependency multiple times
+                        downloadedArtifacts.add(sb.toString());
+
+                        Path target = extraSourcesPath.resolve(artifact.getGav().getArtifactId());
+                        getLog().info("Unzipping the artifact: " + artifact + " to " + target);
+                        if (Files.exists(target)) {
+                            continue;
+                        }
+
+                        unzipArtifact(artifact, target);
+
+                        FileUtil.findJavaFiles(target.toFile(), javaFiles);
+                        FileUtil.findXmlFiles(target.toFile(), xmlFiles);
+                    }
+                }
+            } catch (IOException e) {
+                throw new MojoExecutionException(e);
+            } catch (MavenResolutionException e) {
+                // missing artifact, log and proceed
+                getLog().warn(e.getMessage());
+            }
+        }
+
         CamelCatalog catalog = new DefaultCamelCatalog();
         // add activemq as known component
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
@@ -227,6 +330,25 @@ public class ValidateMojo extends AbstractExecMojo {
 
         doExecuteRoutes(catalog);
         doExecuteConfigurationFiles(catalog);
+    }
+
+    private static void unzipArtifact(MavenArtifact artifact, Path target) throws IOException {
+        try (ZipFile zipFile = new ZipFile(artifact.getFile().toPath().toFile())) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                File entryDestination = new File(target.toString(), entry.getName());
+                if (entry.isDirectory()) {
+                    entryDestination.mkdirs();
+                } else {
+                    entryDestination.getParentFile().mkdirs();
+                    try (InputStream in = zipFile.getInputStream(entry);
+                         OutputStream out = new FileOutputStream(entryDestination)) {
+                        IOUtils.copy(in, out);
+                    }
+                }
+            }
+        }
     }
 
     protected void doExecuteConfigurationFiles(CamelCatalog catalog) throws MojoExecutionException {
@@ -390,8 +512,6 @@ public class ValidateMojo extends AbstractExecMojo {
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
         List<CamelSimpleExpressionDetails> simpleExpressions = new ArrayList<>();
         List<CamelRouteDetails> routeIds = new ArrayList<>();
-        Set<File> javaFiles = new LinkedHashSet<>();
-        Set<File> xmlFiles = new LinkedHashSet<>();
 
         // find all java route builder classes
         findJavaRouteBuilderClasses(javaFiles, includeJava, includeTest, project);
