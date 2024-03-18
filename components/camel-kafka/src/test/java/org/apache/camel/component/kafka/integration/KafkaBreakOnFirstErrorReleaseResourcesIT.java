@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64", "s390x" },
              disabledReason = "This test does not run reliably on ppc64le")
-class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
+class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20563";
     public static final String TOPIC = "breakOnFirstError-20563";
