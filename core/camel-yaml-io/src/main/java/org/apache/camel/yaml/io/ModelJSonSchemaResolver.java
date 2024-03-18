@@ -65,6 +65,11 @@ class ModelJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getPojoBeanJSonSchema(String name) {
+        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+    }
+
+    @Override
     public String getModelJSonSchema(String name) {
         try {
             String[] subPackages = new String[] {

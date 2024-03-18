@@ -125,8 +125,12 @@ public abstract class AbstractCamelCatalog {
     }
 
     public PojoBeanModel pojoBeanModel(String name) {
-        String json = modelJSonSchema(name);
+        String json = pojoBeanJSonSchema(name);
         return json != null ? JsonMapper.generatePojoBeanModel(json) : null;
+    }
+
+    public String pojoBeanJSonSchema(String name) {
+        return getJSonSchemaResolver().getPojoBeanJSonSchema(name);
     }
 
     public String devConsoleJSonSchema(String name) {

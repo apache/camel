@@ -27,6 +27,7 @@ import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public final class DependencyDownloaderClassResolver extends DefaultClassResolver {
 
@@ -62,8 +63,10 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(uri);
             if (gav == null) {
                 // okay maybe its a known pojo-bean from the catalog
-                PojoBeanModel model = catalog.pojoBeanModel(uri);
-                if (model != null) {
+                // lookup via class name without package
+                String last = StringHelper.afterLast(uri, ".", uri);
+                PojoBeanModel model = catalog.pojoBeanModel(last);
+                if (model != null && uri.equals(model.getJavaType())) {
                     gav = MavenGav.fromCoordinates(model.getGroupId(), model.getArtifactId(), model.getVersion(), null, null);
                 }
             }
@@ -98,8 +101,10 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(name);
             if (gav == null) {
                 // okay maybe its a known pojo-bean from the catalog
-                PojoBeanModel model = catalog.pojoBeanModel(name);
-                if (model != null) {
+                // lookup via class name without package
+                String last = StringHelper.afterLast(name, ".", name);
+                PojoBeanModel model = catalog.pojoBeanModel(last);
+                if (model != null && name.equals(model.getJavaType())) {
                     gav = MavenGav.fromCoordinates(model.getGroupId(), model.getArtifactId(), model.getVersion(), null, null);
                 }
             }
