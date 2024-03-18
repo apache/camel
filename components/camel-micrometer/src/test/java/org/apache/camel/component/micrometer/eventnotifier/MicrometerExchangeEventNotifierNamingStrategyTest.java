@@ -20,7 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class MicrometerExchangeEventNotifierNamingStrategyTest {
@@ -31,7 +31,7 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
 
         String result = defaultStrategy.formatName("some.metric.name");
 
-        assertThat(result).isEqualTo("some.metric.name");
+        assertEquals("some.metric.name", result);
     }
 
     @Test
@@ -40,7 +40,7 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
 
         String result = legacyStrategy.formatName("some.metric.name");
 
-        assertThat(result).isEqualTo("SomeMetricName");
+        assertEquals("SomeMetricName", result);
     }
 
     @Test
@@ -50,7 +50,7 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
         MicrometerExchangeEventNotifierNamingStrategy defaultStrategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
         String result = defaultStrategy.getInflightExchangesName(exchange, endpoint);
 
-        assertThat(result).isEqualTo("camel.exchanges.inflight");
+        assertEquals("camel.exchanges.inflight", result);
     }
 
     @Test
@@ -60,7 +60,7 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
         MicrometerExchangeEventNotifierNamingStrategy defaultStrategy = MicrometerExchangeEventNotifierNamingStrategy.LEGACY;
         String result = defaultStrategy.getInflightExchangesName(exchange, endpoint);
 
-        assertThat(result).isEqualTo("CamelExchangesInflight");
+        assertEquals("CamelExchangesInflight", result);
     }
 
 }
