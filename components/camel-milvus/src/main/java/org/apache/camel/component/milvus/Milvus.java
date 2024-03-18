@@ -25,7 +25,8 @@ public class Milvus {
     }
 
     public static class Headers {
-        @Metadata(description = "The action to be performed.", javaType = "String", enums = "UPSERT,RETRIEVE,DELETE")
+        @Metadata(description = "The action to be performed.", javaType = "String",
+                  enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE")
         public static final String ACTION = "CamelMilvusAction";
 
         @Metadata(description = "Operation ID.", javaType = "long")
