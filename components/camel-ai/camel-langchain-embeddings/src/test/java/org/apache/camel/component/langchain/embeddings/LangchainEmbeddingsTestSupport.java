@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.langchain.embeddings;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.protobuf.InvalidProtocolBufferException;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
+import io.milvus.param.dml.InsertParam;
 import io.qdrant.client.ValueFactory;
 import io.qdrant.client.VectorsFactory;
 import io.qdrant.client.grpc.Points;
@@ -53,6 +58,24 @@ public class LangchainEmbeddingsTestSupport {
             }
 
             return builder.build();
+        }
+    }
+
+    public static class AsInsertParam {
+        @Handler
+        public InsertParam AsInsertParam(Exchange e) throws InvalidProtocolBufferException {
+            Embedding embedding = e.getMessage().getHeader(LangchainEmbeddings.Headers.VECTOR, Embedding.class);
+            List<InsertParam.Field> fields = new ArrayList<>();
+            ArrayList list = new ArrayList<>();
+            list.add(embedding.vectorAsList());
+            fields.add(new InsertParam.Field("vector", list));
+
+            InsertParam insertParam = InsertParam.newBuilder()
+                    .withCollectionName("embeddings")
+                    .withFields(fields)
+                    .build();
+
+            return insertParam;
         }
     }
 }
