@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -38,13 +39,22 @@ public abstract class InfinispanAggregationRepository
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanAggregationRepository.class);
 
-    private String cacheName;
-
     private CamelContext camelContext;
+
+    @Metadata(description = "Name of cache", required = true)
+    private String cacheName;
+    @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterChannel;
+    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+                            + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
+              defaultValue = "3")
     private int maximumRedeliveries = 3;
+    @Metadata(label = "advanced",
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
     public InfinispanAggregationRepository() {

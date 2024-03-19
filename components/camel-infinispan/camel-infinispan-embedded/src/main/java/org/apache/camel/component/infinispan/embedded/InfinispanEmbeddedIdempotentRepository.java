@@ -20,26 +20,40 @@ import java.util.function.Supplier;
 
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.infinispan.InfinispanIdempotentRepository;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.manager.EmbeddedCacheManager;
 
+@Metadata(label = "bean",
+          description = "Idempotent repository that uses embedded Infinispan to store message ids.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Configurer(metadataOnly = true)
 @ManagedResource(description = "Infinispan Embedded message id repository")
 public class InfinispanEmbeddedIdempotentRepository extends InfinispanIdempotentRepository {
-    private final String cacheName;
-    private final Supplier<BasicCache<String, Boolean>> cache;
 
-    private InfinispanEmbeddedConfiguration configuration;
+    private Supplier<BasicCache<String, Boolean>> cache;
     private InfinispanEmbeddedManager manager;
+
+    @Metadata(description = "Name of cache", required = true)
+    private String cacheName;
+    @Metadata(description = "Configuration for embedded Infinispan")
+    private InfinispanEmbeddedConfiguration configuration;
+
+    public InfinispanEmbeddedIdempotentRepository() {
+    }
 
     public InfinispanEmbeddedIdempotentRepository(String cacheName) {
         this.cacheName = cacheName;
-        this.cache = Suppliers.memorize(() -> manager.getCache(getCacheName()));
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        ObjectHelper.notNull(cacheName, "cacheName", this);
 
         if (this.configuration == null) {
             this.configuration = new InfinispanEmbeddedConfiguration();
@@ -47,18 +61,23 @@ public class InfinispanEmbeddedIdempotentRepository extends InfinispanIdempotent
 
         this.manager = new InfinispanEmbeddedManager(configuration);
         this.manager.setCamelContext(getCamelContext());
-        this.manager.start();
+        this.cache = Suppliers.memorize(() -> manager.getCache(getCacheName()));
+        ServiceHelper.startService(manager);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        this.manager.shutdown();
+        ServiceHelper.stopAndShutdownService(manager);
         super.doShutdown();
     }
 
     @Override
     protected BasicCache<String, Boolean> getCache() {
         return cache.get();
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
     }
 
     @Override

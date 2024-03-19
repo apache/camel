@@ -179,35 +179,12 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                     model.setInterfaceName(annotationValue(a, "annotations", "interfaceName"));
                 }
 
-                // find all fields with @Metadata as options
-                for (FieldInfo fi : ci.fields()) {
-                    AnnotationInstance ai = fi.annotation(METADATA);
-                    if (ai != null) {
-                        BeanPojoOptionModel o = new BeanPojoOptionModel();
-                        o.setKind("property");
-                        o.setName(fi.name());
-                        o.setLabel(annotationValue(ai, "label"));
-                        o.setDefaultValue(annotationValue(ai, "defaultValue"));
-                        o.setRequired("true".equals(annotationValue(ai, "required")));
-                        String displayName = annotationValue(ai, "displayName");
-                        if (displayName == null) {
-                            displayName = Strings.asTitle(o.getName());
-                        }
-                        o.setDisplayName(displayName);
-                        o.setDeprecated(fi.hasAnnotation(Deprecated.class));
-                        String javaType = annotationValue(ai, "javaType");
-                        if (javaType == null) {
-                            javaType = ci.name().toString();
-                        }
-                        o.setJavaType(javaType);
-                        o.setType(getType(javaType, false, false));
-                        o.setDescription(annotationValue(ai, "description"));
-                        String enums = annotationValue(ai, "enums");
-                        if (enums != null) {
-                            String[] values = enums.split(",");
-                            o.setEnums(Stream.of(values).map(String::trim).toList());
-                        }
-                        model.addOption(o);
+                // find all fields with @Metadata as options (also from super class)
+                while (ci != null) {
+                    extractFields(ci, model);
+                    DotName dn = ci.superName();
+                    if (dn != null) {
+                        ci = index.getClassByName(dn);
                     }
                 }
                 models.add(model);
@@ -240,6 +217,39 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                               + (count > 1 ? "beans: " : "bean: ") + names);
             } catch (Exception e) {
                 throw new MojoExecutionException(e);
+            }
+        }
+    }
+
+    private static void extractFields(ClassInfo ci, BeanPojoModel model) {
+        for (FieldInfo fi : ci.fields()) {
+            AnnotationInstance ai = fi.annotation(METADATA);
+            if (ai != null) {
+                BeanPojoOptionModel o = new BeanPojoOptionModel();
+                o.setKind("property");
+                o.setName(fi.name());
+                o.setLabel(annotationValue(ai, "label"));
+                o.setDefaultValue(annotationValue(ai, "defaultValue"));
+                o.setRequired("true".equals(annotationValue(ai, "required")));
+                String displayName = annotationValue(ai, "displayName");
+                if (displayName == null) {
+                    displayName = Strings.asTitle(o.getName());
+                }
+                o.setDisplayName(displayName);
+                o.setDeprecated(fi.hasAnnotation(Deprecated.class));
+                String javaType = annotationValue(ai, "javaType");
+                if (javaType == null) {
+                    javaType = ci.name().toString();
+                }
+                o.setJavaType(javaType);
+                o.setType(getType(javaType, false, false));
+                o.setDescription(annotationValue(ai, "description"));
+                String enums = annotationValue(ai, "enums");
+                if (enums != null) {
+                    String[] values = enums.split(",");
+                    o.setEnums(Stream.of(values).map(String::trim).toList());
+                }
+                model.addOption(o);
             }
         }
     }

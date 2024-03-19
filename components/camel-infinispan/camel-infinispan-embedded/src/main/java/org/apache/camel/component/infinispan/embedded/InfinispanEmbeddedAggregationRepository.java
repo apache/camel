@@ -19,17 +19,42 @@ package org.apache.camel.component.infinispan.embedded;
 import java.util.function.Supplier;
 
 import org.apache.camel.component.infinispan.InfinispanAggregationRepository;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.infinispan.commons.api.BasicCache;
 
+@Metadata(label = "bean",
+          description = "Aggregation repository that uses embedded Infinispan to store exchanges.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Configurer(metadataOnly = true)
 public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregationRepository {
 
     private Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
-    private InfinispanEmbeddedConfiguration configuration;
     private InfinispanEmbeddedManager manager;
+
+    @Metadata(description = "Configuration for embedded Infinispan")
+    private InfinispanEmbeddedConfiguration configuration;
+
+    // needed for metadata generation
+    @Metadata(description = "Name of cache", required = true)
+    private String cacheName;
+    @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
+    private boolean useRecovery = true;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+    private String deadLetterChannel;
+    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
+    private long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+                            + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
+              defaultValue = "3")
+    private int maximumRedeliveries = 3;
+    @Metadata(label = "advanced",
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+    private boolean allowSerializedHeaders;
 
     public InfinispanEmbeddedAggregationRepository() {
     }
