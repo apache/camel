@@ -47,6 +47,8 @@ import io.etcd.jetcd.options.PutOption;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -56,22 +58,36 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Metadata(label = "bean",
+        description = "Aggregation repository that uses Etcd3 to store exchanges.",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+@Configurer(metadataOnly = true)
 public class Etcd3AggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
     private static final Logger LOG = LoggerFactory.getLogger(Etcd3AggregationRepository.class);
     private static final String COMPLETED_SUFFIX = "-completed";
 
-    private boolean optimistic;
-    private boolean useRecovery = true;
+    @Metadata(description = "URL to Etcd3 service", required = true)
     private String endpoint;
     private Client client;
     private boolean shutdownClient;
     private KV kvClient;
+    @Metadata(description = "Prefix to use as primary key", required = true)
     private String prefixName;
+    @Metadata(label = "advanced", description = "Prefix to use as primary key for completed exchanges")
     private String persistencePrefixName;
+    @Metadata(description = "Whether or not to use optimistic locking")
+    private boolean optimistic;
+    @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
+    private boolean useRecovery = true;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterChannel;
+    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+                            + " When this limit is hit, then the Exchange is moved to the dead letter channel.", defaultValue = "3")
     private int maximumRedeliveries = 3;
+    @Metadata(label = "advanced", description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
     public Etcd3AggregationRepository() {
@@ -254,13 +270,13 @@ public class Etcd3AggregationRepository extends ServiceSupport
     }
 
     @Override
-    public void setRecoveryInterval(long interval) {
-        this.recoveryInterval = interval;
+    public long getRecoveryInterval() {
+        return recoveryInterval;
     }
 
     @Override
-    public long getRecoveryIntervalInMillis() {
-        return recoveryInterval;
+    public void setRecoveryInterval(long interval) {
+        this.recoveryInterval = interval;
     }
 
     @Override
@@ -516,7 +532,9 @@ public class Etcd3AggregationRepository extends ServiceSupport
         if (recoveryInterval < 0) {
             throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
         }
-
+        if (persistencePrefixName == null && prefixName != null) {
+            this.persistencePrefixName = String.format("%s%s", prefixName, COMPLETED_SUFFIX);
+        }
     }
 
     @Override
