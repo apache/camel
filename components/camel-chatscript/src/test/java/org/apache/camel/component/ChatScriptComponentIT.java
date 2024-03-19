@@ -37,7 +37,7 @@ public class ChatScriptComponentIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptComponentIT.class);
 
     @RegisterExtension
-    public ChatScriptService service = ChatScriptServiceFactory.createService();
+    public static ChatScriptService service = ChatScriptServiceFactory.createService();
 
     @Test
     public void testChatScript() throws Exception {
