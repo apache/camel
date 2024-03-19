@@ -189,7 +189,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                         o.setLabel(annotationValue(ai, "label"));
                         o.setDefaultValue(annotationValue(ai, "defaultValue"));
                         o.setRequired("true".equals(annotationValue(ai, "required")));
-                        String displayName = annotationValue(ai, "title");
+                        String displayName = annotationValue(ai, "displayName");
                         if (displayName == null) {
                             displayName = Strings.asTitle(o.getName());
                         }

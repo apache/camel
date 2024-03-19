@@ -49,49 +49,29 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
  */
 @Metadata(label = "bean",
         description = "Idempotent repository that uses Cassandra table to store message ids."
-                      + "Advice: use LeveledCompaction for this table and tune read/write consistency levels.")
+                      + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.")
 @Configurer(metadataOnly = true)
 public class CassandraIdempotentRepository extends ServiceSupport implements IdempotentRepository {
-    /**
-     * Logger
-     */
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraIdempotentRepository.class);
-    /**
-     * Session holder
-     */
+
     @Metadata(description = "Cassandra session", required = true)
     private CassandraSessionHolder session;
-
-    /**
-     * Table name
-     */
     @Metadata(description = "The table name for storing the data", defaultValue = "CAMEL_IDEMPOTENT")
     private String table = "CAMEL_IDEMPOTENT";
-    /**
-     * Values used as primary key prefix
-     */
-    @Metadata(description = "Values used as primary key prefix. Multiple values can be separated by comma.", javaType = "java.lang.String")
+    @Metadata(description = "Values used as primary key prefix. Multiple values can be separated by comma.", displayName =
+            "Prefix Primary Key Values", javaType = "java.lang.String")
     private String[] prefixPKValues = new String[0];
-    /**
-     * Primary key columns
-     */
-    @Metadata(description = "Primary key columns. Multiple values can be separated by comma.", javaType = "java.lang.String", defaultValue = "KEY")
+    @Metadata(description = "Primary key columns. Multiple values can be separated by comma.", displayName = "Primary Key Columns",
+            javaType = "java.lang.String", defaultValue = "KEY")
     private String[] pkColumns = { "KEY" };
-    /**
-     * Time to live in seconds used for inserts
-     */
-    @Metadata(description = "Time to live in seconds used for inserts")
+    @Metadata(description = "Time to live in seconds used for inserts", displayName = "Time to Live")
     private Integer ttl;
-    /**
-     * Write consistency level
-     */
     @Metadata(description = "Write consistency level", enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel writeConsistencyLevel;
-    /**
-     * Read consistency level
-     */
     @Metadata(description = "Read consistency level", enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel readConsistencyLevel;
+
     private PreparedStatement insertStatement;
     private PreparedStatement selectStatement;
     private PreparedStatement deleteStatement;
