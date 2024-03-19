@@ -39,4 +39,14 @@ public class MilvusRemoteService implements MilvusService {
     public String getMilvusEndpointUrl() {
         return System.getProperty(MilvusProperties.MILVUS_ENDPOINT_URL);
     }
+
+    @Override
+    public String getMilvusHost() {
+        return System.getProperty(MilvusProperties.MILVUS_ENDPOINT_HOST);
+    }
+
+    @Override
+    public int getMilvusPort() {
+        return Integer.parseInt(System.getProperty(MilvusProperties.MILVUS_ENDPOINT_PORT));
+    }
 }

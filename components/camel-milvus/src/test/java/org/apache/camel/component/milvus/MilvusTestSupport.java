@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.milvus;
 
-import java.net.URL;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.milvus.services.MilvusService;
 import org.apache.camel.test.infra.milvus.services.MilvusServiceFactory;
@@ -34,10 +32,9 @@ public class MilvusTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        URL url = new URL(MILVUS.getMilvusEndpointUrl());
         MilvusComponent component = context.getComponent(Milvus.SCHEME, MilvusComponent.class);
-        component.getConfiguration().setHost(url.getHost());
-        component.getConfiguration().setPort(url.getPort());
+        component.getConfiguration().setHost(MILVUS.getMilvusHost());
+        component.getConfiguration().setPort(MILVUS.getMilvusPort());
 
         return context;
     }
