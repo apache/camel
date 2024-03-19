@@ -16,16 +16,25 @@
  */
 package org.apache.camel.processor.aggregate.hazelcast;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
+import org.apache.camel.test.infra.hazelcast.services.HazelcastService;
+import org.apache.camel.test.infra.hazelcast.services.HazelcastServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastAggregationRepositoryCamelTestSupport extends CamelTestSupport {
+
+    @RegisterExtension
+    public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
+
+    @RegisterExtension
+    public static TestEntityNameGenerator nameGenerator = new TestEntityNameGenerator();
 
     private static HazelcastInstance hzOne;
     private static HazelcastInstance hzTwo;
@@ -40,21 +49,12 @@ public class HazelcastAggregationRepositoryCamelTestSupport extends CamelTestSup
 
     @BeforeAll
     public static void setUpHazelcastCluster() {
-        hzOne = Hazelcast.newHazelcastInstance(createConfig("hzOne"));
-        hzTwo = Hazelcast.newHazelcastInstance(createConfig("hzTwo"));
+        hzOne = Hazelcast.newHazelcastInstance(hazelcastService.createConfiguration(null, 0, "hzOne", "aggregation"));
+        hzTwo = Hazelcast.newHazelcastInstance(hazelcastService.createConfiguration(null, 0, "hzTwo", "aggregation"));
     }
 
     @AfterAll
     public static void shutDownHazelcastCluster() {
         Hazelcast.shutdownAll();
-    }
-
-    private static Config createConfig(String name) {
-        Config config = new Config();
-        config.setInstanceName(name);
-        config.getMetricsConfig().setEnabled(false);
-        config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
-        config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true).addMember("127.0.0.1");
-        return config;
     }
 }

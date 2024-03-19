@@ -22,12 +22,16 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
+import org.apache.camel.test.infra.hazelcast.services.HazelcastService;
+import org.apache.camel.test.infra.hazelcast.services.HazelcastServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,6 +39,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
+
+    @RegisterExtension
+    public static TestEntityNameGenerator nameGenerator = new TestEntityNameGenerator();
 
     private IMap<String, Boolean> cache;
     private HazelcastIdempotentRepository repo;
@@ -46,8 +56,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     @BeforeAll
     void setupHazelcast() throws Exception {
         Config config = new Config();
-        config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
-        config.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
+        config = hazelcastService.createConfiguration(null, 0, null, "idempotent");
         hazelcastInstance = Hazelcast.newHazelcastInstance(null);
         cache = hazelcastInstance.getMap("myRepo");
         repo = new HazelcastIdempotentRepository(hazelcastInstance, "myRepo");
