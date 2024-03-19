@@ -465,7 +465,6 @@ public class JdbcAggregationRepository extends ServiceSupport
         this.recoveryInterval = timeUnit.toMillis(interval);
     }
 
-
     @Override
     public long getRecoveryInterval() {
         return recoveryInterval;
