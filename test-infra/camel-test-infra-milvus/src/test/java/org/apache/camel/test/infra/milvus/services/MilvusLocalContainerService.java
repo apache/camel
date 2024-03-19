@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.milvus.services;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
@@ -52,6 +54,8 @@ public class MilvusLocalContainerService implements MilvusService, ContainerServ
     @Override
     public void registerProperties() {
         System.setProperty(MilvusProperties.MILVUS_ENDPOINT_URL, getMilvusEndpointUrl());
+        System.setProperty(MilvusProperties.MILVUS_ENDPOINT_HOST, getMilvusHost());
+        System.setProperty(MilvusProperties.MILVUS_ENDPOINT_PORT, String.valueOf(getMilvusPort()));
     }
 
     @Override
@@ -77,5 +81,27 @@ public class MilvusLocalContainerService implements MilvusService, ContainerServ
     @Override
     public String getMilvusEndpointUrl() {
         return container.getEndpoint();
+    }
+
+    @Override
+    public String getMilvusHost() {
+        URL url = null;
+        try {
+            url = new URL(container.getEndpoint());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        return url.getHost();
+    }
+
+    @Override
+    public int getMilvusPort() {
+        URL url = null;
+        try {
+            url = new URL(container.getEndpoint());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        return url.getPort();
     }
 }

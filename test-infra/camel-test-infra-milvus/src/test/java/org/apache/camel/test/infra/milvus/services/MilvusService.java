@@ -24,4 +24,8 @@ import org.apache.camel.test.infra.common.services.TestService;
 public interface MilvusService extends TestService {
 
     String getMilvusEndpointUrl();
+
+    String getMilvusHost();
+
+    int getMilvusPort();
 }
