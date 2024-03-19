@@ -31,13 +31,13 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ValueOperations;
 
 @ManagedResource(description = "Spring Redis based message id repository")
-public class RedisStringIdempotentRepository extends RedisIdempotentRepository {
+public class SpringRedisStringIdempotentRepository extends SpringRedisIdempotentRepository {
 
     private final ValueOperations<String, String> valueOperations;
 
     private long expiry;
 
-    public RedisStringIdempotentRepository(RedisTemplate<String, String> redisTemplate, String processorName) {
+    public SpringRedisStringIdempotentRepository(RedisTemplate<String, String> redisTemplate, String processorName) {
         super(redisTemplate, processorName);
         this.valueOperations = redisTemplate.opsForValue();
     }
@@ -87,7 +87,7 @@ public class RedisStringIdempotentRepository extends RedisIdempotentRepository {
     }
 
     protected String createRedisKey(String key) {
-        return getProcessorName() + ":" + key;
+        return getRepositoryName() + ":" + key;
     }
 
     public long getExpiry() {

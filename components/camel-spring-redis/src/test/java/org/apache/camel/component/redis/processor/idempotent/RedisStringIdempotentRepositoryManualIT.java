@@ -41,7 +41,7 @@ public class RedisStringIdempotentRepositoryManualIT extends CamelTestSupport {
 
     private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
 
-    protected RedisStringIdempotentRepository idempotentRepository;
+    protected SpringRedisStringIdempotentRepository idempotentRepository;
 
     @Produce("direct:start")
     private ProducerTemplate producer;
@@ -69,7 +69,7 @@ public class RedisStringIdempotentRepositoryManualIT extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        idempotentRepository = new RedisStringIdempotentRepository(
+        idempotentRepository = new SpringRedisStringIdempotentRepository(
                 redisTemplate,
                 "redis-idempotent-repository");
         RouteBuilder rb = new RouteBuilder() {

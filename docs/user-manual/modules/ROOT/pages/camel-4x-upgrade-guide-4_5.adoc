@@ -259,5 +259,10 @@ to use from Camel.
 
 === camel-elasticsearch / camel-opensearch
 
-The `BulkRequestAggregationStrategy` has been renamed to `OpensearchBulkRequestAggregationStrategy` and
-`ElasticsearchBulkRequestAggregationStrategy` respectively.
+The class `BulkRequestAggregationStrategy` has been renamed to `OpensearchBulkRequestAggregationStrategy`
+The class `BulkRequestAggregationStrategy` has been renamed to `ElasticsearchBulkRequestAggregationStrategy`
+
+=== camel-spring-redis
+
+The class `RedisIdempotentRepository` has been renamed to `SpringRedisIdempotentRepository`
+The class `RedisStringIdempotentRepository` has been renamed to `SpringRedisStringIdempotentRepository`

@@ -20,46 +20,53 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.redis.RedisConfiguration;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
+@Metadata(label = "bean",
+          description = "Idempotent repository that uses Redis to store message ids.")
+@Configurer(metadataOnly = true)
 @ManagedResource(description = "Spring Redis based message id repository")
-public class RedisIdempotentRepository extends ServiceSupport implements IdempotentRepository {
-    private final SetOperations<String, String> setOperations;
-    private final String processorName;
+public class SpringRedisIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+
+    private SetOperations<String, String> setOperations;
+    @Metadata(description = "Name of repository", required = true)
+    private String repositoryName;
+    @Metadata(description = "Redis configuration")
     private RedisConfiguration redisConfiguration;
     private RedisTemplate<String, String> redisTemplate;
 
-    public RedisIdempotentRepository(RedisTemplate<String, String> redisTemplate, String processorName) {
+    public SpringRedisIdempotentRepository() {
+    }
+
+    public SpringRedisIdempotentRepository(RedisTemplate<String, String> redisTemplate, String repositoryName) {
         this.setOperations = redisTemplate.opsForSet();
-        this.processorName = processorName;
+        this.repositoryName = repositoryName;
         this.redisTemplate = redisTemplate;
     }
 
-    public RedisIdempotentRepository(String processorName) {
-        redisConfiguration = new RedisConfiguration();
-        this.redisTemplate = (RedisTemplate<String, String>) redisConfiguration.getRedisTemplate();
-        this.setOperations = redisTemplate.opsForSet();
-        redisTemplate.getConnectionFactory().getConnection().flushDb();
-        this.processorName = processorName;
+    public SpringRedisIdempotentRepository(String repositoryName) {
+        this.repositoryName = repositoryName;
     }
 
-    public static RedisIdempotentRepository redisIdempotentRepository(String processorName) {
-        return new RedisIdempotentRepository(processorName);
+    public static SpringRedisIdempotentRepository redisIdempotentRepository(String processorName) {
+        return new SpringRedisIdempotentRepository(processorName);
     }
 
-    public static RedisIdempotentRepository redisIdempotentRepository(
+    public static SpringRedisIdempotentRepository redisIdempotentRepository(
             RedisTemplate<String, String> redisTemplate, String processorName) {
-        return new RedisIdempotentRepository(redisTemplate, processorName);
+        return new SpringRedisIdempotentRepository(redisTemplate, processorName);
     }
 
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
         if (!contains(key)) {
-            return setOperations.add(processorName, key) != null;
+            return setOperations.add(repositoryName, key) != null;
         } else {
             return false;
         }
@@ -68,13 +75,13 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
     @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
-        return setOperations.isMember(processorName, key);
+        return setOperations.isMember(repositoryName, key);
     }
 
     @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
-        return setOperations.remove(processorName, key) != null;
+        return setOperations.remove(repositoryName, key) != null;
     }
 
     @Override
@@ -83,9 +90,13 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
         redisTemplate.getConnectionFactory().getConnection().flushDb();
     }
 
-    @ManagedAttribute(description = "The processor name")
-    public String getProcessorName() {
-        return processorName;
+    public void setRepositoryName(String repositoryName) {
+        this.repositoryName = repositoryName;
+    }
+
+    @ManagedAttribute(description = "The repository name")
+    public String getRepositoryName() {
+        return repositoryName;
     }
 
     @Override
@@ -95,7 +106,12 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        if (redisConfiguration == null) {
+            redisConfiguration = new RedisConfiguration();
+        }
+        this.redisTemplate = (RedisTemplate<String, String>) redisConfiguration.getRedisTemplate();
+        this.setOperations = redisTemplate.opsForSet();
+        redisTemplate.getConnectionFactory().getConnection().flushDb();
     }
 
     @Override

@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class RedisIdempotentRepositoryTest {
+public class SpringRedisIdempotentRepositoryTest {
 
     private static final String REPOSITORY = "testRepository";
     private static final String KEY = "KEY";
@@ -45,14 +45,14 @@ public class RedisIdempotentRepositoryTest {
     @Mock
     private SetOperations<String, String> setOperations;
 
-    private RedisIdempotentRepository idempotentRepository;
+    private SpringRedisIdempotentRepository idempotentRepository;
 
     @BeforeEach
     public void setUp() throws Exception {
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
         when(redisTemplate.getConnectionFactory()).thenReturn(redisConnectionFactory);
         when(redisTemplate.getConnectionFactory().getConnection()).thenReturn(redisConnection);
-        idempotentRepository = RedisIdempotentRepository.redisIdempotentRepository(redisTemplate, REPOSITORY);
+        idempotentRepository = SpringRedisIdempotentRepository.redisIdempotentRepository(redisTemplate, REPOSITORY);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class RedisIdempotentRepositoryTest {
 
     @Test
     public void shouldReturnProcessorName() {
-        String processorName = idempotentRepository.getProcessorName();
+        String processorName = idempotentRepository.getRepositoryName();
         assertEquals(REPOSITORY, processorName);
     }
 }
