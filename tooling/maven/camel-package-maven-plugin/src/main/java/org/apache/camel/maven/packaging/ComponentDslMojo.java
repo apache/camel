@@ -19,7 +19,6 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -202,7 +201,10 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
                 .generateClass(componentModel, getProjectClassLoader(), componentsDslPackageName);
         boolean updated = writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(),
                 componentsDslFactoriesPackageName.replace('.', '/') + "/"
-                + componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
+                                                                                                         + componentDslBuilderFactoryGenerator
+                                                                                                                 .getGeneratedClassName()
+                                                                                                         + ".java",
+                sourcesOutputDir);
 
         if (updated) {
             getLog().info("Updated ComponentDsl: " + componentModel.getScheme());
@@ -230,7 +232,8 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator
                 .generateClass(componentCachedModels, getProjectClassLoader(), componentsDslPackageName);
         boolean updated = writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(),
-                componentsDslPackageName.replace('.', '/') + "/" + componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java",
+                componentsDslPackageName.replace('.', '/') + "/" + componentsBuilderFactoryGenerator.getGeneratedClassName()
+                                                                                                       + ".java",
                 sourcesOutputDir);
 
         if (updated) {
