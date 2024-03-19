@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
@@ -24,15 +23,25 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
+import org.apache.camel.test.infra.hazelcast.services.HazelcastService;
+import org.apache.camel.test.infra.hazelcast.services.HazelcastServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
+
+    @RegisterExtension
+    public static TestEntityNameGenerator nameGenerator = new TestEntityNameGenerator();
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -41,9 +50,7 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
 
     @BeforeAll
     public void beforeAll() {
-        Config config = new Config();
-        config.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
-        hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+        hazelcastInstance = Hazelcast.newHazelcastInstance(hazelcastService.createConfiguration(null, 0, null, "seda"));
     }
 
     @AfterEach
