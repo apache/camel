@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LangchainEmbeddingsComponentIT extends CamelTestSupport {
+public class LangchainEmbeddingsComponentQdrantTargetIT extends CamelTestSupport {
     public static final long POINT_ID = 8;
     public static final String QDRANT_URI = "qdrant:embeddings";
 
