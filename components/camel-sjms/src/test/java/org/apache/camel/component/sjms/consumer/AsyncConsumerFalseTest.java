@@ -36,7 +36,7 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
     private static final String SJMS_QUEUE_URI = "sjms:queue:start.AsyncConsumerFalseTest";
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testAsyncJmsConsumer() throws Exception {
