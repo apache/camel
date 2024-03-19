@@ -538,6 +538,40 @@ class IntegrationRunTest extends KubeBaseTest {
     }
 
     @Test
+    public void shouldUseTraitWithListItem() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.traits
+                = new String[] { "toleration.taints=camel.apache.org/master:NoExecute:300", "camel.properties=camel.foo=bar" };
+        command.output = "yaml";
+        command.doCall();
+
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  annotations:
+                    camel.apache.org/operator.id: camel-k
+                  name: route
+                spec:
+                  flows:
+                  - additionalProperties:
+                      from:
+                        uri: timer:tick
+                        steps:
+                        - set-body:
+                            constant: Hello Camel !!!
+                        - to: log:info
+                  traits:
+                    camel:
+                      properties:
+                      - camel.foo=bar
+                    toleration:
+                      taints:
+                      - camel.apache.org/master:NoExecute:300""", printer.getOutput());
+    }
+
+    @Test
     public void shouldUseCompression() throws Exception {
         IntegrationRun command = createCommand();
         command.filePaths = new String[] { "classpath:route.yaml" };
