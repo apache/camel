@@ -29,24 +29,10 @@ public class Milvus {
                   enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE")
         public static final String ACTION = "CamelMilvusAction";
 
-        @Metadata(description = "Operation ID.", javaType = "long")
-        public static final String OPERATION_ID = "CamelMilvusOperationID";
-
         @Metadata(description = "Operation Status.", javaType = "String")
         public static final String OPERATION_STATUS = "CamelMilvusOperationStatus";
 
         @Metadata(description = "Operation Status Value.", javaType = "int")
         public static final String OPERATION_STATUS_VALUE = "CamelMilvusOperationStatusValue";
-
-        @Metadata(description = "Include Payload.", javaType = "boolean", defaultValue = "true")
-        public static final String INCLUDE_PAYLOAD = "CamelMilvusWithPayload";
-        public static final boolean DEFAULT_INCLUDE_PAYLOAD = true;
-
-        @Metadata(description = "Include Vectors.", javaType = "boolean", defaultValue = "false")
-        public static final String INCLUDE_VECTORS = "CamelMilvusWithVectors";
-        public static final boolean DEFAULT_INCLUDE_VECTORS = false;
-
-        @Metadata(description = "The number of elements.", javaType = "int")
-        public static final String SIZE = "CamelMilvusSize";
     }
 }
