@@ -50,7 +50,9 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      *
      * @param interval the interval
      * @param timeUnit the time unit
+     * @deprecated use setRecoveryInterval
      */
+    @Deprecated
     void setRecoveryInterval(long interval, TimeUnit timeUnit);
 
     /**
@@ -65,7 +67,18 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      *
      * @return the interval in millis
      */
-    long getRecoveryIntervalInMillis();
+    long getRecoveryInterval();
+
+    /**
+     * Gets the interval between recovery scans in millis.
+     *
+     * @return the interval in millis
+     * @deprecated use getRecoveryInterval
+     */
+    @Deprecated
+    default long getRecoveryIntervalInMillis() {
+        return getRecoveryInterval();
+    }
 
     /**
      * Sets whether or not recovery is enabled
