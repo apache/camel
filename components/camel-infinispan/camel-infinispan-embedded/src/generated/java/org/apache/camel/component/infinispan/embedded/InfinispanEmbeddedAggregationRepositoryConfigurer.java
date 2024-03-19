@@ -27,8 +27,6 @@ public class InfinispanEmbeddedAggregationRepositoryConfigurer extends org.apach
         case "CacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration":
         case "Configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration.class, value)); return true;
-        case "deadletterchannel":
-        case "DeadLetterChannel": target.setDeadLetterChannel(property(camelContext, java.lang.String.class, value)); return true;
         case "deadletteruri":
         case "DeadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
         case "maximumredeliveries":
@@ -50,8 +48,6 @@ public class InfinispanEmbeddedAggregationRepositoryConfigurer extends org.apach
         case "CacheName": return java.lang.String.class;
         case "configuration":
         case "Configuration": return org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration.class;
-        case "deadletterchannel":
-        case "DeadLetterChannel": return java.lang.String.class;
         case "deadletteruri":
         case "DeadLetterUri": return java.lang.String.class;
         case "maximumredeliveries":
@@ -74,8 +70,6 @@ public class InfinispanEmbeddedAggregationRepositoryConfigurer extends org.apach
         case "CacheName": return target.getCacheName();
         case "configuration":
         case "Configuration": return target.getConfiguration();
-        case "deadletterchannel":
-        case "DeadLetterChannel": return target.getDeadLetterChannel();
         case "deadletteruri":
         case "DeadLetterUri": return target.getDeadLetterUri();
         case "maximumredeliveries":

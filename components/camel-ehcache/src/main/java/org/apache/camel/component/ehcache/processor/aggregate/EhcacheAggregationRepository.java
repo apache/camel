@@ -57,7 +57,7 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
     @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
-    private String deadLetterChannel;
+    private String deadLetterUri;
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
     @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
@@ -106,16 +106,6 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
     }
 
     @Override
-    public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetterChannel = deadLetterUri;
-    }
-
-    @Override
-    public String getDeadLetterUri() {
-        return deadLetterChannel;
-    }
-
-    @Override
     public boolean isUseRecovery() {
         return useRecovery;
     }
@@ -125,12 +115,12 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
         this.useRecovery = useRecovery;
     }
 
-    public String getDeadLetterChannel() {
-        return deadLetterChannel;
+    public String getDeadLetterUri() {
+        return deadLetterUri;
     }
 
-    public void setDeadLetterChannel(String deadLetterChannel) {
-        this.deadLetterChannel = deadLetterChannel;
+    public void setDeadLetterUri(String deadLetterUri) {
+        this.deadLetterUri = deadLetterUri;
     }
 
     public long getRecoveryInterval() {

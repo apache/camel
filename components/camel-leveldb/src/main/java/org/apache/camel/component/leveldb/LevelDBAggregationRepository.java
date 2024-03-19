@@ -26,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -40,21 +42,40 @@ import org.slf4j.LoggerFactory;
 /**
  * An instance of {@link org.apache.camel.spi.AggregationRepository} which is backed by a {@link LevelDBFile}.
  */
+@Metadata(label = "bean",
+          description = "Aggregation repository that uses LevelDB to store exchanges.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Configurer(metadataOnly = true)
 public class LevelDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregationRepository.class);
 
     private LevelDBFile levelDBFile;
-    private String persistentFileName;
-    private String repositoryName;
-    private boolean sync;
-    private boolean returnOldExchange;
     private LevelDBCamelCodec codec;
-    private long recoveryInterval = 5000;
+
+    @Metadata(description = "Name of file to use for storing data", required = true)
+    private String persistentFileName;
+    @Metadata(description = "Name of repository", required = true)
+    private String repositoryName;
+    @Metadata(description = "Whether LevelDB should sync writes")
+    private boolean sync;
+    @Metadata(label = "advanced",
+              description = "Whether to return the old exchange when adding new exchanges to the repository")
+    private boolean returnOldExchange;
+    @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
+    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
+    private long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+                            + " When this limit is hit, then the Exchange is moved to the dead letter channel.")
     private int maximumRedeliveries;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
+    @Metadata(label = "advanced",
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
+    @Metadata(label = "advanced",
+              description = "To use a custom serializer for LevelDB")
     private LevelDBSerializer serializer;
 
     /**
@@ -361,13 +382,13 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     }
 
     @Override
-    public void setRecoveryInterval(long interval) {
-        this.recoveryInterval = interval;
+    public long getRecoveryInterval() {
+        return recoveryInterval;
     }
 
     @Override
-    public long getRecoveryIntervalInMillis() {
-        return recoveryInterval;
+    public void setRecoveryInterval(long interval) {
+        this.recoveryInterval = interval;
     }
 
     @Override

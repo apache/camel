@@ -56,6 +56,9 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
     protected Map<String, DefaultExchangeHolder> replicatedCache;
     protected Map<String, DefaultExchangeHolder> replicatedPersistedCache;
 
+    public ReplicatedHazelcastAggregationRepository() {
+    }
+
     /**
      * Creates new {@link ReplicatedHazelcastAggregationRepository} that defaults to non-optimistic locking with
      * recoverable behavior and a local Hazelcast instance. Recoverable repository name defaults to

@@ -23,8 +23,6 @@ public class CaffeineAggregationRepositoryConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
         case "AllowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
-        case "deadletterchannel":
-        case "DeadLetterChannel": target.setDeadLetterChannel(property(camelContext, java.lang.String.class, value)); return true;
         case "deadletteruri":
         case "DeadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
         case "maximumredeliveries":
@@ -42,8 +40,6 @@ public class CaffeineAggregationRepositoryConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
         case "AllowSerializedHeaders": return boolean.class;
-        case "deadletterchannel":
-        case "DeadLetterChannel": return java.lang.String.class;
         case "deadletteruri":
         case "DeadLetterUri": return java.lang.String.class;
         case "maximumredeliveries":
@@ -62,8 +58,6 @@ public class CaffeineAggregationRepositoryConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
         case "AllowSerializedHeaders": return target.isAllowSerializedHeaders();
-        case "deadletterchannel":
-        case "DeadLetterChannel": return target.getDeadLetterChannel();
         case "deadletteruri":
         case "DeadLetterUri": return target.getDeadLetterUri();
         case "maximumredeliveries":

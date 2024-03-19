@@ -80,7 +80,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     protected boolean useRecovery = true;
     @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
-    protected String deadLetterChannel;
+    protected String deadLetterUri;
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     protected long recoveryInterval = 5000;
     @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
@@ -293,12 +293,12 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetterChannel = deadLetterUri;
+        this.deadLetterUri = deadLetterUri;
     }
 
     @Override
     public String getDeadLetterUri() {
-        return deadLetterChannel;
+        return deadLetterUri;
     }
 
     @Override
