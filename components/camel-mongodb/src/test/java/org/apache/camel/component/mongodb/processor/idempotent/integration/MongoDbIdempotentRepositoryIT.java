@@ -42,6 +42,7 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
     @BeforeEach
     public void setupIdempotentRepository() {
         repo = new MongoDbIdempotentRepository(mongo, testCollectionName, dbName);
+        repo.start();
     }
 
     @Test
