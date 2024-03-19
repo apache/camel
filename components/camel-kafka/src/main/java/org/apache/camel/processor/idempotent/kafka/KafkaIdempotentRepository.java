@@ -67,9 +67,9 @@ import org.slf4j.LoggerFactory;
  * CamelContext aware.
  */
 @Metadata(label = "bean",
-        description = "Idempotent repository that uses Kafka to store message ids. Uses a local cache of previously seen Message IDs."
-                      + " The topic used must be unique per logical repository (i.e. two routes de-duplicate using different repositories, and different topics)"
-                      + " On startup, the instance consumes the full content of the topic, rebuilding the cache to the latest state.")
+          description = "Idempotent repository that uses Kafka to store message ids. Uses a local cache of previously seen Message IDs."
+                        + " The topic used must be unique per logical repository (i.e. two routes de-duplicate using different repositories, and different topics)"
+                        + " On startup, the instance consumes the full content of the topic, rebuilding the cache to the latest state.")
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Kafka IdempotentRepository")
 public class KafkaIdempotentRepository extends ServiceSupport implements IdempotentRepository, CamelContextAware {
@@ -91,7 +91,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     // configurable
     @Metadata(description = "Sets the name of the Kafka topic used by this idempotent repository."
-                            + " Each functionally-separate repository should use a different topic.", required = true)
+                            + " Each functionally-separate repository should use a different topic.",
+              required = true)
     private String topic;
     @Metadata(description = "The URL for the kafka brokers to use", required = true)
     private String bootstrapServers;
@@ -105,7 +106,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                             + " brokers. The cache warmup process also depends on there being one poll that fetches nothing - this indicates that"
                             + " the stream has been consumed up to the current point. If the poll duration is excessively long for the rate at"
                             + " which messages are sent on the topic, there exists a possibility that the cache cannot be warmed up and will"
-                            + " operate in an inconsistent state relative to its peers until it catches up.", defaultValue = "" + DEFAULT_POLL_DURATION_MS)
+                            + " operate in an inconsistent state relative to its peers until it catches up.",
+              defaultValue = "" + DEFAULT_POLL_DURATION_MS)
     private int pollDurationMs = DEFAULT_POLL_DURATION_MS;
 
     enum CacheAction {
@@ -203,8 +205,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     /**
-     * Sets the bootstrap.servers property on the internal Kafka producer and consumer. Use this as shorthand if not setting
-     * {@link #consumerConfig} and {@link #producerConfig}. If used, this component will apply sensible default
+     * Sets the bootstrap.servers property on the internal Kafka producer and consumer. Use this as shorthand if not
+     * setting {@link #consumerConfig} and {@link #producerConfig}. If used, this component will apply sensible default
      * configurations for the producer and consumer.
      */
     public void setBootstrapServers(String bootstrapServers) {

@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +52,16 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ManagedResource(description = "JDBC IdempotentRepository")
 public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport implements IdempotentRepository {
 
-    protected JdbcTemplate jdbcTemplate;
-    protected String processorName;
-    protected TransactionTemplate transactionTemplate;
-    protected DataSource dataSource;
     protected Logger log = LoggerFactory.getLogger(getClass());
+
+    @Metadata(description = "The name of the processor that are used for this repository. Use unique names to separate processors in the same database.",
+              required = true)
+    protected String processorName;
+    @Metadata(description = "The Spring JdbcTemplate to use for connecting to the database", required = true)
+    protected JdbcTemplate jdbcTemplate;
+    @Metadata(description = "The Spring TransactionTemplate to use for connecting to the database", required = true)
+    protected TransactionTemplate transactionTemplate;
+    protected DataSource dataSource; // not in use
 
     public AbstractJdbcMessageIdRepository() {
     }

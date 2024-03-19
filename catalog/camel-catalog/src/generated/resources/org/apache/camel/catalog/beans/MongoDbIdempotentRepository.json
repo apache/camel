@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "MongoDbIdempotentRepository",
+    "javaType": "org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository",
+    "interfaceType": "org.apache.camel.spi.IdempotentRepository",
+    "title": "Mongo Db Idempotent Repository",
+    "description": "Idempotent repository that uses MongoDB to store message ids.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mongodb",
+    "version": "4.5.0-SNAPSHOT",
+    "properties": { "collectionName": { "index": 0, "kind": "property", "displayName": "Collection Name", "required": true, "type": "object", "javaType": "org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "The collection name" }, "dbName": { "index": 1, "kind": "property", "displayName": "Db Name", "required": true, "type": "object", "javaType": "org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "The Database name" }, "mongoClient": { "index": 2, "kind": "property", "displayName": "Mongo Client", "required": true, "type": "object", "javaType": "org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "The MongoClient to use for connecting to the MongoDB server" } }
+  }
+}
+
