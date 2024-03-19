@@ -56,6 +56,7 @@ public final class KubernetesHelper {
         OBJECT_MAPPER = JsonMapper.builder()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
                 .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
                 .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE)
                 .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
