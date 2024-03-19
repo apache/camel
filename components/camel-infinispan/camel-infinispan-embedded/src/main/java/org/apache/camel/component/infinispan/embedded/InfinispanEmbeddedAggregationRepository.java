@@ -26,10 +26,13 @@ import org.apache.camel.util.function.Suppliers;
 import org.infinispan.commons.api.BasicCache;
 
 public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregationRepository {
-    private final Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
 
+    private Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
     private InfinispanEmbeddedConfiguration configuration;
     private InfinispanEmbeddedManager manager;
+
+    public InfinispanEmbeddedAggregationRepository() {
+    }
 
     /**
      * Creates new {@link InfinispanEmbeddedAggregationRepository} that defaults to non-optimistic locking with
@@ -39,8 +42,6 @@ public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregati
      */
     public InfinispanEmbeddedAggregationRepository(String cacheName) {
         super(cacheName);
-
-        this.cache = Suppliers.memorize(() -> manager.getCache(getCacheName()));
     }
 
     @Override
@@ -53,8 +54,8 @@ public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregati
         if (ObjectHelper.isEmpty(manager)) {
             manager = new InfinispanEmbeddedManager(configuration);
         }
-
         manager.setCamelContext(getCamelContext());
+        this.cache = Suppliers.memorize(() -> manager.getCache(getCacheName()));
 
         ServiceHelper.startService(manager);
     }
@@ -62,7 +63,6 @@ public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregati
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-
         ServiceHelper.stopService(manager);
     }
 

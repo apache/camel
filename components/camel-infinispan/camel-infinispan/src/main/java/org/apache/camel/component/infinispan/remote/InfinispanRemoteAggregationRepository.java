@@ -29,10 +29,13 @@ import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.configuration.Combine;
 
 public class InfinispanRemoteAggregationRepository extends InfinispanAggregationRepository {
-    private final Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
 
+    private Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
     private InfinispanRemoteConfiguration configuration;
     private InfinispanRemoteManager manager;
+
+    public InfinispanRemoteAggregationRepository() {
+    }
 
     /**
      * Creates new {@link InfinispanRemoteAggregationRepository} that defaults to non-optimistic locking with
@@ -42,11 +45,6 @@ public class InfinispanRemoteAggregationRepository extends InfinispanAggregation
      */
     public InfinispanRemoteAggregationRepository(String cacheName) {
         super(cacheName);
-
-        this.cache = Suppliers.memorize(
-                // for optimization reason, a remote cache does not return the previous value for operation
-                // such as Map::put and need to be explicitly forced
-                () -> InfinispanRemoteUtil.getCacheWithFlags(manager, getCacheName(), Flag.FORCE_RETURN_VALUE));
     }
 
     @Override
@@ -71,13 +69,17 @@ public class InfinispanRemoteAggregationRepository extends InfinispanAggregation
         manager = new InfinispanRemoteManager(conf);
         manager.setCamelContext(getCamelContext());
 
+        this.cache = Suppliers.memorize(
+                // for optimization reason, a remote cache does not return the previous value for operation
+                // such as Map::put and need to be explicitly forced
+                () -> InfinispanRemoteUtil.getCacheWithFlags(manager, getCacheName(), Flag.FORCE_RETURN_VALUE));
+
         ServiceHelper.startService(manager);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-
         ServiceHelper.stopService(manager);
     }
 

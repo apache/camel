@@ -27,6 +27,7 @@ import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public abstract class InfinispanAggregationRepository
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanAggregationRepository.class);
 
-    private final String cacheName;
+    private String cacheName;
 
     private CamelContext camelContext;
     private boolean useRecovery = true;
@@ -45,6 +46,9 @@ public abstract class InfinispanAggregationRepository
     private long recoveryInterval = 5000;
     private int maximumRedeliveries = 3;
     private boolean allowSerializedHeaders;
+
+    public InfinispanAggregationRepository() {
+    }
 
     /**
      * Creates new {@link InfinispanAggregationRepository} that defaults to non-optimistic locking with recoverable
@@ -110,19 +114,23 @@ public abstract class InfinispanAggregationRepository
         return useRecovery ? unmarshallExchange(camelContext, getCache().get(exchangeId)) : null;
     }
 
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
     @Override
     public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
         this.recoveryInterval = timeUnit.toMillis(interval);
     }
 
     @Override
-    public void setRecoveryInterval(long interval) {
-        this.recoveryInterval = interval;
+    public long getRecoveryInterval() {
+        return recoveryInterval;
     }
 
     @Override
-    public long getRecoveryIntervalInMillis() {
-        return recoveryInterval;
+    public void setRecoveryInterval(long interval) {
+        this.recoveryInterval = interval;
     }
 
     @Override
@@ -157,6 +165,7 @@ public abstract class InfinispanAggregationRepository
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(cacheName, "cacheName", this);
         if (maximumRedeliveries < 0) {
             throw new IllegalArgumentException("Maximum redelivery retries must be zero or a positive integer.");
         }
