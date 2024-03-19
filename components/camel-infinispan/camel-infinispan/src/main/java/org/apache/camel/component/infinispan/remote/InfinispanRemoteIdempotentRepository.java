@@ -33,8 +33,8 @@ import org.infinispan.commons.api.BasicCache;
 import static org.apache.camel.component.infinispan.remote.InfinispanRemoteUtil.getCacheWithFlags;
 
 @Metadata(label = "bean",
-        description = "Idempotent repository that uses remote Infinispan to store message ids.",
-        annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+          description = "Idempotent repository that uses remote Infinispan to store message ids.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Infinispan Remote message id repository")
 public class InfinispanRemoteIdempotentRepository extends InfinispanIdempotentRepository {
