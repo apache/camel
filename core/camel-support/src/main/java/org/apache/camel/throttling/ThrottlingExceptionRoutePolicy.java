@@ -50,9 +50,9 @@ import org.slf4j.LoggerFactory;
  * (ie select 1 from dual) to determine if the processes that cause the route to be open are now available
  */
 @Metadata(label = "bean",
-        description = "A throttle based RoutePolicy which is modelled after the circuit breaker and will stop consuming"
-                      + " from an endpoint based on the type of exceptions that are thrown and the threshold settings.",
-        annotations = {"interfaceName=org.apache.camel.spi.RoutePolicy"})
+          description = "A throttle based RoutePolicy which is modelled after the circuit breaker and will stop consuming"
+                        + " from an endpoint based on the type of exceptions that are thrown and the threshold settings.",
+          annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
 @Configurer(metadataOnly = true)
 public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
@@ -76,8 +76,9 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private String exceptions;
     private List<Class<?>> throttledExceptions;
     // handler for half open circuit can be used instead of resuming route to check on resources
-    @Metadata(label = "advanced", description = "Custom check to perform whether the circuit breaker can move to half-open state."
-                                                + " If set then this is used instead of resuming the route.")
+    @Metadata(label = "advanced",
+              description = "Custom check to perform whether the circuit breaker can move to half-open state."
+                            + " If set then this is used instead of resuming the route.")
     private ThrottlingExceptionHalfOpenHandler halfOpenHandler;
 
     // stateful information

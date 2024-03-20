@@ -27,13 +27,13 @@ import org.apache.camel.support.PatternHelper;
 /**
  * {@link org.apache.camel.spi.RoutePolicyFactory} which executes for a duration and then triggers an action.
  * <p/>
- * This can be used to stop a set of routes (or CamelContext) after they have processed a number of messages, or has been
- * running for N seconds.
+ * This can be used to stop a set of routes (or CamelContext) after they have processed a number of messages, or has
+ * been running for N seconds.
  */
 @Metadata(label = "bean",
-        description = "RoutePolicyFactory which executes for a duration and then triggers an action."
-                      + " This can be used to stop a set of routes after they have processed a number of messages, or has been running for N seconds.",
-        annotations = {"interfaceName=org.apache.camel.spi.RoutePolicyFactory"})
+          description = "RoutePolicyFactory which executes for a duration and then triggers an action."
+                        + " This can be used to stop a set of routes after they have processed a number of messages, or has been running for N seconds.",
+          annotations = { "interfaceName=org.apache.camel.spi.RoutePolicyFactory" })
 @Configurer(metadataOnly = true)
 public class DurationRoutePolicyFactory implements RoutePolicyFactory {
 
@@ -43,7 +43,8 @@ public class DurationRoutePolicyFactory implements RoutePolicyFactory {
     private int maxSeconds;
     @Metadata(description = "Maximum number of messages to process before the action is triggered")
     private int maxMessages;
-    @Metadata(description = "Action to perform", enums = "STOP_CAMEL_CONTEXT,STOP_ROUTE,SUSPEND_ROUTE,SUSPEND_ALL_ROUTES", defaultValue = "STOP_ROUTE")
+    @Metadata(description = "Action to perform", enums = "STOP_CAMEL_CONTEXT,STOP_ROUTE,SUSPEND_ROUTE,SUSPEND_ALL_ROUTES",
+              defaultValue = "STOP_ROUTE")
     private DurationRoutePolicy.Action action = DurationRoutePolicy.Action.STOP_ROUTE;
 
     @Override
