@@ -33,6 +33,11 @@
     <description>Camel MLLP Component</description>
 
     <properties>
+        <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
+        <camel.surefire.forkCount>1</camel.surefire.forkCount>
+        <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+        <camel.surefire.parallel.factor>0.5</camel.surefire.parallel.factor>
     </properties>
 
     <dependencies>
