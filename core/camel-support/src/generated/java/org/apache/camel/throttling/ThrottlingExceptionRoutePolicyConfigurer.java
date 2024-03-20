@@ -21,16 +21,15 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.throttling.ThrottlingExceptionRoutePolicy target = (org.apache.camel.throttling.ThrottlingExceptionRoutePolicy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "exceptions":
-        case "Exceptions": target.setExceptions(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptions": target.setExceptions(property(camelContext, java.lang.String.class, value)); return true;
         case "failurethreshold":
-        case "FailureThreshold": target.setFailureThreshold(property(camelContext, int.class, value)); return true;
+        case "failureThreshold": target.setFailureThreshold(property(camelContext, int.class, value)); return true;
         case "failurewindow":
-        case "FailureWindow": target.setFailureWindow(property(camelContext, long.class, value)); return true;
+        case "failureWindow": target.setFailureWindow(property(camelContext, long.class, value)); return true;
         case "halfopenafter":
-        case "HalfOpenAfter": target.setHalfOpenAfter(property(camelContext, long.class, value)); return true;
+        case "halfOpenAfter": target.setHalfOpenAfter(property(camelContext, long.class, value)); return true;
         case "halfopenhandler":
-        case "HalfOpenHandler": target.setHalfOpenHandler(property(camelContext, org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler.class, value)); return true;
+        case "halfOpenHandler": target.setHalfOpenHandler(property(camelContext, org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler.class, value)); return true;
         default: return false;
         }
     }
@@ -38,16 +37,15 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "exceptions":
-        case "Exceptions": return java.lang.String.class;
+        case "exceptions": return java.lang.String.class;
         case "failurethreshold":
-        case "FailureThreshold": return int.class;
+        case "failureThreshold": return int.class;
         case "failurewindow":
-        case "FailureWindow": return long.class;
+        case "failureWindow": return long.class;
         case "halfopenafter":
-        case "HalfOpenAfter": return long.class;
+        case "halfOpenAfter": return long.class;
         case "halfopenhandler":
-        case "HalfOpenHandler": return org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler.class;
+        case "halfOpenHandler": return org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler.class;
         default: return null;
         }
     }
@@ -56,16 +54,15 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.throttling.ThrottlingExceptionRoutePolicy target = (org.apache.camel.throttling.ThrottlingExceptionRoutePolicy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "exceptions":
-        case "Exceptions": return target.getExceptions();
+        case "exceptions": return target.getExceptions();
         case "failurethreshold":
-        case "FailureThreshold": return target.getFailureThreshold();
+        case "failureThreshold": return target.getFailureThreshold();
         case "failurewindow":
-        case "FailureWindow": return target.getFailureWindow();
+        case "failureWindow": return target.getFailureWindow();
         case "halfopenafter":
-        case "HalfOpenAfter": return target.getHalfOpenAfter();
+        case "halfOpenAfter": return target.getHalfOpenAfter();
         case "halfopenhandler":
-        case "HalfOpenHandler": return target.getHalfOpenHandler();
+        case "halfOpenHandler": return target.getHalfOpenHandler();
         default: return null;
         }
     }

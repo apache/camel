@@ -22,13 +22,12 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
         org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository target = (org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bootstrapservers":
-        case "BootstrapServers": target.setBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "bootstrapServers": target.setBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "maxcachesize":
-        case "MaxCacheSize": target.setMaxCacheSize(property(camelContext, int.class, value)); return true;
+        case "maxCacheSize": target.setMaxCacheSize(property(camelContext, int.class, value)); return true;
         case "polldurationms":
-        case "PollDurationMs": target.setPollDurationMs(property(camelContext, int.class, value)); return true;
-        case "topic":
-        case "Topic": target.setTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollDurationMs": target.setPollDurationMs(property(camelContext, int.class, value)); return true;
+        case "topic": target.setTopic(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -37,13 +36,12 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bootstrapservers":
-        case "BootstrapServers": return java.lang.String.class;
+        case "bootstrapServers": return java.lang.String.class;
         case "maxcachesize":
-        case "MaxCacheSize": return int.class;
+        case "maxCacheSize": return int.class;
         case "polldurationms":
-        case "PollDurationMs": return int.class;
-        case "topic":
-        case "Topic": return java.lang.String.class;
+        case "pollDurationMs": return int.class;
+        case "topic": return java.lang.String.class;
         default: return null;
         }
     }
@@ -53,13 +51,12 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
         org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository target = (org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bootstrapservers":
-        case "BootstrapServers": return target.getBootstrapServers();
+        case "bootstrapServers": return target.getBootstrapServers();
         case "maxcachesize":
-        case "MaxCacheSize": return target.getMaxCacheSize();
+        case "maxCacheSize": return target.getMaxCacheSize();
         case "polldurationms":
-        case "PollDurationMs": return target.getPollDurationMs();
-        case "topic":
-        case "Topic": return target.getTopic();
+        case "pollDurationMs": return target.getPollDurationMs();
+        case "topic": return target.getTopic();
         default: return null;
         }
     }

@@ -22,7 +22,7 @@ public class CombinedServiceFilterFactoryConfigurer extends org.apache.camel.sup
         org.apache.camel.impl.cloud.CombinedServiceFilterFactory target = (org.apache.camel.impl.cloud.CombinedServiceFilterFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "servicefilterlist":
-        case "ServiceFilterList": target.setServiceFilterList(property(camelContext, java.util.List.class, value)); return true;
+        case "serviceFilterList": target.setServiceFilterList(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +31,7 @@ public class CombinedServiceFilterFactoryConfigurer extends org.apache.camel.sup
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "servicefilterlist":
-        case "ServiceFilterList": return java.util.List.class;
+        case "serviceFilterList": return java.util.List.class;
         default: return null;
         }
     }
@@ -41,7 +41,7 @@ public class CombinedServiceFilterFactoryConfigurer extends org.apache.camel.sup
         org.apache.camel.impl.cloud.CombinedServiceFilterFactory target = (org.apache.camel.impl.cloud.CombinedServiceFilterFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "servicefilterlist":
-        case "ServiceFilterList": return target.getServiceFilterList();
+        case "serviceFilterList": return target.getServiceFilterList();
         default: return null;
         }
     }
@@ -50,7 +50,7 @@ public class CombinedServiceFilterFactoryConfigurer extends org.apache.camel.sup
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "servicefilterlist":
-        case "ServiceFilterList": return org.apache.camel.cloud.ServiceFilter.class;
+        case "serviceFilterList": return org.apache.camel.cloud.ServiceFilter.class;
         default: return null;
         }
     }

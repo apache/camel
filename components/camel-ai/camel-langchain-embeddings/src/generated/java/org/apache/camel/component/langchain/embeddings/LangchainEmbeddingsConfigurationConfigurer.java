@@ -22,7 +22,7 @@ public class LangchainEmbeddingsConfigurationConfigurer extends org.apache.camel
         org.apache.camel.component.langchain.embeddings.LangchainEmbeddingsConfiguration target = (org.apache.camel.component.langchain.embeddings.LangchainEmbeddingsConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "embeddingmodel":
-        case "EmbeddingModel": target.setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
+        case "embeddingModel": target.setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +31,7 @@ public class LangchainEmbeddingsConfigurationConfigurer extends org.apache.camel
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "embeddingmodel":
-        case "EmbeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
+        case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         default: return null;
         }
     }
@@ -41,7 +41,7 @@ public class LangchainEmbeddingsConfigurationConfigurer extends org.apache.camel
         org.apache.camel.component.langchain.embeddings.LangchainEmbeddingsConfiguration target = (org.apache.camel.component.langchain.embeddings.LangchainEmbeddingsConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "embeddingmodel":
-        case "EmbeddingModel": return target.getEmbeddingModel();
+        case "embeddingModel": return target.getEmbeddingModel();
         default: return null;
         }
     }

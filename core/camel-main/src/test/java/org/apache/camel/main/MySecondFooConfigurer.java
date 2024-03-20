@@ -21,8 +21,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MySecondFoo target = (org.apache.camel.main.MySecondFoo) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bars":
-        case "Bars": target.setBars(property(camelContext, java.util.List.class, value)); return true;
+        case "bars": target.setBars(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }
@@ -30,8 +29,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bars":
-        case "Bars": return java.util.List.class;
+        case "bars": return java.util.List.class;
         default: return null;
         }
     }
@@ -40,8 +38,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MySecondFoo target = (org.apache.camel.main.MySecondFoo) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bars":
-        case "Bars": return target.getBars();
+        case "bars": return target.getBars();
         default: return null;
         }
     }
@@ -49,8 +46,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bars":
-        case "Bars": return org.apache.camel.main.MySecondBar.class;
+        case "bars": return org.apache.camel.main.MySecondBar.class;
         default: return null;
         }
     }

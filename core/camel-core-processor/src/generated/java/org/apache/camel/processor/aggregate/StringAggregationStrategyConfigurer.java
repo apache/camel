@@ -21,8 +21,7 @@ public class StringAggregationStrategyConfigurer extends org.apache.camel.suppor
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.aggregate.StringAggregationStrategy target = (org.apache.camel.processor.aggregate.StringAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "delimiter":
-        case "Delimiter": target.setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
+        case "delimiter": target.setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -30,8 +29,7 @@ public class StringAggregationStrategyConfigurer extends org.apache.camel.suppor
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "delimiter":
-        case "Delimiter": return java.lang.String.class;
+        case "delimiter": return java.lang.String.class;
         default: return null;
         }
     }
@@ -40,8 +38,7 @@ public class StringAggregationStrategyConfigurer extends org.apache.camel.suppor
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.aggregate.StringAggregationStrategy target = (org.apache.camel.processor.aggregate.StringAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "delimiter":
-        case "Delimiter": return target.getDelimiter();
+        case "delimiter": return target.getDelimiter();
         default: return null;
         }
     }

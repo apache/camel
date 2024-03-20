@@ -43,35 +43,31 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         org.apache.camel.component.google.calendar.CalendarCalendarsEndpointConfiguration target = (org.apache.camel.component.google.calendar.CalendarCalendarsEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class, value)); return true;
         case "applicationname":
-        case "ApplicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "calendarid":
-        case "CalendarId": target.setCalendarId(property(camelContext, java.lang.String.class, value)); return true;
+        case "calendarId": target.setCalendarId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientid":
-        case "ClientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
-        case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "content":
-        case "Content": target.setContent(property(camelContext, com.google.api.services.calendar.model.Calendar.class, value)); return true;
-        case "delegate":
-        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "content": target.setContent(property(camelContext, com.google.api.services.calendar.model.Calendar.class, value)); return true;
+        case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "emailaddress":
-        case "EmailAddress": target.setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
+        case "emailAddress": target.setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "p12filename":
-        case "P12FileName": target.setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "p12FileName": target.setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
-        case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes":
-        case "Scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "serviceaccountkey":
-        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "user":
-        case "User": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -85,35 +81,31 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return java.lang.String.class;
+        case "accessToken": return java.lang.String.class;
         case "apiname":
-        case "ApiName": return org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class;
+        case "apiName": return org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class;
         case "applicationname":
-        case "ApplicationName": return java.lang.String.class;
+        case "applicationName": return java.lang.String.class;
         case "calendarid":
-        case "CalendarId": return java.lang.String.class;
+        case "calendarId": return java.lang.String.class;
         case "clientid":
-        case "ClientId": return java.lang.String.class;
+        case "clientId": return java.lang.String.class;
         case "clientsecret":
-        case "ClientSecret": return java.lang.String.class;
-        case "content":
-        case "Content": return com.google.api.services.calendar.model.Calendar.class;
-        case "delegate":
-        case "Delegate": return java.lang.String.class;
+        case "clientSecret": return java.lang.String.class;
+        case "content": return com.google.api.services.calendar.model.Calendar.class;
+        case "delegate": return java.lang.String.class;
         case "emailaddress":
-        case "EmailAddress": return java.lang.String.class;
+        case "emailAddress": return java.lang.String.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "p12filename":
-        case "P12FileName": return java.lang.String.class;
+        case "p12FileName": return java.lang.String.class;
         case "refreshtoken":
-        case "RefreshToken": return java.lang.String.class;
-        case "scopes":
-        case "Scopes": return java.util.List.class;
+        case "refreshToken": return java.lang.String.class;
+        case "scopes": return java.util.List.class;
         case "serviceaccountkey":
-        case "ServiceAccountKey": return java.lang.String.class;
-        case "user":
-        case "User": return java.lang.String.class;
+        case "serviceAccountKey": return java.lang.String.class;
+        case "user": return java.lang.String.class;
         default: return null;
         }
     }
@@ -123,35 +115,31 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         org.apache.camel.component.google.calendar.CalendarCalendarsEndpointConfiguration target = (org.apache.camel.component.google.calendar.CalendarCalendarsEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return target.getAccessToken();
+        case "accessToken": return target.getAccessToken();
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "applicationname":
-        case "ApplicationName": return target.getApplicationName();
+        case "applicationName": return target.getApplicationName();
         case "calendarid":
-        case "CalendarId": return target.getCalendarId();
+        case "calendarId": return target.getCalendarId();
         case "clientid":
-        case "ClientId": return target.getClientId();
+        case "clientId": return target.getClientId();
         case "clientsecret":
-        case "ClientSecret": return target.getClientSecret();
-        case "content":
-        case "Content": return target.getContent();
-        case "delegate":
-        case "Delegate": return target.getDelegate();
+        case "clientSecret": return target.getClientSecret();
+        case "content": return target.getContent();
+        case "delegate": return target.getDelegate();
         case "emailaddress":
-        case "EmailAddress": return target.getEmailAddress();
+        case "emailAddress": return target.getEmailAddress();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "p12filename":
-        case "P12FileName": return target.getP12FileName();
+        case "p12FileName": return target.getP12FileName();
         case "refreshtoken":
-        case "RefreshToken": return target.getRefreshToken();
-        case "scopes":
-        case "Scopes": return target.getScopes();
+        case "refreshToken": return target.getRefreshToken();
+        case "scopes": return target.getScopes();
         case "serviceaccountkey":
-        case "ServiceAccountKey": return target.getServiceAccountKey();
-        case "user":
-        case "User": return target.getUser();
+        case "serviceAccountKey": return target.getServiceAccountKey();
+        case "user": return target.getUser();
         default: return null;
         }
     }
@@ -159,8 +147,7 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes":
-        case "Scopes": return java.lang.String.class;
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

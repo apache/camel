@@ -22,33 +22,33 @@ public class JdbcAggregationRepositoryConfigurer extends org.apache.camel.suppor
         org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository target = (org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "datasource":
-        case "DataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
+        case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
         case "deadletteruri":
-        case "DeadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
         case "deserializationfilter":
-        case "DeserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "headerstostoreastext":
-        case "HeadersToStoreAsText": target.setHeadersToStoreAsText(property(camelContext, java.util.List.class, value)); return true;
+        case "headersToStoreAsText": target.setHeadersToStoreAsText(property(camelContext, java.util.List.class, value)); return true;
         case "jdbcoptimisticlockingexceptionmapper":
-        case "JdbcOptimisticLockingExceptionMapper": target.setJdbcOptimisticLockingExceptionMapper(property(camelContext, org.apache.camel.processor.aggregate.jdbc.JdbcOptimisticLockingExceptionMapper.class, value)); return true;
+        case "jdbcOptimisticLockingExceptionMapper": target.setJdbcOptimisticLockingExceptionMapper(property(camelContext, org.apache.camel.processor.aggregate.jdbc.JdbcOptimisticLockingExceptionMapper.class, value)); return true;
         case "lobhandler":
-        case "LobHandler": target.setLobHandler(property(camelContext, org.springframework.jdbc.support.lob.LobHandler.class, value)); return true;
+        case "lobHandler": target.setLobHandler(property(camelContext, org.springframework.jdbc.support.lob.LobHandler.class, value)); return true;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
+        case "maximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
         case "propagationbehaviorname":
-        case "PropagationBehaviorName": target.setPropagationBehaviorName(property(camelContext, java.lang.String.class, value)); return true;
+        case "propagationBehaviorName": target.setPropagationBehaviorName(property(camelContext, java.lang.String.class, value)); return true;
         case "recoveryinterval":
-        case "RecoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
         case "repositoryname":
-        case "RepositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
+        case "repositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
         case "storebodyastext":
-        case "StoreBodyAsText": target.setStoreBodyAsText(property(camelContext, boolean.class, value)); return true;
+        case "storeBodyAsText": target.setStoreBodyAsText(property(camelContext, boolean.class, value)); return true;
         case "transactionmanager":
-        case "TransactionManager": target.setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
+        case "transactionManager": target.setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
         case "userecovery":
-        case "UseRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
+        case "useRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -57,33 +57,33 @@ public class JdbcAggregationRepositoryConfigurer extends org.apache.camel.suppor
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return boolean.class;
+        case "allowSerializedHeaders": return boolean.class;
         case "datasource":
-        case "DataSource": return javax.sql.DataSource.class;
+        case "dataSource": return javax.sql.DataSource.class;
         case "deadletteruri":
-        case "DeadLetterUri": return java.lang.String.class;
+        case "deadLetterUri": return java.lang.String.class;
         case "deserializationfilter":
-        case "DeserializationFilter": return java.lang.String.class;
+        case "deserializationFilter": return java.lang.String.class;
         case "headerstostoreastext":
-        case "HeadersToStoreAsText": return java.util.List.class;
+        case "headersToStoreAsText": return java.util.List.class;
         case "jdbcoptimisticlockingexceptionmapper":
-        case "JdbcOptimisticLockingExceptionMapper": return org.apache.camel.processor.aggregate.jdbc.JdbcOptimisticLockingExceptionMapper.class;
+        case "jdbcOptimisticLockingExceptionMapper": return org.apache.camel.processor.aggregate.jdbc.JdbcOptimisticLockingExceptionMapper.class;
         case "lobhandler":
-        case "LobHandler": return org.springframework.jdbc.support.lob.LobHandler.class;
+        case "lobHandler": return org.springframework.jdbc.support.lob.LobHandler.class;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return int.class;
+        case "maximumRedeliveries": return int.class;
         case "propagationbehaviorname":
-        case "PropagationBehaviorName": return java.lang.String.class;
+        case "propagationBehaviorName": return java.lang.String.class;
         case "recoveryinterval":
-        case "RecoveryInterval": return long.class;
+        case "recoveryInterval": return long.class;
         case "repositoryname":
-        case "RepositoryName": return java.lang.String.class;
+        case "repositoryName": return java.lang.String.class;
         case "storebodyastext":
-        case "StoreBodyAsText": return boolean.class;
+        case "storeBodyAsText": return boolean.class;
         case "transactionmanager":
-        case "TransactionManager": return org.springframework.transaction.PlatformTransactionManager.class;
+        case "transactionManager": return org.springframework.transaction.PlatformTransactionManager.class;
         case "userecovery":
-        case "UseRecovery": return boolean.class;
+        case "useRecovery": return boolean.class;
         default: return null;
         }
     }
@@ -93,33 +93,33 @@ public class JdbcAggregationRepositoryConfigurer extends org.apache.camel.suppor
         org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository target = (org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return target.isAllowSerializedHeaders();
+        case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "datasource":
-        case "DataSource": return target.getDataSource();
+        case "dataSource": return target.getDataSource();
         case "deadletteruri":
-        case "DeadLetterUri": return target.getDeadLetterUri();
+        case "deadLetterUri": return target.getDeadLetterUri();
         case "deserializationfilter":
-        case "DeserializationFilter": return target.getDeserializationFilter();
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "headerstostoreastext":
-        case "HeadersToStoreAsText": return target.getHeadersToStoreAsText();
+        case "headersToStoreAsText": return target.getHeadersToStoreAsText();
         case "jdbcoptimisticlockingexceptionmapper":
-        case "JdbcOptimisticLockingExceptionMapper": return target.getJdbcOptimisticLockingExceptionMapper();
+        case "jdbcOptimisticLockingExceptionMapper": return target.getJdbcOptimisticLockingExceptionMapper();
         case "lobhandler":
-        case "LobHandler": return target.getLobHandler();
+        case "lobHandler": return target.getLobHandler();
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return target.getMaximumRedeliveries();
+        case "maximumRedeliveries": return target.getMaximumRedeliveries();
         case "propagationbehaviorname":
-        case "PropagationBehaviorName": return target.getPropagationBehaviorName();
+        case "propagationBehaviorName": return target.getPropagationBehaviorName();
         case "recoveryinterval":
-        case "RecoveryInterval": return target.getRecoveryInterval();
+        case "recoveryInterval": return target.getRecoveryInterval();
         case "repositoryname":
-        case "RepositoryName": return target.getRepositoryName();
+        case "repositoryName": return target.getRepositoryName();
         case "storebodyastext":
-        case "StoreBodyAsText": return target.isStoreBodyAsText();
+        case "storeBodyAsText": return target.isStoreBodyAsText();
         case "transactionmanager":
-        case "TransactionManager": return target.getTransactionManager();
+        case "transactionManager": return target.getTransactionManager();
         case "userecovery":
-        case "UseRecovery": return target.isUseRecovery();
+        case "useRecovery": return target.isUseRecovery();
         default: return null;
         }
     }
@@ -128,7 +128,7 @@ public class JdbcAggregationRepositoryConfigurer extends org.apache.camel.suppor
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "headerstostoreastext":
-        case "HeadersToStoreAsText": return java.lang.String.class;
+        case "headersToStoreAsText": return java.lang.String.class;
         default: return null;
         }
     }

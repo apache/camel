@@ -22,11 +22,11 @@ public class MongoDbIdempotentRepositoryConfigurer extends org.apache.camel.supp
         org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository target = (org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "collectionname":
-        case "CollectionName": target.setCollectionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectionName": target.setCollectionName(property(camelContext, java.lang.String.class, value)); return true;
         case "dbname":
-        case "DbName": target.setDbName(property(camelContext, java.lang.String.class, value)); return true;
+        case "dbName": target.setDbName(property(camelContext, java.lang.String.class, value)); return true;
         case "mongoclient":
-        case "MongoClient": target.setMongoClient(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
+        case "mongoClient": target.setMongoClient(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
         default: return false;
         }
     }
@@ -35,11 +35,11 @@ public class MongoDbIdempotentRepositoryConfigurer extends org.apache.camel.supp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "collectionname":
-        case "CollectionName": return java.lang.String.class;
+        case "collectionName": return java.lang.String.class;
         case "dbname":
-        case "DbName": return java.lang.String.class;
+        case "dbName": return java.lang.String.class;
         case "mongoclient":
-        case "MongoClient": return com.mongodb.client.MongoClient.class;
+        case "mongoClient": return com.mongodb.client.MongoClient.class;
         default: return null;
         }
     }
@@ -49,11 +49,11 @@ public class MongoDbIdempotentRepositoryConfigurer extends org.apache.camel.supp
         org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository target = (org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "collectionname":
-        case "CollectionName": return target.getCollectionName();
+        case "collectionName": return target.getCollectionName();
         case "dbname":
-        case "DbName": return target.getDbName();
+        case "dbName": return target.getDbName();
         case "mongoclient":
-        case "MongoClient": return target.getMongoClient();
+        case "mongoClient": return target.getMongoClient();
         default: return null;
         }
     }

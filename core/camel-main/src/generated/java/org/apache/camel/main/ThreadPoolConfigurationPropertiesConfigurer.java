@@ -22,21 +22,20 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
         org.apache.camel.main.ThreadPoolConfigurationProperties target = (org.apache.camel.main.ThreadPoolConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcorethreadtimeout":
-        case "AllowCoreThreadTimeOut": target.setAllowCoreThreadTimeOut(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "config":
-        case "Config": target.setConfig(property(camelContext, java.util.Map.class, value)); return true;
+        case "allowCoreThreadTimeOut": target.setAllowCoreThreadTimeOut(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "config": target.setConfig(property(camelContext, java.util.Map.class, value)); return true;
         case "keepalivetime":
-        case "KeepAliveTime": target.setKeepAliveTime(property(camelContext, java.lang.Long.class, value)); return true;
+        case "keepAliveTime": target.setKeepAliveTime(property(camelContext, java.lang.Long.class, value)); return true;
         case "maxpoolsize":
-        case "MaxPoolSize": target.setMaxPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxPoolSize": target.setMaxPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxqueuesize":
-        case "MaxQueueSize": target.setMaxQueueSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxQueueSize": target.setMaxQueueSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "poolsize":
-        case "PoolSize": target.setPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "poolSize": target.setPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "rejectedpolicy":
-        case "RejectedPolicy": target.setRejectedPolicy(property(camelContext, org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class, value)); return true;
+        case "rejectedPolicy": target.setRejectedPolicy(property(camelContext, org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class, value)); return true;
         case "timeunit":
-        case "TimeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         default: return false;
         }
     }
@@ -45,21 +44,20 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcorethreadtimeout":
-        case "AllowCoreThreadTimeOut": return java.lang.Boolean.class;
-        case "config":
-        case "Config": return java.util.Map.class;
+        case "allowCoreThreadTimeOut": return java.lang.Boolean.class;
+        case "config": return java.util.Map.class;
         case "keepalivetime":
-        case "KeepAliveTime": return java.lang.Long.class;
+        case "keepAliveTime": return java.lang.Long.class;
         case "maxpoolsize":
-        case "MaxPoolSize": return java.lang.Integer.class;
+        case "maxPoolSize": return java.lang.Integer.class;
         case "maxqueuesize":
-        case "MaxQueueSize": return java.lang.Integer.class;
+        case "maxQueueSize": return java.lang.Integer.class;
         case "poolsize":
-        case "PoolSize": return java.lang.Integer.class;
+        case "poolSize": return java.lang.Integer.class;
         case "rejectedpolicy":
-        case "RejectedPolicy": return org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class;
+        case "rejectedPolicy": return org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class;
         case "timeunit":
-        case "TimeUnit": return java.util.concurrent.TimeUnit.class;
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
         default: return null;
         }
     }
@@ -69,21 +67,20 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
         org.apache.camel.main.ThreadPoolConfigurationProperties target = (org.apache.camel.main.ThreadPoolConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcorethreadtimeout":
-        case "AllowCoreThreadTimeOut": return target.getAllowCoreThreadTimeOut();
-        case "config":
-        case "Config": return target.getConfig();
+        case "allowCoreThreadTimeOut": return target.getAllowCoreThreadTimeOut();
+        case "config": return target.getConfig();
         case "keepalivetime":
-        case "KeepAliveTime": return target.getKeepAliveTime();
+        case "keepAliveTime": return target.getKeepAliveTime();
         case "maxpoolsize":
-        case "MaxPoolSize": return target.getMaxPoolSize();
+        case "maxPoolSize": return target.getMaxPoolSize();
         case "maxqueuesize":
-        case "MaxQueueSize": return target.getMaxQueueSize();
+        case "maxQueueSize": return target.getMaxQueueSize();
         case "poolsize":
-        case "PoolSize": return target.getPoolSize();
+        case "poolSize": return target.getPoolSize();
         case "rejectedpolicy":
-        case "RejectedPolicy": return target.getRejectedPolicy();
+        case "rejectedPolicy": return target.getRejectedPolicy();
         case "timeunit":
-        case "TimeUnit": return target.getTimeUnit();
+        case "timeUnit": return target.getTimeUnit();
         default: return null;
         }
     }
@@ -91,8 +88,7 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "config":
-        case "Config": return org.apache.camel.main.ThreadPoolProfileConfigurationProperties.class;
+        case "config": return org.apache.camel.main.ThreadPoolProfileConfigurationProperties.class;
         default: return null;
         }
     }

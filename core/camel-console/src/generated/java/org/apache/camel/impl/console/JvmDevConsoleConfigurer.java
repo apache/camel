@@ -22,9 +22,9 @@ public class JvmDevConsoleConfigurer extends org.apache.camel.support.component.
         org.apache.camel.impl.console.JvmDevConsole target = (org.apache.camel.impl.console.JvmDevConsole) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "showclasspath":
-        case "ShowClasspath": target.setShowClasspath(property(camelContext, boolean.class, value)); return true;
+        case "showClasspath": target.setShowClasspath(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -33,9 +33,9 @@ public class JvmDevConsoleConfigurer extends org.apache.camel.support.component.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "camelContext": return org.apache.camel.CamelContext.class;
         case "showclasspath":
-        case "ShowClasspath": return boolean.class;
+        case "showClasspath": return boolean.class;
         default: return null;
         }
     }
@@ -45,9 +45,9 @@ public class JvmDevConsoleConfigurer extends org.apache.camel.support.component.
         org.apache.camel.impl.console.JvmDevConsole target = (org.apache.camel.impl.console.JvmDevConsole) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return target.getCamelContext();
+        case "camelContext": return target.getCamelContext();
         case "showclasspath":
-        case "ShowClasspath": return target.isShowClasspath();
+        case "showClasspath": return target.isShowClasspath();
         default: return null;
         }
     }

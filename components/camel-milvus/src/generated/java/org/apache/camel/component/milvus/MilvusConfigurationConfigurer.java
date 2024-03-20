@@ -21,16 +21,11 @@ public class MilvusConfigurationConfigurer extends org.apache.camel.support.comp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.milvus.MilvusConfiguration target = (org.apache.camel.component.milvus.MilvusConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "client":
-        case "Client": target.setClient(property(camelContext, io.milvus.client.MilvusClient.class, value)); return true;
-        case "host":
-        case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "port":
-        case "Port": target.setPort(property(camelContext, int.class, value)); return true;
-        case "timeout":
-        case "Timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
-        case "token":
-        case "Token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "client": target.setClient(property(camelContext, io.milvus.client.MilvusClient.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -38,16 +33,11 @@ public class MilvusConfigurationConfigurer extends org.apache.camel.support.comp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "client":
-        case "Client": return io.milvus.client.MilvusClient.class;
-        case "host":
-        case "Host": return java.lang.String.class;
-        case "port":
-        case "Port": return int.class;
-        case "timeout":
-        case "Timeout": return long.class;
-        case "token":
-        case "Token": return java.lang.String.class;
+        case "client": return io.milvus.client.MilvusClient.class;
+        case "host": return java.lang.String.class;
+        case "port": return int.class;
+        case "timeout": return long.class;
+        case "token": return java.lang.String.class;
         default: return null;
         }
     }
@@ -56,16 +46,11 @@ public class MilvusConfigurationConfigurer extends org.apache.camel.support.comp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.milvus.MilvusConfiguration target = (org.apache.camel.component.milvus.MilvusConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "client":
-        case "Client": return target.getClient();
-        case "host":
-        case "Host": return target.getHost();
-        case "port":
-        case "Port": return target.getPort();
-        case "timeout":
-        case "Timeout": return target.getTimeout();
-        case "token":
-        case "Token": return target.getToken();
+        case "client": return target.getClient();
+        case "host": return target.getHost();
+        case "port": return target.getPort();
+        case "timeout": return target.getTimeout();
+        case "token": return target.getToken();
         default: return null;
         }
     }

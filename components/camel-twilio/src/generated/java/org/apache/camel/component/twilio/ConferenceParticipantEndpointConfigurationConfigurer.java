@@ -35,19 +35,17 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
         org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration target = (org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
-        case "from":
-        case "From": target.setFrom(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
+        case "from": target.setFrom(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
-        case "PathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
         case "pathcallsid":
-        case "PathCallSid": target.setPathCallSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathCallSid": target.setPathCallSid(property(camelContext, java.lang.String.class, value)); return true;
         case "pathconferencesid":
-        case "PathConferenceSid": target.setPathConferenceSid(property(camelContext, java.lang.String.class, value)); return true;
-        case "to":
-        case "To": target.setTo(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
+        case "pathConferenceSid": target.setPathConferenceSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "to": target.setTo(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
         default: return false;
         }
     }
@@ -61,19 +59,17 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
-        case "from":
-        case "From": return com.twilio.type.Endpoint.class;
+        case "apiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "from": return com.twilio.type.Endpoint.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "pathaccountsid":
-        case "PathAccountSid": return java.lang.String.class;
+        case "pathAccountSid": return java.lang.String.class;
         case "pathcallsid":
-        case "PathCallSid": return java.lang.String.class;
+        case "pathCallSid": return java.lang.String.class;
         case "pathconferencesid":
-        case "PathConferenceSid": return java.lang.String.class;
-        case "to":
-        case "To": return com.twilio.type.Endpoint.class;
+        case "pathConferenceSid": return java.lang.String.class;
+        case "to": return com.twilio.type.Endpoint.class;
         default: return null;
         }
     }
@@ -83,19 +79,17 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
         org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration target = (org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
-        case "from":
-        case "From": return target.getFrom();
+        case "apiName": return target.getApiName();
+        case "from": return target.getFrom();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "pathaccountsid":
-        case "PathAccountSid": return target.getPathAccountSid();
+        case "pathAccountSid": return target.getPathAccountSid();
         case "pathcallsid":
-        case "PathCallSid": return target.getPathCallSid();
+        case "pathCallSid": return target.getPathCallSid();
         case "pathconferencesid":
-        case "PathConferenceSid": return target.getPathConferenceSid();
-        case "to":
-        case "To": return target.getTo();
+        case "pathConferenceSid": return target.getPathConferenceSid();
+        case "to": return target.getTo();
         default: return null;
         }
     }

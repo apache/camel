@@ -21,8 +21,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.wasm.WasmConfiguration target = (org.apache.camel.component.wasm.WasmConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "module":
-        case "Module": target.setModule(property(camelContext, java.lang.String.class, value)); return true;
+        case "module": target.setModule(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -30,8 +29,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "module":
-        case "Module": return java.lang.String.class;
+        case "module": return java.lang.String.class;
         default: return null;
         }
     }
@@ -40,8 +38,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.wasm.WasmConfiguration target = (org.apache.camel.component.wasm.WasmConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "module":
-        case "Module": return target.getModule();
+        case "module": return target.getModule();
         default: return null;
         }
     }

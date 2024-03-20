@@ -22,17 +22,17 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
         org.apache.camel.support.DefaultHeaderFilterStrategy target = (org.apache.camel.support.DefaultHeaderFilterStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullvalues":
-        case "AllowNullValues": target.setAllowNullValues(property(camelContext, boolean.class, value)); return true;
+        case "allowNullValues": target.setAllowNullValues(property(camelContext, boolean.class, value)); return true;
         case "caseinsensitive":
-        case "CaseInsensitive": target.setCaseInsensitive(property(camelContext, boolean.class, value)); return true;
+        case "caseInsensitive": target.setCaseInsensitive(property(camelContext, boolean.class, value)); return true;
         case "filteronmatch":
-        case "FilterOnMatch": target.setFilterOnMatch(property(camelContext, boolean.class, value)); return true;
+        case "filterOnMatch": target.setFilterOnMatch(property(camelContext, boolean.class, value)); return true;
         case "infilter":
-        case "InFilter": target.setInFilter(property(camelContext, java.util.Set.class, value)); return true;
+        case "inFilter": target.setInFilter(property(camelContext, java.util.Set.class, value)); return true;
         case "lowercase":
-        case "LowerCase": target.setLowerCase(property(camelContext, boolean.class, value)); return true;
+        case "lowerCase": target.setLowerCase(property(camelContext, boolean.class, value)); return true;
         case "outfilter":
-        case "OutFilter": target.setOutFilter(property(camelContext, java.util.Set.class, value)); return true;
+        case "outFilter": target.setOutFilter(property(camelContext, java.util.Set.class, value)); return true;
         default: return false;
         }
     }
@@ -41,17 +41,17 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullvalues":
-        case "AllowNullValues": return boolean.class;
+        case "allowNullValues": return boolean.class;
         case "caseinsensitive":
-        case "CaseInsensitive": return boolean.class;
+        case "caseInsensitive": return boolean.class;
         case "filteronmatch":
-        case "FilterOnMatch": return boolean.class;
+        case "filterOnMatch": return boolean.class;
         case "infilter":
-        case "InFilter": return java.util.Set.class;
+        case "inFilter": return java.util.Set.class;
         case "lowercase":
-        case "LowerCase": return boolean.class;
+        case "lowerCase": return boolean.class;
         case "outfilter":
-        case "OutFilter": return java.util.Set.class;
+        case "outFilter": return java.util.Set.class;
         default: return null;
         }
     }
@@ -61,17 +61,17 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
         org.apache.camel.support.DefaultHeaderFilterStrategy target = (org.apache.camel.support.DefaultHeaderFilterStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullvalues":
-        case "AllowNullValues": return target.isAllowNullValues();
+        case "allowNullValues": return target.isAllowNullValues();
         case "caseinsensitive":
-        case "CaseInsensitive": return target.isCaseInsensitive();
+        case "caseInsensitive": return target.isCaseInsensitive();
         case "filteronmatch":
-        case "FilterOnMatch": return target.isFilterOnMatch();
+        case "filterOnMatch": return target.isFilterOnMatch();
         case "infilter":
-        case "InFilter": return target.getInFilter();
+        case "inFilter": return target.getInFilter();
         case "lowercase":
-        case "LowerCase": return target.isLowerCase();
+        case "lowerCase": return target.isLowerCase();
         case "outfilter":
-        case "OutFilter": return target.getOutFilter();
+        case "outFilter": return target.getOutFilter();
         default: return null;
         }
     }
@@ -80,9 +80,9 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "infilter":
-        case "InFilter": return java.lang.String.class;
+        case "inFilter": return java.lang.String.class;
         case "outfilter":
-        case "OutFilter": return java.lang.String.class;
+        case "outFilter": return java.lang.String.class;
         default: return null;
         }
     }

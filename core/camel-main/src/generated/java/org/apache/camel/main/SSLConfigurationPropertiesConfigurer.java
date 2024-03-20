@@ -22,17 +22,16 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         org.apache.camel.main.SSLConfigurationProperties target = (org.apache.camel.main.SSLConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "clientauthentication":
-        case "ClientAuthentication": target.setClientAuthentication(property(camelContext, java.lang.String.class, value)); return true;
-        case "enabled":
-        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "clientAuthentication": target.setClientAuthentication(property(camelContext, java.lang.String.class, value)); return true;
+        case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "keystore":
-        case "KeyStore": target.setKeyStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyStore": target.setKeyStore(property(camelContext, java.lang.String.class, value)); return true;
         case "keystorepassword":
-        case "KeystorePassword": target.setKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystorePassword": target.setKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "truststore":
-        case "TrustStore": target.setTrustStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustStore": target.setTrustStore(property(camelContext, java.lang.String.class, value)); return true;
         case "truststorepassword":
-        case "TrustStorePassword": target.setTrustStorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustStorePassword": target.setTrustStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -41,17 +40,16 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "clientauthentication":
-        case "ClientAuthentication": return java.lang.String.class;
-        case "enabled":
-        case "Enabled": return boolean.class;
+        case "clientAuthentication": return java.lang.String.class;
+        case "enabled": return boolean.class;
         case "keystore":
-        case "KeyStore": return java.lang.String.class;
+        case "keyStore": return java.lang.String.class;
         case "keystorepassword":
-        case "KeystorePassword": return java.lang.String.class;
+        case "keystorePassword": return java.lang.String.class;
         case "truststore":
-        case "TrustStore": return java.lang.String.class;
+        case "trustStore": return java.lang.String.class;
         case "truststorepassword":
-        case "TrustStorePassword": return java.lang.String.class;
+        case "trustStorePassword": return java.lang.String.class;
         default: return null;
         }
     }
@@ -61,17 +59,16 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         org.apache.camel.main.SSLConfigurationProperties target = (org.apache.camel.main.SSLConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "clientauthentication":
-        case "ClientAuthentication": return target.getClientAuthentication();
-        case "enabled":
-        case "Enabled": return target.isEnabled();
+        case "clientAuthentication": return target.getClientAuthentication();
+        case "enabled": return target.isEnabled();
         case "keystore":
-        case "KeyStore": return target.getKeyStore();
+        case "keyStore": return target.getKeyStore();
         case "keystorepassword":
-        case "KeystorePassword": return target.getKeystorePassword();
+        case "keystorePassword": return target.getKeystorePassword();
         case "truststore":
-        case "TrustStore": return target.getTrustStore();
+        case "trustStore": return target.getTrustStore();
         case "truststorepassword":
-        case "TrustStorePassword": return target.getTrustStorePassword();
+        case "trustStorePassword": return target.getTrustStorePassword();
         default: return null;
         }
     }

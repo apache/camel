@@ -22,7 +22,7 @@ public class SpringRedisIdempotentRepositoryConfigurer extends org.apache.camel.
         org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository target = (org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "repositoryname":
-        case "RepositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
+        case "repositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +31,7 @@ public class SpringRedisIdempotentRepositoryConfigurer extends org.apache.camel.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "repositoryname":
-        case "RepositoryName": return java.lang.String.class;
+        case "repositoryName": return java.lang.String.class;
         default: return null;
         }
     }
@@ -41,7 +41,7 @@ public class SpringRedisIdempotentRepositoryConfigurer extends org.apache.camel.
         org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository target = (org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "repositoryname":
-        case "RepositoryName": return target.getRepositoryName();
+        case "repositoryName": return target.getRepositoryName();
         default: return null;
         }
     }

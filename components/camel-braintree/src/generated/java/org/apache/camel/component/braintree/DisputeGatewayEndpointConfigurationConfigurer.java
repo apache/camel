@@ -49,47 +49,43 @@ public class DisputeGatewayEndpointConfigurationConfigurer extends org.apache.ca
         org.apache.camel.component.braintree.DisputeGatewayEndpointConfiguration target = (org.apache.camel.component.braintree.DisputeGatewayEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.braintree.internal.BraintreeApiName.class, value)); return true;
-        case "content":
-        case "Content": target.setContent(property(camelContext, java.lang.String.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.braintree.internal.BraintreeApiName.class, value)); return true;
+        case "content": target.setContent(property(camelContext, java.lang.String.class, value)); return true;
         case "disputeid":
-        case "DisputeId": target.setDisputeId(property(camelContext, java.lang.String.class, value)); return true;
+        case "disputeId": target.setDisputeId(property(camelContext, java.lang.String.class, value)); return true;
         case "documentid":
-        case "DocumentId": target.setDocumentId(property(camelContext, java.lang.String.class, value)); return true;
-        case "environment":
-        case "Environment": target.setEnvironment(property(camelContext, java.lang.String.class, value)); return true;
+        case "documentId": target.setDocumentId(property(camelContext, java.lang.String.class, value)); return true;
+        case "environment": target.setEnvironment(property(camelContext, java.lang.String.class, value)); return true;
         case "evidenceid":
-        case "EvidenceId": target.setEvidenceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "evidenceId": target.setEvidenceId(property(camelContext, java.lang.String.class, value)); return true;
         case "fileevidencerequest":
-        case "FileEvidenceRequest": target.setFileEvidenceRequest(property(camelContext, com.braintreegateway.FileEvidenceRequest.class, value)); return true;
+        case "fileEvidenceRequest": target.setFileEvidenceRequest(property(camelContext, com.braintreegateway.FileEvidenceRequest.class, value)); return true;
         case "httploglevel":
-        case "HttpLogLevel": target.setHttpLogLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpLogLevel": target.setHttpLogLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "httplogname":
-        case "HttpLogName": target.setHttpLogName(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpLogName": target.setHttpLogName(property(camelContext, java.lang.String.class, value)); return true;
         case "httpreadtimeout":
-        case "HttpReadTimeout": target.setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpReadTimeout": target.setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
         case "loghandlerenabled":
-        case "LogHandlerEnabled": target.setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "logHandlerEnabled": target.setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
         case "merchantid":
-        case "MerchantId": target.setMerchantId(property(camelContext, java.lang.String.class, value)); return true;
+        case "merchantId": target.setMerchantId(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekey":
-        case "PrivateKey": target.setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "privateKey": target.setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
-        case "ProxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
-        case "ProxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "publickey":
-        case "PublicKey": target.setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "query":
-        case "Query": target.setQuery(property(camelContext, com.braintreegateway.DisputeSearchRequest.class, value)); return true;
+        case "publicKey": target.setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "query": target.setQuery(property(camelContext, com.braintreegateway.DisputeSearchRequest.class, value)); return true;
         case "textevidencerequest":
-        case "TextEvidenceRequest": target.setTextEvidenceRequest(property(camelContext, com.braintreegateway.TextEvidenceRequest.class, value)); return true;
+        case "textEvidenceRequest": target.setTextEvidenceRequest(property(camelContext, com.braintreegateway.TextEvidenceRequest.class, value)); return true;
         default: return false;
         }
     }
@@ -103,47 +99,43 @@ public class DisputeGatewayEndpointConfigurationConfigurer extends org.apache.ca
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return java.lang.String.class;
+        case "accessToken": return java.lang.String.class;
         case "apiname":
-        case "ApiName": return org.apache.camel.component.braintree.internal.BraintreeApiName.class;
-        case "content":
-        case "Content": return java.lang.String.class;
+        case "apiName": return org.apache.camel.component.braintree.internal.BraintreeApiName.class;
+        case "content": return java.lang.String.class;
         case "disputeid":
-        case "DisputeId": return java.lang.String.class;
+        case "disputeId": return java.lang.String.class;
         case "documentid":
-        case "DocumentId": return java.lang.String.class;
-        case "environment":
-        case "Environment": return java.lang.String.class;
+        case "documentId": return java.lang.String.class;
+        case "environment": return java.lang.String.class;
         case "evidenceid":
-        case "EvidenceId": return java.lang.String.class;
+        case "evidenceId": return java.lang.String.class;
         case "fileevidencerequest":
-        case "FileEvidenceRequest": return com.braintreegateway.FileEvidenceRequest.class;
+        case "fileEvidenceRequest": return com.braintreegateway.FileEvidenceRequest.class;
         case "httploglevel":
-        case "HttpLogLevel": return java.lang.String.class;
+        case "httpLogLevel": return java.lang.String.class;
         case "httplogname":
-        case "HttpLogName": return java.lang.String.class;
+        case "httpLogName": return java.lang.String.class;
         case "httpreadtimeout":
-        case "HttpReadTimeout": return java.lang.Integer.class;
-        case "id":
-        case "Id": return java.lang.String.class;
+        case "httpReadTimeout": return java.lang.Integer.class;
+        case "id": return java.lang.String.class;
         case "loghandlerenabled":
-        case "LogHandlerEnabled": return boolean.class;
+        case "logHandlerEnabled": return boolean.class;
         case "merchantid":
-        case "MerchantId": return java.lang.String.class;
+        case "merchantId": return java.lang.String.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "privatekey":
-        case "PrivateKey": return java.lang.String.class;
+        case "privateKey": return java.lang.String.class;
         case "proxyhost":
-        case "ProxyHost": return java.lang.String.class;
+        case "proxyHost": return java.lang.String.class;
         case "proxyport":
-        case "ProxyPort": return java.lang.Integer.class;
+        case "proxyPort": return java.lang.Integer.class;
         case "publickey":
-        case "PublicKey": return java.lang.String.class;
-        case "query":
-        case "Query": return com.braintreegateway.DisputeSearchRequest.class;
+        case "publicKey": return java.lang.String.class;
+        case "query": return com.braintreegateway.DisputeSearchRequest.class;
         case "textevidencerequest":
-        case "TextEvidenceRequest": return com.braintreegateway.TextEvidenceRequest.class;
+        case "textEvidenceRequest": return com.braintreegateway.TextEvidenceRequest.class;
         default: return null;
         }
     }
@@ -153,47 +145,43 @@ public class DisputeGatewayEndpointConfigurationConfigurer extends org.apache.ca
         org.apache.camel.component.braintree.DisputeGatewayEndpointConfiguration target = (org.apache.camel.component.braintree.DisputeGatewayEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return target.getAccessToken();
+        case "accessToken": return target.getAccessToken();
         case "apiname":
-        case "ApiName": return target.getApiName();
-        case "content":
-        case "Content": return target.getContent();
+        case "apiName": return target.getApiName();
+        case "content": return target.getContent();
         case "disputeid":
-        case "DisputeId": return target.getDisputeId();
+        case "disputeId": return target.getDisputeId();
         case "documentid":
-        case "DocumentId": return target.getDocumentId();
-        case "environment":
-        case "Environment": return target.getEnvironment();
+        case "documentId": return target.getDocumentId();
+        case "environment": return target.getEnvironment();
         case "evidenceid":
-        case "EvidenceId": return target.getEvidenceId();
+        case "evidenceId": return target.getEvidenceId();
         case "fileevidencerequest":
-        case "FileEvidenceRequest": return target.getFileEvidenceRequest();
+        case "fileEvidenceRequest": return target.getFileEvidenceRequest();
         case "httploglevel":
-        case "HttpLogLevel": return target.getHttpLogLevel();
+        case "httpLogLevel": return target.getHttpLogLevel();
         case "httplogname":
-        case "HttpLogName": return target.getHttpLogName();
+        case "httpLogName": return target.getHttpLogName();
         case "httpreadtimeout":
-        case "HttpReadTimeout": return target.getHttpReadTimeout();
-        case "id":
-        case "Id": return target.getId();
+        case "httpReadTimeout": return target.getHttpReadTimeout();
+        case "id": return target.getId();
         case "loghandlerenabled":
-        case "LogHandlerEnabled": return target.isLogHandlerEnabled();
+        case "logHandlerEnabled": return target.isLogHandlerEnabled();
         case "merchantid":
-        case "MerchantId": return target.getMerchantId();
+        case "merchantId": return target.getMerchantId();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "privatekey":
-        case "PrivateKey": return target.getPrivateKey();
+        case "privateKey": return target.getPrivateKey();
         case "proxyhost":
-        case "ProxyHost": return target.getProxyHost();
+        case "proxyHost": return target.getProxyHost();
         case "proxyport":
-        case "ProxyPort": return target.getProxyPort();
+        case "proxyPort": return target.getProxyPort();
         case "publickey":
-        case "PublicKey": return target.getPublicKey();
-        case "query":
-        case "Query": return target.getQuery();
+        case "publicKey": return target.getPublicKey();
+        case "query": return target.getQuery();
         case "textevidencerequest":
-        case "TextEvidenceRequest": return target.getTextEvidenceRequest();
+        case "textEvidenceRequest": return target.getTextEvidenceRequest();
         default: return null;
         }
     }

@@ -22,33 +22,31 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
         org.apache.camel.main.TracerConfigurationProperties target = (org.apache.camel.main.TracerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "backlogsize":
-        case "BacklogSize": target.setBacklogSize(property(camelContext, int.class, value)); return true;
+        case "backlogSize": target.setBacklogSize(property(camelContext, int.class, value)); return true;
         case "bodyincludefiles":
-        case "BodyIncludeFiles": target.setBodyIncludeFiles(property(camelContext, boolean.class, value)); return true;
+        case "bodyIncludeFiles": target.setBodyIncludeFiles(property(camelContext, boolean.class, value)); return true;
         case "bodyincludestreams":
-        case "BodyIncludeStreams": target.setBodyIncludeStreams(property(camelContext, boolean.class, value)); return true;
+        case "bodyIncludeStreams": target.setBodyIncludeStreams(property(camelContext, boolean.class, value)); return true;
         case "bodymaxchars":
-        case "BodyMaxChars": target.setBodyMaxChars(property(camelContext, int.class, value)); return true;
-        case "enabled":
-        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bodyMaxChars": target.setBodyMaxChars(property(camelContext, int.class, value)); return true;
+        case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "includeexception":
-        case "IncludeException": target.setIncludeException(property(camelContext, boolean.class, value)); return true;
+        case "includeException": target.setIncludeException(property(camelContext, boolean.class, value)); return true;
         case "includeexchangeproperties":
-        case "IncludeExchangeProperties": target.setIncludeExchangeProperties(property(camelContext, boolean.class, value)); return true;
+        case "includeExchangeProperties": target.setIncludeExchangeProperties(property(camelContext, boolean.class, value)); return true;
         case "includeexchangevariables":
-        case "IncludeExchangeVariables": target.setIncludeExchangeVariables(property(camelContext, boolean.class, value)); return true;
+        case "includeExchangeVariables": target.setIncludeExchangeVariables(property(camelContext, boolean.class, value)); return true;
         case "removeondump":
-        case "RemoveOnDump": target.setRemoveOnDump(property(camelContext, boolean.class, value)); return true;
-        case "standby":
-        case "Standby": target.setStandby(property(camelContext, boolean.class, value)); return true;
+        case "removeOnDump": target.setRemoveOnDump(property(camelContext, boolean.class, value)); return true;
+        case "standby": target.setStandby(property(camelContext, boolean.class, value)); return true;
         case "tracefilter":
-        case "TraceFilter": target.setTraceFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "traceFilter": target.setTraceFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "tracepattern":
-        case "TracePattern": target.setTracePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "tracePattern": target.setTracePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracerests":
-        case "TraceRests": target.setTraceRests(property(camelContext, boolean.class, value)); return true;
+        case "traceRests": target.setTraceRests(property(camelContext, boolean.class, value)); return true;
         case "tracetemplates":
-        case "TraceTemplates": target.setTraceTemplates(property(camelContext, boolean.class, value)); return true;
+        case "traceTemplates": target.setTraceTemplates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -57,33 +55,31 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "backlogsize":
-        case "BacklogSize": return int.class;
+        case "backlogSize": return int.class;
         case "bodyincludefiles":
-        case "BodyIncludeFiles": return boolean.class;
+        case "bodyIncludeFiles": return boolean.class;
         case "bodyincludestreams":
-        case "BodyIncludeStreams": return boolean.class;
+        case "bodyIncludeStreams": return boolean.class;
         case "bodymaxchars":
-        case "BodyMaxChars": return int.class;
-        case "enabled":
-        case "Enabled": return boolean.class;
+        case "bodyMaxChars": return int.class;
+        case "enabled": return boolean.class;
         case "includeexception":
-        case "IncludeException": return boolean.class;
+        case "includeException": return boolean.class;
         case "includeexchangeproperties":
-        case "IncludeExchangeProperties": return boolean.class;
+        case "includeExchangeProperties": return boolean.class;
         case "includeexchangevariables":
-        case "IncludeExchangeVariables": return boolean.class;
+        case "includeExchangeVariables": return boolean.class;
         case "removeondump":
-        case "RemoveOnDump": return boolean.class;
-        case "standby":
-        case "Standby": return boolean.class;
+        case "removeOnDump": return boolean.class;
+        case "standby": return boolean.class;
         case "tracefilter":
-        case "TraceFilter": return java.lang.String.class;
+        case "traceFilter": return java.lang.String.class;
         case "tracepattern":
-        case "TracePattern": return java.lang.String.class;
+        case "tracePattern": return java.lang.String.class;
         case "tracerests":
-        case "TraceRests": return boolean.class;
+        case "traceRests": return boolean.class;
         case "tracetemplates":
-        case "TraceTemplates": return boolean.class;
+        case "traceTemplates": return boolean.class;
         default: return null;
         }
     }
@@ -93,33 +89,31 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
         org.apache.camel.main.TracerConfigurationProperties target = (org.apache.camel.main.TracerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "backlogsize":
-        case "BacklogSize": return target.getBacklogSize();
+        case "backlogSize": return target.getBacklogSize();
         case "bodyincludefiles":
-        case "BodyIncludeFiles": return target.isBodyIncludeFiles();
+        case "bodyIncludeFiles": return target.isBodyIncludeFiles();
         case "bodyincludestreams":
-        case "BodyIncludeStreams": return target.isBodyIncludeStreams();
+        case "bodyIncludeStreams": return target.isBodyIncludeStreams();
         case "bodymaxchars":
-        case "BodyMaxChars": return target.getBodyMaxChars();
-        case "enabled":
-        case "Enabled": return target.isEnabled();
+        case "bodyMaxChars": return target.getBodyMaxChars();
+        case "enabled": return target.isEnabled();
         case "includeexception":
-        case "IncludeException": return target.isIncludeException();
+        case "includeException": return target.isIncludeException();
         case "includeexchangeproperties":
-        case "IncludeExchangeProperties": return target.isIncludeExchangeProperties();
+        case "includeExchangeProperties": return target.isIncludeExchangeProperties();
         case "includeexchangevariables":
-        case "IncludeExchangeVariables": return target.isIncludeExchangeVariables();
+        case "includeExchangeVariables": return target.isIncludeExchangeVariables();
         case "removeondump":
-        case "RemoveOnDump": return target.isRemoveOnDump();
-        case "standby":
-        case "Standby": return target.isStandby();
+        case "removeOnDump": return target.isRemoveOnDump();
+        case "standby": return target.isStandby();
         case "tracefilter":
-        case "TraceFilter": return target.getTraceFilter();
+        case "traceFilter": return target.getTraceFilter();
         case "tracepattern":
-        case "TracePattern": return target.getTracePattern();
+        case "tracePattern": return target.getTracePattern();
         case "tracerests":
-        case "TraceRests": return target.isTraceRests();
+        case "traceRests": return target.isTraceRests();
         case "tracetemplates":
-        case "TraceTemplates": return target.isTraceTemplates();
+        case "traceTemplates": return target.isTraceTemplates();
         default: return null;
         }
     }

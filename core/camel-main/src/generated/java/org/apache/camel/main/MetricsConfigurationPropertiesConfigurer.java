@@ -21,26 +21,24 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "binders":
-        case "Binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
+        case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
         case "clearonreload":
-        case "ClearOnReload": target.setClearOnReload(property(camelContext, boolean.class, value)); return true;
+        case "clearOnReload": target.setClearOnReload(property(camelContext, boolean.class, value)); return true;
         case "enableexchangeeventnotifier":
-        case "EnableExchangeEventNotifier": target.setEnableExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
+        case "enableExchangeEventNotifier": target.setEnableExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "enablemessagehistory":
-        case "EnableMessageHistory": target.setEnableMessageHistory(property(camelContext, boolean.class, value)); return true;
+        case "enableMessageHistory": target.setEnableMessageHistory(property(camelContext, boolean.class, value)); return true;
         case "enablerouteeventnotifier":
-        case "EnableRouteEventNotifier": target.setEnableRouteEventNotifier(property(camelContext, boolean.class, value)); return true;
+        case "enableRouteEventNotifier": target.setEnableRouteEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "enableroutepolicy":
-        case "EnableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
-        case "enabled":
-        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "enableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
+        case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "namingstrategy":
-        case "NamingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "routepolicylevel":
-        case "RoutePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "routePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "textformatversion":
-        case "TextFormatVersion": target.setTextFormatVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "textFormatVersion": target.setTextFormatVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -48,26 +46,24 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "binders":
-        case "Binders": return java.lang.String.class;
+        case "binders": return java.lang.String.class;
         case "clearonreload":
-        case "ClearOnReload": return boolean.class;
+        case "clearOnReload": return boolean.class;
         case "enableexchangeeventnotifier":
-        case "EnableExchangeEventNotifier": return boolean.class;
+        case "enableExchangeEventNotifier": return boolean.class;
         case "enablemessagehistory":
-        case "EnableMessageHistory": return boolean.class;
+        case "enableMessageHistory": return boolean.class;
         case "enablerouteeventnotifier":
-        case "EnableRouteEventNotifier": return boolean.class;
+        case "enableRouteEventNotifier": return boolean.class;
         case "enableroutepolicy":
-        case "EnableRoutePolicy": return boolean.class;
-        case "enabled":
-        case "Enabled": return boolean.class;
+        case "enableRoutePolicy": return boolean.class;
+        case "enabled": return boolean.class;
         case "namingstrategy":
-        case "NamingStrategy": return java.lang.String.class;
+        case "namingStrategy": return java.lang.String.class;
         case "routepolicylevel":
-        case "RoutePolicyLevel": return java.lang.String.class;
+        case "routePolicyLevel": return java.lang.String.class;
         case "textformatversion":
-        case "TextFormatVersion": return java.lang.String.class;
+        case "textFormatVersion": return java.lang.String.class;
         default: return null;
         }
     }
@@ -76,26 +72,24 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "binders":
-        case "Binders": return target.getBinders();
+        case "binders": return target.getBinders();
         case "clearonreload":
-        case "ClearOnReload": return target.isClearOnReload();
+        case "clearOnReload": return target.isClearOnReload();
         case "enableexchangeeventnotifier":
-        case "EnableExchangeEventNotifier": return target.isEnableExchangeEventNotifier();
+        case "enableExchangeEventNotifier": return target.isEnableExchangeEventNotifier();
         case "enablemessagehistory":
-        case "EnableMessageHistory": return target.isEnableMessageHistory();
+        case "enableMessageHistory": return target.isEnableMessageHistory();
         case "enablerouteeventnotifier":
-        case "EnableRouteEventNotifier": return target.isEnableRouteEventNotifier();
+        case "enableRouteEventNotifier": return target.isEnableRouteEventNotifier();
         case "enableroutepolicy":
-        case "EnableRoutePolicy": return target.isEnableRoutePolicy();
-        case "enabled":
-        case "Enabled": return target.isEnabled();
+        case "enableRoutePolicy": return target.isEnableRoutePolicy();
+        case "enabled": return target.isEnabled();
         case "namingstrategy":
-        case "NamingStrategy": return target.getNamingStrategy();
+        case "namingStrategy": return target.getNamingStrategy();
         case "routepolicylevel":
-        case "RoutePolicyLevel": return target.getRoutePolicyLevel();
+        case "routePolicyLevel": return target.getRoutePolicyLevel();
         case "textformatversion":
-        case "TextFormatVersion": return target.getTextFormatVersion();
+        case "textFormatVersion": return target.getTextFormatVersion();
         default: return null;
         }
     }

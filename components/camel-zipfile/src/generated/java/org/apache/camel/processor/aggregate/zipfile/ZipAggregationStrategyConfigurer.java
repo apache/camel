@@ -22,17 +22,17 @@ public class ZipAggregationStrategyConfigurer extends org.apache.camel.support.c
         org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy target = (org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "fileprefix":
-        case "FilePrefix": target.setFilePrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "filePrefix": target.setFilePrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "filesuffix":
-        case "FileSuffix": target.setFileSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "fileSuffix": target.setFileSuffix(property(camelContext, java.lang.String.class, value)); return true;
         case "parentdir":
-        case "ParentDir": target.setParentDir(property(camelContext, java.io.File.class, value)); return true;
+        case "parentDir": target.setParentDir(property(camelContext, java.io.File.class, value)); return true;
         case "preservefolderstructure":
-        case "PreserveFolderStructure": target.setPreserveFolderStructure(property(camelContext, boolean.class, value)); return true;
+        case "preserveFolderStructure": target.setPreserveFolderStructure(property(camelContext, boolean.class, value)); return true;
         case "usefilenameheader":
-        case "UseFilenameHeader": target.setUseFilenameHeader(property(camelContext, boolean.class, value)); return true;
+        case "useFilenameHeader": target.setUseFilenameHeader(property(camelContext, boolean.class, value)); return true;
         case "usetempfile":
-        case "UseTempFile": target.setUseTempFile(property(camelContext, boolean.class, value)); return true;
+        case "useTempFile": target.setUseTempFile(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -41,17 +41,17 @@ public class ZipAggregationStrategyConfigurer extends org.apache.camel.support.c
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "fileprefix":
-        case "FilePrefix": return java.lang.String.class;
+        case "filePrefix": return java.lang.String.class;
         case "filesuffix":
-        case "FileSuffix": return java.lang.String.class;
+        case "fileSuffix": return java.lang.String.class;
         case "parentdir":
-        case "ParentDir": return java.io.File.class;
+        case "parentDir": return java.io.File.class;
         case "preservefolderstructure":
-        case "PreserveFolderStructure": return boolean.class;
+        case "preserveFolderStructure": return boolean.class;
         case "usefilenameheader":
-        case "UseFilenameHeader": return boolean.class;
+        case "useFilenameHeader": return boolean.class;
         case "usetempfile":
-        case "UseTempFile": return boolean.class;
+        case "useTempFile": return boolean.class;
         default: return null;
         }
     }
@@ -61,17 +61,17 @@ public class ZipAggregationStrategyConfigurer extends org.apache.camel.support.c
         org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy target = (org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "fileprefix":
-        case "FilePrefix": return target.getFilePrefix();
+        case "filePrefix": return target.getFilePrefix();
         case "filesuffix":
-        case "FileSuffix": return target.getFileSuffix();
+        case "fileSuffix": return target.getFileSuffix();
         case "parentdir":
-        case "ParentDir": return target.getParentDir();
+        case "parentDir": return target.getParentDir();
         case "preservefolderstructure":
-        case "PreserveFolderStructure": return target.isPreserveFolderStructure();
+        case "preserveFolderStructure": return target.isPreserveFolderStructure();
         case "usefilenameheader":
-        case "UseFilenameHeader": return target.isUseFilenameHeader();
+        case "useFilenameHeader": return target.isUseFilenameHeader();
         case "usetempfile":
-        case "UseTempFile": return target.isUseTempFile();
+        case "useTempFile": return target.isUseTempFile();
         default: return null;
         }
     }

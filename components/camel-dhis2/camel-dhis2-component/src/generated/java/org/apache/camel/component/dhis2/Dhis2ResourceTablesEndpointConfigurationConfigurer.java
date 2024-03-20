@@ -40,29 +40,24 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
         org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration target = (org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.dhis2.internal.Dhis2ApiName.class, value)); return true;
-        case "async":
-        case "Async": target.setAsync(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.dhis2.internal.Dhis2ApiName.class, value)); return true;
+        case "async": target.setAsync(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "baseapiurl":
-        case "BaseApiUrl": target.setBaseApiUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "client":
-        case "Client": target.setClient(property(camelContext, org.hisp.dhis.integration.sdk.api.Dhis2Client.class, value)); return true;
-        case "interval":
-        case "Interval": target.setInterval(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "baseApiUrl": target.setBaseApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "client": target.setClient(property(camelContext, org.hisp.dhis.integration.sdk.api.Dhis2Client.class, value)); return true;
+        case "interval": target.setInterval(property(camelContext, java.lang.Integer.class, value)); return true;
         case "lastyears":
-        case "LastYears": target.setLastYears(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "lastYears": target.setLastYears(property(camelContext, java.lang.Integer.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
-        case "password":
-        case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "personalaccesstoken":
-        case "PersonalAccessToken": target.setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "personalAccessToken": target.setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "skipaggregate":
-        case "SkipAggregate": target.setSkipAggregate(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "skipAggregate": target.setSkipAggregate(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "skipevents":
-        case "SkipEvents": target.setSkipEvents(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "username":
-        case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipEvents": target.setSkipEvents(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -76,29 +71,24 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.dhis2.internal.Dhis2ApiName.class;
-        case "async":
-        case "Async": return java.lang.Boolean.class;
+        case "apiName": return org.apache.camel.component.dhis2.internal.Dhis2ApiName.class;
+        case "async": return java.lang.Boolean.class;
         case "baseapiurl":
-        case "BaseApiUrl": return java.lang.String.class;
-        case "client":
-        case "Client": return org.hisp.dhis.integration.sdk.api.Dhis2Client.class;
-        case "interval":
-        case "Interval": return java.lang.Integer.class;
+        case "baseApiUrl": return java.lang.String.class;
+        case "client": return org.hisp.dhis.integration.sdk.api.Dhis2Client.class;
+        case "interval": return java.lang.Integer.class;
         case "lastyears":
-        case "LastYears": return java.lang.Integer.class;
+        case "lastYears": return java.lang.Integer.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
-        case "password":
-        case "Password": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
+        case "password": return java.lang.String.class;
         case "personalaccesstoken":
-        case "PersonalAccessToken": return java.lang.String.class;
+        case "personalAccessToken": return java.lang.String.class;
         case "skipaggregate":
-        case "SkipAggregate": return java.lang.Boolean.class;
+        case "skipAggregate": return java.lang.Boolean.class;
         case "skipevents":
-        case "SkipEvents": return java.lang.Boolean.class;
-        case "username":
-        case "Username": return java.lang.String.class;
+        case "skipEvents": return java.lang.Boolean.class;
+        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -108,29 +98,24 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
         org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration target = (org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
-        case "async":
-        case "Async": return target.getAsync();
+        case "apiName": return target.getApiName();
+        case "async": return target.getAsync();
         case "baseapiurl":
-        case "BaseApiUrl": return target.getBaseApiUrl();
-        case "client":
-        case "Client": return target.getClient();
-        case "interval":
-        case "Interval": return target.getInterval();
+        case "baseApiUrl": return target.getBaseApiUrl();
+        case "client": return target.getClient();
+        case "interval": return target.getInterval();
         case "lastyears":
-        case "LastYears": return target.getLastYears();
+        case "lastYears": return target.getLastYears();
         case "methodname":
-        case "MethodName": return target.getMethodName();
-        case "password":
-        case "Password": return target.getPassword();
+        case "methodName": return target.getMethodName();
+        case "password": return target.getPassword();
         case "personalaccesstoken":
-        case "PersonalAccessToken": return target.getPersonalAccessToken();
+        case "personalAccessToken": return target.getPersonalAccessToken();
         case "skipaggregate":
-        case "SkipAggregate": return target.getSkipAggregate();
+        case "skipAggregate": return target.getSkipAggregate();
         case "skipevents":
-        case "SkipEvents": return target.getSkipEvents();
-        case "username":
-        case "Username": return target.getUsername();
+        case "skipEvents": return target.getSkipEvents();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

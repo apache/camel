@@ -22,13 +22,13 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
         org.apache.camel.support.processor.idempotent.FileIdempotentRepository target = (org.apache.camel.support.processor.idempotent.FileIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachesize":
-        case "CacheSize": target.setCacheSize(property(camelContext, int.class, value)); return true;
+        case "cacheSize": target.setCacheSize(property(camelContext, int.class, value)); return true;
         case "dropoldestfilestore":
-        case "DropOldestFileStore": target.setDropOldestFileStore(property(camelContext, long.class, value)); return true;
+        case "dropOldestFileStore": target.setDropOldestFileStore(property(camelContext, long.class, value)); return true;
         case "filestore":
-        case "FileStore": target.setFileStore(property(camelContext, java.io.File.class, value)); return true;
+        case "fileStore": target.setFileStore(property(camelContext, java.io.File.class, value)); return true;
         case "maxfilestoresize":
-        case "MaxFileStoreSize": target.setMaxFileStoreSize(property(camelContext, long.class, value)); return true;
+        case "maxFileStoreSize": target.setMaxFileStoreSize(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }
@@ -37,13 +37,13 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachesize":
-        case "CacheSize": return int.class;
+        case "cacheSize": return int.class;
         case "dropoldestfilestore":
-        case "DropOldestFileStore": return long.class;
+        case "dropOldestFileStore": return long.class;
         case "filestore":
-        case "FileStore": return java.io.File.class;
+        case "fileStore": return java.io.File.class;
         case "maxfilestoresize":
-        case "MaxFileStoreSize": return long.class;
+        case "maxFileStoreSize": return long.class;
         default: return null;
         }
     }
@@ -53,13 +53,13 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
         org.apache.camel.support.processor.idempotent.FileIdempotentRepository target = (org.apache.camel.support.processor.idempotent.FileIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachesize":
-        case "CacheSize": return target.getCacheSize();
+        case "cacheSize": return target.getCacheSize();
         case "dropoldestfilestore":
-        case "DropOldestFileStore": return target.getDropOldestFileStore();
+        case "dropOldestFileStore": return target.getDropOldestFileStore();
         case "filestore":
-        case "FileStore": return target.getFileStore();
+        case "fileStore": return target.getFileStore();
         case "maxfilestoresize":
-        case "MaxFileStoreSize": return target.getMaxFileStoreSize();
+        case "maxFileStoreSize": return target.getMaxFileStoreSize();
         default: return null;
         }
     }

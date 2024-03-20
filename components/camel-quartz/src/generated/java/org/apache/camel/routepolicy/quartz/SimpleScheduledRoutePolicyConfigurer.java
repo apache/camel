@@ -22,23 +22,23 @@ public class SimpleScheduledRoutePolicyConfigurer extends org.apache.camel.suppo
         org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy target = (org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "routeresumerepeatcount":
-        case "RouteResumeRepeatCount": target.setRouteResumeRepeatCount(property(camelContext, int.class, value)); return true;
+        case "routeResumeRepeatCount": target.setRouteResumeRepeatCount(property(camelContext, int.class, value)); return true;
         case "routeresumerepeatinterval":
-        case "RouteResumeRepeatInterval": target.setRouteResumeRepeatInterval(property(camelContext, long.class, value)); return true;
+        case "routeResumeRepeatInterval": target.setRouteResumeRepeatInterval(property(camelContext, long.class, value)); return true;
         case "routestartrepeatcount":
-        case "RouteStartRepeatCount": target.setRouteStartRepeatCount(property(camelContext, int.class, value)); return true;
+        case "routeStartRepeatCount": target.setRouteStartRepeatCount(property(camelContext, int.class, value)); return true;
         case "routestartrepeatinterval":
-        case "RouteStartRepeatInterval": target.setRouteStartRepeatInterval(property(camelContext, long.class, value)); return true;
+        case "routeStartRepeatInterval": target.setRouteStartRepeatInterval(property(camelContext, long.class, value)); return true;
         case "routestopgraceperiod":
-        case "RouteStopGracePeriod": target.setRouteStopGracePeriod(property(camelContext, int.class, value)); return true;
+        case "routeStopGracePeriod": target.setRouteStopGracePeriod(property(camelContext, int.class, value)); return true;
         case "routestoprepeatcount":
-        case "RouteStopRepeatCount": target.setRouteStopRepeatCount(property(camelContext, int.class, value)); return true;
+        case "routeStopRepeatCount": target.setRouteStopRepeatCount(property(camelContext, int.class, value)); return true;
         case "routestoprepeatinterval":
-        case "RouteStopRepeatInterval": target.setRouteStopRepeatInterval(property(camelContext, long.class, value)); return true;
+        case "routeStopRepeatInterval": target.setRouteStopRepeatInterval(property(camelContext, long.class, value)); return true;
         case "routesuspendrepeatcount":
-        case "RouteSuspendRepeatCount": target.setRouteSuspendRepeatCount(property(camelContext, int.class, value)); return true;
+        case "routeSuspendRepeatCount": target.setRouteSuspendRepeatCount(property(camelContext, int.class, value)); return true;
         case "routesuspendrepeatinterval":
-        case "RouteSuspendRepeatInterval": target.setRouteSuspendRepeatInterval(property(camelContext, long.class, value)); return true;
+        case "routeSuspendRepeatInterval": target.setRouteSuspendRepeatInterval(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }
@@ -47,23 +47,23 @@ public class SimpleScheduledRoutePolicyConfigurer extends org.apache.camel.suppo
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "routeresumerepeatcount":
-        case "RouteResumeRepeatCount": return int.class;
+        case "routeResumeRepeatCount": return int.class;
         case "routeresumerepeatinterval":
-        case "RouteResumeRepeatInterval": return long.class;
+        case "routeResumeRepeatInterval": return long.class;
         case "routestartrepeatcount":
-        case "RouteStartRepeatCount": return int.class;
+        case "routeStartRepeatCount": return int.class;
         case "routestartrepeatinterval":
-        case "RouteStartRepeatInterval": return long.class;
+        case "routeStartRepeatInterval": return long.class;
         case "routestopgraceperiod":
-        case "RouteStopGracePeriod": return int.class;
+        case "routeStopGracePeriod": return int.class;
         case "routestoprepeatcount":
-        case "RouteStopRepeatCount": return int.class;
+        case "routeStopRepeatCount": return int.class;
         case "routestoprepeatinterval":
-        case "RouteStopRepeatInterval": return long.class;
+        case "routeStopRepeatInterval": return long.class;
         case "routesuspendrepeatcount":
-        case "RouteSuspendRepeatCount": return int.class;
+        case "routeSuspendRepeatCount": return int.class;
         case "routesuspendrepeatinterval":
-        case "RouteSuspendRepeatInterval": return long.class;
+        case "routeSuspendRepeatInterval": return long.class;
         default: return null;
         }
     }
@@ -73,23 +73,23 @@ public class SimpleScheduledRoutePolicyConfigurer extends org.apache.camel.suppo
         org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy target = (org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "routeresumerepeatcount":
-        case "RouteResumeRepeatCount": return target.getRouteResumeRepeatCount();
+        case "routeResumeRepeatCount": return target.getRouteResumeRepeatCount();
         case "routeresumerepeatinterval":
-        case "RouteResumeRepeatInterval": return target.getRouteResumeRepeatInterval();
+        case "routeResumeRepeatInterval": return target.getRouteResumeRepeatInterval();
         case "routestartrepeatcount":
-        case "RouteStartRepeatCount": return target.getRouteStartRepeatCount();
+        case "routeStartRepeatCount": return target.getRouteStartRepeatCount();
         case "routestartrepeatinterval":
-        case "RouteStartRepeatInterval": return target.getRouteStartRepeatInterval();
+        case "routeStartRepeatInterval": return target.getRouteStartRepeatInterval();
         case "routestopgraceperiod":
-        case "RouteStopGracePeriod": return target.getRouteStopGracePeriod();
+        case "routeStopGracePeriod": return target.getRouteStopGracePeriod();
         case "routestoprepeatcount":
-        case "RouteStopRepeatCount": return target.getRouteStopRepeatCount();
+        case "routeStopRepeatCount": return target.getRouteStopRepeatCount();
         case "routestoprepeatinterval":
-        case "RouteStopRepeatInterval": return target.getRouteStopRepeatInterval();
+        case "routeStopRepeatInterval": return target.getRouteStopRepeatInterval();
         case "routesuspendrepeatcount":
-        case "RouteSuspendRepeatCount": return target.getRouteSuspendRepeatCount();
+        case "routeSuspendRepeatCount": return target.getRouteSuspendRepeatCount();
         case "routesuspendrepeatinterval":
-        case "RouteSuspendRepeatInterval": return target.getRouteSuspendRepeatInterval();
+        case "routeSuspendRepeatInterval": return target.getRouteSuspendRepeatInterval();
         default: return null;
         }
     }

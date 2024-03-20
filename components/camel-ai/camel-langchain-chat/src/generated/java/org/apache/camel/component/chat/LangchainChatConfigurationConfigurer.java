@@ -22,9 +22,9 @@ public class LangchainChatConfigurationConfigurer extends org.apache.camel.suppo
         org.apache.camel.component.chat.LangchainChatConfiguration target = (org.apache.camel.component.chat.LangchainChatConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "chatmodel":
-        case "ChatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
+        case "chatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
         case "chatoperation":
-        case "ChatOperation": target.setChatOperation(property(camelContext, org.apache.camel.component.chat.LangchainChatOperations.class, value)); return true;
+        case "chatOperation": target.setChatOperation(property(camelContext, org.apache.camel.component.chat.LangchainChatOperations.class, value)); return true;
         default: return false;
         }
     }
@@ -33,9 +33,9 @@ public class LangchainChatConfigurationConfigurer extends org.apache.camel.suppo
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "chatmodel":
-        case "ChatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
+        case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
         case "chatoperation":
-        case "ChatOperation": return org.apache.camel.component.chat.LangchainChatOperations.class;
+        case "chatOperation": return org.apache.camel.component.chat.LangchainChatOperations.class;
         default: return null;
         }
     }
@@ -45,9 +45,9 @@ public class LangchainChatConfigurationConfigurer extends org.apache.camel.suppo
         org.apache.camel.component.chat.LangchainChatConfiguration target = (org.apache.camel.component.chat.LangchainChatConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "chatmodel":
-        case "ChatModel": return target.getChatModel();
+        case "chatModel": return target.getChatModel();
         case "chatoperation":
-        case "ChatOperation": return target.getChatOperation();
+        case "chatOperation": return target.getChatOperation();
         default: return null;
         }
     }

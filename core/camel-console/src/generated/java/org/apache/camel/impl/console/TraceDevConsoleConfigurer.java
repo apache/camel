@@ -22,9 +22,8 @@ public class TraceDevConsoleConfigurer extends org.apache.camel.support.componen
         org.apache.camel.impl.console.TraceDevConsole target = (org.apache.camel.impl.console.TraceDevConsole) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
-        case "capacity":
-        case "Capacity": target.setCapacity(property(camelContext, int.class, value)); return true;
+        case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "capacity": target.setCapacity(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -33,9 +32,8 @@ public class TraceDevConsoleConfigurer extends org.apache.camel.support.componen
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return org.apache.camel.CamelContext.class;
-        case "capacity":
-        case "Capacity": return int.class;
+        case "camelContext": return org.apache.camel.CamelContext.class;
+        case "capacity": return int.class;
         default: return null;
         }
     }
@@ -45,9 +43,8 @@ public class TraceDevConsoleConfigurer extends org.apache.camel.support.componen
         org.apache.camel.impl.console.TraceDevConsole target = (org.apache.camel.impl.console.TraceDevConsole) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return target.getCamelContext();
-        case "capacity":
-        case "Capacity": return target.getCapacity();
+        case "camelContext": return target.getCamelContext();
+        case "capacity": return target.getCapacity();
         default: return null;
         }
     }

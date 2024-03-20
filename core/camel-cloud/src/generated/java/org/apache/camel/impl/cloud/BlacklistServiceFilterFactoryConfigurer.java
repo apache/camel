@@ -21,8 +21,7 @@ public class BlacklistServiceFilterFactoryConfigurer extends org.apache.camel.su
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.impl.cloud.BlacklistServiceFilterFactory target = (org.apache.camel.impl.cloud.BlacklistServiceFilterFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "servers":
-        case "Servers": target.setServers(property(camelContext, java.util.List.class, value)); return true;
+        case "servers": target.setServers(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }
@@ -30,8 +29,7 @@ public class BlacklistServiceFilterFactoryConfigurer extends org.apache.camel.su
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "servers":
-        case "Servers": return java.util.List.class;
+        case "servers": return java.util.List.class;
         default: return null;
         }
     }
@@ -40,8 +38,7 @@ public class BlacklistServiceFilterFactoryConfigurer extends org.apache.camel.su
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.impl.cloud.BlacklistServiceFilterFactory target = (org.apache.camel.impl.cloud.BlacklistServiceFilterFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "servers":
-        case "Servers": return target.getServers();
+        case "servers": return target.getServers();
         default: return null;
         }
     }
@@ -49,8 +46,7 @@ public class BlacklistServiceFilterFactoryConfigurer extends org.apache.camel.su
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "servers":
-        case "Servers": return java.lang.String.class;
+        case "servers": return java.lang.String.class;
         default: return null;
         }
     }

@@ -22,21 +22,19 @@ public class Etcd3AggregationRepositoryConfigurer extends org.apache.camel.suppo
         org.apache.camel.component.etcd3.processor.aggregate.Etcd3AggregationRepository target = (org.apache.camel.component.etcd3.processor.aggregate.Etcd3AggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "deadletteruri":
-        case "DeadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "endpoint":
-        case "Endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
-        case "optimistic":
-        case "Optimistic": target.setOptimistic(property(camelContext, boolean.class, value)); return true;
+        case "maximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
+        case "optimistic": target.setOptimistic(property(camelContext, boolean.class, value)); return true;
         case "prefixname":
-        case "PrefixName": target.setPrefixName(property(camelContext, java.lang.String.class, value)); return true;
+        case "prefixName": target.setPrefixName(property(camelContext, java.lang.String.class, value)); return true;
         case "recoveryinterval":
-        case "RecoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
         case "userecovery":
-        case "UseRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
+        case "useRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -45,21 +43,19 @@ public class Etcd3AggregationRepositoryConfigurer extends org.apache.camel.suppo
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return boolean.class;
+        case "allowSerializedHeaders": return boolean.class;
         case "deadletteruri":
-        case "DeadLetterUri": return java.lang.String.class;
-        case "endpoint":
-        case "Endpoint": return java.lang.String.class;
+        case "deadLetterUri": return java.lang.String.class;
+        case "endpoint": return java.lang.String.class;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return int.class;
-        case "optimistic":
-        case "Optimistic": return boolean.class;
+        case "maximumRedeliveries": return int.class;
+        case "optimistic": return boolean.class;
         case "prefixname":
-        case "PrefixName": return java.lang.String.class;
+        case "prefixName": return java.lang.String.class;
         case "recoveryinterval":
-        case "RecoveryInterval": return long.class;
+        case "recoveryInterval": return long.class;
         case "userecovery":
-        case "UseRecovery": return boolean.class;
+        case "useRecovery": return boolean.class;
         default: return null;
         }
     }
@@ -69,21 +65,19 @@ public class Etcd3AggregationRepositoryConfigurer extends org.apache.camel.suppo
         org.apache.camel.component.etcd3.processor.aggregate.Etcd3AggregationRepository target = (org.apache.camel.component.etcd3.processor.aggregate.Etcd3AggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return target.isAllowSerializedHeaders();
+        case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "deadletteruri":
-        case "DeadLetterUri": return target.getDeadLetterUri();
-        case "endpoint":
-        case "Endpoint": return target.getEndpoint();
+        case "deadLetterUri": return target.getDeadLetterUri();
+        case "endpoint": return target.getEndpoint();
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return target.getMaximumRedeliveries();
-        case "optimistic":
-        case "Optimistic": return target.isOptimistic();
+        case "maximumRedeliveries": return target.getMaximumRedeliveries();
+        case "optimistic": return target.isOptimistic();
         case "prefixname":
-        case "PrefixName": return target.getPrefixName();
+        case "prefixName": return target.getPrefixName();
         case "recoveryinterval":
-        case "RecoveryInterval": return target.getRecoveryInterval();
+        case "recoveryInterval": return target.getRecoveryInterval();
         case "userecovery":
-        case "UseRecovery": return target.isUseRecovery();
+        case "useRecovery": return target.isUseRecovery();
         default: return null;
         }
     }

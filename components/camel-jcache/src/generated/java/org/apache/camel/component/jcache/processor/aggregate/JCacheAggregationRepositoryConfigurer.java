@@ -22,13 +22,11 @@ public class JCacheAggregationRepositoryConfigurer extends org.apache.camel.supp
         org.apache.camel.component.jcache.processor.aggregate.JCacheAggregationRepository target = (org.apache.camel.component.jcache.processor.aggregate.JCacheAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "cachename":
-        case "CacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration":
-        case "Configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jcache.JCacheConfiguration.class, value)); return true;
-        case "optimistic":
-        case "Optimistic": target.setOptimistic(property(camelContext, boolean.class, value)); return true;
+        case "cacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jcache.JCacheConfiguration.class, value)); return true;
+        case "optimistic": target.setOptimistic(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -37,13 +35,11 @@ public class JCacheAggregationRepositoryConfigurer extends org.apache.camel.supp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return boolean.class;
+        case "allowSerializedHeaders": return boolean.class;
         case "cachename":
-        case "CacheName": return java.lang.String.class;
-        case "configuration":
-        case "Configuration": return org.apache.camel.component.jcache.JCacheConfiguration.class;
-        case "optimistic":
-        case "Optimistic": return boolean.class;
+        case "cacheName": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.jcache.JCacheConfiguration.class;
+        case "optimistic": return boolean.class;
         default: return null;
         }
     }
@@ -53,13 +49,11 @@ public class JCacheAggregationRepositoryConfigurer extends org.apache.camel.supp
         org.apache.camel.component.jcache.processor.aggregate.JCacheAggregationRepository target = (org.apache.camel.component.jcache.processor.aggregate.JCacheAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return target.isAllowSerializedHeaders();
+        case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "cachename":
-        case "CacheName": return target.getCacheName();
-        case "configuration":
-        case "Configuration": return target.getConfiguration();
-        case "optimistic":
-        case "Optimistic": return target.isOptimistic();
+        case "cacheName": return target.getCacheName();
+        case "configuration": return target.getConfiguration();
+        case "optimistic": return target.isOptimistic();
         default: return null;
         }
     }

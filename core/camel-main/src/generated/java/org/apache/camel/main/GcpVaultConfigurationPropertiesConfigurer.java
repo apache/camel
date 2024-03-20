@@ -22,27 +22,26 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         org.apache.camel.main.GcpVaultConfigurationProperties target = (org.apache.camel.main.GcpVaultConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
-        case "AwsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
+        case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
-        case "AzureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
         case "gcpvaultconfiguration":
-        case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
+        case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
-        case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
         case "projectid":
-        case "ProjectId": target.setProjectId(property(camelContext, java.lang.String.class, value)); return true;
+        case "projectId": target.setProjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshenabled":
-        case "RefreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
+        case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
         case "refreshperiod":
-        case "RefreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
-        case "secrets":
-        case "Secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
+        case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
-        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptionname":
-        case "SubscriptionName": target.setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscriptionName": target.setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultinstance":
-        case "UseDefaultInstance": target.setUseDefaultInstance(property(camelContext, boolean.class, value)); return true;
+        case "useDefaultInstance": target.setUseDefaultInstance(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -51,27 +50,26 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
-        case "AwsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
+        case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
-        case "AzureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
         case "gcpvaultconfiguration":
-        case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
+        case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
-        case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
         case "projectid":
-        case "ProjectId": return java.lang.String.class;
+        case "projectId": return java.lang.String.class;
         case "refreshenabled":
-        case "RefreshEnabled": return boolean.class;
+        case "refreshEnabled": return boolean.class;
         case "refreshperiod":
-        case "RefreshPeriod": return long.class;
-        case "secrets":
-        case "Secrets": return java.lang.String.class;
+        case "refreshPeriod": return long.class;
+        case "secrets": return java.lang.String.class;
         case "serviceaccountkey":
-        case "ServiceAccountKey": return java.lang.String.class;
+        case "serviceAccountKey": return java.lang.String.class;
         case "subscriptionname":
-        case "SubscriptionName": return java.lang.String.class;
+        case "subscriptionName": return java.lang.String.class;
         case "usedefaultinstance":
-        case "UseDefaultInstance": return boolean.class;
+        case "useDefaultInstance": return boolean.class;
         default: return null;
         }
     }
@@ -81,27 +79,26 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         org.apache.camel.main.GcpVaultConfigurationProperties target = (org.apache.camel.main.GcpVaultConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
-        case "AwsVaultConfiguration": return target.getAwsVaultConfiguration();
+        case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
-        case "AzureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
         case "gcpvaultconfiguration":
-        case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
+        case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
-        case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
         case "projectid":
-        case "ProjectId": return target.getProjectId();
+        case "projectId": return target.getProjectId();
         case "refreshenabled":
-        case "RefreshEnabled": return target.isRefreshEnabled();
+        case "refreshEnabled": return target.isRefreshEnabled();
         case "refreshperiod":
-        case "RefreshPeriod": return target.getRefreshPeriod();
-        case "secrets":
-        case "Secrets": return target.getSecrets();
+        case "refreshPeriod": return target.getRefreshPeriod();
+        case "secrets": return target.getSecrets();
         case "serviceaccountkey":
-        case "ServiceAccountKey": return target.getServiceAccountKey();
+        case "serviceAccountKey": return target.getServiceAccountKey();
         case "subscriptionname":
-        case "SubscriptionName": return target.getSubscriptionName();
+        case "subscriptionName": return target.getSubscriptionName();
         case "usedefaultinstance":
-        case "UseDefaultInstance": return target.isUseDefaultInstance();
+        case "useDefaultInstance": return target.isUseDefaultInstance();
         default: return null;
         }
     }

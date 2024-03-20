@@ -22,19 +22,17 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         org.apache.camel.opentelemetry.OpenTelemetryTracer target = (org.apache.camel.opentelemetry.OpenTelemetryTracer) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "contextpropagators":
-        case "ContextPropagators": target.setContextPropagators(property(camelContext, io.opentelemetry.context.propagation.ContextPropagators.class, value)); return true;
-        case "encoding":
-        case "Encoding": target.setEncoding(property(camelContext, boolean.class, value)); return true;
+        case "contextPropagators": target.setContextPropagators(property(camelContext, io.opentelemetry.context.propagation.ContextPropagators.class, value)); return true;
+        case "encoding": target.setEncoding(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
-        case "ExcludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
+        case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "instrumentationname":
-        case "InstrumentationName": target.setInstrumentationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "tracer":
-        case "Tracer": target.setTracer(property(camelContext, io.opentelemetry.api.trace.Tracer.class, value)); return true;
+        case "instrumentationName": target.setInstrumentationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tracer": target.setTracer(property(camelContext, io.opentelemetry.api.trace.Tracer.class, value)); return true;
         case "tracingstrategy":
-        case "TracingStrategy": target.setTracingStrategy(property(camelContext, org.apache.camel.spi.InterceptStrategy.class, value)); return true;
+        case "tracingStrategy": target.setTracingStrategy(property(camelContext, org.apache.camel.spi.InterceptStrategy.class, value)); return true;
         default: return false;
         }
     }
@@ -43,19 +41,17 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "camelContext": return org.apache.camel.CamelContext.class;
         case "contextpropagators":
-        case "ContextPropagators": return io.opentelemetry.context.propagation.ContextPropagators.class;
-        case "encoding":
-        case "Encoding": return boolean.class;
+        case "contextPropagators": return io.opentelemetry.context.propagation.ContextPropagators.class;
+        case "encoding": return boolean.class;
         case "excludepatterns":
-        case "ExcludePatterns": return java.lang.String.class;
+        case "excludePatterns": return java.lang.String.class;
         case "instrumentationname":
-        case "InstrumentationName": return java.lang.String.class;
-        case "tracer":
-        case "Tracer": return io.opentelemetry.api.trace.Tracer.class;
+        case "instrumentationName": return java.lang.String.class;
+        case "tracer": return io.opentelemetry.api.trace.Tracer.class;
         case "tracingstrategy":
-        case "TracingStrategy": return org.apache.camel.spi.InterceptStrategy.class;
+        case "tracingStrategy": return org.apache.camel.spi.InterceptStrategy.class;
         default: return null;
         }
     }
@@ -65,19 +61,17 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         org.apache.camel.opentelemetry.OpenTelemetryTracer target = (org.apache.camel.opentelemetry.OpenTelemetryTracer) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return target.getCamelContext();
+        case "camelContext": return target.getCamelContext();
         case "contextpropagators":
-        case "ContextPropagators": return target.getContextPropagators();
-        case "encoding":
-        case "Encoding": return target.isEncoding();
+        case "contextPropagators": return target.getContextPropagators();
+        case "encoding": return target.isEncoding();
         case "excludepatterns":
-        case "ExcludePatterns": return target.getExcludePatterns();
+        case "excludePatterns": return target.getExcludePatterns();
         case "instrumentationname":
-        case "InstrumentationName": return target.getInstrumentationName();
-        case "tracer":
-        case "Tracer": return target.getTracer();
+        case "instrumentationName": return target.getInstrumentationName();
+        case "tracer": return target.getTracer();
         case "tracingstrategy":
-        case "TracingStrategy": return target.getTracingStrategy();
+        case "tracingStrategy": return target.getTracingStrategy();
         default: return null;
         }
     }

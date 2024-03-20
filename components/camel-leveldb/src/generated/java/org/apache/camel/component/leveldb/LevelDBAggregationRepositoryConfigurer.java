@@ -22,25 +22,23 @@ public class LevelDBAggregationRepositoryConfigurer extends org.apache.camel.sup
         org.apache.camel.component.leveldb.LevelDBAggregationRepository target = (org.apache.camel.component.leveldb.LevelDBAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "deadletteruri":
-        case "DeadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
+        case "maximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
         case "persistentfilename":
-        case "PersistentFileName": target.setPersistentFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "persistentFileName": target.setPersistentFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "recoveryinterval":
-        case "RecoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
         case "repositoryname":
-        case "RepositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
+        case "repositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
         case "returnoldexchange":
-        case "ReturnOldExchange": target.setReturnOldExchange(property(camelContext, boolean.class, value)); return true;
-        case "serializer":
-        case "Serializer": target.setSerializer(property(camelContext, org.apache.camel.component.leveldb.LevelDBSerializer.class, value)); return true;
-        case "sync":
-        case "Sync": target.setSync(property(camelContext, boolean.class, value)); return true;
+        case "returnOldExchange": target.setReturnOldExchange(property(camelContext, boolean.class, value)); return true;
+        case "serializer": target.setSerializer(property(camelContext, org.apache.camel.component.leveldb.LevelDBSerializer.class, value)); return true;
+        case "sync": target.setSync(property(camelContext, boolean.class, value)); return true;
         case "userecovery":
-        case "UseRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
+        case "useRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -49,25 +47,23 @@ public class LevelDBAggregationRepositoryConfigurer extends org.apache.camel.sup
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return boolean.class;
+        case "allowSerializedHeaders": return boolean.class;
         case "deadletteruri":
-        case "DeadLetterUri": return java.lang.String.class;
+        case "deadLetterUri": return java.lang.String.class;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return int.class;
+        case "maximumRedeliveries": return int.class;
         case "persistentfilename":
-        case "PersistentFileName": return java.lang.String.class;
+        case "persistentFileName": return java.lang.String.class;
         case "recoveryinterval":
-        case "RecoveryInterval": return long.class;
+        case "recoveryInterval": return long.class;
         case "repositoryname":
-        case "RepositoryName": return java.lang.String.class;
+        case "repositoryName": return java.lang.String.class;
         case "returnoldexchange":
-        case "ReturnOldExchange": return boolean.class;
-        case "serializer":
-        case "Serializer": return org.apache.camel.component.leveldb.LevelDBSerializer.class;
-        case "sync":
-        case "Sync": return boolean.class;
+        case "returnOldExchange": return boolean.class;
+        case "serializer": return org.apache.camel.component.leveldb.LevelDBSerializer.class;
+        case "sync": return boolean.class;
         case "userecovery":
-        case "UseRecovery": return boolean.class;
+        case "useRecovery": return boolean.class;
         default: return null;
         }
     }
@@ -77,25 +73,23 @@ public class LevelDBAggregationRepositoryConfigurer extends org.apache.camel.sup
         org.apache.camel.component.leveldb.LevelDBAggregationRepository target = (org.apache.camel.component.leveldb.LevelDBAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return target.isAllowSerializedHeaders();
+        case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "deadletteruri":
-        case "DeadLetterUri": return target.getDeadLetterUri();
+        case "deadLetterUri": return target.getDeadLetterUri();
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return target.getMaximumRedeliveries();
+        case "maximumRedeliveries": return target.getMaximumRedeliveries();
         case "persistentfilename":
-        case "PersistentFileName": return target.getPersistentFileName();
+        case "persistentFileName": return target.getPersistentFileName();
         case "recoveryinterval":
-        case "RecoveryInterval": return target.getRecoveryInterval();
+        case "recoveryInterval": return target.getRecoveryInterval();
         case "repositoryname":
-        case "RepositoryName": return target.getRepositoryName();
+        case "repositoryName": return target.getRepositoryName();
         case "returnoldexchange":
-        case "ReturnOldExchange": return target.isReturnOldExchange();
-        case "serializer":
-        case "Serializer": return target.getSerializer();
-        case "sync":
-        case "Sync": return target.isSync();
+        case "returnOldExchange": return target.isReturnOldExchange();
+        case "serializer": return target.getSerializer();
+        case "sync": return target.isSync();
         case "userecovery":
-        case "UseRecovery": return target.isUseRecovery();
+        case "useRecovery": return target.isUseRecovery();
         default: return null;
         }
     }

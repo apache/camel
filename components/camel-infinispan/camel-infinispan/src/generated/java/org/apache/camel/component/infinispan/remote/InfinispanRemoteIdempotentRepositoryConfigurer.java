@@ -22,9 +22,8 @@ public class InfinispanRemoteIdempotentRepositoryConfigurer extends org.apache.c
         org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository target = (org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachecontainer":
-        case "CacheContainer": target.setCacheContainer(property(camelContext, org.infinispan.client.hotrod.RemoteCacheManager.class, value)); return true;
-        case "configuration":
-        case "Configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class, value)); return true;
+        case "cacheContainer": target.setCacheContainer(property(camelContext, org.infinispan.client.hotrod.RemoteCacheManager.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class, value)); return true;
         default: return false;
         }
     }
@@ -33,9 +32,8 @@ public class InfinispanRemoteIdempotentRepositoryConfigurer extends org.apache.c
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachecontainer":
-        case "CacheContainer": return org.infinispan.client.hotrod.RemoteCacheManager.class;
-        case "configuration":
-        case "Configuration": return org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class;
+        case "cacheContainer": return org.infinispan.client.hotrod.RemoteCacheManager.class;
+        case "configuration": return org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class;
         default: return null;
         }
     }
@@ -45,9 +43,8 @@ public class InfinispanRemoteIdempotentRepositoryConfigurer extends org.apache.c
         org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository target = (org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachecontainer":
-        case "CacheContainer": return target.getCacheContainer();
-        case "configuration":
-        case "Configuration": return target.getConfiguration();
+        case "cacheContainer": return target.getCacheContainer();
+        case "configuration": return target.getConfiguration();
         default: return null;
         }
     }

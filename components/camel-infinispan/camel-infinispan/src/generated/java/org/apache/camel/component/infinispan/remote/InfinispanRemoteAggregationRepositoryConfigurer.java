@@ -22,19 +22,18 @@ public class InfinispanRemoteAggregationRepositoryConfigurer extends org.apache.
         org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository target = (org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "cachename":
-        case "CacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration":
-        case "Configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class, value)); return true;
+        case "cacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class, value)); return true;
         case "deadletteruri":
-        case "DeadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
+        case "maximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
         case "recoveryinterval":
-        case "RecoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
         case "userecovery":
-        case "UseRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
+        case "useRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -43,19 +42,18 @@ public class InfinispanRemoteAggregationRepositoryConfigurer extends org.apache.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return boolean.class;
+        case "allowSerializedHeaders": return boolean.class;
         case "cachename":
-        case "CacheName": return java.lang.String.class;
-        case "configuration":
-        case "Configuration": return org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class;
+        case "cacheName": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class;
         case "deadletteruri":
-        case "DeadLetterUri": return java.lang.String.class;
+        case "deadLetterUri": return java.lang.String.class;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return int.class;
+        case "maximumRedeliveries": return int.class;
         case "recoveryinterval":
-        case "RecoveryInterval": return long.class;
+        case "recoveryInterval": return long.class;
         case "userecovery":
-        case "UseRecovery": return boolean.class;
+        case "useRecovery": return boolean.class;
         default: return null;
         }
     }
@@ -65,19 +63,18 @@ public class InfinispanRemoteAggregationRepositoryConfigurer extends org.apache.
         org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository target = (org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return target.isAllowSerializedHeaders();
+        case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "cachename":
-        case "CacheName": return target.getCacheName();
-        case "configuration":
-        case "Configuration": return target.getConfiguration();
+        case "cacheName": return target.getCacheName();
+        case "configuration": return target.getConfiguration();
         case "deadletteruri":
-        case "DeadLetterUri": return target.getDeadLetterUri();
+        case "deadLetterUri": return target.getDeadLetterUri();
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return target.getMaximumRedeliveries();
+        case "maximumRedeliveries": return target.getMaximumRedeliveries();
         case "recoveryinterval":
-        case "RecoveryInterval": return target.getRecoveryInterval();
+        case "recoveryInterval": return target.getRecoveryInterval();
         case "userecovery":
-        case "UseRecovery": return target.isUseRecovery();
+        case "useRecovery": return target.isUseRecovery();
         default: return null;
         }
     }

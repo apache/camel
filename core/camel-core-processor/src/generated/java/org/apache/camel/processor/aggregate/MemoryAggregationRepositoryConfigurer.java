@@ -22,7 +22,7 @@ public class MemoryAggregationRepositoryConfigurer extends org.apache.camel.supp
         org.apache.camel.processor.aggregate.MemoryAggregationRepository target = (org.apache.camel.processor.aggregate.MemoryAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "optimisticlocking":
-        case "OptimisticLocking": target.setOptimisticLocking(property(camelContext, boolean.class, value)); return true;
+        case "optimisticLocking": target.setOptimisticLocking(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +31,7 @@ public class MemoryAggregationRepositoryConfigurer extends org.apache.camel.supp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "optimisticlocking":
-        case "OptimisticLocking": return boolean.class;
+        case "optimisticLocking": return boolean.class;
         default: return null;
         }
     }
@@ -41,7 +41,7 @@ public class MemoryAggregationRepositoryConfigurer extends org.apache.camel.supp
         org.apache.camel.processor.aggregate.MemoryAggregationRepository target = (org.apache.camel.processor.aggregate.MemoryAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "optimisticlocking":
-        case "OptimisticLocking": return target.isOptimisticLocking();
+        case "optimisticLocking": return target.isOptimisticLocking();
         default: return null;
         }
     }

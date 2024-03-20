@@ -43,35 +43,32 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         org.apache.camel.component.google.sheets.SheetsSpreadsheetsEndpointConfiguration target = (org.apache.camel.component.google.sheets.SheetsSpreadsheetsEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName.class, value)); return true;
         case "applicationname":
-        case "ApplicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "batchupdatespreadsheetrequest":
-        case "BatchUpdateSpreadsheetRequest": target.setBatchUpdateSpreadsheetRequest(property(camelContext, com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest.class, value)); return true;
+        case "batchUpdateSpreadsheetRequest": target.setBatchUpdateSpreadsheetRequest(property(camelContext, com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest.class, value)); return true;
         case "clientid":
-        case "ClientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
-        case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "content":
-        case "Content": target.setContent(property(camelContext, com.google.api.services.sheets.v4.model.Spreadsheet.class, value)); return true;
-        case "delegate":
-        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "content": target.setContent(property(camelContext, com.google.api.services.sheets.v4.model.Spreadsheet.class, value)); return true;
+        case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "getspreadsheetbydatafilterrequest":
-        case "GetSpreadsheetByDataFilterRequest": target.setGetSpreadsheetByDataFilterRequest(property(camelContext, com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class, value)); return true;
+        case "getSpreadsheetByDataFilterRequest": target.setGetSpreadsheetByDataFilterRequest(property(camelContext, com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
-        case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes":
-        case "Scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         case "serviceaccountkey":
-        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresult":
-        case "SplitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
+        case "splitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
         case "spreadsheetid":
-        case "SpreadsheetId": target.setSpreadsheetId(property(camelContext, java.lang.String.class, value)); return true;
+        case "spreadsheetId": target.setSpreadsheetId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -85,35 +82,32 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return java.lang.String.class;
+        case "accessToken": return java.lang.String.class;
         case "apiname":
-        case "ApiName": return org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName.class;
+        case "apiName": return org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName.class;
         case "applicationname":
-        case "ApplicationName": return java.lang.String.class;
+        case "applicationName": return java.lang.String.class;
         case "batchupdatespreadsheetrequest":
-        case "BatchUpdateSpreadsheetRequest": return com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest.class;
+        case "batchUpdateSpreadsheetRequest": return com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest.class;
         case "clientid":
-        case "ClientId": return java.lang.String.class;
+        case "clientId": return java.lang.String.class;
         case "clientsecret":
-        case "ClientSecret": return java.lang.String.class;
-        case "content":
-        case "Content": return com.google.api.services.sheets.v4.model.Spreadsheet.class;
-        case "delegate":
-        case "Delegate": return java.lang.String.class;
+        case "clientSecret": return java.lang.String.class;
+        case "content": return com.google.api.services.sheets.v4.model.Spreadsheet.class;
+        case "delegate": return java.lang.String.class;
         case "getspreadsheetbydatafilterrequest":
-        case "GetSpreadsheetByDataFilterRequest": return com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class;
+        case "getSpreadsheetByDataFilterRequest": return com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "refreshtoken":
-        case "RefreshToken": return java.lang.String.class;
-        case "scopes":
-        case "Scopes": return java.util.Collection.class;
+        case "refreshToken": return java.lang.String.class;
+        case "scopes": return java.util.Collection.class;
         case "serviceaccountkey":
-        case "ServiceAccountKey": return java.lang.String.class;
+        case "serviceAccountKey": return java.lang.String.class;
         case "splitresult":
-        case "SplitResult": return boolean.class;
+        case "splitResult": return boolean.class;
         case "spreadsheetid":
-        case "SpreadsheetId": return java.lang.String.class;
+        case "spreadsheetId": return java.lang.String.class;
         default: return null;
         }
     }
@@ -123,35 +117,32 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         org.apache.camel.component.google.sheets.SheetsSpreadsheetsEndpointConfiguration target = (org.apache.camel.component.google.sheets.SheetsSpreadsheetsEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return target.getAccessToken();
+        case "accessToken": return target.getAccessToken();
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "applicationname":
-        case "ApplicationName": return target.getApplicationName();
+        case "applicationName": return target.getApplicationName();
         case "batchupdatespreadsheetrequest":
-        case "BatchUpdateSpreadsheetRequest": return target.getBatchUpdateSpreadsheetRequest();
+        case "batchUpdateSpreadsheetRequest": return target.getBatchUpdateSpreadsheetRequest();
         case "clientid":
-        case "ClientId": return target.getClientId();
+        case "clientId": return target.getClientId();
         case "clientsecret":
-        case "ClientSecret": return target.getClientSecret();
-        case "content":
-        case "Content": return target.getContent();
-        case "delegate":
-        case "Delegate": return target.getDelegate();
+        case "clientSecret": return target.getClientSecret();
+        case "content": return target.getContent();
+        case "delegate": return target.getDelegate();
         case "getspreadsheetbydatafilterrequest":
-        case "GetSpreadsheetByDataFilterRequest": return target.getGetSpreadsheetByDataFilterRequest();
+        case "getSpreadsheetByDataFilterRequest": return target.getGetSpreadsheetByDataFilterRequest();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "refreshtoken":
-        case "RefreshToken": return target.getRefreshToken();
-        case "scopes":
-        case "Scopes": return target.getScopes();
+        case "refreshToken": return target.getRefreshToken();
+        case "scopes": return target.getScopes();
         case "serviceaccountkey":
-        case "ServiceAccountKey": return target.getServiceAccountKey();
+        case "serviceAccountKey": return target.getServiceAccountKey();
         case "splitresult":
-        case "SplitResult": return target.isSplitResult();
+        case "splitResult": return target.isSplitResult();
         case "spreadsheetid":
-        case "SpreadsheetId": return target.getSpreadsheetId();
+        case "spreadsheetId": return target.getSpreadsheetId();
         default: return null;
         }
     }
@@ -159,8 +150,7 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes":
-        case "Scopes": return java.lang.String.class;
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

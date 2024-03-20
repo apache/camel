@@ -22,7 +22,7 @@ public class CombinedServiceDiscoveryFactoryConfigurer extends org.apache.camel.
         org.apache.camel.impl.cloud.CombinedServiceDiscoveryFactory target = (org.apache.camel.impl.cloud.CombinedServiceDiscoveryFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "servicediscoverylist":
-        case "ServiceDiscoveryList": target.setServiceDiscoveryList(property(camelContext, java.util.List.class, value)); return true;
+        case "serviceDiscoveryList": target.setServiceDiscoveryList(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +31,7 @@ public class CombinedServiceDiscoveryFactoryConfigurer extends org.apache.camel.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "servicediscoverylist":
-        case "ServiceDiscoveryList": return java.util.List.class;
+        case "serviceDiscoveryList": return java.util.List.class;
         default: return null;
         }
     }
@@ -41,7 +41,7 @@ public class CombinedServiceDiscoveryFactoryConfigurer extends org.apache.camel.
         org.apache.camel.impl.cloud.CombinedServiceDiscoveryFactory target = (org.apache.camel.impl.cloud.CombinedServiceDiscoveryFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "servicediscoverylist":
-        case "ServiceDiscoveryList": return target.getServiceDiscoveryList();
+        case "serviceDiscoveryList": return target.getServiceDiscoveryList();
         default: return null;
         }
     }
@@ -50,7 +50,7 @@ public class CombinedServiceDiscoveryFactoryConfigurer extends org.apache.camel.
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "servicediscoverylist":
-        case "ServiceDiscoveryList": return org.apache.camel.cloud.ServiceDiscovery.class;
+        case "serviceDiscoveryList": return org.apache.camel.cloud.ServiceDiscovery.class;
         default: return null;
         }
     }

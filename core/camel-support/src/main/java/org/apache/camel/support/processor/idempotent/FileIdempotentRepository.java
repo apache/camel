@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * file store and make room for newer entries.
  */
 @Metadata(label = "bean",
-          description = "A file based IdempotentRepository.",
+          description = "A file based idempotent repository. Comes with 1st-level in-memory cache for fast check of the most frequently used keys.",
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "File based idempotent repository")
@@ -65,6 +65,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     private final AtomicBoolean init = new AtomicBoolean();
     private Map<String, Object> cache;
 
+    @Metadata(description = "The size of the 1st-level in-memory cache", defaultValue = "1000")
+    private int cacheSize = 1000;
     @Metadata(description = "File name of the repository (incl directory)", required = true)
     private File fileStore;
     @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb",
@@ -258,6 +260,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * Setting cache size is only possible when using the default {@link LRUCache} cache implementation.
      */
     public void setCacheSize(int size) {
+        this.cacheSize = size;
         if (cache != null && !(cache instanceof LRUCache)) {
             throw new IllegalArgumentException(
                     "Setting cache size is only possible when using the default LRUCache cache implementation");
@@ -268,8 +271,13 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         cache = LRUCacheFactory.newLRUCache(size);
     }
 
-    @ManagedAttribute(description = "The current 1st-level cache size")
+    @ManagedAttribute(description = "The current 1st-level maximum cache size")
     public int getCacheSize() {
+        return cacheSize;
+    }
+
+    @ManagedAttribute(description = "The current 1st-level cache size (elements in cache)")
+    public int getCurrentCacheSize() {
         if (cache != null) {
             return cache.size();
         }
@@ -502,7 +510,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
         if (this.cache == null) {
             // default use a 1st level cache
-            this.cache = LRUCacheFactory.newLRUCache(1000);
+            this.cache = LRUCacheFactory.newLRUCache(cacheSize);
         }
 
         // init store if not loaded before

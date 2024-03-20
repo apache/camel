@@ -22,45 +22,39 @@ public class Etcd3ServiceDiscoveryFactoryConfigurer extends org.apache.camel.sup
         org.apache.camel.component.etcd3.cloud.Etcd3ServiceDiscoveryFactory target = (org.apache.camel.component.etcd3.cloud.Etcd3ServiceDiscoveryFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authheaders":
-        case "AuthHeaders": target.setAuthHeaders(property(camelContext, java.util.Map.class, value)); return true;
-        case "authority":
-        case "Authority": target.setAuthority(property(camelContext, java.lang.String.class, value)); return true;
+        case "authHeaders": target.setAuthHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "authority": target.setAuthority(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
-        case "ConnectionTimeout": target.setConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "endpoints":
-        case "Endpoints": target.setEndpoints(property(camelContext, java.lang.String[].class, value)); return true;
-        case "headers":
-        case "Headers": target.setHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "endpoints": target.setEndpoints(property(camelContext, java.lang.String[].class, value)); return true;
+        case "headers": target.setHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "keepalivetime":
-        case "KeepAliveTime": target.setKeepAliveTime(property(camelContext, java.time.Duration.class, value)); return true;
+        case "keepAliveTime": target.setKeepAliveTime(property(camelContext, java.time.Duration.class, value)); return true;
         case "keepalivetimeout":
-        case "KeepAliveTimeout": target.setKeepAliveTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "keepAliveTimeout": target.setKeepAliveTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "keycharset":
-        case "KeyCharset": target.setKeyCharset(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyCharset": target.setKeyCharset(property(camelContext, java.lang.String.class, value)); return true;
         case "loadbalancerpolicy":
-        case "LoadBalancerPolicy": target.setLoadBalancerPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "loadBalancerPolicy": target.setLoadBalancerPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "maxinboundmessagesize":
-        case "MaxInboundMessageSize": target.setMaxInboundMessageSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "namespace":
-        case "Namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
-        case "password":
-        case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxInboundMessageSize": target.setMaxInboundMessageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "retrydelay":
-        case "RetryDelay": target.setRetryDelay(property(camelContext, long.class, value)); return true;
+        case "retryDelay": target.setRetryDelay(property(camelContext, long.class, value)); return true;
         case "retrymaxdelay":
-        case "RetryMaxDelay": target.setRetryMaxDelay(property(camelContext, long.class, value)); return true;
+        case "retryMaxDelay": target.setRetryMaxDelay(property(camelContext, long.class, value)); return true;
         case "retrymaxduration":
-        case "RetryMaxDuration": target.setRetryMaxDuration(property(camelContext, java.time.Duration.class, value)); return true;
+        case "retryMaxDuration": target.setRetryMaxDuration(property(camelContext, java.time.Duration.class, value)); return true;
         case "servicepath":
-        case "ServicePath": target.setServicePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "servicePath": target.setServicePath(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontext":
-        case "SslContext": target.setSslContext(property(camelContext, io.netty.handler.ssl.SslContext.class, value)); return true;
-        case "type":
-        case "Type": target.setType(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslContext": target.setSslContext(property(camelContext, io.netty.handler.ssl.SslContext.class, value)); return true;
+        case "type": target.setType(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
-        case "UserName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "userName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "valuecharset":
-        case "ValueCharset": target.setValueCharset(property(camelContext, java.lang.String.class, value)); return true;
+        case "valueCharset": target.setValueCharset(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -69,45 +63,39 @@ public class Etcd3ServiceDiscoveryFactoryConfigurer extends org.apache.camel.sup
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authheaders":
-        case "AuthHeaders": return java.util.Map.class;
-        case "authority":
-        case "Authority": return java.lang.String.class;
+        case "authHeaders": return java.util.Map.class;
+        case "authority": return java.lang.String.class;
         case "connectiontimeout":
-        case "ConnectionTimeout": return java.time.Duration.class;
-        case "endpoints":
-        case "Endpoints": return java.lang.String[].class;
-        case "headers":
-        case "Headers": return java.util.Map.class;
+        case "connectionTimeout": return java.time.Duration.class;
+        case "endpoints": return java.lang.String[].class;
+        case "headers": return java.util.Map.class;
         case "keepalivetime":
-        case "KeepAliveTime": return java.time.Duration.class;
+        case "keepAliveTime": return java.time.Duration.class;
         case "keepalivetimeout":
-        case "KeepAliveTimeout": return java.time.Duration.class;
+        case "keepAliveTimeout": return java.time.Duration.class;
         case "keycharset":
-        case "KeyCharset": return java.lang.String.class;
+        case "keyCharset": return java.lang.String.class;
         case "loadbalancerpolicy":
-        case "LoadBalancerPolicy": return java.lang.String.class;
+        case "loadBalancerPolicy": return java.lang.String.class;
         case "maxinboundmessagesize":
-        case "MaxInboundMessageSize": return java.lang.Integer.class;
-        case "namespace":
-        case "Namespace": return java.lang.String.class;
-        case "password":
-        case "Password": return java.lang.String.class;
+        case "maxInboundMessageSize": return java.lang.Integer.class;
+        case "namespace": return java.lang.String.class;
+        case "password": return java.lang.String.class;
         case "retrydelay":
-        case "RetryDelay": return long.class;
+        case "retryDelay": return long.class;
         case "retrymaxdelay":
-        case "RetryMaxDelay": return long.class;
+        case "retryMaxDelay": return long.class;
         case "retrymaxduration":
-        case "RetryMaxDuration": return java.time.Duration.class;
+        case "retryMaxDuration": return java.time.Duration.class;
         case "servicepath":
-        case "ServicePath": return java.lang.String.class;
+        case "servicePath": return java.lang.String.class;
         case "sslcontext":
-        case "SslContext": return io.netty.handler.ssl.SslContext.class;
-        case "type":
-        case "Type": return java.lang.String.class;
+        case "sslContext": return io.netty.handler.ssl.SslContext.class;
+        case "type": return java.lang.String.class;
         case "username":
-        case "UserName": return java.lang.String.class;
+        case "userName": return java.lang.String.class;
         case "valuecharset":
-        case "ValueCharset": return java.lang.String.class;
+        case "valueCharset": return java.lang.String.class;
         default: return null;
         }
     }
@@ -117,45 +105,39 @@ public class Etcd3ServiceDiscoveryFactoryConfigurer extends org.apache.camel.sup
         org.apache.camel.component.etcd3.cloud.Etcd3ServiceDiscoveryFactory target = (org.apache.camel.component.etcd3.cloud.Etcd3ServiceDiscoveryFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authheaders":
-        case "AuthHeaders": return target.getAuthHeaders();
-        case "authority":
-        case "Authority": return target.getAuthority();
+        case "authHeaders": return target.getAuthHeaders();
+        case "authority": return target.getAuthority();
         case "connectiontimeout":
-        case "ConnectionTimeout": return target.getConnectionTimeout();
-        case "endpoints":
-        case "Endpoints": return target.getEndpoints();
-        case "headers":
-        case "Headers": return target.getHeaders();
+        case "connectionTimeout": return target.getConnectionTimeout();
+        case "endpoints": return target.getEndpoints();
+        case "headers": return target.getHeaders();
         case "keepalivetime":
-        case "KeepAliveTime": return target.getKeepAliveTime();
+        case "keepAliveTime": return target.getKeepAliveTime();
         case "keepalivetimeout":
-        case "KeepAliveTimeout": return target.getKeepAliveTimeout();
+        case "keepAliveTimeout": return target.getKeepAliveTimeout();
         case "keycharset":
-        case "KeyCharset": return target.getKeyCharset();
+        case "keyCharset": return target.getKeyCharset();
         case "loadbalancerpolicy":
-        case "LoadBalancerPolicy": return target.getLoadBalancerPolicy();
+        case "loadBalancerPolicy": return target.getLoadBalancerPolicy();
         case "maxinboundmessagesize":
-        case "MaxInboundMessageSize": return target.getMaxInboundMessageSize();
-        case "namespace":
-        case "Namespace": return target.getNamespace();
-        case "password":
-        case "Password": return target.getPassword();
+        case "maxInboundMessageSize": return target.getMaxInboundMessageSize();
+        case "namespace": return target.getNamespace();
+        case "password": return target.getPassword();
         case "retrydelay":
-        case "RetryDelay": return target.getRetryDelay();
+        case "retryDelay": return target.getRetryDelay();
         case "retrymaxdelay":
-        case "RetryMaxDelay": return target.getRetryMaxDelay();
+        case "retryMaxDelay": return target.getRetryMaxDelay();
         case "retrymaxduration":
-        case "RetryMaxDuration": return target.getRetryMaxDuration();
+        case "retryMaxDuration": return target.getRetryMaxDuration();
         case "servicepath":
-        case "ServicePath": return target.getServicePath();
+        case "servicePath": return target.getServicePath();
         case "sslcontext":
-        case "SslContext": return target.getSslContext();
-        case "type":
-        case "Type": return target.getType();
+        case "sslContext": return target.getSslContext();
+        case "type": return target.getType();
         case "username":
-        case "UserName": return target.getUserName();
+        case "userName": return target.getUserName();
         case "valuecharset":
-        case "ValueCharset": return target.getValueCharset();
+        case "valueCharset": return target.getValueCharset();
         default: return null;
         }
     }
@@ -164,9 +146,8 @@ public class Etcd3ServiceDiscoveryFactoryConfigurer extends org.apache.camel.sup
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authheaders":
-        case "AuthHeaders": return java.lang.String.class;
-        case "headers":
-        case "Headers": return java.lang.String.class;
+        case "authHeaders": return java.lang.String.class;
+        case "headers": return java.lang.String.class;
         default: return null;
         }
     }

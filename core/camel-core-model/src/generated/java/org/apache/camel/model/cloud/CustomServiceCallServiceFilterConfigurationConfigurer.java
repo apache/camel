@@ -31,14 +31,12 @@ public class CustomServiceCallServiceFilterConfigurationConfigurer extends org.a
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration target = (org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties":
-        case "Properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
         case "servicefilter":
-        case "ServiceFilter": target.setServiceFilter(property(camelContext, org.apache.camel.cloud.ServiceFilter.class, value)); return true;
+        case "serviceFilter": target.setServiceFilter(property(camelContext, org.apache.camel.cloud.ServiceFilter.class, value)); return true;
         case "servicefilterref":
-        case "ServiceFilterRef": target.setServiceFilterRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "serviceFilterRef": target.setServiceFilterRef(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -51,14 +49,12 @@ public class CustomServiceCallServiceFilterConfigurationConfigurer extends org.a
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": return java.lang.String.class;
-        case "properties":
-        case "Properties": return java.util.List.class;
+        case "id": return java.lang.String.class;
+        case "properties": return java.util.List.class;
         case "servicefilter":
-        case "ServiceFilter": return org.apache.camel.cloud.ServiceFilter.class;
+        case "serviceFilter": return org.apache.camel.cloud.ServiceFilter.class;
         case "servicefilterref":
-        case "ServiceFilterRef": return java.lang.String.class;
+        case "serviceFilterRef": return java.lang.String.class;
         default: return null;
         }
     }
@@ -67,14 +63,12 @@ public class CustomServiceCallServiceFilterConfigurationConfigurer extends org.a
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration target = (org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": return target.getId();
-        case "properties":
-        case "Properties": return target.getProperties();
+        case "id": return target.getId();
+        case "properties": return target.getProperties();
         case "servicefilter":
-        case "ServiceFilter": return target.getServiceFilter();
+        case "serviceFilter": return target.getServiceFilter();
         case "servicefilterref":
-        case "ServiceFilterRef": return target.getServiceFilterRef();
+        case "serviceFilterRef": return target.getServiceFilterRef();
         default: return null;
         }
     }
@@ -82,8 +76,7 @@ public class CustomServiceCallServiceFilterConfigurationConfigurer extends org.a
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "properties":
-        case "Properties": return org.apache.camel.model.PropertyDefinition.class;
+        case "properties": return org.apache.camel.model.PropertyDefinition.class;
         default: return null;
         }
     }

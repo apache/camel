@@ -22,15 +22,15 @@ public class CronScheduledRoutePolicyConfigurer extends org.apache.camel.support
         org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy target = (org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "routeresumetime":
-        case "RouteResumeTime": target.setRouteResumeTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "routeResumeTime": target.setRouteResumeTime(property(camelContext, java.lang.String.class, value)); return true;
         case "routestarttime":
-        case "RouteStartTime": target.setRouteStartTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "routeStartTime": target.setRouteStartTime(property(camelContext, java.lang.String.class, value)); return true;
         case "routestopgraceperiod":
-        case "RouteStopGracePeriod": target.setRouteStopGracePeriod(property(camelContext, int.class, value)); return true;
+        case "routeStopGracePeriod": target.setRouteStopGracePeriod(property(camelContext, int.class, value)); return true;
         case "routestoptime":
-        case "RouteStopTime": target.setRouteStopTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "routeStopTime": target.setRouteStopTime(property(camelContext, java.lang.String.class, value)); return true;
         case "routesuspendtime":
-        case "RouteSuspendTime": target.setRouteSuspendTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "routeSuspendTime": target.setRouteSuspendTime(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -39,15 +39,15 @@ public class CronScheduledRoutePolicyConfigurer extends org.apache.camel.support
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "routeresumetime":
-        case "RouteResumeTime": return java.lang.String.class;
+        case "routeResumeTime": return java.lang.String.class;
         case "routestarttime":
-        case "RouteStartTime": return java.lang.String.class;
+        case "routeStartTime": return java.lang.String.class;
         case "routestopgraceperiod":
-        case "RouteStopGracePeriod": return int.class;
+        case "routeStopGracePeriod": return int.class;
         case "routestoptime":
-        case "RouteStopTime": return java.lang.String.class;
+        case "routeStopTime": return java.lang.String.class;
         case "routesuspendtime":
-        case "RouteSuspendTime": return java.lang.String.class;
+        case "routeSuspendTime": return java.lang.String.class;
         default: return null;
         }
     }
@@ -57,15 +57,15 @@ public class CronScheduledRoutePolicyConfigurer extends org.apache.camel.support
         org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy target = (org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "routeresumetime":
-        case "RouteResumeTime": return target.getRouteResumeTime();
+        case "routeResumeTime": return target.getRouteResumeTime();
         case "routestarttime":
-        case "RouteStartTime": return target.getRouteStartTime();
+        case "routeStartTime": return target.getRouteStartTime();
         case "routestopgraceperiod":
-        case "RouteStopGracePeriod": return target.getRouteStopGracePeriod();
+        case "routeStopGracePeriod": return target.getRouteStopGracePeriod();
         case "routestoptime":
-        case "RouteStopTime": return target.getRouteStopTime();
+        case "routeStopTime": return target.getRouteStopTime();
         case "routesuspendtime":
-        case "RouteSuspendTime": return target.getRouteSuspendTime();
+        case "routeSuspendTime": return target.getRouteSuspendTime();
         default: return null;
         }
     }

@@ -22,13 +22,12 @@ public class ThrottlingInflightRoutePolicyConfigurer extends org.apache.camel.su
         org.apache.camel.throttling.ThrottlingInflightRoutePolicy target = (org.apache.camel.throttling.ThrottlingInflightRoutePolicy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "logginglevel":
-        case "LoggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "loggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "maxinflightexchanges":
-        case "MaxInflightExchanges": target.setMaxInflightExchanges(property(camelContext, int.class, value)); return true;
+        case "maxInflightExchanges": target.setMaxInflightExchanges(property(camelContext, int.class, value)); return true;
         case "resumepercentofmax":
-        case "ResumePercentOfMax": target.setResumePercentOfMax(property(camelContext, int.class, value)); return true;
-        case "scope":
-        case "Scope": target.setScope(property(camelContext, org.apache.camel.throttling.ThrottlingInflightRoutePolicy.ThrottlingScope.class, value)); return true;
+        case "resumePercentOfMax": target.setResumePercentOfMax(property(camelContext, int.class, value)); return true;
+        case "scope": target.setScope(property(camelContext, org.apache.camel.throttling.ThrottlingInflightRoutePolicy.ThrottlingScope.class, value)); return true;
         default: return false;
         }
     }
@@ -37,13 +36,12 @@ public class ThrottlingInflightRoutePolicyConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "logginglevel":
-        case "LoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "loggingLevel": return org.apache.camel.LoggingLevel.class;
         case "maxinflightexchanges":
-        case "MaxInflightExchanges": return int.class;
+        case "maxInflightExchanges": return int.class;
         case "resumepercentofmax":
-        case "ResumePercentOfMax": return int.class;
-        case "scope":
-        case "Scope": return org.apache.camel.throttling.ThrottlingInflightRoutePolicy.ThrottlingScope.class;
+        case "resumePercentOfMax": return int.class;
+        case "scope": return org.apache.camel.throttling.ThrottlingInflightRoutePolicy.ThrottlingScope.class;
         default: return null;
         }
     }
@@ -53,13 +51,12 @@ public class ThrottlingInflightRoutePolicyConfigurer extends org.apache.camel.su
         org.apache.camel.throttling.ThrottlingInflightRoutePolicy target = (org.apache.camel.throttling.ThrottlingInflightRoutePolicy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "logginglevel":
-        case "LoggingLevel": return target.getLoggingLevel();
+        case "loggingLevel": return target.getLoggingLevel();
         case "maxinflightexchanges":
-        case "MaxInflightExchanges": return target.getMaxInflightExchanges();
+        case "maxInflightExchanges": return target.getMaxInflightExchanges();
         case "resumepercentofmax":
-        case "ResumePercentOfMax": return target.getResumePercentOfMax();
-        case "scope":
-        case "Scope": return target.getScope();
+        case "resumePercentOfMax": return target.getResumePercentOfMax();
+        case "scope": return target.getScope();
         default: return null;
         }
     }

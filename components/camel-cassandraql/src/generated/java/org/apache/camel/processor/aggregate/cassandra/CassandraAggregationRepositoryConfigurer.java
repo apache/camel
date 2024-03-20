@@ -22,33 +22,30 @@ public class CassandraAggregationRepositoryConfigurer extends org.apache.camel.s
         org.apache.camel.processor.aggregate.cassandra.CassandraAggregationRepository target = (org.apache.camel.processor.aggregate.cassandra.CassandraAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "deadletteruri":
-        case "DeadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
         case "exchangecolumn":
-        case "ExchangeColumn": target.setExchangeColumn(property(camelContext, java.lang.String.class, value)); return true;
+        case "exchangeColumn": target.setExchangeColumn(property(camelContext, java.lang.String.class, value)); return true;
         case "exchangeidcolumn":
-        case "ExchangeIdColumn": target.setExchangeIdColumn(property(camelContext, java.lang.String.class, value)); return true;
+        case "exchangeIdColumn": target.setExchangeIdColumn(property(camelContext, java.lang.String.class, value)); return true;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
+        case "maximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
         case "pkcolumns":
-        case "PKColumns": target.setPKColumns(property(camelContext, java.lang.String[].class, value)); return true;
+        case "pKColumns": target.setPKColumns(property(camelContext, java.lang.String[].class, value)); return true;
         case "prefixpkvalues":
-        case "PrefixPKValues": target.setPrefixPKValues(property(camelContext, java.lang.Object[].class, value)); return true;
+        case "prefixPKValues": target.setPrefixPKValues(property(camelContext, java.lang.Object[].class, value)); return true;
         case "readconsistencylevel":
-        case "ReadConsistencyLevel": target.setReadConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
+        case "readConsistencyLevel": target.setReadConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
         case "recoveryinterval":
-        case "RecoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
-        case "session":
-        case "Session": target.setSession(property(camelContext, com.datastax.oss.driver.api.core.CqlSession.class, value)); return true;
-        case "table":
-        case "Table": target.setTable(property(camelContext, java.lang.String.class, value)); return true;
-        case "ttl":
-        case "Ttl": target.setTtl(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
+        case "session": target.setSession(property(camelContext, com.datastax.oss.driver.api.core.CqlSession.class, value)); return true;
+        case "table": target.setTable(property(camelContext, java.lang.String.class, value)); return true;
+        case "ttl": target.setTtl(property(camelContext, java.lang.Integer.class, value)); return true;
         case "userecovery":
-        case "UseRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
+        case "useRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
         case "writeconsistencylevel":
-        case "WriteConsistencyLevel": target.setWriteConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
+        case "writeConsistencyLevel": target.setWriteConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
         default: return false;
         }
     }
@@ -57,33 +54,30 @@ public class CassandraAggregationRepositoryConfigurer extends org.apache.camel.s
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return boolean.class;
+        case "allowSerializedHeaders": return boolean.class;
         case "deadletteruri":
-        case "DeadLetterUri": return java.lang.String.class;
+        case "deadLetterUri": return java.lang.String.class;
         case "exchangecolumn":
-        case "ExchangeColumn": return java.lang.String.class;
+        case "exchangeColumn": return java.lang.String.class;
         case "exchangeidcolumn":
-        case "ExchangeIdColumn": return java.lang.String.class;
+        case "exchangeIdColumn": return java.lang.String.class;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return int.class;
+        case "maximumRedeliveries": return int.class;
         case "pkcolumns":
-        case "PKColumns": return java.lang.String[].class;
+        case "pKColumns": return java.lang.String[].class;
         case "prefixpkvalues":
-        case "PrefixPKValues": return java.lang.Object[].class;
+        case "prefixPKValues": return java.lang.Object[].class;
         case "readconsistencylevel":
-        case "ReadConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
+        case "readConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
         case "recoveryinterval":
-        case "RecoveryInterval": return long.class;
-        case "session":
-        case "Session": return com.datastax.oss.driver.api.core.CqlSession.class;
-        case "table":
-        case "Table": return java.lang.String.class;
-        case "ttl":
-        case "Ttl": return java.lang.Integer.class;
+        case "recoveryInterval": return long.class;
+        case "session": return com.datastax.oss.driver.api.core.CqlSession.class;
+        case "table": return java.lang.String.class;
+        case "ttl": return java.lang.Integer.class;
         case "userecovery":
-        case "UseRecovery": return boolean.class;
+        case "useRecovery": return boolean.class;
         case "writeconsistencylevel":
-        case "WriteConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
+        case "writeConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
         default: return null;
         }
     }
@@ -93,33 +87,30 @@ public class CassandraAggregationRepositoryConfigurer extends org.apache.camel.s
         org.apache.camel.processor.aggregate.cassandra.CassandraAggregationRepository target = (org.apache.camel.processor.aggregate.cassandra.CassandraAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return target.isAllowSerializedHeaders();
+        case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "deadletteruri":
-        case "DeadLetterUri": return target.getDeadLetterUri();
+        case "deadLetterUri": return target.getDeadLetterUri();
         case "exchangecolumn":
-        case "ExchangeColumn": return target.getExchangeColumn();
+        case "exchangeColumn": return target.getExchangeColumn();
         case "exchangeidcolumn":
-        case "ExchangeIdColumn": return target.getExchangeIdColumn();
+        case "exchangeIdColumn": return target.getExchangeIdColumn();
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return target.getMaximumRedeliveries();
+        case "maximumRedeliveries": return target.getMaximumRedeliveries();
         case "pkcolumns":
-        case "PKColumns": return target.getPKColumns();
+        case "pKColumns": return target.getPKColumns();
         case "prefixpkvalues":
-        case "PrefixPKValues": return target.getPrefixPKValues();
+        case "prefixPKValues": return target.getPrefixPKValues();
         case "readconsistencylevel":
-        case "ReadConsistencyLevel": return target.getReadConsistencyLevel();
+        case "readConsistencyLevel": return target.getReadConsistencyLevel();
         case "recoveryinterval":
-        case "RecoveryInterval": return target.getRecoveryInterval();
-        case "session":
-        case "Session": return target.getSession();
-        case "table":
-        case "Table": return target.getTable();
-        case "ttl":
-        case "Ttl": return target.getTtl();
+        case "recoveryInterval": return target.getRecoveryInterval();
+        case "session": return target.getSession();
+        case "table": return target.getTable();
+        case "ttl": return target.getTtl();
         case "userecovery":
-        case "UseRecovery": return target.isUseRecovery();
+        case "useRecovery": return target.isUseRecovery();
         case "writeconsistencylevel":
-        case "WriteConsistencyLevel": return target.getWriteConsistencyLevel();
+        case "writeConsistencyLevel": return target.getWriteConsistencyLevel();
         default: return null;
         }
     }

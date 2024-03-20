@@ -22,19 +22,16 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         org.apache.camel.impl.DefaultDumpRoutesStrategy target = (org.apache.camel.impl.DefaultDumpRoutesStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "generatedids":
-        case "GeneratedIds": target.setGeneratedIds(property(camelContext, boolean.class, value)); return true;
-        case "include":
-        case "Include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "log":
-        case "Log": target.setLog(property(camelContext, boolean.class, value)); return true;
-        case "output":
-        case "Output": target.setOutput(property(camelContext, java.lang.String.class, value)); return true;
+        case "generatedIds": target.setGeneratedIds(property(camelContext, boolean.class, value)); return true;
+        case "include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "log": target.setLog(property(camelContext, boolean.class, value)); return true;
+        case "output": target.setOutput(property(camelContext, java.lang.String.class, value)); return true;
         case "resolveplaceholders":
-        case "ResolvePlaceholders": target.setResolvePlaceholders(property(camelContext, boolean.class, value)); return true;
+        case "resolvePlaceholders": target.setResolvePlaceholders(property(camelContext, boolean.class, value)); return true;
         case "uriasparameters":
-        case "UriAsParameters": target.setUriAsParameters(property(camelContext, boolean.class, value)); return true;
+        case "uriAsParameters": target.setUriAsParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -43,19 +40,16 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "camelContext": return org.apache.camel.CamelContext.class;
         case "generatedids":
-        case "GeneratedIds": return boolean.class;
-        case "include":
-        case "Include": return java.lang.String.class;
-        case "log":
-        case "Log": return boolean.class;
-        case "output":
-        case "Output": return java.lang.String.class;
+        case "generatedIds": return boolean.class;
+        case "include": return java.lang.String.class;
+        case "log": return boolean.class;
+        case "output": return java.lang.String.class;
         case "resolveplaceholders":
-        case "ResolvePlaceholders": return boolean.class;
+        case "resolvePlaceholders": return boolean.class;
         case "uriasparameters":
-        case "UriAsParameters": return boolean.class;
+        case "uriAsParameters": return boolean.class;
         default: return null;
         }
     }
@@ -65,19 +59,16 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         org.apache.camel.impl.DefaultDumpRoutesStrategy target = (org.apache.camel.impl.DefaultDumpRoutesStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return target.getCamelContext();
+        case "camelContext": return target.getCamelContext();
         case "generatedids":
-        case "GeneratedIds": return target.isGeneratedIds();
-        case "include":
-        case "Include": return target.getInclude();
-        case "log":
-        case "Log": return target.isLog();
-        case "output":
-        case "Output": return target.getOutput();
+        case "generatedIds": return target.isGeneratedIds();
+        case "include": return target.getInclude();
+        case "log": return target.isLog();
+        case "output": return target.getOutput();
         case "resolveplaceholders":
-        case "ResolvePlaceholders": return target.isResolvePlaceholders();
+        case "resolvePlaceholders": return target.isResolvePlaceholders();
         case "uriasparameters":
-        case "UriAsParameters": return target.isUriAsParameters();
+        case "uriAsParameters": return target.isUriAsParameters();
         default: return null;
         }
     }

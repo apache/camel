@@ -66,81 +66,78 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration target = (org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.as2.internal.AS2ApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.as2.internal.AS2ApiName.class, value)); return true;
         case "as2from":
-        case "As2From": target.setAs2From(property(camelContext, java.lang.String.class, value)); return true;
+        case "as2From": target.setAs2From(property(camelContext, java.lang.String.class, value)); return true;
         case "as2messagestructure":
-        case "As2MessageStructure": target.setAs2MessageStructure(property(camelContext, org.apache.camel.component.as2.api.AS2MessageStructure.class, value)); return true;
+        case "as2MessageStructure": target.setAs2MessageStructure(property(camelContext, org.apache.camel.component.as2.api.AS2MessageStructure.class, value)); return true;
         case "as2to":
-        case "As2To": target.setAs2To(property(camelContext, java.lang.String.class, value)); return true;
+        case "as2To": target.setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
-        case "As2Version": target.setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "as2Version": target.setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
         case "attachedfilename":
-        case "AttachedFileName": target.setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "attachedFileName": target.setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientfqdn":
-        case "ClientFqdn": target.setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientFqdn": target.setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
         case "compressionalgorithm":
-        case "CompressionAlgorithm": target.setCompressionAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class, value)); return true;
+        case "compressionAlgorithm": target.setCompressionAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class, value)); return true;
         case "decryptingprivatekey":
-        case "DecryptingPrivateKey": target.setDecryptingPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "decryptingPrivateKey": target.setDecryptingPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
         case "dispositionnotificationto":
-        case "DispositionNotificationTo": target.setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "dispositionNotificationTo": target.setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessage":
-        case "EdiMessage": target.setEdiMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "ediMessage": target.setEdiMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessagecontenttype":
-        case "EdiMessageContentType": target.setEdiMessageContentType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
+        case "ediMessageContentType": target.setEdiMessageContentType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
         case "edimessagetransferencoding":
-        case "EdiMessageTransferEncoding": target.setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "ediMessageTransferEncoding": target.setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessagetype":
-        case "EdiMessageType": target.setEdiMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
+        case "ediMessageType": target.setEdiMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
         case "encryptingalgorithm":
-        case "EncryptingAlgorithm": target.setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
+        case "encryptingAlgorithm": target.setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
         case "encryptingcertificatechain":
-        case "EncryptingCertificateChain": target.setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
-        case "from":
-        case "From": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "encryptingCertificateChain": target.setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
+        case "from": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "hostnameverifier":
-        case "HostnameVerifier": target.setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
+        case "hostnameVerifier": target.setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         case "httpconnectionpoolsize":
-        case "HttpConnectionPoolSize": target.setHttpConnectionPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpConnectionPoolSize": target.setHttpConnectionPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpconnectionpoolttl":
-        case "HttpConnectionPoolTtl": target.setHttpConnectionPoolTtl(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpConnectionPoolTtl": target.setHttpConnectionPoolTtl(property(camelContext, java.time.Duration.class, value)); return true;
         case "httpconnectiontimeout":
-        case "HttpConnectionTimeout": target.setHttpConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpConnectionTimeout": target.setHttpConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "httpsockettimeout":
-        case "HttpSocketTimeout": target.setHttpSocketTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpSocketTimeout": target.setHttpSocketTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "mdnmessagetemplate":
-        case "MdnMessageTemplate": target.setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
+        case "mdnMessageTemplate": target.setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
-        case "RequestUri": target.setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "server":
-        case "Server": target.setServer(property(camelContext, java.lang.String.class, value)); return true;
+        case "requestUri": target.setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "server": target.setServer(property(camelContext, java.lang.String.class, value)); return true;
         case "serverfqdn":
-        case "ServerFqdn": target.setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverFqdn": target.setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
         case "serverportnumber":
-        case "ServerPortNumber": target.setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "serverPortNumber": target.setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "signedreceiptmicalgorithms":
-        case "SignedReceiptMicAlgorithms": target.setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String[].class, value)); return true;
+        case "signedReceiptMicAlgorithms": target.setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String[].class, value)); return true;
         case "signingalgorithm":
-        case "SigningAlgorithm": target.setSigningAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class, value)); return true;
+        case "signingAlgorithm": target.setSigningAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class, value)); return true;
         case "signingcertificatechain":
-        case "SigningCertificateChain": target.setSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
+        case "signingCertificateChain": target.setSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         case "signingprivatekey":
-        case "SigningPrivateKey": target.setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "signingPrivateKey": target.setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
         case "sslcontext":
-        case "SslContext": target.setSslContext(property(camelContext, javax.net.ssl.SSLContext.class, value)); return true;
-        case "subject":
-        case "Subject": target.setSubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslContext": target.setSslContext(property(camelContext, javax.net.ssl.SSLContext.class, value)); return true;
+        case "subject": target.setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "targethostname":
-        case "TargetHostname": target.setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "targetHostname": target.setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "targetportnumber":
-        case "TargetPortNumber": target.setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "targetPortNumber": target.setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "useragent":
-        case "UserAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "userAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         case "validatesigningcertificatechain":
-        case "ValidateSigningCertificateChain": target.setValidateSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
+        case "validateSigningCertificateChain": target.setValidateSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         default: return false;
         }
     }
@@ -154,81 +151,78 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.as2.internal.AS2ApiName.class;
+        case "apiName": return org.apache.camel.component.as2.internal.AS2ApiName.class;
         case "as2from":
-        case "As2From": return java.lang.String.class;
+        case "as2From": return java.lang.String.class;
         case "as2messagestructure":
-        case "As2MessageStructure": return org.apache.camel.component.as2.api.AS2MessageStructure.class;
+        case "as2MessageStructure": return org.apache.camel.component.as2.api.AS2MessageStructure.class;
         case "as2to":
-        case "As2To": return java.lang.String.class;
+        case "as2To": return java.lang.String.class;
         case "as2version":
-        case "As2Version": return java.lang.String.class;
+        case "as2Version": return java.lang.String.class;
         case "attachedfilename":
-        case "AttachedFileName": return java.lang.String.class;
+        case "attachedFileName": return java.lang.String.class;
         case "clientfqdn":
-        case "ClientFqdn": return java.lang.String.class;
+        case "clientFqdn": return java.lang.String.class;
         case "compressionalgorithm":
-        case "CompressionAlgorithm": return org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class;
+        case "compressionAlgorithm": return org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class;
         case "decryptingprivatekey":
-        case "DecryptingPrivateKey": return java.security.PrivateKey.class;
+        case "decryptingPrivateKey": return java.security.PrivateKey.class;
         case "dispositionnotificationto":
-        case "DispositionNotificationTo": return java.lang.String.class;
+        case "dispositionNotificationTo": return java.lang.String.class;
         case "edimessage":
-        case "EdiMessage": return java.lang.String.class;
+        case "ediMessage": return java.lang.String.class;
         case "edimessagecontenttype":
-        case "EdiMessageContentType": return org.apache.http.entity.ContentType.class;
+        case "ediMessageContentType": return org.apache.http.entity.ContentType.class;
         case "edimessagetransferencoding":
-        case "EdiMessageTransferEncoding": return java.lang.String.class;
+        case "ediMessageTransferEncoding": return java.lang.String.class;
         case "edimessagetype":
-        case "EdiMessageType": return org.apache.http.entity.ContentType.class;
+        case "ediMessageType": return org.apache.http.entity.ContentType.class;
         case "encryptingalgorithm":
-        case "EncryptingAlgorithm": return org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class;
+        case "encryptingAlgorithm": return org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class;
         case "encryptingcertificatechain":
-        case "EncryptingCertificateChain": return java.security.cert.Certificate[].class;
-        case "from":
-        case "From": return java.lang.String.class;
+        case "encryptingCertificateChain": return java.security.cert.Certificate[].class;
+        case "from": return java.lang.String.class;
         case "hostnameverifier":
-        case "HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
+        case "hostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
         case "httpconnectionpoolsize":
-        case "HttpConnectionPoolSize": return java.lang.Integer.class;
+        case "httpConnectionPoolSize": return java.lang.Integer.class;
         case "httpconnectionpoolttl":
-        case "HttpConnectionPoolTtl": return java.time.Duration.class;
+        case "httpConnectionPoolTtl": return java.time.Duration.class;
         case "httpconnectiontimeout":
-        case "HttpConnectionTimeout": return java.time.Duration.class;
+        case "httpConnectionTimeout": return java.time.Duration.class;
         case "httpsockettimeout":
-        case "HttpSocketTimeout": return java.time.Duration.class;
+        case "httpSocketTimeout": return java.time.Duration.class;
         case "mdnmessagetemplate":
-        case "MdnMessageTemplate": return java.lang.String.class;
+        case "mdnMessageTemplate": return java.lang.String.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "requesturi":
-        case "RequestUri": return java.lang.String.class;
-        case "server":
-        case "Server": return java.lang.String.class;
+        case "requestUri": return java.lang.String.class;
+        case "server": return java.lang.String.class;
         case "serverfqdn":
-        case "ServerFqdn": return java.lang.String.class;
+        case "serverFqdn": return java.lang.String.class;
         case "serverportnumber":
-        case "ServerPortNumber": return java.lang.Integer.class;
+        case "serverPortNumber": return java.lang.Integer.class;
         case "signedreceiptmicalgorithms":
-        case "SignedReceiptMicAlgorithms": return java.lang.String[].class;
+        case "signedReceiptMicAlgorithms": return java.lang.String[].class;
         case "signingalgorithm":
-        case "SigningAlgorithm": return org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class;
+        case "signingAlgorithm": return org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class;
         case "signingcertificatechain":
-        case "SigningCertificateChain": return java.security.cert.Certificate[].class;
+        case "signingCertificateChain": return java.security.cert.Certificate[].class;
         case "signingprivatekey":
-        case "SigningPrivateKey": return java.security.PrivateKey.class;
+        case "signingPrivateKey": return java.security.PrivateKey.class;
         case "sslcontext":
-        case "SslContext": return javax.net.ssl.SSLContext.class;
-        case "subject":
-        case "Subject": return java.lang.String.class;
+        case "sslContext": return javax.net.ssl.SSLContext.class;
+        case "subject": return java.lang.String.class;
         case "targethostname":
-        case "TargetHostname": return java.lang.String.class;
+        case "targetHostname": return java.lang.String.class;
         case "targetportnumber":
-        case "TargetPortNumber": return java.lang.Integer.class;
+        case "targetPortNumber": return java.lang.Integer.class;
         case "useragent":
-        case "UserAgent": return java.lang.String.class;
+        case "userAgent": return java.lang.String.class;
         case "validatesigningcertificatechain":
-        case "ValidateSigningCertificateChain": return java.security.cert.Certificate[].class;
+        case "validateSigningCertificateChain": return java.security.cert.Certificate[].class;
         default: return null;
         }
     }
@@ -238,81 +232,78 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration target = (org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "as2from":
-        case "As2From": return target.getAs2From();
+        case "as2From": return target.getAs2From();
         case "as2messagestructure":
-        case "As2MessageStructure": return target.getAs2MessageStructure();
+        case "as2MessageStructure": return target.getAs2MessageStructure();
         case "as2to":
-        case "As2To": return target.getAs2To();
+        case "as2To": return target.getAs2To();
         case "as2version":
-        case "As2Version": return target.getAs2Version();
+        case "as2Version": return target.getAs2Version();
         case "attachedfilename":
-        case "AttachedFileName": return target.getAttachedFileName();
+        case "attachedFileName": return target.getAttachedFileName();
         case "clientfqdn":
-        case "ClientFqdn": return target.getClientFqdn();
+        case "clientFqdn": return target.getClientFqdn();
         case "compressionalgorithm":
-        case "CompressionAlgorithm": return target.getCompressionAlgorithm();
+        case "compressionAlgorithm": return target.getCompressionAlgorithm();
         case "decryptingprivatekey":
-        case "DecryptingPrivateKey": return target.getDecryptingPrivateKey();
+        case "decryptingPrivateKey": return target.getDecryptingPrivateKey();
         case "dispositionnotificationto":
-        case "DispositionNotificationTo": return target.getDispositionNotificationTo();
+        case "dispositionNotificationTo": return target.getDispositionNotificationTo();
         case "edimessage":
-        case "EdiMessage": return target.getEdiMessage();
+        case "ediMessage": return target.getEdiMessage();
         case "edimessagecontenttype":
-        case "EdiMessageContentType": return target.getEdiMessageContentType();
+        case "ediMessageContentType": return target.getEdiMessageContentType();
         case "edimessagetransferencoding":
-        case "EdiMessageTransferEncoding": return target.getEdiMessageTransferEncoding();
+        case "ediMessageTransferEncoding": return target.getEdiMessageTransferEncoding();
         case "edimessagetype":
-        case "EdiMessageType": return target.getEdiMessageType();
+        case "ediMessageType": return target.getEdiMessageType();
         case "encryptingalgorithm":
-        case "EncryptingAlgorithm": return target.getEncryptingAlgorithm();
+        case "encryptingAlgorithm": return target.getEncryptingAlgorithm();
         case "encryptingcertificatechain":
-        case "EncryptingCertificateChain": return target.getEncryptingCertificateChain();
-        case "from":
-        case "From": return target.getFrom();
+        case "encryptingCertificateChain": return target.getEncryptingCertificateChain();
+        case "from": return target.getFrom();
         case "hostnameverifier":
-        case "HostnameVerifier": return target.getHostnameVerifier();
+        case "hostnameVerifier": return target.getHostnameVerifier();
         case "httpconnectionpoolsize":
-        case "HttpConnectionPoolSize": return target.getHttpConnectionPoolSize();
+        case "httpConnectionPoolSize": return target.getHttpConnectionPoolSize();
         case "httpconnectionpoolttl":
-        case "HttpConnectionPoolTtl": return target.getHttpConnectionPoolTtl();
+        case "httpConnectionPoolTtl": return target.getHttpConnectionPoolTtl();
         case "httpconnectiontimeout":
-        case "HttpConnectionTimeout": return target.getHttpConnectionTimeout();
+        case "httpConnectionTimeout": return target.getHttpConnectionTimeout();
         case "httpsockettimeout":
-        case "HttpSocketTimeout": return target.getHttpSocketTimeout();
+        case "httpSocketTimeout": return target.getHttpSocketTimeout();
         case "mdnmessagetemplate":
-        case "MdnMessageTemplate": return target.getMdnMessageTemplate();
+        case "mdnMessageTemplate": return target.getMdnMessageTemplate();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "requesturi":
-        case "RequestUri": return target.getRequestUri();
-        case "server":
-        case "Server": return target.getServer();
+        case "requestUri": return target.getRequestUri();
+        case "server": return target.getServer();
         case "serverfqdn":
-        case "ServerFqdn": return target.getServerFqdn();
+        case "serverFqdn": return target.getServerFqdn();
         case "serverportnumber":
-        case "ServerPortNumber": return target.getServerPortNumber();
+        case "serverPortNumber": return target.getServerPortNumber();
         case "signedreceiptmicalgorithms":
-        case "SignedReceiptMicAlgorithms": return target.getSignedReceiptMicAlgorithms();
+        case "signedReceiptMicAlgorithms": return target.getSignedReceiptMicAlgorithms();
         case "signingalgorithm":
-        case "SigningAlgorithm": return target.getSigningAlgorithm();
+        case "signingAlgorithm": return target.getSigningAlgorithm();
         case "signingcertificatechain":
-        case "SigningCertificateChain": return target.getSigningCertificateChain();
+        case "signingCertificateChain": return target.getSigningCertificateChain();
         case "signingprivatekey":
-        case "SigningPrivateKey": return target.getSigningPrivateKey();
+        case "signingPrivateKey": return target.getSigningPrivateKey();
         case "sslcontext":
-        case "SslContext": return target.getSslContext();
-        case "subject":
-        case "Subject": return target.getSubject();
+        case "sslContext": return target.getSslContext();
+        case "subject": return target.getSubject();
         case "targethostname":
-        case "TargetHostname": return target.getTargetHostname();
+        case "targetHostname": return target.getTargetHostname();
         case "targetportnumber":
-        case "TargetPortNumber": return target.getTargetPortNumber();
+        case "targetPortNumber": return target.getTargetPortNumber();
         case "useragent":
-        case "UserAgent": return target.getUserAgent();
+        case "userAgent": return target.getUserAgent();
         case "validatesigningcertificatechain":
-        case "ValidateSigningCertificateChain": return target.getValidateSigningCertificateChain();
+        case "validateSigningCertificateChain": return target.getValidateSigningCertificateChain();
         default: return null;
         }
     }

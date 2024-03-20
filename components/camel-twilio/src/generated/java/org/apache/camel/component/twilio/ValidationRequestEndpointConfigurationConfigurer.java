@@ -32,13 +32,13 @@ public class ValidationRequestEndpointConfigurationConfigurer extends org.apache
         org.apache.camel.component.twilio.ValidationRequestEndpointConfiguration target = (org.apache.camel.component.twilio.ValidationRequestEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
-        case "PathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
         case "phonenumber":
-        case "PhoneNumber": target.setPhoneNumber(property(camelContext, com.twilio.type.PhoneNumber.class, value)); return true;
+        case "phoneNumber": target.setPhoneNumber(property(camelContext, com.twilio.type.PhoneNumber.class, value)); return true;
         default: return false;
         }
     }
@@ -52,13 +52,13 @@ public class ValidationRequestEndpointConfigurationConfigurer extends org.apache
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "apiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "pathaccountsid":
-        case "PathAccountSid": return java.lang.String.class;
+        case "pathAccountSid": return java.lang.String.class;
         case "phonenumber":
-        case "PhoneNumber": return com.twilio.type.PhoneNumber.class;
+        case "phoneNumber": return com.twilio.type.PhoneNumber.class;
         default: return null;
         }
     }
@@ -68,13 +68,13 @@ public class ValidationRequestEndpointConfigurationConfigurer extends org.apache
         org.apache.camel.component.twilio.ValidationRequestEndpointConfiguration target = (org.apache.camel.component.twilio.ValidationRequestEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "pathaccountsid":
-        case "PathAccountSid": return target.getPathAccountSid();
+        case "pathAccountSid": return target.getPathAccountSid();
         case "phonenumber":
-        case "PhoneNumber": return target.getPhoneNumber();
+        case "phoneNumber": return target.getPhoneNumber();
         default: return null;
         }
     }

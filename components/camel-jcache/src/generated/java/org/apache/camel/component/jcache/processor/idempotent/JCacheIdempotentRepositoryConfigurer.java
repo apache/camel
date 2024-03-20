@@ -22,9 +22,8 @@ public class JCacheIdempotentRepositoryConfigurer extends org.apache.camel.suppo
         org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository target = (org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachename":
-        case "CacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration":
-        case "Configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jcache.JCacheConfiguration.class, value)); return true;
+        case "cacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jcache.JCacheConfiguration.class, value)); return true;
         default: return false;
         }
     }
@@ -33,9 +32,8 @@ public class JCacheIdempotentRepositoryConfigurer extends org.apache.camel.suppo
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachename":
-        case "CacheName": return java.lang.String.class;
-        case "configuration":
-        case "Configuration": return org.apache.camel.component.jcache.JCacheConfiguration.class;
+        case "cacheName": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.jcache.JCacheConfiguration.class;
         default: return null;
         }
     }
@@ -45,9 +43,8 @@ public class JCacheIdempotentRepositoryConfigurer extends org.apache.camel.suppo
         org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository target = (org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachename":
-        case "CacheName": return target.getCacheName();
-        case "configuration":
-        case "Configuration": return target.getConfiguration();
+        case "cacheName": return target.getCacheName();
+        case "configuration": return target.getConfiguration();
         default: return null;
         }
     }

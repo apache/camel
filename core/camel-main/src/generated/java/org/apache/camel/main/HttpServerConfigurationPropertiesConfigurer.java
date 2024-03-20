@@ -22,31 +22,27 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "devconsoleenabled":
-        case "DevConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
-        case "enabled":
-        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "devConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
+        case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckenabled":
-        case "HealthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
-        case "host":
-        case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "infoenabled":
-        case "InfoEnabled": target.setInfoEnabled(property(camelContext, boolean.class, value)); return true;
+        case "infoEnabled": target.setInfoEnabled(property(camelContext, boolean.class, value)); return true;
         case "jolokiaenabled":
-        case "JolokiaEnabled": target.setJolokiaEnabled(property(camelContext, boolean.class, value)); return true;
+        case "jolokiaEnabled": target.setJolokiaEnabled(property(camelContext, boolean.class, value)); return true;
         case "maxbodysize":
-        case "MaxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
         case "metricsenabled":
-        case "MetricsEnabled": target.setMetricsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "path":
-        case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "port":
-        case "Port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "metricsEnabled": target.setMetricsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.setPort(property(camelContext, int.class, value)); return true;
         case "uploadenabled":
-        case "UploadEnabled": target.setUploadEnabled(property(camelContext, boolean.class, value)); return true;
+        case "uploadEnabled": target.setUploadEnabled(property(camelContext, boolean.class, value)); return true;
         case "uploadsourcedir":
-        case "UploadSourceDir": target.setUploadSourceDir(property(camelContext, java.lang.String.class, value)); return true;
+        case "uploadSourceDir": target.setUploadSourceDir(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
-        case "UseGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -55,31 +51,27 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "devconsoleenabled":
-        case "DevConsoleEnabled": return boolean.class;
-        case "enabled":
-        case "Enabled": return boolean.class;
+        case "devConsoleEnabled": return boolean.class;
+        case "enabled": return boolean.class;
         case "healthcheckenabled":
-        case "HealthCheckEnabled": return boolean.class;
-        case "host":
-        case "Host": return java.lang.String.class;
+        case "healthCheckEnabled": return boolean.class;
+        case "host": return java.lang.String.class;
         case "infoenabled":
-        case "InfoEnabled": return boolean.class;
+        case "infoEnabled": return boolean.class;
         case "jolokiaenabled":
-        case "JolokiaEnabled": return boolean.class;
+        case "jolokiaEnabled": return boolean.class;
         case "maxbodysize":
-        case "MaxBodySize": return java.lang.Long.class;
+        case "maxBodySize": return java.lang.Long.class;
         case "metricsenabled":
-        case "MetricsEnabled": return boolean.class;
-        case "path":
-        case "Path": return java.lang.String.class;
-        case "port":
-        case "Port": return int.class;
+        case "metricsEnabled": return boolean.class;
+        case "path": return java.lang.String.class;
+        case "port": return int.class;
         case "uploadenabled":
-        case "UploadEnabled": return boolean.class;
+        case "uploadEnabled": return boolean.class;
         case "uploadsourcedir":
-        case "UploadSourceDir": return java.lang.String.class;
+        case "uploadSourceDir": return java.lang.String.class;
         case "useglobalsslcontextparameters":
-        case "UseGlobalSslContextParameters": return boolean.class;
+        case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
         }
     }
@@ -89,31 +81,27 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "devconsoleenabled":
-        case "DevConsoleEnabled": return target.isDevConsoleEnabled();
-        case "enabled":
-        case "Enabled": return target.isEnabled();
+        case "devConsoleEnabled": return target.isDevConsoleEnabled();
+        case "enabled": return target.isEnabled();
         case "healthcheckenabled":
-        case "HealthCheckEnabled": return target.isHealthCheckEnabled();
-        case "host":
-        case "Host": return target.getHost();
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "host": return target.getHost();
         case "infoenabled":
-        case "InfoEnabled": return target.isInfoEnabled();
+        case "infoEnabled": return target.isInfoEnabled();
         case "jolokiaenabled":
-        case "JolokiaEnabled": return target.isJolokiaEnabled();
+        case "jolokiaEnabled": return target.isJolokiaEnabled();
         case "maxbodysize":
-        case "MaxBodySize": return target.getMaxBodySize();
+        case "maxBodySize": return target.getMaxBodySize();
         case "metricsenabled":
-        case "MetricsEnabled": return target.isMetricsEnabled();
-        case "path":
-        case "Path": return target.getPath();
-        case "port":
-        case "Port": return target.getPort();
+        case "metricsEnabled": return target.isMetricsEnabled();
+        case "path": return target.getPath();
+        case "port": return target.getPort();
         case "uploadenabled":
-        case "UploadEnabled": return target.isUploadEnabled();
+        case "uploadEnabled": return target.isUploadEnabled();
         case "uploadsourcedir":
-        case "UploadSourceDir": return target.getUploadSourceDir();
+        case "uploadSourceDir": return target.getUploadSourceDir();
         case "useglobalsslcontextparameters":
-        case "UseGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
         }
     }

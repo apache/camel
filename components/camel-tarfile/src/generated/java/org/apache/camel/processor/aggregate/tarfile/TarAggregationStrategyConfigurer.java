@@ -22,11 +22,11 @@ public class TarAggregationStrategyConfigurer extends org.apache.camel.support.c
         org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy target = (org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "fileprefix":
-        case "FilePrefix": target.setFilePrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "filePrefix": target.setFilePrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "filesuffix":
-        case "FileSuffix": target.setFileSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "fileSuffix": target.setFileSuffix(property(camelContext, java.lang.String.class, value)); return true;
         case "parentdir":
-        case "ParentDir": target.setParentDir(property(camelContext, java.io.File.class, value)); return true;
+        case "parentDir": target.setParentDir(property(camelContext, java.io.File.class, value)); return true;
         default: return false;
         }
     }
@@ -35,11 +35,11 @@ public class TarAggregationStrategyConfigurer extends org.apache.camel.support.c
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "fileprefix":
-        case "FilePrefix": return java.lang.String.class;
+        case "filePrefix": return java.lang.String.class;
         case "filesuffix":
-        case "FileSuffix": return java.lang.String.class;
+        case "fileSuffix": return java.lang.String.class;
         case "parentdir":
-        case "ParentDir": return java.io.File.class;
+        case "parentDir": return java.io.File.class;
         default: return null;
         }
     }
@@ -49,11 +49,11 @@ public class TarAggregationStrategyConfigurer extends org.apache.camel.support.c
         org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy target = (org.apache.camel.processor.aggregate.tarfile.TarAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "fileprefix":
-        case "FilePrefix": return target.getFilePrefix();
+        case "filePrefix": return target.getFilePrefix();
         case "filesuffix":
-        case "FileSuffix": return target.getFileSuffix();
+        case "fileSuffix": return target.getFileSuffix();
         case "parentdir":
-        case "ParentDir": return target.getParentDir();
+        case "parentDir": return target.getParentDir();
         default: return null;
         }
     }

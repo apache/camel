@@ -22,19 +22,16 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
         org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository target = (org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "pkcolumns":
-        case "PkColumns": target.setPkColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "pkColumns": target.setPkColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "prefixpkvalues":
-        case "PrefixPKValues": target.setPrefixPKValues(property(camelContext, java.lang.String.class, value)); return true;
+        case "prefixPKValues": target.setPrefixPKValues(property(camelContext, java.lang.String.class, value)); return true;
         case "readconsistencylevel":
-        case "ReadConsistencyLevel": target.setReadConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
-        case "session":
-        case "Session": target.setSession(property(camelContext, com.datastax.oss.driver.api.core.CqlSession.class, value)); return true;
-        case "table":
-        case "Table": target.setTable(property(camelContext, java.lang.String.class, value)); return true;
-        case "ttl":
-        case "Ttl": target.setTtl(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "readConsistencyLevel": target.setReadConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
+        case "session": target.setSession(property(camelContext, com.datastax.oss.driver.api.core.CqlSession.class, value)); return true;
+        case "table": target.setTable(property(camelContext, java.lang.String.class, value)); return true;
+        case "ttl": target.setTtl(property(camelContext, java.lang.Integer.class, value)); return true;
         case "writeconsistencylevel":
-        case "WriteConsistencyLevel": target.setWriteConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
+        case "writeConsistencyLevel": target.setWriteConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
         default: return false;
         }
     }
@@ -43,19 +40,16 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "pkcolumns":
-        case "PkColumns": return java.lang.String.class;
+        case "pkColumns": return java.lang.String.class;
         case "prefixpkvalues":
-        case "PrefixPKValues": return java.lang.String.class;
+        case "prefixPKValues": return java.lang.String.class;
         case "readconsistencylevel":
-        case "ReadConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
-        case "session":
-        case "Session": return com.datastax.oss.driver.api.core.CqlSession.class;
-        case "table":
-        case "Table": return java.lang.String.class;
-        case "ttl":
-        case "Ttl": return java.lang.Integer.class;
+        case "readConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
+        case "session": return com.datastax.oss.driver.api.core.CqlSession.class;
+        case "table": return java.lang.String.class;
+        case "ttl": return java.lang.Integer.class;
         case "writeconsistencylevel":
-        case "WriteConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
+        case "writeConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
         default: return null;
         }
     }
@@ -65,19 +59,16 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
         org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository target = (org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "pkcolumns":
-        case "PkColumns": return target.getPkColumns();
+        case "pkColumns": return target.getPkColumns();
         case "prefixpkvalues":
-        case "PrefixPKValues": return target.getPrefixPKValues();
+        case "prefixPKValues": return target.getPrefixPKValues();
         case "readconsistencylevel":
-        case "ReadConsistencyLevel": return target.getReadConsistencyLevel();
-        case "session":
-        case "Session": return target.getSession();
-        case "table":
-        case "Table": return target.getTable();
-        case "ttl":
-        case "Ttl": return target.getTtl();
+        case "readConsistencyLevel": return target.getReadConsistencyLevel();
+        case "session": return target.getSession();
+        case "table": return target.getTable();
+        case "ttl": return target.getTtl();
         case "writeconsistencylevel":
-        case "WriteConsistencyLevel": return target.getWriteConsistencyLevel();
+        case "writeConsistencyLevel": return target.getWriteConsistencyLevel();
         default: return null;
         }
     }

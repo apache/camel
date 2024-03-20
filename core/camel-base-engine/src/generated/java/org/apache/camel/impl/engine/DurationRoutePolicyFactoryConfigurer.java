@@ -21,14 +21,13 @@ public class DurationRoutePolicyFactoryConfigurer extends org.apache.camel.suppo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.impl.engine.DurationRoutePolicyFactory target = (org.apache.camel.impl.engine.DurationRoutePolicyFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action":
-        case "Action": target.setAction(property(camelContext, org.apache.camel.impl.engine.DurationRoutePolicy.Action.class, value)); return true;
+        case "action": target.setAction(property(camelContext, org.apache.camel.impl.engine.DurationRoutePolicy.Action.class, value)); return true;
         case "fromrouteid":
-        case "FromRouteId": target.setFromRouteId(property(camelContext, java.lang.String.class, value)); return true;
+        case "fromRouteId": target.setFromRouteId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxmessages":
-        case "MaxMessages": target.setMaxMessages(property(camelContext, int.class, value)); return true;
+        case "maxMessages": target.setMaxMessages(property(camelContext, int.class, value)); return true;
         case "maxseconds":
-        case "MaxSeconds": target.setMaxSeconds(property(camelContext, int.class, value)); return true;
+        case "maxSeconds": target.setMaxSeconds(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -36,14 +35,13 @@ public class DurationRoutePolicyFactoryConfigurer extends org.apache.camel.suppo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action":
-        case "Action": return org.apache.camel.impl.engine.DurationRoutePolicy.Action.class;
+        case "action": return org.apache.camel.impl.engine.DurationRoutePolicy.Action.class;
         case "fromrouteid":
-        case "FromRouteId": return java.lang.String.class;
+        case "fromRouteId": return java.lang.String.class;
         case "maxmessages":
-        case "MaxMessages": return int.class;
+        case "maxMessages": return int.class;
         case "maxseconds":
-        case "MaxSeconds": return int.class;
+        case "maxSeconds": return int.class;
         default: return null;
         }
     }
@@ -52,14 +50,13 @@ public class DurationRoutePolicyFactoryConfigurer extends org.apache.camel.suppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.impl.engine.DurationRoutePolicyFactory target = (org.apache.camel.impl.engine.DurationRoutePolicyFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action":
-        case "Action": return target.getAction();
+        case "action": return target.getAction();
         case "fromrouteid":
-        case "FromRouteId": return target.getFromRouteId();
+        case "fromRouteId": return target.getFromRouteId();
         case "maxmessages":
-        case "MaxMessages": return target.getMaxMessages();
+        case "maxMessages": return target.getMaxMessages();
         case "maxseconds":
-        case "MaxSeconds": return target.getMaxSeconds();
+        case "maxSeconds": return target.getMaxSeconds();
         default: return null;
         }
     }

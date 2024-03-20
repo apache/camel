@@ -48,45 +48,44 @@ public class BoxCommentsManagerEndpointConfigurationConfigurer extends org.apach
         org.apache.camel.component.box.BoxCommentsManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxCommentsManagerEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstokencache":
-        case "AccessTokenCache": target.setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
+        case "accessTokenCache": target.setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.box.internal.BoxApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.box.internal.BoxApiName.class, value)); return true;
         case "authenticationtype":
-        case "AuthenticationType": target.setAuthenticationType(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticationType": target.setAuthenticationType(property(camelContext, java.lang.String.class, value)); return true;
         case "clientid":
-        case "ClientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
-        case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "commentid":
-        case "CommentId": target.setCommentId(property(camelContext, java.lang.String.class, value)); return true;
+        case "commentId": target.setCommentId(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
+        case "encryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
         case "enterpriseid":
-        case "EnterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
+        case "enterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
         case "fileid":
-        case "FileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
+        case "fileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
         case "httpparams":
-        case "HttpParams": target.setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
+        case "httpParams": target.setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
-        case "message":
-        case "Message": target.setMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
+        case "message": target.setMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekeyfile":
-        case "PrivateKeyFile": target.setPrivateKeyFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "privateKeyFile": target.setPrivateKeyFile(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekeypassword":
-        case "PrivateKeyPassword": target.setPrivateKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "privateKeyPassword": target.setPrivateKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "publickeyid":
-        case "PublicKeyId": target.setPublicKeyId(property(camelContext, java.lang.String.class, value)); return true;
+        case "publicKeyId": target.setPublicKeyId(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
-        case "SslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "userid":
-        case "UserId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
+        case "userId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
-        case "UserName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "userName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "userpassword":
-        case "UserPassword": target.setUserPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "userPassword": target.setUserPassword(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -100,45 +99,44 @@ public class BoxCommentsManagerEndpointConfigurationConfigurer extends org.apach
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstokencache":
-        case "AccessTokenCache": return com.box.sdk.IAccessTokenCache.class;
+        case "accessTokenCache": return com.box.sdk.IAccessTokenCache.class;
         case "apiname":
-        case "ApiName": return org.apache.camel.component.box.internal.BoxApiName.class;
+        case "apiName": return org.apache.camel.component.box.internal.BoxApiName.class;
         case "authenticationtype":
-        case "AuthenticationType": return java.lang.String.class;
+        case "authenticationType": return java.lang.String.class;
         case "clientid":
-        case "ClientId": return java.lang.String.class;
+        case "clientId": return java.lang.String.class;
         case "clientsecret":
-        case "ClientSecret": return java.lang.String.class;
+        case "clientSecret": return java.lang.String.class;
         case "commentid":
-        case "CommentId": return java.lang.String.class;
+        case "commentId": return java.lang.String.class;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": return com.box.sdk.EncryptionAlgorithm.class;
+        case "encryptionAlgorithm": return com.box.sdk.EncryptionAlgorithm.class;
         case "enterpriseid":
-        case "EnterpriseId": return java.lang.String.class;
+        case "enterpriseId": return java.lang.String.class;
         case "fileid":
-        case "FileId": return java.lang.String.class;
+        case "fileId": return java.lang.String.class;
         case "httpparams":
-        case "HttpParams": return java.util.Map.class;
+        case "httpParams": return java.util.Map.class;
         case "maxcacheentries":
-        case "MaxCacheEntries": return int.class;
-        case "message":
-        case "Message": return java.lang.String.class;
+        case "maxCacheEntries": return int.class;
+        case "message": return java.lang.String.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "privatekeyfile":
-        case "PrivateKeyFile": return java.lang.String.class;
+        case "privateKeyFile": return java.lang.String.class;
         case "privatekeypassword":
-        case "PrivateKeyPassword": return java.lang.String.class;
+        case "privateKeyPassword": return java.lang.String.class;
         case "publickeyid":
-        case "PublicKeyId": return java.lang.String.class;
+        case "publicKeyId": return java.lang.String.class;
         case "sslcontextparameters":
-        case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "userid":
-        case "UserId": return java.lang.String.class;
+        case "userId": return java.lang.String.class;
         case "username":
-        case "UserName": return java.lang.String.class;
+        case "userName": return java.lang.String.class;
         case "userpassword":
-        case "UserPassword": return java.lang.String.class;
+        case "userPassword": return java.lang.String.class;
         default: return null;
         }
     }
@@ -148,45 +146,44 @@ public class BoxCommentsManagerEndpointConfigurationConfigurer extends org.apach
         org.apache.camel.component.box.BoxCommentsManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxCommentsManagerEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstokencache":
-        case "AccessTokenCache": return target.getAccessTokenCache();
+        case "accessTokenCache": return target.getAccessTokenCache();
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "authenticationtype":
-        case "AuthenticationType": return target.getAuthenticationType();
+        case "authenticationType": return target.getAuthenticationType();
         case "clientid":
-        case "ClientId": return target.getClientId();
+        case "clientId": return target.getClientId();
         case "clientsecret":
-        case "ClientSecret": return target.getClientSecret();
+        case "clientSecret": return target.getClientSecret();
         case "commentid":
-        case "CommentId": return target.getCommentId();
+        case "commentId": return target.getCommentId();
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": return target.getEncryptionAlgorithm();
+        case "encryptionAlgorithm": return target.getEncryptionAlgorithm();
         case "enterpriseid":
-        case "EnterpriseId": return target.getEnterpriseId();
+        case "enterpriseId": return target.getEnterpriseId();
         case "fileid":
-        case "FileId": return target.getFileId();
+        case "fileId": return target.getFileId();
         case "httpparams":
-        case "HttpParams": return target.getHttpParams();
+        case "httpParams": return target.getHttpParams();
         case "maxcacheentries":
-        case "MaxCacheEntries": return target.getMaxCacheEntries();
-        case "message":
-        case "Message": return target.getMessage();
+        case "maxCacheEntries": return target.getMaxCacheEntries();
+        case "message": return target.getMessage();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "privatekeyfile":
-        case "PrivateKeyFile": return target.getPrivateKeyFile();
+        case "privateKeyFile": return target.getPrivateKeyFile();
         case "privatekeypassword":
-        case "PrivateKeyPassword": return target.getPrivateKeyPassword();
+        case "privateKeyPassword": return target.getPrivateKeyPassword();
         case "publickeyid":
-        case "PublicKeyId": return target.getPublicKeyId();
+        case "publicKeyId": return target.getPublicKeyId();
         case "sslcontextparameters":
-        case "SslContextParameters": return target.getSslContextParameters();
+        case "sslContextParameters": return target.getSslContextParameters();
         case "userid":
-        case "UserId": return target.getUserId();
+        case "userId": return target.getUserId();
         case "username":
-        case "UserName": return target.getUserName();
+        case "userName": return target.getUserName();
         case "userpassword":
-        case "UserPassword": return target.getUserPassword();
+        case "userPassword": return target.getUserPassword();
         default: return null;
         }
     }
@@ -195,7 +192,7 @@ public class BoxCommentsManagerEndpointConfigurationConfigurer extends org.apach
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "httpparams":
-        case "HttpParams": return java.lang.Object.class;
+        case "httpParams": return java.lang.Object.class;
         default: return null;
         }
     }

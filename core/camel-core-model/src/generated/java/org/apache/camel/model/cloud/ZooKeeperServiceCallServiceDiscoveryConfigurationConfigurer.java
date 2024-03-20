@@ -38,25 +38,21 @@ public class ZooKeeperServiceCallServiceDiscoveryConfigurationConfigurer extends
         org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basepath":
-        case "BasePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "basePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
-        case "ConnectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.String.class, value)); return true;
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
-        case "namespace":
-        case "Namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
-        case "nodes":
-        case "Nodes": target.setNodes(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties":
-        case "Properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
+        case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.String.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "nodes": target.setNodes(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
         case "reconnectbasesleeptime":
-        case "ReconnectBaseSleepTime": target.setReconnectBaseSleepTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnectBaseSleepTime": target.setReconnectBaseSleepTime(property(camelContext, java.lang.String.class, value)); return true;
         case "reconnectmaxretries":
-        case "ReconnectMaxRetries": target.setReconnectMaxRetries(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnectMaxRetries": target.setReconnectMaxRetries(property(camelContext, java.lang.String.class, value)); return true;
         case "reconnectmaxsleeptime":
-        case "ReconnectMaxSleepTime": target.setReconnectMaxSleepTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnectMaxSleepTime": target.setReconnectMaxSleepTime(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
-        case "SessionTimeout": target.setSessionTimeout(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessionTimeout": target.setSessionTimeout(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -70,25 +66,21 @@ public class ZooKeeperServiceCallServiceDiscoveryConfigurationConfigurer extends
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basepath":
-        case "BasePath": return java.lang.String.class;
+        case "basePath": return java.lang.String.class;
         case "connectiontimeout":
-        case "ConnectionTimeout": return java.lang.String.class;
-        case "id":
-        case "Id": return java.lang.String.class;
-        case "namespace":
-        case "Namespace": return java.lang.String.class;
-        case "nodes":
-        case "Nodes": return java.lang.String.class;
-        case "properties":
-        case "Properties": return java.util.List.class;
+        case "connectionTimeout": return java.lang.String.class;
+        case "id": return java.lang.String.class;
+        case "namespace": return java.lang.String.class;
+        case "nodes": return java.lang.String.class;
+        case "properties": return java.util.List.class;
         case "reconnectbasesleeptime":
-        case "ReconnectBaseSleepTime": return java.lang.String.class;
+        case "reconnectBaseSleepTime": return java.lang.String.class;
         case "reconnectmaxretries":
-        case "ReconnectMaxRetries": return java.lang.String.class;
+        case "reconnectMaxRetries": return java.lang.String.class;
         case "reconnectmaxsleeptime":
-        case "ReconnectMaxSleepTime": return java.lang.String.class;
+        case "reconnectMaxSleepTime": return java.lang.String.class;
         case "sessiontimeout":
-        case "SessionTimeout": return java.lang.String.class;
+        case "sessionTimeout": return java.lang.String.class;
         default: return null;
         }
     }
@@ -98,25 +90,21 @@ public class ZooKeeperServiceCallServiceDiscoveryConfigurationConfigurer extends
         org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basepath":
-        case "BasePath": return target.getBasePath();
+        case "basePath": return target.getBasePath();
         case "connectiontimeout":
-        case "ConnectionTimeout": return target.getConnectionTimeout();
-        case "id":
-        case "Id": return target.getId();
-        case "namespace":
-        case "Namespace": return target.getNamespace();
-        case "nodes":
-        case "Nodes": return target.getNodes();
-        case "properties":
-        case "Properties": return target.getProperties();
+        case "connectionTimeout": return target.getConnectionTimeout();
+        case "id": return target.getId();
+        case "namespace": return target.getNamespace();
+        case "nodes": return target.getNodes();
+        case "properties": return target.getProperties();
         case "reconnectbasesleeptime":
-        case "ReconnectBaseSleepTime": return target.getReconnectBaseSleepTime();
+        case "reconnectBaseSleepTime": return target.getReconnectBaseSleepTime();
         case "reconnectmaxretries":
-        case "ReconnectMaxRetries": return target.getReconnectMaxRetries();
+        case "reconnectMaxRetries": return target.getReconnectMaxRetries();
         case "reconnectmaxsleeptime":
-        case "ReconnectMaxSleepTime": return target.getReconnectMaxSleepTime();
+        case "reconnectMaxSleepTime": return target.getReconnectMaxSleepTime();
         case "sessiontimeout":
-        case "SessionTimeout": return target.getSessionTimeout();
+        case "sessionTimeout": return target.getSessionTimeout();
         default: return null;
         }
     }
@@ -124,8 +112,7 @@ public class ZooKeeperServiceCallServiceDiscoveryConfigurationConfigurer extends
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "properties":
-        case "Properties": return org.apache.camel.model.PropertyDefinition.class;
+        case "properties": return org.apache.camel.model.PropertyDefinition.class;
         default: return null;
         }
     }

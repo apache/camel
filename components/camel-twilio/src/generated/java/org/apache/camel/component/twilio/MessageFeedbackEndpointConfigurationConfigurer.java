@@ -32,13 +32,13 @@ public class MessageFeedbackEndpointConfigurationConfigurer extends org.apache.c
         org.apache.camel.component.twilio.MessageFeedbackEndpointConfiguration target = (org.apache.camel.component.twilio.MessageFeedbackEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
-        case "PathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
         case "pathmessagesid":
-        case "PathMessageSid": target.setPathMessageSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathMessageSid": target.setPathMessageSid(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -52,13 +52,13 @@ public class MessageFeedbackEndpointConfigurationConfigurer extends org.apache.c
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "apiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "pathaccountsid":
-        case "PathAccountSid": return java.lang.String.class;
+        case "pathAccountSid": return java.lang.String.class;
         case "pathmessagesid":
-        case "PathMessageSid": return java.lang.String.class;
+        case "pathMessageSid": return java.lang.String.class;
         default: return null;
         }
     }
@@ -68,13 +68,13 @@ public class MessageFeedbackEndpointConfigurationConfigurer extends org.apache.c
         org.apache.camel.component.twilio.MessageFeedbackEndpointConfiguration target = (org.apache.camel.component.twilio.MessageFeedbackEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "pathaccountsid":
-        case "PathAccountSid": return target.getPathAccountSid();
+        case "pathAccountSid": return target.getPathAccountSid();
         case "pathmessagesid":
-        case "PathMessageSid": return target.getPathMessageSid();
+        case "pathMessageSid": return target.getPathMessageSid();
         default: return null;
         }
     }

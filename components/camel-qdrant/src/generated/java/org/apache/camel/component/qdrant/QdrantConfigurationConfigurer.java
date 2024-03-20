@@ -22,17 +22,12 @@ public class QdrantConfigurationConfigurer extends org.apache.camel.support.comp
         org.apache.camel.component.qdrant.QdrantConfiguration target = (org.apache.camel.component.qdrant.QdrantConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
-        case "ApiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "client":
-        case "Client": target.setClient(property(camelContext, io.qdrant.client.QdrantClient.class, value)); return true;
-        case "host":
-        case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "port":
-        case "Port": target.setPort(property(camelContext, int.class, value)); return true;
-        case "timeout":
-        case "Timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "tls":
-        case "Tls": target.setTls(property(camelContext, boolean.class, value)); return true;
+        case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "client": target.setClient(property(camelContext, io.qdrant.client.QdrantClient.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "tls": target.setTls(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -41,17 +36,12 @@ public class QdrantConfigurationConfigurer extends org.apache.camel.support.comp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
-        case "ApiKey": return java.lang.String.class;
-        case "client":
-        case "Client": return io.qdrant.client.QdrantClient.class;
-        case "host":
-        case "Host": return java.lang.String.class;
-        case "port":
-        case "Port": return int.class;
-        case "timeout":
-        case "Timeout": return java.time.Duration.class;
-        case "tls":
-        case "Tls": return boolean.class;
+        case "apiKey": return java.lang.String.class;
+        case "client": return io.qdrant.client.QdrantClient.class;
+        case "host": return java.lang.String.class;
+        case "port": return int.class;
+        case "timeout": return java.time.Duration.class;
+        case "tls": return boolean.class;
         default: return null;
         }
     }
@@ -61,17 +51,12 @@ public class QdrantConfigurationConfigurer extends org.apache.camel.support.comp
         org.apache.camel.component.qdrant.QdrantConfiguration target = (org.apache.camel.component.qdrant.QdrantConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
-        case "ApiKey": return target.getApiKey();
-        case "client":
-        case "Client": return target.getClient();
-        case "host":
-        case "Host": return target.getHost();
-        case "port":
-        case "Port": return target.getPort();
-        case "timeout":
-        case "Timeout": return target.getTimeout();
-        case "tls":
-        case "Tls": return target.isTls();
+        case "apiKey": return target.getApiKey();
+        case "client": return target.getClient();
+        case "host": return target.getHost();
+        case "port": return target.getPort();
+        case "timeout": return target.getTimeout();
+        case "tls": return target.isTls();
         default: return null;
         }
     }

@@ -22,11 +22,10 @@ public class InfinispanEmbeddedIdempotentRepositoryConfigurer extends org.apache
         org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository target = (org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachecontainer":
-        case "CacheContainer": target.setCacheContainer(property(camelContext, org.infinispan.manager.EmbeddedCacheManager.class, value)); return true;
+        case "cacheContainer": target.setCacheContainer(property(camelContext, org.infinispan.manager.EmbeddedCacheManager.class, value)); return true;
         case "cachename":
-        case "CacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration":
-        case "Configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration.class, value)); return true;
+        case "cacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration.class, value)); return true;
         default: return false;
         }
     }
@@ -35,11 +34,10 @@ public class InfinispanEmbeddedIdempotentRepositoryConfigurer extends org.apache
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachecontainer":
-        case "CacheContainer": return org.infinispan.manager.EmbeddedCacheManager.class;
+        case "cacheContainer": return org.infinispan.manager.EmbeddedCacheManager.class;
         case "cachename":
-        case "CacheName": return java.lang.String.class;
-        case "configuration":
-        case "Configuration": return org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration.class;
+        case "cacheName": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration.class;
         default: return null;
         }
     }
@@ -49,11 +47,10 @@ public class InfinispanEmbeddedIdempotentRepositoryConfigurer extends org.apache
         org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository target = (org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachecontainer":
-        case "CacheContainer": return target.getCacheContainer();
+        case "cacheContainer": return target.getCacheContainer();
         case "cachename":
-        case "CacheName": return target.getCacheName();
-        case "configuration":
-        case "Configuration": return target.getConfiguration();
+        case "cacheName": return target.getCacheName();
+        case "configuration": return target.getConfiguration();
         default: return null;
         }
     }

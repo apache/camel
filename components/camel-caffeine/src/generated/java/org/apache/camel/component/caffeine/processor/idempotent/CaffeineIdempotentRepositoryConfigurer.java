@@ -22,7 +22,7 @@ public class CaffeineIdempotentRepositoryConfigurer extends org.apache.camel.sup
         org.apache.camel.component.caffeine.processor.idempotent.CaffeineIdempotentRepository target = (org.apache.camel.component.caffeine.processor.idempotent.CaffeineIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachename":
-        case "CacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
+        case "cacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +31,7 @@ public class CaffeineIdempotentRepositoryConfigurer extends org.apache.camel.sup
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachename":
-        case "CacheName": return java.lang.String.class;
+        case "cacheName": return java.lang.String.class;
         default: return null;
         }
     }
@@ -41,7 +41,7 @@ public class CaffeineIdempotentRepositoryConfigurer extends org.apache.camel.sup
         org.apache.camel.component.caffeine.processor.idempotent.CaffeineIdempotentRepository target = (org.apache.camel.component.caffeine.processor.idempotent.CaffeineIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachename":
-        case "CacheName": return target.getCacheName();
+        case "cacheName": return target.getCacheName();
         default: return null;
         }
     }

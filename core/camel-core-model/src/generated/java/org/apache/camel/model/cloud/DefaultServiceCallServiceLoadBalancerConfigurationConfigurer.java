@@ -29,10 +29,8 @@ public class DefaultServiceCallServiceLoadBalancerConfigurationConfigurer extend
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration target = (org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties":
-        case "Properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }
@@ -45,10 +43,8 @@ public class DefaultServiceCallServiceLoadBalancerConfigurationConfigurer extend
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": return java.lang.String.class;
-        case "properties":
-        case "Properties": return java.util.List.class;
+        case "id": return java.lang.String.class;
+        case "properties": return java.util.List.class;
         default: return null;
         }
     }
@@ -57,10 +53,8 @@ public class DefaultServiceCallServiceLoadBalancerConfigurationConfigurer extend
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration target = (org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": return target.getId();
-        case "properties":
-        case "Properties": return target.getProperties();
+        case "id": return target.getId();
+        case "properties": return target.getProperties();
         default: return null;
         }
     }
@@ -68,8 +62,7 @@ public class DefaultServiceCallServiceLoadBalancerConfigurationConfigurer extend
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "properties":
-        case "Properties": return org.apache.camel.model.PropertyDefinition.class;
+        case "properties": return org.apache.camel.model.PropertyDefinition.class;
         default: return null;
         }
     }

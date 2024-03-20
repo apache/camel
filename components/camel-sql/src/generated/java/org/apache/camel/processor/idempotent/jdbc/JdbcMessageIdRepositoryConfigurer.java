@@ -22,27 +22,27 @@ public class JdbcMessageIdRepositoryConfigurer extends org.apache.camel.support.
         org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository target = (org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "clearstring":
-        case "ClearString": target.setClearString(property(camelContext, java.lang.String.class, value)); return true;
+        case "clearString": target.setClearString(property(camelContext, java.lang.String.class, value)); return true;
         case "createstring":
-        case "CreateString": target.setCreateString(property(camelContext, java.lang.String.class, value)); return true;
+        case "createString": target.setCreateString(property(camelContext, java.lang.String.class, value)); return true;
         case "createtableifnotexists":
-        case "CreateTableIfNotExists": target.setCreateTableIfNotExists(property(camelContext, boolean.class, value)); return true;
+        case "createTableIfNotExists": target.setCreateTableIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "deletestring":
-        case "DeleteString": target.setDeleteString(property(camelContext, java.lang.String.class, value)); return true;
+        case "deleteString": target.setDeleteString(property(camelContext, java.lang.String.class, value)); return true;
         case "insertstring":
-        case "InsertString": target.setInsertString(property(camelContext, java.lang.String.class, value)); return true;
+        case "insertString": target.setInsertString(property(camelContext, java.lang.String.class, value)); return true;
         case "jdbctemplate":
-        case "JdbcTemplate": target.setJdbcTemplate(property(camelContext, org.springframework.jdbc.core.JdbcTemplate.class, value)); return true;
+        case "jdbcTemplate": target.setJdbcTemplate(property(camelContext, org.springframework.jdbc.core.JdbcTemplate.class, value)); return true;
         case "processorname":
-        case "ProcessorName": target.setProcessorName(property(camelContext, java.lang.String.class, value)); return true;
+        case "processorName": target.setProcessorName(property(camelContext, java.lang.String.class, value)); return true;
         case "querystring":
-        case "QueryString": target.setQueryString(property(camelContext, java.lang.String.class, value)); return true;
+        case "queryString": target.setQueryString(property(camelContext, java.lang.String.class, value)); return true;
         case "tableexistsstring":
-        case "TableExistsString": target.setTableExistsString(property(camelContext, java.lang.String.class, value)); return true;
+        case "tableExistsString": target.setTableExistsString(property(camelContext, java.lang.String.class, value)); return true;
         case "tablename":
-        case "TableName": target.setTableName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tableName": target.setTableName(property(camelContext, java.lang.String.class, value)); return true;
         case "transactiontemplate":
-        case "TransactionTemplate": target.setTransactionTemplate(property(camelContext, org.springframework.transaction.support.TransactionTemplate.class, value)); return true;
+        case "transactionTemplate": target.setTransactionTemplate(property(camelContext, org.springframework.transaction.support.TransactionTemplate.class, value)); return true;
         default: return false;
         }
     }
@@ -51,27 +51,27 @@ public class JdbcMessageIdRepositoryConfigurer extends org.apache.camel.support.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "clearstring":
-        case "ClearString": return java.lang.String.class;
+        case "clearString": return java.lang.String.class;
         case "createstring":
-        case "CreateString": return java.lang.String.class;
+        case "createString": return java.lang.String.class;
         case "createtableifnotexists":
-        case "CreateTableIfNotExists": return boolean.class;
+        case "createTableIfNotExists": return boolean.class;
         case "deletestring":
-        case "DeleteString": return java.lang.String.class;
+        case "deleteString": return java.lang.String.class;
         case "insertstring":
-        case "InsertString": return java.lang.String.class;
+        case "insertString": return java.lang.String.class;
         case "jdbctemplate":
-        case "JdbcTemplate": return org.springframework.jdbc.core.JdbcTemplate.class;
+        case "jdbcTemplate": return org.springframework.jdbc.core.JdbcTemplate.class;
         case "processorname":
-        case "ProcessorName": return java.lang.String.class;
+        case "processorName": return java.lang.String.class;
         case "querystring":
-        case "QueryString": return java.lang.String.class;
+        case "queryString": return java.lang.String.class;
         case "tableexistsstring":
-        case "TableExistsString": return java.lang.String.class;
+        case "tableExistsString": return java.lang.String.class;
         case "tablename":
-        case "TableName": return java.lang.String.class;
+        case "tableName": return java.lang.String.class;
         case "transactiontemplate":
-        case "TransactionTemplate": return org.springframework.transaction.support.TransactionTemplate.class;
+        case "transactionTemplate": return org.springframework.transaction.support.TransactionTemplate.class;
         default: return null;
         }
     }
@@ -81,27 +81,27 @@ public class JdbcMessageIdRepositoryConfigurer extends org.apache.camel.support.
         org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository target = (org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "clearstring":
-        case "ClearString": return target.getClearString();
+        case "clearString": return target.getClearString();
         case "createstring":
-        case "CreateString": return target.getCreateString();
+        case "createString": return target.getCreateString();
         case "createtableifnotexists":
-        case "CreateTableIfNotExists": return target.isCreateTableIfNotExists();
+        case "createTableIfNotExists": return target.isCreateTableIfNotExists();
         case "deletestring":
-        case "DeleteString": return target.getDeleteString();
+        case "deleteString": return target.getDeleteString();
         case "insertstring":
-        case "InsertString": return target.getInsertString();
+        case "insertString": return target.getInsertString();
         case "jdbctemplate":
-        case "JdbcTemplate": return target.getJdbcTemplate();
+        case "jdbcTemplate": return target.getJdbcTemplate();
         case "processorname":
-        case "ProcessorName": return target.getProcessorName();
+        case "processorName": return target.getProcessorName();
         case "querystring":
-        case "QueryString": return target.getQueryString();
+        case "queryString": return target.getQueryString();
         case "tableexistsstring":
-        case "TableExistsString": return target.getTableExistsString();
+        case "tableExistsString": return target.getTableExistsString();
         case "tablename":
-        case "TableName": return target.getTableName();
+        case "tableName": return target.getTableName();
         case "transactiontemplate":
-        case "TransactionTemplate": return target.getTransactionTemplate();
+        case "transactionTemplate": return target.getTransactionTemplate();
         default: return null;
         }
     }

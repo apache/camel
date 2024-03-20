@@ -22,23 +22,18 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         org.apache.camel.main.HashicorpVaultConfigurationProperties target = (org.apache.camel.main.HashicorpVaultConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
-        case "AwsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
+        case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
-        case "AzureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
-        case "engine":
-        case "Engine": target.setEngine(property(camelContext, java.lang.String.class, value)); return true;
+        case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "engine": target.setEngine(property(camelContext, java.lang.String.class, value)); return true;
         case "gcpvaultconfiguration":
-        case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
+        case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
-        case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
-        case "host":
-        case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "port":
-        case "Port": target.setPort(property(camelContext, java.lang.String.class, value)); return true;
-        case "scheme":
-        case "Scheme": target.setScheme(property(camelContext, java.lang.String.class, value)); return true;
-        case "token":
-        case "Token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.setPort(property(camelContext, java.lang.String.class, value)); return true;
+        case "scheme": target.setScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -47,23 +42,18 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
-        case "AwsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
+        case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
-        case "AzureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
-        case "engine":
-        case "Engine": return java.lang.String.class;
+        case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "engine": return java.lang.String.class;
         case "gcpvaultconfiguration":
-        case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
+        case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
-        case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
-        case "host":
-        case "Host": return java.lang.String.class;
-        case "port":
-        case "Port": return java.lang.String.class;
-        case "scheme":
-        case "Scheme": return java.lang.String.class;
-        case "token":
-        case "Token": return java.lang.String.class;
+        case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "host": return java.lang.String.class;
+        case "port": return java.lang.String.class;
+        case "scheme": return java.lang.String.class;
+        case "token": return java.lang.String.class;
         default: return null;
         }
     }
@@ -73,23 +63,18 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         org.apache.camel.main.HashicorpVaultConfigurationProperties target = (org.apache.camel.main.HashicorpVaultConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
-        case "AwsVaultConfiguration": return target.getAwsVaultConfiguration();
+        case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
-        case "AzureVaultConfiguration": return target.getAzureVaultConfiguration();
-        case "engine":
-        case "Engine": return target.getEngine();
+        case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "engine": return target.getEngine();
         case "gcpvaultconfiguration":
-        case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
+        case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
-        case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
-        case "host":
-        case "Host": return target.getHost();
-        case "port":
-        case "Port": return target.getPort();
-        case "scheme":
-        case "Scheme": return target.getScheme();
-        case "token":
-        case "Token": return target.getToken();
+        case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "host": return target.getHost();
+        case "port": return target.getPort();
+        case "scheme": return target.getScheme();
+        case "token": return target.getToken();
         default: return null;
         }
     }

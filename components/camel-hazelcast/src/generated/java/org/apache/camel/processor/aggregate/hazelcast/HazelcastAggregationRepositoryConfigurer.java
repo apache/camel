@@ -22,17 +22,17 @@ public class HazelcastAggregationRepositoryConfigurer extends org.apache.camel.s
         org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository target = (org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "deadletteruri":
-        case "DeadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
         case "hazelcastinstance":
-        case "HazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
+        case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
+        case "maximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
         case "recoveryinterval":
-        case "RecoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, long.class, value)); return true;
         case "userecovery":
-        case "UseRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
+        case "useRecovery": target.setUseRecovery(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -41,17 +41,17 @@ public class HazelcastAggregationRepositoryConfigurer extends org.apache.camel.s
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return boolean.class;
+        case "allowSerializedHeaders": return boolean.class;
         case "deadletteruri":
-        case "DeadLetterUri": return java.lang.String.class;
+        case "deadLetterUri": return java.lang.String.class;
         case "hazelcastinstance":
-        case "HazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
+        case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return int.class;
+        case "maximumRedeliveries": return int.class;
         case "recoveryinterval":
-        case "RecoveryInterval": return long.class;
+        case "recoveryInterval": return long.class;
         case "userecovery":
-        case "UseRecovery": return boolean.class;
+        case "useRecovery": return boolean.class;
         default: return null;
         }
     }
@@ -61,17 +61,17 @@ public class HazelcastAggregationRepositoryConfigurer extends org.apache.camel.s
         org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository target = (org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowserializedheaders":
-        case "AllowSerializedHeaders": return target.isAllowSerializedHeaders();
+        case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "deadletteruri":
-        case "DeadLetterUri": return target.getDeadLetterUri();
+        case "deadLetterUri": return target.getDeadLetterUri();
         case "hazelcastinstance":
-        case "HazelcastInstance": return target.getHazelcastInstance();
+        case "hazelcastInstance": return target.getHazelcastInstance();
         case "maximumredeliveries":
-        case "MaximumRedeliveries": return target.getMaximumRedeliveries();
+        case "maximumRedeliveries": return target.getMaximumRedeliveries();
         case "recoveryinterval":
-        case "RecoveryInterval": return target.getRecoveryInterval();
+        case "recoveryInterval": return target.getRecoveryInterval();
         case "userecovery":
-        case "UseRecovery": return target.isUseRecovery();
+        case "useRecovery": return target.isUseRecovery();
         default: return null;
         }
     }

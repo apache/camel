@@ -21,14 +21,13 @@ public class XsltSaxonAggregationStrategyConfigurer extends org.apache.camel.sup
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy target = (org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "output":
-        case "Output": target.setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
+        case "output": target.setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
         case "propertyname":
-        case "PropertyName": target.setPropertyName(property(camelContext, java.lang.String.class, value)); return true;
+        case "propertyName": target.setPropertyName(property(camelContext, java.lang.String.class, value)); return true;
         case "transformerfactoryclass":
-        case "TransformerFactoryClass": target.setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "transformerFactoryClass": target.setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
         case "xslfile":
-        case "XslFile": target.setXslFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "xslFile": target.setXslFile(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -36,14 +35,13 @@ public class XsltSaxonAggregationStrategyConfigurer extends org.apache.camel.sup
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "output":
-        case "Output": return org.apache.camel.component.xslt.XsltOutput.class;
+        case "output": return org.apache.camel.component.xslt.XsltOutput.class;
         case "propertyname":
-        case "PropertyName": return java.lang.String.class;
+        case "propertyName": return java.lang.String.class;
         case "transformerfactoryclass":
-        case "TransformerFactoryClass": return java.lang.String.class;
+        case "transformerFactoryClass": return java.lang.String.class;
         case "xslfile":
-        case "XslFile": return java.lang.String.class;
+        case "xslFile": return java.lang.String.class;
         default: return null;
         }
     }
@@ -52,14 +50,13 @@ public class XsltSaxonAggregationStrategyConfigurer extends org.apache.camel.sup
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy target = (org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "output":
-        case "Output": return target.getOutput();
+        case "output": return target.getOutput();
         case "propertyname":
-        case "PropertyName": return target.getPropertyName();
+        case "propertyName": return target.getPropertyName();
         case "transformerfactoryclass":
-        case "TransformerFactoryClass": return target.getTransformerFactoryClass();
+        case "transformerFactoryClass": return target.getTransformerFactoryClass();
         case "xslfile":
-        case "XslFile": return target.getXslFile();
+        case "xslFile": return target.getXslFile();
         default: return null;
         }
     }

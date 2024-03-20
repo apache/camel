@@ -21,14 +21,12 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.OtelConfigurationProperties target = (org.apache.camel.main.OtelConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "enabled":
-        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
-        case "encoding":
-        case "Encoding": target.setEncoding(property(camelContext, boolean.class, value)); return true;
+        case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "encoding": target.setEncoding(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
-        case "ExcludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
+        case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "instrumentationname":
-        case "InstrumentationName": target.setInstrumentationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "instrumentationName": target.setInstrumentationName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -36,14 +34,12 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "enabled":
-        case "Enabled": return boolean.class;
-        case "encoding":
-        case "Encoding": return boolean.class;
+        case "enabled": return boolean.class;
+        case "encoding": return boolean.class;
         case "excludepatterns":
-        case "ExcludePatterns": return java.lang.String.class;
+        case "excludePatterns": return java.lang.String.class;
         case "instrumentationname":
-        case "InstrumentationName": return java.lang.String.class;
+        case "instrumentationName": return java.lang.String.class;
         default: return null;
         }
     }
@@ -52,14 +48,12 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.OtelConfigurationProperties target = (org.apache.camel.main.OtelConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "enabled":
-        case "Enabled": return target.isEnabled();
-        case "encoding":
-        case "Encoding": return target.isEncoding();
+        case "enabled": return target.isEnabled();
+        case "encoding": return target.isEncoding();
         case "excludepatterns":
-        case "ExcludePatterns": return target.getExcludePatterns();
+        case "excludePatterns": return target.getExcludePatterns();
         case "instrumentationname":
-        case "InstrumentationName": return target.getInstrumentationName();
+        case "instrumentationName": return target.getInstrumentationName();
         default: return null;
         }
     }

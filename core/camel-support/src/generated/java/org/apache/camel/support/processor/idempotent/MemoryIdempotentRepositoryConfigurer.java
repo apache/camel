@@ -22,7 +22,7 @@ public class MemoryIdempotentRepositoryConfigurer extends org.apache.camel.suppo
         org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository target = (org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachesize":
-        case "CacheSize": target.setCacheSize(property(camelContext, int.class, value)); return true;
+        case "cacheSize": target.setCacheSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +31,7 @@ public class MemoryIdempotentRepositoryConfigurer extends org.apache.camel.suppo
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachesize":
-        case "CacheSize": return int.class;
+        case "cacheSize": return int.class;
         default: return null;
         }
     }
@@ -41,7 +41,7 @@ public class MemoryIdempotentRepositoryConfigurer extends org.apache.camel.suppo
         org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository target = (org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cachesize":
-        case "CacheSize": return target.getCacheSize();
+        case "cacheSize": return target.getCacheSize();
         default: return null;
         }
     }
