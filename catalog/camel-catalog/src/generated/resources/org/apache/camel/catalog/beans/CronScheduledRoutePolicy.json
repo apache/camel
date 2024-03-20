@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "CronScheduledRoutePolicy",
+    "javaType": "org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy",
+    "interfaceType": "org.apache.camel.spi.RoutePolicy",
+    "title": "Cron Scheduled Route Policy",
+    "description": "A cron based RoutePolicy that can be used to start\/stop routes at specific times.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-quartz",
+    "version": "4.5.0-SNAPSHOT",
+    "properties": { "routeStartTime": { "index": 0, "kind": "property", "displayName": "Route Start Time", "required": false, "type": "object", "javaType": "org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Cron expression for when the route should be started" }, "routeStopTime": { "index": 1, "kind": "property", "displayName": "Route Stop Time", "required": false, "type": "object", "javaType": "org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Cron expression for when the route should be stopped" }, "routeSuspendTime": { "index": 2, "kind": "property", "displayName": "Route Suspend Time", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Cron expression for when the route should be suspended" }, "routeResumeTime": { "index": 3, "kind": "property", "displayName": "Route Resume Time", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Cron expression for when the route should be resumed" }, "timeZoneString": { "index": 4, "kind": "property", "displayName": "Time Zone String", "required": false, "type": "object", "javaType": "org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "To use a specific timezone (ID such as CET)" }, "routeStopGracePeriod": { "index": 5, "kind": "property", "displayName": "Route Stop Grace Period", "required": false, "type": "object", "javaType": "org.apache.camel.routepolicy.quartz.ScheduledRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "10000", "description": "Timeout (in millis) when stopping routes." } }
+  }
+}
+

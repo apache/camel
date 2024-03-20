@@ -31,6 +31,8 @@ import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -50,6 +52,10 @@ import org.slf4j.LoggerFactory;
  * {@link org.apache.camel.spi.Synchronization} callback on the current {@link Exchange} which triggers the
  * {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)} when the current {@link Exchange} is done.
  */
+@Metadata(label = "bean",
+        description = "A throttle based RoutePolicy which is capable of dynamic throttling a route based on number of current inflight exchanges.",
+        annotations = {"interfaceName=org.apache.camel.spi.RoutePolicy"})
+@Configurer(metadataOnly = true)
 public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThrottlingInflightRoutePolicy.class);
@@ -63,10 +69,14 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private ContextScopedEventNotifier eventNotifier;
     private CamelContext camelContext;
     private final Lock lock = new ReentrantLock();
+    @Metadata(description = "Sets which scope the throttling should be based upon, either route or total scoped.", enums = "Context,Route", defaultValue = "Route")
     private ThrottlingScope scope = ThrottlingScope.Route;
+    @Metadata(description = "Sets the upper limit of number of concurrent inflight exchanges at which point reached the throttler should suspend the route.", defaultValue = "1000")
     private int maxInflightExchanges = 1000;
+    @Metadata(description = "Sets at which percentage of the max the throttler should start resuming the route.", defaultValue = "70")
     private int resumePercentOfMax = 70;
     private int resumeInflightExchanges = 700;
+    @Metadata(description = "Sets the logging level to report the throttling activity.", javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
     private CamelLogger logger;
 

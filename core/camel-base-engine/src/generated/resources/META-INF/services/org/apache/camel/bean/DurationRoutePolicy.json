@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "DurationRoutePolicy",
+    "javaType": "org.apache.camel.impl.engine.DurationRoutePolicy",
+    "interfaceType": "org.apache.camel.spi.RoutePolicy",
+    "title": "Duration Route Policy",
+    "description": "RoutePolicy which executes for a duration and then triggers an action. This can be used to stop the route after it has processed a number of messages, or has been running for N seconds.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-base-engine",
+    "version": "4.5.0-SNAPSHOT",
+    "properties": { "maxSeconds": { "index": 0, "kind": "property", "displayName": "Max Seconds", "required": false, "type": "object", "javaType": "org.apache.camel.impl.engine.DurationRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Maximum seconds Camel is running before the action is triggered" }, "maxMessages": { "index": 1, "kind": "property", "displayName": "Max Messages", "required": false, "type": "object", "javaType": "org.apache.camel.impl.engine.DurationRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Maximum number of messages to process before the action is triggered" }, "action": { "index": 2, "kind": "property", "displayName": "Action", "required": false, "type": "object", "javaType": "org.apache.camel.impl.engine.DurationRoutePolicy", "enum": [ "STOP_CAMEL_CONTEXT", "STOP_ROUTE", "SUSPEND_ROUTE", "SUSPEND_ALL_ROUTES" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "STOP_ROUTE", "description": "Action to perform" } }
+  }
+}
+

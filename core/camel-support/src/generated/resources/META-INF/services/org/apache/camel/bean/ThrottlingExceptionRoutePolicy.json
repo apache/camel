@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "ThrottlingExceptionRoutePolicy",
+    "javaType": "org.apache.camel.throttling.ThrottlingExceptionRoutePolicy",
+    "interfaceType": "org.apache.camel.spi.RoutePolicy",
+    "title": "Throttling Exception Route Policy",
+    "description": "A throttle based RoutePolicy which is modelled after the circuit breaker and will stop consuming from an endpoint based on the type of exceptions that are thrown and the threshold settings.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-support",
+    "version": "4.5.0-SNAPSHOT",
+    "properties": { "failureThreshold": { "index": 0, "kind": "property", "displayName": "Failure Threshold", "required": false, "type": "object", "javaType": "org.apache.camel.throttling.ThrottlingExceptionRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "How many failed messages within the window would trigger the circuit breaker to open" }, "failureWindow": { "index": 1, "kind": "property", "displayName": "Failure Window", "required": false, "type": "object", "javaType": "org.apache.camel.throttling.ThrottlingExceptionRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Sliding window for how long time to go back (in millis) when counting number of failures" }, "halfOpenAfter": { "index": 2, "kind": "property", "displayName": "Half Open After", "required": false, "type": "object", "javaType": "org.apache.camel.throttling.ThrottlingExceptionRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Interval (in millis) for how often to check whether a currently open circuit breaker may work again" }, "exceptions": { "index": 3, "kind": "property", "displayName": "Exceptions", "required": false, "type": "object", "javaType": "org.apache.camel.throttling.ThrottlingExceptionRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Allows to only throttle based on certain types of exceptions. Multiple exceptions (use FQN class name) can be separated by comma." }, "halfOpenHandler": { "index": 4, "kind": "property", "displayName": "Half Open Handler", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.throttling.ThrottlingExceptionRoutePolicy", "deprecated": false, "autowired": false, "secret": false, "description": "Custom check to perform whether the circuit breaker can move to half-open state. If set then this is used instead of resuming the route." } }
+  }
+}
+
