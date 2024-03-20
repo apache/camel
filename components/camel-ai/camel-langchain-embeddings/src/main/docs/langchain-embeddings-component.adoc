@@ -1,8 +1,8 @@
-= Langchain4j Embeddings Component
-:doctitle: Langchain4j Embeddings
+= LangChain4j Embeddings Component
+:doctitle: LangChain4j Embeddings
 :shortname: langchain-embeddings
 :artifactid: camel-langchain-embeddings
-:description: Langchain4j Embeddings
+:description: LangChain4j Embeddings
 :since: 4.5
 :supportlevel: Preview
 :tabs-sync-option:
@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Langchain embeddings component provides support to compute embeddings using Langchain4j embeddings.
+The LangChain embeddings component provides support to compute embeddings using https://docs.langchain4j.dev/[LangChain4j] embeddings.
 
 == URI format
 

@@ -27,14 +27,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LangchainEmbeddingsComponentTest extends CamelTestSupport {
+public class LangChainEmbeddingsComponentTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        LangchainEmbeddingsComponent component
-                = context.getComponent(LangchainEmbeddings.SCHEME, LangchainEmbeddingsComponent.class);
+        LangChainEmbeddingsComponent component
+                = context.getComponent(LangChainEmbeddings.SCHEME, LangChainEmbeddingsComponent.class);
 
         component.getConfiguration().setEmbeddingModel(new AllMiniLmL6V2EmbeddingModel());
 
@@ -48,14 +48,14 @@ public class LangchainEmbeddingsComponentTest extends CamelTestSupport {
                 .withBody("hi")
                 .request(Message.class);
 
-        Embedding firstEmbedding = first.getHeader(LangchainEmbeddings.Headers.VECTOR, Embedding.class);
+        Embedding firstEmbedding = first.getHeader(LangChainEmbeddings.Headers.VECTOR, Embedding.class);
         assertThat(firstEmbedding.vector()).hasSize(384);
 
         Message second = fluentTemplate.to("langchain-embeddings:second")
                 .withBody("hello")
                 .request(Message.class);
 
-        Embedding secondEmbedding = second.getHeader(LangchainEmbeddings.Headers.VECTOR, Embedding.class);
+        Embedding secondEmbedding = second.getHeader(LangChainEmbeddings.Headers.VECTOR, Embedding.class);
         assertThat(secondEmbedding.vector()).hasSize(384);
 
         double cosineSimilarity = CosineSimilarity.between(firstEmbedding, secondEmbedding);

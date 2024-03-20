@@ -23,7 +23,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Langchain4j Chat component
+ * LangChain4j Chat component
  */
 public fun UriDsl.`langchain-chat`(i: LangchainChatUriDsl.() -> Unit) {
   LangchainChatUriDsl(this).apply(i)
@@ -51,8 +51,8 @@ public class LangchainChatUriDsl(
   }
 
   /**
-   * Operation in case of Endpoint of type CHAT. value is one the values of
-   * org.apache.camel.component.langchain.LangchainChatOperations
+   * Operation in case of Endpoint of type CHAT. The value is one of the values of
+   * org.apache.camel.component.langchain.LangChainChatOperations
    */
   public fun chatOperation(chatOperation: String) {
     it.property("chatOperation", chatOperation)

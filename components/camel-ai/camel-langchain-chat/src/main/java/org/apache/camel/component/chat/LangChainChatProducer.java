@@ -31,13 +31,13 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
-public class LangchainChatProducer extends DefaultProducer {
+public class LangChainChatProducer extends DefaultProducer {
 
-    private final LangchainChatEndpoint endpoint;
+    private final LangChainChatEndpoint endpoint;
 
     private ChatLanguageModel chatLanguageModel;
 
-    public LangchainChatProducer(LangchainChatEndpoint endpoint) {
+    public LangChainChatProducer(LangChainChatEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
@@ -47,21 +47,21 @@ public class LangchainChatProducer extends DefaultProducer {
 
         var operation = this.endpoint.getConfiguration().getChatOperation();
 
-        if (LangchainChatOperations.CHAT_SINGLE_MESSAGE.equals(operation)) {
+        if (LangChainChatOperations.CHAT_SINGLE_MESSAGE.equals(operation)) {
             processSingleMessage(exchange);
-        } else if (LangchainChatOperations.CHAT_SINGLE_MESSAGE_WITH_PROMPT.equals(operation)) {
+        } else if (LangChainChatOperations.CHAT_SINGLE_MESSAGE_WITH_PROMPT.equals(operation)) {
             processSingleMessageWithPrompt(exchange);
-        } else if (LangchainChatOperations.CHAT_MULTIPLE_MESSAGES.equals(operation)) {
+        } else if (LangChainChatOperations.CHAT_MULTIPLE_MESSAGES.equals(operation)) {
             processMultipleMessages(exchange);
         }
     }
 
     @SuppressWarnings("unchecked")
     private void processSingleMessageWithPrompt(Exchange exchange) throws NoSuchHeaderException, InvalidPayloadException {
-        final String promptTemplate = exchange.getIn().getHeader(LangchainChat.Headers.PROMPT_TEMPLATE, String.class);
+        final String promptTemplate = exchange.getIn().getHeader(LangChainChat.Headers.PROMPT_TEMPLATE, String.class);
         if (promptTemplate == null) {
             throw new NoSuchHeaderException(
-                    "The promptTemplate is a required header", exchange, LangchainChat.Headers.PROMPT_TEMPLATE);
+                    "The promptTemplate is a required header", exchange, LangChainChat.Headers.PROMPT_TEMPLATE);
         }
 
         Map<String, Object> variables = (Map<String, Object>) exchange.getIn().getMandatoryBody(Map.class);

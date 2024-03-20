@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
-public class LangchainChatIT extends OllamaTestSupport {
+public class LangChainChatIT extends OllamaTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -121,7 +121,7 @@ public class LangchainChatIT extends OllamaTestSupport {
         variables.put("ingredients", "potato, tomato, feta, olive oil");
 
         String response = template.requestBodyAndHeader("direct:send-message-prompt", variables,
-                LangchainChat.Headers.PROMPT_TEMPLATE, promptTemplate, String.class);
+                LangChainChat.Headers.PROMPT_TEMPLATE, promptTemplate, String.class);
         mockEndpoint.assertIsSatisfied();
 
         assertTrue(response.contains("potato"));
@@ -153,7 +153,7 @@ public class LangchainChatIT extends OllamaTestSupport {
         var promptTemplate = "Create a recipe for a {{dishType}} with the following ingredients: {{ingredients}}";
 
         template.sendBodyAndHeader("direct:send-message-prompt", null,
-                LangchainChat.Headers.PROMPT_TEMPLATE, promptTemplate);
+                LangChainChat.Headers.PROMPT_TEMPLATE, promptTemplate);
         mockEndpoint.assertIsSatisfied();
     }
 

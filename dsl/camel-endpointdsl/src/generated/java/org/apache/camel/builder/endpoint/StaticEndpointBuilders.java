@@ -9787,8 +9787,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * langchain 4j chat (camel-langchain-chat)
-     * Langchain4j Chat component
+     * langChain4j Chat (camel-langchain-chat)
+     * LangChain4j Chat component
      * 
      * Category: ai
      * Since: 4.5
@@ -9802,13 +9802,13 @@ public class StaticEndpointBuilders {
      * @param path chatId
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.LangchainChatEndpointBuilderFactory.LangchainChatEndpointBuilder langchainChat(
+    public static org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.LangChainChatEndpointBuilder langchainChat(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.LangchainChatEndpointBuilderFactory.endpointBuilder("langchain-chat", path);
+        return org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.endpointBuilder("langchain-chat", path);
     }
     /**
-     * langchain 4j chat (camel-langchain-chat)
-     * Langchain4j Chat component
+     * langChain4j Chat (camel-langchain-chat)
+     * LangChain4j Chat component
      * 
      * Category: ai
      * Since: 4.5
@@ -9824,14 +9824,14 @@ public class StaticEndpointBuilders {
      * @param path chatId
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.LangchainChatEndpointBuilderFactory.LangchainChatEndpointBuilder langchainChat(
+    public static org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.LangChainChatEndpointBuilder langchainChat(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.LangchainChatEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Langchain4j Embeddings (camel-langchain-embeddings)
-     * Langchain4j Embeddings
+     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings
      * 
      * Category: ai
      * Since: 4.5
@@ -9845,13 +9845,13 @@ public class StaticEndpointBuilders {
      * @param path embeddingId
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.LangchainEmbeddingsEndpointBuilderFactory.LangchainEmbeddingsEndpointBuilder langchainEmbeddings(
+    public static org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.LangChainEmbeddingsEndpointBuilder langchainEmbeddings(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.LangchainEmbeddingsEndpointBuilderFactory.endpointBuilder("langchain-embeddings", path);
+        return org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.endpointBuilder("langchain-embeddings", path);
     }
     /**
-     * Langchain4j Embeddings (camel-langchain-embeddings)
-     * Langchain4j Embeddings
+     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings
      * 
      * Category: ai
      * Since: 4.5
@@ -9867,10 +9867,10 @@ public class StaticEndpointBuilders {
      * @param path embeddingId
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.LangchainEmbeddingsEndpointBuilderFactory.LangchainEmbeddingsEndpointBuilder langchainEmbeddings(
+    public static org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.LangChainEmbeddingsEndpointBuilder langchainEmbeddings(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.LangchainEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Language (camel-language)

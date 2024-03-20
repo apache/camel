@@ -16,8 +16,17 @@
  */
 package org.apache.camel.component.chat;
 
-public enum LangchainChatOperations {
-    CHAT_SINGLE_MESSAGE,
-    CHAT_SINGLE_MESSAGE_WITH_PROMPT,
-    CHAT_MULTIPLE_MESSAGES
+import org.apache.camel.spi.Metadata;
+
+public class LangChainChat {
+
+    public static final String SCHEME = "langchain-chat";
+
+    private LangChainChat() {
+    }
+
+    public static class Headers {
+        @Metadata(description = "The prompt Template.", javaType = "String")
+        public static final String PROMPT_TEMPLATE = "CamelLangChainChatPromptTemplate";
+    }
 }

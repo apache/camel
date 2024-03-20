@@ -52,7 +52,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LangchainEmbeddingsComponentMilvusTargetIT extends CamelTestSupport {
+public class LangChainEmbeddingsComponentMilvusTargetIT extends CamelTestSupport {
     public static final String MILVUS_URI = "milvus:embeddings";
 
     @RegisterExtension

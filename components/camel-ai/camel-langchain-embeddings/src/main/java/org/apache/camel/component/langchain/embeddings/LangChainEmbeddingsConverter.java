@@ -23,10 +23,10 @@ import dev.langchain4j.data.segment.TextSegment;
 import org.apache.camel.Converter;
 
 /**
- * Converter methods to convert from / to langchain4j embedding types.
+ * Converter methods to convert from / to LangChain4j embedding types.
  */
 @Converter(generateLoader = true)
-public class LangchainEmbeddingsConverter {
+public class LangChainEmbeddingsConverter {
 
     @Converter
     public static TextSegment toTextSegment(String value) {

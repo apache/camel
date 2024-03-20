@@ -18,26 +18,26 @@ package org.apache.camel.component.langchain.embeddings;
 
 import org.apache.camel.spi.Metadata;
 
-public final class LangchainEmbeddings {
+public final class LangChainEmbeddings {
     public static final String SCHEME = "langchain-embeddings";
 
-    private LangchainEmbeddings() {
+    private LangChainEmbeddings() {
     }
 
     public static class Headers {
         @Metadata(description = "The Finish Reason.", javaType = "dev.langchain4j.model.output.FinishReason")
-        public static final String FINISH_REASON = "CamelLangchainEmbeddingsFinishReason";
+        public static final String FINISH_REASON = "CamelLangChainEmbeddingsFinishReason";
 
         @Metadata(description = "The Input Token Count.", javaType = "int")
-        public static final String INPUT_TOKEN_COUNT = "CamelLangchainEmbeddingsInputTokenCount";
+        public static final String INPUT_TOKEN_COUNT = "CamelLangChainEmbeddingsInputTokenCount";
 
         @Metadata(description = "The Output Token Count.", javaType = "int")
-        public static final String OUTPUT_TOKEN_COUNT = "CamelLangchainEmbeddingsOutputTokenCount";
+        public static final String OUTPUT_TOKEN_COUNT = "CamelLangChainEmbeddingsOutputTokenCount";
 
         @Metadata(description = "The Total Token Count.", javaType = "int")
-        public static final String TOTAL_TOKEN_COUNT = "CamelLangchainEmbeddingsTotalTokenCount";
+        public static final String TOTAL_TOKEN_COUNT = "CamelLangChainEmbeddingsTotalTokenCount";
 
         @Metadata(description = "A dense vector embedding of a text", javaType = "float[]")
-        public static final String VECTOR = "CamelLangchainEmbeddingsVector";
+        public static final String VECTOR = "CamelLangChainEmbeddingsVector";
     }
 }
