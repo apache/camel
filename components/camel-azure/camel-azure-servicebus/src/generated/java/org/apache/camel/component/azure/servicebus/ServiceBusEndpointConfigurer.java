@@ -38,6 +38,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.servicebus.CredentialType.class, value)); return true;
         case "disableautocomplete":
         case "disableAutoComplete": target.getConfiguration().setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
+        case "enabledeadlettering":
+        case "enableDeadLettering": target.getConfiguration().setEnableDeadLettering(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -105,6 +107,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": return org.apache.camel.component.azure.servicebus.CredentialType.class;
         case "disableautocomplete":
         case "disableAutoComplete": return boolean.class;
+        case "enabledeadlettering":
+        case "enableDeadLettering": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -168,6 +172,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": return target.getConfiguration().getCredentialType();
         case "disableautocomplete":
         case "disableAutoComplete": return target.getConfiguration().isDisableAutoComplete();
+        case "enabledeadlettering":
+        case "enableDeadLettering": return target.getConfiguration().isEnableDeadLettering();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

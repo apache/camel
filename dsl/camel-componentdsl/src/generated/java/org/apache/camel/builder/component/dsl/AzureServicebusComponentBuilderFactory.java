@@ -582,6 +582,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "bridgeErrorHandler": ((ServiceBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "consumerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setConsumerOperation((org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition) value); return true;
             case "disableAutoComplete": getOrCreateConfiguration((ServiceBusComponent) component).setDisableAutoComplete((boolean) value); return true;
+            case "enableDeadLettering": getOrCreateConfiguration((ServiceBusComponent) component).setEnableDeadLettering((boolean) value); return true;
             case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((java.time.Duration) value); return true;
             case "peekNumMaxMessages": getOrCreateConfiguration((ServiceBusComponent) component).setPeekNumMaxMessages((java.lang.Integer) value); return true;
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;

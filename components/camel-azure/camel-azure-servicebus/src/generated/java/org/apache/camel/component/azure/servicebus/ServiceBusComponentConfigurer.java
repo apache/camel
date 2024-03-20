@@ -48,6 +48,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.servicebus.CredentialType.class, value)); return true;
         case "disableautocomplete":
         case "disableAutoComplete": getOrCreateConfiguration(target).setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
+        case "enabledeadlettering":
+        case "enableDeadLettering": getOrCreateConfiguration(target).setEnableDeadLettering(property(camelContext, boolean.class, value)); return true;
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": getOrCreateConfiguration(target).setFullyQualifiedNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -114,6 +116,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "credentialType": return org.apache.camel.component.azure.servicebus.CredentialType.class;
         case "disableautocomplete":
         case "disableAutoComplete": return boolean.class;
+        case "enabledeadlettering":
+        case "enableDeadLettering": return boolean.class;
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": return java.lang.String.class;
         case "lazystartproducer":
@@ -176,6 +180,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "disableautocomplete":
         case "disableAutoComplete": return getOrCreateConfiguration(target).isDisableAutoComplete();
+        case "enabledeadlettering":
+        case "enableDeadLettering": return getOrCreateConfiguration(target).isEnableDeadLettering();
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": return getOrCreateConfiguration(target).getFullyQualifiedNamespace();
         case "lazystartproducer":
