@@ -17,6 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.StringJoiner;
 import java.util.stream.Stream;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
@@ -38,7 +40,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
-import org.jboss.jandex.FieldInfo;
 import org.jboss.jandex.Index;
 
 import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
@@ -221,36 +222,39 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private static void extractFields(ClassInfo ci, BeanPojoModel model) {
-        for (FieldInfo fi : ci.fields()) {
-            AnnotationInstance ai = fi.annotation(METADATA);
-            if (ai != null) {
-                BeanPojoOptionModel o = new BeanPojoOptionModel();
-                o.setKind("property");
-                o.setName(fi.name());
-                o.setLabel(annotationValue(ai, "label"));
-                o.setDefaultValue(annotationValue(ai, "defaultValue"));
-                o.setRequired("true".equals(annotationValue(ai, "required")));
-                String displayName = annotationValue(ai, "displayName");
-                if (displayName == null) {
-                    displayName = Strings.asTitle(o.getName());
-                }
-                o.setDisplayName(displayName);
-                o.setDeprecated(fi.hasAnnotation(Deprecated.class));
-                String javaType = annotationValue(ai, "javaType");
-                if (javaType == null) {
-                    javaType = ci.name().toString();
-                }
-                o.setJavaType(javaType);
-                o.setType(getType(javaType, false, false));
-                o.setDescription(annotationValue(ai, "description"));
-                String enums = annotationValue(ai, "enums");
-                if (enums != null) {
-                    String[] values = enums.split(",");
-                    o.setEnums(Stream.of(values).map(String::trim).toList());
-                }
-                model.addOption(o);
+    private void extractFields(ClassInfo ci, BeanPojoModel model) {
+        // need to load the class so we can get the field in the order they are declared in the source code
+        Class<?> classElement = loadClass(ci.name().toString());
+        List<Field> fields
+                = Stream.of(classElement.getDeclaredFields()).filter(f -> f.getAnnotation(Metadata.class) != null).toList();
+
+        for (Field fi : fields) {
+            BeanPojoOptionModel o = new BeanPojoOptionModel();
+            Metadata ai = fi.getAnnotation(Metadata.class);
+            o.setKind("property");
+            o.setName(fi.getName());
+            o.setLabel(ai.label());
+            o.setDefaultValue(ai.defaultValue());
+            o.setRequired(ai.required());
+            String displayName = ai.displayName();
+            if (displayName.isEmpty()) {
+                displayName = Strings.asTitle(o.getName());
             }
+            o.setDisplayName(displayName);
+            o.setDeprecated(fi.getAnnotation(Deprecated.class) != null);
+            String javaType = ai.javaType();
+            if (javaType.isEmpty()) {
+                javaType = ci.name().toString();
+            }
+            o.setJavaType(javaType);
+            o.setType(getType(javaType, false, false));
+            o.setDescription(ai.description());
+            String enums = ai.enums();
+            if (!enums.isEmpty()) {
+                String[] values = enums.split(",");
+                o.setEnums(Stream.of(values).map(String::trim).toList());
+            }
+            model.addOption(o);
         }
     }
 
