@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "UseOriginalAggregationStrategy",
+    "javaType": "org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy",
+    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "title": "Use Original Aggregation Strategy",
+    "description": "An AggregationStrategy which just uses the original exchange which can be needed when you want to preserve the original Exchange. For example when splitting an Exchange and then you may want to keep routing using the original Exchange.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-processor",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

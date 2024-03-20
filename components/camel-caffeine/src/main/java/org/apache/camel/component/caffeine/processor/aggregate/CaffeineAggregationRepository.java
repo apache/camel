@@ -24,6 +24,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -31,18 +34,31 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Metadata(label = "bean",
+          description = "Aggregation repository that uses Caffeine Cache to store exchanges.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Configurer(metadataOnly = true)
+@ManagedResource(description = "Caffeine based aggregation repository")
 public class CaffeineAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(CaffeineAggregationRepository.class);
 
     private CamelContext camelContext;
     private Cache<String, DefaultExchangeHolder> cache;
-    private boolean allowSerializedHeaders;
 
+    @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
-    private String deadLetterChannel;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+    private String deadLetterUri;
+    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+                            + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
+              defaultValue = "3")
     private int maximumRedeliveries = 3;
+    @Metadata(label = "advanced",
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+    private boolean allowSerializedHeaders;
 
     public CamelContext getCamelContext() {
         return camelContext;
@@ -70,12 +86,12 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
 
     @Override
     public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetterChannel = deadLetterUri;
+        this.deadLetterUri = deadLetterUri;
     }
 
     @Override
     public String getDeadLetterUri() {
-        return deadLetterChannel;
+        return deadLetterUri;
     }
 
     @Override
@@ -88,20 +104,7 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
         this.useRecovery = useRecovery;
     }
 
-    public String getDeadLetterChannel() {
-        return deadLetterChannel;
-    }
-
-    public void setDeadLetterChannel(String deadLetterChannel) {
-        this.deadLetterChannel = deadLetterChannel;
-    }
-
     public long getRecoveryInterval() {
-        return recoveryInterval;
-    }
-
-    @Override
-    public long getRecoveryIntervalInMillis() {
         return recoveryInterval;
     }
 
@@ -192,6 +195,7 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
 
     @Override
     protected void doStop() throws Exception {
+        // noop
     }
 
     public static Exchange unmarshallExchange(CamelContext camelContext, DefaultExchangeHolder holder) {

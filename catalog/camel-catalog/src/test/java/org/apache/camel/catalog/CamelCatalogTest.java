@@ -34,6 +34,7 @@ import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EntityRef;
 import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -1632,4 +1633,24 @@ public class CamelCatalogTest {
         Optional<EntityRef> ref2 = catalog.findCapabilityRef("not-implemented");
         Assertions.assertFalse(ref2.isPresent());
     }
+
+    @Test
+    public void testFindPojoBeanNames() {
+        List<String> names = catalog.findBeansNames();
+
+        assertTrue(names.contains("GroupedBodyAggregationStrategy"));
+        assertTrue(names.contains("ZipAggregationStrategy"));
+    }
+
+    @Test
+    public void testPojoBeanModel() {
+        PojoBeanModel model = catalog.pojoBeanModel("ZipAggregationStrategy");
+        assertNotNull(model);
+
+        assertEquals("bean", model.getKind());
+        assertEquals("ZipAggregationStrategy", model.getName());
+        assertEquals("org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy", model.getJavaType());
+        assertEquals(6, model.getOptions().size());
+    }
+
 }

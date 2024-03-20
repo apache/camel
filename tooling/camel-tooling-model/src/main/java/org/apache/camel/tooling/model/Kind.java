@@ -34,6 +34,7 @@ public enum Kind implements Jsonable {
     console,
     other,
     eip,
+    bean,
     model;
 
     @Override
@@ -51,4 +52,5 @@ public enum Kind implements Jsonable {
     public void toJson(final Writer writable) throws IOException {
         writable.write(Jsoner.serialize(name()));
     }
+
 }

@@ -89,4 +89,12 @@ public interface JSonSchemaResolver {
      */
     String getMainJsonSchema();
 
+    /**
+     * Returns the pojo bean information as JSON format.
+     *
+     * @param  name the pojo bean name
+     * @return      model details in JSon
+     */
+    String getPojoBeanJSonSchema(String name);
+
 }

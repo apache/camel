@@ -82,6 +82,11 @@ public interface RuntimeProvider {
     String getOtherJSonSchemaDirectory();
 
     /**
+     * Gets the directory where the pojo bean json files are stored in the catalog JAR file
+     */
+    String getPojoBeanJSonSchemaDirectory();
+
+    /**
      * Find all the component names from the Camel catalog supported by the provider
      */
     List<String> findComponentNames();
@@ -110,6 +115,11 @@ public interface RuntimeProvider {
      * Find all the other (miscellaneous) names from the Camel catalog supported by the provider
      */
     List<String> findOtherNames();
+
+    /**
+     * Find all the pojo beans names from the Camel catalog supported by the provider
+     */
+    List<String> findBeansNames();
 
     /**
      * Find all the capabilities from the Camel catalog supported by the provider

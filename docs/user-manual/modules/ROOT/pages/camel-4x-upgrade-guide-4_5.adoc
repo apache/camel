@@ -256,3 +256,13 @@ Upgraded Apache Shiro from 1.13 to 2.0.
 
 Upgraded to Twilio 10.1.0 which removed `call-feedback` and `call-feedback-summary` from the available APIs,
 to use from Camel.
+
+=== camel-elasticsearch / camel-opensearch
+
+The class `BulkRequestAggregationStrategy` has been renamed to `OpensearchBulkRequestAggregationStrategy`
+The class `BulkRequestAggregationStrategy` has been renamed to `ElasticsearchBulkRequestAggregationStrategy`
+
+=== camel-spring-redis
+
+The class `RedisIdempotentRepository` has been renamed to `SpringRedisIdempotentRepository`
+The class `RedisStringIdempotentRepository` has been renamed to `SpringRedisStringIdempotentRepository`

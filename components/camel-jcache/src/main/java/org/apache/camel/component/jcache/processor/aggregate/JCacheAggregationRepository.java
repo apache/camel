@@ -29,6 +29,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -37,17 +39,26 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Metadata(label = "bean",
+          description = "Aggregation repository that uses JCache to store exchanges.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Configurer(metadataOnly = true)
 public class JCacheAggregationRepository extends ServiceSupport
         implements CamelContextAware, OptimisticLockingAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(JCacheAggregationRepository.class);
 
     private CamelContext camelContext;
-    private JCacheConfiguration configuration;
     private Cache<String, DefaultExchangeHolder> cache;
-    private boolean optimistic;
-    private boolean allowSerializedHeaders;
     private JCacheManager<String, DefaultExchangeHolder> cacheManager;
+
+    @Metadata(description = "Configuration for JCache")
+    private JCacheConfiguration configuration;
+    @Metadata(description = "Whether optimistic locking is in use")
+    private boolean optimistic;
+    @Metadata(label = "advanced",
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+    private boolean allowSerializedHeaders;
 
     public JCacheAggregationRepository() {
         this.configuration = new JCacheConfiguration();

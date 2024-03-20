@@ -19,12 +19,20 @@ package org.apache.camel.processor.aggregate;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 
 /**
  * An {@link AggregationStrategy} which just uses the latest exchange which is useful for status messages where old
  * status messages have no real value. Another example is things like market data prices, where old stock prices are not
  * that relevant, only the current price is.
  */
+@Metadata(label = "bean",
+          description = "An AggregationStrategy which just uses the latest exchange which is useful for status messages where old"
+                        + " status messages have no real value. Another example is things like market data prices, where old stock prices are not"
+                        + " that relevant, only the current price is.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Configurer(metadataOnly = true)
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 
     @Override

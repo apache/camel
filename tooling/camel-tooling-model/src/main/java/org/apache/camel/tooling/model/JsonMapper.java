@@ -71,6 +71,8 @@ public final class JsonMapper {
             return generateOtherModel(obj);
         } else if (obj.containsKey("model")) {
             return generateEipModel(obj);
+        } else if (obj.containsKey("bean")) {
+            return generatePojoBeanModel(obj);
         } else {
             return null;
         }
@@ -315,6 +317,27 @@ public final class JsonMapper {
         return model;
     }
 
+    public static PojoBeanModel generatePojoBeanModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generatePojoBeanModel(obj);
+    }
+
+    public static PojoBeanModel generatePojoBeanModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("bean");
+        PojoBeanModel model = new PojoBeanModel();
+        parseModel(mobj, model);
+        JsonObject mprp = (JsonObject) mobj.get("properties");
+        if (mprp != null) {
+            for (Map.Entry<String, Object> entry : mprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                PojoBeanModel.PojoBeanOptionModel option = new PojoBeanModel.PojoBeanOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addOption(option);
+            }
+        }
+        return model;
+    }
+
     public static String createParameterJsonSchema(EipModel model) {
         JsonObject wrapper = asJsonObject(model);
         return serialize(wrapper);
@@ -333,6 +356,22 @@ public final class JsonMapper {
         if (!model.getExchangeProperties().isEmpty()) {
             wrapper.put("exchangeProperties", asJsonObject(model.getExchangeProperties()));
         }
+        return wrapper;
+    }
+
+    public static String createParameterJsonSchema(PojoBeanModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static JsonObject asJsonObject(PojoBeanModel model) {
+        JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("model", obj);
+        wrapper.put("properties", asJsonObject(model.getOptions()));
         return wrapper;
     }
 

@@ -1491,6 +1491,17 @@ public abstract class AbstractCamelContext extends BaseService
         return null;
     }
 
+    @Override
+    public String getPojoBeanParameterJsonSchema(String beanName) throws IOException {
+        String name = sanitizeFileName(beanName) + ".json";
+        String path = "META-INF/services/org/apache/camel/bean/" + name;
+        String inputStream = doLoadResource(beanName, path, "bean");
+        if (inputStream != null) {
+            return inputStream;
+        }
+        return null;
+    }
+
     // Helper methods
     // -----------------------------------------------------------------------
 

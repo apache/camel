@@ -20,14 +20,21 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.ehcache.EhcacheManager;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 
-@ManagedResource(description = "Ehcache based message id repository")
+@Metadata(label = "bean",
+          description = "Idempotent repository that uses EHCache cache to store message ids.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Configurer(metadataOnly = true)
+@ManagedResource(description = "EHCache based message id repository")
 public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
+    @Metadata(description = "Name of cache", defaultValue = "EhcacheIdempotentRepository")
     private String cacheName;
     private Cache<String, Boolean> cache;
     private EhcacheManager cacheManager;
@@ -39,6 +46,10 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
     public EhcacheIdempotentRepository(CacheManager cacheManager, String repositoryName) {
         this.cacheName = repositoryName;
         this.cacheManager = new EhcacheManager(cacheManager, false, null);
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
     }
 
     @ManagedAttribute(description = "The processor name")

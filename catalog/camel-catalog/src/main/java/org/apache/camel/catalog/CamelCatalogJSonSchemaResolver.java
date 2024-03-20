@@ -138,6 +138,13 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
         return loadResourceFromVersionManager(file);
     }
 
+    @Override
+    public String getPojoBeanJSonSchema(String name) {
+        name = sanitizeFileName(name);
+        final String file = camelCatalog.getRuntimeProvider().getPojoBeanJSonSchemaDirectory() + "/" + name + EXTENSION;
+        return loadResourceFromVersionManager(file);
+    }
+
     String loadFromClasspath(final String className, final String fileName) {
         if (className != null) {
             String packageName = className.substring(0, className.lastIndexOf('.'));

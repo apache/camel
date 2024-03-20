@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "InfinispanRemoteIdempotentRepository",
+    "javaType": "org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository",
+    "interfaceType": "org.apache.camel.spi.IdempotentRepository",
+    "title": "Infinispan Remote Idempotent Repository",
+    "description": "Idempotent repository that uses remote Infinispan to store message ids.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-infinispan",
+    "version": "4.5.0-SNAPSHOT",
+    "properties": { "cacheName": { "index": 0, "kind": "property", "displayName": "Cache Name", "required": true, "type": "object", "javaType": "org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "Name of cache" }, "configuration": { "index": 1, "kind": "property", "displayName": "Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "Configuration for remote Infinispan" } }
+  }
+}
+

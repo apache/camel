@@ -54,6 +54,7 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
@@ -120,6 +121,15 @@ public abstract class AbstractCamelCatalog {
     public TransformerModel transformerModel(String name) {
         String json = transformerJSonSchema(name);
         return json != null ? JsonMapper.generateTransformerModel(json) : null;
+    }
+
+    public PojoBeanModel pojoBeanModel(String name) {
+        String json = pojoBeanJSonSchema(name);
+        return json != null ? JsonMapper.generatePojoBeanModel(json) : null;
+    }
+
+    public String pojoBeanJSonSchema(String name) {
+        return getJSonSchemaResolver().getPojoBeanJSonSchema(name);
     }
 
     public String devConsoleJSonSchema(String name) {

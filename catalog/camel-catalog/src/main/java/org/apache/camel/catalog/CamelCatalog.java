@@ -34,6 +34,7 @@ import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.tooling.model.TransformerModel;
 
@@ -218,6 +219,11 @@ public interface CamelCatalog {
     List<String> findOtherNames();
 
     /**
+     * Find all the pojo beans names from the Camel catalog
+     */
+    List<String> findBeansNames();
+
+    /**
      * Find all the capability names from the Camel catalog
      */
     List<String> findCapabilityNames();
@@ -242,6 +248,8 @@ public interface CamelCatalog {
                 return findOtherNames();
             case eip:
                 return findModelNames();
+            case bean:
+                return findBeansNames();
             default:
                 throw new IllegalArgumentException("Unexpected kind " + kind);
         }
@@ -585,6 +593,12 @@ public interface CamelCatalog {
      * @return      the requested EIP model or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     EipModel eipModel(String name);
+
+    /**
+     * @param  name the FQN class name to look up
+     * @return      the requested Bean model or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    PojoBeanModel pojoBeanModel(String name);
 
     /**
      * @return the requested main model or {@code null} in case it is not available in this {@link CamelCatalog}

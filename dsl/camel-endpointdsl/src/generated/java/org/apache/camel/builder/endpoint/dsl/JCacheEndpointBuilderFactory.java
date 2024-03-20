@@ -44,40 +44,6 @@ public interface JCacheEndpointBuilderFactory {
             return (AdvancedJCacheEndpointConsumerBuilder) this;
         }
         /**
-         * A Configuration for the Cache.
-         * 
-         * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param cacheConfiguration the value to set
-         * @return the dsl builder
-         */
-        default JCacheEndpointConsumerBuilder cacheConfiguration(
-                javax.cache.configuration.Configuration cacheConfiguration) {
-            doSetProperty("cacheConfiguration", cacheConfiguration);
-            return this;
-        }
-        /**
-         * A Configuration for the Cache.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param cacheConfiguration the value to set
-         * @return the dsl builder
-         */
-        default JCacheEndpointConsumerBuilder cacheConfiguration(
-                String cacheConfiguration) {
-            doSetProperty("cacheConfiguration", cacheConfiguration);
-            return this;
-        }
-        /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
@@ -552,6 +518,40 @@ public interface JCacheEndpointBuilderFactory {
             return this;
         }
         /**
+         * A Configuration for the Cache.
+         * 
+         * The option is a:
+         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param cacheConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJCacheEndpointConsumerBuilder cacheConfiguration(
+                javax.cache.configuration.Configuration cacheConfiguration) {
+            doSetProperty("cacheConfiguration", cacheConfiguration);
+            return this;
+        }
+        /**
+         * A Configuration for the Cache.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param cacheConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJCacheEndpointConsumerBuilder cacheConfiguration(
+                String cacheConfiguration) {
+            doSetProperty("cacheConfiguration", cacheConfiguration);
+            return this;
+        }
+        /**
          * The CacheLoader factory.
          * 
          * The option is a:
@@ -727,40 +727,6 @@ public interface JCacheEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedJCacheEndpointProducerBuilder advanced() {
             return (AdvancedJCacheEndpointProducerBuilder) this;
-        }
-        /**
-         * A Configuration for the Cache.
-         * 
-         * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param cacheConfiguration the value to set
-         * @return the dsl builder
-         */
-        default JCacheEndpointProducerBuilder cacheConfiguration(
-                javax.cache.configuration.Configuration cacheConfiguration) {
-            doSetProperty("cacheConfiguration", cacheConfiguration);
-            return this;
-        }
-        /**
-         * A Configuration for the Cache.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param cacheConfiguration the value to set
-         * @return the dsl builder
-         */
-        default JCacheEndpointProducerBuilder cacheConfiguration(
-                String cacheConfiguration) {
-            doSetProperty("cacheConfiguration", cacheConfiguration);
-            return this;
         }
         /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
@@ -1062,6 +1028,40 @@ public interface JCacheEndpointBuilderFactory {
             return this;
         }
         /**
+         * A Configuration for the Cache.
+         * 
+         * The option is a:
+         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param cacheConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJCacheEndpointProducerBuilder cacheConfiguration(
+                javax.cache.configuration.Configuration cacheConfiguration) {
+            doSetProperty("cacheConfiguration", cacheConfiguration);
+            return this;
+        }
+        /**
+         * A Configuration for the Cache.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param cacheConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJCacheEndpointProducerBuilder cacheConfiguration(
+                String cacheConfiguration) {
+            doSetProperty("cacheConfiguration", cacheConfiguration);
+            return this;
+        }
+        /**
          * The CacheLoader factory.
          * 
          * The option is a:
@@ -1238,40 +1238,6 @@ public interface JCacheEndpointBuilderFactory {
                 JCacheEndpointProducerBuilder {
         default AdvancedJCacheEndpointBuilder advanced() {
             return (AdvancedJCacheEndpointBuilder) this;
-        }
-        /**
-         * A Configuration for the Cache.
-         * 
-         * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param cacheConfiguration the value to set
-         * @return the dsl builder
-         */
-        default JCacheEndpointBuilder cacheConfiguration(
-                javax.cache.configuration.Configuration cacheConfiguration) {
-            doSetProperty("cacheConfiguration", cacheConfiguration);
-            return this;
-        }
-        /**
-         * A Configuration for the Cache.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param cacheConfiguration the value to set
-         * @return the dsl builder
-         */
-        default JCacheEndpointBuilder cacheConfiguration(
-                String cacheConfiguration) {
-            doSetProperty("cacheConfiguration", cacheConfiguration);
-            return this;
         }
         /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
@@ -1503,6 +1469,40 @@ public interface JCacheEndpointBuilderFactory {
                 AdvancedJCacheEndpointProducerBuilder {
         default JCacheEndpointBuilder basic() {
             return (JCacheEndpointBuilder) this;
+        }
+        /**
+         * A Configuration for the Cache.
+         * 
+         * The option is a:
+         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param cacheConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJCacheEndpointBuilder cacheConfiguration(
+                javax.cache.configuration.Configuration cacheConfiguration) {
+            doSetProperty("cacheConfiguration", cacheConfiguration);
+            return this;
+        }
+        /**
+         * A Configuration for the Cache.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param cacheConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJCacheEndpointBuilder cacheConfiguration(
+                String cacheConfiguration) {
+            doSetProperty("cacheConfiguration", cacheConfiguration);
+            return this;
         }
         /**
          * The CacheLoader factory.

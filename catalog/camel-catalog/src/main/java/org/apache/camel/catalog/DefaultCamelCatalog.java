@@ -47,6 +47,7 @@ import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.util.json.JsonArray;
@@ -88,6 +89,9 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     public static final String FIND_OTHER_NAMES = "findOtherNames";
     public static final String FIND_OTHER_LABELS = "findOtherLabels";
     public static final String LIST_OTHERS_AS_JSON = "listOthersAsJson";
+
+    public static final String FIND_BEAN_NAMES = "findBeanNames";
+    public static final String LIST_BEANS_AS_JSON = "listBeansAsJson";
 
     public static final String SUMMARY_AS_JSON = "summaryAsJson";
 
@@ -274,6 +278,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public List<String> findBeansNames() {
+        return cache(FIND_BEAN_NAMES, runtimeProvider::findBeansNames);
+    }
+
+    @Override
     public List<String> findModelNames(String filter) {
         // should not cache when filter parameter can by any kind of value
         return findNames(filter, this::findModelNames, this::eipModel);
@@ -340,6 +349,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public EipModel eipModel(String name) {
         return cache("eip-model-" + name, name, super::eipModel);
+    }
+
+    @Override
+    public PojoBeanModel pojoBeanModel(String name) {
+        return cache("pojo-bean-model-" + name, name, super::pojoBeanModel);
     }
 
     @Override

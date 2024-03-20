@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "MemoryIdempotentRepository",
+    "javaType": "org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository",
+    "interfaceType": "org.apache.camel.spi.IdempotentRepository",
+    "title": "Memory Idempotent Repository",
+    "description": "A memory based IdempotentRepository.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-support",
+    "version": "4.5.0-SNAPSHOT",
+    "properties": { "cacheSize": { "index": 0, "kind": "property", "displayName": "Cache Size", "required": false, "type": "object", "javaType": "org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Maximum elements that can be stored in-memory" } }
+  }
+}
+

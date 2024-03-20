@@ -34,6 +34,7 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String TRANSFORMER_DIR = "org/apache/camel/catalog/transformers";
     private static final String CONSOLE_DIR = "org/apache/camel/catalog/dev-consoles";
     private static final String OTHER_DIR = "org/apache/camel/catalog/others";
+    private static final String BEANS_DIR = "org/apache/camel/catalog/beans";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
@@ -41,6 +42,7 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String CONSOLE_CATALOG = "org/apache/camel/catalog/dev-consoles.properties";
     private static final String OTHER_CATALOG = "org/apache/camel/catalog/others.properties";
     private static final String CAPABILITIES_CATALOG = "org/apache/camel/catalog/capabilities.properties";
+    private static final String BEANS_CATALOG = "org/apache/camel/catalog/beans.properties";
 
     private CamelCatalog camelCatalog;
 
@@ -106,6 +108,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
         return OTHER_DIR;
     }
 
+    @Override
+    public String getPojoBeanJSonSchemaDirectory() {
+        return BEANS_DIR;
+    }
+
     protected String getComponentsCatalog() {
         return COMPONENTS_CATALOG;
     }
@@ -132,6 +139,10 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
 
     protected String getCapabilitiesCatalog() {
         return CAPABILITIES_CATALOG;
+    }
+
+    protected String getBeansCatalog() {
+        return BEANS_CATALOG;
     }
 
     @Override
@@ -162,6 +173,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findOtherNames() {
         return find(getOtherCatalog());
+    }
+
+    @Override
+    public List<String> findBeansNames() {
+        return find(getBeansCatalog());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
