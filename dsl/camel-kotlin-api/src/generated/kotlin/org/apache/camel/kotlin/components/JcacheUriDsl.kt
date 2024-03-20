@@ -51,13 +51,6 @@ public class JcacheUriDsl(
   }
 
   /**
-   * A Configuration for the Cache
-   */
-  public fun cacheConfiguration(cacheConfiguration: String) {
-    it.property("cacheConfiguration", cacheConfiguration)
-  }
-
-  /**
    * The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
    */
   public fun cacheConfigurationProperties(cacheConfigurationProperties: String) {
@@ -268,6 +261,13 @@ public class JcacheUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
+  }
+
+  /**
+   * A Configuration for the Cache
+   */
+  public fun cacheConfiguration(cacheConfiguration: String) {
+    it.property("cacheConfiguration", cacheConfiguration)
   }
 
   /**

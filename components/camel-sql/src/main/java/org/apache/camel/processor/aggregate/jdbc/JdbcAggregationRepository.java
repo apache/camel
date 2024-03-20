@@ -33,6 +33,7 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.service.ServiceSupport;
@@ -86,6 +87,8 @@ public class JdbcAggregationRepository extends ServiceSupport
     private DataSource dataSource;
     private int propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED;
     private LobHandler lobHandler = new DefaultLobHandler();
+
+    @Metadata(description = "The name of the repository.")
     private String repositoryName;
     private boolean returnOldExchange;
     private long recoveryInterval = 5000;
