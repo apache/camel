@@ -399,7 +399,7 @@ public interface QdrantEndpointBuilderFactory {
         }
 
         /**
-         * The point id to use for operation.
+         * The number of elements.
          * 
          * The option is a: {@code int} type.
          * 
@@ -409,6 +409,19 @@ public interface QdrantEndpointBuilderFactory {
          */
         public String qdrantSize() {
             return "CamelQdrantSize";
+        }
+
+        /**
+         * The point id to use for operation.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code QdrantPointId}.
+         */
+        public String qdrantPointId() {
+            return "CamelQdrantPointId";
         }
     }
     static QdrantEndpointBuilder endpointBuilder(
