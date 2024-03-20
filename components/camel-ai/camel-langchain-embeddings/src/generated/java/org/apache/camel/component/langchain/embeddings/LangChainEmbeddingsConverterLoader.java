@@ -18,11 +18,11 @@ import org.apache.camel.util.DoubleMap;
  */
 @SuppressWarnings("unchecked")
 @DeferredContextBinding
-public final class LangchainEmbeddingsConverterLoader implements TypeConverterLoader, CamelContextAware {
+public final class LangChainEmbeddingsConverterLoader implements TypeConverterLoader, CamelContextAware {
 
     private CamelContext camelContext;
 
-    public LangchainEmbeddingsConverterLoader() {
+    public LangChainEmbeddingsConverterLoader() {
     }
 
     @Override
@@ -42,11 +42,11 @@ public final class LangchainEmbeddingsConverterLoader implements TypeConverterLo
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, dev.langchain4j.data.embedding.Embedding.class, float[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.langchain.embeddings.LangchainEmbeddingsConverter.toEmbedding((float[]) value));
+            (type, exchange, value) -> org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConverter.toEmbedding((float[]) value));
         addTypeConverter(registry, dev.langchain4j.data.embedding.Embedding.class, java.util.List.class, false,
-            (type, exchange, value) -> org.apache.camel.component.langchain.embeddings.LangchainEmbeddingsConverter.toEmbedding((java.util.List) value));
+            (type, exchange, value) -> org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConverter.toEmbedding((java.util.List) value));
         addTypeConverter(registry, dev.langchain4j.data.segment.TextSegment.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.langchain.embeddings.LangchainEmbeddingsConverter.toTextSegment((java.lang.String) value));
+            (type, exchange, value) -> org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConverter.toTextSegment((java.lang.String) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 

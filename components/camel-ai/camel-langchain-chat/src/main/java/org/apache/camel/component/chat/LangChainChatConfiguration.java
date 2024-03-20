@@ -25,30 +25,30 @@ import org.apache.camel.spi.UriParams;
 
 @Configurer
 @UriParams
-public class LangchainChatConfiguration implements Cloneable {
+public class LangChainChatConfiguration implements Cloneable {
 
     @UriParam
     @Metadata(required = true, defaultValue = "CHAT_SINGLE_MESSAGE")
-    private LangchainChatOperations chatOperation = LangchainChatOperations.CHAT_SINGLE_MESSAGE;
+    private LangChainChatOperations chatOperation = LangChainChatOperations.CHAT_SINGLE_MESSAGE;
 
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private ChatLanguageModel chatModel;
 
-    public LangchainChatConfiguration() {
+    public LangChainChatConfiguration() {
     }
 
     /**
-     * Operation in case of Endpoint of type CHAT. value is one the values of
-     * org.apache.camel.component.langchain.LangchainChatOperations
+     * Operation in case of Endpoint of type CHAT. The value is one of the values of
+     * org.apache.camel.component.langchain.LangChainChatOperations
      *
      * @return
      */
-    public LangchainChatOperations getChatOperation() {
+    public LangChainChatOperations getChatOperation() {
         return chatOperation;
     }
 
-    public void setChatOperation(LangchainChatOperations chatOperation) {
+    public void setChatOperation(LangChainChatOperations chatOperation) {
         this.chatOperation = chatOperation;
     }
 
@@ -65,9 +65,9 @@ public class LangchainChatConfiguration implements Cloneable {
         this.chatModel = chatModel;
     }
 
-    public LangchainChatConfiguration copy() {
+    public LangChainChatConfiguration copy() {
         try {
-            return (LangchainChatConfiguration) super.clone();
+            return (LangChainChatConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

@@ -28,25 +28,25 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Langchain4j Embeddings
+ * LangChain4j Embeddings
  */
-@UriEndpoint(firstVersion = "4.5.0", scheme = LangchainEmbeddings.SCHEME, title = "Langchain4j Embeddings",
+@UriEndpoint(firstVersion = "4.5.0", scheme = LangChainEmbeddings.SCHEME, title = "LangChain4j Embeddings",
              syntax = "langchain4j-embeddings:embeddingId", producerOnly = true, category = {
                      Category.AI
-             }, headersClass = LangchainEmbeddings.Headers.class)
-public class LangchainEmbeddingsEndpoint extends DefaultEndpoint {
+             }, headersClass = LangChainEmbeddings.Headers.class)
+public class LangChainEmbeddingsEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id")
     private final String embeddingId;
 
     @UriParam
-    private LangchainEmbeddingsConfiguration configuration;
+    private LangChainEmbeddingsConfiguration configuration;
 
-    public LangchainEmbeddingsEndpoint(
+    public LangChainEmbeddingsEndpoint(
                                        String endpointUri,
                                        Component component,
                                        String embeddingId,
-                                       LangchainEmbeddingsConfiguration configuration) {
+                                       LangChainEmbeddingsConfiguration configuration) {
 
         super(endpointUri, component);
 
@@ -54,7 +54,7 @@ public class LangchainEmbeddingsEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public LangchainEmbeddingsConfiguration getConfiguration() {
+    public LangChainEmbeddingsConfiguration getConfiguration() {
         return this.configuration;
     }
 
@@ -64,7 +64,7 @@ public class LangchainEmbeddingsEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new LangchainEmbeddingsProducer(this);
+        return new LangChainEmbeddingsProducer(this);
     }
 
     @Override

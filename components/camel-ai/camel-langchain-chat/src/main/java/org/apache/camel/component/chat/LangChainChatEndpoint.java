@@ -26,23 +26,23 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-import static org.apache.camel.component.chat.LangchainChat.SCHEME;
+import static org.apache.camel.component.chat.LangChainChat.SCHEME;
 
 @UriEndpoint(firstVersion = "4.5.0", scheme = SCHEME,
-             title = "langchain 4j chat",
+             title = "langChain4j Chat",
              syntax = "langchain-chat:chatId", producerOnly = true,
-             category = { Category.AI }, headersClass = LangchainChat.Headers.class)
-public class LangchainChatEndpoint extends DefaultEndpoint {
+             category = { Category.AI }, headersClass = LangChainChat.Headers.class)
+public class LangChainChatEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
     @UriPath(description = "The id")
     private final String chatId;
 
     @UriParam
-    private LangchainChatConfiguration configuration;
+    private LangChainChatConfiguration configuration;
 
-    public LangchainChatEndpoint(String uri, LangchainChatComponent component, String chatId,
-                                 LangchainChatConfiguration configuration) {
+    public LangChainChatEndpoint(String uri, LangChainChatComponent component, String chatId,
+                                 LangChainChatConfiguration configuration) {
         super(uri, component);
         this.chatId = chatId;
         this.configuration = configuration;
@@ -50,12 +50,12 @@ public class LangchainChatEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new LangchainChatProducer(this);
+        return new LangChainChatProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Cannot consume from an LangchainEndpoint: " + getEndpointUri());
+        throw new UnsupportedOperationException("Cannot consume from an LangChain Endpoint: " + getEndpointUri());
     }
 
     /**
@@ -67,7 +67,7 @@ public class LangchainChatEndpoint extends DefaultEndpoint {
         return chatId;
     }
 
-    public LangchainChatConfiguration getConfiguration() {
+    public LangChainChatConfiguration getConfiguration() {
         return configuration;
     }
 

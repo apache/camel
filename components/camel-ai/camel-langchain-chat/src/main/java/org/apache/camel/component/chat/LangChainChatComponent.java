@@ -24,41 +24,41 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-import static org.apache.camel.component.chat.LangchainChat.SCHEME;
+import static org.apache.camel.component.chat.LangChainChat.SCHEME;
 
 @Component(SCHEME)
-public class LangchainChatComponent extends DefaultComponent {
+public class LangChainChatComponent extends DefaultComponent {
 
     @Metadata
-    LangchainChatConfiguration configuration;
+    LangChainChatConfiguration configuration;
 
-    public LangchainChatComponent() {
+    public LangChainChatComponent() {
         this(null);
     }
 
-    public LangchainChatComponent(CamelContext context) {
+    public LangChainChatComponent(CamelContext context) {
         super(context);
-        this.configuration = new LangchainChatConfiguration();
+        this.configuration = new LangChainChatConfiguration();
 
     }
 
-    public LangchainChatConfiguration getConfiguration() {
+    public LangChainChatConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
      * The configuration.
      */
-    public void setConfiguration(LangchainChatConfiguration configuration) {
+    public void setConfiguration(LangChainChatConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        LangchainChatConfiguration langchainChatConfiguration = this.configuration.copy();
+        LangChainChatConfiguration langchainChatConfiguration = this.configuration.copy();
 
-        Endpoint endpoint = new LangchainChatEndpoint(uri, this, remaining, langchainChatConfiguration);
+        Endpoint endpoint = new LangChainChatEndpoint(uri, this, remaining, langchainChatConfiguration);
 
         setProperties(endpoint, parameters);
         return endpoint;

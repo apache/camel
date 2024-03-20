@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParams;
 
 @Configurer
 @UriParams
-public class LangchainEmbeddingsConfiguration implements Cloneable {
+public class LangChainEmbeddingsConfiguration implements Cloneable {
 
     @Metadata(required = true, autowired = true)
     @UriParam
@@ -42,9 +42,9 @@ public class LangchainEmbeddingsConfiguration implements Cloneable {
         this.embeddingModel = embeddingModel;
     }
 
-    public LangchainEmbeddingsConfiguration copy() {
+    public LangChainEmbeddingsConfiguration copy() {
         try {
-            return (LangchainEmbeddingsConfiguration) super.clone();
+            return (LangChainEmbeddingsConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

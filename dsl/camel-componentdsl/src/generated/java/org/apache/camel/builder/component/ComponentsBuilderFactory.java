@@ -2767,8 +2767,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KuduComponentBuilderFactory.kudu();
     }
     /**
-     * langchain 4j chat (camel-langchain-chat)
-     * Langchain4j Chat component
+     * langChain4j Chat (camel-langchain-chat)
+     * LangChain4j Chat component
      * 
      * Category: ai
      * Since: 4.5
@@ -2780,8 +2780,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.LangchainChatComponentBuilderFactory.langchainChat();
     }
     /**
-     * Langchain4j Embeddings (camel-langchain-embeddings)
-     * Langchain4j Embeddings
+     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings
      * 
      * Category: ai
      * Since: 4.5

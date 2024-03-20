@@ -28,8 +28,8 @@
   <artifactId>camel-langchain-embeddings</artifactId>
   <packaging>jar</packaging>
 
-  <name>Camel :: Langchain :: Embedding</name>
-  <description>Langchain4j Embedding</description>
+  <name>Camel :: LangChain :: Embedding</name>
+  <description>LangChain4j Embedding</description>
 
   <properties>
     <!-- Qdrant is not available on these platforms -->

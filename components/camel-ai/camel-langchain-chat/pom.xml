@@ -28,8 +28,8 @@
   <artifactId>camel-langchain-chat</artifactId>
   <packaging>jar</packaging>
 
-  <name>Camel :: Langchain :: Chat</name>
-  <description>Langchain4j Chat component</description>
+  <name>Camel :: LangChain :: Chat</name>
+  <description>LangChain4j Chat component</description>
 
   <properties>
     <firstVersion>4.5.0</firstVersion>

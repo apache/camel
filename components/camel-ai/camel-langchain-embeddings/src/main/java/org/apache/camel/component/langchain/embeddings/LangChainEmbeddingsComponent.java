@@ -24,37 +24,37 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-@Component(LangchainEmbeddings.SCHEME)
-public class LangchainEmbeddingsComponent extends DefaultComponent {
+@Component(LangChainEmbeddings.SCHEME)
+public class LangChainEmbeddingsComponent extends DefaultComponent {
     @Metadata
-    private LangchainEmbeddingsConfiguration configuration;
+    private LangChainEmbeddingsConfiguration configuration;
 
-    public LangchainEmbeddingsComponent() {
+    public LangChainEmbeddingsComponent() {
         this(null);
     }
 
-    public LangchainEmbeddingsComponent(CamelContext context) {
+    public LangChainEmbeddingsComponent(CamelContext context) {
         super(context);
 
-        this.configuration = new LangchainEmbeddingsConfiguration();
+        this.configuration = new LangChainEmbeddingsConfiguration();
     }
 
-    public LangchainEmbeddingsConfiguration getConfiguration() {
+    public LangChainEmbeddingsConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
      * The configuration.
      */
-    public void setConfiguration(LangchainEmbeddingsConfiguration configuration) {
+    public void setConfiguration(LangChainEmbeddingsConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        LangchainEmbeddingsConfiguration configuration = this.configuration.copy();
+        LangChainEmbeddingsConfiguration configuration = this.configuration.copy();
 
-        LangchainEmbeddingsEndpoint endpoint = new LangchainEmbeddingsEndpoint(uri, this, remaining, configuration);
+        LangChainEmbeddingsEndpoint endpoint = new LangChainEmbeddingsEndpoint(uri, this, remaining, configuration);
         setProperties(endpoint, parameters);
 
         return endpoint;

@@ -24,14 +24,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 
-public class LangchainEmbeddingsProducer extends DefaultProducer {
-    public LangchainEmbeddingsProducer(LangchainEmbeddingsEndpoint endpoint) {
+public class LangChainEmbeddingsProducer extends DefaultProducer {
+    public LangChainEmbeddingsProducer(LangChainEmbeddingsEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    public LangchainEmbeddingsEndpoint getEndpoint() {
-        return (LangchainEmbeddingsEndpoint) super.getEndpoint();
+    public LangChainEmbeddingsEndpoint getEndpoint() {
+        return (LangChainEmbeddingsEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -42,15 +42,15 @@ public class LangchainEmbeddingsProducer extends DefaultProducer {
         final Message message = exchange.getMessage();
 
         if (result.finishReason() != null) {
-            message.setHeader(LangchainEmbeddings.Headers.FINISH_REASON, result.finishReason());
+            message.setHeader(LangChainEmbeddings.Headers.FINISH_REASON, result.finishReason());
         }
 
         if (result.tokenUsage() != null) {
-            message.setHeader(LangchainEmbeddings.Headers.INPUT_TOKEN_COUNT, result.tokenUsage().inputTokenCount());
-            message.setHeader(LangchainEmbeddings.Headers.OUTPUT_TOKEN_COUNT, result.tokenUsage().outputTokenCount());
-            message.setHeader(LangchainEmbeddings.Headers.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
+            message.setHeader(LangChainEmbeddings.Headers.INPUT_TOKEN_COUNT, result.tokenUsage().inputTokenCount());
+            message.setHeader(LangChainEmbeddings.Headers.OUTPUT_TOKEN_COUNT, result.tokenUsage().outputTokenCount());
+            message.setHeader(LangChainEmbeddings.Headers.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
         }
 
-        message.setHeader(LangchainEmbeddings.Headers.VECTOR, result.content().vector());
+        message.setHeader(LangChainEmbeddings.Headers.VECTOR, result.content().vector());
     }
 }

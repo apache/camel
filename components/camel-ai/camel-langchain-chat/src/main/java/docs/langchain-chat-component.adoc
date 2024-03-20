@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Langchain Chat Component allows you to integrate with any LLM supported by https://github.com/langchain4j/langchain4j[Langchain4j].
+The LangChain Chat Component allows you to integrate with any LLM supported by https://github.com/langchain4j/langchain4j[LangChain4j].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -55,12 +55,12 @@ include::partial$component-endpoint-options.adoc[]
 include::spring-boot:partial$starter.adoc[]
 
 == Using a specific Chat Model
-The Camel Langchain chat component provides an abstraction for interacting with various types of Large Language Models (LLMs) supported by https://github.com/langchain4j/langchain4j[Langchain4j].
+The Camel LangChain chat component provides an abstraction for interacting with various types of Large Language Models (LLMs) supported by https://github.com/langchain4j/langchain4j[LangChain4j].
 
 To integrate with a specific Large Language Model, users should follow these steps:
 
 === Example of Integrating with OpenAI
-Add the dependency for Langchain4j OpenAI support:
+Add the dependency for LangChain4j OpenAI support:
 
 [source,xml]
 ----
@@ -83,7 +83,7 @@ ChatLanguageModel model = OpenAiChatModel.builder()
 context.getRegistry().bind("chatModel", model);
 ----
 
-Use the model in the Camel Langchain Chat Producer
+Use the model in the Camel LangChain Chat Producer
 [source, java]
 ----
  from("direct:chat")
@@ -97,7 +97,7 @@ To switch to another Large Language Model and its corresponding dependency, simp
 ====
 
 == Send a prompt with variables
-To send a prompt with variables, use the Operation type `LangchainChatOperations.CHAT_SINGLE_MESSAGE_WITH_PROMPT`.
+To send a prompt with variables, use the Operation type `LangChainChatOperations.CHAT_SINGLE_MESSAGE_WITH_PROMPT`.
 This operation allows you to send a single prompt message with dynamic variables, which will be replaced with values provided in the request.
 
 Example of route :
@@ -118,12 +118,12 @@ variables.put("dishType", "oven dish");
 variables.put("ingredients", "potato, tomato, feta, olive oil");
 
 String response = template.requestBodyAndHeader("direct:chat", variables,
-                LangchainChat.Headers.PROMPT_TEMPLATE, promptTemplate, String.class);
+                LangChainChat.Headers.PROMPT_TEMPLATE, promptTemplate, String.class);
 ----
 
 == Chat with history
 You can send a new prompt along with the chat message history by passing all messages in a list of type `dev.langchain4j.data.message.ChatMessage`.
-Use the Operation type `LangchainChatOperations.CHAT_MULTIPLE_MESSAGES`.
+Use the Operation type `LangChainChatOperations.CHAT_MULTIPLE_MESSAGES`.
 This operation allows you to continue the conversation with the context of previous messages.
 
 Example of route :
