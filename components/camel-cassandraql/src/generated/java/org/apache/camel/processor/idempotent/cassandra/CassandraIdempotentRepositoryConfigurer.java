@@ -22,7 +22,7 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
         org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository target = (org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "pkcolumns":
-        case "PKColumns": target.setPKColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "PKColumns": target.setPKColumns(property(camelContext, java.lang.String[].class, value)); return true;
         case "prefixpkvalues":
         case "PrefixPKValues": target.setPrefixPKValues(property(camelContext, java.lang.String[].class, value)); return true;
         case "readconsistencylevel":
@@ -43,7 +43,7 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "pkcolumns":
-        case "PKColumns": return java.lang.String.class;
+        case "PKColumns": return java.lang.String[].class;
         case "prefixpkvalues":
         case "PrefixPKValues": return java.lang.String[].class;
         case "readconsistencylevel":
