@@ -329,11 +329,9 @@
                             <Dockerfile.native-micro>SCRIPT_STYLE</Dockerfile.native-micro>
                             <Dockerfile.native>SCRIPT_STYLE</Dockerfile.native>
                             <Dockerfile>SCRIPT_STYLE</Dockerfile>
+                            <Jenkinsfile>SLASHSTAR_STYLE</Jenkinsfile>
                             <Jenkinsfile.deploy>SLASHSTAR_STYLE</Jenkinsfile.deploy>
                             <Jenkinsfile.dryrun>SLASHSTAR_STYLE</Jenkinsfile.dryrun>
-                            <Jenkinsfile.jdk17>SLASHSTAR_STYLE</Jenkinsfile.jdk17>
-                            <Jenkinsfile.ppc64le>SLASHSTAR_STYLE</Jenkinsfile.ppc64le>
-                            <Jenkinsfile.s390x>SLASHSTAR_STYLE</Jenkinsfile.s390x>
                             <atom>XML_STYLE</atom>
                             <bpmn>XML_STYLE</bpmn>
                             <camel-eclipse-pmd>XML_STYLE</camel-eclipse-pmd>
