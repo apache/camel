@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.langchain.embeddings;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -65,9 +64,8 @@ public class LangchainEmbeddingsComponentMilvusTargetIT extends CamelTestSupport
         CamelContext context = super.createCamelContext();
 
         var milvus = context.getComponent(Milvus.SCHEME, MilvusComponent.class);
-        URL url = new URL(MILVUS.getMilvusEndpointUrl());
-        milvus.getConfiguration().setHost(url.getHost());
-        milvus.getConfiguration().setPort(url.getPort());
+        milvus.getConfiguration().setHost(MILVUS.getMilvusHost());
+        milvus.getConfiguration().setPort(MILVUS.getMilvusPort());
 
         context.getRegistry().bind("embedding-model", new AllMiniLmL6V2EmbeddingModel());
 

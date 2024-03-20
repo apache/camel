@@ -246,7 +246,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                                       + "\n" + s + "\n"
                                       + "        " + endDependenciesMarker + after;
 
-            updateResource(buildContext, pomFile, updatedPom);
+            updateResource(root, "pom.xml", updatedPom);
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading file " + pomFile + " Reason: " + e, e);
         }
@@ -293,7 +293,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                                       + "\n" + s + "\n"
                                       + "    " + endDependenciesMarker + after;
 
-            updateResource(buildContext, pomFile, updatedPom);
+            updateResource(root, "pom.xml", updatedPom);
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading file " + pomFile + " Reason: " + e, e);
         }

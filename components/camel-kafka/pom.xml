@@ -223,7 +223,7 @@
                                 <configuration>
                                     <reuseForks>false</reuseForks>
                                     <groups>health,idempotent,breakOnFirstError</groups>
-                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                                    <forkedProcessTimeoutInSeconds>1200</forkedProcessTimeoutInSeconds>
                                 </configuration>
                             </execution>
                         </executions>

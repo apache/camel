@@ -34,6 +34,16 @@ public final class MilvusServiceFactory {
         public String getMilvusEndpointUrl() {
             return getService().getMilvusEndpointUrl();
         }
+
+        @Override
+        public String getMilvusHost() {
+            return getService().getMilvusHost();
+        }
+
+        @Override
+        public int getMilvusPort() {
+            return getService().getMilvusPort();
+        }
     }
 
     public static SimpleTestServiceBuilder<MilvusService> builder() {

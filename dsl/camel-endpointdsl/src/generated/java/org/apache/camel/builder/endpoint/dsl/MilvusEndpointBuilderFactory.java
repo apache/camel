@@ -270,19 +270,6 @@ public interface MilvusEndpointBuilderFactory {
         }
 
         /**
-         * Operation ID.
-         * 
-         * The option is a: {@code long} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code MilvusOperationID}.
-         */
-        public String milvusOperationID() {
-            return "CamelMilvusOperationID";
-        }
-
-        /**
          * Operation Status.
          * 
          * The option is a: {@code String} type.
@@ -306,47 +293,6 @@ public interface MilvusEndpointBuilderFactory {
          */
         public String milvusOperationStatusValue() {
             return "CamelMilvusOperationStatusValue";
-        }
-
-        /**
-         * Include Payload.
-         * 
-         * The option is a: {@code boolean} type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @return the name of the header {@code MilvusWithPayload}.
-         */
-        public String milvusWithPayload() {
-            return "CamelMilvusWithPayload";
-        }
-
-        /**
-         * Include Vectors.
-         * 
-         * The option is a: {@code boolean} type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @return the name of the header {@code MilvusWithVectors}.
-         */
-        public String milvusWithVectors() {
-            return "CamelMilvusWithVectors";
-        }
-
-        /**
-         * The number of elements.
-         * 
-         * The option is a: {@code int} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code MilvusSize}.
-         */
-        public String milvusSize() {
-            return "CamelMilvusSize";
         }
     }
     static MilvusEndpointBuilder endpointBuilder(

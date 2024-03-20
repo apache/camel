@@ -186,6 +186,7 @@ public class MilvusProducer extends DefaultProducer {
     private void populateResponse(R<?> r, Exchange exchange) {
         Message out = exchange.getMessage();
         out.setHeader(Milvus.Headers.OPERATION_STATUS, r.getStatus());
+        out.setHeader(Milvus.Headers.OPERATION_STATUS_VALUE, r.getStatus().intValue());
         out.setBody(r.getData());
     }
 }

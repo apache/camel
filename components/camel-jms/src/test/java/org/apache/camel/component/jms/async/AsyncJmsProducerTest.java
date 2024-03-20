@@ -23,10 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
-import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,23 +36,36 @@ public class AsyncJmsProducerTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
-    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
     private static String beforeThreadName;
     private static String afterThreadName;
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
-    @Test
-    public void testAsyncEndpoint() throws Exception {
-        getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
-        getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
+    private MockEndpoint mockBefore;
+    private MockEndpoint mockAfter;
+    private MockEndpoint mockResult;
 
+    @BeforeEach
+    void setupMocks() {
+        mockBefore = getMockEndpoint("mock:before");
+        mockAfter = getMockEndpoint("mock:after");
+        mockResult = getMockEndpoint("mock:result");
+
+        mockBefore.expectedBodiesReceived("Hello Camel");
+        mockAfter.expectedBodiesReceived("Bye Camel");
+        mockResult.expectedBodiesReceived("Bye Camel");
+    }
+
+    @RepeatedTest(5)
+    public void testAsyncEndpoint() throws Exception {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye Camel", reply);
 
-        MockEndpoint.assertIsSatisfied(context);
+        mockBefore.assertIsSatisfied();
+        mockAfter.assertIsSatisfied();
+        mockResult.assertIsSatisfied();
 
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }

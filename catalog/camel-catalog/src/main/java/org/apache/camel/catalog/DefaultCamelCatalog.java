@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
 
-import org.apache.camel.catalog.impl.AbstractCamelCatalog;
+import org.apache.camel.catalog.impl.AbstractCachingCamelCatalog;
 import org.apache.camel.catalog.impl.CatalogHelper;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
@@ -57,7 +57,7 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * Default {@link CamelCatalog}.
  */
-public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCatalog {
+public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements CamelCatalog {
 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
@@ -103,10 +103,6 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     private final Map<String, String> extraDataFormats = new HashMap<>();
     private final Map<String, String> extraDataFormatsJSonSchema = new HashMap<>();
 
-    // cache of operation -> result
-    private final Map<String, Object> cache = new HashMap<>();
-
-    private boolean caching;
     private VersionManager versionManager = new DefaultVersionManager(this);
     private RuntimeProvider runtimeProvider = new DefaultRuntimeProvider(this);
 
@@ -123,7 +119,8 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
      * @param caching whether to use cache
      */
     public DefaultCamelCatalog(boolean caching) {
-        this.caching = caching;
+        super(caching);
+
         setJSonSchemaResolver(new CamelCatalogJSonSchemaResolver(
                 this, extraComponents, extraComponentsJSonSchema, extraDataFormats, extraDataFormatsJSonSchema));
     }
@@ -140,17 +137,17 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         this.runtimeProvider.setCamelCatalog(this);
 
         // invalidate the cache
-        cache.clear();
+        super.clearCache();
     }
 
     @Override
     public void enableCache() {
-        caching = true;
+        super.setCaching(true);
     }
 
     @Override
     public boolean isCaching() {
-        return caching;
+        return super.isCaching();
     }
 
     @Override
@@ -167,11 +164,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public void addComponent(String name, String className) {
         extraComponents.put(name, className);
         // invalidate the cache
-        cache.remove(FIND_COMPONENT_NAMES);
-        cache.remove(FIND_COMPONENT_LABELS);
-        cache.remove(LIST_COMPONENTS_AS_JSON);
+        getCache().remove(FIND_COMPONENT_NAMES);
+        getCache().remove(FIND_COMPONENT_LABELS);
+        getCache().remove(LIST_COMPONENTS_AS_JSON);
 
-        cache.remove(SUMMARY_AS_JSON);
+        getCache().remove(SUMMARY_AS_JSON);
     }
 
     @Override
@@ -186,11 +183,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public void addDataFormat(String name, String className) {
         extraDataFormats.put(name, className);
         // invalidate the cache
-        cache.remove(FIND_DATA_FORMAT_NAMES);
-        cache.remove(FIND_DATA_FORMAT_LABELS);
-        cache.remove(LIST_DATA_FORMATS_AS_JSON);
+        getCache().remove(FIND_DATA_FORMAT_NAMES);
+        getCache().remove(FIND_DATA_FORMAT_LABELS);
+        getCache().remove(LIST_DATA_FORMATS_AS_JSON);
 
-        cache.remove(SUMMARY_AS_JSON);
+        getCache().remove(SUMMARY_AS_JSON);
     }
 
     @Override
@@ -212,7 +209,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
             return true;
         } else if (versionManager.loadVersion(version)) {
             // invalidate existing cache if we loaded a new version
-            cache.clear();
+            super.clearCache();
             return true;
         }
         return false;
@@ -652,46 +649,6 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
         return groupId.equals(am.getGroupId()) && artifactId.equals(am.getArtifactId())
                 && (version == null || version.isBlank() || version.equals(am.getVersion()));
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T cache(String name, Supplier<T> loader) {
-        if (caching) {
-            T t = (T) cache.get(name);
-            if (t == null) {
-                t = loader.get();
-                if (t != null) {
-                    cache.put(name, t);
-                }
-            }
-            return t;
-        } else {
-            return loader.get();
-        }
-    }
-
-    private <T> T cache(String key, String name, Function<String, T> loader) {
-        return doGetCache(key, name, loader);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T doGetCache(String key, String name, Function<String, T> loader) {
-        if (caching) {
-            T t = (T) cache.get(key);
-            if (t == null) {
-                t = loader.apply(name);
-                if (t != null) {
-                    cache.put(key, t);
-                }
-            }
-            return t;
-        } else {
-            return loader.apply(name);
-        }
-    }
-
-    private <T> T cache(String name, Function<String, T> loader) {
-        return doGetCache(name, name, loader);
     }
 
     private String loadResource(String file) {

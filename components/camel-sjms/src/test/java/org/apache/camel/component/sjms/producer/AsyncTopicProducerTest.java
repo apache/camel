@@ -41,7 +41,7 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
     private static String route = "";
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testAsyncTopicProducer() throws Exception {

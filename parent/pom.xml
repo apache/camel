@@ -51,7 +51,7 @@
         <!-- dependency versions -->
         <activemq-version>5.18.3</activemq-version>
         <activemq-artemis-version>2.32.0</activemq-artemis-version>
-        <angus-mail-version>2.0.2</angus-mail-version>
+        <angus-mail-version>2.0.3</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-drill-version>1.21.1</apache-drill-version>
         <apicurio-version>2.0.4</apicurio-version>
@@ -68,7 +68,7 @@
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.25.10</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.25.12</aws-java-sdk2-version>
         <aws-xray-version>2.15.1</aws-xray-version>
         <azure-sdk-bom-version>1.2.21</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
@@ -120,7 +120,7 @@
         <cxf-codegen-plugin-version>4.0.3</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
-        <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
+        <cxf-xjc-utils-version>4.0.1</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.5.2-jakarta4</datasonnet-mapper-version>
         <debezium-version>2.5.2.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.33</debezium-mysql-connector-version>
@@ -146,7 +146,7 @@
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
-        <flink-version>1.18.1</flink-version>
+        <flink-version>1.19.0</flink-version>
         <fop-version>2.9</fop-version>
         <formatter-maven-plugin-version>2.23.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.0</ftpserver-version>
@@ -186,7 +186,7 @@
         <google-cloud-http-client-version>1.44.1</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.36.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>23.1.2</graaljs-version>
-        <graphql-java-version>21.3</graphql-java-version>
+        <graphql-java-version>21.4</graphql-java-version>
         <greenmail-version>2.0.1</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.19</groovy-version>
@@ -216,7 +216,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.23.9.1</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.85</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.86</huaweicloud-sdk-version>
         <ical4j-version>3.2.16</ical4j-version>
         <icu4j-version>74.2</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
@@ -386,7 +386,7 @@
         <parson-version>1.1.5</parson-version>
         <parquet-common-version>1.13.1</parquet-common-version>
         <parquet-avro-version>1.13.1</parquet-avro-version>
-        <pdfbox-version>3.0.1</pdfbox-version>
+        <pdfbox-version>3.0.2</pdfbox-version>
         <pgjdbc-driver-version>42.7.2</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.7.5</picocli-version>
@@ -439,7 +439,7 @@
         <spring-data-redis-version>3.2.3</spring-data-redis-version>
         <spring-ldap-version>3.2.2</spring-ldap-version>
         <spring-vault-core-version>3.1.1</spring-vault-core-version>
-        <spring-version>6.1.3</spring-version>
+        <spring-version>6.1.5</spring-version>
         <spring-rabbitmq-version>3.1.2</spring-rabbitmq-version>
         <spring-security-version>6.2.2</spring-security-version>
         <spring-ws-version>4.0.10</spring-ws-version>

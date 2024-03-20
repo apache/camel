@@ -23,16 +23,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
-public class JmsMultipleConsumersTest extends AbstractJMSTest {
+public class JmsMultipleConsumersQueueTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
@@ -42,44 +41,11 @@ public class JmsMultipleConsumersTest extends AbstractJMSTest {
     protected ConsumerTemplate consumer;
 
     @Test
-    public void testMultipleConsumersTopic() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("jms:topic:JmsMultipleConsumersTest").to("mock:foo");
-
-                from("direct:JmsMultipleConsumersTest").to("mock:result");
-
-                from("jms:topic:JmsMultipleConsumersTest").to("mock:bar");
-            }
-        });
-
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedMessageCount(0);
-
-        template.sendBody("jms:topic:JmsMultipleConsumersTest", "Hello World");
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testMultipleConsumersQueue() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("jms:queue:JmsMultipleConsumersTest").to("mock:result");
-
-                from("direct:JmsMultipleConsumersTest").to("mock:result");
-
-                from("jms:queue:JmsMultipleConsumersTest").to("mock:result");
-            }
-        });
-
+    public void testMultipleConsumers() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("jms:queue:JmsMultipleConsumersTest", "Hello World");
-        template.sendBody("jms:queue:JmsMultipleConsumersTest", "Bye World");
+        template.sendBody("jms:queue:JmsMultipleConsumersQueueTest", "Hello World");
+        template.sendBody("jms:queue:JmsMultipleConsumersQueueTest", "Bye World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -91,7 +57,22 @@ public class JmsMultipleConsumersTest extends AbstractJMSTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return null;
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("jms:queue:JmsMultipleConsumersQueueTest")
+                        .routeId("route-1")
+                        .to("mock:result");
+
+                from("direct:JmsMultipleConsumersQueueTest")
+                        .routeId("route-2")
+                        .to("mock:result");
+
+                from("jms:queue:JmsMultipleConsumersQueueTest")
+                        .routeId("route-3")
+                        .to("mock:result");
+            }
+        };
     }
 
     @Override
@@ -104,5 +85,13 @@ public class JmsMultipleConsumersTest extends AbstractJMSTest {
         context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
         consumer = camelContextExtension.getConsumerTemplate();
+
+        waitForConnections();
+    }
+
+    private void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 100);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 100);
+        Awaitility.await().until(() -> context.getRoute("route-3").getUptimeMillis() > 100);
     }
 }

@@ -64,7 +64,6 @@ import org.apache.camel.util.URISupport;
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
  */
-@SuppressWarnings("unused")
 public abstract class AbstractCamelCatalog {
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("([\\w.]+)");

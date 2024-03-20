@@ -41,8 +41,8 @@ public class TransformerModel extends ArtifactModel<BaseOptionModel> {
     }
 
     @Override
-    public String getKind() {
-        return "transformer";
+    public Kind getKind() {
+        return Kind.transformer;
     }
 
 }
