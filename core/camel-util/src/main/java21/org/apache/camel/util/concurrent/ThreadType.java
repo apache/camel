@@ -30,7 +30,7 @@ public enum ThreadType {
     private static final Logger LOG = LoggerFactory.getLogger(ThreadType.class);
     private static final ThreadType CURRENT = Boolean.getBoolean("camel.threads.virtual.enabled") ? VIRTUAL : PLATFORM;
     static {
-        LOG.info("The type of thread detected is {}", CURRENT);
+        CURRENT == VIRTUAL ? LOG.info("The type of thread detected is: {}", CURRENT) : LOG.debug("The type of thread detected is: {}", CURRENT);
     }
     public static ThreadType current() {
         return CURRENT;
