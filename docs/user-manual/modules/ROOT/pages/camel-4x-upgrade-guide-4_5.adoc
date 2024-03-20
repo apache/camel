@@ -266,3 +266,14 @@ The class `BulkRequestAggregationStrategy` has been renamed to `ElasticsearchBul
 
 The class `RedisIdempotentRepository` has been renamed to `SpringRedisIdempotentRepository`
 The class `RedisStringIdempotentRepository` has been renamed to `SpringRedisStringIdempotentRepository`
+
+
+== Camel Spring Boot
+
+The auto configuration with `camel.springboot.xxx` properties has been harmonized to use same naming for
+all the Camel runtimes (camel-main, canel-quarkus, and camel-spring-boot). These options have been marked
+as deprecated, and you can migrate to use `camel.main.xxx` naming instead.
+
+For example `camel.springboot.name = Foo` to `camel.main.name = Foo`.
+
+Only the special Spring Boot options are still named `camel.springboot.xxx`.
