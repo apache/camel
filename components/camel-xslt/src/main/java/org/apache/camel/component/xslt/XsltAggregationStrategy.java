@@ -63,7 +63,8 @@ import org.slf4j.LoggerFactory;
  * Some code bits have been copied from the {@link org.apache.camel.component.xslt.XsltEndpoint}.
  */
 @Metadata(label = "bean",
-          description = "The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages.")
+        description = "The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages.",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class XsltAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
 

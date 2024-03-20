@@ -33,7 +33,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "bean",
-          description = "Idempotent repository that uses JCache to store message ids.")
+        description = "Idempotent repository that uses JCache to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "JCache based message id repository")
 public class JCacheIdempotentRepository extends ServiceSupport implements CamelContextAware, IdempotentRepository {

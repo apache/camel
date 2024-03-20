@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "JdbcAggregationRepository",
     "javaType": "org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository",
-    "interfaceType": "org.apache.camel.spi.RecoverableAggregationRepository",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Jdbc Aggregation Repository",
     "description": "Aggregation repository that uses SQL database to store exchanges.",
     "deprecated": false,

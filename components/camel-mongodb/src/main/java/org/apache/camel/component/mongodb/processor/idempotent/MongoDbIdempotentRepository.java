@@ -34,7 +34,8 @@ import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 @Metadata(label = "bean",
-          description = "Idempotent repository that uses MongoDB to store message ids.")
+        description = "Idempotent repository that uses MongoDB to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "MongoDB based message id repository")
 public class MongoDbIdempotentRepository extends ServiceSupport implements IdempotentRepository {

@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "JCacheIdempotentRepository",
     "javaType": "org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository",
-    "interfaceType": "org.apache.camel.CamelContextAware",
+    "interfaceType": "org.apache.camel.spi.IdempotentRepository",
     "title": "JCache Idempotent Repository",
     "description": "Idempotent repository that uses JCache to store message ids.",
     "deprecated": false,

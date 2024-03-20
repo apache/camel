@@ -31,8 +31,9 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
  */
 @Metadata(label = "bean",
-          description = "Aggregate result of pick expression into a single combined Exchange holding all the aggregated bodies in a"
-                        + " String as the message body. This aggregation strategy can used in combination with Splitter to batch messages")
+        description = "Aggregate result of pick expression into a single combined Exchange holding all the aggregated bodies in a"
+                      + " String as the message body. This aggregation strategy can used in combination with Splitter to batch messages",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class StringAggregationStrategy implements AggregationStrategy {
 

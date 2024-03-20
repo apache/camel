@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregate;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultExchange;
 
@@ -30,9 +31,11 @@ import org.apache.camel.support.DefaultExchange;
  * <a href="http://camel.apache.org/content-enricher.html">Content Enricher</a> EIP which is enrich or pollEnrich.
  */
 @Metadata(label = "bean",
-          description = "Aggregate all Exchanges into a single combined Exchange holding all the aggregated exchanges in a List"
-                        + " of Exchange as the message body. This aggregation strategy can be used in combination with"
-                        + " Splitter to batch messages.")
+        description = "Aggregate all Exchanges into a single combined Exchange holding all the aggregated exchanges in a List"
+                      + " of Exchange as the message body. This aggregation strategy can be used in combination with"
+                      + " Splitter to batch messages.",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+@Configurer(metadataOnly = true)
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 
     @Override

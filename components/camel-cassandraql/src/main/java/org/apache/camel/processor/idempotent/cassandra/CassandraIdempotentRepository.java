@@ -49,7 +49,8 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
  */
 @Metadata(label = "bean",
         description = "Idempotent repository that uses Cassandra table to store message ids."
-                      + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.")
+                      + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 public class CassandraIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 

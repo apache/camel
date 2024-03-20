@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultExchange;
 
@@ -31,9 +32,11 @@ import org.apache.camel.support.DefaultExchange;
  * messages
  */
 @Metadata(label = "bean",
-          description = "Aggregate all Message into a single combined Exchange holding all the aggregated messages in a List"
-                        + " of Message as the message body. This aggregation strategy can be used in combination with"
-                        + " Splitter to batch messages.")
+        description = "Aggregate all Message into a single combined Exchange holding all the aggregated messages in a List"
+                      + " of Message as the message body. This aggregation strategy can be used in combination with"
+                      + " Splitter to batch messages.",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+@Configurer(metadataOnly = true)
 public class GroupedMessageAggregationStrategy extends AbstractListAggregationStrategy<Message> {
 
     @Override

@@ -34,8 +34,9 @@ import org.apache.camel.support.service.ServiceSupport;
  * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a memory leak.
  */
 @Metadata(label = "bean",
-          description = "A memory based IdempotentRepository.")
-@Configurer
+          description = "A memory based IdempotentRepository.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
+@Configurer(metadataOnly = true)
 @ManagedResource(description = "Memory based idempotent repository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private Map<String, Object> cache;

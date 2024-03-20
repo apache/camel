@@ -28,7 +28,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
 @Metadata(label = "bean",
-          description = "Idempotent repository that uses Redis to store message ids.")
+        description = "Idempotent repository that uses Redis to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Spring Redis based message id repository")
 public class SpringRedisIdempotentRepository extends ServiceSupport implements IdempotentRepository {

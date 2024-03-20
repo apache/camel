@@ -30,7 +30,8 @@ import org.opensearch.client.opensearch.core.bulk.BulkOperation;
  * Aggregates two {@link BulkOperation}s into a single {@link BulkRequest}.
  */
 @Metadata(label = "bean",
-        description = "Aggregates two OpenSearch BulkOperation into a single BulkRequest")
+        description = "Aggregates two OpenSearch BulkOperation into a single BulkRequest",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class OpensearchBulkRequestAggregationStrategy implements AggregationStrategy {
 

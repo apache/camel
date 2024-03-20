@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -28,9 +29,11 @@ import org.apache.camel.spi.Metadata;
  * @see org.apache.camel.processor.Splitter
  */
 @Metadata(label = "bean",
-          description = "An AggregationStrategy which just uses the original exchange which can be needed when you want to preserve"
-                        + " the original Exchange. For example when splitting an Exchange and then you may want to keep routing using the"
-                        + " original Exchange.")
+        description = "An AggregationStrategy which just uses the original exchange which can be needed when you want to preserve"
+                      + " the original Exchange. For example when splitting an Exchange and then you may want to keep routing using the"
+                      + " original Exchange.",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+@Configurer(metadataOnly = true)
 public class UseOriginalAggregationStrategy implements AggregationStrategy {
 
     private final Exchange original;
