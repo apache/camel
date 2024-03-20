@@ -36,8 +36,8 @@ public class PojoBeanModel extends ArtifactModel<PojoBeanModel.PojoBeanOptionMod
     }
 
     @Override
-    public String getKind() {
-        return "bean";
+    public Kind getKind() {
+        return Kind.bean;
     }
 
     public static class PojoBeanOptionModel extends BaseOptionModel {
