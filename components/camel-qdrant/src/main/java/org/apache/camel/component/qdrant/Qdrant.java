@@ -53,5 +53,8 @@ public class Qdrant {
 
         @Metadata(description = "The number of elements.", javaType = "int")
         public static final String SIZE = "CamelQdrantSize";
+
+        @Metadata(description = "The point id to use for operation.", javaType = "int")
+        public static final String POINT_ID = "CamelQdrantSize";
     }
 }
