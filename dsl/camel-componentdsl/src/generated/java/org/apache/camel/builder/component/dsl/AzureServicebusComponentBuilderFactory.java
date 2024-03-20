@@ -218,6 +218,23 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
+         * Enable application level deadlettering to the subscription deadletter
+         * subqueue if deadletter related headers are set.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param enableDeadLettering the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder enableDeadLettering(
+                boolean enableDeadLettering) {
+            doSetProperty("enableDeadLettering", enableDeadLettering);
+            return this;
+        }
+        /**
          * Sets the amount of time to continue auto-renewing the lock. Setting
          * ZERO disables auto-renewal. For ServiceBus receive mode
          * (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
