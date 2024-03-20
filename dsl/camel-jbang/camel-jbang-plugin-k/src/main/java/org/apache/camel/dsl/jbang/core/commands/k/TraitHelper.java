@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.v1.integrationspec.Traits;
 
 /**
@@ -51,7 +52,9 @@ public final class TraitHelper {
                 final String[] trait = traitExpression.split("\\.", 2);
                 final String[] traitConfig = trait[1].split("=", 2);
 
-                final String traitKey = traitConfig[0];
+                // the CRD api is in CamelCase, then we have to
+                // convert the kebab-case to CamelCase
+                final String traitKey = StringHelper.dashToCamelCase(traitConfig[0]);
                 final Object traitValue = resolveTraitValue(traitKey, traitConfig[1].trim());
                 if (traitJson.containsKey(trait[0])) {
                     Map<String, Object> config = traitJson.get(trait[0]);

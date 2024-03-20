@@ -65,7 +65,7 @@ class IntegrationRunTest extends KubeBaseTest {
     public void shouldAddTraits() throws Exception {
         IntegrationRun command = createCommand();
         command.filePaths = new String[] { "classpath:route.yaml" };
-        command.traits = new String[] { "logging.level=DEBUG", "container.imagePullPolicy=Always" };
+        command.traits = new String[] { "logging.level=DEBUG", "container.image-pull-policy=Always" };
         command.output = "yaml";
         command.doCall();
 
@@ -542,7 +542,9 @@ class IntegrationRunTest extends KubeBaseTest {
         IntegrationRun command = createCommand();
         command.filePaths = new String[] { "classpath:route.yaml" };
         command.traits
-                = new String[] { "toleration.taints=camel.apache.org/master:NoExecute:300", "camel.properties=camel.foo=bar" };
+                = new String[] {
+                        "toleration.taints=camel.apache.org/master:NoExecute:300", "camel.properties=camel.foo=bar",
+                        "affinity.node-affinity-labels=kubernetes.io/hostname" };
         command.output = "yaml";
         command.doCall();
 
@@ -563,6 +565,11 @@ class IntegrationRunTest extends KubeBaseTest {
                             constant: Hello Camel !!!
                         - to: log:info
                   traits:
+                    affinity:
+                      nodeAffinityLabels:
+                      - kubernetes.io/hostname
+                      podAffinity: false
+                      podAntiAffinity: false
                     camel:
                       properties:
                       - camel.foo=bar
