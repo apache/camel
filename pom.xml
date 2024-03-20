@@ -338,6 +338,9 @@
                             <Dockerfile.native-micro>SCRIPT_STYLE</Dockerfile.native-micro>
                             <Dockerfile.native>SCRIPT_STYLE</Dockerfile.native>
                             <Dockerfile>SCRIPT_STYLE</Dockerfile>
+                            <Jenkinsfile>SLASHSTAR_STYLE</Jenkinsfile>
+                            <Jenkinsfile.matrix.platform>SLASHSTAR_STYLE</Jenkinsfile.matrix.platform>
+                            <Jenkinsfile.matrix.jdk>SLASHSTAR_STYLE</Jenkinsfile.matrix.jdk>
                             <Jenkinsfile.deploy>SLASHSTAR_STYLE</Jenkinsfile.deploy>
                             <Jenkinsfile.dryrun>SLASHSTAR_STYLE</Jenkinsfile.dryrun>
                             <Jenkinsfile.jdk17>SLASHSTAR_STYLE</Jenkinsfile.jdk17>
