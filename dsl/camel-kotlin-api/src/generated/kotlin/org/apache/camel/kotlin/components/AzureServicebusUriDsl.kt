@@ -117,6 +117,22 @@ public class AzureServicebusUriDsl(
   }
 
   /**
+   * Enable application level deadlettering to the subscription deadletter subqueue if deadletter
+   * related headers are set.
+   */
+  public fun enableDeadLettering(enableDeadLettering: String) {
+    it.property("enableDeadLettering", enableDeadLettering)
+  }
+
+  /**
+   * Enable application level deadlettering to the subscription deadletter subqueue if deadletter
+   * related headers are set.
+   */
+  public fun enableDeadLettering(enableDeadLettering: Boolean) {
+    it.property("enableDeadLettering", enableDeadLettering.toString())
+  }
+
+  /**
    * Sets the amount of time to continue auto-renewing the lock. Setting ZERO disables auto-renewal.
    * For ServiceBus receive mode (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
    */
