@@ -22,9 +22,9 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
         org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository target = (org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "pkcolumns":
-        case "PKColumns": target.setPKColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "PkColumns": target.setPkColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "prefixpkvalues":
-        case "PrefixPKValues": target.setPrefixPKValues(property(camelContext, java.lang.String[].class, value)); return true;
+        case "PrefixPKValues": target.setPrefixPKValues(property(camelContext, java.lang.String.class, value)); return true;
         case "readconsistencylevel":
         case "ReadConsistencyLevel": target.setReadConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
         case "session":
@@ -43,9 +43,9 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "pkcolumns":
-        case "PKColumns": return java.lang.String.class;
+        case "PkColumns": return java.lang.String.class;
         case "prefixpkvalues":
-        case "PrefixPKValues": return java.lang.String[].class;
+        case "PrefixPKValues": return java.lang.String.class;
         case "readconsistencylevel":
         case "ReadConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
         case "session":
@@ -65,7 +65,7 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
         org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository target = (org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "pkcolumns":
-        case "PKColumns": return target.getPKColumns();
+        case "PkColumns": return target.getPkColumns();
         case "prefixpkvalues":
         case "PrefixPKValues": return target.getPrefixPKValues();
         case "readconsistencylevel":

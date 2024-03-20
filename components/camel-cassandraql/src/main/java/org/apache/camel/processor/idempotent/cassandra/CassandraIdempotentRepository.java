@@ -61,12 +61,12 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     @Metadata(description = "The table name for storing the data", defaultValue = "CAMEL_IDEMPOTENT")
     private String table = "CAMEL_IDEMPOTENT";
     @Metadata(description = "Values used as primary key prefix. Multiple values can be separated by comma.",
-              displayName = "Prefix Primary Key Values", javaType = "java.lang.String")
-    private String[] prefixPKValues = new String[0];
+              displayName = "Prefix Primary Key Values")
+    private String prefixPKValues;
     @Metadata(description = "Primary key columns. Multiple values can be separated by comma.",
               displayName = "Primary Key Columns",
               javaType = "java.lang.String", defaultValue = "KEY")
-    private String[] pkColumns = { "KEY" };
+    private String pkColumns = "KEY";
     @Metadata(description = "Time to live in seconds used for inserts", displayName = "Time to Live")
     private Integer ttl;
     @Metadata(description = "Write consistency level",
@@ -95,7 +95,8 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
             return false;
         } else {
             LOGGER.debug("Row with {} columns to check key", row.getColumnDefinitions());
-            return row.getColumnDefinitions().size() >= pkColumns.length;
+            int len = pkColumns.split(",").length;
+            return row.getColumnDefinitions().size() >= len;
         }
     }
 
@@ -105,7 +106,11 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     }
 
     protected Object[] getPKValues(String key) {
-        return append(prefixPKValues, key);
+        if (prefixPKValues != null) {
+            return append(prefixPKValues.split(","), key);
+        } else {
+            return new Object[] { key };
+        }
     }
     // -------------------------------------------------------------------------
     // Lifecycle methods
@@ -130,7 +135,7 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     // Add key to repository
 
     protected void initInsertStatement() {
-        Insert insert = generateInsert(table, pkColumns, true, ttl);
+        Insert insert = generateInsert(table, pkColumns.split(","), true, ttl);
         SimpleStatement statement = applyConsistencyLevel(insert.build(), writeConsistencyLevel);
         LOGGER.debug("Generated Insert {}", statement);
         insertStatement = getSession().prepare(statement);
@@ -147,7 +152,7 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     // Check if key is in repository
 
     protected void initSelectStatement() {
-        Select select = generateSelect(table, pkColumns, pkColumns);
+        Select select = generateSelect(table, pkColumns.split(","), pkColumns.split(","));
         SimpleStatement statement = applyConsistencyLevel(select.build(), readConsistencyLevel);
         LOGGER.debug("Generated Select {}", statement);
         selectStatement = getSession().prepare(statement);
@@ -169,7 +174,7 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     // Remove key from repository
 
     protected void initDeleteStatement() {
-        Delete delete = generateDelete(table, pkColumns, true);
+        Delete delete = generateDelete(table, pkColumns.split(","), true);
         SimpleStatement statement = applyConsistencyLevel(delete.build(), writeConsistencyLevel);
         LOGGER.debug("Generated Delete {}", statement);
         deleteStatement = getSession().prepare(statement);
@@ -217,18 +222,6 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
         this.table = table;
     }
 
-    public String[] getPKColumns() {
-        return pkColumns;
-    }
-
-    public void setPKColumns(String... pkColumns) {
-        this.pkColumns = pkColumns;
-    }
-
-    public void setPKColumns(String value) {
-        this.pkColumns = value.split(",");
-    }
-
     public Integer getTtl() {
         return ttl;
     }
@@ -253,16 +246,19 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
         this.readConsistencyLevel = readConsistencyLevel;
     }
 
-    public String[] getPrefixPKValues() {
+    public String getPrefixPKValues() {
         return prefixPKValues;
     }
 
-    public void setPrefixPKValues(String[] prefixPKValues) {
+    public void setPrefixPKValues(String prefixPKValues) {
         this.prefixPKValues = prefixPKValues;
     }
 
-    public void setPrefixPKValues(String values) {
-        this.prefixPKValues = values.split(",");
+    public String getPkColumns() {
+        return pkColumns;
     }
 
+    public void setPkColumns(String pkColumns) {
+        this.pkColumns = pkColumns;
+    }
 }

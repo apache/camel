@@ -1647,7 +1647,7 @@ public class CamelCatalogTest {
         PojoBeanModel model = catalog.pojoBeanModel("ZipAggregationStrategy");
         assertNotNull(model);
 
-        assertEquals("bean", model.getKind());
+        assertEquals(Kind.bean, model.getKind());
         assertEquals("ZipAggregationStrategy", model.getName());
         assertEquals("org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy", model.getJavaType());
         assertEquals(6, model.getOptions().size());
