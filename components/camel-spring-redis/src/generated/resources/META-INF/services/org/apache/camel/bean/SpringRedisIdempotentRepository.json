@@ -10,7 +10,7 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-redis",
     "version": "4.5.0-SNAPSHOT",
-    "properties": { "redisConfiguration": { "index": 0, "kind": "property", "displayName": "Redis Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "Redis configuration" }, "repositoryName": { "index": 1, "kind": "property", "displayName": "Repository Name", "required": true, "type": "object", "javaType": "org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "Name of repository" } }
+    "properties": { "repositoryName": { "index": 0, "kind": "property", "displayName": "Repository Name", "required": true, "type": "object", "javaType": "org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "Name of repository" }, "redisConfiguration": { "index": 1, "kind": "property", "displayName": "Redis Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository", "deprecated": false, "autowired": false, "secret": false, "description": "Redis configuration" } }
   }
 }
 

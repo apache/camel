@@ -87,18 +87,22 @@ public class JdbcAggregationRepository extends ServiceSupport
     private boolean returnOldExchange;
     private int propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED;
 
-    @Metadata(description = "The Spring TransactionManager to use for connecting to the database", required = true)
-    private PlatformTransactionManager transactionManager;
     @Metadata(description = "The DataSource to use for connecting to the database", required = true)
     private DataSource dataSource;
-    @Metadata(label = "advanced", description = "To use a custom LobHandler")
-    private LobHandler lobHandler = new DefaultLobHandler();
+    @Metadata(description = "The Spring TransactionManager to use for connecting to the database", required = true)
+    private PlatformTransactionManager transactionManager;
     @Metadata(description = "The name of the repository.")
     private String repositoryName;
-    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
-    private long recoveryInterval = 5000;
+    @Metadata(javaType = "java.lang.String",
+            description = "Allows to store headers as String which is human readable. By default this option is disabled, storing the headers in binary format."
+                          + " Multiple header names can be separated by comma.")
+    private List<String> headersToStoreAsText;
+    @Metadata(description = "Whether to store the message body as String which is human readable. By default this option is false storing the body in binary format.")
+    private boolean storeBodyAsText;
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
+    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
+    private long recoveryInterval = 5000;
     @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.")
     private int maximumRedeliveries;
@@ -107,12 +111,6 @@ public class JdbcAggregationRepository extends ServiceSupport
     @Metadata(label = "advanced",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
-    @Metadata(javaType = "java.lang.String",
-              description = "Allows to store headers as String which is human readable. By default this option is disabled, storing the headers in binary format."
-                            + " Multiple header names can be separated by comma.")
-    private List<String> headersToStoreAsText;
-    @Metadata(description = "Whether to store the message body as String which is human readable. By default this option is false storing the body in binary format.")
-    private boolean storeBodyAsText;
     @Metadata(label = "security", defaultValue = "java.**;org.apache.camel.**;!*",
               description = "Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter will allow"
                             + " all java packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be"
@@ -122,6 +120,8 @@ public class JdbcAggregationRepository extends ServiceSupport
               description = "Mapper allowing different JDBC vendors to be mapped with vendor specific error codes to an OptimisticLockingException")
     private JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper
             = new DefaultJdbcOptimisticLockingExceptionMapper();
+    @Metadata(label = "advanced", description = "To use a custom LobHandler")
+    private LobHandler lobHandler = new DefaultLobHandler();
 
     /**
      * Creates an aggregation repository

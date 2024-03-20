@@ -69,20 +69,20 @@ public class HazelcastAggregationRepository extends ServiceSupport
     protected boolean useLocalHzInstance;
     protected IMap<String, DefaultExchangeHolder> cache;
     protected IMap<String, DefaultExchangeHolder> persistedCache;
-    @Metadata(description = "To use an existing Hazelcast instance instead of local")
-    protected HazelcastInstance hazelcastInstance;
     @Metadata(description = "Name of cache to use", required = true)
     protected String mapName;
+    @Metadata(description = "To use an existing Hazelcast instance instead of local")
+    protected HazelcastInstance hazelcastInstance;
     @Metadata(label = "advanced", description = "Name of cache to use for completed exchanges")
     protected String persistenceMapName;
     @Metadata(description = "Whether to use optimistic locking")
     protected boolean optimistic;
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     protected boolean useRecovery = true;
-    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
-    protected String deadLetterUri;
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     protected long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+    protected String deadLetterUri;
     @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
               defaultValue = "3")

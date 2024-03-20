@@ -50,10 +50,10 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
             = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
     protected static final String DEFAULT_CLEAR_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
 
-    @Metadata(description = "Whether to create the table in the database if none exists on startup", defaultValue = "true")
-    private boolean createTableIfNotExists = true;
     @Metadata(description = "The name of the table to use in the database", defaultValue = "CAMEL_MESSAGEPROCESSED")
     private String tableName;
+    @Metadata(description = "Whether to create the table in the database if none exists on startup", defaultValue = "true")
+    private boolean createTableIfNotExists = true;
 
     @Metadata(label = "advanced", description = "SQL query to use for checking if table exists")
     private String tableExistsString = DEFAULT_TABLE_EXISTS_STRING;

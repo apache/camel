@@ -233,8 +233,12 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
             Metadata ai = fi.getAnnotation(Metadata.class);
             o.setKind("property");
             o.setName(fi.getName());
-            o.setLabel(ai.label());
-            o.setDefaultValue(ai.defaultValue());
+            if (!ai.label().isEmpty()) {
+                o.setLabel(ai.label());
+            }
+            if (!ai.defaultValue().isEmpty()) {
+                o.setDefaultValue(ai.defaultValue());
+            }
             o.setRequired(ai.required());
             String displayName = ai.displayName();
             if (displayName.isEmpty()) {
@@ -242,6 +246,8 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
             }
             o.setDisplayName(displayName);
             o.setDeprecated(fi.getAnnotation(Deprecated.class) != null);
+            o.setAutowired(ai.autowired());
+            o.setSecret(ai.secret());
             String javaType = ai.javaType();
             if (javaType.isEmpty()) {
                 javaType = ci.name().toString();

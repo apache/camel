@@ -37,15 +37,15 @@ public class XsltSaxonAggregationStrategy extends XsltAggregationStrategy {
     private String xslFile;
     @Metadata(description = "The exchange property name that contains the XML payloads as an input", defaultValue = "new-exchange")
     private String propertyName;
-    private TransformerFactory transformerFactory;
-    @Metadata(label = "advanced", description = "To use a custom XSLT transformer factory, specified as a FQN class name")
-    private String transformerFactoryClass;
     @Metadata(defaultValue = "string", enums = "string,bytes,DOM,file",
             description = "Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three"
                           + " options are all in memory based, where as file is streamed directly to a java.io.File. For file you must specify"
                           + " the filename in the IN header with the key XsltConstants.XSLT_FILE_NAME which is also CamelXsltFileName. Also any"
                           + " paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime.")
     private XsltOutput output = XsltOutput.string;
+    @Metadata(label = "advanced", description = "To use a custom XSLT transformer factory, specified as a FQN class name")
+    private String transformerFactoryClass;
+    private TransformerFactory transformerFactory;
 
     public XsltSaxonAggregationStrategy(String xslFileLocation) {
         super(xslFileLocation);

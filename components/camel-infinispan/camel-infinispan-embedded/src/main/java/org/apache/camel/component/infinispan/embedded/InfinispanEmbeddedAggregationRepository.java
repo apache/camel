@@ -36,12 +36,11 @@ public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregati
     private Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
     private InfinispanEmbeddedManager manager;
 
-    @Metadata(description = "Configuration for embedded Infinispan")
-    private InfinispanEmbeddedConfiguration configuration;
-
     // needed for metadata generation
     @Metadata(description = "Name of cache", required = true)
     private String cacheName;
+    @Metadata(description = "Configuration for embedded Infinispan")
+    private InfinispanEmbeddedConfiguration configuration;
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
     @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")

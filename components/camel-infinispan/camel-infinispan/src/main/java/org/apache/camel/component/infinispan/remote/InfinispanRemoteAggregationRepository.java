@@ -39,11 +39,11 @@ public class InfinispanRemoteAggregationRepository extends InfinispanAggregation
     private Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
     private InfinispanRemoteManager manager;
 
+    @Metadata(description = "Name of cache", required = true)
+    private String cacheName;
     @Metadata(description = "Configuration for remote Infinispan")
     private InfinispanRemoteConfiguration configuration;
     // needed for metadata generation
-    @Metadata(description = "Name of cache", required = true)
-    private String cacheName;
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
     @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")

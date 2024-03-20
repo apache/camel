@@ -80,10 +80,10 @@ public class Etcd3AggregationRepository extends ServiceSupport
     private boolean optimistic;
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
-    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
-    private String deadLetterUri;
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+    private String deadLetterUri;
     @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
               defaultValue = "3")
