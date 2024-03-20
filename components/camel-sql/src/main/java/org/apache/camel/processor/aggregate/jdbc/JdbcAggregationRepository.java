@@ -63,8 +63,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  * persists the Message body and the Message headers. The Exchange properties are not persisted.
  */
 @Metadata(label = "bean",
-        description = "Aggregation repository that uses SQL database to store exchanges.",
-        annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+          description = "Aggregation repository that uses SQL database to store exchanges.",
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class JdbcAggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
@@ -105,19 +105,21 @@ public class JdbcAggregationRepository extends ServiceSupport
     @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
     @Metadata(label = "advanced",
-            description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
-    @Metadata(javaType = "java.lang.String", description = "Allows to store headers as String which is human readable. By default this option is disabled, storing the headers in binary format."
+    @Metadata(javaType = "java.lang.String",
+              description = "Allows to store headers as String which is human readable. By default this option is disabled, storing the headers in binary format."
                             + " Multiple header names can be separated by comma.")
     private List<String> headersToStoreAsText;
     @Metadata(description = "Whether to store the message body as String which is human readable. By default this option is false storing the body in binary format.")
     private boolean storeBodyAsText;
     @Metadata(label = "security", defaultValue = "java.**;org.apache.camel.**;!*",
-            description = "Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter will allow"
-                          + " all java packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be"
-                          + " blacklisted and not deserialized. This parameter should be customized if you're using classes you trust to be deserialized.")
+              description = "Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter will allow"
+                            + " all java packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be"
+                            + " blacklisted and not deserialized. This parameter should be customized if you're using classes you trust to be deserialized.")
     private String deserializationFilter = "java.**;org.apache.camel.**;!*";
-    @Metadata(label = "advanced", description = "Mapper allowing different JDBC vendors to be mapped with vendor specific error codes to an OptimisticLockingException")
+    @Metadata(label = "advanced",
+              description = "Mapper allowing different JDBC vendors to be mapped with vendor specific error codes to an OptimisticLockingException")
     private JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper
             = new DefaultJdbcOptimisticLockingExceptionMapper();
 
@@ -388,7 +390,8 @@ public class JdbcAggregationRepository extends ServiceSupport
                         version = (long) versionObj;
                     }
 
-                    Exchange result = jdbcCamelCodec.unmarshallExchange(camelContext, marshalledExchange, deserializationFilter);
+                    Exchange result
+                            = jdbcCamelCodec.unmarshallExchange(camelContext, marshalledExchange, deserializationFilter);
                     result.setProperty(VERSION_PROPERTY, version);
                     return result;
 
