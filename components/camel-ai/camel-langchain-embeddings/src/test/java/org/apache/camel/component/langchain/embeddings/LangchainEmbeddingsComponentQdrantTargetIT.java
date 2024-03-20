@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.qdrant.Qdrant;
 import org.apache.camel.component.qdrant.QdrantAction;
 import org.apache.camel.component.qdrant.QdrantComponent;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.test.infra.qdrant.services.QdrantService;
 import org.apache.camel.test.infra.qdrant.services.QdrantServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -38,7 +39,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.langchain.embeddings.LangchainEmbeddingsTestSupport.POINT_ID_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -111,8 +111,9 @@ public class LangchainEmbeddingsComponentQdrantTargetIT extends CamelTestSupport
                 from("direct:in")
                         .to("langchain-embeddings:test")
                         .setHeader(Qdrant.Headers.ACTION).constant(QdrantAction.UPSERT)
-                        .setHeader(POINT_ID_HEADER).constant(POINT_ID)
-                        .bean(LangchainEmbeddingsTestSupport.AsPointStruct.class)
+                        .setHeader(Qdrant.Headers.POINT_ID).constant(POINT_ID)
+                        .transform(
+                                new DataType("qdrant:embeddings"))
                         .to(QDRANT_URI);
             }
         };
