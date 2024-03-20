@@ -54,9 +54,9 @@ import org.apache.camel.util.FileUtil;
  * </p>
  */
 @Metadata(label = "bean",
-        description = "AggregationStrategy to zip together incoming messages into a zip file."
-                      + " Please note that this aggregation strategy requires eager completion check to work properly.",
-        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+          description = "AggregationStrategy to zip together incoming messages into a zip file."
+                        + " Please note that this aggregation strategy requires eager completion check to work properly.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
 @Configurer(metadataOnly = true)
 public class ZipAggregationStrategy implements AggregationStrategy {
 

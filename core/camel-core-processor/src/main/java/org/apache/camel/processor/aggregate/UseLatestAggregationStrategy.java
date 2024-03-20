@@ -28,10 +28,10 @@ import org.apache.camel.spi.Metadata;
  * that relevant, only the current price is.
  */
 @Metadata(label = "bean",
-        description = "An AggregationStrategy which just uses the latest exchange which is useful for status messages where old"
-                      + " status messages have no real value. Another example is things like market data prices, where old stock prices are not"
-                      + " that relevant, only the current price is.",
-        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+          description = "An AggregationStrategy which just uses the latest exchange which is useful for status messages where old"
+                        + " status messages have no real value. Another example is things like market data prices, where old stock prices are not"
+                        + " that relevant, only the current price is.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
 @Configurer(metadataOnly = true)
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 

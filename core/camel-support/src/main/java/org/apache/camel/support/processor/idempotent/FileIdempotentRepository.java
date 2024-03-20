@@ -53,8 +53,8 @@ import org.slf4j.LoggerFactory;
  * file store and make room for newer entries.
  */
 @Metadata(label = "bean",
-        description = "A file based IdempotentRepository.",
-        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
+          description = "A file based IdempotentRepository.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository {

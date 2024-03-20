@@ -30,10 +30,10 @@ import org.apache.camel.spi.Metadata;
  * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
  */
 @Metadata(label = "bean",
-        description = "Aggregate body of input Message into a single combined Exchange holding all the aggregated bodies in a List"
-                      + " of type Object as the message body. This aggregation strategy can be used in combination with"
-                      + " Splitter to batch messages.",
-        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+          description = "Aggregate body of input Message into a single combined Exchange holding all the aggregated bodies in a List"
+                        + " of type Object as the message body. This aggregation strategy can be used in combination with"
+                        + " Splitter to batch messages.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
 @Configurer(metadataOnly = true)
 public class GroupedBodyAggregationStrategy extends AbstractListAggregationStrategy<Object> {
 

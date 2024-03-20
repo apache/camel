@@ -67,10 +67,10 @@ import org.slf4j.LoggerFactory;
  * CamelContext aware.
  */
 @Metadata(label = "bean",
-        description = "Idempotent repository that uses Kafka to store message ids. Uses a local cache of previously seen Message IDs."
-                      + " The topic used must be unique per logical repository (i.e. two routes de-duplicate using different repositories, and different topics)"
-                      + " On startup, the instance consumes the full content of the topic, rebuilding the cache to the latest state.",
-        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
+          description = "Idempotent repository that uses Kafka to store message ids. Uses a local cache of previously seen Message IDs."
+                        + " The topic used must be unique per logical repository (i.e. two routes de-duplicate using different repositories, and different topics)"
+                        + " On startup, the instance consumes the full content of the topic, rebuilding the cache to the latest state.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Kafka IdempotentRepository")
 public class KafkaIdempotentRepository extends ServiceSupport implements IdempotentRepository, CamelContextAware {

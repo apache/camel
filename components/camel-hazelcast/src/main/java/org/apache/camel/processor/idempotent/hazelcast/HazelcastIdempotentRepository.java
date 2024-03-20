@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "bean",
           description = "Idempotent repository that uses Hazelcast cache to store message ids.",
-        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 public class HazelcastIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 

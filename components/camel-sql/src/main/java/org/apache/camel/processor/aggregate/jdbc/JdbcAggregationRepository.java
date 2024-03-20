@@ -94,8 +94,8 @@ public class JdbcAggregationRepository extends ServiceSupport
     @Metadata(description = "The name of the repository.")
     private String repositoryName;
     @Metadata(javaType = "java.lang.String",
-            description = "Allows to store headers as String which is human readable. By default this option is disabled, storing the headers in binary format."
-                          + " Multiple header names can be separated by comma.")
+              description = "Allows to store headers as String which is human readable. By default this option is disabled, storing the headers in binary format."
+                            + " Multiple header names can be separated by comma.")
     private List<String> headersToStoreAsText;
     @Metadata(description = "Whether to store the message body as String which is human readable. By default this option is false storing the body in binary format.")
     private boolean storeBodyAsText;

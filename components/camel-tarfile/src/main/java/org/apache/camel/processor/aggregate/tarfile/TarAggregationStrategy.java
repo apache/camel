@@ -62,9 +62,9 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 @Metadata(label = "bean",
-        description = "AggregationStrategy to combine together incoming messages into a tar file."
-                      + " Please note that this aggregation strategy requires eager completion check to work properly.",
-        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+          description = "AggregationStrategy to combine together incoming messages into a tar file."
+                        + " Please note that this aggregation strategy requires eager completion check to work properly.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
 @Configurer(metadataOnly = true)
 public class TarAggregationStrategy implements AggregationStrategy {
 

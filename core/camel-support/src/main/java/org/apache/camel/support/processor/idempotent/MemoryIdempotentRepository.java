@@ -35,7 +35,7 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 @Metadata(label = "bean",
           description = "A memory based IdempotentRepository.",
-        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Memory based idempotent repository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {

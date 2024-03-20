@@ -71,8 +71,7 @@ public interface CatalogCamelContext extends CamelContext {
     String getEipParameterJsonSchema(String eipName) throws IOException;
 
     /**
-     * Returns the JSON schema representation of the pojo bean parameters for the
-     * given bean name.
+     * Returns the JSON schema representation of the pojo bean parameters for the given bean name.
      *
      * @return the json or <tt>null</tt> if the pojo bean does not exist
      */

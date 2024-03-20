@@ -28,8 +28,8 @@ import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 
 @Metadata(label = "bean",
-        description = "Idempotent repository that uses EHCache cache to store message ids.",
-        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
+          description = "Idempotent repository that uses EHCache cache to store message ids.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "EHCache based message id repository")
 public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {

@@ -48,9 +48,9 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
  * queuing use cases See http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
 @Metadata(label = "bean",
-        description = "Idempotent repository that uses Cassandra table to store message ids."
-                      + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.",
-        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
+          description = "Idempotent repository that uses Cassandra table to store message ids."
+                        + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 public class CassandraIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
@@ -60,17 +60,20 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     private CassandraSessionHolder session;
     @Metadata(description = "The table name for storing the data", defaultValue = "CAMEL_IDEMPOTENT")
     private String table = "CAMEL_IDEMPOTENT";
-    @Metadata(description = "Values used as primary key prefix. Multiple values can be separated by comma.", displayName =
-            "Prefix Primary Key Values", javaType = "java.lang.String")
+    @Metadata(description = "Values used as primary key prefix. Multiple values can be separated by comma.",
+              displayName = "Prefix Primary Key Values", javaType = "java.lang.String")
     private String[] prefixPKValues = new String[0];
-    @Metadata(description = "Primary key columns. Multiple values can be separated by comma.", displayName = "Primary Key Columns",
-            javaType = "java.lang.String", defaultValue = "KEY")
+    @Metadata(description = "Primary key columns. Multiple values can be separated by comma.",
+              displayName = "Primary Key Columns",
+              javaType = "java.lang.String", defaultValue = "KEY")
     private String[] pkColumns = { "KEY" };
     @Metadata(description = "Time to live in seconds used for inserts", displayName = "Time to Live")
     private Integer ttl;
-    @Metadata(description = "Write consistency level", enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
+    @Metadata(description = "Write consistency level",
+              enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel writeConsistencyLevel;
-    @Metadata(description = "Read consistency level", enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
+    @Metadata(description = "Read consistency level",
+              enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel readConsistencyLevel;
 
     private PreparedStatement insertStatement;

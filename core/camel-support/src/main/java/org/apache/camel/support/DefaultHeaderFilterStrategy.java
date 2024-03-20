@@ -37,8 +37,8 @@ import org.apache.camel.spi.Metadata;
  * in camel-jms and camel-cxf components.
  */
 @Metadata(label = "bean",
-        description = "The default header filtering strategy. Users can configure which headers is allowed or denied.",
-        annotations = {"interfaceName=org.apache.camel.spi.HeaderFilterStrategy"})
+          description = "The default header filtering strategy. Users can configure which headers is allowed or denied.",
+          annotations = { "interfaceName=org.apache.camel.spi.HeaderFilterStrategy" })
 @Configurer(metadataOnly = true)
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 

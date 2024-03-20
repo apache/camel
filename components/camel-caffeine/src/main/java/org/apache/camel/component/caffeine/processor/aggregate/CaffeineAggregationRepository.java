@@ -57,7 +57,7 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
               defaultValue = "3")
     private int maximumRedeliveries = 3;
     @Metadata(label = "advanced",
-            description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
     public CamelContext getCamelContext() {

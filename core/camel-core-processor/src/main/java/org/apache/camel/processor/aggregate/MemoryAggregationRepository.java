@@ -34,8 +34,8 @@ import org.apache.camel.support.service.ServiceSupport;
  * Supports both optimistic locking and non-optimistic locking modes. Defaults to non-optimistic locking mode.
  */
 @Metadata(label = "bean",
-        description = "A memory based AggregationRepository which stores Exchange in memory only.",
-        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
+          description = "A memory based AggregationRepository which stores Exchange in memory only.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
 @Configurer(metadataOnly = true)
 public class MemoryAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
     private final ConcurrentMap<String, Exchange> cache = new ConcurrentHashMap<>();
