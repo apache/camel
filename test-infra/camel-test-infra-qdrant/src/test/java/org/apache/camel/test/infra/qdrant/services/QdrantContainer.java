@@ -34,9 +34,9 @@ public class QdrantContainer extends GenericContainer<QdrantContainer> {
     protected void configure() {
         super.configure();
 
-        withExposedPorts(HTTP_PORT, GRPC_PORT);
-        withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger(QdrantContainer.class)));
-        waitingFor(Wait.forLogMessage(".*Actix runtime found; starting in Actix runtime.*", 1));
+        withExposedPorts(HTTP_PORT, GRPC_PORT)
+                .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger(QdrantContainer.class)))
+                .waitingFor(Wait.forLogMessage(".*Actix runtime found; starting in Actix runtime.*", 1));
     }
 
     public String getGrpcHost() {

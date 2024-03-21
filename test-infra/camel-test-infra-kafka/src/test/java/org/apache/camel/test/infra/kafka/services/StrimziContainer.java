@@ -37,22 +37,19 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
     public StrimziContainer(Network network, String name, String containerName, String zookeeperInstanceName) {
         super(containerName);
 
-        withEnv("LOG_DIR", "/tmp/logs");
-        withExposedPorts(KAFKA_PORT);
-        withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:9092", getHost()));
-        withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092");
-        withEnv("KAFKA_ZOOKEEPER_CONNECT", zookeeperInstanceName + ":2181");
-        withNetwork(network);
-
-        withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd));
-
-        withCommand("sh", "-c",
-                "bin/kafka-server-start.sh config/server.properties "
-                                + "--override listeners=${KAFKA_LISTENERS} "
-                                + "--override advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} "
-                                + "--override zookeeper.connect=${KAFKA_ZOOKEEPER_CONNECT}");
-
-        waitingFor(Wait.forListeningPort());
+        withEnv("LOG_DIR", "/tmp/logs")
+                .withExposedPorts(KAFKA_PORT)
+                .withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:9092", getHost()))
+                .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092")
+                .withEnv("KAFKA_ZOOKEEPER_CONNECT", zookeeperInstanceName + ":2181")
+                .withNetwork(network)
+                .withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd))
+                .withCommand("sh", "-c",
+                        "bin/kafka-server-start.sh config/server.properties "
+                                         + "--override listeners=${KAFKA_LISTENERS} "
+                                         + "--override advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} "
+                                         + "--override zookeeper.connect=${KAFKA_ZOOKEEPER_CONNECT}")
+                .waitingFor(Wait.forListeningPort());
     }
 
     private void setupContainer(String name, CreateContainerCmd createContainerCmd) {

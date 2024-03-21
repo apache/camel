@@ -81,8 +81,8 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
     }
 
     protected void setupContainer() {
-        withExposedPorts(SERVICE_PORT);
-        waitingFor(Wait.forLogMessage(".*Ready\\.\n", 1));
+        withExposedPorts(SERVICE_PORT)
+                .waitingFor(Wait.forLogMessage(".*Ready\\.\n", 1));
     }
 
     public AwsCredentialsProvider getCredentialsProvider() {
