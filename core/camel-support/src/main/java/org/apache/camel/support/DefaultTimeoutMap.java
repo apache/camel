@@ -100,7 +100,6 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         return entry.getValue();
     }
 
-
     @Override
     public V put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
