@@ -90,6 +90,12 @@ public class LangchainEmbeddingsComponentMilvusTargetIT extends CamelTestSupport
                 .withDimension(384)
                 .build();
 
+        FieldType fieldType3 = FieldType.newBuilder()
+                .withName("text")
+                .withDataType(DataType.VarChar)
+                .withMaxLength(65535)
+                .build();
+
         CreateCollectionParam createCollectionReq = CreateCollectionParam.newBuilder()
                 .withCollectionName("embeddings")
                 .withDescription("customer info")
@@ -97,6 +103,7 @@ public class LangchainEmbeddingsComponentMilvusTargetIT extends CamelTestSupport
                 .withEnableDynamicField(false)
                 .addFieldType(fieldType1)
                 .addFieldType(fieldType2)
+                .addFieldType(fieldType3)
                 .build();
 
         Exchange result = fluentTemplate.to(MILVUS_URI)
@@ -170,9 +177,8 @@ public class LangchainEmbeddingsComponentMilvusTargetIT extends CamelTestSupport
             public void configure() {
                 from("direct:in")
                         .to("langchain-embeddings:test")
-                        .bean(LangchainEmbeddingsTestSupport.AsInsertParam.class)
                         .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.INSERT)
-                        .bean(LangchainEmbeddingsTestSupport.AsInsertParam.class)
+                        .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
             }
         };

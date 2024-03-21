@@ -34,5 +34,14 @@ public class Milvus {
 
         @Metadata(description = "Operation Status Value.", javaType = "int")
         public static final String OPERATION_STATUS_VALUE = "CamelMilvusOperationStatusValue";
+
+        @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
+        public static final String TEXT_FIELD_NAME = "CamelMilvusTextFieldName";
+
+        @Metadata(description = "Vector Field Name for Insert/Upsert operation", javaType = "String")
+        public static final String VECTOR_FIELD_NAME = "CamelMilvusVectorFieldName";
+
+        @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
+        public static final String COLLECTION_NAME = "CamelMilvusCollectionName";
     }
 }
