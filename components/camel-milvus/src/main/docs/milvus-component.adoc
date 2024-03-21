@@ -8,7 +8,7 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: qdrant
+:camel-spring-boot-name: milvus
 
 *Since Camel {since}*
 
