@@ -25,9 +25,11 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated("This test is regularly flaky")
 public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends ContextTestSupport {
 
     public boolean isUseRouteBuilder() {
