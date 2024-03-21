@@ -78,6 +78,14 @@ public class AzureServicebusUriDsl(
   }
 
   /**
+   * To use a custom HeaderFilterStrategy to filter Service Bus application properties to and from
+   * Camel message headers.
+   */
+  public fun headerFilterStrategy(headerFilterStrategy: String) {
+    it.property("headerFilterStrategy", headerFilterStrategy)
+  }
+
+  /**
    * Sets the proxy configuration to use for ServiceBusSenderAsyncClient. When a proxy is
    * configured, AMQP_WEB_SOCKETS must be used for the transport type.
    */

@@ -46,6 +46,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": target.getConfiguration().setFullyQualifiedNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
@@ -115,6 +117,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
@@ -180,6 +184,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": return target.getExchangePattern();
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": return target.getConfiguration().getFullyQualifiedNamespace();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxautolockrenewduration":

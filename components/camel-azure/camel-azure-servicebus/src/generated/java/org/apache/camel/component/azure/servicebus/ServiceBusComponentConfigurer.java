@@ -52,6 +52,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "enableDeadLettering": getOrCreateConfiguration(target).setEnableDeadLettering(property(camelContext, boolean.class, value)); return true;
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": getOrCreateConfiguration(target).setFullyQualifiedNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": getOrCreateConfiguration(target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
@@ -120,6 +122,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "enableDeadLettering": return boolean.class;
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
@@ -184,6 +188,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "enableDeadLettering": return getOrCreateConfiguration(target).isEnableDeadLettering();
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": return getOrCreateConfiguration(target).getFullyQualifiedNamespace();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return getOrCreateConfiguration(target).getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxautolockrenewduration":
