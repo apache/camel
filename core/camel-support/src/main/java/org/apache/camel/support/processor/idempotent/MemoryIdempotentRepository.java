@@ -26,6 +26,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -39,13 +40,15 @@ import org.apache.camel.support.service.ServiceSupport;
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Memory based idempotent repository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+
+    private static final int MAX_CACHE_SIZE = 1000;
+
     private Map<String, Object> cache;
 
-    @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "1000")
+    @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "" + MAX_CACHE_SIZE)
     private int cacheSize;
 
     public MemoryIdempotentRepository() {
-        this.cache = LRUCacheFactory.newLRUCache(1000);
     }
 
     public MemoryIdempotentRepository(Map<String, Object> set) {
@@ -56,7 +59,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      * Creates a new memory based repository using a {@link LRUCache} with a default of 1000 entries in the cache.
      */
     public static IdempotentRepository memoryIdempotentRepository() {
-        return new MemoryIdempotentRepository();
+        return memoryIdempotentRepository(MAX_CACHE_SIZE);
     }
 
     /**
@@ -65,7 +68,10 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      * @param cacheSize the cache size
      */
     public static IdempotentRepository memoryIdempotentRepository(int cacheSize) {
-        return memoryIdempotentRepository(LRUCacheFactory.newLRUCache(cacheSize));
+        MemoryIdempotentRepository answer = new MemoryIdempotentRepository();
+        answer.setCacheSize(cacheSize);
+        ServiceHelper.startService(answer);
+        return answer;
     }
 
     /**
@@ -131,14 +137,19 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         return cache.size();
     }
 
+    @ManagedAttribute(description = "The maximum cache size")
+    public int getMaxCacheSize() {
+        return cacheSize;
+    }
+
     public void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (cacheSize > 0) {
-            cache = LRUCacheFactory.newLRUCache(cacheSize);
+        if (cache == null) {
+            cache = LRUCacheFactory.newLRUCache(cacheSize <= 0 ? MAX_CACHE_SIZE : cacheSize);
         }
     }
 

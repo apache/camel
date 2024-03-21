@@ -133,14 +133,14 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void doInit() throws Exception {
         super.doInit();
 
-        var list = new ArrayList<Class<?>>();
         if (exceptions != null && throttledExceptions == null) {
+            var list = new ArrayList<Class<?>>();
             for (String fqn : exceptions.split(",")) {
                 Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(fqn);
                 list.add(clazz);
             }
+            this.throttledExceptions = list;
         }
-        this.throttledExceptions = list;
     }
 
     @Override
