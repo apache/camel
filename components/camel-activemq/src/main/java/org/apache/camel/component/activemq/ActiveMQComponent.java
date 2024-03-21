@@ -90,8 +90,8 @@ public class ActiveMQComponent extends JmsComponent {
     }
 
     /**
-     * Use an embedded in-memory (non-persistent) ActiveMQ broker for development and testing purposes.
-     * You must have activemq-broker JAR on the classpath.
+     * Use an embedded in-memory (non-persistent) ActiveMQ broker for development and testing purposes. You must have
+     * activemq-broker JAR on the classpath.
      */
     @Metadata(label = "common")
     public void setEmbedded(boolean embedded) {
