@@ -32,7 +32,7 @@ import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
 /**
- * Maps a Langchain Embeddings to a Qdrant PointStruct to write an embeddings vector on a Qdrant Database.
+ * Maps a LangChain Embeddings to a Qdrant PointStruct to write an embeddings vector on a Qdrant Database.
  */
 @DataTypeTransformer(name = "qdrant:embeddings",
                      description = "Prepares the message to become an object writable by Qdrant component")
@@ -40,7 +40,7 @@ public class QdrantEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader("CamelLangchainEmbeddingsVector", Embedding.class);
+        Embedding embedding = message.getHeader("CamelLangChainEmbeddingsVector", Embedding.class);
         TextSegment text = message.getBody(TextSegment.class);
         Points.PointId id
                 = message.getHeader(Qdrant.Headers.POINT_ID, () -> PointIdFactory.id(UUID.randomUUID()), Points.PointId.class);
