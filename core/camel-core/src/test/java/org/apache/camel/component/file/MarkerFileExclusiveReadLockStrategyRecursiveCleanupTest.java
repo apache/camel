@@ -46,12 +46,10 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
         createFiles("d1/d2/d3", "d3.dat");
         createFiles("d1/d2/d3/d4", "d4.dat");
         createFiles("d1/d2/d3/d4/d5", "d5.dat");
-
     }
 
     @Test
     public void testNonRecursive() throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -74,7 +72,6 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
 
     @Test
     public void testRecursiveSingleDepth() throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -97,12 +94,10 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
         checkFilesExists("d1/d2/d3", "d3.dat");
         checkFilesExists("d1/d2/d3/d4", "d4.dat");
         checkFilesExists("d1/d2/d3/d4/d5", "d5.dat");
-
     }
 
     @Test
     public void testRecursiveRange() throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -124,12 +119,10 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
         checkFilesNotExists("d1/d2/d3", "d3.dat");
         checkFilesNotExists("d1/d2/d3/d4", "d4.dat");
         checkFilesExists("d1/d2/d3/d4/d5", "d5.dat");
-
     }
 
     @Test
     public void testRecursiveRangeAntInclude() throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -151,12 +144,10 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
         checkFilesNotExists("d1/d2/d3", "d3.dat");
         checkFilesNotExists("d1/d2/d3/d4", "d4.dat");
         checkFilesExists("d1/d2/d3/d4/d5", "d5.dat");
-
     }
 
     @Test
     public void testRecursive() throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -178,7 +169,6 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
         checkFilesNotExists("d1/d2/d3", "d3.dat");
         checkFilesNotExists("d1/d2/d3/d4", "d4.dat");
         checkFilesNotExists("d1/d2/d3/d4/d5", "d5.dat");
-
     }
 
     private void createFiles(String dir, String fileName) throws IOException {
