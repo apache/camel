@@ -28,19 +28,19 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.Network;
 
-public class RocketMQContainer implements RocketMQService, ContainerService<RocketMQNameserverContainer> {
-    private static final Logger LOG = LoggerFactory.getLogger(RocketMQContainer.class);
+public class RocketMQContainerService implements RocketMQService, ContainerService<RocketMQNameserverContainer> {
+    private static final Logger LOG = LoggerFactory.getLogger(RocketMQContainerService.class);
     public static final String ROCKETMQ_VERSION = LocalPropertyResolver.getProperty(
-            RocketMQContainer.class,
+            RocketMQContainerService.class,
             RocketMQProperties.ROCKETMQ_VERSION_PROPERTY);
     public static final String ROCKETMQ_IMAGE = LocalPropertyResolver.getProperty(
-            RocketMQContainer.class,
+            RocketMQContainerService.class,
             RocketMQProperties.ROCKETMQ_IMAGE_PROPERTY) + ":" + ROCKETMQ_VERSION;
 
     private final RocketMQNameserverContainer nameserverContainer;
     private final RocketMQBrokerContainer brokerContainer1;
 
-    public RocketMQContainer() {
+    public RocketMQContainerService() {
         Network network = Network.newNetwork();
 
         nameserverContainer = new RocketMQNameserverContainer(network);
