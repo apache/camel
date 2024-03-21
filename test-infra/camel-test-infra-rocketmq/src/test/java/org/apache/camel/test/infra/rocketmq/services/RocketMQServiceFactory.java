@@ -54,7 +54,7 @@ public final class RocketMQServiceFactory {
 
     public static RocketMQService createService() {
         return builder()
-                .addLocalMapping(RocketMQContainer::new)
+                .addLocalMapping(RocketMQContainerService::new)
                 .build();
     }
 
@@ -68,7 +68,7 @@ public final class RocketMQServiceFactory {
         static {
             SimpleTestServiceBuilder<RocketMQService> instance = builder();
 
-            instance.addLocalMapping(() -> new SingletonKRocketMQService(new RocketMQContainer(), "rocketmq"));
+            instance.addLocalMapping(() -> new SingletonKRocketMQService(new RocketMQContainerService(), "rocketmq"));
 
             INSTANCE = instance.build();
         }
