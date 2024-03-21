@@ -101,10 +101,6 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     }
 
 
-    public boolean containsKey(K key) {
-        return map.containsKey(key);
-    }
-
     @Override
     public V put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
