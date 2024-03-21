@@ -43,10 +43,11 @@ public class OllamaContainer extends GenericContainer<OllamaContainer> {
         this.port = port;
         this.model = model;
         this.imageName = imageName;
-        withExposedPorts(port);
-        withImagePullPolicy(dockerImageName -> !dockerImageName.getVersionPart().endsWith(model));
-        setWaitStrategy(Wait.forListeningPort());
-        withLogConsumer(new Slf4jLogConsumer(LOGGER));
+
+        withExposedPorts(port)
+                .withImagePullPolicy(dockerImageName -> !dockerImageName.getVersionPart().endsWith(model))
+                .withLogConsumer(new Slf4jLogConsumer(LOGGER))
+                .setWaitStrategy(Wait.forListeningPort());
     }
 
     @Override

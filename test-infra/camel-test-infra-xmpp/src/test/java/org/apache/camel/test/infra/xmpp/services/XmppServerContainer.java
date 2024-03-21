@@ -28,7 +28,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class XmppServerContainer extends GenericContainer {
+public class XmppServerContainer extends GenericContainer<XmppServerContainer> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmppServerContainer.class);
     private static final String CONTAINER_NAME = "vysper-wrapper";
@@ -37,10 +37,10 @@ public class XmppServerContainer extends GenericContainer {
     public XmppServerContainer() {
         super(LocalPropertyResolver.getProperty(XmppServerContainer.class, XmppProperties.XMPP_CONTAINER));
         setWaitStrategy(Wait.forListeningPort());
-        withExposedPorts(XmppProperties.PORT_DEFAULT, PORT_REST);
-        withNetworkAliases(CONTAINER_NAME);
-        withLogConsumer(new Slf4jLogConsumer(LOGGER));
-        waitingFor(Wait.forLogMessage(".*Started Application in.*", 1));
+        withExposedPorts(XmppProperties.PORT_DEFAULT, PORT_REST)
+                .withNetworkAliases(CONTAINER_NAME)
+                .withLogConsumer(new Slf4jLogConsumer(LOGGER))
+                .waitingFor(Wait.forLogMessage(".*Started Application in.*", 1));
     }
 
     public String getUrl() {

@@ -34,9 +34,8 @@ public class DispatchRouterContainer extends GenericContainer<DispatchRouterCont
                         "org/apache/camel/test/infra/dispatch/router/services/Dockerfile")
                 .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME)));
 
-        withExposedPorts(DEFAULT_AMQP_PORT);
-
-        waitingFor(Wait.forListeningPort());
+        withExposedPorts(DEFAULT_AMQP_PORT)
+                .waitingFor(Wait.forListeningPort());
     }
 
     /**
