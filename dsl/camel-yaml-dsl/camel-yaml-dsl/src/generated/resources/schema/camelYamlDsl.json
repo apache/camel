@@ -4850,6 +4850,14 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
+          "ignoreException" : {
+            "type" : "array",
+            "title" : "Ignore Exception",
+            "description" : "Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception matching or inheriting from one of the list will not count as a failure nor success, even if the exceptions is part of recordExceptions.",
+            "items" : {
+              "type" : "string"
+            }
+          },
           "minimumNumberOfCalls" : {
             "type" : "number",
             "title" : "Minimum Number Of Calls",
@@ -4861,6 +4869,14 @@
             "title" : "Permitted Number Of Calls In Half Open State",
             "description" : "Configures the number of permitted calls when the CircuitBreaker is half open. The size must be greater than 0. Default size is 10.",
             "default" : "10"
+          },
+          "recordException" : {
+            "type" : "array",
+            "title" : "Record Exception",
+            "description" : "Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.",
+            "items" : {
+              "type" : "string"
+            }
           },
           "slidingWindowSize" : {
             "type" : "number",

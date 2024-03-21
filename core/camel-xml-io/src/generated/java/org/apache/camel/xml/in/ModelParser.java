@@ -250,7 +250,7 @@ public class ModelParser extends BaseParser {
     }
     protected Resilience4jConfigurationDefinition doParseResilience4jConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new Resilience4jConfigurationDefinition(),
-            resilience4jConfigurationCommonAttributeHandler(), noElementHandler(), noValueHandler());
+            resilience4jConfigurationCommonAttributeHandler(), resilience4jConfigurationCommonElementHandler(), noValueHandler());
     }
     protected FaultToleranceConfigurationDefinition doParseFaultToleranceConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new FaultToleranceConfigurationDefinition(),
@@ -937,8 +937,18 @@ public class ModelParser extends BaseParser {
             return true;
         };
     }
+    protected <T extends Resilience4jConfigurationCommon> ElementHandler<T> resilience4jConfigurationCommonElementHandler() {
+        return (def, key) -> {
+            switch (key) {
+                case "ignoreException": doAdd(doParseText(), def.getIgnoreExceptions(), def::setIgnoreExceptions); break;
+                case "recordException": doAdd(doParseText(), def.getRecordExceptions(), def::setRecordExceptions); break;
+                default: return false;
+            }
+            return true;
+        };
+    }
     protected Resilience4jConfigurationCommon doParseResilience4jConfigurationCommon() throws IOException, XmlPullParserException {
-        return doParse(new Resilience4jConfigurationCommon(), resilience4jConfigurationCommonAttributeHandler(),  noElementHandler(), noValueHandler());
+        return doParse(new Resilience4jConfigurationCommon(), resilience4jConfigurationCommonAttributeHandler(), resilience4jConfigurationCommonElementHandler(), noValueHandler());
     }
     protected RestContextRefDefinition doParseRestContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestContextRefDefinition(), (def, key, val) -> {

@@ -4473,7 +4473,29 @@ configuring the circuit breaker EIP.
   <xs:complexType name="resilience4JConfigurationCommon">
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
-        <xs:sequence/>
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="recordException" type="xs:string">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+<![CDATA[
+Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception matching
+or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.
+]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="ignoreException" type="xs:string">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+<![CDATA[
+Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception matching or
+inheriting from one of the list will not count as a failure nor success, even if the exceptions is part of
+recordExceptions.
+]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
         <xs:attribute name="circuitBreaker" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
