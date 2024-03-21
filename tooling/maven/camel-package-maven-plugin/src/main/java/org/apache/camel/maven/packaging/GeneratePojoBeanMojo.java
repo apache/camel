@@ -250,7 +250,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
             o.setSecret(ai.secret());
             String javaType = ai.javaType();
             if (javaType.isEmpty()) {
-                javaType = ci.name().toString();
+                javaType = fi.getType().getTypeName();
             }
             o.setJavaType(javaType);
             o.setType(getType(javaType, false, false));
