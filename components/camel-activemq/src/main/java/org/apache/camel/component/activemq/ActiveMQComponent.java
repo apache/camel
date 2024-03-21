@@ -32,6 +32,8 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -40,8 +42,12 @@ import org.springframework.jms.core.JmsTemplate;
  */
 @Component("activemq")
 public class ActiveMQComponent extends JmsComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ActiveMQComponent.class);
+
     private final CopyOnWriteArrayList<SingleConnectionFactory> singleConnectionFactoryList = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<Object> pooledConnectionFactoryServiceList = new CopyOnWriteArrayList<>();
+    private boolean embedded;
 
     public ActiveMQComponent() {
     }
@@ -77,6 +83,23 @@ public class ActiveMQComponent extends JmsComponent {
         }
 
         return answer;
+    }
+
+    public boolean isEmbedded() {
+        return embedded;
+    }
+
+    /**
+     * Use an embedded in-memory (non-persistent) ActiveMQ broker for development and testing purposes.
+     * You must have activemq-broker JAR on the classpath.
+     */
+    @Metadata(label = "common")
+    public void setEmbedded(boolean embedded) {
+        this.embedded = embedded;
+        if (embedded) {
+            setBrokerURL("vm://localhost?broker.persistent=false");
+            LOG.info("Using embedded in-memory ActiveMQ broker (you must have activemq-broker JAR added as dependency)");
+        }
     }
 
     public String getBrokerURL() {

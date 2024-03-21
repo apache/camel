@@ -23,6 +23,7 @@ public class ActiveMQComponentConfigurer extends JmsComponentConfigurer implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "brokerurl":
         case "brokerURL": target.setBrokerURL(property(camelContext, java.lang.String.class, value)); return true;
+        case "embedded": target.setEmbedded(property(camelContext, boolean.class, value)); return true;
         case "trustallpackages":
         case "trustAllPackages": target.setTrustAllPackages(property(camelContext, boolean.class, value)); return true;
         case "usepooledconnection":
@@ -38,6 +39,7 @@ public class ActiveMQComponentConfigurer extends JmsComponentConfigurer implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "brokerurl":
         case "brokerURL": return java.lang.String.class;
+        case "embedded": return boolean.class;
         case "trustallpackages":
         case "trustAllPackages": return boolean.class;
         case "usepooledconnection":
@@ -54,6 +56,7 @@ public class ActiveMQComponentConfigurer extends JmsComponentConfigurer implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "brokerurl":
         case "brokerURL": return target.getBrokerURL();
+        case "embedded": return target.isEmbedded();
         case "trustallpackages":
         case "trustAllPackages": return target.isTrustAllPackages();
         case "usepooledconnection":

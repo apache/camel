@@ -141,6 +141,23 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
+         * Use an embedded in-memory (non-persistent) ActiveMQ broker for
+         * development and testing purposes. You must have activemq-broker JAR
+         * on the classpath.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param embedded the value to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder embedded(boolean embedded) {
+            doSetProperty("embedded", embedded);
+            return this;
+        }
+        /**
          * Allows you to force the use of a specific jakarta.jms.Message
          * implementation for sending JMS messages. Possible values are: Bytes,
          * Map, Object, Stream, Text. By default, Camel would determine which
@@ -2101,6 +2118,7 @@ public interface ActivemqComponentBuilderFactory {
             case "connectionFactory": getOrCreateConfiguration((ActiveMQComponent) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "disableReplyTo": getOrCreateConfiguration((ActiveMQComponent) component).setDisableReplyTo((boolean) value); return true;
             case "durableSubscriptionName": getOrCreateConfiguration((ActiveMQComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
+            case "embedded": ((ActiveMQComponent) component).setEmbedded((boolean) value); return true;
             case "jmsMessageType": getOrCreateConfiguration((ActiveMQComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
             case "replyTo": getOrCreateConfiguration((ActiveMQComponent) component).setReplyTo((java.lang.String) value); return true;
             case "testConnectionOnStartup": getOrCreateConfiguration((ActiveMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
