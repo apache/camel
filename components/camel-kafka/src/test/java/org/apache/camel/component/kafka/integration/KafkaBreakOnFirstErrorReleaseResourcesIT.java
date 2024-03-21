@@ -32,6 +32,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
@@ -49,6 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64", "s390x" },
              disabledReason = "This test does not run reliably on ppc64le")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Consistently unreliable in the ASF CI")
 class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20563";
