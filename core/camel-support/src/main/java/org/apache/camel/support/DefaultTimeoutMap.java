@@ -83,6 +83,10 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     @Override
     public V get(K key) {
         TimeoutMapEntry<K, V> entry;
+        // if no contains, the lock is not necessary
+        if(!map.containsKey(key)){
+            return null;
+        }
         lock.lock();
         try {
             entry = map.get(key);
@@ -94,6 +98,11 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
             lock.unlock();
         }
         return entry.getValue();
+    }
+
+
+    public boolean containsKey(K key) {
+        return map.containsKey(key);
     }
 
     @Override
