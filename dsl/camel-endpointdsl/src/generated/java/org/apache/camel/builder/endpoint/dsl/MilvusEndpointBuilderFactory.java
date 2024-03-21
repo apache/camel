@@ -294,6 +294,45 @@ public interface MilvusEndpointBuilderFactory {
         public String milvusOperationStatusValue() {
             return "CamelMilvusOperationStatusValue";
         }
+
+        /**
+         * Text Field Name for Insert/Upsert operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MilvusTextFieldName}.
+         */
+        public String milvusTextFieldName() {
+            return "CamelMilvusTextFieldName";
+        }
+
+        /**
+         * Vector Field Name for Insert/Upsert operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MilvusVectorFieldName}.
+         */
+        public String milvusVectorFieldName() {
+            return "CamelMilvusVectorFieldName";
+        }
+
+        /**
+         * Collection Name for Insert/Upsert operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MilvusCollectionName}.
+         */
+        public String milvusCollectionName() {
+            return "CamelMilvusCollectionName";
+        }
     }
     static MilvusEndpointBuilder endpointBuilder(
             String componentName,
