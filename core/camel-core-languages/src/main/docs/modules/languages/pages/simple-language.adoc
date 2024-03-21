@@ -518,6 +518,9 @@ simple("${header.bar} == 100")
 
 // 100 will be converter to the type of header.bar so we can do > comparison
 simple("${header.bar} > 100")
+
+// if value of header.bar was 100, value returned will be 101. header.bar itself will not be changed.
+simple("${header.bar}++")
 ----
 
 === Comparing with different types
