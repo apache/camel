@@ -22,7 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("This test is regularly flaky")
 public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
 
     @Test
