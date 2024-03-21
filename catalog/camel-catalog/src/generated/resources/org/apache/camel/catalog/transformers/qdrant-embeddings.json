@@ -3,11 +3,11 @@
     "kind": "transformer",
     "name": "qdrant:embeddings",
     "title": "Qdrant (Embeddings)",
-    "description": "Prepares the message to become an object writable by Qdrant component",
+    "description": "Prepares the message to become an object writable by Milvus component",
     "deprecated": false,
-    "javaType": "org.apache.camel.component.qdrant.transform.QdrantEmbeddingsDataTypeTransformer",
+    "javaType": "org.apache.camel.component.milvus.transform.MilvusEmbeddingsDataTypeTransformer",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-qdrant",
+    "artifactId": "camel-milvus",
     "version": "4.5.0-SNAPSHOT"
   }
 }
