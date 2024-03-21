@@ -108,6 +108,52 @@ public class KafkaUriDsl(
   }
 
   /**
+   * The maximum amount of time in milliseconds to wait when retrying a request to the broker that
+   * has repeatedly failed. If provided, the backoff per client will increase exponentially for each
+   * failed request, up to this maximum. To prevent all clients from being synchronized upon retry, a
+   * randomized jitter with a factor of 0.2 will be applied to the backoff, resulting in the backoff
+   * falling within a range between 20% below and 20% above the computed value. If retry.backoff.ms is
+   * set to be higher than retry.backoff.max.ms, then retry.backoff.max.ms will be used as a constant
+   * backoff from the beginning without any exponential increase
+   */
+  public fun retryBackoffMaxMs(retryBackoffMaxMs: String) {
+    it.property("retryBackoffMaxMs", retryBackoffMaxMs)
+  }
+
+  /**
+   * The maximum amount of time in milliseconds to wait when retrying a request to the broker that
+   * has repeatedly failed. If provided, the backoff per client will increase exponentially for each
+   * failed request, up to this maximum. To prevent all clients from being synchronized upon retry, a
+   * randomized jitter with a factor of 0.2 will be applied to the backoff, resulting in the backoff
+   * falling within a range between 20% below and 20% above the computed value. If retry.backoff.ms is
+   * set to be higher than retry.backoff.max.ms, then retry.backoff.max.ms will be used as a constant
+   * backoff from the beginning without any exponential increase
+   */
+  public fun retryBackoffMaxMs(retryBackoffMaxMs: Int) {
+    it.property("retryBackoffMaxMs", retryBackoffMaxMs.toString())
+  }
+
+  /**
+   * The amount of time to wait before attempting to retry a failed request to a given topic
+   * partition. This avoids repeatedly sending requests in a tight loop under some failure scenarios.
+   * This value is the initial backoff value and will increase exponentially for each failed request,
+   * up to the retry.backoff.max.ms value.
+   */
+  public fun retryBackoffMs(retryBackoffMs: String) {
+    it.property("retryBackoffMs", retryBackoffMs)
+  }
+
+  /**
+   * The amount of time to wait before attempting to retry a failed request to a given topic
+   * partition. This avoids repeatedly sending requests in a tight loop under some failure scenarios.
+   * This value is the initial backoff value and will increase exponentially for each failed request,
+   * up to the retry.backoff.max.ms value.
+   */
+  public fun retryBackoffMs(retryBackoffMs: Int) {
+    it.property("retryBackoffMs", retryBackoffMs.toString())
+  }
+
+  /**
    * Timeout in milliseconds to wait gracefully for the consumer or producer to shut down and
    * terminate its worker threads.
    */
@@ -1132,24 +1178,6 @@ public class KafkaUriDsl(
    */
   public fun retries(retries: Int) {
     it.property("retries", retries.toString())
-  }
-
-  /**
-   * Before each retry, the producer refreshes the metadata of relevant topics to see if a new
-   * leader has been elected. Since the leader election takes a bit of time, this property specifies
-   * the amount of time that the producer waits before refreshing the metadata.
-   */
-  public fun retryBackoffMs(retryBackoffMs: String) {
-    it.property("retryBackoffMs", retryBackoffMs)
-  }
-
-  /**
-   * Before each retry, the producer refreshes the metadata of relevant topics to see if a new
-   * leader has been elected. Since the leader election takes a bit of time, this property specifies
-   * the amount of time that the producer waits before refreshing the metadata.
-   */
-  public fun retryBackoffMs(retryBackoffMs: Int) {
-    it.property("retryBackoffMs", retryBackoffMs.toString())
   }
 
   /**

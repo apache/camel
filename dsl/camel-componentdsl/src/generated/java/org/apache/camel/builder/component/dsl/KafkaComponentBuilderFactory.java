@@ -158,6 +158,51 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum amount of time in milliseconds to wait when retrying a
+         * request to the broker that has repeatedly failed. If provided, the
+         * backoff per client will increase exponentially for each failed
+         * request, up to this maximum. To prevent all clients from being
+         * synchronized upon retry, a randomized jitter with a factor of 0.2
+         * will be applied to the backoff, resulting in the backoff falling
+         * within a range between 20% below and 20% above the computed value. If
+         * retry.backoff.ms is set to be higher than retry.backoff.max.ms, then
+         * retry.backoff.max.ms will be used as a constant backoff from the
+         * beginning without any exponential increase.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: common
+         * 
+         * @param retryBackoffMaxMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder retryBackoffMaxMs(
+                java.lang.Integer retryBackoffMaxMs) {
+            doSetProperty("retryBackoffMaxMs", retryBackoffMaxMs);
+            return this;
+        }
+        /**
+         * The amount of time to wait before attempting to retry a failed
+         * request to a given topic partition. This avoids repeatedly sending
+         * requests in a tight loop under some failure scenarios. This value is
+         * the initial backoff value and will increase exponentially for each
+         * failed request, up to the retry.backoff.max.ms value.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param retryBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder retryBackoffMs(
+                java.lang.Integer retryBackoffMs) {
+            doSetProperty("retryBackoffMs", retryBackoffMs);
+            return this;
+        }
+        /**
          * Timeout in milliseconds to wait gracefully for the consumer or
          * producer to shut down and terminate its worker threads.
          * 
@@ -1532,25 +1577,6 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Before each retry, the producer refreshes the metadata of relevant
-         * topics to see if a new leader has been elected. Since the leader
-         * election takes a bit of time, this property specifies the amount of
-         * time that the producer waits before refreshing the metadata.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 100
-         * Group: producer
-         * 
-         * @param retryBackoffMs the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder retryBackoffMs(
-                java.lang.Integer retryBackoffMs) {
-            doSetProperty("retryBackoffMs", retryBackoffMs);
-            return this;
-        }
-        /**
          * Socket write buffer size.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -2256,6 +2282,8 @@ public interface KafkaComponentBuilderFactory {
             case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
             case "headerFilterStrategy": getOrCreateConfiguration((KafkaComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "reconnectBackoffMaxMs": getOrCreateConfiguration((KafkaComponent) component).setReconnectBackoffMaxMs((java.lang.Integer) value); return true;
+            case "retryBackoffMaxMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMaxMs((java.lang.Integer) value); return true;
+            case "retryBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMs((java.lang.Integer) value); return true;
             case "shutdownTimeout": getOrCreateConfiguration((KafkaComponent) component).setShutdownTimeout((int) value); return true;
             case "allowManualCommit": getOrCreateConfiguration((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
             case "autoCommitEnable": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitEnable((boolean) value); return true;
@@ -2325,7 +2353,6 @@ public interface KafkaComponentBuilderFactory {
             case "requestRequiredAcks": getOrCreateConfiguration((KafkaComponent) component).setRequestRequiredAcks((java.lang.String) value); return true;
             case "requestTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setRequestTimeoutMs((java.lang.Integer) value); return true;
             case "retries": getOrCreateConfiguration((KafkaComponent) component).setRetries((java.lang.Integer) value); return true;
-            case "retryBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMs((java.lang.Integer) value); return true;
             case "sendBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setSendBufferBytes((java.lang.Integer) value); return true;
             case "valueSerializer": getOrCreateConfiguration((KafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
             case "workerPool": getOrCreateConfiguration((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;

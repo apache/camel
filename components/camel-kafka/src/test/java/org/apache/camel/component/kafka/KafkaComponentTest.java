@@ -202,6 +202,7 @@ public class KafkaComponentTest {
         props.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, "50");
         props.put(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, "1000");
         props.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, "100");
+        props.put(ProducerConfig.RETRY_BACKOFF_MAX_MS_CONFIG, "1000");
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "false");

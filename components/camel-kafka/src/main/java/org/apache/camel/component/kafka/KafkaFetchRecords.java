@@ -558,11 +558,15 @@ public class KafkaFetchRecords implements Runnable {
                 // need to use reflection to access the network client which has API to check if the client has ready
                 // connections
                 org.apache.kafka.clients.consumer.KafkaConsumer kc = (org.apache.kafka.clients.consumer.KafkaConsumer) consumer;
-                ConsumerNetworkClient nc
-                        = (ConsumerNetworkClient) ReflectionHelper.getField(kc.getClass().getDeclaredField("client"), kc);
-                LOG.trace(
-                        "Health-Check calling org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient.hasReadyNode");
-                ready = nc.hasReadyNodes(System.currentTimeMillis());
+                Object client = ReflectionHelper.getField(kc.getClass().getDeclaredField("delegate"), kc);
+                if (client != null) {
+                    ConsumerNetworkClient nc
+                            = (ConsumerNetworkClient) ReflectionHelper.getField(client.getClass().getDeclaredField("client"),
+                                    client);
+                    LOG.trace(
+                            "Health-Check calling org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient.hasReadyNode");
+                    ready = nc.hasReadyNodes(System.currentTimeMillis());
+                }
             }
         } catch (Exception e) {
             // ignore
