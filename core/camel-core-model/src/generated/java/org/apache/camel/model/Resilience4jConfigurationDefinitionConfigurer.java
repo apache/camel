@@ -28,8 +28,10 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         map.put("Config", java.lang.String.class);
         map.put("FailureRateThreshold", java.lang.String.class);
         map.put("Id", java.lang.String.class);
+        map.put("IgnoreExceptions", java.util.List.class);
         map.put("MinimumNumberOfCalls", java.lang.String.class);
         map.put("PermittedNumberOfCallsInHalfOpenState", java.lang.String.class);
+        map.put("RecordExceptions", java.util.List.class);
         map.put("SlidingWindowSize", java.lang.String.class);
         map.put("SlidingWindowType", java.lang.String.class);
         map.put("SlowCallDurationThreshold", java.lang.String.class);
@@ -62,10 +64,14 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "failureratethreshold":
         case "failureRateThreshold": target.setFailureRateThreshold(property(camelContext, java.lang.String.class, value)); return true;
         case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "ignoreexceptions":
+        case "ignoreExceptions": target.setIgnoreExceptions(property(camelContext, java.util.List.class, value)); return true;
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": target.setMinimumNumberOfCalls(property(camelContext, java.lang.String.class, value)); return true;
         case "permittednumberofcallsinhalfopenstate":
         case "permittedNumberOfCallsInHalfOpenState": target.setPermittedNumberOfCallsInHalfOpenState(property(camelContext, java.lang.String.class, value)); return true;
+        case "recordexceptions":
+        case "recordExceptions": target.setRecordExceptions(property(camelContext, java.util.List.class, value)); return true;
         case "slidingwindowsize":
         case "slidingWindowSize": target.setSlidingWindowSize(property(camelContext, java.lang.String.class, value)); return true;
         case "slidingwindowtype":
@@ -114,10 +120,14 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "failureratethreshold":
         case "failureRateThreshold": return java.lang.String.class;
         case "id": return java.lang.String.class;
+        case "ignoreexceptions":
+        case "ignoreExceptions": return java.util.List.class;
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": return java.lang.String.class;
         case "permittednumberofcallsinhalfopenstate":
         case "permittedNumberOfCallsInHalfOpenState": return java.lang.String.class;
+        case "recordexceptions":
+        case "recordExceptions": return java.util.List.class;
         case "slidingwindowsize":
         case "slidingWindowSize": return java.lang.String.class;
         case "slidingwindowtype":
@@ -162,10 +172,14 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "failureratethreshold":
         case "failureRateThreshold": return target.getFailureRateThreshold();
         case "id": return target.getId();
+        case "ignoreexceptions":
+        case "ignoreExceptions": return target.getIgnoreExceptions();
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": return target.getMinimumNumberOfCalls();
         case "permittednumberofcallsinhalfopenstate":
         case "permittedNumberOfCallsInHalfOpenState": return target.getPermittedNumberOfCallsInHalfOpenState();
+        case "recordexceptions":
+        case "recordExceptions": return target.getRecordExceptions();
         case "slidingwindowsize":
         case "slidingWindowSize": return target.getSlidingWindowSize();
         case "slidingwindowtype":
@@ -188,6 +202,17 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "waitDurationInOpenState": return target.getWaitDurationInOpenState();
         case "writablestacktraceenabled":
         case "writableStackTraceEnabled": return target.getWritableStackTraceEnabled();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ignoreexceptions":
+        case "ignoreExceptions": return java.lang.String.class;
+        case "recordexceptions":
+        case "recordExceptions": return java.lang.String.class;
         default: return null;
         }
     }
