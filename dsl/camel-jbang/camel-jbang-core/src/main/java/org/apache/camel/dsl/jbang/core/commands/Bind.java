@@ -70,6 +70,10 @@ public class Bind extends CamelCommand {
                         required = true)
     String sink;
 
+    @CommandLine.Option(names = { "--error-handler" },
+            description = "Add error handler (none|log|sink:<endpoint>). Sink endpoints are expected in the format \"[[apigroup/]version:]kind:[namespace/]name\", plain Camel URIs or Kamelet name.")
+    String errorHandler;
+
     @CommandLine.Option(names = { "--property" },
                         description = "Adds a pipe property in the form of [source|sink|step-<n>].<key>=<value> where <n> is the step number starting from 1",
                         arity = "0")
@@ -157,11 +161,78 @@ public class Bind extends CamelCommand {
             stepsContext = sb.toString();
         }
 
+        String errorHandlerContext = "";
+        if (errorHandler != null) {
+            StringBuilder sb = new StringBuilder("\n  errorHandler:\n");
+
+            Map<String, Object> errorHandlerParameters = getProperties("error-handler");
+
+            String[] errorHandlerTokens = errorHandler.split(":", 2);
+            String errorHandlerType = errorHandlerTokens[0];
+
+            String errorHandlerSpec;
+            switch (errorHandlerType) {
+                case "sink":
+                    if (errorHandlerTokens.length != 2) {
+                        printer().println(
+                                "Invalid error handler syntax. Type 'sink' needs an endpoint configuration (ie sink:endpointUri)");
+                        return -1;
+                    }
+                    String endpoint = errorHandlerTokens[1];
+
+                    String sinkType;
+                    Map<String, Object> errorHandlerSinkProperties = getProperties("error-handler.sink");
+
+                    // remove sink properties from error handler parameters
+                    errorHandlerSinkProperties.keySet().stream()
+                            .map(key -> "sink." + key)
+                            .filter(errorHandlerParameters::containsKey)
+                            .forEach(errorHandlerParameters::remove);
+
+                    if (endpoint.contains(":")) {
+                        sinkType = "uri";
+                        if (endpoint.contains("?")) {
+                            String query = StringHelper.after(endpoint, "?");
+                            endpoint = StringHelper.before(endpoint, "?");
+                            if (query != null) {
+                                errorHandlerSinkProperties.putAll(URISupport.parseQuery(query, true));
+                            }
+                        }
+                    } else {
+                        sinkType = "kamelet";
+                        errorHandlerSinkProperties = kameletProperties(endpoint, errorHandlerSinkProperties);
+                    }
+
+                    is = Bind.class.getClassLoader()
+                            .getResourceAsStream("templates/error-handler-sink-%s.yaml.tmpl".formatted(sinkType));
+                    errorHandlerSpec = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                    errorHandlerSpec = errorHandlerSpec.replaceFirst("\\{\\{ \\.Name }}", endpoint);
+                    errorHandlerSpec = errorHandlerSpec.replaceFirst("\\{\\{ \\.ErrorHandlerProperties }}",
+                            asEndpointProperties(errorHandlerSinkProperties, 4));
+                    errorHandlerSpec = errorHandlerSpec.replaceFirst("\\{\\{ \\.ErrorHandlerParameter }}",
+                            asErrorHandlerParameters(errorHandlerParameters));
+                    break;
+                case "log":
+                    is = Bind.class.getClassLoader().getResourceAsStream("templates/error-handler-log.yaml.tmpl");
+                    errorHandlerSpec = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                    errorHandlerSpec = errorHandlerSpec.replaceFirst("\\{\\{ \\.ErrorHandlerParameter }}",
+                            asErrorHandlerParameters(errorHandlerParameters));
+                    break;
+                default:
+                    errorHandlerSpec = "    none: {}";
+            }
+            sb.append(errorHandlerSpec);
+            errorHandlerContext = sb.toString();
+        }
+
         String name = FileUtil.onlyName(file, false);
         context = context.replaceFirst("\\{\\{ \\.Name }}", name);
         context = context.replaceFirst("\\{\\{ \\.Source }}", sourceEndpoint);
         context = context.replaceFirst("\\{\\{ \\.Sink }}", sinkEndpoint);
         context = context.replaceFirst("\\{\\{ \\.Steps }}", stepsContext);
+        context = context.replaceFirst("\\{\\{ \\.ErrorHandler }}", errorHandlerContext);
 
         Map<String, Object> sourceProperties = getProperties("source");
         if ("kamelet".equals(in)) {
@@ -205,21 +276,50 @@ public class Bind extends CamelCommand {
     }
 
     /**
+     * Creates YAML snippet representing the error handler parameters section.
+     *
+     * @param props the properties to set as error handler parameters.
+     */
+    private String asErrorHandlerParameters(Map<String, Object> props) {
+        if (props.isEmpty()) {
+            return "parameters: {}";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("parameters:\n");
+        for (Map.Entry<String, Object> propertyEntry : props.entrySet()) {
+            sb.append("        ").append(propertyEntry.getKey()).append(": ").append(propertyEntry.getValue()).append("\n");
+        }
+        return sb.toString().trim();
+    }
+
+    /**
      * Creates YAML snippet representing the endpoint properties section.
      *
      * @param  props the properties to set as endpoint properties.
      * @return
      */
     private String asEndpointProperties(Map<String, Object> props) {
+        return asEndpointProperties(props, 0);
+    }
+
+    /**
+     * Creates YAML snippet representing the endpoint properties section.
+     *
+     * @param  props            the properties to set as endpoint properties.
+     * @param  additionalIndent optional number of additional spaces used as indentation.
+     * @return
+     */
+    private String asEndpointProperties(Map<String, Object> props, int additionalIndent) {
         StringBuilder sb = new StringBuilder();
         if (props.isEmpty()) {
             // create a dummy placeholder, so it is easier to add new properties manually
-            return sb.append("#properties:\n      ").append("#key: \"value\"").toString();
+            return sb.append("#properties:\n      ").append(" ".repeat(additionalIndent)).append("#key: \"value\"").toString();
         }
 
         sb.append("properties:\n");
         for (Map.Entry<String, Object> propertyEntry : props.entrySet()) {
-            sb.append("      ").append(propertyEntry.getKey()).append(": ")
+            sb.append("      ").append(" ".repeat(additionalIndent)).append(propertyEntry.getKey()).append(": ")
                     .append(propertyEntry.getValue()).append("\n");
         }
         return sb.toString().trim();
@@ -227,7 +327,7 @@ public class Bind extends CamelCommand {
 
     /**
      * Extracts properties from given property arguments. Filter properties by given prefix. This way each component in
-     * pipe (source, sink, step[1-n]) can have its individual properties.
+     * pipe (source, sink, errorHandler, step[1-n]) can have its individual properties.
      *
      * @param  keyPrefix
      * @return
@@ -240,7 +340,7 @@ public class Bind extends CamelCommand {
                     String[] keyValue = propertyExpression.split("=", 2);
                     if (keyValue.length != 2) {
                         printer().printf(
-                                "property '%s' does not follow format [source|sink|step-<n>].<key>=<value>%n",
+                                "property '%s' does not follow format [source|sink|error-handler|step-<n>].<key>=<value>%n",
                                 propertyExpression);
                         continue;
                     }
