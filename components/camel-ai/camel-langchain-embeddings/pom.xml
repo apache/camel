@@ -17,99 +17,103 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>camel-ai-parent</artifactId>
-    <groupId>org.apache.camel</groupId>
-    <version>4.5.0-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <artifactId>camel-langchain-embeddings</artifactId>
-  <packaging>jar</packaging>
+    <modelVersion>4.0.0</modelVersion>
 
-  <name>Camel :: LangChain :: Embedding</name>
-  <description>LangChain4j Embedding</description>
+    <parent>
+        <artifactId>camel-ai-parent</artifactId>
+        <groupId>org.apache.camel</groupId>
+        <version>4.5.0-SNAPSHOT</version>
+    </parent>
 
-  <properties>
-    <!-- Qdrant is not available on these platforms -->
-    <skipITs.ppc64le>true</skipITs.ppc64le>
-    <skipITs.s390x>true</skipITs.s390x>
-    <skipTests.ppc64le>true</skipTests.ppc64le>
-    <skipTests.s390x>true</skipTests.s390x>
-  </properties>
+    <artifactId>camel-langchain-embeddings</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: LangChain :: Embedding</name>
+    <description>LangChain4j Embedding</description>
 
-  <dependencies>
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-core</artifactId>
-      <version>${langchain4j.version}</version>
-    </dependency>
+    <properties>
+        <!-- Qdrant is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipTests.ppc64le>true</skipTests.ppc64le>
+        <skipTests.s390x>true</skipTests.s390x>
+    </properties>
 
-    <!-- test dependencies -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-direct</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-qdrant</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-milvus</artifactId>
-      <scope>test</scope>
-    </dependency>
+    <dependencies>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-junit5</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj-version}</version>
-      <scope>test</scope>
-    </dependency>
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-direct</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-qdrant</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-milvus</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-version}</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-embeddings</artifactId>
-      <version>${langchain4j.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-embeddings</artifactId>
+            <version>${langchain4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
+            <version>${langchain4j.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
-      <version>${langchain4j.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-qdrant</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-milvus</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
-    <!-- test infra -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-infra-qdrant</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-infra-milvus</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
+    </dependencies>
 </project>
