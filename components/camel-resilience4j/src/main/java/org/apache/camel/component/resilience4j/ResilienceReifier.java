@@ -200,7 +200,6 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         // on camel context takes the precedence over those in the registry
         if (definition.getConfiguration() != null) {
             final String ref = parseString(definition.getConfiguration());
-
             loadProperties(properties, Suppliers.firstNotNull(
                     () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class)
                             .getResilience4jConfiguration(ref),
@@ -215,6 +214,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         Resilience4jConfigurationDefinition config = new Resilience4jConfigurationDefinition();
         PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
+                .withIgnoreCase(true)
                 .withConfigurer(configurer)
                 .withProperties(properties)
                 .withTarget(config)

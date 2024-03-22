@@ -149,7 +149,6 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         // on camel context takes the precedence over those in the registry
         if (definition.getConfiguration() != null) {
             final String ref = parseString(definition.getConfiguration());
-
             loadProperties(properties, Suppliers.firstNotNull(
                     () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class)
                             .getFaultToleranceConfiguration(ref),
@@ -164,6 +163,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         FaultToleranceConfigurationDefinition config = new FaultToleranceConfigurationDefinition();
         PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
+                .withIgnoreCase(true)
                 .withConfigurer(configurer)
                 .withProperties(properties)
                 .withTarget(config)
