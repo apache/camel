@@ -568,6 +568,478 @@ class BindTest extends CamelCommandBaseTest {
     }
 
     @Test
+    public void shouldBindKameletSinkErrorHandler() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "sink:log-sink";
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    sink:
+                      endpoint:
+                        ref:
+                          kind: Kamelet
+                          apiVersion: camel.apache.org/v1
+                          name: log-sink
+                        #properties:
+                          #key: "value"
+                      parameters: {}
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindKameletSinkErrorHandlerWithParameters() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "sink:log-sink";
+
+        command.properties = new String[] {
+                "error-handler.maximumRedeliveries=3",
+                "error-handler.redeliveryDelay=2000"
+        };
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    sink:
+                      endpoint:
+                        ref:
+                          kind: Kamelet
+                          apiVersion: camel.apache.org/v1
+                          name: log-sink
+                        #properties:
+                          #key: "value"
+                      parameters:
+                        redeliveryDelay: 2000
+                        maximumRedeliveries: 3
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindKameletSinkErrorHandlerAndSinkProperties() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "sink:log-sink";
+
+        command.properties = new String[] {
+                "error-handler.sink.showHeaders=true",
+                "error-handler.maximumRedeliveries=3",
+                "error-handler.redeliveryDelay=2000"
+        };
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    sink:
+                      endpoint:
+                        ref:
+                          kind: Kamelet
+                          apiVersion: camel.apache.org/v1
+                          name: log-sink
+                        properties:
+                          showHeaders: true
+                      parameters:
+                        redeliveryDelay: 2000
+                        maximumRedeliveries: 3
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindEndpointUriSinkErrorHandler() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "sink:log:error";
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    sink:
+                      endpoint:
+                        uri: log:error
+                        #properties:
+                          #key: "value"
+                      parameters: {}
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindEndpointUriSinkErrorHandlerWithParameters() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "sink:log:error";
+
+        command.properties = new String[] {
+                "error-handler.maximumRedeliveries=3",
+                "error-handler.redeliveryDelay=2000"
+        };
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    sink:
+                      endpoint:
+                        uri: log:error
+                        #properties:
+                          #key: "value"
+                      parameters:
+                        redeliveryDelay: 2000
+                        maximumRedeliveries: 3
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindEndpointUriSinkErrorHandlerAndSinkProperties() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "sink:log:error";
+
+        command.properties = new String[] {
+                "error-handler.sink.showHeaders=true",
+                "error-handler.maximumRedeliveries=3",
+                "error-handler.redeliveryDelay=2000"
+        };
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    sink:
+                      endpoint:
+                        uri: log:error
+                        properties:
+                          showHeaders: true
+                      parameters:
+                        redeliveryDelay: 2000
+                        maximumRedeliveries: 3
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindEndpointUriSinkErrorHandlerAndUriProperties() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "sink:log:error?showStreams=false";
+
+        command.properties = new String[] {
+                "error-handler.sink.showHeaders=true",
+                "error-handler.maximumRedeliveries=3",
+                "error-handler.redeliveryDelay=2000"
+        };
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    sink:
+                      endpoint:
+                        uri: log:error
+                        properties:
+                          showStreams: false
+                          showHeaders: true
+                      parameters:
+                        redeliveryDelay: 2000
+                        maximumRedeliveries: 3
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindWithLogErrorHandler() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "log";
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    log:
+                      parameters: {}
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindWithLogErrorHandlerWithParameters() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "log";
+
+        command.properties = new String[] {
+                "error-handler.maximumRedeliveries=3",
+                "error-handler.redeliveryDelay=2000"
+        };
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    log:
+                      parameters:
+                        redeliveryDelay: 2000
+                        maximumRedeliveries: 3
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindWithNoErrorHandler() throws Exception {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+        command.file = "timer-to-log";
+        command.source = "timer-source";
+        command.sink = "log-sink";
+        command.output = "yaml";
+
+        command.errorHandler = "none";
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                  errorHandler:
+                    none: {}
+                """.trim(), output);
+    }
+
+    @Test
     public void shouldSupportJsonOutput() throws Exception {
         Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
         command.file = "timer-to-log";
