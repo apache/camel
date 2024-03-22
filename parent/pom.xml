@@ -117,9 +117,9 @@
         <couchbase-client-version>3.5.3</couchbase-client-version>
         <curator-version>5.6.0</curator-version>
         <cxf-version>4.0.4</cxf-version>
-        <cxf-codegen-plugin-version>4.0.3</cxf-codegen-plugin-version>
+        <cxf-codegen-plugin-version>4.0.4</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
-        <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
+        <cxf-xjc-plugin-version>4.0.1</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.1</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.5.2-jakarta4</datasonnet-mapper-version>
         <debezium-version>2.5.3.Final</debezium-version>
