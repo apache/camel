@@ -103,7 +103,7 @@ It will automatically determine the appropriate jars for your system based on th
     <dependency>
       <groupId>ai.djl.mxnet</groupId>
       <artifactId>mxnet-native-auto</artifactId>
-      <version>1.7.0-a</version>
+      <version>1.8.0</version>
       <scope>runtime</scope>
     </dependency>
 ----
@@ -132,7 +132,7 @@ It will automatically determine the appropriate jars for your system based on th
     <dependency>
       <groupId>ai.djl.pytorch</groupId>
       <artifactId>pytorch-native-auto</artifactId>
-      <version>1.5.0</version>
+      <version>1.9.1</version>
       <scope>runtime</scope>
     </dependency>
 ----
@@ -161,7 +161,7 @@ It will automatically determine the appropriate jars for your system based on th
     <dependency>
       <groupId>ai.djl.tensorflow</groupId>
       <artifactId>tensorflow-native-auto</artifactId>
-      <version>2.1.0</version>
+      <version>2.4.1</version>
       <scope>runtime</scope>
     </dependency>
 ----

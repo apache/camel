@@ -116,7 +116,6 @@
         <module>camel-dhis2</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
-        <module>camel-djl</module>
         <module>camel-dns</module>
         <module>camel-docker</module>
         <module>camel-drill</module>

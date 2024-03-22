@@ -33,6 +33,7 @@
     <description>Camel AI parent</description>
 
     <modules>
+        <module>camel-djl</module>
         <module>camel-langchain-chat</module>
         <module>camel-langchain-embeddings</module>
     </modules>
