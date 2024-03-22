@@ -148,7 +148,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         return (exchange, callback) -> {
             final Object inputBody = exchange.getMessage().getBody();
             Map<String, Object> applicationProperties
-                = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+                    = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
             if (applicationProperties == null) {
                 applicationProperties = new HashMap<>();
             }
@@ -182,7 +182,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         return (exchange, callback) -> {
             final Object inputBody = exchange.getMessage().getBody();
             Map<String, Object> applicationProperties
-                = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+                    = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
             if (applicationProperties == null) {
                 applicationProperties = new HashMap<>();
             }
