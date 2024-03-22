@@ -21,14 +21,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
+        <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
         <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-chatscript</artifactId>
     <packaging>jar</packaging>
-
     <name>Camel :: ChatScript</name>
     <description>Camel support for ChatScript</description>
 

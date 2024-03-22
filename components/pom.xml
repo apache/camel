@@ -98,7 +98,6 @@
         <module>camel-caffeine</module>
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
-        <module>camel-chatscript</module>
         <module>camel-chunk</module>
         <module>camel-cloudevents</module>
         <module>camel-cm-sms</module>
