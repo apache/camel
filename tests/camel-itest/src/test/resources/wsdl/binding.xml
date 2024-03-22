@@ -17,8 +17,8 @@
     limitations under the License.
 
 -->
-<jxb:bindings version="1.0" wsdlLocation="hello_world.wsdl"
-              xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+<jxb:bindings version="3.0" wsdlLocation="hello_world.wsdl"
+              xmlns:jxb="https://jakarta.ee/xml/ns/jaxb">
     <jxb:bindings>
         <jxb:globalBindings>
             <jxb:serializable uid="1"/>
