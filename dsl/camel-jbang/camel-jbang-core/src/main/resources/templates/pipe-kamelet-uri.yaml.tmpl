@@ -12,5 +12,4 @@ spec:
 {{ .Steps }}
   sink:
     uri: {{ .Sink }}
-    #properties:
-      #key: "value"
+    {{ .SinkProperties }}

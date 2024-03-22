@@ -5,8 +5,7 @@ metadata:
 spec:
   source:
     uri: {{ .Source }}
-    #properties:
-      #key: "value"
+    {{ .SourceProperties }}
 {{ .Steps }}
   sink:
     ref:
