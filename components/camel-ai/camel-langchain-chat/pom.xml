@@ -33,12 +33,6 @@
     <name>Camel :: LangChain :: Chat</name>
     <description>LangChain4j Chat component</description>
 
-    <properties>
-        <firstVersion>4.5.0</firstVersion>
-        <supportLevel>Preview</supportLevel>
-        <label>ai</label>
-    </properties>
-
     <dependencies>
 
         <dependency>
