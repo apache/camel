@@ -293,7 +293,11 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         }
 
         // we want to handle the UoW
-        consumer.createUoW(exchange);
+        try {
+            consumer.createUoW(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
 
         boolean isAsync = false;
         CompletionStage<?> result = null;
