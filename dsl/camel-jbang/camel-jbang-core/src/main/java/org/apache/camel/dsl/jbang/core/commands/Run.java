@@ -159,8 +159,7 @@ public class Run extends CamelCommand {
 
     @Option(names = { "--maven-settings" },
             description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
-                          +
-                          " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+                          + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
     @Option(names = { "--maven-settings-security" },
@@ -232,7 +231,7 @@ public class Run extends CamelCommand {
                           " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
-    @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
+    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
     String[] property;
 
     @Option(names = { "--stub" }, description = "Stubs all the matching endpoint with the given component name or pattern."

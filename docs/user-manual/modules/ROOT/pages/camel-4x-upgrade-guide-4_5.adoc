@@ -176,6 +176,8 @@ You can run with `--profile=prod` to turn off all of this, which makes Camel run
 
 The command `camel generate rest` have removed all the shorthand arguments `such as `-i -o` instead use the long names `--input --output`.
 
+The shorthand `-p` option from `run` and `script` command has been removed. Use `--prop` instead.
+
 === camel-jsonpath
 
 The `camel-jsonpath` will now work more similar as `camel-jq` when you specify a `resultType` and have a list of entities.
