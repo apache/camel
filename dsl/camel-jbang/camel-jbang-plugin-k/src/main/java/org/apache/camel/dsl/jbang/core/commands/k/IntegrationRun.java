@@ -173,6 +173,12 @@ public class IntegrationRun extends KubeBaseCommand {
     }
 
     public Integer doCall() throws Exception {
+        // Operator id must be set
+        if (ObjectHelper.isEmpty(operatorId)) {
+            printer().println("Operator id must be set");
+            return -1;
+        }
+
         List<String> integrationSources
                 = Stream.concat(Arrays.stream(Optional.ofNullable(filePaths).orElseGet(() -> new String[] {})),
                         Arrays.stream(Optional.ofNullable(sources).orElseGet(() -> new String[] {}))).toList();
@@ -216,13 +222,12 @@ public class IntegrationRun extends KubeBaseCommand {
                     .collect(Collectors.toMap(it -> it[0].trim(), it -> it[1].trim())));
         }
 
-        if (operatorId != null) {
-            if (integration.getMetadata().getAnnotations() == null) {
-                integration.getMetadata().setAnnotations(new HashMap<>());
-            }
-
-            integration.getMetadata().getAnnotations().put(KubeCommand.OPERATOR_ID_LABEL, operatorId);
+        if (integration.getMetadata().getAnnotations() == null) {
+            integration.getMetadata().setAnnotations(new HashMap<>());
         }
+
+        // --operator-id={id} is a syntax sugar for '--annotation camel.apache.org/operator.id={id}'
+        integration.getMetadata().getAnnotations().put(KubeCommand.OPERATOR_ID_LABEL, operatorId);
 
         if (labels != null && labels.length > 0) {
             integration.getMetadata().setLabels(Arrays.stream(labels)
