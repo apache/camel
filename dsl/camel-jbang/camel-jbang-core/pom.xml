@@ -92,6 +92,7 @@
             <groupId>org.jolokia</groupId>
             <artifactId>jolokia-agent-jvm</artifactId>
             <version>${jolokia-version}</version>
+            <classifier>javaagent</classifier>
         </dependency>
         <!-- servlet for launching hawtio -->
         <dependency>
