@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>components</artifactId>
+        <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <version>4.5.0-SNAPSHOT</version>
     </parent>
