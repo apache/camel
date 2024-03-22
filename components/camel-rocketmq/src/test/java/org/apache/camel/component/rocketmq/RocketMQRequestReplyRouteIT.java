@@ -54,6 +54,8 @@ public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
 
     private static final String EXPECTED_MESSAGE = "Hi.";
 
+    private static final int MESSAGE_COUNT = 5;
+
     private MockEndpoint resultEndpoint;
 
     private DefaultMQPushConsumer replierConsumer;
@@ -119,7 +121,9 @@ public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
         resultEndpoint.expectedBodiesReceived(EXPECTED_MESSAGE);
         resultEndpoint.message(0).header(RocketMQConstants.TOPIC).isEqualTo("REPLY_TO_TOPIC");
 
-        template.sendBody(START_ENDPOINT_URI, "hello, RocketMQ.");
+        for (int i = 0; i < MESSAGE_COUNT; i++) {
+            template.sendBody(START_ENDPOINT_URI, "hello, RocketMQ.");
+        }
 
         resultEndpoint.assertIsSatisfied();
     }
