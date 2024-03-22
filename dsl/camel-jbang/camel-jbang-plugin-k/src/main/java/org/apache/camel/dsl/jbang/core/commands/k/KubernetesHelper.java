@@ -17,7 +17,6 @@
 
 package org.apache.camel.dsl.jbang.core.commands.k;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,14 +30,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
+import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.introspector.Property;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.representer.Representer;
 
 /**
  * Helper class provides access to cached Kubernetes client. Also provides access to generic Json and Yaml mappers.
@@ -103,22 +98,7 @@ public final class KubernetesHelper {
      * @return
      */
     public static Yaml yaml() {
-        Representer representer = new Representer(new DumperOptions()) {
-            @Override
-            protected NodeTuple representJavaBeanProperty(
-                    Object javaBean, Property property, Object propertyValue, Tag customTag) {
-                // if value of property is null, ignore it.
-                if (propertyValue == null || (propertyValue instanceof Collection && ((Collection<?>) propertyValue).isEmpty())
-                        ||
-                        (propertyValue instanceof Map && ((Map<?, ?>) propertyValue).isEmpty())) {
-                    return null;
-                } else {
-                    return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
-                }
-            }
-        };
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-        return new Yaml(representer);
+        return YamlHelper.yaml();
     }
 
     public static ObjectMapper json() {
