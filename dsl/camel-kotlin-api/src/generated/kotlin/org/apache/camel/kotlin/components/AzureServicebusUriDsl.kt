@@ -57,6 +57,10 @@ public class AzureServicebusUriDsl(
     it.property("clientOptions", clientOptions)
   }
 
+  public fun headerFilterStrategy(headerFilterStrategy: String) {
+    it.property("headerFilterStrategy", headerFilterStrategy)
+  }
+
   public fun proxyOptions(proxyOptions: String) {
     it.property("proxyOptions", proxyOptions)
   }
