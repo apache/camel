@@ -71,7 +71,7 @@ public class Bind extends CamelCommand {
     String sink;
 
     @CommandLine.Option(names = { "--error-handler" },
-            description = "Add error handler (none|log|sink:<endpoint>). Sink endpoints are expected in the format \"[[apigroup/]version:]kind:[namespace/]name\", plain Camel URIs or Kamelet name.")
+                        description = "Add error handler (none|log|sink:<endpoint>). Sink endpoints are expected in the format \"[[apigroup/]version:]kind:[namespace/]name\", plain Camel URIs or Kamelet name.")
     String errorHandler;
 
     @CommandLine.Option(names = { "--property" },
