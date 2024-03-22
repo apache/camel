@@ -17,7 +17,9 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -28,7 +30,6 @@
 
     <artifactId>camel-ai-parent</artifactId>
     <packaging>pom</packaging>
-
     <name>Camel :: AI :: Parent</name>
     <description>Camel AI parent</description>
 
@@ -37,19 +38,6 @@
         <module>camel-langchain-chat</module>
         <module>camel-langchain-embeddings</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j</artifactId>
-            <version>${langchain4j.version}</version>
-        </dependency>
-    </dependencies>
 
 </project>
 
