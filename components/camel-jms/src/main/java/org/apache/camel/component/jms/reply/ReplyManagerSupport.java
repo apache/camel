@@ -231,13 +231,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     /**
      * <b>IMPORTANT:</b> This logic is only being used due to high performance in-memory only testing using InOut over
-     * JMS. Its unlikely to happen in a real life situation with communication to a remote broker, which always will be
-     * slower to send back reply, before Camel had a chance to update it's internal correlation map.
+     * JMS. It is unlikely to happen in a real life situation with communication to a remote broker, which always will
+     * be slower to send back reply, before Camel had a chance to update the internal correlation map.
      */
     protected ReplyHandler waitForProvisionCorrelationToBeUpdated(String correlationID, Message message) {
         // race condition, when using messageID as correlationID then we store a provisional correlation id
         // at first, which gets updated with the JMSMessageID after the message has been sent. And in the unlikely
-        // event that the reply comes back really really fast, and the correlation map hasn't yet been updated
+        // event that the reply comes back really fast, and the correlation map hasn't yet been updated
         // from the provisional id to the JMSMessageID. If so we have to wait a bit and lookup again.
         if (log.isWarnEnabled()) {
             log.warn("Early reply received with correlationID [{}] -> {}", correlationID, message);
@@ -255,8 +255,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     private ReplyHandler getReplyHandler(String correlationID) {
-        log.trace("Early reply not found handler. Waiting a bit longer.");
-        return correlation.get(correlationID);
+        log.trace("Early reply not found. Waiting a bit longer.");
+        return correlation.remove(correlationID); // get and remove
     }
 
     @Override
