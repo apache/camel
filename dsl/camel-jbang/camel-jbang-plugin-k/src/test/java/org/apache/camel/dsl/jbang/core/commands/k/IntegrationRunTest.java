@@ -642,6 +642,20 @@ class IntegrationRunTest extends KubeBaseTest {
                   traits: {}""", removeLicenseHeader(printer.getOutput()));
     }
 
+    @Test
+    public void shouldFailWithMissingOperatorId() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.useFlows = false;
+        command.output = "yaml";
+
+        command.operatorId = "";
+
+        Assertions.assertEquals(-1, command.doCall());
+
+        Assertions.assertEquals("Operator id must be set", printer.getOutput());
+    }
+
     private IntegrationRun createCommand() {
         IntegrationRun command = new IntegrationRun(new CamelJBangMain().withPrinter(printer));
         command.withClient(kubernetesClient);
