@@ -179,11 +179,11 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 ac = doneSync -> {
                     try {
                         // result should be stored in variable instead of message body/headers
-                        if (variableReceive != null) {
-                            ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
-                                    exchange.getMessage());
-                            exchange.getMessage().setBody(originalBody);
-                            exchange.getMessage().setHeaders(originalHeaders);
+                        if (ExchangeHelper.shouldSetVariableResult(target, variableReceive)) {
+                            ExchangeHelper.setVariableFromMessageBodyAndHeaders(target, variableReceive,
+                                    target.getMessage());
+                            target.getMessage().setBody(originalBody);
+                            target.getMessage().setHeaders(originalHeaders);
                         }
                         // restore previous MEP
                         target.setPattern(existingPattern);
@@ -202,8 +202,6 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 if (variableSend != null) {
                     Object value = ExchangeHelper.getVariable(exchange, variableSend);
                     exchange.getMessage().setBody(value);
-                    // TODO: empty headers or
-
                 }
 
                 LOG.debug(">>>> {} {}", destination, exchange);
@@ -240,7 +238,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                         // restore previous MEP
                         exchange.setPattern(existingPattern);
                         // result should be stored in variable instead of message body/headers
-                        if (variableReceive != null) {
+                        if (ExchangeHelper.shouldSetVariableResult(exchange, variableReceive)) {
                             ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
                                     exchange.getMessage());
                             exchange.getMessage().setBody(originalBody);

@@ -237,10 +237,10 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                     ServiceHelper.stopAndShutdownService(endpoint);
                 }
                 // result should be stored in variable instead of message body
-                if (variableReceive != null) {
-                    ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive, exchange.getMessage());
-                    exchange.getMessage().setBody(originalBody);
-                    exchange.getMessage().setHeaders(originalHeaders);
+                if (ExchangeHelper.shouldSetVariableResult(target, variableReceive)) {
+                    ExchangeHelper.setVariableFromMessageBodyAndHeaders(target, variableReceive, target.getMessage());
+                    target.getMessage().setBody(originalBody);
+                    target.getMessage().setHeaders(originalHeaders);
                 }
                 // signal we are done
                 c.done(doneSync);
