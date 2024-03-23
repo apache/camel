@@ -222,7 +222,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
 
                         Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                         if (aggregatedExchange != null) {
-                            if (variableReceive != null) {
+                            if (ExchangeHelper.shouldSetVariableResult(exchange, variableReceive)) {
                                 // result should be stored in variable instead of message body
                                 ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
                                         exchange.getMessage());

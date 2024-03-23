@@ -179,7 +179,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 ac = doneSync -> {
                     try {
                         // result should be stored in variable instead of message body/headers
-                        if (variableReceive != null) {
+                        if (ExchangeHelper.shouldSetVariableResult(exchange, variableReceive)) {
                             ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
                                     exchange.getMessage());
                             exchange.getMessage().setBody(originalBody);
@@ -240,7 +240,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                         // restore previous MEP
                         exchange.setPattern(existingPattern);
                         // result should be stored in variable instead of message body/headers
-                        if (variableReceive != null) {
+                        if (ExchangeHelper.shouldSetVariableResult(exchange, variableReceive)) {
                             ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
                                     exchange.getMessage());
                             exchange.getMessage().setBody(originalBody);

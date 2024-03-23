@@ -1157,6 +1157,28 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Whether the processing of the {@link Exchange} was success and that the result should be stored in variable.
+     *
+     * @param  exchange the exchange
+     * @param  name     the variable name
+     * @return          true to call setVariableFromMessageBodyAndHeaders to set the result after-wards
+     */
+    public static boolean shouldSetVariableResult(Exchange exchange, String name) {
+        if (name == null) {
+            return false;
+        }
+        // same logic as in Pipeline/PipelineHelper
+        boolean stop = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()
+                || exchange.getExchangeExtension().isErrorHandlerHandledSet()
+                        && exchange.getExchangeExtension().isErrorHandlerHandled();
+        if (stop) {
+            return false;
+        }
+        // success
+        return true;
+    }
+
+    /**
      * Gets the variable
      *
      * @param  exchange the exchange
