@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.reply;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -250,12 +251,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 .build())
                 .build();
 
-        return task.run(() -> getReplyHandler(correlationID), answer -> answer != null).orElse(null);
+        return task.run(() -> getReplyHandler(correlationID), Objects::nonNull).orElse(null);
     }
 
     private ReplyHandler getReplyHandler(String correlationID) {
         log.trace("Early reply not found handler. Waiting a bit longer.");
-
         return correlation.get(correlationID);
     }
 
