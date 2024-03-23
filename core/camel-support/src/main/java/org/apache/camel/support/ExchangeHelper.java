@@ -1168,9 +1168,10 @@ public final class ExchangeHelper {
             return false;
         }
         // same logic as in Pipeline/PipelineHelper
-        boolean stop = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()
-                || exchange.getExchangeExtension().isErrorHandlerHandledSet()
-                        && exchange.getExchangeExtension().isErrorHandlerHandled();
+        boolean stop
+                = exchange.isRouteStop() || exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()
+                        || exchange.getExchangeExtension().isErrorHandlerHandledSet()
+                                && exchange.getExchangeExtension().isErrorHandlerHandled();
         if (stop) {
             return false;
         }
