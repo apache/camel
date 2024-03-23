@@ -412,7 +412,7 @@ public class CdiCamelExtension implements Extension {
 
     private void afterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager manager) {
         // Send event for Camel CDI configuration
-        manager.fireEvent(configuration);
+        manager.getEvent().fire(configuration);
         configuration.unmodifiable();
 
         Collection<CamelContext> contexts = new ArrayList<>();
