@@ -103,23 +103,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @UriParam(description = "API basePath, for example \"`/v3`\". Default is unset, if set overrides the value present in"
                             + " OpenApi specification and in the component configuration.",
-              defaultValue = "", label = "producer")
+              label = "producer")
     private String basePath;
-
     @UriParam(description = "Name of the Camel component that will perform the requests. The component must be present"
                             + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
                             + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides"
                             + " component configuration.",
-              label = "producer")
+              label = "producer,advanced")
     private String componentName;
-
-    @UriParam(description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
-                            + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
-                            + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification and."
-                            + " in the component configuration",
-              label = "producer")
-    private String consumes;
-
     @UriParam(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
                             + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
                             + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
@@ -128,17 +119,20 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                             + " configuration.",
               label = "producer")
     private String host;
-
     @UriPath(description = "ID of the operation from the OpenApi specification.", label = "producer")
     @Metadata(required = true)
     private String operationId;
-
+    @UriParam(description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
+                            + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
+                            + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification and."
+                            + " in the component configuration",
+              label = "producer")
+    private String consumes;
     @UriParam(description = "What payload type this component is producing. For example `application/json`"
                             + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
                             + " any value present in the OpenApi specification. Overrides all other configuration.",
               label = "producer")
     private String produces;
-
     @UriPath(description = "Path to the OpenApi specification file. The scheme, host base path are taken from this"
                            + " specification, but these can be overridden with properties on the component or endpoint level. If not"
                            + " given the component tries to load `openapi.json` resource from the classpath. Note that the `host` defined on the"
@@ -151,20 +145,16 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
              defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI_STR,
              defaultValueNote = "By default loads `openapi.json` file", label = "producer")
     private URI specificationUri = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI;
-
-    @UriParam(description = "Enable validation of requests against the configured OpenAPI specification",
-              defaultValue = "false")
+    @UriParam(description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
-
     @UriParam(description = "If request validation is enabled, this option provides the capability to customize"
                             + " the creation of OpenApiInteractionValidator used to validate requests.",
-              defaultValue = "org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer")
+              label = "advanced")
     private RequestValidationCustomizer requestValidationCustomizer;
-
     @UriParam(description = "Levels for specific OpenAPI request validation options. Multiple options can be"
                             + " specified as URI options prefixed by 'validation.'. For example, validation.request.body=ERROR"
                             + "&validation.request.body.unexpected=IGNORED. Supported values are INFO, ERROR, WARN & IGNORE.",
-              prefix = "validation.", multiValue = true)
+              label = "advanced", prefix = "validation.", multiValue = true)
     private Map<String, Object> requestValidationLevels = new HashMap<>();
 
     public RestOpenApiEndpoint() {
@@ -605,8 +595,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                 try {
                     uris.add(new URI(parseVariables(server.getUrl(), server)));
                 } catch (URISyntaxException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    // ignore
                 }
             }
         }

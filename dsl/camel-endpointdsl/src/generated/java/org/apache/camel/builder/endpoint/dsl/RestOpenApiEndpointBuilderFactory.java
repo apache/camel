@@ -61,24 +61,6 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the Camel component that will perform the requests. The
-         * component must be present in Camel registry and it must implement
-         * RestProducerFactory service provider interface. If not set CLASSPATH
-         * is searched for single component that implements RestProducerFactory
-         * SPI. Overrides component configuration.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param componentName the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointBuilder componentName(String componentName) {
-            doSetProperty("componentName", componentName);
-            return this;
-        }
-        /**
          * What payload type this component capable of consuming. Could be one
          * type, like application/json or multiple types as application/json,
          * application/xml; q=0.5 according to the RFC7231. This equates to the
@@ -134,46 +116,6 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Default:
-         * org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer
-         * Group: producer
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointBuilder requestValidationCustomizer(
-                org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Default:
-         * org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer
-         * Group: producer
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointBuilder requestValidationCustomizer(
-                String requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
          * Enable validation of requests against the configured OpenAPI
          * specification.
          * 
@@ -208,51 +150,6 @@ public interface RestOpenApiEndpointBuilderFactory {
             doSetProperty("requestValidationEnabled", requestValidationEnabled);
             return this;
         }
-        /**
-         * Levels for specific OpenAPI request validation options. Multiple
-         * options can be specified as URI options prefixed by 'validation.'.
-         * For example,
-         * validation.request.body=ERROR&amp;amp;validation.request.body.unexpected=IGNORED. Supported values are INFO, ERROR, WARN &amp;amp; IGNORE.
-         * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * The option is multivalued, and you can use the
-         * requestValidationLevels(String, Object) method to add a value (call
-         * the method multiple times to set more values).
-         * 
-         * Group: producer
-         * 
-         * @param key the option key
-         * @param value the option value
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointBuilder requestValidationLevels(
-                String key,
-                Object value) {
-            doSetMultiValueProperty("requestValidationLevels", "validation." + key, value);
-            return this;
-        }
-        /**
-         * Levels for specific OpenAPI request validation options. Multiple
-         * options can be specified as URI options prefixed by 'validation.'.
-         * For example,
-         * validation.request.body=ERROR&amp;amp;validation.request.body.unexpected=IGNORED. Supported values are INFO, ERROR, WARN &amp;amp; IGNORE.
-         * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * The option is multivalued, and you can use the
-         * requestValidationLevels(String, Object) method to add a value (call
-         * the method multiple times to set more values).
-         * 
-         * Group: producer
-         * 
-         * @param values the values
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointBuilder requestValidationLevels(Map values) {
-            doSetMultiValueProperties("requestValidationLevels", "validation.", values);
-            return this;
-        }
     }
 
     /**
@@ -263,6 +160,25 @@ public interface RestOpenApiEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default RestOpenApiEndpointBuilder basic() {
             return (RestOpenApiEndpointBuilder) this;
+        }
+        /**
+         * Name of the Camel component that will perform the requests. The
+         * component must be present in Camel registry and it must implement
+         * RestProducerFactory service provider interface. If not set CLASSPATH
+         * is searched for single component that implements RestProducerFactory
+         * SPI. Overrides component configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param componentName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointBuilder componentName(
+                String componentName) {
+            doSetProperty("componentName", componentName);
+            return this;
         }
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -311,6 +227,88 @@ public interface RestOpenApiEndpointBuilderFactory {
         default AdvancedRestOpenApiEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * If request validation is enabled, this option provides the capability
+         * to customize the creation of OpenApiInteractionValidator used to
+         * validate requests.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestValidationCustomizer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointBuilder requestValidationCustomizer(
+                org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer requestValidationCustomizer) {
+            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
+            return this;
+        }
+        /**
+         * If request validation is enabled, this option provides the capability
+         * to customize the creation of OpenApiInteractionValidator used to
+         * validate requests.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestValidationCustomizer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointBuilder requestValidationCustomizer(
+                String requestValidationCustomizer) {
+            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
+            return this;
+        }
+        /**
+         * Levels for specific OpenAPI request validation options. Multiple
+         * options can be specified as URI options prefixed by 'validation.'.
+         * For example,
+         * validation.request.body=ERROR&amp;amp;validation.request.body.unexpected=IGNORED. Supported values are INFO, ERROR, WARN &amp;amp; IGNORE.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * requestValidationLevels(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointBuilder requestValidationLevels(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("requestValidationLevels", "validation." + key, value);
+            return this;
+        }
+        /**
+         * Levels for specific OpenAPI request validation options. Multiple
+         * options can be specified as URI options prefixed by 'validation.'.
+         * For example,
+         * validation.request.body=ERROR&amp;amp;validation.request.body.unexpected=IGNORED. Supported values are INFO, ERROR, WARN &amp;amp; IGNORE.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * requestValidationLevels(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointBuilder requestValidationLevels(
+                Map values) {
+            doSetMultiValueProperties("requestValidationLevels", "validation.", values);
             return this;
         }
     }

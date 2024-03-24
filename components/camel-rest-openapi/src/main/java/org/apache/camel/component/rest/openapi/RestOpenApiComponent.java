@@ -78,32 +78,22 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  */
 @Component("rest-openapi")
 public final class RestOpenApiComponent extends DefaultComponent implements SSLContextParametersAware {
+
     public static final String DEFAULT_BASE_PATH = "/";
 
     static final URI DEFAULT_SPECIFICATION_URI = URI.create(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI_STR);
 
     static final String DEFAULT_SPECIFICATION_URI_STR = "openapi.json";
 
-    @Metadata(
-              description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in OpenApi specification.",
-              defaultValue = "", label = "producer")
+    @Metadata(description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in OpenApi specification.",
+              label = "producer")
     private String basePath = "";
-
     @Metadata(description = "Name of the Camel component that will perform the requests. The component must be present"
                             + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
                             + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in"
                             + " endpoint configuration.",
-              label = "producer", required = false)
+              label = "producer,advanced")
     private String componentName;
-
-    @Metadata(
-              description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
-                            + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
-                            + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification."
-                            + " Can be overridden in endpoint configuration",
-              label = "producer")
-    private String consumes;
-
     @Metadata(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
                             + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
                             + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
@@ -112,14 +102,17 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " configuration.",
               label = "producer")
     private String host;
-
-    @Metadata(
-              description = "What payload type this component is producing. For example `application/json`"
+    @Metadata(description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
+                            + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
+                            + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification."
+                            + " Can be overridden in endpoint configuration",
+              label = "producer,advanced")
+    private String consumes;
+    @Metadata(description = "What payload type this component is producing. For example `application/json`"
                             + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
                             + " any value present in the OpenApi specification. Can be overridden in endpoint configuration.",
-              label = "producer")
+              label = "producer,advanced")
     private String produces;
-
     @Metadata(description = "Path to the OpenApi specification file. The scheme, host base path are taken from this"
                             + " specification, but these can be overridden with properties on the component or endpoint level. If not"
                             + " given the component tries to load `openapi.json` resource. Note that the `host` defined on the"
@@ -128,24 +121,18 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " configuration.",
               defaultValue = DEFAULT_SPECIFICATION_URI_STR, label = "producer")
     private URI specificationUri;
-
-    @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters"
-                            + " set in the Camel context ",
-              label = "security")
-    private SSLContextParameters sslContextParameters;
-
-    @Metadata(description = "Enable usage of global SSL context parameters.", label = "security",
-              defaultValue = "false")
-    private boolean useGlobalSslContextParameters;
-
     @Metadata(description = "Enable validation of requests against the configured OpenAPI specification",
               defaultValue = "false")
     private boolean requestValidationEnabled;
-
     @Metadata(description = "If request validation is enabled, this option provides the capability to customize"
                             + " the creation of OpenApiInteractionValidator used to validate requests.",
-              defaultValue = "org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer")
+              label = "advanced")
     private RequestValidationCustomizer requestValidationCustomizer;
+    @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
+    private boolean useGlobalSslContextParameters;
+    @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context ",
+              label = "security")
+    private SSLContextParameters sslContextParameters;
 
     public RestOpenApiComponent() {
     }
