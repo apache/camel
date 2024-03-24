@@ -195,14 +195,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        final CamelContext camelContext = getCamelContext();
-        final OpenAPI openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
-        String path = determineBasePath(openapiDoc);
-
-        // TODO: processor should use OpenAPI to detect which operations exists, and map to direct:xx
-        // TODO: validate on|poff
-
-        return createConsumerFor(path, processor);
+        OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri);
+        String path = determineBasePath(doc);
+        return createConsumerFor(path, new RestOpenApiProcessor(doc, path, processor));
     }
 
     protected Consumer createConsumerFor(String basePath, Processor processor) throws Exception {
