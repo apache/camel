@@ -176,6 +176,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public RestOpenApiComponent getComponent() {
+        return (RestOpenApiComponent) super.getComponent();
+    }
+
+    @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
     }
@@ -310,10 +315,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return requestValidationLevels;
     }
 
-    RestOpenApiComponent component() {
-        return (RestOpenApiComponent) getComponent();
-    }
-
     Producer createProducerFor(
             final OpenAPI openapi, final Operation operation, final String method,
             final String uriTemplate)
@@ -334,7 +335,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         // let the rest endpoint configure itself
         endpoint.configureProperties(params);
 
-        RestOpenApiComponent component = component();
+        RestOpenApiComponent component = getComponent();
         RequestValidator requestValidator = null;
         if (component.isRequestValidationEnabled() || requestValidationEnabled) {
             requestValidator = configureRequestValidator(openapi, operation, method, uriTemplate);
@@ -350,7 +351,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return basePath;
         }
 
-        final String componentBasePath = component().getBasePath();
+        final String componentBasePath = getComponent().getBasePath();
         if (isNotEmpty(componentBasePath)) {
             return componentBasePath;
         }
@@ -414,7 +415,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     String determineComponentName() {
-        return Optional.ofNullable(componentName).orElse(component().getComponentName());
+        return Optional.ofNullable(componentName).orElse(getComponent().getComponentName());
     }
 
     Map<String, Object> determineEndpointParameters(final OpenAPI openapi, final Operation operation) {
@@ -430,7 +431,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             parameters.put("host", host);
         }
 
-        final RestOpenApiComponent component = component();
+        final RestOpenApiComponent component = getComponent();
 
         // what we consume is what the API defined by OpenApi specification
         // produces
@@ -520,7 +521,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return host;
         }
 
-        final String componentHost = component().getHost();
+        final String componentHost = getComponent().getHost();
         if (isNotEmpty(componentHost)) {
             return componentHost;
         }
@@ -672,7 +673,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     RequestValidator configureRequestValidator(OpenAPI openapi, Operation operation, String method, String uriTemplate) {
-        RestOpenApiComponent component = component();
+        RestOpenApiComponent component = getComponent();
         RequestValidationCustomizer validationCustomizer = requestValidationCustomizer;
         if (validationCustomizer == null) {
             validationCustomizer = component.getRequestValidationCustomizer();
