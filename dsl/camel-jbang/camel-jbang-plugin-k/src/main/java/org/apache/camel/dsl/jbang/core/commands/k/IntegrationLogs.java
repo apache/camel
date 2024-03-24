@@ -55,13 +55,13 @@ public class IntegrationLogs extends KubeBaseCommand {
             return 0;
         }
 
-        watchLogs(integration);
+        watchLogs(integration.getMetadata().getName());
 
         return 0;
     }
 
-    void watchLogs(Integration integration) {
-        PodList pods = pods().withLabel(KubeCommand.INTEGRATION_LABEL, integration.getMetadata().getName()).list();
+    void watchLogs(String integrationName) {
+        PodList pods = pods().withLabel(KubeCommand.INTEGRATION_LABEL, integrationName).list();
 
         Pod pod = pods.getItems().stream()
                 .filter(p -> p.getStatus().getPhase() != null && !"Terminated".equals(p.getStatus().getPhase()))
@@ -73,7 +73,7 @@ public class IntegrationLogs extends KubeBaseCommand {
             if (pod.getSpec().getContainers().stream()
                     .anyMatch(container -> KubeCommand.INTEGRATION_CONTAINER_NAME.equals(container.getName()))) {
                 containerName = KubeCommand.INTEGRATION_CONTAINER_NAME;
-            } else if (pod.getSpec().getContainers().size() > 0) {
+            } else if (!pod.getSpec().getContainers().isEmpty()) {
                 containerName = pod.getSpec().getContainers().get(0).getName();
             }
         }

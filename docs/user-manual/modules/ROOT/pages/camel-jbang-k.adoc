@@ -24,6 +24,9 @@ camel plugin get
 ----
 
 Now Camel JBang is able to run the subcommands offered by the plugin.
+
+== Run integrations
+
 Simply run the integration using the `k` subcommand in Camel JBang.
 
 [source,bash]
@@ -110,7 +113,7 @@ The run command offers a lot more options that you may use to configure the Came
 |Add a label to the integration. Use name values pairs like "--label my.company=hello".
 
 |--traits, -t
-|Add a label to the integration. Use name values pairs like "--label my.company=hello".
+|Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
 
 |--use-flows
 |Write yaml sources as Flow objects in the integration custom resource (default=true).
@@ -128,6 +131,8 @@ The run command offers a lot more options that you may use to configure the Came
 |Just output the generated integration custom resource (supports: yaml or json).
 |=======================================================================
 
+== List integrations
+
 You can list the available integration resources with the following command.
 
 [source,bash]
@@ -139,6 +144,8 @@ my-route  Running  kit-123456789   1/1
 
 This looks for all integrations in the current namespace and lists their individual status.
 
+== Show integration logs
+
 To inspect the log output of a running integration call:
 
 [source,bash]
@@ -148,6 +155,8 @@ camel k logs my-route
 
 The command connects to the running integration Pod and prints the log output.
 Just terminate the process to stop printing the logs.
+
+== Delete integrations
 
 Of course, you may also delete an integration resource from the cluster.
 
@@ -161,4 +170,314 @@ To remove all available integrations on the current namespace use the `--all` op
 [source,bash]
 ----
 camel k delete --all
+----
+
+== Create integration pipes
+
+In some contexts (for example **"serverless"**) users often want to leverage the power of Apache Camel to be able to connect to various sources/sinks, with focus on connectivity to 3rd party technologies and services and less focus on doing complex processing (such as transformations or other enterprise integration patterns).
+
+Pipe resources represent a special form of Camel integrations where a source gets bound to a sink.
+The operation to create such a Pipe resource is often related to as the process of binding a source to a sink.
+
+You can use the Camel JBang subcommand `bind` to create Pipe resources.
+The result of this Pipe resource being created on a Kubernetes cluster is a running Camel integration.
+
+The Camel K bind command supports the following options:
+
+[width="100%",cols="1m,3",options="header",]
+|=======================================================================
+|Option |Description
+
+|--operator-id
+|Operator id selected to manage this integration. (default=camel-k)
+
+|--source
+|Source (from) such as a Kamelet or Camel endpoint uri that provides data..
+
+|--sink
+|Sink (to) such as a Kamelet or Camel endpoint uri where data should be sent to.
+
+|--step
+|Add optional 1-n steps to the pipe processing. Each step represents a reference to a Kamelet of type action.
+
+|--property
+|Add a pipe property in the form of [source,sink,error-handler,step-<n>].<key>=<value> where <n> is the step number starting from 1.
+
+|--error-handler
+|Add error handler (none,log,sink:<endpoint>). Sink endpoints are expected in the format [[apigroup/]version:]kind:[namespace/]name, plain Camel URIs or Kamelet name.
+
+|--annotation
+|Add an annotation to the integration. Use name values pairs like "--annotation my.company=hello".
+
+|--connect
+|A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
+
+|--traits
+|Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
+
+|--wait
+|Wait for the integration to become ready.
+
+|--logs
+|Print logs after integration has been started.
+
+|--output
+|Just output the generated pipe custom resource (supports: file, yaml or json).
+|=======================================================================
+
+Sources and sinks in a pipe may be Camel endpoint URIs, a Kamelet or a references to a Kubernetes resource (e.g. Knative brokers, Kafka topics).
+
+=== Binding Kamelets
+
+In a typical use case a Pipe connects Kamelets of type source and sink.
+Usually a Kamelet gets identified by its name (e.g. timer-source, log-sink).
+
+[source,bash]
+----
+camel k bind my-pipe --source timer-source --sink log-sink --property source.message="Camel rocks!" --property sink.showHeaders=true
+----
+
+The bind command receives the name of the pipe as a command argument and uses several options to specify the source and the sink.
+In addition to that the user is able to specify properties on the individual source and sink (e.g. the message property on the timer-source Kamelet).
+
+The result of this command is a Pipe custom resource that you can apply to a Kubernetes cluster.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+  annotations:
+    camel.apache.org/operator.id: camel-k
+spec:
+  source: # <1>
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: timer-source
+    properties:
+      message: "Camel rocks!"
+  sink: # <2>
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: log-sink
+    properties:
+      showHeaders: true
+----
+<1> Reference to the source that provides data
+<2> Reference to the sink where data should be sent to
+
+Each Pipe resource uses an operator id annotation to specify which operator on the cluster should handle the resource.
+
+NOTE: The bind command is able to inspect the properties defined in the Kamelet specification in order to set default values. In case the Kamelet defines a required property that is not explicitly set by the user the bind command automatically creates a property placeholder with an example value.
+
+=== Add binding steps
+
+You can specify 1-n additional steps that get executed between the source and sink.
+
+[source,bash]
+----
+camel k bind my-pipe --source timer-source --sink log-sink --step set-body-action --property step-1.value="Camel rocks!"
+----
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+# ...
+  steps:
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: set-body-action
+    properties:
+      value: "Camel rocks!"
+  sink:
+# ...
+----
+
+NOTE: Each step should reverence a Kamelet of type `action`.
+The properties for a step can be set with the respective `step-<n>` prefix where `n` is the step number beginning with 1.
+
+=== Binding Camel endpoint URIs
+
+Instead of referencing a Kamelet or Kubernetes resource you can also configure the source/sink to be an explicit Camel URI.
+For example, the following bind command is allowed:
+
+[source,bash]
+----
+camel k bind my-pipe --source timer:tick --sink https://mycompany.com/the-service --property source.period=5000
+----
+
+This will use the Camel endpoint URIs `timer:tick` and `log:info` as source and sink in the Pipe.
+The properties are set as endpoint parameters.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+    uri: timer:tick # <1>
+    properties:
+      period: 5000
+  sink:
+    uri: https://mycompany.com/the-service # <2>
+----
+<1> Pipe with explicit Camel endpoint URI as source
+<2> Pipe with explicit Camel endpoint URI as sink where the data gets pushed to
+
+This Pipe explicitly defines Camel endpoint URIs that act as a source and sink.
+
+NOTE: You can also specify endpoint parameters directly on the source/sink like `--source timer:tick?period=5000`
+
+=== Error handling
+
+You can configure an error handler in order to specify what to do when some event ends up with failure.
+Pipes offer a mechanism to specify an error policy to adopt in case an event processing fails.
+
+In case of an exception thrown during the pipe processing the respective error handler will perform its actions.
+
+The Pipe knows different types of error handlers `none`, `log` and `sink`:
+
+* none -> Explicit `noErrorHandler` is set and the error is ignored.
+* log -> Errors get logged to the output.
+* sink -> Errors get pushed to a specified endpoint in the form of dead letter queue.
+
+The error handler may be configured with special properties that allow you to define the error handling behavior such as redelivery or delay policy.
+
+==== No error handler
+
+There may be certain cases where you want to just ignore any failure happening on your integration.
+In this situation just use a `none` error handler.
+
+[source,bash]
+----
+camel k bind my-pipe --source timer-source --sink log-sink --error-handler none
+----
+
+This results in following error handler configuration on the pipe:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+# ...
+  sink:
+# ...
+  errorHandler:
+    none: {}
+----
+
+==== Log error handler
+
+Apache Camel offers a default behavior for handling failure: log to standard output.
+However, you can use the `log` error handler to specify other behaviors such as redelivery or delay policy.
+
+[source,bash]
+----
+camel k bind my-pipe --source timer-source --sink log-sink --error-handler log --property error-handler.maximumRedeliveries=3 --property error-handler.redeliveryDelay=2000
+----
+
+This results in the error handler configuration on the Pipe:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+# ...
+  sink:
+# ...
+  errorHandler:
+    log:
+      parameters: # <1>
+        redeliveryDelay: 2000
+        maximumRedeliveries: 3
+----
+<1> Parameters belonging to the `log` error handler type
+
+==== Sink error handler
+
+The `sink` error handler is probably the most interesting error handler type as it allows you to redirect failing events to other components, such as a third party URI, a queue or topic or even another `Kamelet` which will be performing certain logic with the failing event.
+
+The sink error handler expects a proper endpoint URI which may be a reference to another Kamelet, a fully qualified custom resource reference or an arbitrary Camel endpoint URI.
+
+[source,bash]
+----
+camel k bind my-pipe --source timer-source --sink log-sink --error-handler sink:my-error-handler --property error-handler.sink.message=ERROR! --property error-handler.maximumRedeliveries=1
+----
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+# ...
+  sink:
+# ...
+  errorHandler:
+    sink:
+      endpoint:
+        ref: # <1>
+          kind: Kamelet
+          apiVersion: camel.apache.org/v1
+          name: my-error-handler
+        properties:
+          message: "ERROR!" # <2>
+          # ...
+      parameters:
+        maximumRedeliveries: 1 # <3>
+        # ...
+----
+<1> You can use `ref` or `uri`. `ref` will be interpreted by the operator according the `kind`, `apiVersion` and `name`. You can use any `Kamelet`, `KafkaTopic` channel or `Knative` destination.
+<2> Properties targeting the sink endpoint (in this example a property on the `Kamelet` named `my-error-handler`). Properties targeting the sink endpoint need to use the `error-handler.sink.*` prefix.
+<3> Parameters for the error handler (such as redelivery or delay policy). Error handler parameters need to use the `error-handler.*` prefix.
+
+NOTE: The error handler properties are divided into properties that target the error handler sink endpoint and properties that should be set on the Camel error handler component (e.g. maximumRedeliveries). You need to specify the respective property prefix (`error-handler.` or `error-handler.sink.`) to decide where the property should be set.
+
+As an alternative to referencing a Kamelet as an error handler sink you may also use an arbitrary Camel endpoint URI.
+
+[source,bash]
+----
+camel k bind my-pipe --source timer-source --sink log-sink --error-handler sink:log:error --property error-handler.sink.showHeaders=true
+----
+
+It creates the error handler specification as follows:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+# ...
+  sink:
+# ...
+  errorHandler:
+    sink:
+      endpoint:
+        uri: log:error
+        properties:
+          showHeaders: true
 ----

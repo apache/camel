@@ -32,6 +32,8 @@ import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.v1.Integration;
 import org.apache.camel.v1.IntegrationSpec;
+import org.apache.camel.v1.Pipe;
+import org.apache.camel.v1.PipeSpec;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +43,7 @@ import org.junit.jupiter.api.TestInstance;
 public class KubeBaseTest {
 
     protected static Integration integration;
+    protected static Pipe pipe;
 
     private KubernetesMockServer k8sServer;
 
@@ -86,6 +89,28 @@ public class KubeBaseTest {
         created.setSpec(new IntegrationSpec());
         created.getSpec().setTraits(integration.getSpec().getTraits());
         created.getSpec().setFlows(integration.getSpec().getFlows());
+
+        return created;
+    }
+
+    protected Pipe createPipe() throws IOException {
+        return createPipe("pipe");
+    }
+
+    protected Pipe createPipe(String name) throws IOException {
+        if (pipe == null) {
+            pipe = KubernetesHelper.yaml().loadAs(
+                    IOHelper.loadText(KubeBaseTest.class.getResourceAsStream("pipe.yaml")), Pipe.class);
+        }
+
+        Pipe created = new Pipe();
+        created.getMetadata().setName(name);
+        created.setSpec(new PipeSpec());
+        created.getSpec().setSource(pipe.getSpec().getSource());
+        created.getSpec().setSink(pipe.getSpec().getSink());
+        created.getSpec().setSteps(pipe.getSpec().getSteps());
+        created.getSpec().setErrorHandler(pipe.getSpec().getErrorHandler());
+        created.getSpec().setIntegration(pipe.getSpec().getIntegration());
 
         return created;
     }
