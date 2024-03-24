@@ -78,16 +78,6 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * Name of the Camel component that will perform the requests. The component must be present in
-   * Camel registry and it must implement RestProducerFactory service provider interface. If not set
-   * CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides
-   * component configuration.
-   */
-  public fun componentName(componentName: String) {
-    it.property("componentName", componentName)
-  }
-
-  /**
    * What payload type this component capable of consuming. Could be one type, like application/json
    * or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This
    * equates to the value of Accept HTTP header. If set overrides any value found in the OpenApi
@@ -118,14 +108,6 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * If request validation is enabled, this option provides the capability to customize the creation
-   * of OpenApiInteractionValidator used to validate requests.
-   */
-  public fun requestValidationCustomizer(requestValidationCustomizer: String) {
-    it.property("requestValidationCustomizer", requestValidationCustomizer)
-  }
-
-  /**
    * Enable validation of requests against the configured OpenAPI specification
    */
   public fun requestValidationEnabled(requestValidationEnabled: String) {
@@ -140,13 +122,13 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * Levels for specific OpenAPI request validation options. Multiple options can be specified as
-   * URI options prefixed by 'validation.'. For example,
-   * validation.request.body=ERROR&validation.request.body.unexpected=IGNORED. Supported values are
-   * INFO, ERROR, WARN & IGNORE.
+   * Name of the Camel component that will perform the requests. The component must be present in
+   * Camel registry and it must implement RestProducerFactory service provider interface. If not set
+   * CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides
+   * component configuration.
    */
-  public fun requestValidationLevels(requestValidationLevels: String) {
-    it.property("requestValidationLevels", requestValidationLevels)
+  public fun componentName(componentName: String) {
+    it.property("componentName", componentName)
   }
 
   /**
@@ -171,5 +153,23 @@ public class RestOpenapiUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
+  }
+
+  /**
+   * If request validation is enabled, this option provides the capability to customize the creation
+   * of OpenApiInteractionValidator used to validate requests.
+   */
+  public fun requestValidationCustomizer(requestValidationCustomizer: String) {
+    it.property("requestValidationCustomizer", requestValidationCustomizer)
+  }
+
+  /**
+   * Levels for specific OpenAPI request validation options. Multiple options can be specified as
+   * URI options prefixed by 'validation.'. For example,
+   * validation.request.body=ERROR&validation.request.body.unexpected=IGNORED. Supported values are
+   * INFO, ERROR, WARN & IGNORE.
+   */
+  public fun requestValidationLevels(requestValidationLevels: String) {
+    it.property("requestValidationLevels", requestValidationLevels)
   }
 }

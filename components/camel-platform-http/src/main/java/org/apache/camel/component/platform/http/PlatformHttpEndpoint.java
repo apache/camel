@@ -73,15 +73,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     @UriParam(label = "advanced",
               description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new PlatformHttpHeaderFilterStrategy();
-    @UriParam(label = "consumer",
+    @UriParam(label = "advanced,consumer",
               description = "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
     private boolean useStreaming;
-
-    @UriParam(label = "consumer", description = "The properties set on a Cookies when a Cookie is added via the"
-                                                + " Cookie Handler (currently only supported by camel-platform-http-vertx)")
+    @UriParam(label = "advanced,consumer", description = "The properties set on a Cookies when a Cookie is added via the"
+                                                         + " Cookie Handler (currently only supported by camel-platform-http-vertx)")
     private CookieConfiguration cookieConfiguration = new CookieConfiguration();
-
-    @UriParam(label = "consumer",
+    @UriParam(label = "advanced,consumer",
               description = "Whether to enable the Cookie Handler that allows Cookie addition, expiry, and retrieval"
                             + " (currently only supported by camel-platform-http-vertx)")
     private boolean useCookieHandler;
