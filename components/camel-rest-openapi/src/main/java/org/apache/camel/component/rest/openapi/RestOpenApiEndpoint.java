@@ -76,7 +76,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -84,7 +83,6 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
-import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isMediaRange;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import static org.apache.camel.util.StringHelper.after;
@@ -156,8 +154,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                            + " TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties)."
                            + " How to do that consult the JDK documentation for UrlHandler.",
              defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI_STR,
-             defaultValueNote = "By default loads `openapi.json` file", label = "producer")
-    private URI specificationUri = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI;
+             defaultValueNote = "By default loads `openapi.json` file", label = "common")
+    private URI specificationUri;
     @UriParam(description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
     @UriParam(description = "If request validation is enabled, this option provides the capability to customize"
@@ -179,12 +177,25 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         super(notEmpty(uri, "uri"), notNull(component, "component"));
         this.parameters = parameters;
 
-        specificationUri = before(remaining, "#", StringHelper::trimToNull)
-                .map(URI::create)
-                .orElse(ofNullable(component.getSpecificationUri()).orElse(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI));
-
-        operationId = ofNullable(after(remaining, "#")).orElse(remaining);
-
+        if (remaining.contains("#")) {
+            operationId = after(remaining, "#");
+            String spec = before(remaining, "#");
+            if (spec != null && !spec.isEmpty()) {
+                specificationUri = URI.create(spec);
+            }
+        } else {
+            if (remaining.endsWith(".json") || remaining.endsWith(".yaml") || remaining.endsWith(".yml")) {
+                specificationUri = URI.create(remaining);
+            } else {
+                operationId = remaining;
+            }
+        }
+        if (specificationUri == null) {
+            specificationUri = component.getSpecificationUri();
+        }
+        if (specificationUri == null) {
+            specificationUri = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI;
+        }
         setExchangePattern(ExchangePattern.InOut);
     }
 
@@ -291,6 +302,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+
         final CamelContext camelContext = getCamelContext();
         final OpenAPI openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
         final Paths paths = openapiDoc.getPaths();
@@ -371,7 +383,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     public void setBasePath(final String basePath) {
-        this.basePath = notEmpty(basePath, "basePath");
+        this.basePath = basePath;
     }
 
     public void setComponentName(final String componentName) {
@@ -383,7 +395,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     public void setConsumes(final String consumes) {
-        this.consumes = isMediaRange(consumes, "consumes");
+        this.consumes = consumes;
     }
 
     public void setHost(final String host) {
@@ -391,15 +403,15 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     public void setOperationId(final String operationId) {
-        this.operationId = notEmpty(operationId, "operationId");
+        this.operationId = operationId;
     }
 
     public void setProduces(final String produces) {
-        this.produces = isMediaRange(produces, "produces");
+        this.produces = produces;
     }
 
     public void setSpecificationUri(final URI specificationUri) {
-        this.specificationUri = notNull(specificationUri, "specificationUri");
+        this.specificationUri = specificationUri;
     }
 
     public void setRequestValidationCustomizer(

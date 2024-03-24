@@ -151,6 +151,8 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
             throws Exception {
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
+        endpoint.setRequestValidationCustomizer(getRequestValidationCustomizer());
+        endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRequestValidationLevels(PropertiesHelper.extractProperties(parameters, "validation."));
         setProperties(endpoint, parameters);
         return endpoint;

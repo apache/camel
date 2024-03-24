@@ -17,6 +17,8 @@
 package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
@@ -29,5 +31,12 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor {
         super(processor);
         this.basePath = basePath;
         this.openAPI = openAPI;
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        // what operation to invoke
+        exchange.getMessage().setBody("I was here");
+        return super.process(exchange, callback);
     }
 }
