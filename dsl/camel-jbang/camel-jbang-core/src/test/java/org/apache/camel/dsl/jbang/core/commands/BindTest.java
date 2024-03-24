@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,12 +25,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindKameletSourceToKameletSink() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
-
+        Bind command = createCommand("timer", "log");
         command.doCall();
 
         String output = printer.getOutput();
@@ -58,11 +54,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindKameletSourceToKameletSinkWithProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.properties = new String[] {
                 "source.message=Hello",
@@ -99,11 +91,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindWithSteps() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-http";
-        command.source = "timer-source";
-        command.sink = "http-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "http");
 
         command.steps = new String[] {
                 "set-body-action",
@@ -151,11 +139,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindWithUriSteps() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-http";
-        command.source = "timer-source";
-        command.sink = "http-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "http");
 
         command.steps = new String[] {
                 "set-body-action",
@@ -200,11 +184,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindWithStepsAndProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-http";
-        command.source = "timer-source";
-        command.sink = "http-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "http");
 
         command.steps = new String[] {
                 "set-body-action",
@@ -259,11 +239,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindWithUriStepsAndProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-http";
-        command.source = "timer-source";
-        command.sink = "http-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "http");
 
         command.steps = new String[] {
                 "set-body-action",
@@ -313,11 +289,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindWithUriStepsAndUriProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-http";
-        command.source = "timer-source";
-        command.sink = "http-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "http");
 
         command.steps = new String[] {
                 "set-body-action",
@@ -369,11 +341,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindKameletSourceToUri() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log:info";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log:info");
 
         command.doCall();
 
@@ -400,11 +368,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindKameletSourceToUriWithProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log:info";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log:info");
 
         command.properties = new String[] {
                 "source.message=Hello",
@@ -436,11 +400,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindKameletSourceToUriWithUriProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log:info?showStreams=false";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log:info?showStreams=false");
 
         command.properties = new String[] {
                 "source.message=Hello",
@@ -473,11 +433,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindUriToUri() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer:tick";
-        command.sink = "log:info";
-        command.output = "yaml";
+        Bind command = createCommand("timer:tick", "log:info");
 
         command.doCall();
 
@@ -501,11 +457,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindUriToUriWithProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer:tick";
-        command.sink = "log:info";
-        command.output = "yaml";
+        Bind command = createCommand("timer:tick", "log:info");
 
         command.properties = new String[] {
                 "source.message=Hello",
@@ -534,11 +486,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindUriToUriWithUriProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer:tick?period=10000";
-        command.sink = "log:info?showStreams=false";
-        command.output = "yaml";
+        Bind command = createCommand("timer:tick?period=10000", "log:info?showStreams=false");
 
         command.properties = new String[] {
                 "source.message=Hello",
@@ -569,11 +517,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindKameletSinkErrorHandler() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "sink:log-sink";
 
@@ -615,11 +559,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindKameletSinkErrorHandlerWithParameters() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "sink:log-sink";
 
@@ -668,11 +608,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindKameletSinkErrorHandlerAndSinkProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "sink:log-sink";
 
@@ -722,11 +658,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindEndpointUriSinkErrorHandler() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "sink:log:error";
 
@@ -765,11 +697,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindEndpointUriSinkErrorHandlerWithParameters() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "sink:log:error";
 
@@ -815,11 +743,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindEndpointUriSinkErrorHandlerAndSinkProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "sink:log:error";
 
@@ -866,11 +790,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindEndpointUriSinkErrorHandlerAndUriProperties() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "sink:log:error?showStreams=false";
 
@@ -918,11 +838,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindWithLogErrorHandler() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "log";
 
@@ -957,11 +873,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindWithLogErrorHandlerWithParameters() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "log";
 
@@ -1003,11 +915,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldBindWithNoErrorHandler() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
-        command.output = "yaml";
+        Bind command = createCommand("timer", "log");
 
         command.errorHandler = "none";
 
@@ -1041,10 +949,7 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldSupportJsonOutput() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
+        Bind command = createCommand("timer", "log");
         command.output = "json";
 
         command.doCall();
@@ -1082,14 +987,42 @@ class BindTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldHandleUnsupportedOutputFormat() throws Exception {
-        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
-        command.file = "timer-to-log";
-        command.source = "timer-source";
-        command.sink = "log-sink";
+        Bind command = createCommand("timer", "log");
         command.output = "wrong";
 
         Assertions.assertEquals(-1, command.doCall());
 
         Assertions.assertEquals("Unsupported output format 'wrong' (supported: file, yaml, json)", printer.getOutput());
+    }
+
+    private Bind createCommand(String source, String sink) {
+        Bind command = new Bind(new CamelJBangMain().withPrinter(printer));
+
+        String sourceName;
+        String sourceUri;
+        if (source.contains(":")) {
+            sourceName = StringHelper.before(source, ":");
+            sourceUri = source;
+        } else {
+            sourceName = source;
+            sourceUri = source + "-source";
+        }
+
+        String sinkName;
+        String sinkUri;
+        if (sink.contains(":")) {
+            sinkName = StringHelper.before(sink, ":");
+            sinkUri = sink;
+        } else {
+            sinkName = sink;
+            sinkUri = sink + "-sink";
+        }
+
+        command.file = sourceName + "-to-" + sinkName + ".yaml";
+        command.source = sourceUri;
+        command.sink = sinkUri;
+        command.output = "yaml";
+
+        return command;
     }
 }

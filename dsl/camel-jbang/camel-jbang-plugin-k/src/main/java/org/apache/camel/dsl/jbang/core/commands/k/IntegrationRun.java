@@ -147,7 +147,7 @@ public class IntegrationRun extends KubeBaseCommand {
     String[] labels;
 
     @CommandLine.Option(names = { "--traits", "-t" },
-                        description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
+                        description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
     String[] traits;
 
     @CommandLine.Option(names = { "--use-flows" }, defaultValue = "true",
@@ -313,7 +313,10 @@ public class IntegrationRun extends KubeBaseCommand {
                 case "yaml" -> printer().println(KubernetesHelper.yaml().dumpAsMap(integration));
                 case "json" -> printer().println(
                         JSonHelper.prettyPrint(KubernetesHelper.json().writer().writeValueAsString(integration), 2));
-                default -> printer().printf("Unsupported output format %s%n", output);
+                default -> {
+                    printer().printf("Unsupported output format '%s' (supported: yaml, json)%n", output);
+                    return -1;
+                }
             }
 
             return 0;
@@ -337,7 +340,7 @@ public class IntegrationRun extends KubeBaseCommand {
         }
 
         if (logs) {
-            new IntegrationLogs(getMain()).watchLogs(integration);
+            new IntegrationLogs(getMain()).watchLogs(integration.getMetadata().getName());
         }
 
         return 0;

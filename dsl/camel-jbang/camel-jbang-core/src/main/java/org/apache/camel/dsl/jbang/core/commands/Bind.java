@@ -75,7 +75,7 @@ public class Bind extends CamelCommand {
     String errorHandler;
 
     @CommandLine.Option(names = { "--property" },
-                        description = "Adds a pipe property in the form of [source|sink|step-<n>].<key>=<value> where <n> is the step number starting from 1",
+                        description = "Adds a pipe property in the form of [source|sink|error-handler|step-<n>].<key>=<value> where <n> is the step number starting from 1",
                         arity = "0")
     String[] properties;
 

@@ -656,6 +656,18 @@ class IntegrationRunTest extends KubeBaseTest {
         Assertions.assertEquals("Operator id must be set", printer.getOutput());
     }
 
+    @Test
+    public void shouldHandleUnsupportedOutputFormat() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.useFlows = false;
+        command.output = "wrong";
+
+        Assertions.assertEquals(-1, command.doCall());
+
+        Assertions.assertEquals("Unsupported output format 'wrong' (supported: yaml, json)", printer.getOutput());
+    }
+
     private IntegrationRun createCommand() {
         IntegrationRun command = new IntegrationRun(new CamelJBangMain().withPrinter(printer));
         command.withClient(kubernetesClient);
