@@ -53,6 +53,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -208,7 +209,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(final Processor processor) throws Exception {
         OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri);
         String path = determineBasePath(doc);
-        return createConsumerFor(path, new RestOpenApiProcessor(doc, path, processor));
+        Processor target = new RestOpenApiProcessor(doc, path, processor);
+        CamelContextAware.trySetCamelContext(target, getCamelContext());
+        return createConsumerFor(path, target);
     }
 
     protected Consumer createConsumerFor(String basePath, Processor processor) throws Exception {

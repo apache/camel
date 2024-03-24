@@ -18,14 +18,23 @@ package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProducer;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.service.ServiceHelper;
 
-public class RestOpenApiProcessor extends DelegateAsyncProcessor {
+public class RestOpenApiProcessor extends DelegateAsyncProcessor implements CamelContextAware {
 
+    private CamelContext camelContext;
     private final OpenAPI openAPI;
     private final String basePath;
+    private ProducerCache producerCache;
 
     public RestOpenApiProcessor(OpenAPI openAPI, String basePath, Processor processor) {
         super(processor);
@@ -34,9 +43,55 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // what operation to invoke
-        exchange.getMessage().setBody("I was here");
-        return super.process(exchange, callback);
+        String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
+        if (path != null && path.startsWith(basePath)) {
+            path = path.substring(basePath.length() + 1);
+        }
+
+        // TODO: choose processor strategy (mapping by operation id -> direct)
+        // TODO: check if valid operation according to OpenApi
+        // TODO: validate GET/POST etc
+        // TODO: 404 and so on
+        // TODO: binding
+
+        Endpoint e = camelContext.getEndpoint("direct:" + path);
+        AsyncProducer p = producerCache.acquireProducer(e);
+        return p.process(exchange, new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+                producerCache.releaseProducer(e, p);
+                callback.done(doneSync);
+            }
+        });
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        producerCache = new DefaultProducerCache(this, getCamelContext(), 1000);
+        ServiceHelper.initService(producerCache);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(producerCache);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(producerCache);
     }
 }
