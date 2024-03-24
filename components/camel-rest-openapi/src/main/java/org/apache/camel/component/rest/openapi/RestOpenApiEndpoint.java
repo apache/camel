@@ -54,18 +54,20 @@ import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer;
 import org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer;
 import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestOpenApiConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -77,6 +79,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Optional.ofNullable;
@@ -92,9 +95,13 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * To call REST services using OpenAPI specification as contract.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
-             syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API },
-             producerOnly = true)
+             syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API })
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiEndpoint.class);
+
+    public static final String[] DEFAULT_REST_OPENAPI_CONSUMER_COMPONENTS
+            = new String[] { "platform-http" };
 
     /**
      * Remaining parameters specified in the Endpoint URI.
@@ -111,6 +118,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                             + " component configuration.",
               label = "producer,advanced")
     private String componentName;
+    @UriParam(description = "Name of the Camel component that will service the requests. The component must be present"
+                            + " in Camel registry and it must implement RestOpenApiConsumerFactory service provider interface. If not set"
+                            + " CLASSPATH is searched for single component that implements RestOpenApiConsumerFactory SPI. Overrides"
+                            + " component configuration.",
+              label = "consumer,advanced")
+    private String consumerComponentName;
     @UriParam(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
                             + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
                             + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
@@ -119,8 +132,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                             + " configuration.",
               label = "producer")
     private String host;
-    @UriPath(description = "ID of the operation from the OpenApi specification.", label = "producer")
-    @Metadata(required = true)
+    @UriPath(description = "ID of the operation from the OpenApi specification. This is required when using producer",
+             label = "producer")
     private String operationId;
     @UriParam(description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
                             + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
@@ -182,7 +195,103 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer not supported");
+        final CamelContext camelContext = getCamelContext();
+        final OpenAPI openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
+        String path = determineBasePath(openapiDoc);
+
+        // TODO: processor should use OpenAPI to detect which operations exists, and map to direct:xx
+        // TODO: validate on|poff
+
+        return createConsumerFor(path, processor);
+    }
+
+    protected Consumer createConsumerFor(String basePath, Processor processor) throws Exception {
+        RestOpenApiConsumerFactory factory = null;
+        String cname = null;
+        if (getConsumerComponentName() != null) {
+            Object comp = getCamelContext().getRegistry().lookupByName(getConsumerComponentName());
+            if (comp instanceof RestOpenApiConsumerFactory) {
+                factory = (RestOpenApiConsumerFactory) comp;
+            } else {
+                comp = getCamelContext().getComponent(getConsumerComponentName());
+                if (comp instanceof RestOpenApiConsumerFactory) {
+                    factory = (RestOpenApiConsumerFactory) comp;
+                }
+            }
+
+            if (factory == null) {
+                if (comp != null) {
+                    throw new IllegalArgumentException(
+                            "Component " + getConsumerComponentName() + " is not a RestOpenApiConsumerFactory");
+                } else {
+                    throw new NoSuchBeanException(getConsumerComponentName(), RestOpenApiConsumerFactory.class.getName());
+                }
+            }
+            cname = getConsumerComponentName();
+        }
+
+        // try all components
+        if (factory == null) {
+            for (String name : getCamelContext().getComponentNames()) {
+                Component comp = getCamelContext().getComponent(name);
+                if (comp instanceof RestOpenApiConsumerFactory) {
+                    factory = (RestOpenApiConsumerFactory) comp;
+                    cname = name;
+                    break;
+                }
+            }
+        }
+
+        // favour using platform-http if available on classpath
+        if (factory == null) {
+            Object comp = getCamelContext().getComponent("platform-http", true);
+            if (comp instanceof RestOpenApiConsumerFactory) {
+                factory = (RestOpenApiConsumerFactory) comp;
+                LOG.debug("Auto discovered platform-http as RestConsumerFactory");
+            }
+        }
+
+        // lookup in registry
+        if (factory == null) {
+            Set<RestOpenApiConsumerFactory> factories
+                    = getCamelContext().getRegistry().findByType(RestOpenApiConsumerFactory.class);
+            if (factories != null && factories.size() == 1) {
+                factory = factories.iterator().next();
+            }
+        }
+
+        // no explicit factory found then try to see if we can find any of the default rest consumer components
+        // and there must only be exactly one so we safely can pick this one
+        if (factory == null) {
+            RestOpenApiConsumerFactory found = null;
+            String foundName = null;
+            for (String name : DEFAULT_REST_OPENAPI_CONSUMER_COMPONENTS) {
+                Object comp = getCamelContext().getComponent(name, true);
+                if (comp instanceof RestOpenApiConsumerFactory) {
+                    if (found == null) {
+                        found = (RestOpenApiConsumerFactory) comp;
+                        foundName = name;
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Multiple RestOpenApiConsumerFactory found on classpath. Configure explicit which component to use");
+                    }
+                }
+            }
+            if (found != null) {
+                LOG.debug("Auto discovered {} as RestOpenApiConsumerFactory", foundName);
+                factory = found;
+            }
+        }
+
+        if (factory != null) {
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
+            Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
+            configureConsumer(consumer);
+            return consumer;
+        } else {
+            throw new IllegalStateException("Cannot find RestOpenApiConsumerFactory in Registry or as a Component to use");
+        }
     }
 
     @Override
@@ -237,6 +346,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return componentName;
     }
 
+    public String getConsumerComponentName() {
+        return consumerComponentName;
+    }
+
     public String getConsumes() {
         return consumes;
     }
@@ -267,7 +380,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     public void setComponentName(final String componentName) {
-        this.componentName = notEmpty(componentName, "componentName");
+        this.componentName = componentName;
+    }
+
+    public void setConsumerComponentName(String consumerComponentName) {
+        this.consumerComponentName = consumerComponentName;
     }
 
     public void setConsumes(final String consumes) {
@@ -416,6 +533,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     String determineComponentName() {
         return Optional.ofNullable(componentName).orElse(getComponent().getComponentName());
+    }
+
+    String determineConsumerComponentName() {
+        return Optional.ofNullable(consumerComponentName).orElse(getComponent().getConsumerComponentName());
     }
 
     Map<String, Object> determineEndpointParameters(final OpenAPI openapi, final Operation operation) {

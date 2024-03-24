@@ -94,6 +94,12 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " endpoint configuration.",
               label = "producer,advanced")
     private String componentName;
+    @Metadata(description = "Name of the Camel component that will service the requests. The component must be present"
+                            + " in Camel registry and it must implement RestOpenApiConsumerFactory service provider interface. If not set"
+                            + " CLASSPATH is searched for single component that implements RestOpenApiConsumerFactory SPI.  Can be overridden in"
+                            + " endpoint configuration.",
+              label = "consumer,advanced")
+    private String consumerComponentName;
     @Metadata(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
                             + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
                             + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
@@ -158,6 +164,10 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         return componentName;
     }
 
+    public String getConsumerComponentName() {
+        return consumerComponentName;
+    }
+
     public String getConsumes() {
         return consumes;
     }
@@ -189,6 +199,10 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public void setComponentName(final String componentName) {
         this.componentName = notEmpty(componentName, "componentName");
+    }
+
+    public void setConsumerComponentName(String consumerComponentName) {
+        this.consumerComponentName = consumerComponentName;
     }
 
     public void setConsumes(final String consumes) {

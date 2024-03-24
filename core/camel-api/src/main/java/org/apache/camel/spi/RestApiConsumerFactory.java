@@ -38,8 +38,8 @@ public interface RestApiConsumerFactory {
      * @param  camelContext the camel context
      * @param  processor    the processor
      * @param  contextPath  the context-path
+     * @param  configuration REST configuration
      * @param  parameters   additional parameters
-     *
      * @return              a newly created REST API consumer
      * @throws Exception    can be thrown
      */

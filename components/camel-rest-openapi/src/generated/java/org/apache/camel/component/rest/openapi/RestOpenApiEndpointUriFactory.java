@@ -21,10 +21,14 @@ public class RestOpenApiEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(15);
         props.add("basePath");
+        props.add("bridgeErrorHandler");
         props.add("componentName");
+        props.add("consumerComponentName");
         props.add("consumes");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("host");
         props.add("lazyStartProducer");
         props.add("operationId");
@@ -53,7 +57,7 @@ public class RestOpenApiEndpointUriFactory extends org.apache.camel.support.comp
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "specificationUri", "openapi.json", false, copy);
-        uri = buildPathParameter(syntax, uri, "operationId", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "operationId", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

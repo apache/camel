@@ -39,12 +39,14 @@ public interface RestOpenApiConsumerFactory {
      *
      * @param  camelContext  the camel context
      * @param  processor     the processor
+     * @param  contextPath  the context-path
      * @param  configuration REST configuration
      * @param  parameters    additional parameters
      * @return               a newly created REST consumer
      * @throws Exception     can be thrown
      */
     Consumer createConsumer(
-            CamelContext camelContext, Processor processor, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext, Processor processor, String contextPath,
+            RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception;
 }

@@ -6,7 +6,7 @@
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: rest-openapi
 
