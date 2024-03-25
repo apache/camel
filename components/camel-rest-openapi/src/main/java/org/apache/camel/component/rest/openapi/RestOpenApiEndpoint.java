@@ -150,9 +150,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                            + " Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup"
                            + " TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties)."
                            + " How to do that consult the JDK documentation for UrlHandler.",
-             defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI_STR,
+             defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI,
              defaultValueNote = "By default loads `openapi.json` file", label = "common")
-    private URI specificationUri;
+    private String specificationUri;
     @UriParam(description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
     @UriParam(description = "If request validation is enabled, this option provides the capability to customize"
@@ -181,11 +181,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             operationId = after(remaining, "#");
             String spec = before(remaining, "#");
             if (spec != null && !spec.isEmpty()) {
-                specificationUri = URI.create(spec);
+                specificationUri = spec;
             }
         } else {
             if (remaining.endsWith(".json") || remaining.endsWith(".yaml") || remaining.endsWith(".yml")) {
-                specificationUri = URI.create(remaining);
+                specificationUri = remaining;
             } else {
                 operationId = remaining;
             }
@@ -376,7 +376,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return produces;
     }
 
-    public URI getSpecificationUri() {
+    public String getSpecificationUri() {
         return specificationUri;
     }
 
@@ -413,7 +413,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         this.produces = produces;
     }
 
-    public void setSpecificationUri(final URI specificationUri) {
+    public void setSpecificationUri(String specificationUri) {
         this.specificationUri = specificationUri;
     }
 
@@ -676,7 +676,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         URI relativeURI = null;
         Set<URI> operationURIs = getURIs(operation.getServers());
         // Check if at least one of them is absolute:
-        Optional<URI> opURI = operationURIs.stream().filter(uri -> uri.isAbsolute()).findFirst();
+        Optional<URI> opURI = operationURIs.stream().filter(URI::isAbsolute).findFirst();
         if (opURI.isEmpty()) {
             // look for absolute at api level + possible relative URI for the operation
             Set<URI> apiURIs = getURIs(openApi.getServers());
@@ -713,17 +713,18 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return globalConfigurationHost;
         }
 
-        final String specificationScheme = specificationUri.getScheme();
-        // Perform a case insensitive "startsWith" check that works for different locales
-        String prefix = "http";
-        if (specificationUri.isAbsolute() && specificationScheme.regionMatches(true, 0, prefix, 0, prefix.length())) {
-            try {
+        try {
+            final URI uri = new URI(specificationUri);
+            final String specificationScheme = uri.getScheme();
+            // Perform a case-insensitive "startsWith" check that works for different locales
+            String prefix = "http";
+            if (uri.isAbsolute() && specificationScheme.regionMatches(true, 0, prefix, 0, prefix.length())) {
                 return new URI(
-                        specificationUri.getScheme(), specificationUri.getUserInfo(), specificationUri.getHost(),
-                        specificationUri.getPort(), null, null, null).toString();
-            } catch (final URISyntaxException e) {
-                throw new IllegalStateException("Unable to create a new URI from: " + specificationUri, e);
+                        uri.getScheme(), uri.getUserInfo(), uri.getHost(),
+                        uri.getPort(), null, null, null).toString();
             }
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to create a new URI from: " + specificationUri, e);
         }
 
         throw new IllegalStateException(
@@ -916,23 +917,22 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
      * Loads the OpenApi definition model from the given path. This delegates directly to the OpenAPI parser. If the
      * specification can't be read there is no OpenAPI object in the result.
      *
-     * @param  uri          URI of the specification
+     * @param  uri          the specification uri
      * @param  camelContext context to use
      * @return              the specification
      */
-    static OpenAPI loadSpecificationFrom(final CamelContext camelContext, final URI uri) {
-        final String uriAsString = uri.toString();
+    static OpenAPI loadSpecificationFrom(final CamelContext camelContext, final String uri) {
         final OpenAPIParser openApiParser = new OpenAPIParser();
         final ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
 
         File tmpFileToDelete = null;
         try {
-            Resource resource = ResourceHelper.resolveMandatoryResource(camelContext, uriAsString);
+            Resource resource = ResourceHelper.resolveMandatoryResource(camelContext, uri);
             //if location can not be used in Swagger API (e.g. in case of "bean;")
             // the content of the resource has to be copied into a tmp file for swagger API.
             String locationToSearch;
-            if ("bean:".equals(ResourceHelper.getScheme(uriAsString))) {
+            if ("bean:".equals(ResourceHelper.getScheme(uri))) {
                 Path tmpFile = Files.createTempFile(null, null);
                 tmpFileToDelete = tmpFile.toFile();
                 tmpFileToDelete.deleteOnExit();
@@ -945,32 +945,20 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             final SwaggerParseResult openApi = openApiParser.readLocation(locationToSearch, null, options);
 
             if (openApi != null && openApi.getOpenAPI() != null) {
-                checkV2specification(openApi.getOpenAPI(), uri);
                 return openApi.getOpenAPI();
             }
         } catch (Exception e) {
             throw new IllegalArgumentException(
-                    "The given OpenApi specification could not be loaded from `" + uri + "`.", e);
+                    "The given OpenApi specification cannot be loaded from: " + uri, e);
         } finally {
             if (tmpFileToDelete != null) {
                 FileUtil.deleteFile(tmpFileToDelete);
             }
         }
 
-        // In theory there should be a message in the parse result but it has disappeared...
+        // In theory there should be a message in the parse result, but it has disappeared...
         throw new IllegalArgumentException(
-                "The given OpenApi specification could not be loaded from `" + uri + "`.");
-    }
-
-    private static void checkV2specification(OpenAPI openAPI, final URI uri) {
-        if (openAPI.getExtensions() != null) {
-            Object swaggerVersion = openAPI.getExtensions().get("x-original-swagger-version");
-            if (swaggerVersion != null) {
-                LoggerFactory.getLogger(RestOpenApiEndpoint.class).info(
-                        "The specification {} was upgraded from {} to OpenAPI {}",
-                        uri, swaggerVersion, openAPI.getSpecVersion());
-            }
-        }
+                "The given OpenApi specification cannot be loaded from: " + uri);
     }
 
     static String pickBestScheme(final String specificationScheme, final List<String> schemes) {

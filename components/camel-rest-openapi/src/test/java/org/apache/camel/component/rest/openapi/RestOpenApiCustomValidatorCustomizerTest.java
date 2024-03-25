@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rest.openapi;
 
-import java.net.URI;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -89,7 +88,7 @@ public class RestOpenApiCustomValidatorCustomizerTest extends CamelTestSupport {
         component.setComponentName("http");
         component.setConsumes("application/json");
         component.setProduces("application/json");
-        component.setSpecificationUri(URI.create("classpath:openapi-v3.json"));
+        component.setSpecificationUri("classpath:openapi-v3.json");
         component.setRequestValidationCustomizer(new CustomRequestValidationCustomizer("Test validation error from component"));
         camelContext.addComponent("petStore", component);
 

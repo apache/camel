@@ -45,7 +45,7 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "restopenapiprocessorstrategy":
         case "restOpenapiProcessorStrategy": target.setRestOpenapiProcessorStrategy(property(camelContext, org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy.class, value)); return true;
         case "specificationuri":
-        case "specificationUri": target.setSpecificationUri(property(camelContext, java.net.URI.class, value)); return true;
+        case "specificationUri": target.setSpecificationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -81,7 +81,7 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "restopenapiprocessorstrategy":
         case "restOpenapiProcessorStrategy": return org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy.class;
         case "specificationuri":
-        case "specificationUri": return java.net.URI.class;
+        case "specificationUri": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "useglobalsslcontextparameters":

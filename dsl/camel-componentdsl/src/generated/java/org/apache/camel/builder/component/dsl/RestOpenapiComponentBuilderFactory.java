@@ -217,8 +217,6 @@ public interface RestOpenapiComponentBuilderFactory {
          * syntax (i.e. https://api.example.com:8080). Can be overridden in
          * endpoint configuration.
          * 
-         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
-         * 
          * Default: openapi.json
          * Group: producer
          * 
@@ -226,7 +224,7 @@ public interface RestOpenapiComponentBuilderFactory {
          * @return the dsl builder
          */
         default RestOpenapiComponentBuilder specificationUri(
-                java.net.URI specificationUri) {
+                String specificationUri) {
             doSetProperty("specificationUri", specificationUri);
             return this;
         }
@@ -382,7 +380,7 @@ public interface RestOpenapiComponentBuilderFactory {
             case "basePath": ((RestOpenApiComponent) component).setBasePath((java.lang.String) value); return true;
             case "host": ((RestOpenApiComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.net.URI) value); return true;
+            case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.lang.String) value); return true;
             case "componentName": ((RestOpenApiComponent) component).setComponentName((java.lang.String) value); return true;
             case "consumes": ((RestOpenApiComponent) component).setConsumes((java.lang.String) value); return true;
             case "produces": ((RestOpenApiComponent) component).setProduces((java.lang.String) value); return true;

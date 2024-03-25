@@ -22,7 +22,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -550,7 +549,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     private RestOpenApiComponent createRestOpenApiComponent(String specificationUri) {
         RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName("http");
-        component.setSpecificationUri(URI.create("classpath:" + specificationUri));
+        component.setSpecificationUri("classpath:" + specificationUri);
         component.setConsumes("application/json");
         component.setProduces("application/json");
         component.setHost("http://localhost:" + wireMockServer.port());
