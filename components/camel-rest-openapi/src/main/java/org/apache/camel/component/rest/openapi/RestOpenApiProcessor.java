@@ -17,12 +17,11 @@
 package org.apache.camel.component.rest.openapi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.PathItem;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -33,6 +32,9 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 
 public class RestOpenApiProcessor extends DelegateAsyncProcessor implements CamelContextAware {
+
+    private static final List<String> METHODS
+            = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     private CamelContext camelContext;
     private final OpenAPI openAPI;
@@ -68,9 +70,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // TODO: check if valid operation according to OpenApi
-        // TODO: validate GET/POST etc
         // TODO: RequestValidator
-        // TODO: 404 and so on
         // TODO: binding
 
         String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
@@ -86,24 +86,19 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             return restOpenapiProcessorStrategy.process(o, path, exchange, callback);
         }
 
-        // no operation found so it's a 404
-        exchange.setException(new RejectedExecutionException());
-        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+        // okay we cannot process this requires so return either 404 or 405.
+        // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+        final String contextPath = path;
+        boolean hasAnyMethod
+                = METHODS.stream().anyMatch(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null);
+        if (hasAnyMethod) {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 405);
+        } else {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+        }
+        exchange.setRouteStop(true);
         callback.done(true);
         return true;
-    }
-
-    protected Operation asOperation(PathItem item, String verb) {
-        return switch (verb) {
-            case "GET" -> item.getGet();
-            case "DELETE" -> item.getDelete();
-            case "HEAD" -> item.getHead();
-            case "PATCH" -> item.getPatch();
-            case "OPTIONS" -> item.getOptions();
-            case "PUT" -> item.getPut();
-            case "POST" -> item.getPost();
-            default -> null;
-        };
     }
 
     @Override

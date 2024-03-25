@@ -54,4 +54,60 @@ public class PlatformHttpRestOpenApiConsumerTest {
         }
     }
 
+    @Test
+    public void testRestOpenApiNotFound() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json")
+                            .log("dummy");
+
+                    from("direct:getPetById")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/api/v3/pet/123/unknown")
+                    .then()
+                    .statusCode(404);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRestOpenApiNotAllowed() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json")
+                            .log("dummy");
+
+                    from("direct:getPetById")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .put("/api/v3/pet/123")
+                    .then()
+                    .statusCode(405);
+        } finally {
+            context.stop();
+        }
+    }
+
 }
