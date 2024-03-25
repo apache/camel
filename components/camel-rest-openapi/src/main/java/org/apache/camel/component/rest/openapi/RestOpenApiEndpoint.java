@@ -169,6 +169,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     @UriParam(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
               enums = "fail,ignore,mock", label = "consumer", defaultValue = "fail")
     private String missingOperation;
+    @UriParam(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern."
+                            + " Multiple patterns can be specified separated by comma.",
+              label = "consumer,advanced", defaultValue = "classpath:camel-mock/*")
+    private String mockIncludePattern;
 
     public RestOpenApiEndpoint() {
         // help tooling instantiate endpoint
@@ -456,6 +460,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public void setMissingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
+    }
+
+    public void setMockIncludePattern(String mockIncludePattern) {
+        this.mockIncludePattern = mockIncludePattern;
+    }
+
+    public String getMockIncludePattern() {
+        return mockIncludePattern;
     }
 
     Producer createProducerFor(

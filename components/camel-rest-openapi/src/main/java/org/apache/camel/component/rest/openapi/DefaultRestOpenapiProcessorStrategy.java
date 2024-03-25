@@ -17,6 +17,7 @@
 package org.apache.camel.component.rest.openapi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,10 +31,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +57,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private ProducerCache producerCache;
     private String component = "direct";
     private String missingOperation;
+    private String mockIncludePattern;
 
     @Override
     public void validateOpenApi(OpenAPI openAPI) throws Exception {
@@ -94,10 +103,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             // check if there is a route
             Endpoint e = camelContext.hasEndpoint(component + ":" + operation.getOperationId());
             if (e == null) {
-                // no route for the given operation, so lets return an empty response
-                exchange.getMessage().setBody("");
-                // TODO: load canned response from classpath if exist
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+                loadMockData(operation, path, exchange);
                 callback.done(true);
                 return true;
             }
@@ -112,6 +118,56 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 callback.done(doneSync);
             }
         });
+    }
+
+    private void loadMockData(Operation operation, String path, Exchange exchange) {
+        final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
+        final String[] includes = mockIncludePattern != null ? mockIncludePattern.split(",") : null;
+
+        Collection<Resource> accepted = new ArrayList<>();
+        for (String include : includes) {
+            try {
+                for (Resource resource : resolver.findResources(include)) {
+                    accepted.add(resource);
+                }
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
+        boolean json = false;
+        boolean xml = false;
+        String ct = ExchangeHelper.getContentType(exchange);
+        if (ct != null) {
+            json = ct.contains("json");
+            xml = ct.contains("xml");
+        }
+
+        Resource found = null;
+        for (Resource resource : accepted) {
+            String target = FileUtil.stripFirstLeadingSeparator(path);
+            String loc = FileUtil.stripExt(FileUtil.compactPath(resource.getLocation(), '/'));
+            String onlyExt = FileUtil.onlyExt(resource.getLocation());
+            boolean match = loc.endsWith(target);
+            boolean matchExt = !json && !xml || json && onlyExt.equals("json") || xml && onlyExt.equals("xml");
+            if (match && matchExt) {
+                found = resource;
+                break;
+            }
+        }
+        if (found != null) {
+            try {
+                // use the mock data as response
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                exchange.getMessage().setBody(IOHelper.loadText(found.getInputStream()));
+            } catch (Exception e) {
+                // ignore
+            }
+        } else {
+            // no mock data, so return an empty response
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+            exchange.getMessage().setBody("");
+        }
     }
 
     @Override
@@ -141,6 +197,16 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
 
     public void setMissingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
+    }
+
+    @Override
+    public String getMockIncludePattern() {
+        return mockIncludePattern;
+    }
+
+    @Override
+    public void setMockIncludePattern(String mockIncludePattern) {
+        this.mockIncludePattern = mockIncludePattern;
     }
 
     @Override

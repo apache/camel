@@ -158,6 +158,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         super.doInit();
 
         restOpenapiProcessorStrategy.setMissingOperation(endpoint.getMissingOperation());
+        restOpenapiProcessorStrategy.setMockIncludePattern(endpoint.getMockIncludePattern());
         ServiceHelper.initService(restOpenapiProcessorStrategy);
 
         // validate openapi contract

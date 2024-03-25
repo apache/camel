@@ -37,6 +37,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "missingoperation":
         case "missingOperation": target.setMissingOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "mockincludepattern":
+        case "mockIncludePattern": target.setMockIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
         case "requestvalidationcustomizer":
         case "requestValidationCustomizer": target.setRequestValidationCustomizer(property(camelContext, org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class, value)); return true;
@@ -73,6 +75,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "lazyStartProducer": return boolean.class;
         case "missingoperation":
         case "missingOperation": return java.lang.String.class;
+        case "mockincludepattern":
+        case "mockIncludePattern": return java.lang.String.class;
         case "produces": return java.lang.String.class;
         case "requestvalidationcustomizer":
         case "requestValidationCustomizer": return org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class;
@@ -110,6 +114,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "missingoperation":
         case "missingOperation": return target.getMissingOperation();
+        case "mockincludepattern":
+        case "mockIncludePattern": return target.getMockIncludePattern();
         case "produces": return target.getProduces();
         case "requestvalidationcustomizer":
         case "requestValidationCustomizer": return target.getRequestValidationCustomizer();

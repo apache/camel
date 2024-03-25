@@ -39,6 +39,18 @@ public interface RestOpenapiProcessorStrategy {
     String getMissingOperation();
 
     /**
+     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
+     * patterns can be specified separated by comma.
+     */
+    void setMockIncludePattern(String mockIncludePattern);
+
+    /**
+     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
+     * patterns can be specified separated by comma.
+     */
+    String getMockIncludePattern();
+
+    /**
      * Validates the OpenAPI specification on startup
      *
      * @param  openAPI   the openapi specification

@@ -47,7 +47,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * <pre>
  * from(...).to("rest-openapi:https://petstore3.swagger.io/api/v3/openapi.json#getPetById")
  * </pre>
- *
+ * <p>
  * This relies on only one {@link RestProducerFactory} component being available to Camel, you can use specific, for
  * instance preconfigured component by using the {@code componentName} endpoint property. For example using Undertow
  * component in Java DSL:
@@ -61,7 +61,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  *
  * from(...).to("rest-openapi:https://petstore3.swagger.io/api/v3/openapi.json#getPetById?componentName=myUndertow")
  * </pre>
- *
+ * <p>
  * The most concise way of using this component would be to define it in the Camel context under a meaningful name, for
  * example:
  *
@@ -133,6 +133,10 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     @Metadata(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
               label = "consumer", enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
+    @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern."
+                            + " Multiple patterns can be specified separated by comma.",
+              label = "consumer,advanced", defaultValue = "classpath:camel-mock/*")
+    private String mockIncludePattern = "classpath:camel-mock/*";
     @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
     @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
@@ -157,6 +161,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         endpoint.setRequestValidationLevels(PropertiesHelper.extractProperties(parameters, "validation."));
         endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
         endpoint.setMissingOperation(getMissingOperation());
+        endpoint.setMockIncludePattern(getMockIncludePattern());
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -212,6 +217,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public void setMissingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
+    }
+
+    public String getMockIncludePattern() {
+        return mockIncludePattern;
+    }
+
+    public void setMockIncludePattern(String mockIncludePattern) {
+        this.mockIncludePattern = mockIncludePattern;
     }
 
     public void setBasePath(final String basePath) {

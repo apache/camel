@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class PlatformHttpRestOpenApiConsumerTest {
@@ -230,6 +231,37 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     .put("/api/v3/pet")
                     .then()
                     .statusCode(405); // no request body
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRestOpenApiMockData() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=mock")
+                            .log("dummy");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .contentType("application/json")
+                    .get("/api/v3/pet/444")
+                    .then()
+                    .statusCode(200)
+                    .body(equalToCompressingWhiteSpace(
+                            """
+                                    {
+                                      "pet": "donald the dock"
+                                    }"""));
         } finally {
             context.stop();
         }
