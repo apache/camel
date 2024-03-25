@@ -141,6 +141,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     protected void doBuild() throws Exception {
         super.doBuild();
 
+        CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
         // register all openapi paths
         for (var e : openAPI.getPaths().entrySet()) {
             String path = e.getKey(); // path
@@ -149,15 +150,18 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                 paths.add(new RestOpenApiConsumerPath(v, path, o.getValue()));
             }
         }
-
-        CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
         ServiceHelper.buildService(restOpenapiProcessorStrategy);
     }
 
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        restOpenapiProcessorStrategy.setMissingOperation(endpoint.getMissingOperation());
         ServiceHelper.initService(restOpenapiProcessorStrategy);
+
+        // validate openapi contract
+        restOpenapiProcessorStrategy.validateOpenApi(openAPI);
     }
 
     @Override

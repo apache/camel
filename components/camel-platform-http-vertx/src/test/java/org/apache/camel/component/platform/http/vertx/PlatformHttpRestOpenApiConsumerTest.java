@@ -18,16 +18,49 @@ package org.apache.camel.component.platform.http.vertx;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class PlatformHttpRestOpenApiConsumerTest {
 
     @Test
     public void testRestOpenApi() throws Exception {
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore")
+                            .log("dummy");
+
+                    from("direct:getPetById")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/api/v3/pet/123")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRestOpenApiDevMode() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        // run in developer mode
+        context.getCamelContextExtension().setProfile("dev");
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -55,6 +88,32 @@ public class PlatformHttpRestOpenApiConsumerTest {
     }
 
     @Test
+    public void testRestOpenApiMissingOperation() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=fail")
+                            .log("dummy");
+
+                    from("direct:getPetById")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            context.start();
+            fail();
+        } catch (IllegalArgumentException e) {
+            Assertions.assertTrue(
+                    e.getMessage().startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testRestOpenApiNotFound() throws Exception {
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
 
@@ -62,7 +121,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("rest-openapi:classpath:openapi-v3.json")
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore")
                             .log("dummy");
 
                     from("direct:getPetById")
@@ -90,7 +149,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("rest-openapi:classpath:openapi-v3.json")
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore")
                             .log("dummy");
 
                     from("direct:getPetById")
@@ -118,7 +177,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("rest-openapi:classpath:openapi-v3.json?requestValidationEnabled=true")
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore&requestValidationEnabled=true")
                             .log("dummy");
 
                     from("direct:updatePet")

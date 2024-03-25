@@ -141,6 +141,9 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     private SSLContextParameters sslContextParameters;
     @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
+    @Metadata(description = "Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that are not mapped to a corresponding route.",
+              enums = "fail,ignore,dummy", label = "consumer", defaultValue = "fail")
+    private String missingOperation;
 
     public RestOpenApiComponent() {
     }
@@ -157,6 +160,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRequestValidationLevels(PropertiesHelper.extractProperties(parameters, "validation."));
         endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
+        endpoint.setMissingOperation(getMissingOperation());
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -204,6 +208,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public void setRestOpenapiProcessorStrategy(RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
         this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
+    }
+
+    public String getMissingOperation() {
+        return missingOperation;
+    }
+
+    public void setMissingOperation(String missingOperation) {
+        this.missingOperation = missingOperation;
     }
 
     public void setBasePath(final String basePath) {

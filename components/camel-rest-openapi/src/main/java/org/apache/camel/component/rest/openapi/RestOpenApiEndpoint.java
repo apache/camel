@@ -166,6 +166,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private Map<String, Object> requestValidationLevels = new HashMap<>();
     @UriParam(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
+    @UriParam(description = "Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that are not mapped to a corresponding route.",
+              enums = "fail,ignore,dummy", label = "consumer", defaultValue = "fail")
+    private String missingOperation;
 
     public RestOpenApiEndpoint() {
         // help tooling instantiate endpoint
@@ -445,6 +448,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public void setRestOpenapiProcessorStrategy(RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
         this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
+    }
+
+    public String getMissingOperation() {
+        return missingOperation;
+    }
+
+    public void setMissingOperation(String missingOperation) {
+        this.missingOperation = missingOperation;
     }
 
     Producer createProducerFor(

@@ -84,6 +84,14 @@ public class RestOpenapiUriDsl(
   }
 
   /**
+   * Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that
+   * are not mapped to a corresponding route.
+   */
+  public fun missingOperation(missingOperation: String) {
+    it.property("missingOperation", missingOperation)
+  }
+
+  /**
    * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions
    * (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the
    * likes, will now be processed as a message and handled by the routing Error Handler. Important:

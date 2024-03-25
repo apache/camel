@@ -79,6 +79,23 @@ public interface RestOpenApiEndpointBuilderFactory {
             doSetProperty("requestValidationEnabled", requestValidationEnabled);
             return this;
         }
+        /**
+         * Whether the consumer should fail,ignore or return a dummy response
+         * for OpenAPI operations that are not mapped to a corresponding route.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: fail
+         * Group: consumer
+         * 
+         * @param missingOperation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder missingOperation(
+                String missingOperation) {
+            doSetProperty("missingOperation", missingOperation);
+            return this;
+        }
     }
 
     /**

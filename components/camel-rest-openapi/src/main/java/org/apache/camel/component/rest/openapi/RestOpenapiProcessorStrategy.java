@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rest.openapi;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -24,6 +25,28 @@ import org.apache.camel.Exchange;
  * Strategy for processing the Rest DSL that services an OpenAPI spec.
  */
 public interface RestOpenapiProcessorStrategy {
+
+    /**
+     * Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that are not mapped to
+     * a corresponding route.
+     */
+    void setMissingOperation(String missingOperation);
+
+    /**
+     * Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that are not mapped to
+     * a corresponding route.
+     */
+    String getMissingOperation();
+
+    /**
+     * Validates the OpenAPI specification on startup
+     *
+     * @param  openAPI   the openapi specification
+     * @throws Exception is thrown if validation error on startup
+     */
+    default void validateOpenApi(OpenAPI openAPI) throws Exception {
+        // noop
+    }
 
     /**
      * Strategy for processing the Rest DSL operation
