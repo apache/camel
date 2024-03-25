@@ -18,7 +18,7 @@ package org.apache.camel.component.infinispan.remote;
 
 import java.util.List;
 
-import org.infinispan.protostream.sampledomain.User;
+import org.infinispan.protostream.domain.User;
 
 public class InfinispanRemoteQueryTestSupport extends InfinispanRemoteTestSupport {
 

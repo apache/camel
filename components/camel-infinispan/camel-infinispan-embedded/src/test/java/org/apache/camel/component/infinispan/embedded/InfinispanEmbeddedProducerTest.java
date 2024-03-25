@@ -72,7 +72,7 @@ public class InfinispanEmbeddedProducerTest extends InfinispanEmbeddedTestSuppor
                         .to("direct:start")
                         .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.STATS)
                         .request(Stats.class)
-                        .getTotalNumberOfEntries());
+                        .getApproximateEntries());
     }
 
     // *****************************

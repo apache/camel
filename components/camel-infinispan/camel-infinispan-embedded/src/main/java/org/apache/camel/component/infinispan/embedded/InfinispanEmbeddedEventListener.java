@@ -114,7 +114,7 @@ public abstract class InfinispanEmbeddedEventListener extends InfinispanEventLis
                     event.getType().toString(),
                     event.getCache().getName(),
                     event.getKey(),
-                    event.getValue(),
+                    event.getNewValue(),
                     e -> {
                         e.getMessage().setHeader(InfinispanConstants.IS_PRE, event.isPre());
                         e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());

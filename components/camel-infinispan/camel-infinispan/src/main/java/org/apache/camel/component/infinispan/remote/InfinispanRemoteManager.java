@@ -79,12 +79,6 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
                 ConfigurationBuilder builder = new ConfigurationBuilder();
                 builder.addServers(configuration.getHosts());
 
-                if (camelContext != null && camelContext.getApplicationContextClassLoader() != null) {
-                    builder.classLoader(camelContext.getApplicationContextClassLoader());
-                } else {
-                    builder.classLoader(Thread.currentThread().getContextClassLoader());
-                }
-
                 if (configuration.isSecure()) {
                     if (ObjectHelper.isNotEmpty(configuration.getUsername())
                             && ObjectHelper.isNotEmpty(configuration.getPassword())) {
