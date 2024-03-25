@@ -124,35 +124,35 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         final String[] includes = mockIncludePattern != null ? mockIncludePattern.split(",") : null;
 
-        Collection<Resource> accepted = new ArrayList<>();
-        for (String include : includes) {
-            try {
-                for (Resource resource : resolver.findResources(include)) {
-                    accepted.add(resource);
-                }
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-
-        boolean json = false;
-        boolean xml = false;
-        String ct = ExchangeHelper.getContentType(exchange);
-        if (ct != null) {
-            json = ct.contains("json");
-            xml = ct.contains("xml");
-        }
-
         Resource found = null;
-        for (Resource resource : accepted) {
-            String target = FileUtil.stripFirstLeadingSeparator(path);
-            String loc = FileUtil.stripExt(FileUtil.compactPath(resource.getLocation(), '/'));
-            String onlyExt = FileUtil.onlyExt(resource.getLocation());
-            boolean match = loc.endsWith(target);
-            boolean matchExt = !json && !xml || json && onlyExt.equals("json") || xml && onlyExt.equals("xml");
-            if (match && matchExt) {
-                found = resource;
-                break;
+        if (includes != null) {
+            Collection<Resource> accepted = new ArrayList<>();
+            for (String include : includes) {
+                try {
+                    accepted.addAll(resolver.findResources(include));
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            }
+
+            boolean json = false;
+            boolean xml = false;
+            String ct = ExchangeHelper.getContentType(exchange);
+            if (ct != null) {
+                json = ct.contains("json");
+                xml = ct.contains("xml");
+            }
+
+            for (Resource resource : accepted) {
+                String target = FileUtil.stripFirstLeadingSeparator(path);
+                String loc = FileUtil.stripExt(FileUtil.compactPath(resource.getLocation(), '/'));
+                String onlyExt = FileUtil.onlyExt(resource.getLocation());
+                boolean match = loc.endsWith(target);
+                boolean matchExt = !json && !xml || json && onlyExt.equals("json") || xml && onlyExt.equals("xml");
+                if (match && matchExt) {
+                    found = resource;
+                    break;
+                }
             }
         }
         if (found != null) {
