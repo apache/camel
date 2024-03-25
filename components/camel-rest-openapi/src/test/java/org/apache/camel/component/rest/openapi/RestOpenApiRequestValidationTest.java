@@ -68,7 +68,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiRequestValidationTest extends CamelTestSupport {
@@ -362,7 +361,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         RestOpenApiEndpoint endpoint = context.getEndpoint(petStoreVersion + ":#addPet", RestOpenApiEndpoint.class);
         endpoint.createProducer();
         assertFalse(endpoint.isRequestValidationEnabled());
-        assertNull(endpoint.getRequestValidationCustomizer());
+        assertNotNull(endpoint.getRequestValidationCustomizer());
         assertTrue(endpoint.getRequestValidationLevels().isEmpty());
     }
 

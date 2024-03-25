@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer;
 import org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
@@ -133,7 +134,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     @Metadata(description = "If request validation is enabled, this option provides the capability to customize"
                             + " the creation of OpenApiInteractionValidator used to validate requests.",
               label = "advanced")
-    private RequestValidationCustomizer requestValidationCustomizer;
+    private RequestValidationCustomizer requestValidationCustomizer = new DefaultRequestValidationCustomizer();
     @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
     private boolean useGlobalSslContextParameters;
     @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context ",

@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
@@ -41,6 +42,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private final String basePath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
+    private RequestValidator requestValidator;
 
     public RestOpenApiProcessor(OpenAPI openAPI, String basePath, Processor processor) {
         super(processor);
@@ -65,6 +67,14 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
     public void setRestOpenapiProcessorStrategy(RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
         this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
+    }
+
+    public RequestValidator getRequestValidator() {
+        return requestValidator;
+    }
+
+    public void setRequestValidator(RequestValidator requestValidator) {
+        this.requestValidator = requestValidator;
     }
 
     @Override

@@ -62,7 +62,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer;
 import org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer;
 import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
@@ -468,9 +467,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         // let the rest endpoint configure itself
         endpoint.configureProperties(params);
 
-        RestOpenApiComponent component = getComponent();
         RequestValidator requestValidator = null;
-        if (component.isRequestValidationEnabled() || requestValidationEnabled) {
+        if (requestValidationEnabled) {
             requestValidator = configureRequestValidator(openapi, operation, method, uriTemplate);
         }
 
@@ -810,16 +808,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     RequestValidator configureRequestValidator(OpenAPI openapi, Operation operation, String method, String uriTemplate) {
-        RestOpenApiComponent component = getComponent();
-        RequestValidationCustomizer validationCustomizer = requestValidationCustomizer;
-        if (validationCustomizer == null) {
-            validationCustomizer = component.getRequestValidationCustomizer();
-        }
-
-        if (validationCustomizer == null) {
-            validationCustomizer = new DefaultRequestValidationCustomizer();
-        }
-
         RestOpenApiOperation restOpenApiOperation = new RestOpenApiOperation(operation, method, uriTemplate);
         OpenApiInteractionValidator.Builder builder = OpenApiInteractionValidator.createFor(openapi);
 
@@ -837,9 +825,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         });
         builder.withLevelResolver(levelResolverBuilder.build());
 
-        validationCustomizer.customizeOpenApiInteractionValidator(builder);
+        requestValidationCustomizer.customizeOpenApiInteractionValidator(builder);
 
-        return new RequestValidator(builder.build(), restOpenApiOperation, validationCustomizer);
+        return new RequestValidator(builder.build(), restOpenApiOperation, requestValidationCustomizer);
     }
 
     static String determineOption(
