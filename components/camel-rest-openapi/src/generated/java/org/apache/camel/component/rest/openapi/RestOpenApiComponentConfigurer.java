@@ -40,6 +40,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "requestValidationCustomizer": target.setRequestValidationCustomizer(property(camelContext, org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class, value)); return true;
         case "requestvalidationenabled":
         case "requestValidationEnabled": target.setRequestValidationEnabled(property(camelContext, boolean.class, value)); return true;
+        case "restopenapiprocessorstrategy":
+        case "restOpenapiProcessorStrategy": target.setRestOpenapiProcessorStrategy(property(camelContext, org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy.class, value)); return true;
         case "specificationuri":
         case "specificationUri": target.setSpecificationUri(property(camelContext, java.net.URI.class, value)); return true;
         case "sslcontextparameters":
@@ -72,6 +74,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "requestValidationCustomizer": return org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class;
         case "requestvalidationenabled":
         case "requestValidationEnabled": return boolean.class;
+        case "restopenapiprocessorstrategy":
+        case "restOpenapiProcessorStrategy": return org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy.class;
         case "specificationuri":
         case "specificationUri": return java.net.URI.class;
         case "sslcontextparameters":
@@ -105,6 +109,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "requestValidationCustomizer": return target.getRequestValidationCustomizer();
         case "requestvalidationenabled":
         case "requestValidationEnabled": return target.isRequestValidationEnabled();
+        case "restopenapiprocessorstrategy":
+        case "restOpenapiProcessorStrategy": return target.getRestOpenapiProcessorStrategy();
         case "specificationuri":
         case "specificationUri": return target.getSpecificationUri();
         case "sslcontextparameters":

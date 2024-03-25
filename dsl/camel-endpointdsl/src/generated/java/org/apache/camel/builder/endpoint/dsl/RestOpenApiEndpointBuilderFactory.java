@@ -235,6 +235,38 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom strategy for how to process Rest DSL requests.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param restOpenapiProcessorStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointConsumerBuilder restOpenapiProcessorStrategy(
+                org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
+            doSetProperty("restOpenapiProcessorStrategy", restOpenapiProcessorStrategy);
+            return this;
+        }
+        /**
+         * To use a custom strategy for how to process Rest DSL requests.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param restOpenapiProcessorStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointConsumerBuilder restOpenapiProcessorStrategy(
+                String restOpenapiProcessorStrategy) {
+            doSetProperty("restOpenapiProcessorStrategy", restOpenapiProcessorStrategy);
+            return this;
+        }
+        /**
          * If request validation is enabled, this option provides the capability
          * to customize the creation of OpenApiInteractionValidator used to
          * validate requests.

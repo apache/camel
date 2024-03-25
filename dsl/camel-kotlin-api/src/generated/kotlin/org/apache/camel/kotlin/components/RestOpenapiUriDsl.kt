@@ -140,6 +140,13 @@ public class RestOpenapiUriDsl(
   }
 
   /**
+   * To use a custom strategy for how to process Rest DSL requests
+   */
+  public fun restOpenapiProcessorStrategy(restOpenapiProcessorStrategy: String) {
+    it.property("restOpenapiProcessorStrategy", restOpenapiProcessorStrategy)
+  }
+
+  /**
    * API basePath, for example /v3. Default is unset, if set overrides the value present in OpenApi
    * specification and in the component configuration.
    */

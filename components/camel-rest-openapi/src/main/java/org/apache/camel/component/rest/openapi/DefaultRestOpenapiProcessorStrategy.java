@@ -29,15 +29,19 @@ import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
+/**
+ * Default {@link RestOpenapiProcessorStrategy} that links the Rest DSL to routes called via direct:operationId.
+ */
 public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         implements RestOpenapiProcessorStrategy, CamelContextAware, NonManagedService {
 
     private CamelContext camelContext;
     private ProducerCache producerCache;
+    private String component = "direct";
 
     @Override
     public boolean process(Operation operation, String path, Exchange exchange, AsyncCallback callback) {
-        Endpoint e = camelContext.getEndpoint("direct:" + operation.getOperationId());
+        Endpoint e = camelContext.getEndpoint(component + ":" + operation.getOperationId());
         AsyncProducer p = producerCache.acquireProducer(e);
         return p.process(exchange, doneSync -> {
             try {
@@ -58,9 +62,19 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         this.camelContext = camelContext;
     }
 
+    public String getComponent() {
+        return component;
+    }
+
+    /**
+     * Name of component to use for processing the Rest DSL requests.
+     */
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
     @Override
     protected void doInit() throws Exception {
-        // TODO: non-managed
         producerCache = new DefaultProducerCache(this, getCamelContext(), 1000);
         ServiceHelper.initService(producerCache);
     }

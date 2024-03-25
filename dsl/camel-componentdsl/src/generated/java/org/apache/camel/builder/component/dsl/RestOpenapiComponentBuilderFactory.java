@@ -51,6 +51,86 @@ public interface RestOpenapiComponentBuilderFactory {
             extends
                 ComponentBuilder<RestOpenApiComponent> {
         /**
+         * Enable validation of requests against the configured OpenAPI
+         * specification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param requestValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder requestValidationEnabled(
+                boolean requestValidationEnabled) {
+            doSetProperty("requestValidationEnabled", requestValidationEnabled);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Name of the Camel component that will service the requests. The
+         * component must be present in Camel registry and it must implement
+         * RestOpenApiConsumerFactory service provider interface. If not set
+         * CLASSPATH is searched for single component that implements
+         * RestOpenApiConsumerFactory SPI. Can be overridden in endpoint
+         * configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param consumerComponentName the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder consumerComponentName(
+                java.lang.String consumerComponentName) {
+            doSetProperty("consumerComponentName", consumerComponentName);
+            return this;
+        }
+        /**
+         * To use a custom strategy for how to process Rest DSL requests.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param restOpenapiProcessorStrategy the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder restOpenapiProcessorStrategy(
+                org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
+            doSetProperty("restOpenapiProcessorStrategy", restOpenapiProcessorStrategy);
+            return this;
+        }
+        /**
          * API basePath, for example /v2. Default is unset, if set overrides the
          * value present in OpenApi specification.
          * 
@@ -108,23 +188,6 @@ public interface RestOpenapiComponentBuilderFactory {
         default RestOpenapiComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Enable validation of requests against the configured OpenAPI
-         * specification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param requestValidationEnabled the value to set
-         * @return the dsl builder
-         */
-        default RestOpenapiComponentBuilder requestValidationEnabled(
-                boolean requestValidationEnabled) {
-            doSetProperty("requestValidationEnabled", requestValidationEnabled);
             return this;
         }
         /**
@@ -294,10 +357,13 @@ public interface RestOpenapiComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "requestValidationEnabled": ((RestOpenApiComponent) component).setRequestValidationEnabled((boolean) value); return true;
+            case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "consumerComponentName": ((RestOpenApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;
+            case "restOpenapiProcessorStrategy": ((RestOpenApiComponent) component).setRestOpenapiProcessorStrategy((org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy) value); return true;
             case "basePath": ((RestOpenApiComponent) component).setBasePath((java.lang.String) value); return true;
             case "host": ((RestOpenApiComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "requestValidationEnabled": ((RestOpenApiComponent) component).setRequestValidationEnabled((boolean) value); return true;
             case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.net.URI) value); return true;
             case "componentName": ((RestOpenApiComponent) component).setComponentName((java.lang.String) value); return true;
             case "consumes": ((RestOpenApiComponent) component).setConsumes((java.lang.String) value); return true;

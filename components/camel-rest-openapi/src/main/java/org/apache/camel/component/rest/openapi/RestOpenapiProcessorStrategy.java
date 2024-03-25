@@ -20,8 +20,23 @@ import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 
+/**
+ * Strategy for processing the Rest DSL that services an OpenAPI spec.
+ */
 public interface RestOpenapiProcessorStrategy {
 
+    /**
+     * Strategy for processing the Rest DSL operation
+     *
+     * @param  operation the rest operation
+     * @param  path      the context-path
+     * @param  exchange  the exchange
+     * @param  callback  the AsyncCallback will be invoked when the processing of the exchange is completed. If the
+     *                   exchange is completed synchronously, then the callback is also invoked synchronously. The
+     *                   callback should therefore be careful of starting recursive loop.
+     * @return           (doneSync) true to continue execute synchronously, false to continue being executed
+     *                   asynchronously
+     */
     boolean process(Operation operation, String path, Exchange exchange, AsyncCallback callback);
 
 }

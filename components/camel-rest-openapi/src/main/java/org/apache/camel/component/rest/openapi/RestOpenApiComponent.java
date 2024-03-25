@@ -139,6 +139,8 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context ",
               label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
+    private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
 
     public RestOpenApiComponent() {
     }
@@ -154,6 +156,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         endpoint.setRequestValidationCustomizer(getRequestValidationCustomizer());
         endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRequestValidationLevels(PropertiesHelper.extractProperties(parameters, "validation."));
+        endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -193,6 +196,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     @Override
     public boolean isUseGlobalSslContextParameters() {
         return useGlobalSslContextParameters;
+    }
+
+    public RestOpenapiProcessorStrategy getRestOpenapiProcessorStrategy() {
+        return restOpenapiProcessorStrategy;
+    }
+
+    public void setRestOpenapiProcessorStrategy(RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
+        this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
     }
 
     public void setBasePath(final String basePath) {

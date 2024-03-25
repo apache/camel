@@ -21,7 +21,7 @@ public class RestOpenApiEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(16);
         props.add("basePath");
         props.add("bridgeErrorHandler");
         props.add("componentName");
@@ -36,6 +36,7 @@ public class RestOpenApiEndpointUriFactory extends org.apache.camel.support.comp
         props.add("requestValidationCustomizer");
         props.add("requestValidationEnabled");
         props.add("requestValidationLevels");
+        props.add("restOpenapiProcessorStrategy");
         props.add("specificationUri");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

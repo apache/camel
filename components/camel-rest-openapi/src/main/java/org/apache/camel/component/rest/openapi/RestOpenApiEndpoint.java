@@ -82,13 +82,10 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Optional.ofNullable;
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ObjectHelper.notNull;
 import static org.apache.camel.util.StringHelper.after;
 import static org.apache.camel.util.StringHelper.before;
-import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * To call REST services using OpenAPI specification as contract.
@@ -168,6 +165,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                             + "&validation.request.body.unexpected=IGNORED. Supported values are INFO, ERROR, WARN & IGNORE.",
               label = "advanced", prefix = "validation.", multiValue = true)
     private Map<String, Object> requestValidationLevels = new HashMap<>();
+    @UriParam(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
+    private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
 
     public RestOpenApiEndpoint() {
         // help tooling instantiate endpoint
@@ -175,9 +174,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public RestOpenApiEndpoint(final String uri, final String remaining, final RestOpenApiComponent component,
                                final Map<String, Object> parameters) {
-        super(notEmpty(uri, "uri"), notNull(component, "component"));
-        this.parameters = parameters;
-
+        super(uri, component);
         if (remaining.contains("#")) {
             operationId = after(remaining, "#");
             String spec = before(remaining, "#");
@@ -197,6 +194,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (specificationUri == null) {
             specificationUri = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI;
         }
+        this.parameters = parameters;
         setExchangePattern(ExchangePattern.InOut);
     }
 
@@ -440,6 +438,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public Map<String, Object> getRequestValidationLevels() {
         return requestValidationLevels;
+    }
+
+    public RestOpenapiProcessorStrategy getRestOpenapiProcessorStrategy() {
+        return restOpenapiProcessorStrategy;
+    }
+
+    public void setRestOpenapiProcessorStrategy(RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
+        this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
     }
 
     Producer createProducerFor(
