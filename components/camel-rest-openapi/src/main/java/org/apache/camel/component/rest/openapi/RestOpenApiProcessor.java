@@ -69,7 +69,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // TODO: check if valid operation according to OpenApi
         // TODO: RequestValidator
         // TODO: binding
 
