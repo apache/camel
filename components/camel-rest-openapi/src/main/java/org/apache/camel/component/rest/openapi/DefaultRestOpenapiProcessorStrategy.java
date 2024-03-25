@@ -82,14 +82,27 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 throw new IllegalArgumentException(msg);
             } else if ("ignore".equalsIgnoreCase(missingOperation)) {
                 LOG.warn(msg + ". This validation error is ignored.");
-            } else if ("dev".equalsIgnoreCase(missingOperation)) {
-                LOG.warn(msg + ". This validation error is ignored when running in developer mode (profile=dev).");
+            } else if ("mock".equalsIgnoreCase(missingOperation)) {
+                LOG.debug(msg + ". This validation error is ignored (Will return a mocked/empty response).");
             }
         }
     }
 
     @Override
     public boolean process(Operation operation, String path, Exchange exchange, AsyncCallback callback) {
+        if ("mock".equalsIgnoreCase(missingOperation)) {
+            // check if there is a route
+            Endpoint e = camelContext.hasEndpoint(component + ":" + operation.getOperationId());
+            if (e == null) {
+                // no route for the given operation, so lets return an empty response
+                exchange.getMessage().setBody("");
+                // TODO: load canned response from classpath if exist
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+                callback.done(true);
+                return true;
+            }
+        }
+
         Endpoint e = camelContext.getEndpoint(component + ":" + operation.getOperationId());
         AsyncProducer p = producerCache.acquireProducer(e);
         return p.process(exchange, doneSync -> {
@@ -138,7 +151,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         // automatic adjust missing operation to fail, and ignore if you use developer mode
         if (missingOperation == null) {
             boolean dev = "dev".equalsIgnoreCase(camelContext.getCamelContextExtension().getProfile());
-            missingOperation = dev ? "dev" : "fail";
+            missingOperation = dev ? "mock" : "fail";
         }
     }
 

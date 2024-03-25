@@ -95,6 +95,23 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the consumer should fail,ignore or return a mock response for
+         * OpenAPI operations that are not mapped to a corresponding route.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: fail
+         * Group: consumer
+         * 
+         * @param missingOperation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder missingOperation(
+                java.lang.String missingOperation) {
+            doSetProperty("missingOperation", missingOperation);
+            return this;
+        }
+        /**
          * Name of the Camel component that will service the requests. The
          * component must be present in Camel registry and it must implement
          * RestOpenApiConsumerFactory service provider interface. If not set
@@ -359,6 +376,7 @@ public interface RestOpenapiComponentBuilderFactory {
             switch (name) {
             case "requestValidationEnabled": ((RestOpenApiComponent) component).setRequestValidationEnabled((boolean) value); return true;
             case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "missingOperation": ((RestOpenApiComponent) component).setMissingOperation((java.lang.String) value); return true;
             case "consumerComponentName": ((RestOpenApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;
             case "restOpenapiProcessorStrategy": ((RestOpenApiComponent) component).setRestOpenapiProcessorStrategy((org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy) value); return true;
             case "basePath": ((RestOpenApiComponent) component).setBasePath((java.lang.String) value); return true;

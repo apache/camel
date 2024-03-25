@@ -51,6 +51,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+
         } finally {
             context.stop();
         }
@@ -82,6 +83,43 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRestOpenApiMock() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=mock")
+                            .log("dummy");
+
+                    from("direct:getPetById")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/api/v3/pet/123")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+
+            // mocked gives empty response
+            given()
+                    .when()
+                    .get("/api/v3/pet/findByTags")
+                    .then()
+                    .statusCode(204)
+                    .body(equalTo(""));
         } finally {
             context.stop();
         }

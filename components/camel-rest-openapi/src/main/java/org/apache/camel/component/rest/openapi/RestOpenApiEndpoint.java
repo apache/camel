@@ -166,8 +166,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private Map<String, Object> requestValidationLevels = new HashMap<>();
     @UriParam(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
-    @UriParam(description = "Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that are not mapped to a corresponding route.",
-              enums = "fail,ignore,dummy", label = "consumer", defaultValue = "fail")
+    @UriParam(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
+              enums = "fail,ignore,mock", label = "consumer", defaultValue = "fail")
     private String missingOperation;
 
     public RestOpenApiEndpoint() {

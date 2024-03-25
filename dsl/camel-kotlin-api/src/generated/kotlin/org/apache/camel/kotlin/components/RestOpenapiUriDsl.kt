@@ -84,7 +84,7 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that
+   * Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that
    * are not mapped to a corresponding route.
    */
   public fun missingOperation(missingOperation: String) {
