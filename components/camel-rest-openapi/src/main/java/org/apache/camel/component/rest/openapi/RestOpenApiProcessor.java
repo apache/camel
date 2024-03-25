@@ -78,8 +78,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // TODO: binding
-
         String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
         if (path != null && path.startsWith(basePath)) {
             path = path.substring(basePath.length());
