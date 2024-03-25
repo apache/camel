@@ -45,7 +45,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
             given()
                     .when()
-                    .get("/api/v3/getPetById")
+                    .get("/api/v3/pet/123")
                     .then()
                     .statusCode(200)
                     .body(equalTo("{\"pet\": \"tony the tiger\"}"));

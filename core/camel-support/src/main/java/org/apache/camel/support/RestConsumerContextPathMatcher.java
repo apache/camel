@@ -122,8 +122,7 @@ public final class RestConsumerContextPathMatcher {
      * @param  consumerPaths the list of consumer context path details
      * @return               the best matched consumer, or <tt>null</tt> if none could be determined.
      */
-    public static <
-            T> ConsumerPath<T> matchBestPath(String requestMethod, String requestPath, List<ConsumerPath<T>> consumerPaths) {
+    public static <T> ConsumerPath<T> matchBestPath(String requestMethod, String requestPath, List<ConsumerPath<T>> consumerPaths) {
         ConsumerPath<T> answer = null;
 
         List<ConsumerPath<T>> candidates = new ArrayList<>();
