@@ -110,4 +110,32 @@ public class PlatformHttpRestOpenApiConsumerTest {
         }
     }
 
+    @Test
+    public void testRestOpenApiValidate() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json?requestValidationEnabled=true")
+                            .log("dummy");
+
+                    from("direct:updatePet")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .put("/api/v3/pet")
+                    .then()
+                    .statusCode(405); // no request body
+        } finally {
+            context.stop();
+        }
+    }
+
 }

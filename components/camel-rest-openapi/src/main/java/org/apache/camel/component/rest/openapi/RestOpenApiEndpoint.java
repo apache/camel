@@ -206,7 +206,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(final Processor processor) throws Exception {
         OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri);
         String path = determineBasePath(doc);
-        Processor target = new RestOpenApiProcessor(doc, path, processor);
+        Processor target = new RestOpenApiProcessor(this, doc, path, processor);
         CamelContextAware.trySetCamelContext(target, getCamelContext());
         return createConsumerFor(path, target);
     }

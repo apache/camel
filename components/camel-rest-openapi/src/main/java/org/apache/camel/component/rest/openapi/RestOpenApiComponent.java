@@ -128,8 +128,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " configuration.",
               defaultValue = DEFAULT_SPECIFICATION_URI_STR, label = "producer")
     private URI specificationUri;
-    @Metadata(description = "Enable validation of requests against the configured OpenAPI specification",
-              defaultValue = "false")
+    @Metadata(description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
     @Metadata(description = "If request validation is enabled, this option provides the capability to customize"
                             + " the creation of OpenApiInteractionValidator used to validate requests.",
@@ -252,8 +251,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         return this.requestValidationEnabled;
     }
 
-    public void setRequestValidationCustomizer(
-            RequestValidationCustomizer requestValidationCustomizer) {
+    public void setRequestValidationCustomizer(RequestValidationCustomizer requestValidationCustomizer) {
         this.requestValidationCustomizer = requestValidationCustomizer;
     }
 

@@ -18,10 +18,16 @@ package org.apache.camel.component.rest.openapi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -38,14 +44,15 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     private CamelContext camelContext;
+    private final RestOpenApiEndpoint endpoint;
     private final OpenAPI openAPI;
     private final String basePath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
-    private RequestValidator requestValidator;
 
-    public RestOpenApiProcessor(OpenAPI openAPI, String basePath, Processor processor) {
+    public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, Processor processor) {
         super(processor);
+        this.endpoint = endpoint;
         this.basePath = basePath;
         this.openAPI = openAPI;
         this.restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
@@ -69,17 +76,8 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
     }
 
-    public RequestValidator getRequestValidator() {
-        return requestValidator;
-    }
-
-    public void setRequestValidator(RequestValidator requestValidator) {
-        this.requestValidator = requestValidator;
-    }
-
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // TODO: RequestValidator
         // TODO: binding
 
         String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
@@ -91,8 +89,39 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         RestConsumerContextPathMatcher.ConsumerPath<Operation> m
                 = RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
         if (m != null) {
-            Operation o = m.getConsumer();
-            return restOpenapiProcessorStrategy.process(o, path, exchange, callback);
+            Operation operation = m.getConsumer();
+
+            // we have found the operation to call, but if validation is enabled then we need
+            // to validate the incoming request first
+            if (endpoint.isRequestValidationEnabled()) {
+                Map<String, Parameter> pathParameters;
+                if (operation.getParameters() != null) {
+                    pathParameters = operation.getParameters().stream()
+                            .filter(p -> "path".equals(p.getIn()))
+                            .collect(Collectors.toMap(Parameter::getName, Function.identity()));
+                } else {
+                    pathParameters = new HashMap<>();
+                }
+                try {
+                    final String uriTemplate = endpoint.resolveUri(path, pathParameters);
+                    RequestValidator validator = endpoint.configureRequestValidator(openAPI, operation, verb, uriTemplate);
+                    Set<String> errors = validator.validate(exchange);
+                    if (!errors.isEmpty()) {
+                        RestOpenApiValidationException exception = new RestOpenApiValidationException(errors);
+                        exchange.setException(exception);
+                        // validation error should be 405
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 405);
+                        callback.done(true);
+                        return true;
+                    }
+                } catch (Exception e) {
+                    exchange.setException(e);
+                    callback.done(true);
+                    return true;
+                }
+            }
+
+            return restOpenapiProcessorStrategy.process(operation, path, exchange, callback);
         }
 
         // okay we cannot process this requires so return either 404 or 405.
