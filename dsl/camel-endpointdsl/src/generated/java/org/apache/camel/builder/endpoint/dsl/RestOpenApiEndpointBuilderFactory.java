@@ -252,6 +252,24 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
+         * Used for inclusive filtering of mock data from directories. The
+         * pattern is using Ant-path style pattern. Multiple patterns can be
+         * specified separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: classpath:camel-mock/*
+         * Group: consumer (advanced)
+         * 
+         * @param mockIncludePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRestOpenApiEndpointConsumerBuilder mockIncludePattern(
+                String mockIncludePattern) {
+            doSetProperty("mockIncludePattern", mockIncludePattern);
+            return this;
+        }
+        /**
          * To use a custom strategy for how to process Rest DSL requests.
          * 
          * The option is a:

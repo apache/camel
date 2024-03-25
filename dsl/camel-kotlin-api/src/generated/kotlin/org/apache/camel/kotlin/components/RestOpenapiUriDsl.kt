@@ -148,6 +148,14 @@ public class RestOpenapiUriDsl(
   }
 
   /**
+   * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style
+   * pattern. Multiple patterns can be specified separated by comma.
+   */
+  public fun mockIncludePattern(mockIncludePattern: String) {
+    it.property("mockIncludePattern", mockIncludePattern)
+  }
+
+  /**
    * To use a custom strategy for how to process Rest DSL requests
    */
   public fun restOpenapiProcessorStrategy(restOpenapiProcessorStrategy: String) {
