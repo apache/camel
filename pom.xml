@@ -120,7 +120,7 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2024-02-17T17:17:18Z</project.build.outputTimestamp>
 
-        <cyclonedx-maven-plugin-version>2.7.11</cyclonedx-maven-plugin-version>
+        <cyclonedx-maven-plugin-version>2.8.0</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.6.0</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <license-maven-plugin-version>4.3</license-maven-plugin-version>
