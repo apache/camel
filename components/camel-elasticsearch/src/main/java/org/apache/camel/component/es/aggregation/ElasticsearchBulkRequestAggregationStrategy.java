@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
           description = "Aggregates two ElasticSearch BulkOperation into a single BulkRequest",
           annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
 @Configurer(metadataOnly = true)
-public class ElastichsearchBulkRequestAggregationStrategy implements AggregationStrategy {
+public class ElasticsearchBulkRequestAggregationStrategy implements AggregationStrategy {
 
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
