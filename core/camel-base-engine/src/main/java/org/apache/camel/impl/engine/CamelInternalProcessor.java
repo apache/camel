@@ -32,6 +32,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -1219,7 +1220,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Event notifier for {@link BacklogTracerAdvice} to capture {@link Exchange} sent to endpoints during tracing.
      */
-    private static final class BacklogTraceAdviceEventNotifier extends SimpleEventNotifierSupport {
+    private static final class BacklogTraceAdviceEventNotifier extends SimpleEventNotifierSupport implements NonManagedService {
 
         private final Object dummy = new Object();
 

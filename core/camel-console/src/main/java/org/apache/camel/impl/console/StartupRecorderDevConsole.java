@@ -27,11 +27,11 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("startup-recorder")
+@DevConsole(name = "startup-recorder", description = "Starting recording information")
 public class StartupRecorderDevConsole extends AbstractDevConsole {
 
     public StartupRecorderDevConsole() {
-        super("camel", "startup-recorder", "Startup Recorder", "Display startup recording");
+        super("camel", "startup-recorder", "Startup Recorder", "Starting recording information");
     }
 
     @Override
@@ -62,7 +62,9 @@ public class StartupRecorderDevConsole extends AbstractDevConsole {
                 jo.put("id", s.getId());
                 jo.put("parentId", s.getParentId());
                 jo.put("level", s.getLevel());
-                jo.put("name", s.getName());
+                if (s.getName() != null) {
+                    jo.put("name", s.getName());
+                }
                 jo.put("type", s.getType());
                 jo.put("description", s.getDescription());
                 jo.put("beginTime", s.getBeginTime());
@@ -82,7 +84,12 @@ public class StartupRecorderDevConsole extends AbstractDevConsole {
         String pad = StringHelper.padString(step.getLevel());
         String out = String.format("%s", pad + step.getType());
         String out2 = String.format("%6s ms", delta);
-        String out3 = String.format("%s(%s)", step.getDescription(), step.getName());
+        String out3;
+        if (step.getName() != null) {
+            out3 = String.format("%s (%s)", step.getDescription(), step.getName());
+        } else {
+            out3 = String.format("%s", step.getDescription());
+        }
         return String.format("%s : %s - %s", out2, out, out3);
     }
 

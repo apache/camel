@@ -13371,8 +13371,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "config", type = "string", description = "Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from the registry.", displayName = "Config"),
                     @YamlProperty(name = "failureRateThreshold", type = "number", defaultValue = "50", description = "Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.", displayName = "Failure Rate Threshold"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "ignoreException", type = "array:string", description = "Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception matching or inheriting from one of the list will not count as a failure nor success, even if the exceptions is part of recordExceptions.", displayName = "Ignore Exception"),
                     @YamlProperty(name = "minimumNumberOfCalls", type = "number", defaultValue = "100", description = "Configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate. For example, if minimumNumberOfCalls is 10, then at least 10 calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the CircuitBreaker will not transition to open even if all 9 calls have failed. Default minimumNumberOfCalls is 100", displayName = "Minimum Number Of Calls"),
                     @YamlProperty(name = "permittedNumberOfCallsInHalfOpenState", type = "number", defaultValue = "10", description = "Configures the number of permitted calls when the CircuitBreaker is half open. The size must be greater than 0. Default size is 10.", displayName = "Permitted Number Of Calls In Half Open State"),
+                    @YamlProperty(name = "recordException", type = "array:string", description = "Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.", displayName = "Record Exception"),
                     @YamlProperty(name = "slidingWindowSize", type = "number", defaultValue = "100", description = "Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. slidingWindowSize configures the size of the sliding window. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. The slidingWindowSize must be greater than 0. The minimumNumberOfCalls must be greater than 0. If the slidingWindowType is COUNT_BASED, the minimumNumberOfCalls cannot be greater than slidingWindowSize . If the slidingWindowType is TIME_BASED, you can pick whatever you want. Default slidingWindowSize is 100.", displayName = "Sliding Window Size"),
                     @YamlProperty(name = "slidingWindowType", type = "enum:TIME_BASED,COUNT_BASED", defaultValue = "COUNT_BASED", description = "Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. Default slidingWindowType is COUNT_BASED.", displayName = "Sliding Window Type"),
                     @YamlProperty(name = "slowCallDurationThreshold", type = "number", defaultValue = "60", description = "Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage. Default value is 60 seconds.", displayName = "Slow Call Duration Threshold"),
@@ -13441,6 +13443,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
+                case "ignoreException": {
+                    java.util.List<String> val = asStringList(node);
+                    target.setIgnoreExceptions(val);
+                    break;
+                }
                 case "minimumNumberOfCalls": {
                     String val = asText(node);
                     target.setMinimumNumberOfCalls(val);
@@ -13449,6 +13456,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "permittedNumberOfCallsInHalfOpenState": {
                     String val = asText(node);
                     target.setPermittedNumberOfCallsInHalfOpenState(val);
+                    break;
+                }
+                case "recordException": {
+                    java.util.List<String> val = asStringList(node);
+                    target.setRecordExceptions(val);
                     break;
                 }
                 case "slidingWindowSize": {

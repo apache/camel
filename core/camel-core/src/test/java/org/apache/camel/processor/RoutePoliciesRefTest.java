@@ -31,8 +31,8 @@ public class RoutePoliciesRefTest extends ContextTestSupport {
     private final MyCustomRoutePolicy policyB = new MyCustomRoutePolicy("B");
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("policy-a", policyA);
         jndi.bind("policy-b", policyB);
         return jndi;

@@ -40,9 +40,8 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
 
             final MountableFile mountableFile = MountableFile.forClasspathResource(jaasConfigFile);
             LOG.debug("Using mountable file at: {}", mountableFile.getFilesystemPath());
-            withCopyFileToContainer(mountableFile, "/tmp/kafka-jaas.config");
-
-            withEnv("KAFKA_OPTS", "-Djava.security.auth.login.config=/tmp/kafka-jaas.config")
+            withCopyFileToContainer(mountableFile, "/tmp/kafka-jaas.config")
+                    .withEnv("KAFKA_OPTS", "-Djava.security.auth.login.config=/tmp/kafka-jaas.config")
                     .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9093,BROKER://0.0.0.0:9092")
                     .withEnv("KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL", "PLAIN")
                     .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")

@@ -32,49 +32,49 @@ There is also a container image available in https://hub.docker.com/r/apache/cam
 
 [source,bash]
 ----
-docker pull apache/camel-jbang:3.20.5
+docker pull apache/camel-jbang:4.4.0
 ----
 
 or
 
 [source,bash]
 ----
-podman pull apache/camel-jbang:3.20.5
+podman pull apache/camel-jbang:4.4.0
 ----
 
 Once you have the image in your local registry you can run all the command listed below by simple doing:
 
 [source,bash]
 ----
-docker run apache/camel-jbang:3.20.5 version
+docker run apache/camel-jbang:4.4.0 version
 ----
 
 or
 
 [source,bash]
 ----
-podman run apache/camel-jbang:3.20.5 version
+podman run apache/camel-jbang:4.4.0 version
 ----
 
 This will print the following result:
 
 [source,bash]
 ----
-Camel JBang version: 3.20.5
+Camel JBang version: 4.4.0
 ----
 
 So running a simple route will be as easy as doing the following:
 
 [source,bash]
 ----
-docker run apache/camel-jbang:3.20.5 run example.yaml
+docker run apache/camel-jbang:4.4.0 run example.yaml
 ----
 
 or
 
 [source,bash]
 ----
-podman run apache/camel-jbang:3.20.5 run example.yaml
+podman run apache/camel-jbang:4.4.0 run example.yaml
 ----
 
 == Using Camel JBang
@@ -528,44 +528,33 @@ curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/ | jq
 
 === Using profiles
 
-Camel JBang have the concept of profiles. A _profile_ is essentially a name (id) that refers
-to which configuration to automatic load with Camel JBang. The default profile is named `application`
-which is a (smart default) to let Camel JBang automatic load `application.properties` (if present).
+*Available from Camel 4.5*
 
-This means that creating profiles matching to a properties file with the same name.
+Camel JBang comes with three set of profiles
 
-For example having a profile named `local`, means that Camel JBang will load `local.properties` instead
-of `application.properties`.
+- `dev` - for development (default)
+- `test` - for testing (currently same as production)
+- `prod` - for production
 
-To use a profile, you specify as command line option `--profile` such as:
+The developer profile will pre-configure Camel JBang with a number of developer assisted features when
+running Camel. For example tracing messages during routing, additional metrics collected, and more.
+This is useful during development and also enhanced the Camel JBang CLI tool.
+
+However, you may want to run Camel JBang in a more production like situation, which you can do with:
 
 [source,bash]
 ----
-camel run hello.java --profile=local
+camel run hello.java --profile=prod
 ----
 
-You can only specify one profile name, i.e. `--profile=local,two` is not valid.
+You can have profile specific configuration in configuration files using the naming style `application-<profile>.properties`,
+such as in the following:
 
-In the `properties` files you can configure all
-the configurations from xref:components:others:main.adoc[Camel Main].
+- `application.properties` - Common configuration that is always in use (default).
+- `application-dev.properties` - Developer specific configuration for  the `dev` profile.
+- `application-prod.properties` - Developer specific configuration for  the `prod` profile.
 
-For example to turn off xref:stream-caching.adoc[Stream Caching] and enable log masking you can specify:
-
-[source,properties]
-----
-camel.main.streamCaching=false
-camel.main.logMask=true
-----
-
-And you can also configure Camel components such as camel-kafka to declare the URL to the brokers:
-
-[source,properties]
-----
-camel.component.kafka.brokers=broker1:9092,broker2:9092,broker3:9092
-----
-
-NOTE: Keys starting with `camel.jbang` are reserved keys that are used by Camel JBang internally,
-and as well allow for pre-configuring arguments for Camel JBang commands.
+The profile specific configuration will override values in the common configuration.
 
 === Downloading JARs over the internet
 
@@ -1056,7 +1045,7 @@ camel plugin delete <plugin-name>
 
 === Running Camel K integrations or pipes
 
-Camel also supports running Camel K integrations and binding files, which are in CRD format (Kubernetes Custom Resource Definitions).
+Camel also supports running Camel K integrations and pipes, which represent Kubernetes custom resources following a specific CRD format (Kubernetes Custom Resource Definitions).
 
 For example a pipe file named `joke.yaml`:
 
@@ -1090,6 +1079,102 @@ Can be run with camel:
 ----
 camel run joke.yaml
 ----
+
+==== Binding Kamelets in a pipe
+
+Camel JBang is able to create the Pipe custom resource for you.
+You can use the `bind` command to specify a source and a sink that should be set in the pipe.
+As a result Camel JBang will create a proper Pipe custom resource for you.
+
+The command expects a file name as command argument and provides several options to define the source and the sink that should be used in the pipe.
+
+[source,bash]
+----
+camel bind joke.yaml --source chuck-norris-source --sink log-sink
+----
+
+This creates the `joke.yaml` file that represents the Pipe resource.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: joke
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: chuck-norris-source
+    properties:
+      period: 5000
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: log-sink
+----
+
+NOTE: The bind command is able to inspect the Kamelets being used as a source and sink in order to automatically set all required properties.
+In case the Kamelet defines a required property and the user has not specified such the command will automatically set this property with an example value.
+Once the pipe resource file is generated you can review and set the properties as you wish.
+
+The bind command supports the following options:
+
+[width="100%",cols="1m,3",options="header",]
+|=======================================================================
+|Option |Description
+
+|--source
+|Source (from) such as a Kamelet or Camel endpoint uri that provides data..
+
+|--sink
+|Sink (to) such as a Kamelet or Camel endpoint uri where data should be sent to.
+
+|--step
+|Add optional 1-n steps to the pipe processing. Each step represents a reference to a Kamelet of type action.
+
+|--property
+|Add a pipe property in the form of [source,sink,error-handler,step-<n>].<key>=<value> where <n> is the step number starting from 1.
+
+|--error-handler
+|Add error handler (none,log,sink:<endpoint>). Sink endpoints are expected in the format [[apigroup/]version:]kind:[namespace/]name, plain Camel URIs or Kamelet name.
+
+|--output
+|Output format generated by this command (supports: file, yaml or json). Default is "file".
+|=======================================================================
+
+==== Binding explicit Camel URIs
+
+Usually, the source and sink reference a Kamelet by its name as shown in the previous section.
+As an alternative, you can also just use an arbitrary Camel endpoint URI that acts as a source or sink in the pipe.
+
+[source,bash]
+----
+camel bind joke.yaml --source chuck-norris-source --sink https://mycompany.com/the-service
+----
+
+As a result the Pipe resource uses the Camel endpoints as source and sink.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+# ...
+  sink:
+    uri: https://mycompany.com/the-service # <1>
+----
+<1> Pipe with explicit Camel endpoint URI as sink where the data gets pushed to
+
+==== Advanced binding options
+
+The Camel K JBang plugin also provides the bind command. It enhances the arbitrary bind command with the option to directly create this resource on the
+Kubernetes cluster. Please refer to the plugin documentation for more complex examples and a full description on how to use the bind command options.
 
 === Run from clipboard
 
@@ -1216,7 +1301,6 @@ TIP: See more options with `camel cmd send --help`.
 
 The source for this example is provided on GitHub at https://github.com/apache/camel-kamelets-examples/tree/main/jbang/mqtt)[camel-jbang MQTT example].
 
-
 === Controlling local Camel integrations
 
 To list the currently running Camel integrations you use the `ps` command:
@@ -1224,9 +1308,9 @@ To list the currently running Camel integrations you use the `ps` command:
 [source,bash]
 ----
 camel ps
-  PID   NAME                          READY  STATUS    AGE
- 61818  sample.camel.MyCamelApplica…   1/1   Running  26m38s
- 62506  dude                           1/1   Running   4m34s
+  PID   NAME                             READY  STATUS    AGE
+ 61818  sample.camel.MyCamelApplica...   1/1   Running  26m38s
+ 62506  dude                             1/1   Running   4m34s
 ----
 
 This lists the PID, the name and age of the integration.
@@ -1269,9 +1353,9 @@ This is done using the `--watch` parameter as follows:
 [source,bash]
 ----
 camel ps --watch
-  PID   NAME                          READY  STATUS    AGE
- 61818  sample.camel.MyCamelApplica…   1/1   Running  26m38s
- 62506  dude                           1/1   Running   4m34s
+  PID   NAME                             READY  STATUS    AGE
+ 61818  sample.camel.MyCamelApplica...   1/1   Running  26m38s
+ 62506  dude                             1/1   Running   4m34s
 ----
 
 ==== Controlling Spring Boot and Quarkus integrations
@@ -1648,9 +1732,9 @@ must be installed in the running integration, this can be done, either explicit 
 [source,bash]
 ----
 camel ps
-  PID   NAME                          READY  STATUS    AGE
- 61818  sample.camel.MyCamelApplica…   1/1   Running  26m38s
- 62506  dude.java                      1/1   Running   4m34s
+  PID   NAME                             READY  STATUS    AGE
+ 61818  sample.camel.MyCamelApplica...   1/1   Running  26m38s
+ 62506  dude.java                        1/1   Running   4m34s
 ----
 
 With the PID you can then attach Jolokia:
@@ -2267,9 +2351,9 @@ A health check may often be failed due to an exception was thrown which can be s
 [source,bash]
 ----
 camel get health --trace
-  PID   NAME      AGE   ID                                      RL  STATE    RATE       SINCE     MESSAGE
- 61038  mykafka  6m19s  camel/context                            R   UP    187/187/-  1s/6m16s/-
- 61038  mykafka  6m19s  camel/kafka-consumer-kafka-not-secure…   R  DOWN   187/-/187  1s/-/6m16s  KafkaConsumer is not ready - Error: Invalid url in bootstrap.servers: value
+  PID   NAME      AGE   ID                                        RL  STATE    RATE       SINCE     MESSAGE
+ 61038  mykafka  6m19s  camel/context                             R   UP    187/187/-  1s/6m16s/-
+ 61038  mykafka  6m19s  camel/kafka-consumer-kafka-not-secure...  R  DOWN   187/-/187  1s/-/6m16s  KafkaConsumer is not ready - Error: Invalid url in bootstrap.servers: value
 
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -2602,7 +2686,6 @@ This can be suppressed by setting the option `suppressExceptions` to `true` as s
  [Body is null]
 ----
 
-
 === Transforming message using Components
 
 Some components can also be used for message transformation such as FlatPack, Velocity, FreeMarker, Thymeleaf, and good old XSLT.
@@ -2801,14 +2884,14 @@ For example to list all the components
 
 [source,bash]
 ----
-camel catalog components
+camel catalog component
 ----
 
 And to see which Kamelets are available:
 
 [source,bash]
 ----
-camel catalog kamelets
+camel catalog kamelet
 ----
 
 TIP: Use `camel catalog --help` to see all possible commands.
@@ -3131,6 +3214,8 @@ camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=../my
 
 TIP: See the possible options by running: `camel export --help` for more details.
 
+NOTE: You cannot use `--profile` option when exporting to Camel Quarkus.
+
 === Exporting to Camel Main
 
 The command `export --runtime=camel-main` will export your current Camel JBang file(s) to a Maven based
@@ -3393,6 +3478,12 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.mavenSettingsSecurity`
 |Optional location of Maven settings-security.xml file to decrypt settings.xml
+
+|`camel.jbang.mavenCentralEnabled`
+|Whether downloading JARs from Maven Central repository is enabled
+
+|`camel.jbang.mavenApacheSnapshotEnabled`
+|Whether downloading JARs from ASF Maven Snapshot repository is enabled
 
 |`camel.jbang.exportDir`
 |Directory where the project will be exported

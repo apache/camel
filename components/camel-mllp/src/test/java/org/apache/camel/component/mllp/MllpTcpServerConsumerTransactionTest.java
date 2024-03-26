@@ -41,7 +41,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();

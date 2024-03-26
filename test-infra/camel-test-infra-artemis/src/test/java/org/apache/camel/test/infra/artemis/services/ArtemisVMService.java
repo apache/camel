@@ -30,6 +30,29 @@ public class ArtemisVMService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
 
+    public ArtemisVMService() {
+    }
+
+    protected ArtemisVMService(int port) {
+        super(port);
+    }
+
+    /**
+     * This class should rarely be used. It is intended for some tests that check for reliability operations and require
+     * using the same broker ID between start/stop cycles.
+     */
+    public static class ReusableArtemisVMService extends ArtemisVMService {
+
+        public ReusableArtemisVMService(int port) {
+            super(port);
+        }
+
+        @Override
+        protected int computeBrokerId() {
+            return 0;
+        }
+    }
+
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {
         brokerURL = "vm://" + brokerId;

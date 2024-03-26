@@ -92,6 +92,7 @@
             <groupId>org.jolokia</groupId>
             <artifactId>jolokia-agent-jvm</artifactId>
             <version>${jolokia-version}</version>
+            <classifier>javaagent</classifier>
         </dependency>
         <!-- servlet for launching hawtio -->
         <dependency>
@@ -155,10 +156,6 @@
             <artifactId>openapi-generator</artifactId>
             <version>${openapi-generator}</version>
             <exclusions>
-                <exclusion>
-                    <groupId>io.swagger.parser.v3</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>

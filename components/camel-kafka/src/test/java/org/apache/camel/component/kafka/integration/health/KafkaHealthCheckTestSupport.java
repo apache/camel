@@ -61,8 +61,7 @@ abstract class KafkaHealthCheckTestSupport implements ConfigurableRoute, Configu
     public static void beforeClass() {
         service.initialize();
 
-        LOG.info("### Embedded Kafka cluster broker list: {}", service.getBootstrapServers());
-        System.setProperty("bootstrapServers", service.getBootstrapServers());
+        KafkaTestUtil.setServiceProperties(service);
         System.setProperty("brokers", service.getBootstrapServers());
     }
 

@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.StopWatch;
@@ -32,7 +33,8 @@ import org.slf4j.LoggerFactory;
  * A {@link org.apache.camel.spi.EventNotifier} to trigger (shutdown of the Main JVM, or stopping all routes) when
  * maximum number of messages has been processed.
  */
-public class MainDurationEventNotifier extends EventNotifierSupport {
+public class MainDurationEventNotifier extends EventNotifierSupport implements NonManagedService {
+
     private static final Logger LOG = LoggerFactory.getLogger(MainDurationEventNotifier.class);
 
     private enum Action {

@@ -1,10 +1,6 @@
 [list-of-camel-components]
 = Components
 
-Component references are references used to place a component in an assembly. Apache Component references
-provides various references that offers services for messaging, sending data, notifications and various other 
-services that can not only resolve easy messaging and transferring data but also provide securing of data.
-
 == Core Components
 
 Below is the list of core components that are provided by Apache Camel.

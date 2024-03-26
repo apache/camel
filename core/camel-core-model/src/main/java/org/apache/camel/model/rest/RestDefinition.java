@@ -564,6 +564,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition type(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException(MISSING_VERB);
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setType(classType);
+        return this;
+    }
+
     public RestDefinition type(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -573,6 +584,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setTypeClass(classType);
         verb.setType(asTypeName(classType));
+        return this;
+    }
+
+    public RestDefinition outType(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException(MISSING_VERB);
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutType(classType);
         return this;
     }
 
@@ -909,6 +931,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             binding.setOutType(parseText(camelContext, verb.getOutType()));
             binding.setOutTypeClass(verb.getOutTypeClass());
             // verb takes precedence over configuration on rest
+            if (verb.getBindingMode() != null) {
+                binding.setBindingMode(parseText(camelContext, verb.getBindingMode()));
+            } else {
+                binding.setBindingMode(getBindingMode());
+            }
             if (verb.getConsumes() != null) {
                 binding.setConsumes(parseText(camelContext, verb.getConsumes()));
             } else {
@@ -919,10 +946,31 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setProduces(getProduces());
             }
-            if (verb.getBindingMode() != null) {
-                binding.setBindingMode(parseText(camelContext, verb.getBindingMode()));
-            } else {
-                binding.setBindingMode(getBindingMode());
+            if (binding.getType() != null || binding.getOutType() != null && binding.getBindingMode() != null) {
+                // okay we have binding mode and in/out type defined - then we can infer consume/produces
+                String mode = binding.getBindingMode();
+                if ("json".equals(mode)) {
+                    if (binding.getConsumes() == null && binding.getType() != null) {
+                        binding.setConsumes("application/json");
+                    }
+                    if (binding.getProduces() == null && binding.getOutType() != null) {
+                        binding.setProduces("application/json");
+                    }
+                } else if ("xml".equals(mode)) {
+                    if (binding.getConsumes() == null && binding.getType() != null) {
+                        binding.setConsumes("application/xml");
+                    }
+                    if (binding.getProduces() == null && binding.getOutType() != null) {
+                        binding.setProduces("application/xml");
+                    }
+                } else if ("json_xml".equals(mode)) {
+                    if (binding.getConsumes() == null && binding.getType() != null) {
+                        binding.setConsumes("application/json;application/xml");
+                    }
+                    if (binding.getProduces() == null && binding.getOutType() != null) {
+                        binding.setProduces("application/json;application/xml");
+                    }
+                }
             }
             if (verb.getSkipBindingOnErrorCode() != null) {
                 binding.setSkipBindingOnErrorCode(parseText(camelContext, verb.getSkipBindingOnErrorCode()));
@@ -968,18 +1016,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // append options
             Map<String, Object> options = new HashMap<>();
-            // verb takes precedence over configuration on rest
-            if (verb.getConsumes() != null) {
-                options.put("consumes", parseText(camelContext, verb.getConsumes()));
-            } else if (getConsumes() != null) {
-                options.put("consumes", getConsumes());
+            if (binding.getConsumes() != null) {
+                options.put("consumes", binding.getConsumes());
             }
-            if (verb.getProduces() != null) {
-                options.put("produces", parseText(camelContext, verb.getProduces()));
-            } else if (getProduces() != null) {
-                options.put("produces", getProduces());
+            if (binding.getProduces() != null) {
+                options.put("produces", binding.getProduces());
             }
-
             // append optional type binding information
             String inType = binding.getType();
             if (inType != null) {
@@ -989,7 +1031,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (outType != null) {
                 options.put("outType", outType);
             }
-
             if (component != null && !component.isEmpty()) {
                 options.put("consumerComponentName", component);
             }

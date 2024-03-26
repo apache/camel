@@ -21,12 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public final class DependencyDownloaderClassResolver extends DefaultClassResolver {
 
+    private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final List<ResourceResolverListener> resourceResolverListeners = new ArrayList<>();
     private final KnownDependenciesResolver knownDependenciesResolver;
     private final DependencyDownloader downloader;
@@ -56,6 +61,15 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
         if (answer == null) {
             // okay maybe the class is from a known GAV that we can download first and then load the class
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(uri);
+            if (gav == null) {
+                // okay maybe its a known pojo-bean from the catalog
+                // lookup via class name without package
+                String last = StringHelper.afterLast(uri, ".", uri);
+                PojoBeanModel model = catalog.pojoBeanModel(last);
+                if (model != null && uri.equals(model.getJavaType())) {
+                    gav = MavenGav.fromCoordinates(model.getGroupId(), model.getArtifactId(), model.getVersion(), null, null);
+                }
+            }
             if (gav != null) {
                 if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
                         gav.getVersion())) {
@@ -85,6 +99,15 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
         if (answer == null) {
             // okay maybe the class is from a known GAV that we can download first and then load the class
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(name);
+            if (gav == null) {
+                // okay maybe its a known pojo-bean from the catalog
+                // lookup via class name without package
+                String last = StringHelper.afterLast(name, ".", name);
+                PojoBeanModel model = catalog.pojoBeanModel(last);
+                if (model != null && name.equals(model.getJavaType())) {
+                    gav = MavenGav.fromCoordinates(model.getGroupId(), model.getArtifactId(), model.getVersion(), null, null);
+                }
+            }
             if (gav != null) {
                 if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
                         gav.getVersion())) {

@@ -21,14 +21,12 @@ public class KnativeSinkBindingConfigurer extends org.apache.camel.support.compo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeSinkBinding target = (org.apache.camel.component.knative.spi.KnativeSinkBinding) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "name":
-        case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
+        case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "objectapiversion":
-        case "ObjectApiVersion": target.setObjectApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectApiVersion": target.setObjectApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "objectkind":
-        case "ObjectKind": target.setObjectKind(property(camelContext, java.lang.String.class, value)); return true;
-        case "type":
-        case "Type": target.setType(property(camelContext, org.apache.camel.component.knative.spi.Knative.Type.class, value)); return true;
+        case "objectKind": target.setObjectKind(property(camelContext, java.lang.String.class, value)); return true;
+        case "type": target.setType(property(camelContext, org.apache.camel.component.knative.spi.Knative.Type.class, value)); return true;
         default: return false;
         }
     }
@@ -36,14 +34,12 @@ public class KnativeSinkBindingConfigurer extends org.apache.camel.support.compo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "name":
-        case "Name": return java.lang.String.class;
+        case "name": return java.lang.String.class;
         case "objectapiversion":
-        case "ObjectApiVersion": return java.lang.String.class;
+        case "objectApiVersion": return java.lang.String.class;
         case "objectkind":
-        case "ObjectKind": return java.lang.String.class;
-        case "type":
-        case "Type": return org.apache.camel.component.knative.spi.Knative.Type.class;
+        case "objectKind": return java.lang.String.class;
+        case "type": return org.apache.camel.component.knative.spi.Knative.Type.class;
         default: return null;
         }
     }
@@ -52,14 +48,12 @@ public class KnativeSinkBindingConfigurer extends org.apache.camel.support.compo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeSinkBinding target = (org.apache.camel.component.knative.spi.KnativeSinkBinding) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "name":
-        case "Name": return target.getName();
+        case "name": return target.getName();
         case "objectapiversion":
-        case "ObjectApiVersion": return target.getObjectApiVersion();
+        case "objectApiVersion": return target.getObjectApiVersion();
         case "objectkind":
-        case "ObjectKind": return target.getObjectKind();
-        case "type":
-        case "Type": return target.getType();
+        case "objectKind": return target.getObjectKind();
+        case "type": return target.getType();
         default: return null;
         }
     }

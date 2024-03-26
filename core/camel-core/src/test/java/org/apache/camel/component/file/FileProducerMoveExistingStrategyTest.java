@@ -36,8 +36,8 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
     private MyStrategy myStrategy = new MyStrategy();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myStrategy", myStrategy);
         return jndi;
     }

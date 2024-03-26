@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Send messages to WhatsApp.
+ */
 public fun UriDsl.whatsapp(i: WhatsappUriDsl.() -> Unit) {
   WhatsappUriDsl(this).apply(i)
 }
@@ -39,43 +42,84 @@ public class WhatsappUriDsl(
 
   private var phoneNumberId: String = ""
 
+  /**
+   * The phone number ID taken from whatsapp-business dashboard.
+   */
   public fun phoneNumberId(phoneNumberId: String) {
     this.phoneNumberId = phoneNumberId
     it.url("$phoneNumberId")
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  /**
+   * Facebook graph api version.
+   */
   public fun apiVersion(apiVersion: String) {
     it.property("apiVersion", apiVersion)
   }
 
+  /**
+   * Can be used to set an alternative base URI, e.g. when you want to test the component against a
+   * mock WhatsApp API
+   */
   public fun baseUri(baseUri: String) {
     it.property("baseUri", baseUri)
   }
 
+  /**
+   * HttpClient implementation
+   */
   public fun httpClient(httpClient: String) {
     it.property("httpClient", httpClient)
   }
 
+  /**
+   * Webhook path
+   */
   public fun webhookPath(webhookPath: String) {
     it.property("webhookPath", webhookPath)
   }
 
+  /**
+   * Webhook verify token
+   */
   public fun webhookVerifyToken(webhookVerifyToken: String) {
     it.property("webhookVerifyToken", webhookVerifyToken)
   }
 
+  /**
+   * WhatsApp service implementation
+   */
   public fun whatsappService(whatsappService: String) {
     it.property("whatsappService", whatsappService)
   }
 
+  /**
+   * The authorization access token taken from whatsapp-business dashboard.
+   */
   public fun authorizationToken(authorizationToken: String) {
     it.property("authorizationToken", authorizationToken)
   }

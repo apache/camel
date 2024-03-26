@@ -350,11 +350,12 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // must catch any exception from aggregation
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                 if (aggregatedExchange != null) {
-                    if (variableReceive != null) {
+                    if (ExchangeHelper.shouldSetVariableResult(aggregatedExchange, variableReceive)) {
                         // result should be stored in variable instead of message body
-                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive, exchange.getMessage());
-                        exchange.getMessage().setBody(originalBody);
-                        exchange.getMessage().setHeaders(originalHeaders);
+                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(aggregatedExchange, variableReceive,
+                                aggregatedExchange.getMessage());
+                        aggregatedExchange.getMessage().setBody(originalBody);
+                        aggregatedExchange.getMessage().setHeaders(originalHeaders);
                     }
                     // copy aggregation result onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, aggregatedExchange);

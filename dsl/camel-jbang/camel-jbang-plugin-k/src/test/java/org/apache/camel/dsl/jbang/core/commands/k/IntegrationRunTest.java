@@ -17,7 +17,6 @@
 
 package org.apache.camel.dsl.jbang.core.commands.k;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import org.apache.camel.RuntimeCamelException;
@@ -66,7 +65,7 @@ class IntegrationRunTest extends KubeBaseTest {
     public void shouldAddTraits() throws Exception {
         IntegrationRun command = createCommand();
         command.filePaths = new String[] { "classpath:route.yaml" };
-        command.traits = new String[] { "logging.level=DEBUG", "container.imagePullPolicy=Always" };
+        command.traits = new String[] { "logging.level=DEBUG", "container.image-pull-policy=Always" };
         command.output = "yaml";
         command.doCall();
 
@@ -198,63 +197,6 @@ class IntegrationRunTest extends KubeBaseTest {
                             constant: Hello Camel !!!
                         - to: log:info
                   traits: {}""", printer.getOutput());
-    }
-
-    @Test
-    public void shouldInferDependenciesYamlRoute() throws Exception {
-        IntegrationRun command = createCommand();
-        command.filePaths = new String[] { "classpath:route-deps.yaml" };
-        command.output = "yaml";
-        command.doCall();
-
-        String[] specDependencies = getDependencies(printer.getOutput());
-        String[] deps = new String[] {
-                "camel:caffeine", "camel:http", "camel:jackson", "camel:jsonpath", "camel:log", "camel:timer" };
-        Assertions.assertArrayEquals(deps, specDependencies, "Dependencies don't match: " + Arrays.toString(specDependencies));
-    }
-
-    @Test
-    public void shouldAddComplexDependenciesYamlRoute() throws Exception {
-        IntegrationRun command = createCommand();
-        command.filePaths = new String[] { "classpath:route-deps.yaml" };
-        command.dependencies = new String[] { "camel-twitter", "mvn:foo:bar:1.0" };
-        command.output = "yaml";
-        command.doCall();
-
-        String[] specDependencies = getDependencies(printer.getOutput());
-        String[] deps = new String[] {
-                "camel:caffeine", "camel:http", "camel:jackson", "camel:jsonpath", "camel:log", "camel:timer", "camel:twitter",
-                "mvn:foo:bar:1.0" };
-        Assertions.assertArrayEquals(deps, specDependencies, "Dependencies don't match: " + Arrays.toString(specDependencies));
-    }
-
-    @Test
-    public void shouldInferDependenciesJavaRoute() throws Exception {
-        IntegrationRun command = createCommand();
-        command.filePaths = new String[] { "classpath:Sample.java" };
-        command.output = "yaml";
-        command.doCall();
-
-        String[] specDependencies = getDependencies(printer.getOutput());
-        String[] deps = new String[] {
-                "camel:aws2-s3", "camel:caffeine", "camel:dropbox", "camel:jacksonxml", "camel:java-joor-dsl", "camel:kafka",
-                "camel:mongodb", "camel:telegram", "camel:zipfile" };
-        Assertions.assertArrayEquals(deps, specDependencies, "Dependencies don't match: " + Arrays.toString(specDependencies));
-    }
-
-    @Test
-    public void shouldAddComplexDependenciesJavaRoute() throws Exception {
-        IntegrationRun command = createCommand();
-        command.filePaths = new String[] { "classpath:Sample.java" };
-        command.dependencies = new String[] { "camel-twitter", "mvn:foo:bar:1.0" };
-        command.output = "yaml";
-        command.doCall();
-
-        String[] specDependencies = getDependencies(printer.getOutput());
-        String[] deps = new String[] {
-                "camel:aws2-s3", "camel:caffeine", "camel:dropbox", "camel:jacksonxml", "camel:java-joor-dsl", "camel:kafka",
-                "camel:mongodb", "camel:telegram", "camel:twitter", "camel:zipfile", "mvn:foo:bar:1.0" };
-        Assertions.assertArrayEquals(deps, specDependencies, "Dependencies don't match: " + Arrays.toString(specDependencies));
     }
 
     @Test
@@ -596,6 +538,47 @@ class IntegrationRunTest extends KubeBaseTest {
     }
 
     @Test
+    public void shouldUseTraitWithListItem() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.traits
+                = new String[] {
+                        "toleration.taints=camel.apache.org/master:NoExecute:300", "camel.properties=camel.foo=bar",
+                        "affinity.node-affinity-labels=kubernetes.io/hostname" };
+        command.output = "yaml";
+        command.doCall();
+
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  annotations:
+                    camel.apache.org/operator.id: camel-k
+                  name: route
+                spec:
+                  flows:
+                  - additionalProperties:
+                      from:
+                        uri: timer:tick
+                        steps:
+                        - set-body:
+                            constant: Hello Camel !!!
+                        - to: log:info
+                  traits:
+                    affinity:
+                      nodeAffinityLabels:
+                      - kubernetes.io/hostname
+                      podAffinity: false
+                      podAntiAffinity: false
+                    camel:
+                      properties:
+                      - camel.foo=bar
+                    toleration:
+                      taints:
+                      - camel.apache.org/master:NoExecute:300""", printer.getOutput());
+    }
+
+    @Test
     public void shouldUseCompression() throws Exception {
         IntegrationRun command = createCommand();
         command.filePaths = new String[] { "classpath:route.yaml" };
@@ -657,6 +640,32 @@ class IntegrationRunTest extends KubeBaseTest {
                     language: yaml
                     name: route.yaml
                   traits: {}""", removeLicenseHeader(printer.getOutput()));
+    }
+
+    @Test
+    public void shouldFailWithMissingOperatorId() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.useFlows = false;
+        command.output = "yaml";
+
+        command.operatorId = "";
+
+        Assertions.assertEquals(-1, command.doCall());
+
+        Assertions.assertEquals("Operator id must be set", printer.getOutput());
+    }
+
+    @Test
+    public void shouldHandleUnsupportedOutputFormat() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.useFlows = false;
+        command.output = "wrong";
+
+        Assertions.assertEquals(-1, command.doCall());
+
+        Assertions.assertEquals("Unsupported output format 'wrong' (supported: yaml, json)", printer.getOutput());
     }
 
     private IntegrationRun createCommand() {

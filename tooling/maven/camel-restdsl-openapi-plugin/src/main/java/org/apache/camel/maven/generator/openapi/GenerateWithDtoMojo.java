@@ -30,7 +30,7 @@ public class GenerateWithDtoMojo extends GenerateMojo {
         if (skip) {
             return;
         }
-        super.execute();
+        super.execute(true);
 
         generateDto("java");
     }

@@ -1,0 +1,16 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.5 to 4.6
+
+=== variables
+
+When using `variableReceive` then the variable is only set if processing the `Exchange` was completely successfully.
+
+For example calling a route that fails due to an exception being thrown (even if `onException` or `errorHandler` are in use)
+then the variable is no longer set. Also, if the route is marked for rollback, or to stop continue routing with `.stop()`.
+
+This is the same logic that the routing engine uses, whether to continue routing the `Exchange` or not.

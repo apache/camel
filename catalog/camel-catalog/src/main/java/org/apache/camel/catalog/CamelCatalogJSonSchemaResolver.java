@@ -114,6 +114,13 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getDevConsoleJSonSchema(String name) {
+        name = sanitizeFileName(name);
+        final String file = camelCatalog.getRuntimeProvider().getDevConsoleJSonSchemaDirectory() + "/" + name + EXTENSION;
+        return loadResourceFromVersionManager(file);
+    }
+
+    @Override
     public String getModelJSonSchema(String name) {
         final String file = MODEL_DIR + "/" + name + EXTENSION;
         return loadResourceFromVersionManager(file);
@@ -128,6 +135,13 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     @Override
     public String getOtherJSonSchema(String name) {
         final String file = camelCatalog.getRuntimeProvider().getOtherJSonSchemaDirectory() + "/" + name + EXTENSION;
+        return loadResourceFromVersionManager(file);
+    }
+
+    @Override
+    public String getPojoBeanJSonSchema(String name) {
+        name = sanitizeFileName(name);
+        final String file = camelCatalog.getRuntimeProvider().getPojoBeanJSonSchemaDirectory() + "/" + name + EXTENSION;
         return loadResourceFromVersionManager(file);
     }
 
@@ -164,6 +178,6 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^A-Za-z0-9-]", "-");
+        return fileName.replaceAll("[^A-Za-z0-9+-/]", "-");
     }
 }

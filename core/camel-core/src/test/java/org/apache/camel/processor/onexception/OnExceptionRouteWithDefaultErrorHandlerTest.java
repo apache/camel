@@ -93,8 +93,8 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myOwnHandler", myOwnHandlerBean);
         jndi.bind("myServiceBean", myServiceBean);
         return jndi;

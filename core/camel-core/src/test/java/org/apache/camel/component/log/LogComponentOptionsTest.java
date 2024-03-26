@@ -73,7 +73,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
 
         long after = PluginHelper.getBeanIntrospection(context).getInvokedCounter();
 
-        assertTrue(after > before, "Should use Java reflection");
+        assertEquals(before, after, "Should not use Java reflection");
     }
 
     @Test

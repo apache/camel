@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -30,7 +31,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("event")
+@DevConsole(name = "event", displayName = "Camel Events", description = "The most recent Camel events")
 @Configurer(bootstrap = true)
 public class EventConsole extends AbstractDevConsole {
 
@@ -171,7 +172,7 @@ public class EventConsole extends AbstractDevConsole {
         return arr;
     }
 
-    private class ConsoleEventNotifier extends EventNotifierSupport {
+    private class ConsoleEventNotifier extends EventNotifierSupport implements NonManagedService {
 
         @Override
         public void notify(CamelEvent event) throws Exception {

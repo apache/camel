@@ -25,6 +25,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.quartz.QuartzComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.quartz.JobBuilder;
@@ -49,9 +50,12 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ScheduledRoutePolicy extends RoutePolicySupport
         implements ScheduledRoutePolicyConstants, NonManagedService {
+
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
+
     protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<>();
     private Scheduler scheduler;
+    @Metadata(description = "Timeout (in millis) when stopping routes.", defaultValue = "10000")
     private int routeStopGracePeriod;
     private TimeUnit timeUnit;
 

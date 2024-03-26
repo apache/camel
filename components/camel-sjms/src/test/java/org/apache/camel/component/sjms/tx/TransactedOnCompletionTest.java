@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class TransactedOnCompletionTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Produce
     protected ProducerTemplate template;

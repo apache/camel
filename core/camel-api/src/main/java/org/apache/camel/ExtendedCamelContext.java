@@ -71,6 +71,18 @@ public interface ExtendedCamelContext {
     }
 
     /**
+     * Sets the profile Camel should run as (dev,test,prod).
+     */
+    void setProfile(String profile);
+
+    /**
+     * The profile Camel should run as (dev,test,prod). Returns null if no profile has been set.
+     */
+    default String getProfile() {
+        return null;
+    }
+
+    /**
      * Sets the registry Camel should use for looking up beans by name or type.
      * <p/>
      * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot

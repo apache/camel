@@ -30,15 +30,13 @@ import com.azure.messaging.servicebus.ServiceBusTransactionContext;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.*;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 import static org.apache.camel.component.azure.servicebus.CredentialType.CONNECTION_STRING;
 
 @UriParams
-public class ServiceBusConfiguration implements Cloneable {
+public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyAware {
 
     @UriPath
     private String topicOrQueueName;
@@ -59,6 +57,9 @@ public class ServiceBusConfiguration implements Cloneable {
     private AmqpRetryOptions amqpRetryOptions;
     @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
+    @UriParam(label = "common",
+              description = "To use a custom HeaderFilterStrategy to filter Service Bus application properties to and from Camel message headers.")
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
     @UriParam(label = "consumer", defaultValue = "receiveMessages")
     private ServiceBusConsumerOperationDefinition consumerOperation = ServiceBusConsumerOperationDefinition.receiveMessages;
     @UriParam(label = "consumer")
@@ -68,6 +69,8 @@ public class ServiceBusConfiguration implements Cloneable {
     private String subscriptionName;
     @UriParam(label = "consumer")
     private boolean disableAutoComplete;
+    @UriParam(label = "consumer")
+    private boolean enableDeadLettering;
     @UriParam(label = "consumer", defaultValue = "PEEK_LOCK")
     private ServiceBusReceiveMode serviceBusReceiveMode = ServiceBusReceiveMode.PEEK_LOCK;
     @UriParam(label = "consumer", defaultValue = "5m")
@@ -189,6 +192,17 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
+     * To use a custom HeaderFilterStrategy to filter headers (application properties) to and from the Camel message.
+     */
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    /**
      * Sets the receiverAsyncClient in order to consume messages by the consumer
      */
     public ServiceBusReceiverAsyncClient getReceiverAsyncClient() {
@@ -209,6 +223,18 @@ public class ServiceBusConfiguration implements Cloneable {
 
     public void setDisableAutoComplete(boolean disableAutoComplete) {
         this.disableAutoComplete = disableAutoComplete;
+    }
+
+    /**
+     * Enable application level deadlettering to the subscription deadletter subqueue if deadletter related headers are
+     * set.
+     */
+    public boolean isEnableDeadLettering() {
+        return enableDeadLettering;
+    }
+
+    public void setEnableDeadLettering(boolean enableDeadLettering) {
+        this.enableDeadLettering = enableDeadLettering;
     }
 
     /**

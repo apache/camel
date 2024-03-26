@@ -52,7 +52,7 @@ public class NewInstanceTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         jndiContext = new JndiContext();
         jndiContext.bind("myBean", new MyBean());
         return new DefaultRegistry(new JndiBeanRepository(jndiContext));

@@ -1661,6 +1661,24 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * A pluggable TemporaryQueueResolver that allows you to use your own
+         * resolver for creating temporary queues (some messaging systems has
+         * special requirements for creating temporary queues).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param temporaryQueueResolver the value to set
+         * @return the dsl builder
+         */
+        default JmsComponentBuilder temporaryQueueResolver(
+                org.apache.camel.component.jms.TemporaryQueueResolver temporaryQueueResolver) {
+            doSetProperty("temporaryQueueResolver", temporaryQueueResolver);
+            return this;
+        }
+        /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a jakarta.jms.ObjectMessage. If the
@@ -2068,6 +2086,7 @@ public interface JmsComponentBuilderFactory {
             case "recoveryInterval": getOrCreateConfiguration((JmsComponent) component).setRecoveryInterval((long) value); return true;
             case "requestTimeoutCheckerInterval": getOrCreateConfiguration((JmsComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
             case "synchronous": getOrCreateConfiguration((JmsComponent) component).setSynchronous((boolean) value); return true;
+            case "temporaryQueueResolver": getOrCreateConfiguration((JmsComponent) component).setTemporaryQueueResolver((org.apache.camel.component.jms.TemporaryQueueResolver) value); return true;
             case "transferException": getOrCreateConfiguration((JmsComponent) component).setTransferException((boolean) value); return true;
             case "transferExchange": getOrCreateConfiguration((JmsComponent) component).setTransferExchange((boolean) value); return true;
             case "useMessageIDAsCorrelationID": getOrCreateConfiguration((JmsComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;

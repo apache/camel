@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
+import io.qdrant.client.PointIdFactory;
 import io.qdrant.client.grpc.Points;
 import io.qdrant.client.grpc.Points.Filter;
 import io.qdrant.client.grpc.Points.PointId;
@@ -81,4 +83,20 @@ public class QdrantConverter {
                 .setFilter(filter)
                 .build();
     }
+
+    @Converter
+    public static PointId toPointId(long id) {
+        return PointIdFactory.id(id);
+    }
+
+    @Converter
+    public static PointId toPointId(Long id) {
+        return PointIdFactory.id(id);
+    }
+
+    @Converter
+    public static PointId toPointId(UUID id) {
+        return PointIdFactory.id(id);
+    }
+
 }

@@ -925,6 +925,10 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getIncrementalTicketsResult",
         arg("unixEpochTime", long.class)),
 
+    GET_JIRA_LINKS(
+        Iterable.class,
+        "getJiraLinks"),
+
     GET_JOB_STATUS(
         org.zendesk.client.v2.model.JobStatus.class,
         "getJobStatus",

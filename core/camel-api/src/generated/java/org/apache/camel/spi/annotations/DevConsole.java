@@ -32,8 +32,23 @@ import java.lang.annotation.Target;
 public @interface DevConsole {
 
     /**
+     * The group of the dev console
+     */
+    String group() default "camel";
+
+    /**
      * The ID of the dev console.
      */
-    String value();
+    String name();
+
+    /**
+     * Display name (title)
+     */
+    String displayName() default "";
+
+    /**
+     * Description of the console
+     */
+    String description();
 
 }

@@ -65,10 +65,18 @@ public final class MicrometerConstants {
     public static final String EVENT_TYPE_TAG = "eventType";
     public static final String METRICS_REGISTRY_NAME = "metricsRegistry";
 
+    public static final String KIND = "kind";
+    public static final String KIND_EXCHANGE = "CamelExchangeEvent";
+    public static final String KIND_ROUTE = "CamelRoute";
+    public static final String KIND_HISTORY = "CamelMessageHistory";
+    @Deprecated
     public static final String SERVICE_NAME = "serviceName";
     public static final String ENDPOINT_NAME = "endpointName";
 
+    // used for distribution statistics config filter
     public static final Predicate<Meter.Id> CAMEL_METERS = id -> id.getTag(CAMEL_CONTEXT_TAG) != null;
+    public static final Predicate<Meter.Id> TIMERS = id -> id.getType() == Meter.Type.TIMER;
+    public static final Predicate<Meter.Id> DISTRIBUTION_SUMMARIES = id -> id.getType() == Meter.Type.DISTRIBUTION_SUMMARY;
     public static final Predicate<Meter.Id> ALWAYS = id -> true;
 
     private MicrometerConstants() {

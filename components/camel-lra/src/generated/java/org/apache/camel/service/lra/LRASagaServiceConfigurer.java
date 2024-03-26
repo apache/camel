@@ -22,15 +22,15 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
         org.apache.camel.service.lra.LRASagaService target = (org.apache.camel.service.lra.LRASagaService) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "coordinatorcontextpath":
-        case "CoordinatorContextPath": target.setCoordinatorContextPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "coordinatorContextPath": target.setCoordinatorContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "coordinatorurl":
-        case "CoordinatorUrl": target.setCoordinatorUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "coordinatorUrl": target.setCoordinatorUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "localparticipantcontextpath":
-        case "LocalParticipantContextPath": target.setLocalParticipantContextPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "localParticipantContextPath": target.setLocalParticipantContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "localparticipanturl":
-        case "LocalParticipantUrl": target.setLocalParticipantUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "localParticipantUrl": target.setLocalParticipantUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -39,15 +39,15 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "camelContext": return org.apache.camel.CamelContext.class;
         case "coordinatorcontextpath":
-        case "CoordinatorContextPath": return java.lang.String.class;
+        case "coordinatorContextPath": return java.lang.String.class;
         case "coordinatorurl":
-        case "CoordinatorUrl": return java.lang.String.class;
+        case "coordinatorUrl": return java.lang.String.class;
         case "localparticipantcontextpath":
-        case "LocalParticipantContextPath": return java.lang.String.class;
+        case "localParticipantContextPath": return java.lang.String.class;
         case "localparticipanturl":
-        case "LocalParticipantUrl": return java.lang.String.class;
+        case "localParticipantUrl": return java.lang.String.class;
         default: return null;
         }
     }
@@ -57,15 +57,15 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
         org.apache.camel.service.lra.LRASagaService target = (org.apache.camel.service.lra.LRASagaService) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return target.getCamelContext();
+        case "camelContext": return target.getCamelContext();
         case "coordinatorcontextpath":
-        case "CoordinatorContextPath": return target.getCoordinatorContextPath();
+        case "coordinatorContextPath": return target.getCoordinatorContextPath();
         case "coordinatorurl":
-        case "CoordinatorUrl": return target.getCoordinatorUrl();
+        case "coordinatorUrl": return target.getCoordinatorUrl();
         case "localparticipantcontextpath":
-        case "LocalParticipantContextPath": return target.getLocalParticipantContextPath();
+        case "localParticipantContextPath": return target.getLocalParticipantContextPath();
         case "localparticipanturl":
-        case "LocalParticipantUrl": return target.getLocalParticipantUrl();
+        case "localParticipantUrl": return target.getLocalParticipantUrl();
         default: return null;
         }
     }

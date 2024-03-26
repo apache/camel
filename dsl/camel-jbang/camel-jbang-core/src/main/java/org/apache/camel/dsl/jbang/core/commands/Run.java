@@ -142,9 +142,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
-    @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
-            description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
-    String profile = "application";
+    @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
+            description = "Profile to run (dev, test, or prod).")
+    String profile = "dev";
 
     @Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies)")
@@ -159,13 +159,20 @@ public class Run extends CamelCommand {
 
     @Option(names = { "--maven-settings" },
             description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
-                          +
-                          " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+                          + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
     @Option(names = { "--maven-settings-security" },
             description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
+
+    @Option(names = { "--maven-central-enabled" },
+            description = "Whether downloading JARs from Maven Central repository is enabled")
+    boolean mavenCentralEnabled = true;
+
+    @Option(names = { "--maven-apache-snapshot-enabled" },
+            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    boolean mavenApacheSnapshotEnabled = true;
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
@@ -224,7 +231,7 @@ public class Run extends CamelCommand {
                           " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
-    @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
+    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
     String[] property;
 
     @Option(names = { "--stub" }, description = "Stubs all the matching endpoint with the given component name or pattern."
@@ -278,10 +285,6 @@ public class Run extends CamelCommand {
 
     public Run(CamelJBangMain main) {
         super(main);
-    }
-
-    public String getProfile() {
-        return profile;
     }
 
     @Override
@@ -418,11 +421,11 @@ public class Run extends CamelCommand {
                         run = "debug";
                     }
                     System.err
-                            .println("Cannot " + run + " because " + getProfile()
-                                     + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
+                            .println("Cannot " + run
+                                     + " because application.properties file does not exist or camel.main.routesIncludePattern is not configured");
                     return 1;
                 } else {
-                    // silent-run then auto-detect all files (except properties as they are loaded explicit or via profile)
+                    // silent-run then auto-detect all files (except properties as they are loaded explicit)
                     String[] allFiles = new File(".").list((dir, name) -> !name.endsWith(".properties"));
                     if (allFiles != null) {
                         files.addAll(Arrays.asList(allFiles));
@@ -436,11 +439,14 @@ public class Run extends CamelCommand {
         }
 
         final KameletMain main = createMainInstance();
+        main.setProfile(profile);
         main.setRepos(repos);
         main.setDownload(download);
         main.setFresh(fresh);
         main.setMavenSettings(mavenSettings);
         main.setMavenSettingsSecurity(mavenSettingsSecurity);
+        main.setMavenCentralEnabled(mavenCentralEnabled);
+        main.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
         main.setDownloadListener(new RunDownloadListener());
         main.setAppName("Apache Camel (JBang)");
 
@@ -464,7 +470,6 @@ public class Run extends CamelCommand {
             main.setStubPattern(stub);
         }
 
-        writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
         if (dev) {
             writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", "true");
             // allow quick shutdown during development
@@ -497,7 +502,6 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.verbose", verbose ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.jbang.backlogTracing", "true");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
 
@@ -604,17 +608,19 @@ public class Run extends CamelCommand {
 
             // check for properties files
             if (file.endsWith(".properties")) {
-                if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
-                    file = "file:" + file;
-                }
-                if (ObjectHelper.isEmpty(propertiesFiles)) {
-                    propertiesFiles = file;
-                } else {
-                    propertiesFiles = propertiesFiles + "," + file;
-                }
-                if (dev && file.startsWith("file:")) {
-                    // we can only reload if file based
-                    sjReload.add(file.substring(5));
+                if (acceptPropertiesFile(file)) {
+                    if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+                        file = "file:" + file;
+                    }
+                    if (ObjectHelper.isEmpty(propertiesFiles)) {
+                        propertiesFiles = file;
+                    } else {
+                        propertiesFiles = propertiesFiles + "," + file;
+                    }
+                    if (dev && file.startsWith("file:")) {
+                        // we can only reload if file based
+                        sjReload.add(file.substring(5));
+                    }
                 }
                 continue;
             }
@@ -717,15 +723,26 @@ public class Run extends CamelCommand {
 
         if (propertiesFiles != null) {
             String[] filesLocation = propertiesFiles.split(",");
+            // sort so general application.properties comes first (we should load profile first)
+            List<String> names = new ArrayList<>(List.of(filesLocation));
+            names.sort((o1, o2) -> {
+                // make sure application.properties is last
+                if (o1.endsWith("application.properties")) {
+                    return 1;
+                } else if (o2.endsWith("application.properties")) {
+                    return -1;
+                }
+                return 0;
+            });
             StringBuilder locations = new StringBuilder();
-            for (String file : filesLocation) {
+            for (String file : names) {
                 if (!file.startsWith("file:")) {
                     if (!file.startsWith("/")) {
                         file = FileSystems.getDefault().getPath("").toAbsolutePath() + File.separator + file;
                     }
                     file = "file://" + file;
                 }
-                if (locations.length() > 0) {
+                if (!locations.isEmpty()) {
                     locations.append(",");
                 }
                 locations.append(file);
@@ -737,9 +754,9 @@ public class Run extends CamelCommand {
             } else {
                 loc = locations.toString();
             }
-            // TODO: remove duplicates in loc
             main.addInitialProperty("camel.component.properties.location", loc);
             writeSettings("camel.component.properties.location", loc);
+            main.setPropertyPlaceholderLocations(loc);
         }
 
         // merge existing dependencies with --deps
@@ -795,6 +812,15 @@ public class Run extends CamelCommand {
         }
     }
 
+    private boolean acceptPropertiesFile(String file) {
+        String name = FileUtil.onlyName(file);
+        if (profile != null && name.startsWith("application-")) {
+            // only accept the file that matches the correct profile
+            return ("application-" + profile).equals(name);
+        }
+        return true;
+    }
+
     protected void doAddInitialProperty(KameletMain main) {
         // noop
     }
@@ -836,12 +862,37 @@ public class Run extends CamelCommand {
             return answer;
         }
 
+        // application.properties
         File profilePropertiesFile;
         if (sourceDir != null) {
-            profilePropertiesFile = new File(sourceDir, getProfile() + ".properties");
+            profilePropertiesFile = new File(sourceDir, "application.properties");
         } else {
-            profilePropertiesFile = new File(getProfile() + ".properties");
+            profilePropertiesFile = new File("application.properties");
         }
+        // based application-profile.properties
+        answer = doLoadAndInitProfileProperties(profilePropertiesFile);
+
+        if (profile != null) {
+            if (sourceDir != null) {
+                profilePropertiesFile = new File(sourceDir, "application-" + profile + ".properties");
+            } else {
+                profilePropertiesFile = new File("application-" + profile + ".properties");
+            }
+            // application-profile.properties should override standard application.properties
+            Properties override = doLoadAndInitProfileProperties(profilePropertiesFile);
+            if (override != null) {
+                answer.putAll(override);
+            }
+        }
+
+        if (kameletsVersion == null) {
+            kameletsVersion = VersionHelper.extractKameletsVersion();
+        }
+        return answer;
+    }
+
+    private Properties doLoadAndInitProfileProperties(File profilePropertiesFile) throws Exception {
+        Properties answer = null;
         if (profilePropertiesFile.exists()) {
             answer = loadProfileProperties(profilePropertiesFile);
             // logging level/color may be configured in the properties file
@@ -850,14 +901,13 @@ public class Run extends CamelCommand {
                     = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
             loggingJson
                     = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            if (propertiesFiles == null) {
-                propertiesFiles = "file:" + profilePropertiesFile.getPath();
-            } else {
-                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getPath();
-            }
             repos = answer.getProperty("camel.jbang.repos", repos);
             mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
             mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
+            mavenCentralEnabled = "true"
+                    .equals(answer.getProperty("camel.jbang.maven-central-enabled", mavenCentralEnabled ? "true" : "false"));
+            mavenApacheSnapshotEnabled = "true".equals(answer.getProperty("camel.jbang.maven-apache-snapshot-enabled",
+                    mavenApacheSnapshotEnabled ? "true" : "false"));
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
@@ -869,9 +919,6 @@ public class Run extends CamelCommand {
             exclude = answer.getProperty("camel.jbang.exclude", exclude);
         }
 
-        if (kameletsVersion == null) {
-            kameletsVersion = VersionHelper.extractKameletsVersion();
-        }
         return answer;
     }
 
@@ -977,7 +1024,7 @@ public class Run extends CamelCommand {
         cmds.remove("--background=true");
         cmds.remove("--background");
 
-        cmds.add(0, "camel");
+        addCamelCommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
@@ -1540,6 +1587,15 @@ public class Run extends CamelCommand {
         @Override
         protected boolean failIfEmptyArgs() {
             return false;
+        }
+    }
+
+    protected static void addCamelCommand(List<String> cmds) {
+        if (FileUtil.isWindows()) {
+            String jbangDir = System.getenv().getOrDefault("JBANG_DIR", System.getProperty("user.home") + "\\.jbang");
+            cmds.add(0, jbangDir + "\\bin\\camel.cmd");
+        } else {
+            cmds.add(0, "camel");
         }
     }
 }

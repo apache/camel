@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelEvent;
@@ -1322,7 +1323,7 @@ public class NotifyBuilder {
     /**
      * Notifier which hooks into Camel to listen for {@link Exchange} relevant events for this builder
      */
-    private final class ExchangeNotifier extends EventNotifierSupport {
+    private final class ExchangeNotifier extends EventNotifierSupport implements NonManagedService {
 
         @Override
         public void notify(CamelEvent event) throws Exception {

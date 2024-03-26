@@ -20,6 +20,10 @@ import java.util.function.Supplier;
 
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.infinispan.InfinispanIdempotentRepository;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.infinispan.client.hotrod.Flag;
 import org.infinispan.client.hotrod.RemoteCache;
@@ -28,22 +32,32 @@ import org.infinispan.commons.api.BasicCache;
 
 import static org.apache.camel.component.infinispan.remote.InfinispanRemoteUtil.getCacheWithFlags;
 
+@Metadata(label = "bean",
+          description = "Idempotent repository that uses remote Infinispan to store message ids.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Configurer(metadataOnly = true)
 @ManagedResource(description = "Infinispan Remote message id repository")
 public class InfinispanRemoteIdempotentRepository extends InfinispanIdempotentRepository {
-    private final String cacheName;
-    private final Supplier<RemoteCache<String, Boolean>> cache;
 
-    private InfinispanRemoteConfiguration configuration;
+    private Supplier<RemoteCache<String, Boolean>> cache;
     private InfinispanRemoteManager manager;
+
+    @Metadata(description = "Name of cache", required = true)
+    private String cacheName;
+    @Metadata(description = "Configuration for remote Infinispan")
+    private InfinispanRemoteConfiguration configuration;
+
+    public InfinispanRemoteIdempotentRepository() {
+    }
 
     public InfinispanRemoteIdempotentRepository(String cacheName) {
         this.cacheName = cacheName;
-        this.cache = Suppliers.memorize(() -> getCacheWithFlags(manager, cacheName, Flag.FORCE_RETURN_VALUE));
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        ObjectHelper.notNull(cacheName, "cacheName", this);
 
         if (this.configuration == null) {
             this.configuration = new InfinispanRemoteConfiguration();
@@ -51,12 +65,13 @@ public class InfinispanRemoteIdempotentRepository extends InfinispanIdempotentRe
 
         this.manager = new InfinispanRemoteManager(configuration);
         this.manager.setCamelContext(getCamelContext());
-        this.manager.start();
+        this.cache = Suppliers.memorize(() -> getCacheWithFlags(manager, cacheName, Flag.FORCE_RETURN_VALUE));
+        ServiceHelper.startService(manager);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        this.manager.shutdown();
+        ServiceHelper.stopAndShutdownService(manager);
         super.doShutdown();
     }
 
@@ -94,7 +109,6 @@ public class InfinispanRemoteIdempotentRepository extends InfinispanIdempotentRe
         if (this.configuration == null) {
             this.configuration = new InfinispanRemoteConfiguration();
         }
-
         this.configuration.setCacheContainer(cacheContainer);
     }
 }

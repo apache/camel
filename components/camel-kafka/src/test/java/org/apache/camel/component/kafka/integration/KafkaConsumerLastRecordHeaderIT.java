@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class KafkaConsumerLastRecordHeaderIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerLastRecordHeaderIT extends BaseKafkaTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerLastRecordHeaderIT.class);
     private static final String TOPIC = "last-record";
 

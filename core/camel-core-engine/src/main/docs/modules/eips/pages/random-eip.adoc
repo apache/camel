@@ -34,7 +34,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .loadBalance().ramdom()
+    .loadBalance().random()
         .to("seda:x")
         .to("seda:y")
         .to("seda:z")
@@ -48,7 +48,7 @@ XML::
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-       <ramdom/>
+       <random/>
        <to uri="seda:x"/>
        <to uri="seda:y"/>
        <to uri="seda:z"/>

@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 116 options, which are listed below.
+The camel.main supports 117 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -89,6 +89,7 @@ The camel.main supports 116 options, which are listed below.
 | *camel.main.modeline* | Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like experience by being able to configure various settings using modeline directly in your route source code. | false | boolean
 | *camel.main.name* | Sets the name of the CamelContext. |  | String
 | *camel.main.producerTemplate{zwsp}CacheSize* | Producer template endpoints cache size. | 1000 | int
+| *camel.main.profile* | Camel profile to use when running. The dev profile is for development, which enables a set of additional developer focus functionality, tracing, debugging, and gathering additional runtime statistics that are useful during development. However, those additional features has a slight overhead cost, and are not enabled for production profile. The default profile is prod. |  | String
 | *camel.main.routeFilterExclude{zwsp}Pattern* | Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by PatternHelper#matchPattern(String,String) . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include. |  | String
 | *camel.main.routeFilterInclude{zwsp}Pattern* | Used for filtering routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by PatternHelper#matchPattern(String,String) . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include. |  | String
 | *camel.main.routesBuilder{zwsp}Classes* | Sets classes names that implement RoutesBuilder . |  | String
@@ -386,7 +387,7 @@ The camel.opentelemetry supports 4 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 9 options, which are listed below.
+The camel.metrics supports 10 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -399,6 +400,7 @@ The camel.metrics supports 9 options, which are listed below.
 | *camel.metrics.enableRouteEvent{zwsp}Notifier* | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
 | *camel.metrics.enableRoute{zwsp}Policy* | Set whether to enable the MicrometerRoutePolicyFactory for capturing metrics on route processing times. | true | boolean
 | *camel.metrics.namingStrategy* | Controls the name style to use for metrics. Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase) | default | String
+| *camel.metrics.routePolicyLevel* | Sets the level of information to capture. all = both context and routes. | all | String
 | *camel.metrics.textFormat{zwsp}Version* | The text-format version to use with Prometheus scraping. 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8 | 0.0.4 | String
 |===
 

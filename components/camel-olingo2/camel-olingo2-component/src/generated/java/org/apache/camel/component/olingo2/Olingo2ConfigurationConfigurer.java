@@ -43,35 +43,34 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
         org.apache.camel.component.olingo2.Olingo2Configuration target = (org.apache.camel.component.olingo2.Olingo2Configuration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.olingo2.internal.Olingo2ApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.olingo2.internal.Olingo2ApiName.class, value)); return true;
         case "connecttimeout":
-        case "ConnectTimeout": target.setConnectTimeout(property(camelContext, int.class, value)); return true;
+        case "connectTimeout": target.setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "contenttype":
-        case "ContentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "entityproviderreadproperties":
-        case "EntityProviderReadProperties": target.setEntityProviderReadProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class, value)); return true;
+        case "entityProviderReadProperties": target.setEntityProviderReadProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class, value)); return true;
         case "entityproviderwriteproperties":
-        case "EntityProviderWriteProperties": target.setEntityProviderWriteProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class, value)); return true;
+        case "entityProviderWriteProperties": target.setEntityProviderWriteProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class, value)); return true;
         case "filteralreadyseen":
-        case "FilterAlreadySeen": target.setFilterAlreadySeen(property(camelContext, boolean.class, value)); return true;
+        case "filterAlreadySeen": target.setFilterAlreadySeen(property(camelContext, boolean.class, value)); return true;
         case "httpasyncclientbuilder":
-        case "HttpAsyncClientBuilder": target.setHttpAsyncClientBuilder(property(camelContext, org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class, value)); return true;
+        case "httpAsyncClientBuilder": target.setHttpAsyncClientBuilder(property(camelContext, org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class, value)); return true;
         case "httpclientbuilder":
-        case "HttpClientBuilder": target.setHttpClientBuilder(property(camelContext, org.apache.http.impl.client.HttpClientBuilder.class, value)); return true;
+        case "httpClientBuilder": target.setHttpClientBuilder(property(camelContext, org.apache.http.impl.client.HttpClientBuilder.class, value)); return true;
         case "httpheaders":
-        case "HttpHeaders": target.setHttpHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "httpHeaders": target.setHttpHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxy":
-        case "Proxy": target.setProxy(property(camelContext, org.apache.http.HttpHost.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxy": target.setProxy(property(camelContext, org.apache.http.HttpHost.class, value)); return true;
         case "serviceuri":
-        case "ServiceUri": target.setServiceUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "serviceUri": target.setServiceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "sockettimeout":
-        case "SocketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
         case "splitresult":
-        case "SplitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
+        case "splitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
-        case "SslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         default: return false;
         }
     }
@@ -85,35 +84,34 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.olingo2.internal.Olingo2ApiName.class;
+        case "apiName": return org.apache.camel.component.olingo2.internal.Olingo2ApiName.class;
         case "connecttimeout":
-        case "ConnectTimeout": return int.class;
+        case "connectTimeout": return int.class;
         case "contenttype":
-        case "ContentType": return java.lang.String.class;
+        case "contentType": return java.lang.String.class;
         case "entityproviderreadproperties":
-        case "EntityProviderReadProperties": return org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class;
+        case "entityProviderReadProperties": return org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class;
         case "entityproviderwriteproperties":
-        case "EntityProviderWriteProperties": return org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class;
+        case "entityProviderWriteProperties": return org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class;
         case "filteralreadyseen":
-        case "FilterAlreadySeen": return boolean.class;
+        case "filterAlreadySeen": return boolean.class;
         case "httpasyncclientbuilder":
-        case "HttpAsyncClientBuilder": return org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class;
+        case "httpAsyncClientBuilder": return org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class;
         case "httpclientbuilder":
-        case "HttpClientBuilder": return org.apache.http.impl.client.HttpClientBuilder.class;
+        case "httpClientBuilder": return org.apache.http.impl.client.HttpClientBuilder.class;
         case "httpheaders":
-        case "HttpHeaders": return java.util.Map.class;
+        case "httpHeaders": return java.util.Map.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
-        case "proxy":
-        case "Proxy": return org.apache.http.HttpHost.class;
+        case "methodName": return java.lang.String.class;
+        case "proxy": return org.apache.http.HttpHost.class;
         case "serviceuri":
-        case "ServiceUri": return java.lang.String.class;
+        case "serviceUri": return java.lang.String.class;
         case "sockettimeout":
-        case "SocketTimeout": return int.class;
+        case "socketTimeout": return int.class;
         case "splitresult":
-        case "SplitResult": return boolean.class;
+        case "splitResult": return boolean.class;
         case "sslcontextparameters":
-        case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         default: return null;
         }
     }
@@ -123,35 +121,34 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
         org.apache.camel.component.olingo2.Olingo2Configuration target = (org.apache.camel.component.olingo2.Olingo2Configuration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "connecttimeout":
-        case "ConnectTimeout": return target.getConnectTimeout();
+        case "connectTimeout": return target.getConnectTimeout();
         case "contenttype":
-        case "ContentType": return target.getContentType();
+        case "contentType": return target.getContentType();
         case "entityproviderreadproperties":
-        case "EntityProviderReadProperties": return target.getEntityProviderReadProperties();
+        case "entityProviderReadProperties": return target.getEntityProviderReadProperties();
         case "entityproviderwriteproperties":
-        case "EntityProviderWriteProperties": return target.getEntityProviderWriteProperties();
+        case "entityProviderWriteProperties": return target.getEntityProviderWriteProperties();
         case "filteralreadyseen":
-        case "FilterAlreadySeen": return target.isFilterAlreadySeen();
+        case "filterAlreadySeen": return target.isFilterAlreadySeen();
         case "httpasyncclientbuilder":
-        case "HttpAsyncClientBuilder": return target.getHttpAsyncClientBuilder();
+        case "httpAsyncClientBuilder": return target.getHttpAsyncClientBuilder();
         case "httpclientbuilder":
-        case "HttpClientBuilder": return target.getHttpClientBuilder();
+        case "httpClientBuilder": return target.getHttpClientBuilder();
         case "httpheaders":
-        case "HttpHeaders": return target.getHttpHeaders();
+        case "httpHeaders": return target.getHttpHeaders();
         case "methodname":
-        case "MethodName": return target.getMethodName();
-        case "proxy":
-        case "Proxy": return target.getProxy();
+        case "methodName": return target.getMethodName();
+        case "proxy": return target.getProxy();
         case "serviceuri":
-        case "ServiceUri": return target.getServiceUri();
+        case "serviceUri": return target.getServiceUri();
         case "sockettimeout":
-        case "SocketTimeout": return target.getSocketTimeout();
+        case "socketTimeout": return target.getSocketTimeout();
         case "splitresult":
-        case "SplitResult": return target.isSplitResult();
+        case "splitResult": return target.isSplitResult();
         case "sslcontextparameters":
-        case "SslContextParameters": return target.getSslContextParameters();
+        case "sslContextParameters": return target.getSslContextParameters();
         default: return null;
         }
     }
@@ -160,7 +157,7 @@ public class Olingo2ConfigurationConfigurer extends org.apache.camel.support.com
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "httpheaders":
-        case "HttpHeaders": return java.lang.String.class;
+        case "httpHeaders": return java.lang.String.class;
         default: return null;
         }
     }

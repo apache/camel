@@ -32,8 +32,8 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
     private static int counter;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("fail", new MyFailBean());
         return jndi;
     }

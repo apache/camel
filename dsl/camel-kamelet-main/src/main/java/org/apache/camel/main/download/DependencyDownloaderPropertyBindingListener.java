@@ -36,6 +36,10 @@ public class DependencyDownloaderPropertyBindingListener implements PropertyBind
         if (value instanceof String) {
             String s = (String) value;
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(s);
+            if (gav == null) {
+                String line = target.getClass().getName() + ":" + key + "=" + s;
+                gav = knownDependenciesResolver.mavenGavForClass(line);
+            }
             if (gav != null) {
                 if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
                         gav.getVersion())) {

@@ -33,7 +33,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.vault.AwsVaultConfiguration;
 
-@DevConsole("aws-secrets")
+@DevConsole(name = "aws-secrets", displayName = "AWS Secrets", description = "AWS Secrets Manager")
 public class SecretsDevConsole extends AbstractDevConsole {
 
     private SecretsManagerPropertiesFunction propertiesFunction;

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class Sjms2EndpointTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Override
     protected boolean useJmx() {

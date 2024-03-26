@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class OnExceptionWithTwoBeansTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Registry registry = new DefaultRegistry();
         registry.bind("checkin", new MyBean1());
         registry.bind("handler", new MyBean2());

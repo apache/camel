@@ -67,8 +67,8 @@ public class SimpleTest extends LanguageTestSupport {
     private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myAnimal", new Animal("Donkey", 17));
         return jndi;
     }

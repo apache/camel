@@ -81,7 +81,7 @@ public class RestDslXmlGeneratorV3Test {
         try (CamelContext context = new DefaultCamelContext()) {
             final String xml = RestDslGenerator.toXml(document).generate(context);
 
-            final URI file = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreXml.txt").toURI();
+            final URI file = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreXml.txt").toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
             assertThat(xml).isXmlEqualTo(expectedContent);
@@ -96,7 +96,7 @@ public class RestDslXmlGeneratorV3Test {
                     .withRestContextPath("/foo")
                     .generate(context);
 
-            final URI file = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreWithRestComponentXml.txt").toURI();
+            final URI file = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponentXml.txt").toURI();
             final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertThat(xml).isXmlEqualTo(expectedContent);
         }

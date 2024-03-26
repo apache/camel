@@ -37,6 +37,9 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path",
              category = { Category.HTTP }, consumerOnly = true)
+@Metadata(annotations = {
+        "protocol=http",
+})
 public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private static final String PROXY_PATH = "proxy";

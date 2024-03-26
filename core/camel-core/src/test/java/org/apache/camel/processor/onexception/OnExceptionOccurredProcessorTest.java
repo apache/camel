@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myProcessor", new MyProcessor());
         return jndi;
     }

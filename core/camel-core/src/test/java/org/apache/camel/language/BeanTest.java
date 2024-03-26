@@ -124,8 +124,8 @@ public class BeanTest extends LanguageTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", new MyBean());
         answer.bind("my.company.MyClass", new MyBean());
         return answer;

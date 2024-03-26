@@ -35,11 +35,11 @@ public class MockitoSpyForClassTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         MyService mockService = Mockito.spy(new MyService());
         when(mockService.doSomething(any())).thenReturn("mocked answer");
 
-        Registry answer = super.createRegistry();
+        Registry answer = super.createCamelRegistry();
         answer.bind("myService", mockService);
         return answer;
     }

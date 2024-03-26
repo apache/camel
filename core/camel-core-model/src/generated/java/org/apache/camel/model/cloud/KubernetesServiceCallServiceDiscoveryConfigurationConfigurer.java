@@ -49,47 +49,41 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationConfigurer extend
         org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
-        case "ApiVersion": target.setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "apiVersion": target.setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "cacertdata":
-        case "CaCertData": target.setCaCertData(property(camelContext, java.lang.String.class, value)); return true;
+        case "caCertData": target.setCaCertData(property(camelContext, java.lang.String.class, value)); return true;
         case "cacertfile":
-        case "CaCertFile": target.setCaCertFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "caCertFile": target.setCaCertFile(property(camelContext, java.lang.String.class, value)); return true;
         case "clientcertdata":
-        case "ClientCertData": target.setClientCertData(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientCertData": target.setClientCertData(property(camelContext, java.lang.String.class, value)); return true;
         case "clientcertfile":
-        case "ClientCertFile": target.setClientCertFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientCertFile": target.setClientCertFile(property(camelContext, java.lang.String.class, value)); return true;
         case "clientkeyalgo":
-        case "ClientKeyAlgo": target.setClientKeyAlgo(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientKeyAlgo": target.setClientKeyAlgo(property(camelContext, java.lang.String.class, value)); return true;
         case "clientkeydata":
-        case "ClientKeyData": target.setClientKeyData(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientKeyData": target.setClientKeyData(property(camelContext, java.lang.String.class, value)); return true;
         case "clientkeyfile":
-        case "ClientKeyFile": target.setClientKeyFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientKeyFile": target.setClientKeyFile(property(camelContext, java.lang.String.class, value)); return true;
         case "clientkeypassphrase":
-        case "ClientKeyPassphrase": target.setClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientKeyPassphrase": target.setClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "dnsdomain":
-        case "DnsDomain": target.setDnsDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
-        case "lookup":
-        case "Lookup": target.setLookup(property(camelContext, java.lang.String.class, value)); return true;
+        case "dnsDomain": target.setDnsDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "lookup": target.setLookup(property(camelContext, java.lang.String.class, value)); return true;
         case "masterurl":
-        case "MasterUrl": target.setMasterUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "namespace":
-        case "Namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "masterUrl": target.setMasterUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthtoken":
-        case "OauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password":
-        case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "portname":
-        case "PortName": target.setPortName(property(camelContext, java.lang.String.class, value)); return true;
+        case "portName": target.setPortName(property(camelContext, java.lang.String.class, value)); return true;
         case "portprotocol":
-        case "PortProtocol": target.setPortProtocol(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties":
-        case "Properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
+        case "portProtocol": target.setPortProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
         case "trustcerts":
-        case "TrustCerts": target.setTrustCerts(property(camelContext, java.lang.String.class, value)); return true;
-        case "username":
-        case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustCerts": target.setTrustCerts(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -103,47 +97,41 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationConfigurer extend
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
-        case "ApiVersion": return java.lang.String.class;
+        case "apiVersion": return java.lang.String.class;
         case "cacertdata":
-        case "CaCertData": return java.lang.String.class;
+        case "caCertData": return java.lang.String.class;
         case "cacertfile":
-        case "CaCertFile": return java.lang.String.class;
+        case "caCertFile": return java.lang.String.class;
         case "clientcertdata":
-        case "ClientCertData": return java.lang.String.class;
+        case "clientCertData": return java.lang.String.class;
         case "clientcertfile":
-        case "ClientCertFile": return java.lang.String.class;
+        case "clientCertFile": return java.lang.String.class;
         case "clientkeyalgo":
-        case "ClientKeyAlgo": return java.lang.String.class;
+        case "clientKeyAlgo": return java.lang.String.class;
         case "clientkeydata":
-        case "ClientKeyData": return java.lang.String.class;
+        case "clientKeyData": return java.lang.String.class;
         case "clientkeyfile":
-        case "ClientKeyFile": return java.lang.String.class;
+        case "clientKeyFile": return java.lang.String.class;
         case "clientkeypassphrase":
-        case "ClientKeyPassphrase": return java.lang.String.class;
+        case "clientKeyPassphrase": return java.lang.String.class;
         case "dnsdomain":
-        case "DnsDomain": return java.lang.String.class;
-        case "id":
-        case "Id": return java.lang.String.class;
-        case "lookup":
-        case "Lookup": return java.lang.String.class;
+        case "dnsDomain": return java.lang.String.class;
+        case "id": return java.lang.String.class;
+        case "lookup": return java.lang.String.class;
         case "masterurl":
-        case "MasterUrl": return java.lang.String.class;
-        case "namespace":
-        case "Namespace": return java.lang.String.class;
+        case "masterUrl": return java.lang.String.class;
+        case "namespace": return java.lang.String.class;
         case "oauthtoken":
-        case "OauthToken": return java.lang.String.class;
-        case "password":
-        case "Password": return java.lang.String.class;
+        case "oauthToken": return java.lang.String.class;
+        case "password": return java.lang.String.class;
         case "portname":
-        case "PortName": return java.lang.String.class;
+        case "portName": return java.lang.String.class;
         case "portprotocol":
-        case "PortProtocol": return java.lang.String.class;
-        case "properties":
-        case "Properties": return java.util.List.class;
+        case "portProtocol": return java.lang.String.class;
+        case "properties": return java.util.List.class;
         case "trustcerts":
-        case "TrustCerts": return java.lang.String.class;
-        case "username":
-        case "Username": return java.lang.String.class;
+        case "trustCerts": return java.lang.String.class;
+        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -153,47 +141,41 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationConfigurer extend
         org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
-        case "ApiVersion": return target.getApiVersion();
+        case "apiVersion": return target.getApiVersion();
         case "cacertdata":
-        case "CaCertData": return target.getCaCertData();
+        case "caCertData": return target.getCaCertData();
         case "cacertfile":
-        case "CaCertFile": return target.getCaCertFile();
+        case "caCertFile": return target.getCaCertFile();
         case "clientcertdata":
-        case "ClientCertData": return target.getClientCertData();
+        case "clientCertData": return target.getClientCertData();
         case "clientcertfile":
-        case "ClientCertFile": return target.getClientCertFile();
+        case "clientCertFile": return target.getClientCertFile();
         case "clientkeyalgo":
-        case "ClientKeyAlgo": return target.getClientKeyAlgo();
+        case "clientKeyAlgo": return target.getClientKeyAlgo();
         case "clientkeydata":
-        case "ClientKeyData": return target.getClientKeyData();
+        case "clientKeyData": return target.getClientKeyData();
         case "clientkeyfile":
-        case "ClientKeyFile": return target.getClientKeyFile();
+        case "clientKeyFile": return target.getClientKeyFile();
         case "clientkeypassphrase":
-        case "ClientKeyPassphrase": return target.getClientKeyPassphrase();
+        case "clientKeyPassphrase": return target.getClientKeyPassphrase();
         case "dnsdomain":
-        case "DnsDomain": return target.getDnsDomain();
-        case "id":
-        case "Id": return target.getId();
-        case "lookup":
-        case "Lookup": return target.getLookup();
+        case "dnsDomain": return target.getDnsDomain();
+        case "id": return target.getId();
+        case "lookup": return target.getLookup();
         case "masterurl":
-        case "MasterUrl": return target.getMasterUrl();
-        case "namespace":
-        case "Namespace": return target.getNamespace();
+        case "masterUrl": return target.getMasterUrl();
+        case "namespace": return target.getNamespace();
         case "oauthtoken":
-        case "OauthToken": return target.getOauthToken();
-        case "password":
-        case "Password": return target.getPassword();
+        case "oauthToken": return target.getOauthToken();
+        case "password": return target.getPassword();
         case "portname":
-        case "PortName": return target.getPortName();
+        case "portName": return target.getPortName();
         case "portprotocol":
-        case "PortProtocol": return target.getPortProtocol();
-        case "properties":
-        case "Properties": return target.getProperties();
+        case "portProtocol": return target.getPortProtocol();
+        case "properties": return target.getProperties();
         case "trustcerts":
-        case "TrustCerts": return target.getTrustCerts();
-        case "username":
-        case "Username": return target.getUsername();
+        case "trustCerts": return target.getTrustCerts();
+        case "username": return target.getUsername();
         default: return null;
         }
     }
@@ -201,8 +183,7 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationConfigurer extend
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "properties":
-        case "Properties": return org.apache.camel.model.PropertyDefinition.class;
+        case "properties": return org.apache.camel.model.PropertyDefinition.class;
         default: return null;
         }
     }

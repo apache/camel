@@ -22,10 +22,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,18 +45,27 @@ import static org.junit.jupiter.api.Assertions.fail;
  * bugs which is why we keep them here.
  */
 @Tags({ @Tag("not-parallel") })
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
+    private static final Logger LOG = LoggerFactory.getLogger(JmsDeliveryDelayTest.class);
 
     private CountDownLatch routeComplete;
     private final StopWatch routeWatch = new StopWatch();
 
+    @BeforeEach
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 100);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 100);
+    }
+
+    @Order(1)
     @Test
     void testInOnlyWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived("Hello World from testInOnlyWithDelay");
 
         routeWatch.restart();
-        template.sendBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
+        template.sendBody("activemq:topic:JmsDeliveryDelayTest1?deliveryDelay=1000", "Hello World from testInOnlyWithDelay");
         if (!routeComplete.await(5000, TimeUnit.MILLISECONDS)) {
             fail("Message was not received from Artemis topic for too long");
         }
@@ -60,16 +75,17 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
         assertTrue(routeWatch.taken() >= 900, "Should take at least 1000 millis");
     }
 
+    @Order(2)
     @Test
     void testInOutWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived("Hello World 2");
 
         routeWatch.restart();
-        var response = template.requestBody("activemq:topic:JmsDeliveryDelayTest?deliveryDelay=1000", "Hello World");
+        var response = template.requestBody("activemq:topic:JmsDeliveryDelayTest2?deliveryDelay=1000", "Hello World 2");
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(response, "Hello World");
+        assertEquals(response, "Hello World 2");
         // give some slack
         assertTrue(routeWatch.taken() >= 900, "Should take at least 1000 millis");
     }
@@ -84,9 +100,18 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:topic:JmsDeliveryDelayTest")
-                        .to("mock:result")
-                        .process(exchange -> routeComplete.countDown());
+                from("activemq:topic:JmsDeliveryDelayTest1")
+                        .routeId("route-1")
+                        .process(exchange -> LOG.info("Received from JmsDeliveryDelayTest1: {}",
+                                exchange.getMessage().getBody()))
+                        .process(exchange -> routeComplete.countDown())
+                        .to("mock:result");
+
+                from("activemq:topic:JmsDeliveryDelayTest2")
+                        .routeId("route-2")
+                        .process(exchange -> LOG.info("Received from JmsDeliveryDelayTest2: {}",
+                                exchange.getMessage().getBody()))
+                        .to("mock:result");
             }
         };
     }

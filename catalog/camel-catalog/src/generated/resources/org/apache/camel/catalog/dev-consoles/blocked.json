@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "blocked",
+    "title": "Blocked Exchanges",
+    "description": "Display blocked exchanges",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.BlockedConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

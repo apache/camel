@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -95,7 +97,8 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
 
         asyncSendTwoOverCapacity(BLOCK_WHEN_FULL_URI, QUEUE_SIZE + 4);
-        assertMockEndpointsSatisfied();
+        // wait a bit to allow the async processing to complete
+        assertMockEndpointsSatisfied(2, TimeUnit.SECONDS);
     }
 
     /**

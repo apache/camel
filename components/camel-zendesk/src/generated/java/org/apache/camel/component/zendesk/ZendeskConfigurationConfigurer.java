@@ -34,17 +34,14 @@ public class ZendeskConfigurationConfigurer extends org.apache.camel.support.com
         org.apache.camel.component.zendesk.ZendeskConfiguration target = (org.apache.camel.component.zendesk.ZendeskConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class, value)); return true;
         case "oauthtoken":
-        case "OauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password":
-        case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "serverurl":
-        case "ServerUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "token":
-        case "Token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "username":
-        case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -58,17 +55,14 @@ public class ZendeskConfigurationConfigurer extends org.apache.camel.support.com
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "methodname":
-        case "MethodName": return org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class;
+        case "methodName": return org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class;
         case "oauthtoken":
-        case "OauthToken": return java.lang.String.class;
-        case "password":
-        case "Password": return java.lang.String.class;
+        case "oauthToken": return java.lang.String.class;
+        case "password": return java.lang.String.class;
         case "serverurl":
-        case "ServerUrl": return java.lang.String.class;
-        case "token":
-        case "Token": return java.lang.String.class;
-        case "username":
-        case "Username": return java.lang.String.class;
+        case "serverUrl": return java.lang.String.class;
+        case "token": return java.lang.String.class;
+        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -78,17 +72,14 @@ public class ZendeskConfigurationConfigurer extends org.apache.camel.support.com
         org.apache.camel.component.zendesk.ZendeskConfiguration target = (org.apache.camel.component.zendesk.ZendeskConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "oauthtoken":
-        case "OauthToken": return target.getOauthToken();
-        case "password":
-        case "Password": return target.getPassword();
+        case "oauthToken": return target.getOauthToken();
+        case "password": return target.getPassword();
         case "serverurl":
-        case "ServerUrl": return target.getServerUrl();
-        case "token":
-        case "Token": return target.getToken();
-        case "username":
-        case "Username": return target.getUsername();
+        case "serverUrl": return target.getServerUrl();
+        case "token": return target.getToken();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

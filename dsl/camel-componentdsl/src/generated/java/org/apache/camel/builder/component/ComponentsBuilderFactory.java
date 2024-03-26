@@ -163,6 +163,32 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsBedrockComponentBuilderFactory.awsBedrock();
     }
     /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Operate on AWS Bedrock through its Agent.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsBedrockAgentComponentBuilderFactory.AwsBedrockAgentComponentBuilder awsBedrockAgent() {
+        return org.apache.camel.builder.component.dsl.AwsBedrockAgentComponentBuilderFactory.awsBedrockAgent();
+    }
+    /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsBedrockAgentRuntimeComponentBuilderFactory.AwsBedrockAgentRuntimeComponentBuilder awsBedrockAgentRuntime() {
+        return org.apache.camel.builder.component.dsl.AwsBedrockAgentRuntimeComponentBuilderFactory.awsBedrockAgentRuntime();
+    }
+    /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
      * 
@@ -2741,6 +2767,32 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KuduComponentBuilderFactory.kudu();
     }
     /**
+     * langChain4j Chat (camel-langchain-chat)
+     * LangChain4j Chat component
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.LangchainChatComponentBuilderFactory.LangchainChatComponentBuilder langchainChat() {
+        return org.apache.camel.builder.component.dsl.LangchainChatComponentBuilderFactory.langchainChat();
+    }
+    /**
+     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.LangchainEmbeddingsComponentBuilderFactory.LangchainEmbeddingsComponentBuilder langchainEmbeddings() {
+        return org.apache.camel.builder.component.dsl.LangchainEmbeddingsComponentBuilderFactory.langchainEmbeddings();
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 
@@ -2885,6 +2937,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.MicrometerComponentBuilder micrometer() {
         return org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.micrometer();
+    }
+    /**
+     * Milvus (camel-milvus)
+     * Perform operations on the Milvus Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-milvus
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.MilvusComponentBuilderFactory.MilvusComponentBuilder milvus() {
+        return org.apache.camel.builder.component.dsl.MilvusComponentBuilderFactory.milvus();
     }
     /**
      * Mina (camel-mina)

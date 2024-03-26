@@ -77,6 +77,11 @@ public class RawProcessor extends AbstractSalesforceProcessor {
                         path.append("&");
                     }
                     path.append(p).append("=");
+
+                    if (exchange.getIn().getHeader(p) == null) {
+                        throw new SalesforceException(
+                                String.format("Missing header with key: %s", p));
+                    }
                     path.append(urlEncode(exchange.getIn().getHeader(p).toString()));
                 }
             }

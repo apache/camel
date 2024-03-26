@@ -29,8 +29,8 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
     }
 
     @Override
-    public String getKind() {
-        return "language";
+    public Kind getKind() {
+        return Kind.language;
     }
 
     public String getModelName() {

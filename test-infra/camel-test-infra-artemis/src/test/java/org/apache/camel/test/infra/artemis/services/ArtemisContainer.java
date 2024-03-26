@@ -37,9 +37,8 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
                 .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME)));
 
         withExposedPorts(DEFAULT_MQTT_PORT, DEFAULT_AMQP_PORT,
-                DEFAULT_ADMIN_PORT, DEFAULT_ACCEPTOR_PORT);
-
-        waitingFor(Wait.forListeningPort());
+                DEFAULT_ADMIN_PORT, DEFAULT_ACCEPTOR_PORT)
+                .waitingFor(Wait.forListeningPort());
     }
 
     /**

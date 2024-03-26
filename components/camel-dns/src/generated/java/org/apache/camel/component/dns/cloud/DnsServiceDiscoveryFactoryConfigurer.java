@@ -21,10 +21,8 @@ public class DnsServiceDiscoveryFactoryConfigurer extends org.apache.camel.suppo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.dns.cloud.DnsServiceDiscoveryFactory target = (org.apache.camel.component.dns.cloud.DnsServiceDiscoveryFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "domain":
-        case "Domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "proto":
-        case "Proto": target.setProto(property(camelContext, java.lang.String.class, value)); return true;
+        case "domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "proto": target.setProto(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -32,10 +30,8 @@ public class DnsServiceDiscoveryFactoryConfigurer extends org.apache.camel.suppo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "domain":
-        case "Domain": return java.lang.String.class;
-        case "proto":
-        case "Proto": return java.lang.String.class;
+        case "domain": return java.lang.String.class;
+        case "proto": return java.lang.String.class;
         default: return null;
         }
     }
@@ -44,10 +40,8 @@ public class DnsServiceDiscoveryFactoryConfigurer extends org.apache.camel.suppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.dns.cloud.DnsServiceDiscoveryFactory target = (org.apache.camel.component.dns.cloud.DnsServiceDiscoveryFactory) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "domain":
-        case "Domain": return target.getDomain();
-        case "proto":
-        case "Proto": return target.getProto();
+        case "domain": return target.getDomain();
+        case "proto": return target.getProto();
         default: return null;
         }
     }

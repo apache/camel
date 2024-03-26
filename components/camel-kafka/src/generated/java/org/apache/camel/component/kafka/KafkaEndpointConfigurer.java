@@ -162,6 +162,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "requesttimeoutms":
         case "requestTimeoutMs": target.getConfiguration().setRequestTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "retries": target.getConfiguration().setRetries(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "retrybackoffmaxms":
+        case "retryBackoffMaxMs": target.getConfiguration().setRetryBackoffMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "retrybackoffms":
         case "retryBackoffMs": target.getConfiguration().setRetryBackoffMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "sasljaasconfig":
@@ -375,6 +377,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "requesttimeoutms":
         case "requestTimeoutMs": return java.lang.Integer.class;
         case "retries": return java.lang.Integer.class;
+        case "retrybackoffmaxms":
+        case "retryBackoffMaxMs": return java.lang.Integer.class;
         case "retrybackoffms":
         case "retryBackoffMs": return java.lang.Integer.class;
         case "sasljaasconfig":
@@ -589,6 +593,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "requesttimeoutms":
         case "requestTimeoutMs": return target.getConfiguration().getRequestTimeoutMs();
         case "retries": return target.getConfiguration().getRetries();
+        case "retrybackoffmaxms":
+        case "retryBackoffMaxMs": return target.getConfiguration().getRetryBackoffMaxMs();
         case "retrybackoffms":
         case "retryBackoffMs": return target.getConfiguration().getRetryBackoffMs();
         case "sasljaasconfig":

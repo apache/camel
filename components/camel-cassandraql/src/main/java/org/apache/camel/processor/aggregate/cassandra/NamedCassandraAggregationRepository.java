@@ -23,6 +23,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
  * key) and key (clustering key).
  */
 public class NamedCassandraAggregationRepository extends CassandraAggregationRepository {
+
     public NamedCassandraAggregationRepository() {
         setPKColumns("NAME", "KEY");
         setName("DEFAULT");

@@ -22,33 +22,26 @@ public class KnativeResourceConfigurer extends org.apache.camel.support.componen
         org.apache.camel.component.knative.spi.KnativeResource target = (org.apache.camel.component.knative.spi.KnativeResource) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ceoverrides":
-        case "CeOverrides": target.setCeOverrides(property(camelContext, java.util.Map.class, value)); return true;
+        case "ceOverrides": target.setCeOverrides(property(camelContext, java.util.Map.class, value)); return true;
         case "cloudeventtype":
-        case "CloudEventType": target.setCloudEventType(property(camelContext, java.lang.String.class, value)); return true;
+        case "cloudEventType": target.setCloudEventType(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttype":
-        case "ContentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "endpointkind":
-        case "EndpointKind": target.setEndpointKind(property(camelContext, org.apache.camel.component.knative.spi.Knative.EndpointKind.class, value)); return true;
-        case "filters":
-        case "Filters": target.setFilters(property(camelContext, java.util.Map.class, value)); return true;
-        case "metadata":
-        case "Metadata": target.setMetadata(property(camelContext, java.util.Map.class, value)); return true;
-        case "name":
-        case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
+        case "endpointKind": target.setEndpointKind(property(camelContext, org.apache.camel.component.knative.spi.Knative.EndpointKind.class, value)); return true;
+        case "filters": target.setFilters(property(camelContext, java.util.Map.class, value)); return true;
+        case "metadata": target.setMetadata(property(camelContext, java.util.Map.class, value)); return true;
+        case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "objectapiversion":
-        case "ObjectApiVersion": target.setObjectApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectApiVersion": target.setObjectApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "objectkind":
-        case "ObjectKind": target.setObjectKind(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectKind": target.setObjectKind(property(camelContext, java.lang.String.class, value)); return true;
         case "objectname":
-        case "ObjectName": target.setObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "path":
-        case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "reply":
-        case "Reply": target.setReply(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "type":
-        case "Type": target.setType(property(camelContext, org.apache.camel.component.knative.spi.Knative.Type.class, value)); return true;
-        case "url":
-        case "Url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectName": target.setObjectName(property(camelContext, java.lang.String.class, value)); return true;
+        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "reply": target.setReply(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "type": target.setType(property(camelContext, org.apache.camel.component.knative.spi.Knative.Type.class, value)); return true;
+        case "url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -57,33 +50,26 @@ public class KnativeResourceConfigurer extends org.apache.camel.support.componen
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ceoverrides":
-        case "CeOverrides": return java.util.Map.class;
+        case "ceOverrides": return java.util.Map.class;
         case "cloudeventtype":
-        case "CloudEventType": return java.lang.String.class;
+        case "cloudEventType": return java.lang.String.class;
         case "contenttype":
-        case "ContentType": return java.lang.String.class;
+        case "contentType": return java.lang.String.class;
         case "endpointkind":
-        case "EndpointKind": return org.apache.camel.component.knative.spi.Knative.EndpointKind.class;
-        case "filters":
-        case "Filters": return java.util.Map.class;
-        case "metadata":
-        case "Metadata": return java.util.Map.class;
-        case "name":
-        case "Name": return java.lang.String.class;
+        case "endpointKind": return org.apache.camel.component.knative.spi.Knative.EndpointKind.class;
+        case "filters": return java.util.Map.class;
+        case "metadata": return java.util.Map.class;
+        case "name": return java.lang.String.class;
         case "objectapiversion":
-        case "ObjectApiVersion": return java.lang.String.class;
+        case "objectApiVersion": return java.lang.String.class;
         case "objectkind":
-        case "ObjectKind": return java.lang.String.class;
+        case "objectKind": return java.lang.String.class;
         case "objectname":
-        case "ObjectName": return java.lang.String.class;
-        case "path":
-        case "Path": return java.lang.String.class;
-        case "reply":
-        case "Reply": return java.lang.Boolean.class;
-        case "type":
-        case "Type": return org.apache.camel.component.knative.spi.Knative.Type.class;
-        case "url":
-        case "Url": return java.lang.String.class;
+        case "objectName": return java.lang.String.class;
+        case "path": return java.lang.String.class;
+        case "reply": return java.lang.Boolean.class;
+        case "type": return org.apache.camel.component.knative.spi.Knative.Type.class;
+        case "url": return java.lang.String.class;
         default: return null;
         }
     }
@@ -93,33 +79,26 @@ public class KnativeResourceConfigurer extends org.apache.camel.support.componen
         org.apache.camel.component.knative.spi.KnativeResource target = (org.apache.camel.component.knative.spi.KnativeResource) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ceoverrides":
-        case "CeOverrides": return target.getCeOverrides();
+        case "ceOverrides": return target.getCeOverrides();
         case "cloudeventtype":
-        case "CloudEventType": return target.getCloudEventType();
+        case "cloudEventType": return target.getCloudEventType();
         case "contenttype":
-        case "ContentType": return target.getContentType();
+        case "contentType": return target.getContentType();
         case "endpointkind":
-        case "EndpointKind": return target.getEndpointKind();
-        case "filters":
-        case "Filters": return target.getFilters();
-        case "metadata":
-        case "Metadata": return target.getMetadata();
-        case "name":
-        case "Name": return target.getName();
+        case "endpointKind": return target.getEndpointKind();
+        case "filters": return target.getFilters();
+        case "metadata": return target.getMetadata();
+        case "name": return target.getName();
         case "objectapiversion":
-        case "ObjectApiVersion": return target.getObjectApiVersion();
+        case "objectApiVersion": return target.getObjectApiVersion();
         case "objectkind":
-        case "ObjectKind": return target.getObjectKind();
+        case "objectKind": return target.getObjectKind();
         case "objectname":
-        case "ObjectName": return target.getObjectName();
-        case "path":
-        case "Path": return target.getPath();
-        case "reply":
-        case "Reply": return target.getReply();
-        case "type":
-        case "Type": return target.getType();
-        case "url":
-        case "Url": return target.getUrl();
+        case "objectName": return target.getObjectName();
+        case "path": return target.getPath();
+        case "reply": return target.getReply();
+        case "type": return target.getType();
+        case "url": return target.getUrl();
         default: return null;
         }
     }
@@ -128,11 +107,9 @@ public class KnativeResourceConfigurer extends org.apache.camel.support.componen
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ceoverrides":
-        case "CeOverrides": return java.lang.String.class;
-        case "filters":
-        case "Filters": return java.lang.String.class;
-        case "metadata":
-        case "Metadata": return java.lang.String.class;
+        case "ceOverrides": return java.lang.String.class;
+        case "filters": return java.lang.String.class;
+        case "metadata": return java.lang.String.class;
         default: return null;
         }
     }

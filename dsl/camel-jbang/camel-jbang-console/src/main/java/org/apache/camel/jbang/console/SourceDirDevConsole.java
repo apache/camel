@@ -35,7 +35,8 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("source-dir")
+@DevConsole(name = "source-dir", group = "camel-jbang", displayName = "Source Directory",
+            description = "Information about Camel JBang source files")
 public class SourceDirDevConsole extends AbstractDevConsole {
 
     /**
@@ -44,7 +45,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
     public static final String SOURCE = "source";
 
     public SourceDirDevConsole() {
-        super("camel", "source-dir", "Source Directory", "Information about Camel JBang source files");
+        super("camel-jbang", "source-dir", "Source Directory", "Information about Camel JBang source files");
     }
 
     @Override

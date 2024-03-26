@@ -32,6 +32,8 @@ import com.hazelcast.transaction.TransactionalMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -51,8 +53,11 @@ import org.slf4j.LoggerFactory;
  * are gained this way. If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it
  * will DESTROY this instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself
  * whenever you instantiate {@link HazelcastAggregationRepository} passing a reference to the instance.
- *
  */
+@Metadata(label = "bean",
+          description = "Aggregation repository that uses Hazelcast Cache to store exchanges.",
+          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Configurer(metadataOnly = true)
 public class HazelcastAggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository,
         OptimisticLockingAggregationRepository {
@@ -61,18 +66,33 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName());
 
-    protected boolean optimistic;
     protected boolean useLocalHzInstance;
-    protected boolean useRecovery = true;
     protected IMap<String, DefaultExchangeHolder> cache;
     protected IMap<String, DefaultExchangeHolder> persistedCache;
-    protected HazelcastInstance hzInstance;
+    @Metadata(description = "Name of cache to use", required = true)
     protected String mapName;
+    @Metadata(description = "To use an existing Hazelcast instance instead of local")
+    protected HazelcastInstance hazelcastInstance;
+    @Metadata(label = "advanced", description = "Name of cache to use for completed exchanges")
     protected String persistenceMapName;
-    protected String deadLetterChannel;
+    @Metadata(description = "Whether to use optimistic locking")
+    protected boolean optimistic;
+    @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
+    protected boolean useRecovery = true;
+    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     protected long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+    protected String deadLetterUri;
+    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+                            + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
+              defaultValue = "3")
     protected int maximumRedeliveries = 3;
+    @Metadata(label = "advanced",
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     protected boolean allowSerializedHeaders;
+
+    public HazelcastAggregationRepository() {
+    }
 
     /**
      * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
@@ -84,8 +104,6 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public HazelcastAggregationRepository(final String repositoryName) {
         mapName = repositoryName;
         persistenceMapName = String.format("%s%s", mapName, COMPLETED_SUFFIX);
-        optimistic = false;
-        useLocalHzInstance = true;
     }
 
     /**
@@ -98,8 +116,6 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName) {
         mapName = repositoryName;
         persistenceMapName = persistentRepositoryName;
-        optimistic = false;
-        useLocalHzInstance = true;
     }
 
     /**
@@ -112,7 +128,6 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public HazelcastAggregationRepository(final String repositoryName, boolean optimistic) {
         this(repositoryName);
         this.optimistic = optimistic;
-        useLocalHzInstance = true;
     }
 
     /**
@@ -126,7 +141,6 @@ public class HazelcastAggregationRepository extends ServiceSupport
                                           boolean optimistic) {
         this(repositoryName, persistentRepositoryName);
         this.optimistic = optimistic;
-        useLocalHzInstance = true;
     }
 
     /**
@@ -138,8 +152,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
      */
     public HazelcastAggregationRepository(final String repositoryName, HazelcastInstance hzInstanse) {
         this(repositoryName, false);
-        this.hzInstance = hzInstanse;
-        useLocalHzInstance = false;
+        this.hazelcastInstance = hzInstanse;
     }
 
     /**
@@ -153,8 +166,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
                                           HazelcastInstance hzInstanse) {
         this(repositoryName, persistentRepositoryName, false);
-        this.hzInstance = hzInstanse;
-        useLocalHzInstance = false;
+        this.hazelcastInstance = hzInstanse;
     }
 
     /**
@@ -167,8 +179,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
      */
     public HazelcastAggregationRepository(final String repositoryName, boolean optimistic, HazelcastInstance hzInstance) {
         this(repositoryName, optimistic);
-        this.hzInstance = hzInstance;
-        useLocalHzInstance = false;
+        this.hazelcastInstance = hzInstance;
     }
 
     /**
@@ -182,8 +193,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
                                           boolean optimistic, HazelcastInstance hzInstance) {
         this(repositoryName, persistentRepositoryName, optimistic);
-        this.hzInstance = hzInstance;
-        useLocalHzInstance = false;
+        this.hazelcastInstance = hzInstance;
     }
 
     @Override
@@ -223,7 +233,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
             throw new UnsupportedOperationException();
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-        Lock l = hzInstance.getCPSubsystem().getLock(mapName);
+        Lock l = hazelcastInstance.getCPSubsystem().getLock(mapName);
         try {
             l.lock();
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
@@ -267,7 +277,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     }
 
     @Override
-    public long getRecoveryIntervalInMillis() {
+    public long getRecoveryInterval() {
         return recoveryInterval;
     }
 
@@ -283,12 +293,12 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetterChannel = deadLetterUri;
+        this.deadLetterUri = deadLetterUri;
     }
 
     @Override
     public String getDeadLetterUri() {
-        return deadLetterChannel;
+        return deadLetterUri;
     }
 
     @Override
@@ -325,6 +335,14 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
         this.allowSerializedHeaders = allowSerializedHeaders;
+    }
+
+    public HazelcastInstance getHazelcastInstance() {
+        return hazelcastInstance;
+    }
+
+    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        this.hazelcastInstance = hazelcastInstance;
     }
 
     /**
@@ -364,7 +382,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
                 TransactionOptions tOpts = new TransactionOptions();
 
                 tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
-                TransactionContext tCtx = hzInstance.newTransactionContext(tOpts);
+                TransactionContext tCtx = hazelcastInstance.newTransactionContext(tOpts);
 
                 try {
                     tCtx.beginTransaction();
@@ -419,31 +437,35 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
+        StringHelper.notEmpty(mapName, "repositoryName");
         if (maximumRedeliveries < 0) {
             throw new IllegalArgumentException("Maximum redelivery retries must be zero or a positive integer.");
         }
         if (recoveryInterval < 0) {
             throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
         }
-        StringHelper.notEmpty(mapName, "repositoryName");
-        if (useLocalHzInstance) {
+        if (persistenceMapName == null) {
+            persistenceMapName = String.format("%s%s", mapName, COMPLETED_SUFFIX);
+        }
+        if (hazelcastInstance == null) {
+            useLocalHzInstance = true;
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");
-            hzInstance = Hazelcast.newHazelcastInstance(cfg);
+            hazelcastInstance = Hazelcast.newHazelcastInstance(cfg);
         } else {
-            ObjectHelper.notNull(hzInstance, "hzInstanse");
+            ObjectHelper.notNull(hazelcastInstance, "hazelcastInstance");
         }
-        cache = hzInstance.getMap(mapName);
+        cache = hazelcastInstance.getMap(mapName);
         if (useRecovery) {
-            persistedCache = hzInstance.getMap(persistenceMapName);
+            persistedCache = hazelcastInstance.getMap(persistenceMapName);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        //noop
         if (useLocalHzInstance) {
-            hzInstance.getLifecycleService().shutdown();
+            hazelcastInstance.getLifecycleService().shutdown();
+            hazelcastInstance = null;
         }
     }
 

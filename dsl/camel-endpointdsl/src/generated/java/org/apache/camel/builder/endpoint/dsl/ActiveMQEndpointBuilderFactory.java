@@ -2367,6 +2367,42 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * A pluggable TemporaryQueueResolver that allows you to use your own
+         * resolver for creating temporary queues (some messaging systems has
+         * special requirements for creating temporary queues).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param temporaryQueueResolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointConsumerBuilder temporaryQueueResolver(
+                org.apache.camel.component.jms.TemporaryQueueResolver temporaryQueueResolver) {
+            doSetProperty("temporaryQueueResolver", temporaryQueueResolver);
+            return this;
+        }
+        /**
+         * A pluggable TemporaryQueueResolver that allows you to use your own
+         * resolver for creating temporary queues (some messaging systems has
+         * special requirements for creating temporary queues).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param temporaryQueueResolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointConsumerBuilder temporaryQueueResolver(
+                String temporaryQueueResolver) {
+            doSetProperty("temporaryQueueResolver", temporaryQueueResolver);
+            return this;
+        }
+        /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a jakarta.jms.ObjectMessage. If the
@@ -4863,6 +4899,42 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * A pluggable TemporaryQueueResolver that allows you to use your own
+         * resolver for creating temporary queues (some messaging systems has
+         * special requirements for creating temporary queues).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param temporaryQueueResolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointProducerBuilder temporaryQueueResolver(
+                org.apache.camel.component.jms.TemporaryQueueResolver temporaryQueueResolver) {
+            doSetProperty("temporaryQueueResolver", temporaryQueueResolver);
+            return this;
+        }
+        /**
+         * A pluggable TemporaryQueueResolver that allows you to use your own
+         * resolver for creating temporary queues (some messaging systems has
+         * special requirements for creating temporary queues).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param temporaryQueueResolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointProducerBuilder temporaryQueueResolver(
+                String temporaryQueueResolver) {
+            doSetProperty("temporaryQueueResolver", temporaryQueueResolver);
+            return this;
+        }
+        /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a jakarta.jms.ObjectMessage. If the
@@ -6467,6 +6539,42 @@ public interface ActiveMQEndpointBuilderFactory {
          */
         default AdvancedActiveMQEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * A pluggable TemporaryQueueResolver that allows you to use your own
+         * resolver for creating temporary queues (some messaging systems has
+         * special requirements for creating temporary queues).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param temporaryQueueResolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointBuilder temporaryQueueResolver(
+                org.apache.camel.component.jms.TemporaryQueueResolver temporaryQueueResolver) {
+            doSetProperty("temporaryQueueResolver", temporaryQueueResolver);
+            return this;
+        }
+        /**
+         * A pluggable TemporaryQueueResolver that allows you to use your own
+         * resolver for creating temporary queues (some messaging systems has
+         * special requirements for creating temporary queues).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param temporaryQueueResolver the value to set
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointBuilder temporaryQueueResolver(
+                String temporaryQueueResolver) {
+            doSetProperty("temporaryQueueResolver", temporaryQueueResolver);
             return this;
         }
         /**

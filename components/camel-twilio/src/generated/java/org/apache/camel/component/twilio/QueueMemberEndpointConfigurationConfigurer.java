@@ -34,17 +34,16 @@ public class QueueMemberEndpointConfigurationConfigurer extends org.apache.camel
         org.apache.camel.component.twilio.QueueMemberEndpointConfiguration target = (org.apache.camel.component.twilio.QueueMemberEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
-        case "PathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
         case "pathcallsid":
-        case "PathCallSid": target.setPathCallSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathCallSid": target.setPathCallSid(property(camelContext, java.lang.String.class, value)); return true;
         case "pathqueuesid":
-        case "PathQueueSid": target.setPathQueueSid(property(camelContext, java.lang.String.class, value)); return true;
-        case "url":
-        case "Url": target.setUrl(property(camelContext, java.net.URI.class, value)); return true;
+        case "pathQueueSid": target.setPathQueueSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "url": target.setUrl(property(camelContext, java.net.URI.class, value)); return true;
         default: return false;
         }
     }
@@ -58,17 +57,16 @@ public class QueueMemberEndpointConfigurationConfigurer extends org.apache.camel
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "apiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "pathaccountsid":
-        case "PathAccountSid": return java.lang.String.class;
+        case "pathAccountSid": return java.lang.String.class;
         case "pathcallsid":
-        case "PathCallSid": return java.lang.String.class;
+        case "pathCallSid": return java.lang.String.class;
         case "pathqueuesid":
-        case "PathQueueSid": return java.lang.String.class;
-        case "url":
-        case "Url": return java.net.URI.class;
+        case "pathQueueSid": return java.lang.String.class;
+        case "url": return java.net.URI.class;
         default: return null;
         }
     }
@@ -78,17 +76,16 @@ public class QueueMemberEndpointConfigurationConfigurer extends org.apache.camel
         org.apache.camel.component.twilio.QueueMemberEndpointConfiguration target = (org.apache.camel.component.twilio.QueueMemberEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "pathaccountsid":
-        case "PathAccountSid": return target.getPathAccountSid();
+        case "pathAccountSid": return target.getPathAccountSid();
         case "pathcallsid":
-        case "PathCallSid": return target.getPathCallSid();
+        case "pathCallSid": return target.getPathCallSid();
         case "pathqueuesid":
-        case "PathQueueSid": return target.getPathQueueSid();
-        case "url":
-        case "Url": return target.getUrl();
+        case "pathQueueSid": return target.getPathQueueSid();
+        case "url": return target.getUrl();
         default: return null;
         }
     }

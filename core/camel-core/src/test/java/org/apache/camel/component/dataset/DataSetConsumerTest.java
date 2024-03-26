@@ -37,8 +37,8 @@ public class DataSetConsumerTest extends ContextTestSupport {
     final String resultUri = "mock://result";
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", dataSet);
         return answer;
     }

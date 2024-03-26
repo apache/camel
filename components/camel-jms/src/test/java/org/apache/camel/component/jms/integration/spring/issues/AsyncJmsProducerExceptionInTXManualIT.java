@@ -19,7 +19,7 @@ package org.apache.camel.component.jms.integration.spring.issues;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.integration.spring.CamelBrokerClientITSupport;
+import org.apache.camel.component.jms.integration.spring.SpringJMSBasic;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @see <a href="https://activemq.apache.org/producer-flow-control.html">ActiveMQ flow control</a>
  */
 @Disabled("Cannot reproduce with Artemis")
-class AsyncJmsProducerExceptionInTXManualIT extends CamelBrokerClientITSupport {
+class AsyncJmsProducerExceptionInTXManualIT extends SpringJMSBasic {
 
     @BeforeAll
     static void setSystemProperties() {

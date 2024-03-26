@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "CaffeineIdempotentRepository",
+    "javaType": "org.apache.camel.component.caffeine.processor.idempotent.CaffeineIdempotentRepository",
+    "interfaceType": "org.apache.camel.spi.IdempotentRepository",
+    "title": "Caffeine Idempotent Repository",
+    "description": "Idempotent repository that uses Caffiene cache to store message ids.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-caffeine",
+    "version": "4.5.0-SNAPSHOT",
+    "properties": { "cacheName": { "index": 0, "kind": "property", "displayName": "Cache Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "CaffeineIdempotentRepository", "description": "Name of cache" } }
+  }
+}
+

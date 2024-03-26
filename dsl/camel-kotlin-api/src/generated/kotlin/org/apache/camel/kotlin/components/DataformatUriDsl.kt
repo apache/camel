@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Use a Camel Data Format as a regular Camel Component.
+ */
 public fun UriDsl.dataformat(i: DataformatUriDsl.() -> Unit) {
   DataformatUriDsl(this).apply(i)
 }
@@ -41,20 +44,42 @@ public class DataformatUriDsl(
 
   private var operation: String = ""
 
+  /**
+   * Name of data format
+   */
   public fun name(name: String) {
     this.name = name
     it.url("$name:$operation")
   }
 
+  /**
+   * Operation to use either marshal or unmarshal
+   */
   public fun operation(operation: String) {
     this.operation = operation
     it.url("$name:$operation")
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }

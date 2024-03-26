@@ -155,262 +155,205 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.zendesk.ZendeskEndpointConfiguration target = (org.apache.camel.component.zendesk.ZendeskEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "active":
-        case "Active": target.setActive(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "article":
-        case "Article": target.setArticle(property(camelContext, org.zendesk.client.v2.model.hc.Article.class, value)); return true;
+        case "active": target.setActive(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "article": target.setArticle(property(camelContext, org.zendesk.client.v2.model.hc.Article.class, value)); return true;
         case "articleattachments":
-        case "ArticleAttachments": target.setArticleAttachments(property(camelContext, org.zendesk.client.v2.model.hc.ArticleAttachments.class, value)); return true;
+        case "articleAttachments": target.setArticleAttachments(property(camelContext, org.zendesk.client.v2.model.hc.ArticleAttachments.class, value)); return true;
         case "articleid":
-        case "ArticleId": target.setArticleId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "articleId": target.setArticleId(property(camelContext, java.lang.Long.class, value)); return true;
         case "articleid0":
-        case "ArticleId0": target.setArticleId0(property(camelContext, java.lang.Long.class, value)); return true;
-        case "attachment":
-        case "Attachment": target.setAttachment(property(camelContext, org.zendesk.client.v2.model.Attachment.class, value)); return true;
-        case "attachments":
-        case "Attachments": target.setAttachments(property(camelContext, java.util.List.class, value)); return true;
-        case "audit":
-        case "Audit": target.setAudit(property(camelContext, org.zendesk.client.v2.model.Audit.class, value)); return true;
+        case "articleId0": target.setArticleId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "attachment": target.setAttachment(property(camelContext, org.zendesk.client.v2.model.Attachment.class, value)); return true;
+        case "attachments": target.setAttachments(property(camelContext, java.util.List.class, value)); return true;
+        case "audit": target.setAudit(property(camelContext, org.zendesk.client.v2.model.Audit.class, value)); return true;
         case "auditid":
-        case "AuditId": target.setAuditId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "automation":
-        case "Automation": target.setAutomation(property(camelContext, org.zendesk.client.v2.model.Automation.class, value)); return true;
+        case "auditId": target.setAuditId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "automation": target.setAutomation(property(camelContext, org.zendesk.client.v2.model.Automation.class, value)); return true;
         case "automationid":
-        case "AutomationId": target.setAutomationId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "automationId": target.setAutomationId(property(camelContext, java.lang.Long.class, value)); return true;
         case "automationid0":
-        case "AutomationId0": target.setAutomationId0(property(camelContext, java.lang.Long.class, value)); return true;
-        case "category":
-        case "Category": target.setCategory(property(camelContext, org.zendesk.client.v2.model.hc.Category.class, value)); return true;
+        case "automationId0": target.setAutomationId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "category": target.setCategory(property(camelContext, org.zendesk.client.v2.model.hc.Category.class, value)); return true;
         case "categoryid":
-        case "CategoryId": target.setCategoryId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "categoryId": target.setCategoryId(property(camelContext, java.lang.Long.class, value)); return true;
         case "categoryid0":
-        case "CategoryId0": target.setCategoryId0(property(camelContext, java.lang.String.class, value)); return true;
+        case "categoryId0": target.setCategoryId0(property(camelContext, java.lang.String.class, value)); return true;
         case "categoryid1":
-        case "CategoryId1": target.setCategoryId1(property(camelContext, java.lang.Long.class, value)); return true;
-        case "category_id":
-        case "Category_id": target.setCategory_id(property(camelContext, java.lang.Long.class, value)); return true;
-        case "comment":
-        case "Comment": target.setComment(property(camelContext, org.zendesk.client.v2.model.Comment.class, value)); return true;
+        case "categoryId1": target.setCategoryId1(property(camelContext, java.lang.Long.class, value)); return true;
+        case "category_id": target.setCategory_id(property(camelContext, java.lang.Long.class, value)); return true;
+        case "comment": target.setComment(property(camelContext, org.zendesk.client.v2.model.Comment.class, value)); return true;
         case "commentid":
-        case "CommentId": target.setCommentId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "content":
-        case "Content": target.setContent(property(camelContext, byte[].class, value)); return true;
+        case "commentId": target.setCommentId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "content": target.setContent(property(camelContext, byte[].class, value)); return true;
         case "contenttag":
-        case "ContentTag": target.setContentTag(property(camelContext, org.zendesk.client.v2.model.hc.ContentTag.class, value)); return true;
+        case "contentTag": target.setContentTag(property(camelContext, org.zendesk.client.v2.model.hc.ContentTag.class, value)); return true;
         case "contenttagid":
-        case "ContentTagId": target.setContentTagId(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentTagId": target.setContentTagId(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttype":
-        case "ContentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
-        case "email":
-        case "Email": target.setEmail(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
+        case "email": target.setEmail(property(camelContext, java.lang.String.class, value)); return true;
         case "endtime":
-        case "EndTime": target.setEndTime(property(camelContext, java.util.Date.class, value)); return true;
+        case "endTime": target.setEndTime(property(camelContext, java.util.Date.class, value)); return true;
         case "externalid":
-        case "ExternalId": target.setExternalId(property(camelContext, java.lang.String.class, value)); return true;
+        case "externalId": target.setExternalId(property(camelContext, java.lang.String.class, value)); return true;
         case "externalid0":
-        case "ExternalId0": target.setExternalId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "externalId0": target.setExternalId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "externalid0s":
-        case "ExternalId0s": target.setExternalId0s(property(camelContext, long[].class, value)); return true;
+        case "externalId0s": target.setExternalId0s(property(camelContext, long[].class, value)); return true;
         case "externalids":
-        case "ExternalIds": target.setExternalIds(property(camelContext, java.lang.String[].class, value)); return true;
-        case "field":
-        case "Field": target.setField(property(camelContext, org.zendesk.client.v2.model.Field.class, value)); return true;
-        case "file":
-        case "File": target.setFile(property(camelContext, java.io.File.class, value)); return true;
+        case "externalIds": target.setExternalIds(property(camelContext, java.lang.String[].class, value)); return true;
+        case "field": target.setField(property(camelContext, org.zendesk.client.v2.model.Field.class, value)); return true;
+        case "file": target.setFile(property(camelContext, java.io.File.class, value)); return true;
         case "filename":
-        case "FileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "forum":
-        case "Forum": target.setForum(property(camelContext, org.zendesk.client.v2.model.Forum.class, value)); return true;
-        case "forum_id":
-        case "Forum_id": target.setForum_id(property(camelContext, java.lang.Long.class, value)); return true;
-        case "group":
-        case "Group": target.setGroup(property(camelContext, org.zendesk.client.v2.model.Group.class, value)); return true;
+        case "fileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "forum": target.setForum(property(camelContext, org.zendesk.client.v2.model.Forum.class, value)); return true;
+        case "forum_id": target.setForum_id(property(camelContext, java.lang.Long.class, value)); return true;
+        case "group": target.setGroup(property(camelContext, org.zendesk.client.v2.model.Group.class, value)); return true;
         case "groupmembership":
-        case "GroupMembership": target.setGroupMembership(property(camelContext, org.zendesk.client.v2.model.GroupMembership.class, value)); return true;
-        case "group_id":
-        case "Group_id": target.setGroup_id(property(camelContext, java.lang.Long.class, value)); return true;
-        case "group_membership_id":
-        case "Group_membership_id": target.setGroup_membership_id(property(camelContext, java.lang.Long.class, value)); return true;
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "groupMembership": target.setGroupMembership(property(camelContext, org.zendesk.client.v2.model.GroupMembership.class, value)); return true;
+        case "group_id": target.setGroup_id(property(camelContext, java.lang.Long.class, value)); return true;
+        case "group_membership_id": target.setGroup_membership_id(property(camelContext, java.lang.Long.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.Long.class, value)); return true;
         case "idarticle":
-        case "IdArticle": target.setIdArticle(property(camelContext, java.lang.String.class, value)); return true;
-        case "identity":
-        case "Identity": target.setIdentity(property(camelContext, org.zendesk.client.v2.model.Identity.class, value)); return true;
+        case "idArticle": target.setIdArticle(property(camelContext, java.lang.String.class, value)); return true;
+        case "identity": target.setIdentity(property(camelContext, org.zendesk.client.v2.model.Identity.class, value)); return true;
         case "identityid":
-        case "IdentityId": target.setIdentityId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "ids":
-        case "Ids": target.setIds(property(camelContext, long[].class, value)); return true;
+        case "identityId": target.setIdentityId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "ids": target.setIds(property(camelContext, long[].class, value)); return true;
         case "includearchived":
-        case "IncludeArchived": target.setIncludeArchived(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "inline":
-        case "Inline": target.setInline(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "includeArchived": target.setIncludeArchived(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "inline": target.setInline(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "installationid":
-        case "InstallationId": target.setInstallationId(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "item":
-        case "Item": target.setItem(property(camelContext, org.zendesk.client.v2.model.dynamic.DynamicContentItem.class, value)); return true;
+        case "installationId": target.setInstallationId(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "item": target.setItem(property(camelContext, org.zendesk.client.v2.model.dynamic.DynamicContentItem.class, value)); return true;
         case "itemid":
-        case "ItemId": target.setItemId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "json":
-        case "Json": target.setJson(property(camelContext, java.lang.String.class, value)); return true;
-        case "labels":
-        case "Labels": target.setLabels(property(camelContext, java.util.List.class, value)); return true;
-        case "locale":
-        case "Locale": target.setLocale(property(camelContext, java.lang.String.class, value)); return true;
-        case "macro":
-        case "Macro": target.setMacro(property(camelContext, org.zendesk.client.v2.model.Macro.class, value)); return true;
+        case "itemId": target.setItemId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "json": target.setJson(property(camelContext, java.lang.String.class, value)); return true;
+        case "labels": target.setLabels(property(camelContext, java.util.List.class, value)); return true;
+        case "locale": target.setLocale(property(camelContext, java.lang.String.class, value)); return true;
+        case "macro": target.setMacro(property(camelContext, org.zendesk.client.v2.model.Macro.class, value)); return true;
         case "macroid":
-        case "MacroId": target.setMacroId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "macroId": target.setMacroId(property(camelContext, java.lang.Long.class, value)); return true;
         case "macroid0":
-        case "MacroId0": target.setMacroId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "macroId0": target.setMacroId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class, value)); return true;
         case "monitorid":
-        case "MonitorId": target.setMonitorId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "name":
-        case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
+        case "monitorId": target.setMonitorId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "nameprefix":
-        case "NamePrefix": target.setNamePrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "namePrefix": target.setNamePrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "newpassword":
-        case "NewPassword": target.setNewPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "newPassword": target.setNewPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "notifysubscribers":
-        case "NotifySubscribers": target.setNotifySubscribers(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifySubscribers": target.setNotifySubscribers(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "oauthtoken":
-        case "OauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "oldpassword":
-        case "OldPassword": target.setOldPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "order":
-        case "Order": target.setOrder(property(camelContext, org.zendesk.client.v2.model.SortOrder.class, value)); return true;
-        case "organization":
-        case "Organization": target.setOrganization(property(camelContext, org.zendesk.client.v2.model.Organization.class, value)); return true;
+        case "oldPassword": target.setOldPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "order": target.setOrder(property(camelContext, org.zendesk.client.v2.model.SortOrder.class, value)); return true;
+        case "organization": target.setOrganization(property(camelContext, org.zendesk.client.v2.model.Organization.class, value)); return true;
         case "organizationid":
-        case "OrganizationId": target.setOrganizationId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "organizationId": target.setOrganizationId(property(camelContext, java.lang.Long.class, value)); return true;
         case "organizationlist":
-        case "OrganizationList": target.setOrganizationList(property(camelContext, java.util.List.class, value)); return true;
+        case "organizationList": target.setOrganizationList(property(camelContext, java.util.List.class, value)); return true;
         case "organizationmembership":
-        case "OrganizationMembership": target.setOrganizationMembership(property(camelContext, org.zendesk.client.v2.model.OrganizationMembership.class, value)); return true;
+        case "organizationMembership": target.setOrganizationMembership(property(camelContext, org.zendesk.client.v2.model.OrganizationMembership.class, value)); return true;
         case "organizationmembershiplist":
-        case "OrganizationMembershipList": target.setOrganizationMembershipList(property(camelContext, java.util.List.class, value)); return true;
+        case "organizationMembershipList": target.setOrganizationMembershipList(property(camelContext, java.util.List.class, value)); return true;
         case "organizationmemberships":
-        case "OrganizationMemberships": target.setOrganizationMemberships(property(camelContext, org.zendesk.client.v2.model.OrganizationMembership[].class, value)); return true;
-        case "organization_id":
-        case "Organization_id": target.setOrganization_id(property(camelContext, java.lang.Long.class, value)); return true;
-        case "organization_membership_id":
-        case "Organization_membership_id": target.setOrganization_membership_id(property(camelContext, java.lang.Long.class, value)); return true;
-        case "organizations":
-        case "Organizations": target.setOrganizations(property(camelContext, org.zendesk.client.v2.model.Organization[].class, value)); return true;
-        case "page":
-        case "Page": target.setPage(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "organizationMemberships": target.setOrganizationMemberships(property(camelContext, org.zendesk.client.v2.model.OrganizationMembership[].class, value)); return true;
+        case "organization_id": target.setOrganization_id(property(camelContext, java.lang.Long.class, value)); return true;
+        case "organization_membership_id": target.setOrganization_membership_id(property(camelContext, java.lang.Long.class, value)); return true;
+        case "organizations": target.setOrganizations(property(camelContext, org.zendesk.client.v2.model.Organization[].class, value)); return true;
+        case "page": target.setPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "pagesize":
-        case "PageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "password":
-        case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "permissiongroup":
-        case "PermissionGroup": target.setPermissionGroup(property(camelContext, org.zendesk.client.v2.model.hc.PermissionGroup.class, value)); return true;
-        case "query":
-        case "Query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "permissionGroup": target.setPermissionGroup(property(camelContext, org.zendesk.client.v2.model.hc.PermissionGroup.class, value)); return true;
+        case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "queryparams":
-        case "QueryParams": target.setQueryParams(property(camelContext, java.util.Map.class, value)); return true;
-        case "request":
-        case "Request": target.setRequest(property(camelContext, org.zendesk.client.v2.model.Request.class, value)); return true;
+        case "queryParams": target.setQueryParams(property(camelContext, java.util.Map.class, value)); return true;
+        case "request": target.setRequest(property(camelContext, org.zendesk.client.v2.model.Request.class, value)); return true;
         case "requestid":
-        case "RequestId": target.setRequestId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "role":
-        case "Role": target.setRole(property(camelContext, java.lang.String.class, value)); return true;
-        case "roles":
-        case "Roles": target.setRoles(property(camelContext, java.lang.String[].class, value)); return true;
+        case "requestId": target.setRequestId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "role": target.setRole(property(camelContext, java.lang.String.class, value)); return true;
+        case "roles": target.setRoles(property(camelContext, java.lang.String[].class, value)); return true;
         case "satisfactionrating":
-        case "SatisfactionRating": target.setSatisfactionRating(property(camelContext, org.zendesk.client.v2.model.SatisfactionRating.class, value)); return true;
-        case "schedule":
-        case "Schedule": target.setSchedule(property(camelContext, org.zendesk.client.v2.model.schedules.Schedule.class, value)); return true;
+        case "satisfactionRating": target.setSatisfactionRating(property(camelContext, org.zendesk.client.v2.model.SatisfactionRating.class, value)); return true;
+        case "schedule": target.setSchedule(property(camelContext, org.zendesk.client.v2.model.schedules.Schedule.class, value)); return true;
         case "scheduleid":
-        case "ScheduleId": target.setScheduleId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "scheduleId": target.setScheduleId(property(camelContext, java.lang.Long.class, value)); return true;
         case "searchterm":
-        case "SearchTerm": target.setSearchTerm(property(camelContext, java.lang.String.class, value)); return true;
-        case "section":
-        case "Section": target.setSection(property(camelContext, org.zendesk.client.v2.model.hc.Section.class, value)); return true;
+        case "searchTerm": target.setSearchTerm(property(camelContext, java.lang.String.class, value)); return true;
+        case "section": target.setSection(property(camelContext, org.zendesk.client.v2.model.hc.Section.class, value)); return true;
         case "sectionid":
-        case "SectionId": target.setSectionId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "sectionId": target.setSectionId(property(camelContext, java.lang.Long.class, value)); return true;
         case "sectionid0":
-        case "SectionId0": target.setSectionId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "sectionId0": target.setSectionId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "serverurl":
-        case "ServerUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "sortby":
-        case "SortBy": target.setSortBy(property(camelContext, java.lang.String.class, value)); return true;
+        case "sortBy": target.setSortBy(property(camelContext, java.lang.String.class, value)); return true;
         case "sortorder":
-        case "SortOrder": target.setSortOrder(property(camelContext, org.zendesk.client.v2.model.SortOrder.class, value)); return true;
+        case "sortOrder": target.setSortOrder(property(camelContext, org.zendesk.client.v2.model.SortOrder.class, value)); return true;
         case "starttime":
-        case "StartTime": target.setStartTime(property(camelContext, java.util.Date.class, value)); return true;
-        case "status":
-        case "Status": target.setStatus(property(camelContext, org.zendesk.client.v2.model.JobStatus.class, value)); return true;
-        case "statuses":
-        case "Statuses": target.setStatuses(property(camelContext, java.util.List.class, value)); return true;
+        case "startTime": target.setStartTime(property(camelContext, java.util.Date.class, value)); return true;
+        case "status": target.setStatus(property(camelContext, org.zendesk.client.v2.model.JobStatus.class, value)); return true;
+        case "statuses": target.setStatuses(property(camelContext, java.util.List.class, value)); return true;
         case "suspendedticket":
-        case "SuspendedTicket": target.setSuspendedTicket(property(camelContext, org.zendesk.client.v2.model.SuspendedTicket.class, value)); return true;
-        case "tags":
-        case "Tags": target.setTags(property(camelContext, java.lang.String[].class, value)); return true;
-        case "target":
-        case "Target": target.setTarget(property(camelContext, org.zendesk.client.v2.model.targets.Target.class, value)); return true;
+        case "suspendedTicket": target.setSuspendedTicket(property(camelContext, org.zendesk.client.v2.model.SuspendedTicket.class, value)); return true;
+        case "tags": target.setTags(property(camelContext, java.lang.String[].class, value)); return true;
+        case "target": target.setTarget(property(camelContext, org.zendesk.client.v2.model.targets.Target.class, value)); return true;
         case "targetid":
-        case "TargetId": target.setTargetId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "ticket":
-        case "Ticket": target.setTicket(property(camelContext, org.zendesk.client.v2.model.Ticket.class, value)); return true;
+        case "targetId": target.setTargetId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "ticket": target.setTicket(property(camelContext, org.zendesk.client.v2.model.Ticket.class, value)); return true;
         case "ticketform":
-        case "TicketForm": target.setTicketForm(property(camelContext, org.zendesk.client.v2.model.TicketForm.class, value)); return true;
+        case "ticketForm": target.setTicketForm(property(camelContext, org.zendesk.client.v2.model.TicketForm.class, value)); return true;
         case "ticketid":
-        case "TicketId": target.setTicketId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "ticketId": target.setTicketId(property(camelContext, java.lang.Long.class, value)); return true;
         case "ticketid0":
-        case "TicketId0": target.setTicketId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "ticketId0": target.setTicketId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "ticketimport":
-        case "TicketImport": target.setTicketImport(property(camelContext, org.zendesk.client.v2.model.TicketImport.class, value)); return true;
+        case "ticketImport": target.setTicketImport(property(camelContext, org.zendesk.client.v2.model.TicketImport.class, value)); return true;
         case "ticketlist":
-        case "TicketList": target.setTicketList(property(camelContext, java.util.List.class, value)); return true;
-        case "tickets":
-        case "Tickets": target.setTickets(property(camelContext, org.zendesk.client.v2.model.Ticket[].class, value)); return true;
-        case "token":
-        case "Token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "topic":
-        case "Topic": target.setTopic(property(camelContext, org.zendesk.client.v2.model.Topic.class, value)); return true;
-        case "translation":
-        case "Translation": target.setTranslation(property(camelContext, org.zendesk.client.v2.model.hc.Translation.class, value)); return true;
+        case "ticketList": target.setTicketList(property(camelContext, java.util.List.class, value)); return true;
+        case "tickets": target.setTickets(property(camelContext, org.zendesk.client.v2.model.Ticket[].class, value)); return true;
+        case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "topic": target.setTopic(property(camelContext, org.zendesk.client.v2.model.Topic.class, value)); return true;
+        case "translation": target.setTranslation(property(camelContext, org.zendesk.client.v2.model.hc.Translation.class, value)); return true;
         case "translationid":
-        case "TranslationId": target.setTranslationId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "trigger":
-        case "Trigger": target.setTrigger(property(camelContext, org.zendesk.client.v2.model.Trigger.class, value)); return true;
+        case "translationId": target.setTranslationId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "trigger": target.setTrigger(property(camelContext, org.zendesk.client.v2.model.Trigger.class, value)); return true;
         case "triggerid":
-        case "TriggerId": target.setTriggerId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "triggerId": target.setTriggerId(property(camelContext, java.lang.Long.class, value)); return true;
         case "triggerid0":
-        case "TriggerId0": target.setTriggerId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "triggerId0": target.setTriggerId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "tweetid":
-        case "TweetId": target.setTweetId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "tweetId": target.setTweetId(property(camelContext, java.lang.Long.class, value)); return true;
         case "unixepochtime":
-        case "UnixEpochTime": target.setUnixEpochTime(property(camelContext, java.lang.Long.class, value)); return true;
-        case "upload":
-        case "Upload": target.setUpload(property(camelContext, org.zendesk.client.v2.model.Attachment.Upload.class, value)); return true;
-        case "user":
-        case "User": target.setUser(property(camelContext, org.zendesk.client.v2.model.User.class, value)); return true;
+        case "unixEpochTime": target.setUnixEpochTime(property(camelContext, java.lang.Long.class, value)); return true;
+        case "upload": target.setUpload(property(camelContext, org.zendesk.client.v2.model.Attachment.Upload.class, value)); return true;
+        case "user": target.setUser(property(camelContext, org.zendesk.client.v2.model.User.class, value)); return true;
         case "userid":
-        case "UserId": target.setUserId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "userId": target.setUserId(property(camelContext, java.lang.Long.class, value)); return true;
         case "userid0":
-        case "UserId0": target.setUserId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "userId0": target.setUserId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "useridthatwillbemerged":
-        case "UserIdThatWillBeMerged": target.setUserIdThatWillBeMerged(property(camelContext, java.lang.Long.class, value)); return true;
+        case "userIdThatWillBeMerged": target.setUserIdThatWillBeMerged(property(camelContext, java.lang.Long.class, value)); return true;
         case "useridthatwillremain":
-        case "UserIdThatWillRemain": target.setUserIdThatWillRemain(property(camelContext, java.lang.Long.class, value)); return true;
+        case "userIdThatWillRemain": target.setUserIdThatWillRemain(property(camelContext, java.lang.Long.class, value)); return true;
         case "userlist":
-        case "UserList": target.setUserList(property(camelContext, java.util.List.class, value)); return true;
+        case "userList": target.setUserList(property(camelContext, java.util.List.class, value)); return true;
         case "usersegment":
-        case "UserSegment": target.setUserSegment(property(camelContext, org.zendesk.client.v2.model.hc.UserSegment.class, value)); return true;
-        case "user_id":
-        case "User_id": target.setUser_id(property(camelContext, java.lang.Long.class, value)); return true;
-        case "username":
-        case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "users":
-        case "Users": target.setUsers(property(camelContext, org.zendesk.client.v2.model.User[].class, value)); return true;
+        case "userSegment": target.setUserSegment(property(camelContext, org.zendesk.client.v2.model.hc.UserSegment.class, value)); return true;
+        case "user_id": target.setUser_id(property(camelContext, java.lang.Long.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "users": target.setUsers(property(camelContext, org.zendesk.client.v2.model.User[].class, value)); return true;
         case "userslist":
-        case "UsersList": target.setUsersList(property(camelContext, java.util.List.class, value)); return true;
-        case "variant":
-        case "Variant": target.setVariant(property(camelContext, org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class, value)); return true;
+        case "usersList": target.setUsersList(property(camelContext, java.util.List.class, value)); return true;
+        case "variant": target.setVariant(property(camelContext, org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class, value)); return true;
         default: return false;
         }
     }
@@ -423,262 +366,205 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "active":
-        case "Active": return java.lang.Boolean.class;
-        case "article":
-        case "Article": return org.zendesk.client.v2.model.hc.Article.class;
+        case "active": return java.lang.Boolean.class;
+        case "article": return org.zendesk.client.v2.model.hc.Article.class;
         case "articleattachments":
-        case "ArticleAttachments": return org.zendesk.client.v2.model.hc.ArticleAttachments.class;
+        case "articleAttachments": return org.zendesk.client.v2.model.hc.ArticleAttachments.class;
         case "articleid":
-        case "ArticleId": return java.lang.Long.class;
+        case "articleId": return java.lang.Long.class;
         case "articleid0":
-        case "ArticleId0": return java.lang.Long.class;
-        case "attachment":
-        case "Attachment": return org.zendesk.client.v2.model.Attachment.class;
-        case "attachments":
-        case "Attachments": return java.util.List.class;
-        case "audit":
-        case "Audit": return org.zendesk.client.v2.model.Audit.class;
+        case "articleId0": return java.lang.Long.class;
+        case "attachment": return org.zendesk.client.v2.model.Attachment.class;
+        case "attachments": return java.util.List.class;
+        case "audit": return org.zendesk.client.v2.model.Audit.class;
         case "auditid":
-        case "AuditId": return java.lang.Long.class;
-        case "automation":
-        case "Automation": return org.zendesk.client.v2.model.Automation.class;
+        case "auditId": return java.lang.Long.class;
+        case "automation": return org.zendesk.client.v2.model.Automation.class;
         case "automationid":
-        case "AutomationId": return java.lang.Long.class;
+        case "automationId": return java.lang.Long.class;
         case "automationid0":
-        case "AutomationId0": return java.lang.Long.class;
-        case "category":
-        case "Category": return org.zendesk.client.v2.model.hc.Category.class;
+        case "automationId0": return java.lang.Long.class;
+        case "category": return org.zendesk.client.v2.model.hc.Category.class;
         case "categoryid":
-        case "CategoryId": return java.lang.Long.class;
+        case "categoryId": return java.lang.Long.class;
         case "categoryid0":
-        case "CategoryId0": return java.lang.String.class;
+        case "categoryId0": return java.lang.String.class;
         case "categoryid1":
-        case "CategoryId1": return java.lang.Long.class;
-        case "category_id":
-        case "Category_id": return java.lang.Long.class;
-        case "comment":
-        case "Comment": return org.zendesk.client.v2.model.Comment.class;
+        case "categoryId1": return java.lang.Long.class;
+        case "category_id": return java.lang.Long.class;
+        case "comment": return org.zendesk.client.v2.model.Comment.class;
         case "commentid":
-        case "CommentId": return java.lang.Long.class;
-        case "content":
-        case "Content": return byte[].class;
+        case "commentId": return java.lang.Long.class;
+        case "content": return byte[].class;
         case "contenttag":
-        case "ContentTag": return org.zendesk.client.v2.model.hc.ContentTag.class;
+        case "contentTag": return org.zendesk.client.v2.model.hc.ContentTag.class;
         case "contenttagid":
-        case "ContentTagId": return java.lang.String.class;
+        case "contentTagId": return java.lang.String.class;
         case "contenttype":
-        case "ContentType": return java.lang.String.class;
-        case "email":
-        case "Email": return java.lang.String.class;
+        case "contentType": return java.lang.String.class;
+        case "email": return java.lang.String.class;
         case "endtime":
-        case "EndTime": return java.util.Date.class;
+        case "endTime": return java.util.Date.class;
         case "externalid":
-        case "ExternalId": return java.lang.String.class;
+        case "externalId": return java.lang.String.class;
         case "externalid0":
-        case "ExternalId0": return java.lang.Long.class;
+        case "externalId0": return java.lang.Long.class;
         case "externalid0s":
-        case "ExternalId0s": return long[].class;
+        case "externalId0s": return long[].class;
         case "externalids":
-        case "ExternalIds": return java.lang.String[].class;
-        case "field":
-        case "Field": return org.zendesk.client.v2.model.Field.class;
-        case "file":
-        case "File": return java.io.File.class;
+        case "externalIds": return java.lang.String[].class;
+        case "field": return org.zendesk.client.v2.model.Field.class;
+        case "file": return java.io.File.class;
         case "filename":
-        case "FileName": return java.lang.String.class;
-        case "forum":
-        case "Forum": return org.zendesk.client.v2.model.Forum.class;
-        case "forum_id":
-        case "Forum_id": return java.lang.Long.class;
-        case "group":
-        case "Group": return org.zendesk.client.v2.model.Group.class;
+        case "fileName": return java.lang.String.class;
+        case "forum": return org.zendesk.client.v2.model.Forum.class;
+        case "forum_id": return java.lang.Long.class;
+        case "group": return org.zendesk.client.v2.model.Group.class;
         case "groupmembership":
-        case "GroupMembership": return org.zendesk.client.v2.model.GroupMembership.class;
-        case "group_id":
-        case "Group_id": return java.lang.Long.class;
-        case "group_membership_id":
-        case "Group_membership_id": return java.lang.Long.class;
-        case "id":
-        case "Id": return java.lang.Long.class;
+        case "groupMembership": return org.zendesk.client.v2.model.GroupMembership.class;
+        case "group_id": return java.lang.Long.class;
+        case "group_membership_id": return java.lang.Long.class;
+        case "id": return java.lang.Long.class;
         case "idarticle":
-        case "IdArticle": return java.lang.String.class;
-        case "identity":
-        case "Identity": return org.zendesk.client.v2.model.Identity.class;
+        case "idArticle": return java.lang.String.class;
+        case "identity": return org.zendesk.client.v2.model.Identity.class;
         case "identityid":
-        case "IdentityId": return java.lang.Long.class;
-        case "ids":
-        case "Ids": return long[].class;
+        case "identityId": return java.lang.Long.class;
+        case "ids": return long[].class;
         case "includearchived":
-        case "IncludeArchived": return java.lang.Boolean.class;
-        case "inline":
-        case "Inline": return java.lang.Boolean.class;
+        case "includeArchived": return java.lang.Boolean.class;
+        case "inline": return java.lang.Boolean.class;
         case "installationid":
-        case "InstallationId": return java.lang.Integer.class;
-        case "item":
-        case "Item": return org.zendesk.client.v2.model.dynamic.DynamicContentItem.class;
+        case "installationId": return java.lang.Integer.class;
+        case "item": return org.zendesk.client.v2.model.dynamic.DynamicContentItem.class;
         case "itemid":
-        case "ItemId": return java.lang.Long.class;
-        case "json":
-        case "Json": return java.lang.String.class;
-        case "labels":
-        case "Labels": return java.util.List.class;
-        case "locale":
-        case "Locale": return java.lang.String.class;
-        case "macro":
-        case "Macro": return org.zendesk.client.v2.model.Macro.class;
+        case "itemId": return java.lang.Long.class;
+        case "json": return java.lang.String.class;
+        case "labels": return java.util.List.class;
+        case "locale": return java.lang.String.class;
+        case "macro": return org.zendesk.client.v2.model.Macro.class;
         case "macroid":
-        case "MacroId": return java.lang.Long.class;
+        case "macroId": return java.lang.Long.class;
         case "macroid0":
-        case "MacroId0": return java.lang.Long.class;
+        case "macroId0": return java.lang.Long.class;
         case "methodname":
-        case "MethodName": return org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class;
+        case "methodName": return org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class;
         case "monitorid":
-        case "MonitorId": return java.lang.Long.class;
-        case "name":
-        case "Name": return java.lang.String.class;
+        case "monitorId": return java.lang.Long.class;
+        case "name": return java.lang.String.class;
         case "nameprefix":
-        case "NamePrefix": return java.lang.String.class;
+        case "namePrefix": return java.lang.String.class;
         case "newpassword":
-        case "NewPassword": return java.lang.String.class;
+        case "newPassword": return java.lang.String.class;
         case "notifysubscribers":
-        case "NotifySubscribers": return java.lang.Boolean.class;
+        case "notifySubscribers": return java.lang.Boolean.class;
         case "oauthtoken":
-        case "OauthToken": return java.lang.String.class;
+        case "oauthToken": return java.lang.String.class;
         case "oldpassword":
-        case "OldPassword": return java.lang.String.class;
-        case "order":
-        case "Order": return org.zendesk.client.v2.model.SortOrder.class;
-        case "organization":
-        case "Organization": return org.zendesk.client.v2.model.Organization.class;
+        case "oldPassword": return java.lang.String.class;
+        case "order": return org.zendesk.client.v2.model.SortOrder.class;
+        case "organization": return org.zendesk.client.v2.model.Organization.class;
         case "organizationid":
-        case "OrganizationId": return java.lang.Long.class;
+        case "organizationId": return java.lang.Long.class;
         case "organizationlist":
-        case "OrganizationList": return java.util.List.class;
+        case "organizationList": return java.util.List.class;
         case "organizationmembership":
-        case "OrganizationMembership": return org.zendesk.client.v2.model.OrganizationMembership.class;
+        case "organizationMembership": return org.zendesk.client.v2.model.OrganizationMembership.class;
         case "organizationmembershiplist":
-        case "OrganizationMembershipList": return java.util.List.class;
+        case "organizationMembershipList": return java.util.List.class;
         case "organizationmemberships":
-        case "OrganizationMemberships": return org.zendesk.client.v2.model.OrganizationMembership[].class;
-        case "organization_id":
-        case "Organization_id": return java.lang.Long.class;
-        case "organization_membership_id":
-        case "Organization_membership_id": return java.lang.Long.class;
-        case "organizations":
-        case "Organizations": return org.zendesk.client.v2.model.Organization[].class;
-        case "page":
-        case "Page": return java.lang.Integer.class;
+        case "organizationMemberships": return org.zendesk.client.v2.model.OrganizationMembership[].class;
+        case "organization_id": return java.lang.Long.class;
+        case "organization_membership_id": return java.lang.Long.class;
+        case "organizations": return org.zendesk.client.v2.model.Organization[].class;
+        case "page": return java.lang.Integer.class;
         case "pagesize":
-        case "PageSize": return java.lang.Integer.class;
-        case "password":
-        case "Password": return java.lang.String.class;
+        case "pageSize": return java.lang.Integer.class;
+        case "password": return java.lang.String.class;
         case "permissiongroup":
-        case "PermissionGroup": return org.zendesk.client.v2.model.hc.PermissionGroup.class;
-        case "query":
-        case "Query": return java.lang.String.class;
+        case "permissionGroup": return org.zendesk.client.v2.model.hc.PermissionGroup.class;
+        case "query": return java.lang.String.class;
         case "queryparams":
-        case "QueryParams": return java.util.Map.class;
-        case "request":
-        case "Request": return org.zendesk.client.v2.model.Request.class;
+        case "queryParams": return java.util.Map.class;
+        case "request": return org.zendesk.client.v2.model.Request.class;
         case "requestid":
-        case "RequestId": return java.lang.Long.class;
-        case "role":
-        case "Role": return java.lang.String.class;
-        case "roles":
-        case "Roles": return java.lang.String[].class;
+        case "requestId": return java.lang.Long.class;
+        case "role": return java.lang.String.class;
+        case "roles": return java.lang.String[].class;
         case "satisfactionrating":
-        case "SatisfactionRating": return org.zendesk.client.v2.model.SatisfactionRating.class;
-        case "schedule":
-        case "Schedule": return org.zendesk.client.v2.model.schedules.Schedule.class;
+        case "satisfactionRating": return org.zendesk.client.v2.model.SatisfactionRating.class;
+        case "schedule": return org.zendesk.client.v2.model.schedules.Schedule.class;
         case "scheduleid":
-        case "ScheduleId": return java.lang.Long.class;
+        case "scheduleId": return java.lang.Long.class;
         case "searchterm":
-        case "SearchTerm": return java.lang.String.class;
-        case "section":
-        case "Section": return org.zendesk.client.v2.model.hc.Section.class;
+        case "searchTerm": return java.lang.String.class;
+        case "section": return org.zendesk.client.v2.model.hc.Section.class;
         case "sectionid":
-        case "SectionId": return java.lang.Long.class;
+        case "sectionId": return java.lang.Long.class;
         case "sectionid0":
-        case "SectionId0": return java.lang.Long.class;
+        case "sectionId0": return java.lang.Long.class;
         case "serverurl":
-        case "ServerUrl": return java.lang.String.class;
+        case "serverUrl": return java.lang.String.class;
         case "sortby":
-        case "SortBy": return java.lang.String.class;
+        case "sortBy": return java.lang.String.class;
         case "sortorder":
-        case "SortOrder": return org.zendesk.client.v2.model.SortOrder.class;
+        case "sortOrder": return org.zendesk.client.v2.model.SortOrder.class;
         case "starttime":
-        case "StartTime": return java.util.Date.class;
-        case "status":
-        case "Status": return org.zendesk.client.v2.model.JobStatus.class;
-        case "statuses":
-        case "Statuses": return java.util.List.class;
+        case "startTime": return java.util.Date.class;
+        case "status": return org.zendesk.client.v2.model.JobStatus.class;
+        case "statuses": return java.util.List.class;
         case "suspendedticket":
-        case "SuspendedTicket": return org.zendesk.client.v2.model.SuspendedTicket.class;
-        case "tags":
-        case "Tags": return java.lang.String[].class;
-        case "target":
-        case "Target": return org.zendesk.client.v2.model.targets.Target.class;
+        case "suspendedTicket": return org.zendesk.client.v2.model.SuspendedTicket.class;
+        case "tags": return java.lang.String[].class;
+        case "target": return org.zendesk.client.v2.model.targets.Target.class;
         case "targetid":
-        case "TargetId": return java.lang.Long.class;
-        case "ticket":
-        case "Ticket": return org.zendesk.client.v2.model.Ticket.class;
+        case "targetId": return java.lang.Long.class;
+        case "ticket": return org.zendesk.client.v2.model.Ticket.class;
         case "ticketform":
-        case "TicketForm": return org.zendesk.client.v2.model.TicketForm.class;
+        case "ticketForm": return org.zendesk.client.v2.model.TicketForm.class;
         case "ticketid":
-        case "TicketId": return java.lang.Long.class;
+        case "ticketId": return java.lang.Long.class;
         case "ticketid0":
-        case "TicketId0": return java.lang.Long.class;
+        case "ticketId0": return java.lang.Long.class;
         case "ticketimport":
-        case "TicketImport": return org.zendesk.client.v2.model.TicketImport.class;
+        case "ticketImport": return org.zendesk.client.v2.model.TicketImport.class;
         case "ticketlist":
-        case "TicketList": return java.util.List.class;
-        case "tickets":
-        case "Tickets": return org.zendesk.client.v2.model.Ticket[].class;
-        case "token":
-        case "Token": return java.lang.String.class;
-        case "topic":
-        case "Topic": return org.zendesk.client.v2.model.Topic.class;
-        case "translation":
-        case "Translation": return org.zendesk.client.v2.model.hc.Translation.class;
+        case "ticketList": return java.util.List.class;
+        case "tickets": return org.zendesk.client.v2.model.Ticket[].class;
+        case "token": return java.lang.String.class;
+        case "topic": return org.zendesk.client.v2.model.Topic.class;
+        case "translation": return org.zendesk.client.v2.model.hc.Translation.class;
         case "translationid":
-        case "TranslationId": return java.lang.Long.class;
-        case "trigger":
-        case "Trigger": return org.zendesk.client.v2.model.Trigger.class;
+        case "translationId": return java.lang.Long.class;
+        case "trigger": return org.zendesk.client.v2.model.Trigger.class;
         case "triggerid":
-        case "TriggerId": return java.lang.Long.class;
+        case "triggerId": return java.lang.Long.class;
         case "triggerid0":
-        case "TriggerId0": return java.lang.Long.class;
+        case "triggerId0": return java.lang.Long.class;
         case "tweetid":
-        case "TweetId": return java.lang.Long.class;
+        case "tweetId": return java.lang.Long.class;
         case "unixepochtime":
-        case "UnixEpochTime": return java.lang.Long.class;
-        case "upload":
-        case "Upload": return org.zendesk.client.v2.model.Attachment.Upload.class;
-        case "user":
-        case "User": return org.zendesk.client.v2.model.User.class;
+        case "unixEpochTime": return java.lang.Long.class;
+        case "upload": return org.zendesk.client.v2.model.Attachment.Upload.class;
+        case "user": return org.zendesk.client.v2.model.User.class;
         case "userid":
-        case "UserId": return java.lang.Long.class;
+        case "userId": return java.lang.Long.class;
         case "userid0":
-        case "UserId0": return java.lang.Long.class;
+        case "userId0": return java.lang.Long.class;
         case "useridthatwillbemerged":
-        case "UserIdThatWillBeMerged": return java.lang.Long.class;
+        case "userIdThatWillBeMerged": return java.lang.Long.class;
         case "useridthatwillremain":
-        case "UserIdThatWillRemain": return java.lang.Long.class;
+        case "userIdThatWillRemain": return java.lang.Long.class;
         case "userlist":
-        case "UserList": return java.util.List.class;
+        case "userList": return java.util.List.class;
         case "usersegment":
-        case "UserSegment": return org.zendesk.client.v2.model.hc.UserSegment.class;
-        case "user_id":
-        case "User_id": return java.lang.Long.class;
-        case "username":
-        case "Username": return java.lang.String.class;
-        case "users":
-        case "Users": return org.zendesk.client.v2.model.User[].class;
+        case "userSegment": return org.zendesk.client.v2.model.hc.UserSegment.class;
+        case "user_id": return java.lang.Long.class;
+        case "username": return java.lang.String.class;
+        case "users": return org.zendesk.client.v2.model.User[].class;
         case "userslist":
-        case "UsersList": return java.util.List.class;
-        case "variant":
-        case "Variant": return org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class;
+        case "usersList": return java.util.List.class;
+        case "variant": return org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class;
         default: return null;
         }
     }
@@ -687,262 +573,205 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.zendesk.ZendeskEndpointConfiguration target = (org.apache.camel.component.zendesk.ZendeskEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "active":
-        case "Active": return target.getActive();
-        case "article":
-        case "Article": return target.getArticle();
+        case "active": return target.getActive();
+        case "article": return target.getArticle();
         case "articleattachments":
-        case "ArticleAttachments": return target.getArticleAttachments();
+        case "articleAttachments": return target.getArticleAttachments();
         case "articleid":
-        case "ArticleId": return target.getArticleId();
+        case "articleId": return target.getArticleId();
         case "articleid0":
-        case "ArticleId0": return target.getArticleId0();
-        case "attachment":
-        case "Attachment": return target.getAttachment();
-        case "attachments":
-        case "Attachments": return target.getAttachments();
-        case "audit":
-        case "Audit": return target.getAudit();
+        case "articleId0": return target.getArticleId0();
+        case "attachment": return target.getAttachment();
+        case "attachments": return target.getAttachments();
+        case "audit": return target.getAudit();
         case "auditid":
-        case "AuditId": return target.getAuditId();
-        case "automation":
-        case "Automation": return target.getAutomation();
+        case "auditId": return target.getAuditId();
+        case "automation": return target.getAutomation();
         case "automationid":
-        case "AutomationId": return target.getAutomationId();
+        case "automationId": return target.getAutomationId();
         case "automationid0":
-        case "AutomationId0": return target.getAutomationId0();
-        case "category":
-        case "Category": return target.getCategory();
+        case "automationId0": return target.getAutomationId0();
+        case "category": return target.getCategory();
         case "categoryid":
-        case "CategoryId": return target.getCategoryId();
+        case "categoryId": return target.getCategoryId();
         case "categoryid0":
-        case "CategoryId0": return target.getCategoryId0();
+        case "categoryId0": return target.getCategoryId0();
         case "categoryid1":
-        case "CategoryId1": return target.getCategoryId1();
-        case "category_id":
-        case "Category_id": return target.getCategory_id();
-        case "comment":
-        case "Comment": return target.getComment();
+        case "categoryId1": return target.getCategoryId1();
+        case "category_id": return target.getCategory_id();
+        case "comment": return target.getComment();
         case "commentid":
-        case "CommentId": return target.getCommentId();
-        case "content":
-        case "Content": return target.getContent();
+        case "commentId": return target.getCommentId();
+        case "content": return target.getContent();
         case "contenttag":
-        case "ContentTag": return target.getContentTag();
+        case "contentTag": return target.getContentTag();
         case "contenttagid":
-        case "ContentTagId": return target.getContentTagId();
+        case "contentTagId": return target.getContentTagId();
         case "contenttype":
-        case "ContentType": return target.getContentType();
-        case "email":
-        case "Email": return target.getEmail();
+        case "contentType": return target.getContentType();
+        case "email": return target.getEmail();
         case "endtime":
-        case "EndTime": return target.getEndTime();
+        case "endTime": return target.getEndTime();
         case "externalid":
-        case "ExternalId": return target.getExternalId();
+        case "externalId": return target.getExternalId();
         case "externalid0":
-        case "ExternalId0": return target.getExternalId0();
+        case "externalId0": return target.getExternalId0();
         case "externalid0s":
-        case "ExternalId0s": return target.getExternalId0s();
+        case "externalId0s": return target.getExternalId0s();
         case "externalids":
-        case "ExternalIds": return target.getExternalIds();
-        case "field":
-        case "Field": return target.getField();
-        case "file":
-        case "File": return target.getFile();
+        case "externalIds": return target.getExternalIds();
+        case "field": return target.getField();
+        case "file": return target.getFile();
         case "filename":
-        case "FileName": return target.getFileName();
-        case "forum":
-        case "Forum": return target.getForum();
-        case "forum_id":
-        case "Forum_id": return target.getForum_id();
-        case "group":
-        case "Group": return target.getGroup();
+        case "fileName": return target.getFileName();
+        case "forum": return target.getForum();
+        case "forum_id": return target.getForum_id();
+        case "group": return target.getGroup();
         case "groupmembership":
-        case "GroupMembership": return target.getGroupMembership();
-        case "group_id":
-        case "Group_id": return target.getGroup_id();
-        case "group_membership_id":
-        case "Group_membership_id": return target.getGroup_membership_id();
-        case "id":
-        case "Id": return target.getId();
+        case "groupMembership": return target.getGroupMembership();
+        case "group_id": return target.getGroup_id();
+        case "group_membership_id": return target.getGroup_membership_id();
+        case "id": return target.getId();
         case "idarticle":
-        case "IdArticle": return target.getIdArticle();
-        case "identity":
-        case "Identity": return target.getIdentity();
+        case "idArticle": return target.getIdArticle();
+        case "identity": return target.getIdentity();
         case "identityid":
-        case "IdentityId": return target.getIdentityId();
-        case "ids":
-        case "Ids": return target.getIds();
+        case "identityId": return target.getIdentityId();
+        case "ids": return target.getIds();
         case "includearchived":
-        case "IncludeArchived": return target.getIncludeArchived();
-        case "inline":
-        case "Inline": return target.getInline();
+        case "includeArchived": return target.getIncludeArchived();
+        case "inline": return target.getInline();
         case "installationid":
-        case "InstallationId": return target.getInstallationId();
-        case "item":
-        case "Item": return target.getItem();
+        case "installationId": return target.getInstallationId();
+        case "item": return target.getItem();
         case "itemid":
-        case "ItemId": return target.getItemId();
-        case "json":
-        case "Json": return target.getJson();
-        case "labels":
-        case "Labels": return target.getLabels();
-        case "locale":
-        case "Locale": return target.getLocale();
-        case "macro":
-        case "Macro": return target.getMacro();
+        case "itemId": return target.getItemId();
+        case "json": return target.getJson();
+        case "labels": return target.getLabels();
+        case "locale": return target.getLocale();
+        case "macro": return target.getMacro();
         case "macroid":
-        case "MacroId": return target.getMacroId();
+        case "macroId": return target.getMacroId();
         case "macroid0":
-        case "MacroId0": return target.getMacroId0();
+        case "macroId0": return target.getMacroId0();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "monitorid":
-        case "MonitorId": return target.getMonitorId();
-        case "name":
-        case "Name": return target.getName();
+        case "monitorId": return target.getMonitorId();
+        case "name": return target.getName();
         case "nameprefix":
-        case "NamePrefix": return target.getNamePrefix();
+        case "namePrefix": return target.getNamePrefix();
         case "newpassword":
-        case "NewPassword": return target.getNewPassword();
+        case "newPassword": return target.getNewPassword();
         case "notifysubscribers":
-        case "NotifySubscribers": return target.getNotifySubscribers();
+        case "notifySubscribers": return target.getNotifySubscribers();
         case "oauthtoken":
-        case "OauthToken": return target.getOauthToken();
+        case "oauthToken": return target.getOauthToken();
         case "oldpassword":
-        case "OldPassword": return target.getOldPassword();
-        case "order":
-        case "Order": return target.getOrder();
-        case "organization":
-        case "Organization": return target.getOrganization();
+        case "oldPassword": return target.getOldPassword();
+        case "order": return target.getOrder();
+        case "organization": return target.getOrganization();
         case "organizationid":
-        case "OrganizationId": return target.getOrganizationId();
+        case "organizationId": return target.getOrganizationId();
         case "organizationlist":
-        case "OrganizationList": return target.getOrganizationList();
+        case "organizationList": return target.getOrganizationList();
         case "organizationmembership":
-        case "OrganizationMembership": return target.getOrganizationMembership();
+        case "organizationMembership": return target.getOrganizationMembership();
         case "organizationmembershiplist":
-        case "OrganizationMembershipList": return target.getOrganizationMembershipList();
+        case "organizationMembershipList": return target.getOrganizationMembershipList();
         case "organizationmemberships":
-        case "OrganizationMemberships": return target.getOrganizationMemberships();
-        case "organization_id":
-        case "Organization_id": return target.getOrganization_id();
-        case "organization_membership_id":
-        case "Organization_membership_id": return target.getOrganization_membership_id();
-        case "organizations":
-        case "Organizations": return target.getOrganizations();
-        case "page":
-        case "Page": return target.getPage();
+        case "organizationMemberships": return target.getOrganizationMemberships();
+        case "organization_id": return target.getOrganization_id();
+        case "organization_membership_id": return target.getOrganization_membership_id();
+        case "organizations": return target.getOrganizations();
+        case "page": return target.getPage();
         case "pagesize":
-        case "PageSize": return target.getPageSize();
-        case "password":
-        case "Password": return target.getPassword();
+        case "pageSize": return target.getPageSize();
+        case "password": return target.getPassword();
         case "permissiongroup":
-        case "PermissionGroup": return target.getPermissionGroup();
-        case "query":
-        case "Query": return target.getQuery();
+        case "permissionGroup": return target.getPermissionGroup();
+        case "query": return target.getQuery();
         case "queryparams":
-        case "QueryParams": return target.getQueryParams();
-        case "request":
-        case "Request": return target.getRequest();
+        case "queryParams": return target.getQueryParams();
+        case "request": return target.getRequest();
         case "requestid":
-        case "RequestId": return target.getRequestId();
-        case "role":
-        case "Role": return target.getRole();
-        case "roles":
-        case "Roles": return target.getRoles();
+        case "requestId": return target.getRequestId();
+        case "role": return target.getRole();
+        case "roles": return target.getRoles();
         case "satisfactionrating":
-        case "SatisfactionRating": return target.getSatisfactionRating();
-        case "schedule":
-        case "Schedule": return target.getSchedule();
+        case "satisfactionRating": return target.getSatisfactionRating();
+        case "schedule": return target.getSchedule();
         case "scheduleid":
-        case "ScheduleId": return target.getScheduleId();
+        case "scheduleId": return target.getScheduleId();
         case "searchterm":
-        case "SearchTerm": return target.getSearchTerm();
-        case "section":
-        case "Section": return target.getSection();
+        case "searchTerm": return target.getSearchTerm();
+        case "section": return target.getSection();
         case "sectionid":
-        case "SectionId": return target.getSectionId();
+        case "sectionId": return target.getSectionId();
         case "sectionid0":
-        case "SectionId0": return target.getSectionId0();
+        case "sectionId0": return target.getSectionId0();
         case "serverurl":
-        case "ServerUrl": return target.getServerUrl();
+        case "serverUrl": return target.getServerUrl();
         case "sortby":
-        case "SortBy": return target.getSortBy();
+        case "sortBy": return target.getSortBy();
         case "sortorder":
-        case "SortOrder": return target.getSortOrder();
+        case "sortOrder": return target.getSortOrder();
         case "starttime":
-        case "StartTime": return target.getStartTime();
-        case "status":
-        case "Status": return target.getStatus();
-        case "statuses":
-        case "Statuses": return target.getStatuses();
+        case "startTime": return target.getStartTime();
+        case "status": return target.getStatus();
+        case "statuses": return target.getStatuses();
         case "suspendedticket":
-        case "SuspendedTicket": return target.getSuspendedTicket();
-        case "tags":
-        case "Tags": return target.getTags();
-        case "target":
-        case "Target": return target.getTarget();
+        case "suspendedTicket": return target.getSuspendedTicket();
+        case "tags": return target.getTags();
+        case "target": return target.getTarget();
         case "targetid":
-        case "TargetId": return target.getTargetId();
-        case "ticket":
-        case "Ticket": return target.getTicket();
+        case "targetId": return target.getTargetId();
+        case "ticket": return target.getTicket();
         case "ticketform":
-        case "TicketForm": return target.getTicketForm();
+        case "ticketForm": return target.getTicketForm();
         case "ticketid":
-        case "TicketId": return target.getTicketId();
+        case "ticketId": return target.getTicketId();
         case "ticketid0":
-        case "TicketId0": return target.getTicketId0();
+        case "ticketId0": return target.getTicketId0();
         case "ticketimport":
-        case "TicketImport": return target.getTicketImport();
+        case "ticketImport": return target.getTicketImport();
         case "ticketlist":
-        case "TicketList": return target.getTicketList();
-        case "tickets":
-        case "Tickets": return target.getTickets();
-        case "token":
-        case "Token": return target.getToken();
-        case "topic":
-        case "Topic": return target.getTopic();
-        case "translation":
-        case "Translation": return target.getTranslation();
+        case "ticketList": return target.getTicketList();
+        case "tickets": return target.getTickets();
+        case "token": return target.getToken();
+        case "topic": return target.getTopic();
+        case "translation": return target.getTranslation();
         case "translationid":
-        case "TranslationId": return target.getTranslationId();
-        case "trigger":
-        case "Trigger": return target.getTrigger();
+        case "translationId": return target.getTranslationId();
+        case "trigger": return target.getTrigger();
         case "triggerid":
-        case "TriggerId": return target.getTriggerId();
+        case "triggerId": return target.getTriggerId();
         case "triggerid0":
-        case "TriggerId0": return target.getTriggerId0();
+        case "triggerId0": return target.getTriggerId0();
         case "tweetid":
-        case "TweetId": return target.getTweetId();
+        case "tweetId": return target.getTweetId();
         case "unixepochtime":
-        case "UnixEpochTime": return target.getUnixEpochTime();
-        case "upload":
-        case "Upload": return target.getUpload();
-        case "user":
-        case "User": return target.getUser();
+        case "unixEpochTime": return target.getUnixEpochTime();
+        case "upload": return target.getUpload();
+        case "user": return target.getUser();
         case "userid":
-        case "UserId": return target.getUserId();
+        case "userId": return target.getUserId();
         case "userid0":
-        case "UserId0": return target.getUserId0();
+        case "userId0": return target.getUserId0();
         case "useridthatwillbemerged":
-        case "UserIdThatWillBeMerged": return target.getUserIdThatWillBeMerged();
+        case "userIdThatWillBeMerged": return target.getUserIdThatWillBeMerged();
         case "useridthatwillremain":
-        case "UserIdThatWillRemain": return target.getUserIdThatWillRemain();
+        case "userIdThatWillRemain": return target.getUserIdThatWillRemain();
         case "userlist":
-        case "UserList": return target.getUserList();
+        case "userList": return target.getUserList();
         case "usersegment":
-        case "UserSegment": return target.getUserSegment();
-        case "user_id":
-        case "User_id": return target.getUser_id();
-        case "username":
-        case "Username": return target.getUsername();
-        case "users":
-        case "Users": return target.getUsers();
+        case "userSegment": return target.getUserSegment();
+        case "user_id": return target.getUser_id();
+        case "username": return target.getUsername();
+        case "users": return target.getUsers();
         case "userslist":
-        case "UsersList": return target.getUsersList();
-        case "variant":
-        case "Variant": return target.getVariant();
+        case "usersList": return target.getUsersList();
+        case "variant": return target.getVariant();
         default: return null;
         }
     }
@@ -950,24 +779,21 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "attachments":
-        case "Attachments": return org.zendesk.client.v2.model.Attachment.class;
-        case "labels":
-        case "Labels": return java.lang.String.class;
+        case "attachments": return org.zendesk.client.v2.model.Attachment.class;
+        case "labels": return java.lang.String.class;
         case "organizationlist":
-        case "OrganizationList": return org.zendesk.client.v2.model.Organization.class;
+        case "organizationList": return org.zendesk.client.v2.model.Organization.class;
         case "organizationmembershiplist":
-        case "OrganizationMembershipList": return org.zendesk.client.v2.model.OrganizationMembership.class;
+        case "organizationMembershipList": return org.zendesk.client.v2.model.OrganizationMembership.class;
         case "queryparams":
-        case "QueryParams": return java.lang.Object.class;
-        case "statuses":
-        case "Statuses": return org.zendesk.client.v2.model.JobStatus.class;
+        case "queryParams": return java.lang.Object.class;
+        case "statuses": return org.zendesk.client.v2.model.JobStatus.class;
         case "ticketlist":
-        case "TicketList": return org.zendesk.client.v2.model.Ticket.class;
+        case "ticketList": return org.zendesk.client.v2.model.Ticket.class;
         case "userlist":
-        case "UserList": return org.zendesk.client.v2.model.User.class;
+        case "userList": return org.zendesk.client.v2.model.User.class;
         case "userslist":
-        case "UsersList": return org.zendesk.client.v2.model.User.class;
+        case "usersList": return org.zendesk.client.v2.model.User.class;
         default: return null;
         }
     }

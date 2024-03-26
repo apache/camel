@@ -23,6 +23,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.HL7DataFormat
 
+/**
+ * Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
+ */
 public fun DataFormatDsl.hl7(i: Hl7DataFormatDsl.() -> Unit) {
   def = Hl7DataFormatDsl().apply(i).def
 }
@@ -34,14 +37,23 @@ public class Hl7DataFormatDsl {
   init {
     def = HL7DataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Whether to validate the HL7 message Is by default true.
+   */
   public fun validate(validate: Boolean) {
     def.validate = validate.toString()
   }
 
+  /**
+   * Whether to validate the HL7 message Is by default true.
+   */
   public fun validate(validate: String) {
     def.validate = validate
   }

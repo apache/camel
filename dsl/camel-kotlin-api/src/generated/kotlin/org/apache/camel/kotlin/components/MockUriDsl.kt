@@ -23,6 +23,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Test routes and mediation rules using mocks.
+ */
 public fun UriDsl.mock(i: MockUriDsl.() -> Unit) {
   MockUriDsl(this).apply(i)
 }
@@ -40,87 +43,228 @@ public class MockUriDsl(
 
   private var name: String = ""
 
+  /**
+   * Name of mock endpoint
+   */
   public fun name(name: String) {
     this.name = name
     it.url("$name")
   }
 
+  /**
+   * Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary
+   * assertion is still valid. This is used for example to assert that exactly a number of messages
+   * arrives. For example if expected count was set to 5, then the assertion is satisfied when 5 or
+   * more message arrives. To ensure that exactly 5 messages arrives, then you would need to wait a
+   * little period to ensure no further message arrives. This is what you can use this method for. By
+   * default this period is disabled.
+   */
   public fun assertPeriod(assertPeriod: String) {
     it.property("assertPeriod", assertPeriod)
   }
 
+  /**
+   * Specifies the expected number of message exchanges that should be received by this endpoint.
+   * Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests
+   * starts, so you need to set a assert period time to let the test run for a while to make sure there
+   * are still no messages arrived; for that use setAssertPeriod(long). An alternative is to use
+   * NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you
+   * call the assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert
+   * period, to speedup testing times. If you want to assert that exactly nth message arrives to this
+   * mock endpoint, then see also the setAssertPeriod(long) method for further details.
+   */
   public fun expectedCount(expectedCount: String) {
     it.property("expectedCount", expectedCount)
   }
 
+  /**
+   * Specifies the expected number of message exchanges that should be received by this endpoint.
+   * Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests
+   * starts, so you need to set a assert period time to let the test run for a while to make sure there
+   * are still no messages arrived; for that use setAssertPeriod(long). An alternative is to use
+   * NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you
+   * call the assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert
+   * period, to speedup testing times. If you want to assert that exactly nth message arrives to this
+   * mock endpoint, then see also the setAssertPeriod(long) method for further details.
+   */
   public fun expectedCount(expectedCount: Int) {
     it.property("expectedCount", expectedCount.toString())
   }
 
+  /**
+   * Sets whether assertIsSatisfied() should fail fast at the first detected failed expectation
+   * while it may otherwise wait for all expected messages to arrive before performing expectations
+   * verifications. Is by default true. Set to false to use behavior as in Camel 2.x.
+   */
   public fun failFast(failFast: String) {
     it.property("failFast", failFast)
   }
 
+  /**
+   * Sets whether assertIsSatisfied() should fail fast at the first detected failed expectation
+   * while it may otherwise wait for all expected messages to arrive before performing expectations
+   * verifications. Is by default true. Set to false to use behavior as in Camel 2.x.
+   */
   public fun failFast(failFast: Boolean) {
     it.property("failFast", failFast.toString())
   }
 
+  /**
+   * To turn on logging when the mock receives an incoming message. This will log only one time at
+   * INFO level for the incoming message. For more detailed logging then set the logger to DEBUG level
+   * for the org.apache.camel.component.mock.MockEndpoint class.
+   */
   public fun log(log: String) {
     it.property("log", log)
   }
 
+  /**
+   * To turn on logging when the mock receives an incoming message. This will log only one time at
+   * INFO level for the incoming message. For more detailed logging then set the logger to DEBUG level
+   * for the org.apache.camel.component.mock.MockEndpoint class.
+   */
   public fun log(log: Boolean) {
     it.property("log", log.toString())
   }
 
+  /**
+   * A number that is used to turn on throughput logging based on groups of the size.
+   */
   public fun reportGroup(reportGroup: String) {
     it.property("reportGroup", reportGroup)
   }
 
+  /**
+   * A number that is used to turn on throughput logging based on groups of the size.
+   */
   public fun reportGroup(reportGroup: Int) {
     it.property("reportGroup", reportGroup.toString())
   }
 
+  /**
+   * Sets the minimum expected amount of time (in millis) the assertIsSatisfied() will wait on a
+   * latch until it is satisfied
+   */
   public fun resultMinimumWaitTime(resultMinimumWaitTime: String) {
     it.property("resultMinimumWaitTime", resultMinimumWaitTime)
   }
 
+  /**
+   * Sets the maximum amount of time (in millis) the assertIsSatisfied() will wait on a latch until
+   * it is satisfied
+   */
   public fun resultWaitTime(resultWaitTime: String) {
     it.property("resultWaitTime", resultWaitTime)
   }
 
+  /**
+   * Specifies to only retain the first nth number of received Exchanges. This is used when testing
+   * with big data, to reduce memory consumption by not storing copies of every Exchange this mock
+   * endpoint receives. Important: When using this limitation, then the getReceivedCounter() will still
+   * return the actual number of received Exchanges. For example if we have received 5000 Exchanges,
+   * and have configured to only retain the first 10 Exchanges, then the getReceivedCounter() will
+   * still return 5000 but there is only the first 10 Exchanges in the getExchanges() and
+   * getReceivedExchanges() methods. When using this method, then some of the other expectation methods
+   * is not supported, for example the expectedBodiesReceived(Object...) sets a expectation on the
+   * first number of bodies received. You can configure both setRetainFirst(int) and setRetainLast(int)
+   * methods, to limit both the first and last received.
+   */
   public fun retainFirst(retainFirst: String) {
     it.property("retainFirst", retainFirst)
   }
 
+  /**
+   * Specifies to only retain the first nth number of received Exchanges. This is used when testing
+   * with big data, to reduce memory consumption by not storing copies of every Exchange this mock
+   * endpoint receives. Important: When using this limitation, then the getReceivedCounter() will still
+   * return the actual number of received Exchanges. For example if we have received 5000 Exchanges,
+   * and have configured to only retain the first 10 Exchanges, then the getReceivedCounter() will
+   * still return 5000 but there is only the first 10 Exchanges in the getExchanges() and
+   * getReceivedExchanges() methods. When using this method, then some of the other expectation methods
+   * is not supported, for example the expectedBodiesReceived(Object...) sets a expectation on the
+   * first number of bodies received. You can configure both setRetainFirst(int) and setRetainLast(int)
+   * methods, to limit both the first and last received.
+   */
   public fun retainFirst(retainFirst: Int) {
     it.property("retainFirst", retainFirst.toString())
   }
 
+  /**
+   * Specifies to only retain the last nth number of received Exchanges. This is used when testing
+   * with big data, to reduce memory consumption by not storing copies of every Exchange this mock
+   * endpoint receives. Important: When using this limitation, then the getReceivedCounter() will still
+   * return the actual number of received Exchanges. For example if we have received 5000 Exchanges,
+   * and have configured to only retain the last 20 Exchanges, then the getReceivedCounter() will still
+   * return 5000 but there is only the last 20 Exchanges in the getExchanges() and
+   * getReceivedExchanges() methods. When using this method, then some of the other expectation methods
+   * is not supported, for example the expectedBodiesReceived(Object...) sets a expectation on the
+   * first number of bodies received. You can configure both setRetainFirst(int) and setRetainLast(int)
+   * methods, to limit both the first and last received.
+   */
   public fun retainLast(retainLast: String) {
     it.property("retainLast", retainLast)
   }
 
+  /**
+   * Specifies to only retain the last nth number of received Exchanges. This is used when testing
+   * with big data, to reduce memory consumption by not storing copies of every Exchange this mock
+   * endpoint receives. Important: When using this limitation, then the getReceivedCounter() will still
+   * return the actual number of received Exchanges. For example if we have received 5000 Exchanges,
+   * and have configured to only retain the last 20 Exchanges, then the getReceivedCounter() will still
+   * return 5000 but there is only the last 20 Exchanges in the getExchanges() and
+   * getReceivedExchanges() methods. When using this method, then some of the other expectation methods
+   * is not supported, for example the expectedBodiesReceived(Object...) sets a expectation on the
+   * first number of bodies received. You can configure both setRetainFirst(int) and setRetainLast(int)
+   * methods, to limit both the first and last received.
+   */
   public fun retainLast(retainLast: Int) {
     it.property("retainLast", retainLast.toString())
   }
 
+  /**
+   * Allows a sleep to be specified to wait to check that this endpoint really is empty when
+   * expectedMessageCount(int) is called with zero
+   */
   public fun sleepForEmptyTest(sleepForEmptyTest: String) {
     it.property("sleepForEmptyTest", sleepForEmptyTest)
   }
 
+  /**
+   * Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint.
+   * Is by default true.
+   */
   public fun copyOnExchange(copyOnExchange: String) {
     it.property("copyOnExchange", copyOnExchange)
   }
 
+  /**
+   * Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint.
+   * Is by default true.
+   */
   public fun copyOnExchange(copyOnExchange: Boolean) {
     it.property("copyOnExchange", copyOnExchange.toString())
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }

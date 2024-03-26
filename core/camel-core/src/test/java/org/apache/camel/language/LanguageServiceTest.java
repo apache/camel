@@ -34,8 +34,8 @@ public class LanguageServiceTest extends ContextTestSupport {
     private MyLanguage my = new MyLanguage();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("my", my);
         return jndi;
     }

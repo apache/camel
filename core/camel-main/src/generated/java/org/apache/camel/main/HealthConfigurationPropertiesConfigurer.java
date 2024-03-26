@@ -22,21 +22,20 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         org.apache.camel.main.HealthConfigurationProperties target = (org.apache.camel.main.HealthConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "consumersenabled":
-        case "ConsumersEnabled": target.setConsumersEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "enabled":
-        case "Enabled": target.setEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "consumersEnabled": target.setConsumersEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "enabled": target.setEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "excludepattern":
-        case "ExcludePattern": target.setExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "excludePattern": target.setExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "exposurelevel":
-        case "ExposureLevel": target.setExposureLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "exposureLevel": target.setExposureLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "initialstate":
-        case "InitialState": target.setInitialState(property(camelContext, java.lang.String.class, value)); return true;
+        case "initialState": target.setInitialState(property(camelContext, java.lang.String.class, value)); return true;
         case "producersenabled":
-        case "ProducersEnabled": target.setProducersEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "producersEnabled": target.setProducersEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "registryenabled":
-        case "RegistryEnabled": target.setRegistryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "registryEnabled": target.setRegistryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "routesenabled":
-        case "RoutesEnabled": target.setRoutesEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "routesEnabled": target.setRoutesEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -45,21 +44,20 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "consumersenabled":
-        case "ConsumersEnabled": return java.lang.Boolean.class;
-        case "enabled":
-        case "Enabled": return java.lang.Boolean.class;
+        case "consumersEnabled": return java.lang.Boolean.class;
+        case "enabled": return java.lang.Boolean.class;
         case "excludepattern":
-        case "ExcludePattern": return java.lang.String.class;
+        case "excludePattern": return java.lang.String.class;
         case "exposurelevel":
-        case "ExposureLevel": return java.lang.String.class;
+        case "exposureLevel": return java.lang.String.class;
         case "initialstate":
-        case "InitialState": return java.lang.String.class;
+        case "initialState": return java.lang.String.class;
         case "producersenabled":
-        case "ProducersEnabled": return java.lang.Boolean.class;
+        case "producersEnabled": return java.lang.Boolean.class;
         case "registryenabled":
-        case "RegistryEnabled": return java.lang.Boolean.class;
+        case "registryEnabled": return java.lang.Boolean.class;
         case "routesenabled":
-        case "RoutesEnabled": return java.lang.Boolean.class;
+        case "routesEnabled": return java.lang.Boolean.class;
         default: return null;
         }
     }
@@ -69,21 +67,20 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         org.apache.camel.main.HealthConfigurationProperties target = (org.apache.camel.main.HealthConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "consumersenabled":
-        case "ConsumersEnabled": return target.getConsumersEnabled();
-        case "enabled":
-        case "Enabled": return target.getEnabled();
+        case "consumersEnabled": return target.getConsumersEnabled();
+        case "enabled": return target.getEnabled();
         case "excludepattern":
-        case "ExcludePattern": return target.getExcludePattern();
+        case "excludePattern": return target.getExcludePattern();
         case "exposurelevel":
-        case "ExposureLevel": return target.getExposureLevel();
+        case "exposureLevel": return target.getExposureLevel();
         case "initialstate":
-        case "InitialState": return target.getInitialState();
+        case "initialState": return target.getInitialState();
         case "producersenabled":
-        case "ProducersEnabled": return target.getProducersEnabled();
+        case "producersEnabled": return target.getProducersEnabled();
         case "registryenabled":
-        case "RegistryEnabled": return target.getRegistryEnabled();
+        case "registryEnabled": return target.getRegistryEnabled();
         case "routesenabled":
-        case "RoutesEnabled": return target.getRoutesEnabled();
+        case "routesEnabled": return target.getRoutesEnabled();
         default: return null;
         }
     }

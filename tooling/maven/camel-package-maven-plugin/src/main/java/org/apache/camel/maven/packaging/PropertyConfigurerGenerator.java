@@ -115,10 +115,12 @@ public final class PropertyConfigurerGenerator {
                             && ((AbstractGenerateConfigurerMojo.ConfigurerOption) option).isBuilderMethod();
                     String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getSetterMethod(),
                             option.getConfigurationField(), component, option.getType(), builder);
-                    if (!option.getName().toLowerCase().equals(option.getName())) {
+                    String n = option.getName();
+                    n = Character.toLowerCase(n.charAt(0)) + n.substring(1);
+                    if (!option.getName().toLowerCase().equals(n)) {
                         w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
-                    w.append(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
+                    w.append(String.format("        case \"%s\": %s; return true;\n", n, setterLambda));
                 }
                 if (stub) {
                     // special for stub to accept and ignore lenient options
@@ -195,10 +197,12 @@ public final class PropertyConfigurerGenerator {
                         type = type.substring(0, type.indexOf('<'));
                     }
                     type = type.replace('$', '.');
-                    if (!option.getName().toLowerCase().equals(option.getName())) {
+                    String n = option.getName();
+                    n = Character.toLowerCase(n.charAt(0)) + n.substring(1);
+                    if (!option.getName().toLowerCase().equals(n)) {
                         w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
-                    w.append(String.format("        case \"%s\": return %s.class;\n", option.getName(), type));
+                    w.append(String.format("        case \"%s\": return %s.class;\n", n, type));
                 }
                 if (hasSuper) {
                     w.append("        default: return super.getOptionType(name, ignoreCase);\n");
@@ -223,10 +227,12 @@ public final class PropertyConfigurerGenerator {
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
                     String getterLambda = getterLambda(getOrSet, option.getJavaType(), option.getGetterMethod(),
                             option.getConfigurationField(), component);
-                    if (!option.getName().toLowerCase().equals(option.getName())) {
+                    String n = option.getName();
+                    n = Character.toLowerCase(n.charAt(0)) + n.substring(1);
+                    if (!option.getName().toLowerCase().equals(n)) {
                         w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
-                    w.append(String.format("        case \"%s\": return %s;\n", option.getName(), getterLambda));
+                    w.append(String.format("        case \"%s\": return %s;\n", n, getterLambda));
                 }
                 if (hasSuper) {
                     w.append("        default: return super.getOptionValue(obj, name, ignoreCase);\n");
@@ -253,10 +259,12 @@ public final class PropertyConfigurerGenerator {
                         String nestedType = option.getNestedType();
                         if (nestedType != null && !nestedType.isEmpty()) {
                             nestedType = nestedType.replace('$', '.');
-                            if (!option.getName().toLowerCase().equals(option.getName())) {
+                            String n = option.getName();
+                            n = Character.toLowerCase(n.charAt(0)) + n.substring(1);
+                            if (!option.getName().toLowerCase().equals(n)) {
                                 w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                             }
-                            w.append(String.format("        case \"%s\": return %s.class;\n", option.getName(), nestedType));
+                            w.append(String.format("        case \"%s\": return %s.class;\n", n, nestedType));
                         }
                     }
                     if (hasSuper) {

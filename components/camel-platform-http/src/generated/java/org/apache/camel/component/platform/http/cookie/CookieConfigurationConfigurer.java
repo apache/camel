@@ -34,17 +34,17 @@ public class CookieConfigurationConfigurer extends org.apache.camel.support.comp
         org.apache.camel.component.platform.http.cookie.CookieConfiguration target = (org.apache.camel.component.platform.http.cookie.CookieConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cookiedomain":
-        case "CookieDomain": target.setCookieDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookieDomain": target.setCookieDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "cookiehttponly":
-        case "CookieHttpOnly": target.setCookieHttpOnly(property(camelContext, boolean.class, value)); return true;
+        case "cookieHttpOnly": target.setCookieHttpOnly(property(camelContext, boolean.class, value)); return true;
         case "cookiemaxage":
-        case "CookieMaxAge": target.setCookieMaxAge(property(camelContext, java.lang.Long.class, value)); return true;
+        case "cookieMaxAge": target.setCookieMaxAge(property(camelContext, java.lang.Long.class, value)); return true;
         case "cookiepath":
-        case "CookiePath": target.setCookiePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookiePath": target.setCookiePath(property(camelContext, java.lang.String.class, value)); return true;
         case "cookiesamesite":
-        case "CookieSameSite": target.setCookieSameSite(property(camelContext, org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite.class, value)); return true;
+        case "cookieSameSite": target.setCookieSameSite(property(camelContext, org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite.class, value)); return true;
         case "cookiesecure":
-        case "CookieSecure": target.setCookieSecure(property(camelContext, boolean.class, value)); return true;
+        case "cookieSecure": target.setCookieSecure(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -58,17 +58,17 @@ public class CookieConfigurationConfigurer extends org.apache.camel.support.comp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cookiedomain":
-        case "CookieDomain": return java.lang.String.class;
+        case "cookieDomain": return java.lang.String.class;
         case "cookiehttponly":
-        case "CookieHttpOnly": return boolean.class;
+        case "cookieHttpOnly": return boolean.class;
         case "cookiemaxage":
-        case "CookieMaxAge": return java.lang.Long.class;
+        case "cookieMaxAge": return java.lang.Long.class;
         case "cookiepath":
-        case "CookiePath": return java.lang.String.class;
+        case "cookiePath": return java.lang.String.class;
         case "cookiesamesite":
-        case "CookieSameSite": return org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite.class;
+        case "cookieSameSite": return org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite.class;
         case "cookiesecure":
-        case "CookieSecure": return boolean.class;
+        case "cookieSecure": return boolean.class;
         default: return null;
         }
     }
@@ -78,17 +78,17 @@ public class CookieConfigurationConfigurer extends org.apache.camel.support.comp
         org.apache.camel.component.platform.http.cookie.CookieConfiguration target = (org.apache.camel.component.platform.http.cookie.CookieConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "cookiedomain":
-        case "CookieDomain": return target.getCookieDomain();
+        case "cookieDomain": return target.getCookieDomain();
         case "cookiehttponly":
-        case "CookieHttpOnly": return target.isCookieHttpOnly();
+        case "cookieHttpOnly": return target.isCookieHttpOnly();
         case "cookiemaxage":
-        case "CookieMaxAge": return target.getCookieMaxAge();
+        case "cookieMaxAge": return target.getCookieMaxAge();
         case "cookiepath":
-        case "CookiePath": return target.getCookiePath();
+        case "cookiePath": return target.getCookiePath();
         case "cookiesamesite":
-        case "CookieSameSite": return target.getCookieSameSite();
+        case "cookieSameSite": return target.getCookieSameSite();
         case "cookiesecure":
-        case "CookieSecure": return target.isCookieSecure();
+        case "cookieSecure": return target.isCookieSecure();
         default: return null;
         }
     }

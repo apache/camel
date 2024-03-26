@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.artemis.services;
 
 import java.io.File;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
@@ -45,35 +46,83 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
 
     protected final EmbeddedActiveMQ embeddedBrokerService;
     private final Configuration artemisConfiguration;
+    private Consumer<Configuration> customConfigurator;
+    private final int port;
 
     public AbstractArtemisEmbeddedService() {
         this(AvailablePortFinder.getNextAvailable());
     }
 
+    /**
+     * This is needed for some tests that check reliability of the components by defining the port in advance, trying to
+     * connect first starting the service later
+     *
+     * @param port the port to use
+     */
     protected AbstractArtemisEmbeddedService(int port) {
         embeddedBrokerService = new EmbeddedActiveMQ();
         artemisConfiguration = new ConfigurationImpl();
 
-        embeddedBrokerService.setConfiguration(configure(port));
+        this.port = port;
     }
 
     private synchronized Configuration configure(int port) {
-        final int brokerId = BROKER_COUNT.intValue();
-        BROKER_COUNT.increment();
+        final int brokerId = computeBrokerId();
 
         // Base configuration
         artemisConfiguration.setSecurityEnabled(false);
-        artemisConfiguration.setBrokerInstance(new File("target", "artemis-" + brokerId));
+
+        final File instanceDir = createInstance(brokerId);
+
+        artemisConfiguration.setBrokerInstance(instanceDir);
         artemisConfiguration.setJMXManagementEnabled(false);
         artemisConfiguration.setMaxDiskUsage(98);
 
-        return configure(artemisConfiguration, port, brokerId);
+        final Configuration config = configure(artemisConfiguration, port, brokerId);
+        if (customConfigurator != null) {
+            customConfigurator.accept(config);
+        }
+
+        return config;
+    }
+
+    /**
+     * Computes the current broker ID to use.
+     *
+     * @return the broker ID to use
+     */
+    protected int computeBrokerId() {
+        final int brokerId = BROKER_COUNT.intValue();
+        BROKER_COUNT.increment();
+        return brokerId;
+    }
+
+    private static File createInstance(int brokerId) {
+        File instanceDir = null;
+        final File target = new File("target");
+        final File brokerDir = new File(target, "artemis");
+        do {
+            final String subPath = getRandomSubPath();
+
+            instanceDir = new File(brokerDir, brokerId + "-" + subPath);
+        } while (instanceDir.exists());
+
+        return instanceDir;
+    }
+
+    private static String getRandomSubPath() {
+        final int size = 12;
+
+        return ThreadLocalRandom.current().ints(97, 122)
+                .limit(size)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
     protected abstract Configuration configure(Configuration artemisConfiguration, int port, int brokerId);
 
-    public void customConfiguration(Consumer<Configuration> configuration) {
-        configuration.accept(artemisConfiguration);
+    public void customConfiguration(Consumer<Configuration> configurator) {
+        this.customConfigurator = configurator;
     }
 
     @Override
@@ -103,6 +152,8 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
     public synchronized void initialize() {
         try {
             if (embeddedBrokerService.getActiveMQServer() == null || !embeddedBrokerService.getActiveMQServer().isStarted()) {
+                embeddedBrokerService.setConfiguration(configure(port));
+
                 embeddedBrokerService.start();
 
                 embeddedBrokerService.getActiveMQServer().waitForActivation(20, TimeUnit.SECONDS);

@@ -101,4 +101,28 @@ public interface MavenDownloader {
      */
     void setRepositoryResolver(RepositoryResolver repositoryResolver);
 
+    /**
+     * Sets whether maven central repository should be included and as first in the list of repositories. This can be
+     * used to turn of maven central for users that may use their own maven proxy.
+     */
+    void setMavenCentralEnabled(boolean mavenCentralEnabled);
+
+    /**
+     * Sets whether maven central repository should be included and as first in the list of repositories. This can be
+     * used to turn of maven central for users that may use their own maven proxy.
+     */
+    boolean isMavenCentralEnabled();
+
+    /**
+     * Sets whether using SNAPSHOT versions of Apache Camel is enabled. If enabled then SNAPSHOT can be downloaded from
+     * the ASF SNAPSHOT maven repository.
+     */
+    void setMavenApacheSnapshotEnabled(boolean mavenApacheSnapshotEnabled);
+
+    /**
+     * Sets whether using SNAPSHOT versions of Apache Camel is enabled. If enabled then SNAPSHOT can be downloaded from
+     * the ASF SNAPSHOT maven repository.
+     */
+    boolean isMavenApacheSnapshotEnabled();
+
 }

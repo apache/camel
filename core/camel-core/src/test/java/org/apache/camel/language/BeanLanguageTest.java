@@ -29,8 +29,8 @@ class BeanLanguageTest extends AbstractTypedLanguageTest<MethodCallExpression.Bu
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = super.createCamelRegistry();
         registry.bind("someBean", new SomeBean());
         return registry;
     }

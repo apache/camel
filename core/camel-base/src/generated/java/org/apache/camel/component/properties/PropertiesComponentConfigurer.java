@@ -22,37 +22,34 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         org.apache.camel.component.properties.PropertiesComponent target = (org.apache.camel.component.properties.PropertiesComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autodiscoverpropertiessources":
-        case "AutoDiscoverPropertiesSources": target.setAutoDiscoverPropertiesSources(property(camelContext, boolean.class, value)); return true;
+        case "autoDiscoverPropertiesSources": target.setAutoDiscoverPropertiesSources(property(camelContext, boolean.class, value)); return true;
         case "camelcontext":
-        case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "defaultfallbackenabled":
-        case "DefaultFallbackEnabled": target.setDefaultFallbackEnabled(property(camelContext, boolean.class, value)); return true;
-        case "encoding":
-        case "Encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "defaultFallbackEnabled": target.setDefaultFallbackEnabled(property(camelContext, boolean.class, value)); return true;
+        case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "environmentvariablemode":
-        case "EnvironmentVariableMode": target.setEnvironmentVariableMode(property(camelContext, int.class, value)); return true;
+        case "environmentVariableMode": target.setEnvironmentVariableMode(property(camelContext, int.class, value)); return true;
         case "ignoremissinglocation":
-        case "IgnoreMissingLocation": target.setIgnoreMissingLocation(property(camelContext, boolean.class, value)); return true;
+        case "ignoreMissingLocation": target.setIgnoreMissingLocation(property(camelContext, boolean.class, value)); return true;
         case "ignoremissingproperty":
-        case "IgnoreMissingProperty": target.setIgnoreMissingProperty(property(camelContext, boolean.class, value)); return true;
+        case "ignoreMissingProperty": target.setIgnoreMissingProperty(property(camelContext, boolean.class, value)); return true;
         case "initialproperties":
-        case "InitialProperties": target.setInitialProperties(property(camelContext, java.util.Properties.class, value)); return true;
+        case "initialProperties": target.setInitialProperties(property(camelContext, java.util.Properties.class, value)); return true;
         case "localproperties":
-        case "LocalProperties": target.setLocalProperties(property(camelContext, java.util.Properties.class, value)); return true;
-        case "location":
-        case "Location": target.setLocation(property(camelContext, java.lang.String.class, value)); return true;
-        case "locations":
-        case "Locations": target.setLocations(property(camelContext, java.util.List.class, value)); return true;
+        case "localProperties": target.setLocalProperties(property(camelContext, java.util.Properties.class, value)); return true;
+        case "location": target.setLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "locations": target.setLocations(property(camelContext, java.util.List.class, value)); return true;
         case "nestedplaceholder":
-        case "NestedPlaceholder": target.setNestedPlaceholder(property(camelContext, boolean.class, value)); return true;
+        case "nestedPlaceholder": target.setNestedPlaceholder(property(camelContext, boolean.class, value)); return true;
         case "overrideproperties":
-        case "OverrideProperties": target.setOverrideProperties(property(camelContext, java.util.Properties.class, value)); return true;
+        case "overrideProperties": target.setOverrideProperties(property(camelContext, java.util.Properties.class, value)); return true;
         case "propertiesfunctionresolver":
-        case "PropertiesFunctionResolver": target.setPropertiesFunctionResolver(property(camelContext, org.apache.camel.component.properties.PropertiesFunctionResolver.class, value)); return true;
+        case "propertiesFunctionResolver": target.setPropertiesFunctionResolver(property(camelContext, org.apache.camel.component.properties.PropertiesFunctionResolver.class, value)); return true;
         case "propertiesparser":
-        case "PropertiesParser": target.setPropertiesParser(property(camelContext, org.apache.camel.component.properties.PropertiesParser.class, value)); return true;
+        case "propertiesParser": target.setPropertiesParser(property(camelContext, org.apache.camel.component.properties.PropertiesParser.class, value)); return true;
         case "systempropertiesmode":
-        case "SystemPropertiesMode": target.setSystemPropertiesMode(property(camelContext, int.class, value)); return true;
+        case "systemPropertiesMode": target.setSystemPropertiesMode(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -61,37 +58,34 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autodiscoverpropertiessources":
-        case "AutoDiscoverPropertiesSources": return boolean.class;
+        case "autoDiscoverPropertiesSources": return boolean.class;
         case "camelcontext":
-        case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "camelContext": return org.apache.camel.CamelContext.class;
         case "defaultfallbackenabled":
-        case "DefaultFallbackEnabled": return boolean.class;
-        case "encoding":
-        case "Encoding": return java.lang.String.class;
+        case "defaultFallbackEnabled": return boolean.class;
+        case "encoding": return java.lang.String.class;
         case "environmentvariablemode":
-        case "EnvironmentVariableMode": return int.class;
+        case "environmentVariableMode": return int.class;
         case "ignoremissinglocation":
-        case "IgnoreMissingLocation": return boolean.class;
+        case "ignoreMissingLocation": return boolean.class;
         case "ignoremissingproperty":
-        case "IgnoreMissingProperty": return boolean.class;
+        case "ignoreMissingProperty": return boolean.class;
         case "initialproperties":
-        case "InitialProperties": return java.util.Properties.class;
+        case "initialProperties": return java.util.Properties.class;
         case "localproperties":
-        case "LocalProperties": return java.util.Properties.class;
-        case "location":
-        case "Location": return java.lang.String.class;
-        case "locations":
-        case "Locations": return java.util.List.class;
+        case "localProperties": return java.util.Properties.class;
+        case "location": return java.lang.String.class;
+        case "locations": return java.util.List.class;
         case "nestedplaceholder":
-        case "NestedPlaceholder": return boolean.class;
+        case "nestedPlaceholder": return boolean.class;
         case "overrideproperties":
-        case "OverrideProperties": return java.util.Properties.class;
+        case "overrideProperties": return java.util.Properties.class;
         case "propertiesfunctionresolver":
-        case "PropertiesFunctionResolver": return org.apache.camel.component.properties.PropertiesFunctionResolver.class;
+        case "propertiesFunctionResolver": return org.apache.camel.component.properties.PropertiesFunctionResolver.class;
         case "propertiesparser":
-        case "PropertiesParser": return org.apache.camel.component.properties.PropertiesParser.class;
+        case "propertiesParser": return org.apache.camel.component.properties.PropertiesParser.class;
         case "systempropertiesmode":
-        case "SystemPropertiesMode": return int.class;
+        case "systemPropertiesMode": return int.class;
         default: return null;
         }
     }
@@ -101,37 +95,34 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         org.apache.camel.component.properties.PropertiesComponent target = (org.apache.camel.component.properties.PropertiesComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autodiscoverpropertiessources":
-        case "AutoDiscoverPropertiesSources": return target.isAutoDiscoverPropertiesSources();
+        case "autoDiscoverPropertiesSources": return target.isAutoDiscoverPropertiesSources();
         case "camelcontext":
-        case "CamelContext": return target.getCamelContext();
+        case "camelContext": return target.getCamelContext();
         case "defaultfallbackenabled":
-        case "DefaultFallbackEnabled": return target.isDefaultFallbackEnabled();
-        case "encoding":
-        case "Encoding": return target.getEncoding();
+        case "defaultFallbackEnabled": return target.isDefaultFallbackEnabled();
+        case "encoding": return target.getEncoding();
         case "environmentvariablemode":
-        case "EnvironmentVariableMode": return target.getEnvironmentVariableMode();
+        case "environmentVariableMode": return target.getEnvironmentVariableMode();
         case "ignoremissinglocation":
-        case "IgnoreMissingLocation": return target.isIgnoreMissingLocation();
+        case "ignoreMissingLocation": return target.isIgnoreMissingLocation();
         case "ignoremissingproperty":
-        case "IgnoreMissingProperty": return target.isIgnoreMissingProperty();
+        case "ignoreMissingProperty": return target.isIgnoreMissingProperty();
         case "initialproperties":
-        case "InitialProperties": return target.getInitialProperties();
+        case "initialProperties": return target.getInitialProperties();
         case "localproperties":
-        case "LocalProperties": return target.getLocalProperties();
-        case "location":
-        case "Location": return target.getLocation();
-        case "locations":
-        case "Locations": return target.getLocations();
+        case "localProperties": return target.getLocalProperties();
+        case "location": return target.getLocation();
+        case "locations": return target.getLocations();
         case "nestedplaceholder":
-        case "NestedPlaceholder": return target.isNestedPlaceholder();
+        case "nestedPlaceholder": return target.isNestedPlaceholder();
         case "overrideproperties":
-        case "OverrideProperties": return target.getOverrideProperties();
+        case "overrideProperties": return target.getOverrideProperties();
         case "propertiesfunctionresolver":
-        case "PropertiesFunctionResolver": return target.getPropertiesFunctionResolver();
+        case "propertiesFunctionResolver": return target.getPropertiesFunctionResolver();
         case "propertiesparser":
-        case "PropertiesParser": return target.getPropertiesParser();
+        case "propertiesParser": return target.getPropertiesParser();
         case "systempropertiesmode":
-        case "SystemPropertiesMode": return target.getSystemPropertiesMode();
+        case "systemPropertiesMode": return target.getSystemPropertiesMode();
         default: return null;
         }
     }
@@ -139,8 +130,7 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "locations":
-        case "Locations": return org.apache.camel.component.properties.PropertiesLocation.class;
+        case "locations": return org.apache.camel.component.properties.PropertiesLocation.class;
         default: return null;
         }
     }

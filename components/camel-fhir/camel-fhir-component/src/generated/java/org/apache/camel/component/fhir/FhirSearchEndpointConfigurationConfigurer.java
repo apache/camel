@@ -55,59 +55,51 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
         org.apache.camel.component.fhir.FhirSearchEndpointConfiguration target = (org.apache.camel.component.fhir.FhirSearchEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.fhir.internal.FhirApiName.class, value)); return true;
-        case "client":
-        case "Client": target.setClient(property(camelContext, ca.uhn.fhir.rest.client.api.IGenericClient.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.fhir.internal.FhirApiName.class, value)); return true;
+        case "client": target.setClient(property(camelContext, ca.uhn.fhir.rest.client.api.IGenericClient.class, value)); return true;
         case "clientfactory":
-        case "ClientFactory": target.setClientFactory(property(camelContext, ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class, value)); return true;
-        case "compress":
-        case "Compress": target.setCompress(property(camelContext, boolean.class, value)); return true;
+        case "clientFactory": target.setClientFactory(property(camelContext, ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class, value)); return true;
+        case "compress": target.setCompress(property(camelContext, boolean.class, value)); return true;
         case "connectiontimeout":
-        case "ConnectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "defermodelscanning":
-        case "DeferModelScanning": target.setDeferModelScanning(property(camelContext, boolean.class, value)); return true;
-        case "encoding":
-        case "Encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "deferModelScanning": target.setDeferModelScanning(property(camelContext, boolean.class, value)); return true;
+        case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "extraparameters":
-        case "ExtraParameters": target.setExtraParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "extraParameters": target.setExtraParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "fhircontext":
-        case "FhirContext": target.setFhirContext(property(camelContext, ca.uhn.fhir.context.FhirContext.class, value)); return true;
+        case "fhirContext": target.setFhirContext(property(camelContext, ca.uhn.fhir.context.FhirContext.class, value)); return true;
         case "fhirversion":
-        case "FhirVersion": target.setFhirVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "fhirVersion": target.setFhirVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "forceconformancecheck":
-        case "ForceConformanceCheck": target.setForceConformanceCheck(property(camelContext, boolean.class, value)); return true;
-        case "log":
-        case "Log": target.setLog(property(camelContext, boolean.class, value)); return true;
+        case "forceConformanceCheck": target.setForceConformanceCheck(property(camelContext, boolean.class, value)); return true;
+        case "log": target.setLog(property(camelContext, boolean.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
-        case "password":
-        case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "prettyprint":
-        case "PrettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
+        case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
-        case "ProxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxypassword":
-        case "ProxyPassword": target.setProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyPassword": target.setProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
-        case "ProxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyuser":
-        case "ProxyUser": target.setProxyUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyUser": target.setProxyUser(property(camelContext, java.lang.String.class, value)); return true;
         case "serverurl":
-        case "ServerUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "sessioncookie":
-        case "SessionCookie": target.setSessionCookie(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessionCookie": target.setSessionCookie(property(camelContext, java.lang.String.class, value)); return true;
         case "sockettimeout":
-        case "SocketTimeout": target.setSocketTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "summary":
-        case "Summary": target.setSummary(property(camelContext, java.lang.String.class, value)); return true;
-        case "url":
-        case "Url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "username":
-        case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "socketTimeout": target.setSocketTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "summary": target.setSummary(property(camelContext, java.lang.String.class, value)); return true;
+        case "url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "validationmode":
-        case "ValidationMode": target.setValidationMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "validationMode": target.setValidationMode(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -121,59 +113,51 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return java.lang.String.class;
+        case "accessToken": return java.lang.String.class;
         case "apiname":
-        case "ApiName": return org.apache.camel.component.fhir.internal.FhirApiName.class;
-        case "client":
-        case "Client": return ca.uhn.fhir.rest.client.api.IGenericClient.class;
+        case "apiName": return org.apache.camel.component.fhir.internal.FhirApiName.class;
+        case "client": return ca.uhn.fhir.rest.client.api.IGenericClient.class;
         case "clientfactory":
-        case "ClientFactory": return ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class;
-        case "compress":
-        case "Compress": return boolean.class;
+        case "clientFactory": return ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class;
+        case "compress": return boolean.class;
         case "connectiontimeout":
-        case "ConnectionTimeout": return java.lang.Integer.class;
+        case "connectionTimeout": return java.lang.Integer.class;
         case "defermodelscanning":
-        case "DeferModelScanning": return boolean.class;
-        case "encoding":
-        case "Encoding": return java.lang.String.class;
+        case "deferModelScanning": return boolean.class;
+        case "encoding": return java.lang.String.class;
         case "extraparameters":
-        case "ExtraParameters": return java.util.Map.class;
+        case "extraParameters": return java.util.Map.class;
         case "fhircontext":
-        case "FhirContext": return ca.uhn.fhir.context.FhirContext.class;
+        case "fhirContext": return ca.uhn.fhir.context.FhirContext.class;
         case "fhirversion":
-        case "FhirVersion": return java.lang.String.class;
+        case "fhirVersion": return java.lang.String.class;
         case "forceconformancecheck":
-        case "ForceConformanceCheck": return boolean.class;
-        case "log":
-        case "Log": return boolean.class;
+        case "forceConformanceCheck": return boolean.class;
+        case "log": return boolean.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
-        case "password":
-        case "Password": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
+        case "password": return java.lang.String.class;
         case "prettyprint":
-        case "PrettyPrint": return boolean.class;
+        case "prettyPrint": return boolean.class;
         case "proxyhost":
-        case "ProxyHost": return java.lang.String.class;
+        case "proxyHost": return java.lang.String.class;
         case "proxypassword":
-        case "ProxyPassword": return java.lang.String.class;
+        case "proxyPassword": return java.lang.String.class;
         case "proxyport":
-        case "ProxyPort": return java.lang.Integer.class;
+        case "proxyPort": return java.lang.Integer.class;
         case "proxyuser":
-        case "ProxyUser": return java.lang.String.class;
+        case "proxyUser": return java.lang.String.class;
         case "serverurl":
-        case "ServerUrl": return java.lang.String.class;
+        case "serverUrl": return java.lang.String.class;
         case "sessioncookie":
-        case "SessionCookie": return java.lang.String.class;
+        case "sessionCookie": return java.lang.String.class;
         case "sockettimeout":
-        case "SocketTimeout": return java.lang.Integer.class;
-        case "summary":
-        case "Summary": return java.lang.String.class;
-        case "url":
-        case "Url": return java.lang.String.class;
-        case "username":
-        case "Username": return java.lang.String.class;
+        case "socketTimeout": return java.lang.Integer.class;
+        case "summary": return java.lang.String.class;
+        case "url": return java.lang.String.class;
+        case "username": return java.lang.String.class;
         case "validationmode":
-        case "ValidationMode": return java.lang.String.class;
+        case "validationMode": return java.lang.String.class;
         default: return null;
         }
     }
@@ -183,59 +167,51 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
         org.apache.camel.component.fhir.FhirSearchEndpointConfiguration target = (org.apache.camel.component.fhir.FhirSearchEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return target.getAccessToken();
+        case "accessToken": return target.getAccessToken();
         case "apiname":
-        case "ApiName": return target.getApiName();
-        case "client":
-        case "Client": return target.getClient();
+        case "apiName": return target.getApiName();
+        case "client": return target.getClient();
         case "clientfactory":
-        case "ClientFactory": return target.getClientFactory();
-        case "compress":
-        case "Compress": return target.isCompress();
+        case "clientFactory": return target.getClientFactory();
+        case "compress": return target.isCompress();
         case "connectiontimeout":
-        case "ConnectionTimeout": return target.getConnectionTimeout();
+        case "connectionTimeout": return target.getConnectionTimeout();
         case "defermodelscanning":
-        case "DeferModelScanning": return target.isDeferModelScanning();
-        case "encoding":
-        case "Encoding": return target.getEncoding();
+        case "deferModelScanning": return target.isDeferModelScanning();
+        case "encoding": return target.getEncoding();
         case "extraparameters":
-        case "ExtraParameters": return target.getExtraParameters();
+        case "extraParameters": return target.getExtraParameters();
         case "fhircontext":
-        case "FhirContext": return target.getFhirContext();
+        case "fhirContext": return target.getFhirContext();
         case "fhirversion":
-        case "FhirVersion": return target.getFhirVersion();
+        case "fhirVersion": return target.getFhirVersion();
         case "forceconformancecheck":
-        case "ForceConformanceCheck": return target.isForceConformanceCheck();
-        case "log":
-        case "Log": return target.isLog();
+        case "forceConformanceCheck": return target.isForceConformanceCheck();
+        case "log": return target.isLog();
         case "methodname":
-        case "MethodName": return target.getMethodName();
-        case "password":
-        case "Password": return target.getPassword();
+        case "methodName": return target.getMethodName();
+        case "password": return target.getPassword();
         case "prettyprint":
-        case "PrettyPrint": return target.isPrettyPrint();
+        case "prettyPrint": return target.isPrettyPrint();
         case "proxyhost":
-        case "ProxyHost": return target.getProxyHost();
+        case "proxyHost": return target.getProxyHost();
         case "proxypassword":
-        case "ProxyPassword": return target.getProxyPassword();
+        case "proxyPassword": return target.getProxyPassword();
         case "proxyport":
-        case "ProxyPort": return target.getProxyPort();
+        case "proxyPort": return target.getProxyPort();
         case "proxyuser":
-        case "ProxyUser": return target.getProxyUser();
+        case "proxyUser": return target.getProxyUser();
         case "serverurl":
-        case "ServerUrl": return target.getServerUrl();
+        case "serverUrl": return target.getServerUrl();
         case "sessioncookie":
-        case "SessionCookie": return target.getSessionCookie();
+        case "sessionCookie": return target.getSessionCookie();
         case "sockettimeout":
-        case "SocketTimeout": return target.getSocketTimeout();
-        case "summary":
-        case "Summary": return target.getSummary();
-        case "url":
-        case "Url": return target.getUrl();
-        case "username":
-        case "Username": return target.getUsername();
+        case "socketTimeout": return target.getSocketTimeout();
+        case "summary": return target.getSummary();
+        case "url": return target.getUrl();
+        case "username": return target.getUsername();
         case "validationmode":
-        case "ValidationMode": return target.getValidationMode();
+        case "validationMode": return target.getValidationMode();
         default: return null;
         }
     }
@@ -244,7 +220,7 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "extraparameters":
-        case "ExtraParameters": return java.lang.Object.class;
+        case "extraParameters": return java.lang.Object.class;
         default: return null;
         }
     }

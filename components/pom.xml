@@ -75,6 +75,7 @@
 
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
+        <module>camel-ai</module>
         <module>camel-amqp</module>
         <module>camel-arangodb</module>
         <module>camel-as2</module>
@@ -97,7 +98,6 @@
         <module>camel-caffeine</module>
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
-        <module>camel-chatscript</module>
         <module>camel-chunk</module>
         <module>camel-cloudevents</module>
         <module>camel-cm-sms</module>
@@ -115,7 +115,6 @@
         <module>camel-dhis2</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
-        <module>camel-djl</module>
         <module>camel-dns</module>
         <module>camel-docker</module>
         <module>camel-drill</module>
@@ -208,6 +207,7 @@
         <module>camel-micrometer</module>
         <module>camel-micrometer-prometheus</module>
         <module>camel-microprofile</module>
+        <module>camel-milvus</module>
         <module>camel-mina</module>
         <module>camel-minio</module>
         <module>camel-mllp</module>

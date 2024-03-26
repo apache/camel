@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaProducerFullIT extends BaseKafkaTestSupport {
 
     public static final String DIRECT_START_STRINGS_URI = "direct:startStrings";
     public static final String DIRECT_START_STRINGS_2_URI = "direct:startStrings2";

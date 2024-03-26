@@ -106,8 +106,8 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", bean);
         return answer;
     }

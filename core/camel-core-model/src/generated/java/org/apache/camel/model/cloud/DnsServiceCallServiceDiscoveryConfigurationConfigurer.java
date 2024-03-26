@@ -31,14 +31,10 @@ public class DnsServiceCallServiceDiscoveryConfigurationConfigurer extends org.a
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "domain":
-        case "Domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties":
-        case "Properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
-        case "proto":
-        case "Proto": target.setProto(property(camelContext, java.lang.String.class, value)); return true;
+        case "domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
+        case "proto": target.setProto(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -51,14 +47,10 @@ public class DnsServiceCallServiceDiscoveryConfigurationConfigurer extends org.a
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "domain":
-        case "Domain": return java.lang.String.class;
-        case "id":
-        case "Id": return java.lang.String.class;
-        case "properties":
-        case "Properties": return java.util.List.class;
-        case "proto":
-        case "Proto": return java.lang.String.class;
+        case "domain": return java.lang.String.class;
+        case "id": return java.lang.String.class;
+        case "properties": return java.util.List.class;
+        case "proto": return java.lang.String.class;
         default: return null;
         }
     }
@@ -67,14 +59,10 @@ public class DnsServiceCallServiceDiscoveryConfigurationConfigurer extends org.a
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "domain":
-        case "Domain": return target.getDomain();
-        case "id":
-        case "Id": return target.getId();
-        case "properties":
-        case "Properties": return target.getProperties();
-        case "proto":
-        case "Proto": return target.getProto();
+        case "domain": return target.getDomain();
+        case "id": return target.getId();
+        case "properties": return target.getProperties();
+        case "proto": return target.getProto();
         default: return null;
         }
     }
@@ -82,8 +70,7 @@ public class DnsServiceCallServiceDiscoveryConfigurationConfigurer extends org.a
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "properties":
-        case "Properties": return org.apache.camel.model.PropertyDefinition.class;
+        case "properties": return org.apache.camel.model.PropertyDefinition.class;
         default: return null;
         }
     }

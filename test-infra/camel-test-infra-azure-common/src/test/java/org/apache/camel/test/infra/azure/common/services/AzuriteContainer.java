@@ -37,9 +37,8 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer> {
     public AzuriteContainer(String containerName) {
         super(containerName);
 
-        withExposedPorts(AzureServices.BLOB_SERVICE, AzureServices.QUEUE_SERVICE);
-
-        waitingFor(Wait.forListeningPort());
+        withExposedPorts(AzureServices.BLOB_SERVICE, AzureServices.QUEUE_SERVICE)
+                .waitingFor(Wait.forListeningPort());
     }
 
     public AzureCredentialsHolder azureCredentials() {

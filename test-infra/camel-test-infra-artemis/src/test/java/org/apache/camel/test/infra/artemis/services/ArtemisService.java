@@ -20,11 +20,11 @@ import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.common.services.TestService;
 import org.apache.camel.test.infra.common.services.TestServiceUtil;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public interface ArtemisService extends BeforeEachCallback, AfterEachCallback, TestService {
+public interface ArtemisService extends AfterAllCallback, BeforeAllCallback, TestService {
 
     String serviceAddress();
 
@@ -43,12 +43,12 @@ public interface ArtemisService extends BeforeEachCallback, AfterEachCallback, T
     }
 
     @Override
-    default void afterEach(ExtensionContext extensionContext) throws Exception {
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
         TestServiceUtil.tryShutdown(this, extensionContext);
     }
 
     @Override
-    default void beforeEach(ExtensionContext extensionContext) throws Exception {
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
         TestServiceUtil.tryInitialize(this, extensionContext);
     }
 

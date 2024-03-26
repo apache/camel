@@ -199,10 +199,6 @@ class Resilience4jConfigurationDsl(
         def.timeoutDuration = timeoutDuration
     }
 
-    fun timeoutCancelRunningFuture(timeoutCancelRunningFuture: Boolean) {
-        def.timeoutCancelRunningFuture(timeoutCancelRunningFuture)
-    }
-
     fun timeoutCancelRunningFuture(timeoutCancelRunningFuture: String) {
         def.timeoutCancelRunningFuture = timeoutCancelRunningFuture
     }

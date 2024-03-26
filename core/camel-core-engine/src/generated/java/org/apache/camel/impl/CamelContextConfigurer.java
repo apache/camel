@@ -22,119 +22,112 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         org.apache.camel.CamelContext target = (org.apache.camel.CamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowuseoriginalmessage":
-        case "AllowUseOriginalMessage": target.setAllowUseOriginalMessage(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "allowUseOriginalMessage": target.setAllowUseOriginalMessage(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "applicationcontextclassloader":
-        case "ApplicationContextClassLoader": target.setApplicationContextClassLoader(property(camelContext, java.lang.ClassLoader.class, value)); return true;
+        case "applicationContextClassLoader": target.setApplicationContextClassLoader(property(camelContext, java.lang.ClassLoader.class, value)); return true;
         case "autostartup":
-        case "AutoStartup": target.setAutoStartup(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autoStartup": target.setAutoStartup(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "autowiredenabled":
-        case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backlogtracing":
-        case "BacklogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "backlogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backlogtracingstandby":
-        case "BacklogTracingStandby": target.setBacklogTracingStandby(property(camelContext, boolean.class, value)); return true;
+        case "backlogTracingStandby": target.setBacklogTracingStandby(property(camelContext, boolean.class, value)); return true;
         case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": target.setBacklogTracingTemplates(property(camelContext, boolean.class, value)); return true;
+        case "backlogTracingTemplates": target.setBacklogTracingTemplates(property(camelContext, boolean.class, value)); return true;
         case "caseinsensitiveheaders":
-        case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "caseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "classresolver":
-        case "ClassResolver": target.setClassResolver(property(camelContext, org.apache.camel.spi.ClassResolver.class, value)); return true;
+        case "classResolver": target.setClassResolver(property(camelContext, org.apache.camel.spi.ClassResolver.class, value)); return true;
         case "debugstandby":
-        case "DebugStandby": target.setDebugStandby(property(camelContext, boolean.class, value)); return true;
-        case "debugger":
-        case "Debugger": target.setDebugger(property(camelContext, org.apache.camel.spi.Debugger.class, value)); return true;
-        case "debugging":
-        case "Debugging": target.setDebugging(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "delayer":
-        case "Delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
+        case "debugStandby": target.setDebugStandby(property(camelContext, boolean.class, value)); return true;
+        case "debugger": target.setDebugger(property(camelContext, org.apache.camel.spi.Debugger.class, value)); return true;
+        case "debugging": target.setDebugging(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
         case "devconsole":
-        case "DevConsole": target.setDevConsole(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "devConsole": target.setDevConsole(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "dumproutes":
-        case "DumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.String.class, value)); return true;
+        case "dumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.String.class, value)); return true;
         case "executorservicemanager":
-        case "ExecutorServiceManager": target.setExecutorServiceManager(property(camelContext, org.apache.camel.spi.ExecutorServiceManager.class, value)); return true;
+        case "executorServiceManager": target.setExecutorServiceManager(property(camelContext, org.apache.camel.spi.ExecutorServiceManager.class, value)); return true;
         case "globaloptions":
-        case "GlobalOptions": target.setGlobalOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "globalOptions": target.setGlobalOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "inflightrepository":
-        case "InflightRepository": target.setInflightRepository(property(camelContext, org.apache.camel.spi.InflightRepository.class, value)); return true;
-        case "injector":
-        case "Injector": target.setInjector(property(camelContext, org.apache.camel.spi.Injector.class, value)); return true;
+        case "inflightRepository": target.setInflightRepository(property(camelContext, org.apache.camel.spi.InflightRepository.class, value)); return true;
+        case "injector": target.setInjector(property(camelContext, org.apache.camel.spi.Injector.class, value)); return true;
         case "loadhealthchecks":
-        case "LoadHealthChecks": target.setLoadHealthChecks(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "loadHealthChecks": target.setLoadHealthChecks(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "loadtypeconverters":
-        case "LoadTypeConverters": target.setLoadTypeConverters(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "loadTypeConverters": target.setLoadTypeConverters(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "logexhaustedmessagebody":
-        case "LogExhaustedMessageBody": target.setLogExhaustedMessageBody(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "logExhaustedMessageBody": target.setLogExhaustedMessageBody(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "logmask":
-        case "LogMask": target.setLogMask(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "logMask": target.setLogMask(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "mdcloggingkeyspattern":
-        case "MDCLoggingKeysPattern": target.setMDCLoggingKeysPattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "mDCLoggingKeysPattern": target.setMDCLoggingKeysPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "managementname":
-        case "ManagementName": target.setManagementName(property(camelContext, java.lang.String.class, value)); return true;
+        case "managementName": target.setManagementName(property(camelContext, java.lang.String.class, value)); return true;
         case "managementnamestrategy":
-        case "ManagementNameStrategy": target.setManagementNameStrategy(property(camelContext, org.apache.camel.spi.ManagementNameStrategy.class, value)); return true;
+        case "managementNameStrategy": target.setManagementNameStrategy(property(camelContext, org.apache.camel.spi.ManagementNameStrategy.class, value)); return true;
         case "managementstrategy":
-        case "ManagementStrategy": target.setManagementStrategy(property(camelContext, org.apache.camel.spi.ManagementStrategy.class, value)); return true;
+        case "managementStrategy": target.setManagementStrategy(property(camelContext, org.apache.camel.spi.ManagementStrategy.class, value)); return true;
         case "messagehistory":
-        case "MessageHistory": target.setMessageHistory(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "messageHistory": target.setMessageHistory(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "messagehistoryfactory":
-        case "MessageHistoryFactory": target.setMessageHistoryFactory(property(camelContext, org.apache.camel.spi.MessageHistoryFactory.class, value)); return true;
-        case "modeline":
-        case "Modeline": target.setModeline(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "messageHistoryFactory": target.setMessageHistoryFactory(property(camelContext, org.apache.camel.spi.MessageHistoryFactory.class, value)); return true;
+        case "modeline": target.setModeline(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "namestrategy":
-        case "NameStrategy": target.setNameStrategy(property(camelContext, org.apache.camel.spi.CamelContextNameStrategy.class, value)); return true;
+        case "nameStrategy": target.setNameStrategy(property(camelContext, org.apache.camel.spi.CamelContextNameStrategy.class, value)); return true;
         case "propertiescomponent":
-        case "PropertiesComponent": target.setPropertiesComponent(property(camelContext, org.apache.camel.spi.PropertiesComponent.class, value)); return true;
+        case "propertiesComponent": target.setPropertiesComponent(property(camelContext, org.apache.camel.spi.PropertiesComponent.class, value)); return true;
         case "restconfiguration":
-        case "RestConfiguration": target.setRestConfiguration(property(camelContext, org.apache.camel.spi.RestConfiguration.class, value)); return true;
+        case "restConfiguration": target.setRestConfiguration(property(camelContext, org.apache.camel.spi.RestConfiguration.class, value)); return true;
         case "restregistry":
-        case "RestRegistry": target.setRestRegistry(property(camelContext, org.apache.camel.spi.RestRegistry.class, value)); return true;
+        case "restRegistry": target.setRestRegistry(property(camelContext, org.apache.camel.spi.RestRegistry.class, value)); return true;
         case "routecontroller":
-        case "RouteController": target.setRouteController(property(camelContext, org.apache.camel.spi.RouteController.class, value)); return true;
+        case "routeController": target.setRouteController(property(camelContext, org.apache.camel.spi.RouteController.class, value)); return true;
         case "runtimeendpointregistry":
-        case "RuntimeEndpointRegistry": target.setRuntimeEndpointRegistry(property(camelContext, org.apache.camel.spi.RuntimeEndpointRegistry.class, value)); return true;
+        case "runtimeEndpointRegistry": target.setRuntimeEndpointRegistry(property(camelContext, org.apache.camel.spi.RuntimeEndpointRegistry.class, value)); return true;
         case "sslcontextparameters":
-        case "SSLContextParameters": target.setSSLContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "sSLContextParameters": target.setSSLContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "shutdownroute":
-        case "ShutdownRoute": target.setShutdownRoute(property(camelContext, org.apache.camel.ShutdownRoute.class, value)); return true;
+        case "shutdownRoute": target.setShutdownRoute(property(camelContext, org.apache.camel.ShutdownRoute.class, value)); return true;
         case "shutdownrunningtask":
-        case "ShutdownRunningTask": target.setShutdownRunningTask(property(camelContext, org.apache.camel.ShutdownRunningTask.class, value)); return true;
+        case "shutdownRunningTask": target.setShutdownRunningTask(property(camelContext, org.apache.camel.ShutdownRunningTask.class, value)); return true;
         case "shutdownstrategy":
-        case "ShutdownStrategy": target.setShutdownStrategy(property(camelContext, org.apache.camel.spi.ShutdownStrategy.class, value)); return true;
+        case "shutdownStrategy": target.setShutdownStrategy(property(camelContext, org.apache.camel.spi.ShutdownStrategy.class, value)); return true;
         case "sourcelocationenabled":
-        case "SourceLocationEnabled": target.setSourceLocationEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "sourceLocationEnabled": target.setSourceLocationEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "startupsummarylevel":
-        case "StartupSummaryLevel": target.setStartupSummaryLevel(property(camelContext, org.apache.camel.StartupSummaryLevel.class, value)); return true;
+        case "startupSummaryLevel": target.setStartupSummaryLevel(property(camelContext, org.apache.camel.StartupSummaryLevel.class, value)); return true;
         case "streamcaching":
-        case "StreamCaching": target.setStreamCaching(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "streamCaching": target.setStreamCaching(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "streamcachingstrategy":
-        case "StreamCachingStrategy": target.setStreamCachingStrategy(property(camelContext, org.apache.camel.spi.StreamCachingStrategy.class, value)); return true;
-        case "tracer":
-        case "Tracer": target.setTracer(property(camelContext, org.apache.camel.spi.Tracer.class, value)); return true;
-        case "tracing":
-        case "Tracing": target.setTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "streamCachingStrategy": target.setStreamCachingStrategy(property(camelContext, org.apache.camel.spi.StreamCachingStrategy.class, value)); return true;
+        case "tracer": target.setTracer(property(camelContext, org.apache.camel.spi.Tracer.class, value)); return true;
+        case "tracing": target.setTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "tracingloggingformat":
-        case "TracingLoggingFormat": target.setTracingLoggingFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "tracingLoggingFormat": target.setTracingLoggingFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingpattern":
-        case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "tracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingstandby":
-        case "TracingStandby": target.setTracingStandby(property(camelContext, boolean.class, value)); return true;
+        case "tracingStandby": target.setTracingStandby(property(camelContext, boolean.class, value)); return true;
         case "tracingtemplates":
-        case "TracingTemplates": target.setTracingTemplates(property(camelContext, boolean.class, value)); return true;
+        case "tracingTemplates": target.setTracingTemplates(property(camelContext, boolean.class, value)); return true;
         case "typeconverterregistry":
-        case "TypeConverterRegistry": target.setTypeConverterRegistry(property(camelContext, org.apache.camel.spi.TypeConverterRegistry.class, value)); return true;
+        case "typeConverterRegistry": target.setTypeConverterRegistry(property(camelContext, org.apache.camel.spi.TypeConverterRegistry.class, value)); return true;
         case "typeconverterstatisticsenabled":
-        case "TypeConverterStatisticsEnabled": target.setTypeConverterStatisticsEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "typeConverterStatisticsEnabled": target.setTypeConverterStatisticsEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usebreadcrumb":
-        case "UseBreadcrumb": target.setUseBreadcrumb(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "useBreadcrumb": target.setUseBreadcrumb(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usedatatype":
-        case "UseDataType": target.setUseDataType(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "useDataType": target.setUseDataType(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usemdclogging":
-        case "UseMDCLogging": target.setUseMDCLogging(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "useMDCLogging": target.setUseMDCLogging(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "uuidgenerator":
-        case "UuidGenerator": target.setUuidGenerator(property(camelContext, org.apache.camel.spi.UuidGenerator.class, value)); return true;
+        case "uuidGenerator": target.setUuidGenerator(property(camelContext, org.apache.camel.spi.UuidGenerator.class, value)); return true;
         case "vaultconfiguration":
-        case "VaultConfiguration": target.setVaultConfiguration(property(camelContext, org.apache.camel.vault.VaultConfiguration.class, value)); return true;
+        case "vaultConfiguration": target.setVaultConfiguration(property(camelContext, org.apache.camel.vault.VaultConfiguration.class, value)); return true;
         default: return false;
         }
     }
@@ -143,119 +136,112 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowuseoriginalmessage":
-        case "AllowUseOriginalMessage": return java.lang.Boolean.class;
+        case "allowUseOriginalMessage": return java.lang.Boolean.class;
         case "applicationcontextclassloader":
-        case "ApplicationContextClassLoader": return java.lang.ClassLoader.class;
+        case "applicationContextClassLoader": return java.lang.ClassLoader.class;
         case "autostartup":
-        case "AutoStartup": return java.lang.Boolean.class;
+        case "autoStartup": return java.lang.Boolean.class;
         case "autowiredenabled":
-        case "AutowiredEnabled": return java.lang.Boolean.class;
+        case "autowiredEnabled": return java.lang.Boolean.class;
         case "backlogtracing":
-        case "BacklogTracing": return java.lang.Boolean.class;
+        case "backlogTracing": return java.lang.Boolean.class;
         case "backlogtracingstandby":
-        case "BacklogTracingStandby": return boolean.class;
+        case "backlogTracingStandby": return boolean.class;
         case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": return boolean.class;
+        case "backlogTracingTemplates": return boolean.class;
         case "caseinsensitiveheaders":
-        case "CaseInsensitiveHeaders": return java.lang.Boolean.class;
+        case "caseInsensitiveHeaders": return java.lang.Boolean.class;
         case "classresolver":
-        case "ClassResolver": return org.apache.camel.spi.ClassResolver.class;
+        case "classResolver": return org.apache.camel.spi.ClassResolver.class;
         case "debugstandby":
-        case "DebugStandby": return boolean.class;
-        case "debugger":
-        case "Debugger": return org.apache.camel.spi.Debugger.class;
-        case "debugging":
-        case "Debugging": return java.lang.Boolean.class;
-        case "delayer":
-        case "Delayer": return java.lang.Long.class;
+        case "debugStandby": return boolean.class;
+        case "debugger": return org.apache.camel.spi.Debugger.class;
+        case "debugging": return java.lang.Boolean.class;
+        case "delayer": return java.lang.Long.class;
         case "devconsole":
-        case "DevConsole": return java.lang.Boolean.class;
+        case "devConsole": return java.lang.Boolean.class;
         case "dumproutes":
-        case "DumpRoutes": return java.lang.String.class;
+        case "dumpRoutes": return java.lang.String.class;
         case "executorservicemanager":
-        case "ExecutorServiceManager": return org.apache.camel.spi.ExecutorServiceManager.class;
+        case "executorServiceManager": return org.apache.camel.spi.ExecutorServiceManager.class;
         case "globaloptions":
-        case "GlobalOptions": return java.util.Map.class;
+        case "globalOptions": return java.util.Map.class;
         case "inflightrepository":
-        case "InflightRepository": return org.apache.camel.spi.InflightRepository.class;
-        case "injector":
-        case "Injector": return org.apache.camel.spi.Injector.class;
+        case "inflightRepository": return org.apache.camel.spi.InflightRepository.class;
+        case "injector": return org.apache.camel.spi.Injector.class;
         case "loadhealthchecks":
-        case "LoadHealthChecks": return java.lang.Boolean.class;
+        case "loadHealthChecks": return java.lang.Boolean.class;
         case "loadtypeconverters":
-        case "LoadTypeConverters": return java.lang.Boolean.class;
+        case "loadTypeConverters": return java.lang.Boolean.class;
         case "logexhaustedmessagebody":
-        case "LogExhaustedMessageBody": return java.lang.Boolean.class;
+        case "logExhaustedMessageBody": return java.lang.Boolean.class;
         case "logmask":
-        case "LogMask": return java.lang.Boolean.class;
+        case "logMask": return java.lang.Boolean.class;
         case "mdcloggingkeyspattern":
-        case "MDCLoggingKeysPattern": return java.lang.String.class;
+        case "mDCLoggingKeysPattern": return java.lang.String.class;
         case "managementname":
-        case "ManagementName": return java.lang.String.class;
+        case "managementName": return java.lang.String.class;
         case "managementnamestrategy":
-        case "ManagementNameStrategy": return org.apache.camel.spi.ManagementNameStrategy.class;
+        case "managementNameStrategy": return org.apache.camel.spi.ManagementNameStrategy.class;
         case "managementstrategy":
-        case "ManagementStrategy": return org.apache.camel.spi.ManagementStrategy.class;
+        case "managementStrategy": return org.apache.camel.spi.ManagementStrategy.class;
         case "messagehistory":
-        case "MessageHistory": return java.lang.Boolean.class;
+        case "messageHistory": return java.lang.Boolean.class;
         case "messagehistoryfactory":
-        case "MessageHistoryFactory": return org.apache.camel.spi.MessageHistoryFactory.class;
-        case "modeline":
-        case "Modeline": return java.lang.Boolean.class;
+        case "messageHistoryFactory": return org.apache.camel.spi.MessageHistoryFactory.class;
+        case "modeline": return java.lang.Boolean.class;
         case "namestrategy":
-        case "NameStrategy": return org.apache.camel.spi.CamelContextNameStrategy.class;
+        case "nameStrategy": return org.apache.camel.spi.CamelContextNameStrategy.class;
         case "propertiescomponent":
-        case "PropertiesComponent": return org.apache.camel.spi.PropertiesComponent.class;
+        case "propertiesComponent": return org.apache.camel.spi.PropertiesComponent.class;
         case "restconfiguration":
-        case "RestConfiguration": return org.apache.camel.spi.RestConfiguration.class;
+        case "restConfiguration": return org.apache.camel.spi.RestConfiguration.class;
         case "restregistry":
-        case "RestRegistry": return org.apache.camel.spi.RestRegistry.class;
+        case "restRegistry": return org.apache.camel.spi.RestRegistry.class;
         case "routecontroller":
-        case "RouteController": return org.apache.camel.spi.RouteController.class;
+        case "routeController": return org.apache.camel.spi.RouteController.class;
         case "runtimeendpointregistry":
-        case "RuntimeEndpointRegistry": return org.apache.camel.spi.RuntimeEndpointRegistry.class;
+        case "runtimeEndpointRegistry": return org.apache.camel.spi.RuntimeEndpointRegistry.class;
         case "sslcontextparameters":
-        case "SSLContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sSLContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "shutdownroute":
-        case "ShutdownRoute": return org.apache.camel.ShutdownRoute.class;
+        case "shutdownRoute": return org.apache.camel.ShutdownRoute.class;
         case "shutdownrunningtask":
-        case "ShutdownRunningTask": return org.apache.camel.ShutdownRunningTask.class;
+        case "shutdownRunningTask": return org.apache.camel.ShutdownRunningTask.class;
         case "shutdownstrategy":
-        case "ShutdownStrategy": return org.apache.camel.spi.ShutdownStrategy.class;
+        case "shutdownStrategy": return org.apache.camel.spi.ShutdownStrategy.class;
         case "sourcelocationenabled":
-        case "SourceLocationEnabled": return java.lang.Boolean.class;
+        case "sourceLocationEnabled": return java.lang.Boolean.class;
         case "startupsummarylevel":
-        case "StartupSummaryLevel": return org.apache.camel.StartupSummaryLevel.class;
+        case "startupSummaryLevel": return org.apache.camel.StartupSummaryLevel.class;
         case "streamcaching":
-        case "StreamCaching": return java.lang.Boolean.class;
+        case "streamCaching": return java.lang.Boolean.class;
         case "streamcachingstrategy":
-        case "StreamCachingStrategy": return org.apache.camel.spi.StreamCachingStrategy.class;
-        case "tracer":
-        case "Tracer": return org.apache.camel.spi.Tracer.class;
-        case "tracing":
-        case "Tracing": return java.lang.Boolean.class;
+        case "streamCachingStrategy": return org.apache.camel.spi.StreamCachingStrategy.class;
+        case "tracer": return org.apache.camel.spi.Tracer.class;
+        case "tracing": return java.lang.Boolean.class;
         case "tracingloggingformat":
-        case "TracingLoggingFormat": return java.lang.String.class;
+        case "tracingLoggingFormat": return java.lang.String.class;
         case "tracingpattern":
-        case "TracingPattern": return java.lang.String.class;
+        case "tracingPattern": return java.lang.String.class;
         case "tracingstandby":
-        case "TracingStandby": return boolean.class;
+        case "tracingStandby": return boolean.class;
         case "tracingtemplates":
-        case "TracingTemplates": return boolean.class;
+        case "tracingTemplates": return boolean.class;
         case "typeconverterregistry":
-        case "TypeConverterRegistry": return org.apache.camel.spi.TypeConverterRegistry.class;
+        case "typeConverterRegistry": return org.apache.camel.spi.TypeConverterRegistry.class;
         case "typeconverterstatisticsenabled":
-        case "TypeConverterStatisticsEnabled": return java.lang.Boolean.class;
+        case "typeConverterStatisticsEnabled": return java.lang.Boolean.class;
         case "usebreadcrumb":
-        case "UseBreadcrumb": return java.lang.Boolean.class;
+        case "useBreadcrumb": return java.lang.Boolean.class;
         case "usedatatype":
-        case "UseDataType": return java.lang.Boolean.class;
+        case "useDataType": return java.lang.Boolean.class;
         case "usemdclogging":
-        case "UseMDCLogging": return java.lang.Boolean.class;
+        case "useMDCLogging": return java.lang.Boolean.class;
         case "uuidgenerator":
-        case "UuidGenerator": return org.apache.camel.spi.UuidGenerator.class;
+        case "uuidGenerator": return org.apache.camel.spi.UuidGenerator.class;
         case "vaultconfiguration":
-        case "VaultConfiguration": return org.apache.camel.vault.VaultConfiguration.class;
+        case "vaultConfiguration": return org.apache.camel.vault.VaultConfiguration.class;
         default: return null;
         }
     }
@@ -265,119 +251,112 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         org.apache.camel.CamelContext target = (org.apache.camel.CamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowuseoriginalmessage":
-        case "AllowUseOriginalMessage": return target.isAllowUseOriginalMessage();
+        case "allowUseOriginalMessage": return target.isAllowUseOriginalMessage();
         case "applicationcontextclassloader":
-        case "ApplicationContextClassLoader": return target.getApplicationContextClassLoader();
+        case "applicationContextClassLoader": return target.getApplicationContextClassLoader();
         case "autostartup":
-        case "AutoStartup": return target.isAutoStartup();
+        case "autoStartup": return target.isAutoStartup();
         case "autowiredenabled":
-        case "AutowiredEnabled": return target.isAutowiredEnabled();
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
-        case "BacklogTracing": return target.isBacklogTracing();
+        case "backlogTracing": return target.isBacklogTracing();
         case "backlogtracingstandby":
-        case "BacklogTracingStandby": return target.isBacklogTracingStandby();
+        case "backlogTracingStandby": return target.isBacklogTracingStandby();
         case "backlogtracingtemplates":
-        case "BacklogTracingTemplates": return target.isBacklogTracingTemplates();
+        case "backlogTracingTemplates": return target.isBacklogTracingTemplates();
         case "caseinsensitiveheaders":
-        case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
+        case "caseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
         case "classresolver":
-        case "ClassResolver": return target.getClassResolver();
+        case "classResolver": return target.getClassResolver();
         case "debugstandby":
-        case "DebugStandby": return target.isDebugStandby();
-        case "debugger":
-        case "Debugger": return target.getDebugger();
-        case "debugging":
-        case "Debugging": return target.isDebugging();
-        case "delayer":
-        case "Delayer": return target.getDelayer();
+        case "debugStandby": return target.isDebugStandby();
+        case "debugger": return target.getDebugger();
+        case "debugging": return target.isDebugging();
+        case "delayer": return target.getDelayer();
         case "devconsole":
-        case "DevConsole": return target.isDevConsole();
+        case "devConsole": return target.isDevConsole();
         case "dumproutes":
-        case "DumpRoutes": return target.getDumpRoutes();
+        case "dumpRoutes": return target.getDumpRoutes();
         case "executorservicemanager":
-        case "ExecutorServiceManager": return target.getExecutorServiceManager();
+        case "executorServiceManager": return target.getExecutorServiceManager();
         case "globaloptions":
-        case "GlobalOptions": return target.getGlobalOptions();
+        case "globalOptions": return target.getGlobalOptions();
         case "inflightrepository":
-        case "InflightRepository": return target.getInflightRepository();
-        case "injector":
-        case "Injector": return target.getInjector();
+        case "inflightRepository": return target.getInflightRepository();
+        case "injector": return target.getInjector();
         case "loadhealthchecks":
-        case "LoadHealthChecks": return target.isLoadHealthChecks();
+        case "loadHealthChecks": return target.isLoadHealthChecks();
         case "loadtypeconverters":
-        case "LoadTypeConverters": return target.isLoadTypeConverters();
+        case "loadTypeConverters": return target.isLoadTypeConverters();
         case "logexhaustedmessagebody":
-        case "LogExhaustedMessageBody": return target.isLogExhaustedMessageBody();
+        case "logExhaustedMessageBody": return target.isLogExhaustedMessageBody();
         case "logmask":
-        case "LogMask": return target.isLogMask();
+        case "logMask": return target.isLogMask();
         case "mdcloggingkeyspattern":
-        case "MDCLoggingKeysPattern": return target.getMDCLoggingKeysPattern();
+        case "mDCLoggingKeysPattern": return target.getMDCLoggingKeysPattern();
         case "managementname":
-        case "ManagementName": return target.getManagementName();
+        case "managementName": return target.getManagementName();
         case "managementnamestrategy":
-        case "ManagementNameStrategy": return target.getManagementNameStrategy();
+        case "managementNameStrategy": return target.getManagementNameStrategy();
         case "managementstrategy":
-        case "ManagementStrategy": return target.getManagementStrategy();
+        case "managementStrategy": return target.getManagementStrategy();
         case "messagehistory":
-        case "MessageHistory": return target.isMessageHistory();
+        case "messageHistory": return target.isMessageHistory();
         case "messagehistoryfactory":
-        case "MessageHistoryFactory": return target.getMessageHistoryFactory();
-        case "modeline":
-        case "Modeline": return target.isModeline();
+        case "messageHistoryFactory": return target.getMessageHistoryFactory();
+        case "modeline": return target.isModeline();
         case "namestrategy":
-        case "NameStrategy": return target.getNameStrategy();
+        case "nameStrategy": return target.getNameStrategy();
         case "propertiescomponent":
-        case "PropertiesComponent": return target.getPropertiesComponent();
+        case "propertiesComponent": return target.getPropertiesComponent();
         case "restconfiguration":
-        case "RestConfiguration": return target.getRestConfiguration();
+        case "restConfiguration": return target.getRestConfiguration();
         case "restregistry":
-        case "RestRegistry": return target.getRestRegistry();
+        case "restRegistry": return target.getRestRegistry();
         case "routecontroller":
-        case "RouteController": return target.getRouteController();
+        case "routeController": return target.getRouteController();
         case "runtimeendpointregistry":
-        case "RuntimeEndpointRegistry": return target.getRuntimeEndpointRegistry();
+        case "runtimeEndpointRegistry": return target.getRuntimeEndpointRegistry();
         case "sslcontextparameters":
-        case "SSLContextParameters": return target.getSSLContextParameters();
+        case "sSLContextParameters": return target.getSSLContextParameters();
         case "shutdownroute":
-        case "ShutdownRoute": return target.getShutdownRoute();
+        case "shutdownRoute": return target.getShutdownRoute();
         case "shutdownrunningtask":
-        case "ShutdownRunningTask": return target.getShutdownRunningTask();
+        case "shutdownRunningTask": return target.getShutdownRunningTask();
         case "shutdownstrategy":
-        case "ShutdownStrategy": return target.getShutdownStrategy();
+        case "shutdownStrategy": return target.getShutdownStrategy();
         case "sourcelocationenabled":
-        case "SourceLocationEnabled": return target.isSourceLocationEnabled();
+        case "sourceLocationEnabled": return target.isSourceLocationEnabled();
         case "startupsummarylevel":
-        case "StartupSummaryLevel": return target.getStartupSummaryLevel();
+        case "startupSummaryLevel": return target.getStartupSummaryLevel();
         case "streamcaching":
-        case "StreamCaching": return target.isStreamCaching();
+        case "streamCaching": return target.isStreamCaching();
         case "streamcachingstrategy":
-        case "StreamCachingStrategy": return target.getStreamCachingStrategy();
-        case "tracer":
-        case "Tracer": return target.getTracer();
-        case "tracing":
-        case "Tracing": return target.isTracing();
+        case "streamCachingStrategy": return target.getStreamCachingStrategy();
+        case "tracer": return target.getTracer();
+        case "tracing": return target.isTracing();
         case "tracingloggingformat":
-        case "TracingLoggingFormat": return target.getTracingLoggingFormat();
+        case "tracingLoggingFormat": return target.getTracingLoggingFormat();
         case "tracingpattern":
-        case "TracingPattern": return target.getTracingPattern();
+        case "tracingPattern": return target.getTracingPattern();
         case "tracingstandby":
-        case "TracingStandby": return target.isTracingStandby();
+        case "tracingStandby": return target.isTracingStandby();
         case "tracingtemplates":
-        case "TracingTemplates": return target.isTracingTemplates();
+        case "tracingTemplates": return target.isTracingTemplates();
         case "typeconverterregistry":
-        case "TypeConverterRegistry": return target.getTypeConverterRegistry();
+        case "typeConverterRegistry": return target.getTypeConverterRegistry();
         case "typeconverterstatisticsenabled":
-        case "TypeConverterStatisticsEnabled": return target.isTypeConverterStatisticsEnabled();
+        case "typeConverterStatisticsEnabled": return target.isTypeConverterStatisticsEnabled();
         case "usebreadcrumb":
-        case "UseBreadcrumb": return target.isUseBreadcrumb();
+        case "useBreadcrumb": return target.isUseBreadcrumb();
         case "usedatatype":
-        case "UseDataType": return target.isUseDataType();
+        case "useDataType": return target.isUseDataType();
         case "usemdclogging":
-        case "UseMDCLogging": return target.isUseMDCLogging();
+        case "useMDCLogging": return target.isUseMDCLogging();
         case "uuidgenerator":
-        case "UuidGenerator": return target.getUuidGenerator();
+        case "uuidGenerator": return target.getUuidGenerator();
         case "vaultconfiguration":
-        case "VaultConfiguration": return target.getVaultConfiguration();
+        case "vaultConfiguration": return target.getVaultConfiguration();
         default: return null;
         }
     }
@@ -386,7 +365,7 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "globaloptions":
-        case "GlobalOptions": return java.lang.String.class;
+        case "globalOptions": return java.lang.String.class;
         default: return null;
         }
     }

@@ -21,10 +21,8 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MySecondBar target = (org.apache.camel.main.MySecondBar) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "names":
-        case "Names": target.setNames(property(camelContext, java.util.List.class, value)); return true;
-        case "number":
-        case "Number": target.setNumber(property(camelContext, int.class, value)); return true;
+        case "names": target.setNames(property(camelContext, java.util.List.class, value)); return true;
+        case "number": target.setNumber(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -32,10 +30,8 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "names":
-        case "Names": return java.util.List.class;
-        case "number":
-        case "Number": return int.class;
+        case "names": return java.util.List.class;
+        case "number": return int.class;
         default: return null;
         }
     }
@@ -44,10 +40,8 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MySecondBar target = (org.apache.camel.main.MySecondBar) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "names":
-        case "Names": return target.getNames();
-        case "number":
-        case "Number": return target.getNumber();
+        case "names": return target.getNames();
+        case "number": return target.getNumber();
         default: return null;
         }
     }
@@ -55,8 +49,7 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "names":
-        case "Names": return java.lang.String.class;
+        case "names": return java.lang.String.class;
         default: return null;
         }
     }

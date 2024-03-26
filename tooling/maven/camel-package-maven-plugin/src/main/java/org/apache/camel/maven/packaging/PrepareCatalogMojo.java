@@ -44,10 +44,12 @@ import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.PackageHelper;
@@ -117,6 +119,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/transformers")
     protected File transformersOutDir;
+
+    /**
+     * The output directory for pojo beans catalog
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/beans")
+    protected File beansOutDir;
+
+    /**
+     * The output directory for dev-consoles catalog
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/dev-consoles")
+    protected File consolesOutDir;
 
     /**
      * The output directory for others catalog
@@ -322,7 +336,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                                 allJsonFiles.add(p);
                             } else if (f.equals("component.properties") || f.equals("dataformat.properties")
                                     || f.equals("language.properties") || f.equals("other.properties")
-                                    || f.equals("transformer.properties")) {
+                                    || f.equals("transformer.properties") || f.equals("bean.properties")) {
                                 allPropertiesFiles.add(p);
                             }
                         });
@@ -374,6 +388,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> dataformats = executeDataFormats();
             Set<String> languages = executeLanguages();
             Set<String> transformers = executeTransformers();
+            Set<String> beans = executeBeans();
+            Set<String> consoles = executeDevConsoles();
             Set<String> others = executeOthers();
             executeDocuments(components, dataformats, languages, others);
             executeXmlSchemas();
@@ -763,6 +779,90 @@ public class PrepareCatalogMojo extends AbstractMojo {
         return transformerNames;
     }
 
+    protected Set<String> executeBeans() throws Exception {
+        Path beansOutDir = this.beansOutDir.toPath();
+
+        getLog().info("Copying all Camel pojo bean json descriptors");
+
+        // lets use sorted set/maps
+        Set<Path> jsonFiles;
+        Set<Path> duplicateJsonFiles;
+        Set<Path> beanFiles;
+
+        // find all beans from the components directory
+        beanFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("bean.properties"))
+                .collect(Collectors.toCollection(TreeSet::new));
+        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof PojoBeanModel)
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        getLog().info("Found " + beanFiles.size() + " bean.properties files");
+        getLog().info("Found " + jsonFiles.size() + " bean json files");
+
+        // make sure to create out dir
+        Files.createDirectories(beansOutDir);
+
+        // Check duplicates
+        duplicateJsonFiles = getDuplicates(jsonFiles);
+
+        // Copy all descriptors
+        Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> beansOutDir.resolve(p.getFileName()));
+        try (Stream<Path> stream = list(beansOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
+        newJsons.forEach(this::copy);
+
+        Path all = beansOutDir.resolve("../beans.properties");
+        Set<String> beanNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        FileUtil.updateFile(all, String.join("\n", beanNames) + "\n");
+
+        printBeansReport(jsonFiles, duplicateJsonFiles);
+
+        return beanNames;
+    }
+
+    protected Set<String> executeDevConsoles() throws Exception {
+        Path consolesOutDir = this.consolesOutDir.toPath();
+
+        getLog().info("Copying all Camel dev-consoles json descriptors");
+
+        // lets use sorted set/maps
+        Set<Path> jsonFiles;
+        Set<Path> duplicateJsonFiles;
+        Set<Path> consoleFiles;
+
+        // find all consoles from the components directory
+        consoleFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("dev-console.properties"))
+                .collect(Collectors.toCollection(TreeSet::new));
+        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof DevConsoleModel)
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        getLog().info("Found " + consoleFiles.size() + " dev-console.properties files");
+        getLog().info("Found " + jsonFiles.size() + " dev-console json files");
+
+        // make sure to create out dir
+        Files.createDirectories(consolesOutDir);
+
+        // Check duplicates
+        duplicateJsonFiles = getDuplicates(jsonFiles);
+
+        // Copy all descriptors
+        Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> consolesOutDir.resolve(p.getFileName()));
+        try (Stream<Path> stream = list(consolesOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
+        newJsons.forEach(this::copy);
+
+        Path all = consolesOutDir.resolve("../dev-consoles.properties");
+        Set<String> consoleNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        FileUtil.updateFile(all, String.join("\n", consoleNames) + "\n");
+
+        printConsolesReport(jsonFiles, duplicateJsonFiles);
+
+        return consoleNames;
+    }
+
     private Set<String> executeOthers() throws Exception {
         Path othersOutDir = this.othersOutDir.toPath();
 
@@ -804,6 +904,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-dsl-support":
                 case "camel-endpointdsl-support":
                     // and components with middle folders
+                case "camel-ai":
                 case "camel-as2":
                 case "camel-avro-rpc":
                 case "camel-aws":
@@ -1216,6 +1317,40 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!duplicate.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDuplicate transformer detected: " + duplicate.size());
+            printComponentWarning(duplicate);
+        }
+        getLog().info("");
+        getLog().info(SEPARATOR);
+    }
+
+    private void printBeansReport(
+            Set<Path> json, Set<Path> duplicate) {
+        getLog().info(SEPARATOR);
+        getLog().info("");
+        getLog().info("Camel pojo beans catalog report");
+        getLog().info("");
+        getLog().info("\tPojo beans found: " + json.size());
+        printComponentDebug(json);
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate pojo beans detected: " + duplicate.size());
+            printComponentWarning(duplicate);
+        }
+        getLog().info("");
+        getLog().info(SEPARATOR);
+    }
+
+    private void printConsolesReport(
+            Set<Path> json, Set<Path> duplicate) {
+        getLog().info(SEPARATOR);
+        getLog().info("");
+        getLog().info("Camel dev-console catalog report");
+        getLog().info("");
+        getLog().info("\tConsoles found: " + json.size());
+        printComponentDebug(json);
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate console detected: " + duplicate.size());
             printComponentWarning(duplicate);
         }
         getLog().info("");

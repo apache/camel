@@ -22,23 +22,22 @@ public class QuartzScheduledPollConsumerSchedulerConfigurer extends org.apache.c
         org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler target = (org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
-        case "cron":
-        case "Cron": target.setCron(property(camelContext, java.lang.String.class, value)); return true;
+        case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "cron": target.setCron(property(camelContext, java.lang.String.class, value)); return true;
         case "deletejob":
-        case "DeleteJob": target.setDeleteJob(property(camelContext, boolean.class, value)); return true;
+        case "deleteJob": target.setDeleteJob(property(camelContext, boolean.class, value)); return true;
         case "jobparameters":
-        case "JobParameters": target.setJobParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "jobParameters": target.setJobParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "quartzscheduler":
-        case "QuartzScheduler": target.setQuartzScheduler(property(camelContext, org.quartz.Scheduler.class, value)); return true;
+        case "quartzScheduler": target.setQuartzScheduler(property(camelContext, org.quartz.Scheduler.class, value)); return true;
         case "timezone":
-        case "TimeZone": target.setTimeZone(property(camelContext, java.util.TimeZone.class, value)); return true;
+        case "timeZone": target.setTimeZone(property(camelContext, java.util.TimeZone.class, value)); return true;
         case "triggergroup":
-        case "TriggerGroup": target.setTriggerGroup(property(camelContext, java.lang.String.class, value)); return true;
+        case "triggerGroup": target.setTriggerGroup(property(camelContext, java.lang.String.class, value)); return true;
         case "triggerid":
-        case "TriggerId": target.setTriggerId(property(camelContext, java.lang.String.class, value)); return true;
+        case "triggerId": target.setTriggerId(property(camelContext, java.lang.String.class, value)); return true;
         case "triggerparameters":
-        case "TriggerParameters": target.setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "triggerParameters": target.setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
         default: return false;
         }
     }
@@ -47,23 +46,22 @@ public class QuartzScheduledPollConsumerSchedulerConfigurer extends org.apache.c
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return org.apache.camel.CamelContext.class;
-        case "cron":
-        case "Cron": return java.lang.String.class;
+        case "camelContext": return org.apache.camel.CamelContext.class;
+        case "cron": return java.lang.String.class;
         case "deletejob":
-        case "DeleteJob": return boolean.class;
+        case "deleteJob": return boolean.class;
         case "jobparameters":
-        case "JobParameters": return java.util.Map.class;
+        case "jobParameters": return java.util.Map.class;
         case "quartzscheduler":
-        case "QuartzScheduler": return org.quartz.Scheduler.class;
+        case "quartzScheduler": return org.quartz.Scheduler.class;
         case "timezone":
-        case "TimeZone": return java.util.TimeZone.class;
+        case "timeZone": return java.util.TimeZone.class;
         case "triggergroup":
-        case "TriggerGroup": return java.lang.String.class;
+        case "triggerGroup": return java.lang.String.class;
         case "triggerid":
-        case "TriggerId": return java.lang.String.class;
+        case "triggerId": return java.lang.String.class;
         case "triggerparameters":
-        case "TriggerParameters": return java.util.Map.class;
+        case "triggerParameters": return java.util.Map.class;
         default: return null;
         }
     }
@@ -73,23 +71,22 @@ public class QuartzScheduledPollConsumerSchedulerConfigurer extends org.apache.c
         org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler target = (org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return target.getCamelContext();
-        case "cron":
-        case "Cron": return target.getCron();
+        case "camelContext": return target.getCamelContext();
+        case "cron": return target.getCron();
         case "deletejob":
-        case "DeleteJob": return target.isDeleteJob();
+        case "deleteJob": return target.isDeleteJob();
         case "jobparameters":
-        case "JobParameters": return target.getJobParameters();
+        case "jobParameters": return target.getJobParameters();
         case "quartzscheduler":
-        case "QuartzScheduler": return target.getQuartzScheduler();
+        case "quartzScheduler": return target.getQuartzScheduler();
         case "timezone":
-        case "TimeZone": return target.getTimeZone();
+        case "timeZone": return target.getTimeZone();
         case "triggergroup":
-        case "TriggerGroup": return target.getTriggerGroup();
+        case "triggerGroup": return target.getTriggerGroup();
         case "triggerid":
-        case "TriggerId": return target.getTriggerId();
+        case "triggerId": return target.getTriggerId();
         case "triggerparameters":
-        case "TriggerParameters": return target.getTriggerParameters();
+        case "triggerParameters": return target.getTriggerParameters();
         default: return null;
         }
     }
@@ -98,9 +95,9 @@ public class QuartzScheduledPollConsumerSchedulerConfigurer extends org.apache.c
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "jobparameters":
-        case "JobParameters": return java.lang.Object.class;
+        case "jobParameters": return java.lang.Object.class;
         case "triggerparameters":
-        case "TriggerParameters": return java.lang.Object.class;
+        case "triggerParameters": return java.lang.Object.class;
         default: return null;
         }
     }

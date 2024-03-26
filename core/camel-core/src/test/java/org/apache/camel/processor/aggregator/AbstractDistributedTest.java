@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
@@ -59,7 +59,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         return context2.getEndpoint(uri, MockEndpoint.class);
     }
 
-    protected RouteBuilder createRouteBuilder2() throws Exception {
+    protected RoutesBuilder createRouteBuilder2() throws Exception {
         return createRouteBuilder();
     }
 }

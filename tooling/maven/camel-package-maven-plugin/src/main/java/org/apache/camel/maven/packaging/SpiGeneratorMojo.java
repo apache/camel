@@ -135,7 +135,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                     continue;
                 }
                 String pvals;
-                // @DataTypeTransformer uses name instead of value
+                // @DataTypeTransformer/@DevConsole uses name instead of value
                 if (annotation.value() == null) {
                     pvals = annotation.values().stream()
                             .filter(annotationValue -> "name".equals(annotationValue.name()))
@@ -163,7 +163,8 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^A-Za-z0-9+-/]", "-");
+        // dot should be replaced with dash (camel.yaml -> camel-yaml) for marker files
+        return fileName.replaceAll("[^A-Za-z0-9+-/]", "-").replace('.', '-');
     }
 
     private boolean isLocal(String className) {

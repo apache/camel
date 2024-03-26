@@ -48,7 +48,7 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         Context context = new InitialContext(env);
         context.bind("jdbc/myDataSource", FAKE);
         return new DefaultRegistry(new JndiBeanRepository(context));

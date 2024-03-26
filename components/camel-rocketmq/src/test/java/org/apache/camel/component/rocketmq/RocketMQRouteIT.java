@@ -41,9 +41,11 @@ public class RocketMQRouteIT extends RocketMQTestSupport {
 
     private static final String RESULT_ENDPOINT_URI = "mock:result";
 
+    private static final int MESSAGE_COUNT = 5;
+
     private MockEndpoint resultEndpoint;
 
-    private CountDownLatch latch = new CountDownLatch(1);
+    private CountDownLatch latch = new CountDownLatch(MESSAGE_COUNT);
 
     @BeforeAll
     static void beforeAll() throws Exception {
@@ -87,7 +89,9 @@ public class RocketMQRouteIT extends RocketMQTestSupport {
         resultEndpoint.message(0).header(RocketMQConstants.TOPIC).isEqualTo("START_TOPIC");
         resultEndpoint.message(0).header(RocketMQConstants.TAG).isEqualTo("startTag");
 
-        template.sendBody(START_ENDPOINT_URI, EXPECTED_MESSAGE);
+        for (int i = 0; i < MESSAGE_COUNT; i++) {
+            template.sendBody(START_ENDPOINT_URI, EXPECTED_MESSAGE);
+        }
 
         Assertions.assertTrue(latch.await(5, TimeUnit.SECONDS), "Should have received a message");
         resultEndpoint.assertIsSatisfied();

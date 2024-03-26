@@ -42,8 +42,8 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
     private ExecutorService executor;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", this);
         return jndi;
     }

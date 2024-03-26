@@ -31,8 +31,8 @@ public class BeanMapPutTest extends ContextTestSupport {
     private Map<String, String> myMap = new HashMap<>();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myMap", myMap);
         return jndi;
     }

@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.maven.packaging.generics.ClassUtil;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -157,6 +158,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         if (log.isDebugEnabled()) {
                             log.debug("Model: " + languageModel);
                         }
+
+                        SchemaHelper.addModelMetadata(languageModel, project);
+                        SchemaHelper.addModelMetadata(languageModel, javaType.getAnnotation(Metadata.class));
 
                         // build json schema for the data format
                         String schema = JsonMapper.createParameterJsonSchema(languageModel);

@@ -19,8 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.k;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesCrudDispatcher;
@@ -34,16 +32,18 @@ import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.v1.Integration;
 import org.apache.camel.v1.IntegrationSpec;
+import org.apache.camel.v1.Pipe;
+import org.apache.camel.v1.PipeSpec;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
-import org.yaml.snakeyaml.Yaml;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KubeBaseTest {
 
     protected static Integration integration;
+    protected static Pipe pipe;
 
     private KubernetesMockServer k8sServer;
 
@@ -93,14 +93,26 @@ public class KubeBaseTest {
         return created;
     }
 
-    protected String[] getDependencies(String yamlSource) {
-        Yaml yaml = new Yaml();
-        Map<String, Object> obj = yaml.load(yamlSource);
-        //noinspection unchecked
-        obj = (Map<String, Object>) obj.get("spec");
-        //noinspection unchecked
-        List<String> specDeps = (List<String>) obj.get("dependencies");
-        return specDeps.toArray(new String[specDeps.size()]);
+    protected Pipe createPipe() throws IOException {
+        return createPipe("pipe");
+    }
+
+    protected Pipe createPipe(String name) throws IOException {
+        if (pipe == null) {
+            pipe = KubernetesHelper.yaml().loadAs(
+                    IOHelper.loadText(KubeBaseTest.class.getResourceAsStream("pipe.yaml")), Pipe.class);
+        }
+
+        Pipe created = new Pipe();
+        created.getMetadata().setName(name);
+        created.setSpec(new PipeSpec());
+        created.getSpec().setSource(pipe.getSpec().getSource());
+        created.getSpec().setSink(pipe.getSpec().getSink());
+        created.getSpec().setSteps(pipe.getSpec().getSteps());
+        created.getSpec().setErrorHandler(pipe.getSpec().getErrorHandler());
+        created.getSpec().setIntegration(pipe.getSpec().getIntegration());
+
+        return created;
     }
 
 }

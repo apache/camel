@@ -40,29 +40,24 @@ public class ConsulServiceCallServiceDiscoveryConfigurationConfigurer extends or
         org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acltoken":
-        case "AclToken": target.setAclToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "aclToken": target.setAclToken(property(camelContext, java.lang.String.class, value)); return true;
         case "blockseconds":
-        case "BlockSeconds": target.setBlockSeconds(property(camelContext, java.lang.String.class, value)); return true;
+        case "blockSeconds": target.setBlockSeconds(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": target.setConnectTimeoutMillis(property(camelContext, java.lang.String.class, value)); return true;
-        case "datacenter":
-        case "Datacenter": target.setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
-        case "password":
-        case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties":
-        case "Properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
+        case "connectTimeoutMillis": target.setConnectTimeoutMillis(property(camelContext, java.lang.String.class, value)); return true;
+        case "datacenter": target.setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
         case "readtimeoutmillis":
-        case "ReadTimeoutMillis": target.setReadTimeoutMillis(property(camelContext, java.lang.String.class, value)); return true;
+        case "readTimeoutMillis": target.setReadTimeoutMillis(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
-        case "SslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "url":
-        case "Url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
-        case "UserName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "userName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "writetimeoutmillis":
-        case "WriteTimeoutMillis": target.setWriteTimeoutMillis(property(camelContext, java.lang.String.class, value)); return true;
+        case "writeTimeoutMillis": target.setWriteTimeoutMillis(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -76,29 +71,24 @@ public class ConsulServiceCallServiceDiscoveryConfigurationConfigurer extends or
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acltoken":
-        case "AclToken": return java.lang.String.class;
+        case "aclToken": return java.lang.String.class;
         case "blockseconds":
-        case "BlockSeconds": return java.lang.String.class;
+        case "blockSeconds": return java.lang.String.class;
         case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": return java.lang.String.class;
-        case "datacenter":
-        case "Datacenter": return java.lang.String.class;
-        case "id":
-        case "Id": return java.lang.String.class;
-        case "password":
-        case "Password": return java.lang.String.class;
-        case "properties":
-        case "Properties": return java.util.List.class;
+        case "connectTimeoutMillis": return java.lang.String.class;
+        case "datacenter": return java.lang.String.class;
+        case "id": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "properties": return java.util.List.class;
         case "readtimeoutmillis":
-        case "ReadTimeoutMillis": return java.lang.String.class;
+        case "readTimeoutMillis": return java.lang.String.class;
         case "sslcontextparameters":
-        case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "url":
-        case "Url": return java.lang.String.class;
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "url": return java.lang.String.class;
         case "username":
-        case "UserName": return java.lang.String.class;
+        case "userName": return java.lang.String.class;
         case "writetimeoutmillis":
-        case "WriteTimeoutMillis": return java.lang.String.class;
+        case "writeTimeoutMillis": return java.lang.String.class;
         default: return null;
         }
     }
@@ -108,29 +98,24 @@ public class ConsulServiceCallServiceDiscoveryConfigurationConfigurer extends or
         org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acltoken":
-        case "AclToken": return target.getAclToken();
+        case "aclToken": return target.getAclToken();
         case "blockseconds":
-        case "BlockSeconds": return target.getBlockSeconds();
+        case "blockSeconds": return target.getBlockSeconds();
         case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": return target.getConnectTimeoutMillis();
-        case "datacenter":
-        case "Datacenter": return target.getDatacenter();
-        case "id":
-        case "Id": return target.getId();
-        case "password":
-        case "Password": return target.getPassword();
-        case "properties":
-        case "Properties": return target.getProperties();
+        case "connectTimeoutMillis": return target.getConnectTimeoutMillis();
+        case "datacenter": return target.getDatacenter();
+        case "id": return target.getId();
+        case "password": return target.getPassword();
+        case "properties": return target.getProperties();
         case "readtimeoutmillis":
-        case "ReadTimeoutMillis": return target.getReadTimeoutMillis();
+        case "readTimeoutMillis": return target.getReadTimeoutMillis();
         case "sslcontextparameters":
-        case "SslContextParameters": return target.getSslContextParameters();
-        case "url":
-        case "Url": return target.getUrl();
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "url": return target.getUrl();
         case "username":
-        case "UserName": return target.getUserName();
+        case "userName": return target.getUserName();
         case "writetimeoutmillis":
-        case "WriteTimeoutMillis": return target.getWriteTimeoutMillis();
+        case "writeTimeoutMillis": return target.getWriteTimeoutMillis();
         default: return null;
         }
     }
@@ -138,8 +123,7 @@ public class ConsulServiceCallServiceDiscoveryConfigurationConfigurer extends or
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "properties":
-        case "Properties": return org.apache.camel.model.PropertyDefinition.class;
+        case "properties": return org.apache.camel.model.PropertyDefinition.class;
         default: return null;
         }
     }

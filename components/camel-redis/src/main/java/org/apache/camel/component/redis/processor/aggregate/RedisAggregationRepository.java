@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -47,18 +48,32 @@ public class RedisAggregationRepository extends ServiceSupport
     private static final Logger LOG = LoggerFactory.getLogger(RedisAggregationRepository.class);
     private static final String COMPLETED_SUFFIX = "-completed";
 
-    private boolean optimistic;
-    private boolean useRecovery = true;
     private Map<String, DefaultExchangeHolder> cache;
     private Map<String, DefaultExchangeHolder> persistedCache;
-    private String endpoint;
-    private String mapName;
-    private String persistenceMapName;
-    private RedissonClient redisson;
     private boolean shutdownRedisson;
-    private String deadLetterChannel;
+
+    @Metadata(label = "advanced", description = "To use an existing Redis client to connect to Redis server")
+    private RedissonClient redisson;
+    @Metadata(description = "URL to remote Redis server", required = true)
+    private String endpoint;
+    @Metadata(description = "Name of cache to use", required = true)
+    private String mapName;
+    @Metadata(label = "advanced", description = "Name of cache to use for completed exchanges")
+    private String persistenceMapName;
+    @Metadata(description = "Whether optimistic locking is in use")
+    private boolean optimistic;
+    @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
+    private boolean useRecovery = true;
+    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+    private String deadLetterUri;
+    @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
+    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+                            + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
+              defaultValue = "3")
     private int maximumRedeliveries = 3;
+    @Metadata(label = "advanced",
+              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
     public RedisAggregationRepository() {
@@ -206,13 +221,13 @@ public class RedisAggregationRepository extends ServiceSupport
     }
 
     @Override
-    public void setRecoveryInterval(long interval) {
-        this.recoveryInterval = interval;
+    public long getRecoveryInterval() {
+        return recoveryInterval;
     }
 
     @Override
-    public long getRecoveryIntervalInMillis() {
-        return recoveryInterval;
+    public void setRecoveryInterval(long interval) {
+        this.recoveryInterval = interval;
     }
 
     @Override
@@ -227,12 +242,12 @@ public class RedisAggregationRepository extends ServiceSupport
 
     @Override
     public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetterChannel = deadLetterUri;
+        this.deadLetterUri = deadLetterUri;
     }
 
     @Override
     public String getDeadLetterUri() {
-        return deadLetterChannel;
+        return deadLetterUri;
     }
 
     @Override
@@ -355,6 +370,9 @@ public class RedisAggregationRepository extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
+        if (persistenceMapName == null) {
+            persistenceMapName = String.format("%s%s", mapName, COMPLETED_SUFFIX);
+        }
         if (redisson == null) {
             Config config = new Config();
             config.useSingleServer().setAddress(String.format("redis://%s", endpoint));

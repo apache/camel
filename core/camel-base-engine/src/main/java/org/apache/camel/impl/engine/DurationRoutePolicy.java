@@ -26,6 +26,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,11 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This can be used to stop the route after it has processed a number of messages, or has been running for N seconds.
  */
+@Metadata(label = "bean",
+          description = "RoutePolicy which executes for a duration and then triggers an action."
+                        + " This can be used to stop the route after it has processed a number of messages, or has been running for N seconds.",
+          annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
+@Configurer(metadataOnly = true)
 public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySupport implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DurationRoutePolicy.class);
@@ -53,9 +60,13 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
     private final AtomicInteger doneMessages = new AtomicInteger();
     private final AtomicBoolean actionDone = new AtomicBoolean();
 
-    private Action action = Action.STOP_ROUTE;
-    private int maxMessages;
+    @Metadata(description = "Maximum seconds Camel is running before the action is triggered")
     private int maxSeconds;
+    @Metadata(description = "Maximum number of messages to process before the action is triggered")
+    private int maxMessages;
+    @Metadata(description = "Action to perform", enums = "STOP_CAMEL_CONTEXT,STOP_ROUTE,SUSPEND_ROUTE,SUSPEND_ALL_ROUTES",
+              defaultValue = "STOP_ROUTE")
+    private Action action = Action.STOP_ROUTE;
 
     public DurationRoutePolicy() {
     }

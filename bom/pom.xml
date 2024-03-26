@@ -61,6 +61,7 @@
                         </includes>
                         <excludes>
                             <exclude>org.apache.camel:camel-allcomponents</exclude>
+                            <exclude>org.apache.camel:dummy-component</exclude>
                         </excludes>
                     </dependencies>
                     <sourcePom>${basedir}/target-template-pom.xml</sourcePom>

@@ -295,13 +295,13 @@ not enabled.
 
 |json |Binding to/from json is enabled, and requires a json capable data
 format on the classpath. By default Camel will use `jackson` as the
-data format. See the INFO box below for more details.
+data format.
 
 |xml |Binding to/from xml is enabled, and requires `camel-jaxb` on the
-classpath. See the INFO box below for more details.
+classpath.
 
 |json_xml |Binding to/from json and xml is enabled and requires both data formats to
-be on the classpath. See the INFO box below for more details.
+be on the classpath.
 |===
 
 When using camel-jaxb for xml bindings, then
@@ -372,7 +372,11 @@ json_xml |JSON
 |===
  
 When using binding you must also configure what POJO type to map to.
-This is mandatory for incoming messages, and optional for outgoing. 
+This is mandatory for incoming messages, and optional for outgoing.
+
+NOTE: When using binding mode `json`, `xml` or `json_xml` then Camel will automatically set `consumers` and `produces`
+on the rest endpoint (according to the mode), if not already explicit configured. For example with binding mode `json`
+and setting the outType as `UserPojo` then Camel will define this rest endpoint as producing `application/json`.
 
 For example to map from xml/json to a pojo class `UserPojo` you do this
 in Java DSL as shown below:

@@ -22,7 +22,7 @@ public class JavaSecurityDevConsoleConfigurer extends org.apache.camel.support.c
         org.apache.camel.impl.console.JavaSecurityDevConsole target = (org.apache.camel.impl.console.JavaSecurityDevConsole) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +31,7 @@ public class JavaSecurityDevConsoleConfigurer extends org.apache.camel.support.c
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "camelContext": return org.apache.camel.CamelContext.class;
         default: return null;
         }
     }
@@ -41,7 +41,7 @@ public class JavaSecurityDevConsoleConfigurer extends org.apache.camel.support.c
         org.apache.camel.impl.console.JavaSecurityDevConsole target = (org.apache.camel.impl.console.JavaSecurityDevConsole) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
-        case "CamelContext": return target.getCamelContext();
+        case "camelContext": return target.getCamelContext();
         default: return null;
         }
     }

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class AsyncConsumerInOutTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testAsyncJmsConsumer() throws Exception {

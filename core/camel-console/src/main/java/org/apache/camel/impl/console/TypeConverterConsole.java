@@ -23,7 +23,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("type-converters")
+@DevConsole(name = "type-converters", description = "Camel Type Converter information")
 public class TypeConverterConsole extends AbstractDevConsole {
 
     public TypeConverterConsole() {

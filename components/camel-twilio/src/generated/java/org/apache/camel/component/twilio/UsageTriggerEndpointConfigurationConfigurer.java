@@ -35,19 +35,19 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
         org.apache.camel.component.twilio.UsageTriggerEndpointConfiguration target = (org.apache.camel.component.twilio.UsageTriggerEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "callbackurl":
-        case "CallbackUrl": target.setCallbackUrl(property(camelContext, java.net.URI.class, value)); return true;
+        case "callbackUrl": target.setCallbackUrl(property(camelContext, java.net.URI.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
-        case "PathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
         case "pathsid":
-        case "PathSid": target.setPathSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "pathSid": target.setPathSid(property(camelContext, java.lang.String.class, value)); return true;
         case "triggervalue":
-        case "TriggerValue": target.setTriggerValue(property(camelContext, java.lang.String.class, value)); return true;
+        case "triggerValue": target.setTriggerValue(property(camelContext, java.lang.String.class, value)); return true;
         case "usagecategory":
-        case "UsageCategory": target.setUsageCategory(property(camelContext, com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class, value)); return true;
+        case "usageCategory": target.setUsageCategory(property(camelContext, com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class, value)); return true;
         default: return false;
         }
     }
@@ -61,19 +61,19 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
+        case "apiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "callbackurl":
-        case "CallbackUrl": return java.net.URI.class;
+        case "callbackUrl": return java.net.URI.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "pathaccountsid":
-        case "PathAccountSid": return java.lang.String.class;
+        case "pathAccountSid": return java.lang.String.class;
         case "pathsid":
-        case "PathSid": return java.lang.String.class;
+        case "pathSid": return java.lang.String.class;
         case "triggervalue":
-        case "TriggerValue": return java.lang.String.class;
+        case "triggerValue": return java.lang.String.class;
         case "usagecategory":
-        case "UsageCategory": return com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class;
+        case "usageCategory": return com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class;
         default: return null;
         }
     }
@@ -83,19 +83,19 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
         org.apache.camel.component.twilio.UsageTriggerEndpointConfiguration target = (org.apache.camel.component.twilio.UsageTriggerEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "callbackurl":
-        case "CallbackUrl": return target.getCallbackUrl();
+        case "callbackUrl": return target.getCallbackUrl();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "pathaccountsid":
-        case "PathAccountSid": return target.getPathAccountSid();
+        case "pathAccountSid": return target.getPathAccountSid();
         case "pathsid":
-        case "PathSid": return target.getPathSid();
+        case "pathSid": return target.getPathSid();
         case "triggervalue":
-        case "TriggerValue": return target.getTriggerValue();
+        case "triggerValue": return target.getTriggerValue();
         case "usagecategory":
-        case "UsageCategory": return target.getUsageCategory();
+        case "usageCategory": return target.getUsageCategory();
         default: return null;
         }
     }

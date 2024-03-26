@@ -32,8 +32,8 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
     private static int invoked;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myExchangeFormatter", new MyExchangeFormatter());
         return jndi;
     }

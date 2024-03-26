@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -36,6 +37,9 @@ import org.springframework.vault.core.VaultTemplate;
                      Category.CLOUD, Category.CLOUD },
              producerOnly = true,
              headersClass = HashicorpVaultConstants.class)
+@Metadata(annotations = {
+        "vault=hashicorp-vault",
+})
 public class HashicorpVaultEndpoint extends DefaultEndpoint {
 
     private VaultTemplate vaultTemplate;

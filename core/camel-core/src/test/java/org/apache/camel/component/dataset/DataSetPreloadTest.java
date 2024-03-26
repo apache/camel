@@ -31,8 +31,8 @@ public class DataSetPreloadTest extends ContextTestSupport {
     private String uri = "dataset:foo?initialDelay=0&preloadSize=5";
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", dataSet);
         return answer;
     }

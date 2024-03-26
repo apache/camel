@@ -19,11 +19,10 @@ package org.apache.camel.component.azure.servicebus;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.azure.core.util.BinaryData;
@@ -36,6 +35,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
 import org.apache.camel.component.azure.servicebus.operations.ServiceBusSenderOperations;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -147,8 +147,12 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> sendMessages() {
         return (exchange, callback) -> {
             final Object inputBody = exchange.getMessage().getBody();
-            final Map<String, Object> applicationProperties
+            Map<String, Object> applicationProperties
                     = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+            if (applicationProperties == null) {
+                applicationProperties = new HashMap<>();
+            }
+            propagateHeaders(exchange, applicationProperties);
             final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
 
             Mono<Void> sendMessageAsync;
@@ -177,8 +181,12 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> scheduleMessages() {
         return (exchange, callback) -> {
             final Object inputBody = exchange.getMessage().getBody();
-            final Map<String, Object> applicationProperties
+            Map<String, Object> applicationProperties
                     = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
+            if (applicationProperties == null) {
+                applicationProperties = new HashMap<>();
+            }
+            propagateHeaders(exchange, applicationProperties);
             final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
 
             Mono<List<Long>> scheduleMessagesAsync;
@@ -243,6 +251,15 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         } else {
             return typeConverter.convertTo(String.class, inputBody);
         }
+    }
+
+    private void propagateHeaders(Exchange exchange, Map<String, Object> applicationProperties) {
+        final HeaderFilterStrategy headerFilterStrategy = getConfiguration().getHeaderFilterStrategy();
+        applicationProperties.putAll(
+                exchange.getMessage().getHeaders().entrySet().stream()
+                        .filter(entry -> !headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(),
+                                exchange))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     }
 
     private <T> void subscribeToMono(

@@ -35,8 +35,8 @@ public class BeanInPipelineTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("one", new MyBean("one"));
         answer.bind("two", new MyBean("two"));
         answer.bind("three", new MyBean("three"));

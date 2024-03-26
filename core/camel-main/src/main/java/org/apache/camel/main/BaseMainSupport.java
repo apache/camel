@@ -42,6 +42,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Configuration;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
@@ -102,6 +103,7 @@ import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.main.MainConstants.profilePropertyPlaceholderLocation;
 import static org.apache.camel.main.MainHelper.computeProperties;
 import static org.apache.camel.main.MainHelper.optionKey;
 import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
@@ -362,6 +364,25 @@ public abstract class BaseMainSupport extends BaseService {
         if (pc.getLocations().isEmpty()) {
             String locations = propertyPlaceholderLocations;
             if (locations == null) {
+                // ENV/SYS takes precedence, then java configured value
+                String profile = MainHelper.lookupPropertyFromSysOrEnv(MainConstants.PROFILE)
+                        .orElse(mainConfigurationProperties.getProfile());
+                if (profile == null) {
+                    // fallback to check if application.properties has a profile
+                    Properties prop = new Properties();
+                    try (InputStream is
+                            = ResourceHelper.resolveResourceAsInputStream(camelContext, "application.properties")) {
+                        if (is != null) {
+                            prop.load(is);
+                        }
+                    }
+                    profile = prop.getProperty("camel.main.profile");
+                }
+                if (profile != null) {
+                    mainConfigurationProperties.setProfile(profile);
+                    String loc = profilePropertyPlaceholderLocation(profile);
+                    defaultPropertyPlaceholderLocation = loc + "," + defaultPropertyPlaceholderLocation;
+                }
                 locations
                         = MainHelper.lookupPropertyFromSysOrEnv(MainConstants.PROPERTY_PLACEHOLDER_LOCATION)
                                 .orElse(defaultPropertyPlaceholderLocation);
@@ -371,11 +392,11 @@ public abstract class BaseMainSupport extends BaseService {
             }
             if (!Objects.equals(locations, "false")) {
                 pc.addLocation(locations);
-                if (MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION.equals(locations)) {
-                    LOG.debug("Using properties from: {}", locations);
+                if (defaultPropertyPlaceholderLocation.equals(locations)) {
+                    LOG.debug("Properties location: {}", locations);
                 } else {
                     // if not default location then log at INFO
-                    LOG.info("Using properties from: {}", locations);
+                    LOG.info("Properties location: {}", locations);
                 }
             }
         }
@@ -431,6 +452,9 @@ public abstract class BaseMainSupport extends BaseService {
     protected void autoconfigure(CamelContext camelContext) throws Exception {
         // gathers the properties (key=value) that was auto-configured
         final OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
+
+        // configure the profile with pre-configured settings
+        ProfileConfigurer.configure(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
 
         // need to eager allow to auto-configure properties component
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
@@ -710,41 +734,7 @@ public abstract class BaseMainSupport extends BaseService {
         // we want to log the property placeholder summary after routes has been started,
         // but before camel context logs that it has been started, so we need to use an event listener
         if (standalone && mainConfigurationProperties.isAutoConfigurationLogSummary()) {
-            camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
-                @Override
-                public boolean isEnabled(CamelEvent event) {
-                    return event instanceof CamelEvent.CamelContextRoutesStartedEvent;
-                }
-
-                @Override
-                public void notify(CamelEvent event) throws Exception {
-                    // log summary of configurations
-                    if (!propertyPlaceholders.isEmpty()) {
-                        boolean header = true;
-                        for (var entry : propertyPlaceholders.entrySet()) {
-                            String k = entry.getKey().toString();
-                            Object v = entry.getValue();
-                            Object dv = propertyPlaceholders.getDefaultValue(k);
-                            // skip logging configurations that are using default-value
-                            // or a kamelet that uses templateId as a parameter
-                            boolean same = ObjectHelper.equal(v, dv);
-                            boolean skip = "templateId".equals(k);
-                            if (!same && !skip) {
-                                if (header) {
-                                    LOG.info("Property-placeholders summary");
-                                    header = false;
-                                }
-                                String loc = locationSummary(propertyPlaceholders, k);
-                                if (SensitiveUtils.containsSensitive(k)) {
-                                    LOG.info("    {} {}=xxxxxx", loc, k);
-                                } else {
-                                    LOG.info("    {} {}={}", loc, k, v);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            camelContext.getManagementStrategy().addEventNotifier(new PlaceholderSummaryEventNotifier(propertyPlaceholders));
         }
     }
 
@@ -2303,4 +2293,45 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    private static class PlaceholderSummaryEventNotifier extends SimpleEventNotifierSupport implements NonManagedService {
+        private final OrderedLocationProperties propertyPlaceholders;
+
+        public PlaceholderSummaryEventNotifier(OrderedLocationProperties propertyPlaceholders) {
+            this.propertyPlaceholders = propertyPlaceholders;
+        }
+
+        @Override
+        public boolean isEnabled(CamelEvent event) {
+            return event instanceof CamelEvent.CamelContextRoutesStartedEvent;
+        }
+
+        @Override
+        public void notify(CamelEvent event) throws Exception {
+            // log summary of configurations
+            if (!propertyPlaceholders.isEmpty()) {
+                boolean header = true;
+                for (var entry : propertyPlaceholders.entrySet()) {
+                    String k = entry.getKey().toString();
+                    Object v = entry.getValue();
+                    Object dv = propertyPlaceholders.getDefaultValue(k);
+                    // skip logging configurations that are using default-value
+                    // or a kamelet that uses templateId as a parameter
+                    boolean same = ObjectHelper.equal(v, dv);
+                    boolean skip = "templateId".equals(k);
+                    if (!same && !skip) {
+                        if (header) {
+                            LOG.info("Property-placeholders summary");
+                            header = false;
+                        }
+                        String loc = locationSummary(propertyPlaceholders, k);
+                        if (SensitiveUtils.containsSensitive(k)) {
+                            LOG.info("    {} {}=xxxxxx", loc, k);
+                        } else {
+                            LOG.info("    {} {}={}", loc, k, v);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

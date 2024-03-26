@@ -22,16 +22,27 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.quartz.QuartzComponent;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 
+@Metadata(label = "bean",
+          description = "A cron based RoutePolicy that can be used to start/stop routes at specific times.",
+          annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
+@Configurer(metadataOnly = true)
 public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements ScheduledRoutePolicyConstants {
+    @Metadata(description = "Cron expression for when the route should be started")
     private String routeStartTime;
+    @Metadata(description = "Cron expression for when the route should be stopped")
     private String routeStopTime;
+    @Metadata(label = "advanced", description = "Cron expression for when the route should be suspended")
     private String routeSuspendTime;
+    @Metadata(label = "advanced", description = "Cron expression for when the route should be resumed")
     private String routeResumeTime;
+    @Metadata(description = "To use a specific timezone (ID such as CET)")
     private String timeZoneString;
     private TimeZone timeZone;
 

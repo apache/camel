@@ -32,6 +32,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
+    @Override
+    protected Registry createCamelRegistry() throws Exception {
+        final Registry registry = super.createCamelRegistry();
+        registry.bind("proxy", new ProxyComponent());
+        return registry;
+    }
+
     @Test
     public void testDoneFromRoute() throws Exception {
         // notify when exchange is done
@@ -63,13 +70,6 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello world!");
 
         assertTrue(builder.matchesWaitTime());
-    }
-
-    @Override
-    protected Registry createRegistry() throws Exception {
-        final Registry registry = super.createRegistry();
-        registry.bind("proxy", new ProxyComponent());
-        return registry;
     }
 
     @Override

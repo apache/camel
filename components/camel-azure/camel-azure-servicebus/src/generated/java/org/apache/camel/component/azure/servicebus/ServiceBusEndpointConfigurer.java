@@ -38,12 +38,16 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.servicebus.CredentialType.class, value)); return true;
         case "disableautocomplete":
         case "disableAutoComplete": target.getConfiguration().setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
+        case "enabledeadlettering":
+        case "enableDeadLettering": target.getConfiguration().setEnableDeadLettering(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": target.getConfiguration().setFullyQualifiedNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
@@ -105,12 +109,16 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": return org.apache.camel.component.azure.servicebus.CredentialType.class;
         case "disableautocomplete":
         case "disableAutoComplete": return boolean.class;
+        case "enabledeadlettering":
+        case "enableDeadLettering": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
@@ -168,12 +176,16 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": return target.getConfiguration().getCredentialType();
         case "disableautocomplete":
         case "disableAutoComplete": return target.getConfiguration().isDisableAutoComplete();
+        case "enabledeadlettering":
+        case "enableDeadLettering": return target.getConfiguration().isEnableDeadLettering();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "fullyqualifiednamespace":
         case "fullyQualifiedNamespace": return target.getConfiguration().getFullyQualifiedNamespace();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxautolockrenewduration":

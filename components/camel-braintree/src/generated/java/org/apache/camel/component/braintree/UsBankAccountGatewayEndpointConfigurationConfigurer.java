@@ -43,35 +43,33 @@ public class UsBankAccountGatewayEndpointConfigurationConfigurer extends org.apa
         org.apache.camel.component.braintree.UsBankAccountGatewayEndpointConfiguration target = (org.apache.camel.component.braintree.UsBankAccountGatewayEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.braintree.internal.BraintreeApiName.class, value)); return true;
-        case "environment":
-        case "Environment": target.setEnvironment(property(camelContext, java.lang.String.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.braintree.internal.BraintreeApiName.class, value)); return true;
+        case "environment": target.setEnvironment(property(camelContext, java.lang.String.class, value)); return true;
         case "httploglevel":
-        case "HttpLogLevel": target.setHttpLogLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpLogLevel": target.setHttpLogLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "httplogname":
-        case "HttpLogName": target.setHttpLogName(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpLogName": target.setHttpLogName(property(camelContext, java.lang.String.class, value)); return true;
         case "httpreadtimeout":
-        case "HttpReadTimeout": target.setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpReadTimeout": target.setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "loghandlerenabled":
-        case "LogHandlerEnabled": target.setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "logHandlerEnabled": target.setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
         case "merchantid":
-        case "MerchantId": target.setMerchantId(property(camelContext, java.lang.String.class, value)); return true;
+        case "merchantId": target.setMerchantId(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekey":
-        case "PrivateKey": target.setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "privateKey": target.setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
-        case "ProxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
-        case "ProxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "publickey":
-        case "PublicKey": target.setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "token":
-        case "Token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "publicKey": target.setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         case "transactionrequest":
-        case "TransactionRequest": target.setTransactionRequest(property(camelContext, com.braintreegateway.TransactionRequest.class, value)); return true;
+        case "transactionRequest": target.setTransactionRequest(property(camelContext, com.braintreegateway.TransactionRequest.class, value)); return true;
         default: return false;
         }
     }
@@ -85,35 +83,33 @@ public class UsBankAccountGatewayEndpointConfigurationConfigurer extends org.apa
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return java.lang.String.class;
+        case "accessToken": return java.lang.String.class;
         case "apiname":
-        case "ApiName": return org.apache.camel.component.braintree.internal.BraintreeApiName.class;
-        case "environment":
-        case "Environment": return java.lang.String.class;
+        case "apiName": return org.apache.camel.component.braintree.internal.BraintreeApiName.class;
+        case "environment": return java.lang.String.class;
         case "httploglevel":
-        case "HttpLogLevel": return java.lang.String.class;
+        case "httpLogLevel": return java.lang.String.class;
         case "httplogname":
-        case "HttpLogName": return java.lang.String.class;
+        case "httpLogName": return java.lang.String.class;
         case "httpreadtimeout":
-        case "HttpReadTimeout": return java.lang.Integer.class;
+        case "httpReadTimeout": return java.lang.Integer.class;
         case "loghandlerenabled":
-        case "LogHandlerEnabled": return boolean.class;
+        case "logHandlerEnabled": return boolean.class;
         case "merchantid":
-        case "MerchantId": return java.lang.String.class;
+        case "merchantId": return java.lang.String.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "privatekey":
-        case "PrivateKey": return java.lang.String.class;
+        case "privateKey": return java.lang.String.class;
         case "proxyhost":
-        case "ProxyHost": return java.lang.String.class;
+        case "proxyHost": return java.lang.String.class;
         case "proxyport":
-        case "ProxyPort": return java.lang.Integer.class;
+        case "proxyPort": return java.lang.Integer.class;
         case "publickey":
-        case "PublicKey": return java.lang.String.class;
-        case "token":
-        case "Token": return java.lang.String.class;
+        case "publicKey": return java.lang.String.class;
+        case "token": return java.lang.String.class;
         case "transactionrequest":
-        case "TransactionRequest": return com.braintreegateway.TransactionRequest.class;
+        case "transactionRequest": return com.braintreegateway.TransactionRequest.class;
         default: return null;
         }
     }
@@ -123,35 +119,33 @@ public class UsBankAccountGatewayEndpointConfigurationConfigurer extends org.apa
         org.apache.camel.component.braintree.UsBankAccountGatewayEndpointConfiguration target = (org.apache.camel.component.braintree.UsBankAccountGatewayEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return target.getAccessToken();
+        case "accessToken": return target.getAccessToken();
         case "apiname":
-        case "ApiName": return target.getApiName();
-        case "environment":
-        case "Environment": return target.getEnvironment();
+        case "apiName": return target.getApiName();
+        case "environment": return target.getEnvironment();
         case "httploglevel":
-        case "HttpLogLevel": return target.getHttpLogLevel();
+        case "httpLogLevel": return target.getHttpLogLevel();
         case "httplogname":
-        case "HttpLogName": return target.getHttpLogName();
+        case "httpLogName": return target.getHttpLogName();
         case "httpreadtimeout":
-        case "HttpReadTimeout": return target.getHttpReadTimeout();
+        case "httpReadTimeout": return target.getHttpReadTimeout();
         case "loghandlerenabled":
-        case "LogHandlerEnabled": return target.isLogHandlerEnabled();
+        case "logHandlerEnabled": return target.isLogHandlerEnabled();
         case "merchantid":
-        case "MerchantId": return target.getMerchantId();
+        case "merchantId": return target.getMerchantId();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "privatekey":
-        case "PrivateKey": return target.getPrivateKey();
+        case "privateKey": return target.getPrivateKey();
         case "proxyhost":
-        case "ProxyHost": return target.getProxyHost();
+        case "proxyHost": return target.getProxyHost();
         case "proxyport":
-        case "ProxyPort": return target.getProxyPort();
+        case "proxyPort": return target.getProxyPort();
         case "publickey":
-        case "PublicKey": return target.getPublicKey();
-        case "token":
-        case "Token": return target.getToken();
+        case "publicKey": return target.getPublicKey();
+        case "token": return target.getToken();
         case "transactionrequest":
-        case "TransactionRequest": return target.getTransactionRequest();
+        case "transactionRequest": return target.getTransactionRequest();
         default: return null;
         }
     }

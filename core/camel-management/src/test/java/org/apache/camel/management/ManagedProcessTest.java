@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ManagedProcessTest extends ManagementTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", new MyDummyProcessor());
         return answer;
     }

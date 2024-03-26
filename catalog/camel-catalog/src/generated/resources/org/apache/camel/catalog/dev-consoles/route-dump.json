@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "route-dump",
+    "title": "Route Dump",
+    "description": "Dump route in XML or YAML format",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.RouteDumpDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

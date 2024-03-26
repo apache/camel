@@ -26,16 +26,25 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
+@Metadata(label = "bean",
+          description = "Idempotent repository that uses JCache to store message ids.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Configurer(metadataOnly = true)
 @ManagedResource(description = "JCache based message id repository")
 public class JCacheIdempotentRepository extends ServiceSupport implements CamelContextAware, IdempotentRepository {
+
     private CamelContext camelContext;
-    private JCacheConfiguration configuration;
     private Cache<String, Boolean> cache;
     private JCacheManager<String, Boolean> cacheManager;
+
+    @Metadata(description = "Configuration for JCache")
+    private JCacheConfiguration configuration;
 
     public JCacheIdempotentRepository() {
         this.configuration = new JCacheConfiguration();
@@ -120,6 +129,8 @@ public class JCacheIdempotentRepository extends ServiceSupport implements CamelC
 
     @Override
     protected void doStop() throws Exception {
-        cacheManager.close();
+        if (cacheManager != null) {
+            cacheManager.close();
+        }
     }
 }

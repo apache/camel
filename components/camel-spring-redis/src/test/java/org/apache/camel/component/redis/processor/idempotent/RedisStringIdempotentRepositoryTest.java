@@ -50,15 +50,15 @@ public class RedisStringIdempotentRepositoryTest {
     @Mock
     private ValueOperations<String, String> valueOperations;
 
-    private RedisStringIdempotentRepository idempotentRepository;
-    private RedisStringIdempotentRepository idempotentRepositoryNoExpiry;
+    private SpringRedisStringIdempotentRepository idempotentRepository;
+    private SpringRedisStringIdempotentRepository idempotentRepositoryNoExpiry;
 
     @BeforeEach
     public void setUp() throws Exception {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        idempotentRepository = new RedisStringIdempotentRepository(redisTemplate, REPOSITORY);
+        idempotentRepository = new SpringRedisStringIdempotentRepository(redisTemplate, REPOSITORY);
         idempotentRepository.setExpiry(1000L);
-        idempotentRepositoryNoExpiry = new RedisStringIdempotentRepository(redisTemplate, REPOSITORY_NOEXPIRY);
+        idempotentRepositoryNoExpiry = new SpringRedisStringIdempotentRepository(redisTemplate, REPOSITORY_NOEXPIRY);
     }
 
     @Test
@@ -79,9 +79,9 @@ public class RedisStringIdempotentRepositoryTest {
 
     @Test
     public void shouldReturnProcessorName() {
-        String processorName = idempotentRepository.getProcessorName();
+        String processorName = idempotentRepository.getRepositoryName();
         assertEquals(REPOSITORY, processorName);
-        String processorNameNoExpiry = idempotentRepositoryNoExpiry.getProcessorName();
+        String processorNameNoExpiry = idempotentRepositoryNoExpiry.getRepositoryName();
         assertEquals(REPOSITORY_NOEXPIRY, processorNameNoExpiry);
     }
 

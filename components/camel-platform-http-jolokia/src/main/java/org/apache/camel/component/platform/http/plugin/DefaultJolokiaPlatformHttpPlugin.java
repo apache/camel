@@ -166,7 +166,8 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
 
             JSONAware json = null;
             try {
-                requestHandler.checkAccess(req.remoteAddress().host(), req.remoteAddress().host(), getOriginOrReferer(req));
+                requestHandler.checkAccess(req.scheme(), req.remoteAddress().host(), req.remoteAddress().host(),
+                        getOriginOrReferer(req));
                 if (req.method() == HttpMethod.GET) {
                     json = requestHandler.handleGetRequest(req.uri(), remainingPath, getParams(req.params()));
                 } else {

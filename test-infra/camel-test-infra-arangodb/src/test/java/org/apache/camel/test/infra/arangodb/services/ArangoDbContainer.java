@@ -24,7 +24,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class ArangoDbContainer extends GenericContainer {
+public class ArangoDbContainer extends GenericContainer<ArangoDbContainer> {
     public static final Integer PORT_DEFAULT = 8529;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDbContainer.class);
@@ -40,10 +40,10 @@ public class ArangoDbContainer extends GenericContainer {
 
         setWaitStrategy(Wait.forListeningPort());
         addFixedExposedPort(PORT_DEFAULT, PORT_DEFAULT);
-        withNetworkAliases(CONTAINER_NAME);
-        withEnv(ARANGO_NO_AUTH, "1");
-        withLogConsumer(new Slf4jLogConsumer(LOGGER));
-        waitingFor(Wait.forLogMessage(".*is ready for business. Have fun!.*", 1));
+        withNetworkAliases(CONTAINER_NAME)
+                .withEnv(ARANGO_NO_AUTH, "1")
+                .withLogConsumer(new Slf4jLogConsumer(LOGGER))
+                .waitingFor(Wait.forLogMessage(".*is ready for business. Have fun!.*", 1));
     }
 
     public int getServicePort() {

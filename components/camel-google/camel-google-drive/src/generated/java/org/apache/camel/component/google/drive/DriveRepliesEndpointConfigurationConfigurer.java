@@ -42,33 +42,30 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         org.apache.camel.component.google.drive.DriveRepliesEndpointConfiguration target = (org.apache.camel.component.google.drive.DriveRepliesEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class, value)); return true;
         case "applicationname":
-        case "ApplicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientid":
-        case "ClientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
-        case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "commentid":
-        case "CommentId": target.setCommentId(property(camelContext, java.lang.String.class, value)); return true;
-        case "content":
-        case "Content": target.setContent(property(camelContext, com.google.api.services.drive.model.Reply.class, value)); return true;
-        case "delegate":
-        case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "commentId": target.setCommentId(property(camelContext, java.lang.String.class, value)); return true;
+        case "content": target.setContent(property(camelContext, com.google.api.services.drive.model.Reply.class, value)); return true;
+        case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "fileid":
-        case "FileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
+        case "fileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
-        case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "replyid":
-        case "ReplyId": target.setReplyId(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes":
-        case "Scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "replyId": target.setReplyId(property(camelContext, java.lang.String.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "serviceaccountkey":
-        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -82,33 +79,30 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return java.lang.String.class;
+        case "accessToken": return java.lang.String.class;
         case "apiname":
-        case "ApiName": return org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class;
+        case "apiName": return org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class;
         case "applicationname":
-        case "ApplicationName": return java.lang.String.class;
+        case "applicationName": return java.lang.String.class;
         case "clientid":
-        case "ClientId": return java.lang.String.class;
+        case "clientId": return java.lang.String.class;
         case "clientsecret":
-        case "ClientSecret": return java.lang.String.class;
+        case "clientSecret": return java.lang.String.class;
         case "commentid":
-        case "CommentId": return java.lang.String.class;
-        case "content":
-        case "Content": return com.google.api.services.drive.model.Reply.class;
-        case "delegate":
-        case "Delegate": return java.lang.String.class;
+        case "commentId": return java.lang.String.class;
+        case "content": return com.google.api.services.drive.model.Reply.class;
+        case "delegate": return java.lang.String.class;
         case "fileid":
-        case "FileId": return java.lang.String.class;
+        case "fileId": return java.lang.String.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
         case "refreshtoken":
-        case "RefreshToken": return java.lang.String.class;
+        case "refreshToken": return java.lang.String.class;
         case "replyid":
-        case "ReplyId": return java.lang.String.class;
-        case "scopes":
-        case "Scopes": return java.util.List.class;
+        case "replyId": return java.lang.String.class;
+        case "scopes": return java.util.List.class;
         case "serviceaccountkey":
-        case "ServiceAccountKey": return java.lang.String.class;
+        case "serviceAccountKey": return java.lang.String.class;
         default: return null;
         }
     }
@@ -118,33 +112,30 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         org.apache.camel.component.google.drive.DriveRepliesEndpointConfiguration target = (org.apache.camel.component.google.drive.DriveRepliesEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "AccessToken": return target.getAccessToken();
+        case "accessToken": return target.getAccessToken();
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "applicationname":
-        case "ApplicationName": return target.getApplicationName();
+        case "applicationName": return target.getApplicationName();
         case "clientid":
-        case "ClientId": return target.getClientId();
+        case "clientId": return target.getClientId();
         case "clientsecret":
-        case "ClientSecret": return target.getClientSecret();
+        case "clientSecret": return target.getClientSecret();
         case "commentid":
-        case "CommentId": return target.getCommentId();
-        case "content":
-        case "Content": return target.getContent();
-        case "delegate":
-        case "Delegate": return target.getDelegate();
+        case "commentId": return target.getCommentId();
+        case "content": return target.getContent();
+        case "delegate": return target.getDelegate();
         case "fileid":
-        case "FileId": return target.getFileId();
+        case "fileId": return target.getFileId();
         case "methodname":
-        case "MethodName": return target.getMethodName();
+        case "methodName": return target.getMethodName();
         case "refreshtoken":
-        case "RefreshToken": return target.getRefreshToken();
+        case "refreshToken": return target.getRefreshToken();
         case "replyid":
-        case "ReplyId": return target.getReplyId();
-        case "scopes":
-        case "Scopes": return target.getScopes();
+        case "replyId": return target.getReplyId();
+        case "scopes": return target.getScopes();
         case "serviceaccountkey":
-        case "ServiceAccountKey": return target.getServiceAccountKey();
+        case "serviceAccountKey": return target.getServiceAccountKey();
         default: return null;
         }
     }
@@ -152,8 +143,7 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes":
-        case "Scopes": return java.lang.String.class;
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

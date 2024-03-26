@@ -25,8 +25,8 @@ import org.apache.camel.spi.Registry;
 public class RoutePolicyRefCallbackTest extends RoutePolicyCallbackTest {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = super.createCamelRegistry();
         registry.bind("myPolicy", policy);
         return registry;
     }

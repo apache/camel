@@ -24,7 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.KafkaComponent;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -48,12 +48,7 @@ public class KafkaIdempotentRepositoryNonEagerIT extends SimpleIdempotentTest {
 
     @ContextFixture
     public void configureKafka(CamelContext context) {
-        context.getPropertiesComponent().setLocation("ref:prop");
-
-        KafkaComponent kafka = new KafkaComponent(context);
-        kafka.init();
-        kafka.getConfiguration().setBrokers(service.getBootstrapServers());
-        context.addComponent("kafka", kafka);
+        KafkaTestUtil.configureKafkaComponent(context, service.getBootstrapServers());
     }
 
     @Override

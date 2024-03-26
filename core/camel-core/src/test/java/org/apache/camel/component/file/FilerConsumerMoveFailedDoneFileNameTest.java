@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,7 +35,8 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(fileUri(), "", Exchange.FILE_NAME, "done");
 
-        assertMockEndpointsSatisfied();
+        // wait a bit for the file processing to complete
+        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
 
         oneExchangeDone.matchesWaitTime();
 

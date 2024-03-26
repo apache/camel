@@ -36,7 +36,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = new DefaultCamelContext(createRegistry());
+        DefaultCamelContext context = new DefaultCamelContext(createCamelRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(CamelEvent event) throws Exception {
                 events.add(event);

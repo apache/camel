@@ -30,12 +30,9 @@ public class StaticServiceCallServiceDiscoveryConfigurationConfigurer extends or
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties":
-        case "Properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
-        case "servers":
-        case "Servers": target.setServers(property(camelContext, java.util.List.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.List.class, value)); return true;
+        case "servers": target.setServers(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }
@@ -48,12 +45,9 @@ public class StaticServiceCallServiceDiscoveryConfigurationConfigurer extends or
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": return java.lang.String.class;
-        case "properties":
-        case "Properties": return java.util.List.class;
-        case "servers":
-        case "Servers": return java.util.List.class;
+        case "id": return java.lang.String.class;
+        case "properties": return java.util.List.class;
+        case "servers": return java.util.List.class;
         default: return null;
         }
     }
@@ -62,12 +56,9 @@ public class StaticServiceCallServiceDiscoveryConfigurationConfigurer extends or
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration target = (org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "id":
-        case "Id": return target.getId();
-        case "properties":
-        case "Properties": return target.getProperties();
-        case "servers":
-        case "Servers": return target.getServers();
+        case "id": return target.getId();
+        case "properties": return target.getProperties();
+        case "servers": return target.getServers();
         default: return null;
         }
     }
@@ -75,10 +66,8 @@ public class StaticServiceCallServiceDiscoveryConfigurationConfigurer extends or
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "properties":
-        case "Properties": return org.apache.camel.model.PropertyDefinition.class;
-        case "servers":
-        case "Servers": return java.lang.String.class;
+        case "properties": return org.apache.camel.model.PropertyDefinition.class;
+        case "servers": return java.lang.String.class;
         default: return null;
         }
     }

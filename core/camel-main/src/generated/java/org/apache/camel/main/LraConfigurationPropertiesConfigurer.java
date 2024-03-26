@@ -22,15 +22,14 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         org.apache.camel.main.LraConfigurationProperties target = (org.apache.camel.main.LraConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "coordinatorcontextpath":
-        case "CoordinatorContextPath": target.setCoordinatorContextPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "coordinatorContextPath": target.setCoordinatorContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "coordinatorurl":
-        case "CoordinatorUrl": target.setCoordinatorUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "enabled":
-        case "Enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "coordinatorUrl": target.setCoordinatorUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "localparticipantcontextpath":
-        case "LocalParticipantContextPath": target.setLocalParticipantContextPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "localParticipantContextPath": target.setLocalParticipantContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "localparticipanturl":
-        case "LocalParticipantUrl": target.setLocalParticipantUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "localParticipantUrl": target.setLocalParticipantUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -39,15 +38,14 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "coordinatorcontextpath":
-        case "CoordinatorContextPath": return java.lang.String.class;
+        case "coordinatorContextPath": return java.lang.String.class;
         case "coordinatorurl":
-        case "CoordinatorUrl": return java.lang.String.class;
-        case "enabled":
-        case "Enabled": return boolean.class;
+        case "coordinatorUrl": return java.lang.String.class;
+        case "enabled": return boolean.class;
         case "localparticipantcontextpath":
-        case "LocalParticipantContextPath": return java.lang.String.class;
+        case "localParticipantContextPath": return java.lang.String.class;
         case "localparticipanturl":
-        case "LocalParticipantUrl": return java.lang.String.class;
+        case "localParticipantUrl": return java.lang.String.class;
         default: return null;
         }
     }
@@ -57,15 +55,14 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         org.apache.camel.main.LraConfigurationProperties target = (org.apache.camel.main.LraConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "coordinatorcontextpath":
-        case "CoordinatorContextPath": return target.getCoordinatorContextPath();
+        case "coordinatorContextPath": return target.getCoordinatorContextPath();
         case "coordinatorurl":
-        case "CoordinatorUrl": return target.getCoordinatorUrl();
-        case "enabled":
-        case "Enabled": return target.isEnabled();
+        case "coordinatorUrl": return target.getCoordinatorUrl();
+        case "enabled": return target.isEnabled();
         case "localparticipantcontextpath":
-        case "LocalParticipantContextPath": return target.getLocalParticipantContextPath();
+        case "localParticipantContextPath": return target.getLocalParticipantContextPath();
         case "localparticipanturl":
-        case "LocalParticipantUrl": return target.getLocalParticipantUrl();
+        case "localParticipantUrl": return target.getLocalParticipantUrl();
         default: return null;
         }
     }

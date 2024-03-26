@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Send requests to SAP NetWeaver Gateway using HTTP.
+ */
 public fun UriDsl.`sap-netweaver`(i: SapNetweaverUriDsl.() -> Unit) {
   SapNetweaverUriDsl(this).apply(i)
 }
@@ -39,47 +42,94 @@ public class SapNetweaverUriDsl(
 
   private var url: String = ""
 
+  /**
+   * Url to the SAP net-weaver gateway server.
+   */
   public fun url(url: String) {
     this.url = url
     it.url("$url")
   }
 
+  /**
+   * If the JSON Map contains only a single entry, then flattern by storing that single entry value
+   * as the message body.
+   */
   public fun flatternMap(flatternMap: String) {
     it.property("flatternMap", flatternMap)
   }
 
+  /**
+   * If the JSON Map contains only a single entry, then flattern by storing that single entry value
+   * as the message body.
+   */
   public fun flatternMap(flatternMap: Boolean) {
     it.property("flatternMap", flatternMap.toString())
   }
 
+  /**
+   * Whether to return data in JSON format. If this option is false, then XML is returned in Atom
+   * format.
+   */
   public fun json(json: String) {
     it.property("json", json)
   }
 
+  /**
+   * Whether to return data in JSON format. If this option is false, then XML is returned in Atom
+   * format.
+   */
   public fun json(json: Boolean) {
     it.property("json", json.toString())
   }
 
+  /**
+   * To transform the JSON from a String to a Map in the message body.
+   */
   public fun jsonAsMap(jsonAsMap: String) {
     it.property("jsonAsMap", jsonAsMap)
   }
 
+  /**
+   * To transform the JSON from a String to a Map in the message body.
+   */
   public fun jsonAsMap(jsonAsMap: Boolean) {
     it.property("jsonAsMap", jsonAsMap.toString())
   }
 
+  /**
+   * Password for account.
+   */
   public fun password(password: String) {
     it.property("password", password)
   }
 
+  /**
+   * Username for account.
+   */
   public fun username(username: String) {
     it.property("username", username)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }

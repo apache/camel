@@ -17,7 +17,6 @@
 package org.apache.camel.kotlin.dataformats
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
@@ -25,6 +24,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.ASN1DataFormat
 
+/**
+ * Encode and decode data structures using Abstract Syntax Notation One (ASN.1).
+ */
 public fun DataFormatDsl.asn1(i: Asn1DataFormatDsl.() -> Unit) {
   def = Asn1DataFormatDsl().apply(i).def
 }
@@ -36,18 +38,32 @@ public class Asn1DataFormatDsl {
   init {
     def = ASN1DataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
-  public fun unmarshalType(unmarshalType: Class<out Any>) {
+  /**
+   * Class to use when unmarshalling.
+   */
+  public fun unmarshalType(unmarshalType: Class<*>) {
     def.unmarshalType = unmarshalType
   }
 
+  /**
+   * If the asn1 file has more than one entry, the setting this option to true, allows working with
+   * the splitter EIP, to split the data using an iterator in a streaming mode.
+   */
   public fun usingIterator(usingIterator: Boolean) {
     def.usingIterator = usingIterator.toString()
   }
 
+  /**
+   * If the asn1 file has more than one entry, the setting this option to true, allows working with
+   * the splitter EIP, to split the data using an iterator in a streaming mode.
+   */
   public fun usingIterator(usingIterator: String) {
     def.usingIterator = usingIterator
   }

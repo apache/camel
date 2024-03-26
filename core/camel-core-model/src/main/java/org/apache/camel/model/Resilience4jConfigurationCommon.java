@@ -16,11 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 
 import org.apache.camel.spi.Metadata;
 
@@ -87,6 +90,12 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String timeoutCancelRunningFuture;
+    @XmlElement(name = "recordException")
+    @Metadata(label = "advanced")
+    private List<String> recordExceptions = new ArrayList<>();
+    @XmlElement(name = "ignoreException")
+    @Metadata(label = "advanced")
+    private List<String> ignoreExceptions = new ArrayList<>();
 
     // Getter/Setter
     // -------------------------------------------------------------------------
@@ -357,5 +366,30 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
      */
     public void setTimeoutCancelRunningFuture(String timeoutCancelRunningFuture) {
         this.timeoutCancelRunningFuture = timeoutCancelRunningFuture;
+    }
+
+    public List<String> getRecordExceptions() {
+        return recordExceptions;
+    }
+
+    /**
+     * Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception
+     * matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.
+     */
+    public void setRecordExceptions(List<String> recordExceptions) {
+        this.recordExceptions = recordExceptions;
+    }
+
+    public List<String> getIgnoreExceptions() {
+        return ignoreExceptions;
+    }
+
+    /**
+     * Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception
+     * matching or inheriting from one of the list will not count as a failure nor success, even if the exceptions is
+     * part of recordExceptions.
+     */
+    public void setIgnoreExceptions(List<String> ignoreExceptions) {
+        this.ignoreExceptions = ignoreExceptions;
     }
 }

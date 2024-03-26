@@ -7,12 +7,11 @@ Each release includes a catalog with all sorts of information about what’s inc
 The catalog is shipped in an independent standalone `camel-catalog` JAR containing the following information:
 
 - List of all components, data formats, languages, EIPs, and everything else in the release
-- Curated lists for Camel Quarkus, Camel Spring Boot, and Camel Karaf runtimes
+- Curated lists for Camel Quarkus, Camel Spring Boot, and Camel Main runtimes
 - JSON schema with extensive details for every option
 - Human-readable documentation for every option
 - Categorization of options (for example, find all database components)
 - XML schema for the XML DSLs
-- Maven Archetype Catalog of all the Camel archetypes
 
 There is also a Java API for tooling:
 
@@ -43,14 +42,17 @@ org
 └── apache
   └── camel
     └── catalog
-      ├── archetypes (Maven archetype catalog)
+      ├── beans (JSON schema)
       ├── components (JSON schema)
       ├── dataformats (JSON schema)
+      ├── dev-consoles (JSON schema)
       ├── languages (JSON schema)
       ├── main (JSON schema)
       ├── models (JSON schema)
       ├── others (JSON schema)
-      └── schemas (XML schema)
+      ├── releases (JSON schema)
+      ├── schemas (XML schema)
+      └── transformers (JSON schema)
 ----
 
 Each directory contains files with the information. Every Camel component is included

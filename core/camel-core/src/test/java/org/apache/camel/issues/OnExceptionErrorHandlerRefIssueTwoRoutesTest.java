@@ -50,8 +50,8 @@ public class OnExceptionErrorHandlerRefIssueTwoRoutesTest extends ContextTestSup
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myDLC", new DeadLetterChannelBuilder("mock:dead"));
         return jndi;
     }

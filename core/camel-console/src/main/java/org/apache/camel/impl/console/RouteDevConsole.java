@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -39,7 +40,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole("route")
+@DevConsole(name = "route", description = "Route information")
 public class RouteDevConsole extends AbstractDevConsole {
 
     /**
@@ -57,12 +58,24 @@ public class RouteDevConsole extends AbstractDevConsole {
      */
     public static final String PROCESSORS = "processors";
 
+    /**
+     * Action to perform such as start,stop,suspend,resume on one or more routes
+     */
+    public static final String ACTION = "action";
+
     public RouteDevConsole() {
         super("camel", "route", "Route", "Route information");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
+        String action = (String) options.get(ACTION);
+        String filter = (String) options.get(FILTER);
+        if (action != null) {
+            doAction(getCamelContext(), action, filter);
+            return "";
+        }
+
         final boolean processors = "true".equals(options.getOrDefault(PROCESSORS, "false"));
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
@@ -202,6 +215,13 @@ public class RouteDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
+        String action = (String) options.get(ACTION);
+        String filter = (String) options.get(FILTER);
+        if (action != null) {
+            doAction(getCamelContext(), action, filter);
+            return new JsonObject();
+        }
+
         final boolean processors = "true".equals(options.getOrDefault(PROCESSORS, "false"));
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
@@ -444,6 +464,56 @@ public class RouteDevConsole extends AbstractDevConsole {
             return covered + "/" + total + " (" + f + "%)";
         } else {
             return covered + "/" + total;
+        }
+    }
+
+    protected void doAction(CamelContext camelContext, String command, String filter) {
+        if (filter == null) {
+            filter = "*";
+        }
+        String[] patterns = filter.split(",");
+        // find matching IDs
+        List<String> ids = camelContext.getRoutes()
+                .stream().map(Route::getRouteId)
+                .filter(routeId -> {
+                    for (String p : patterns) {
+                        if (PatternHelper.matchPattern(routeId, p)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .toList();
+        for (String id : ids) {
+            try {
+                if ("start".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.getRouteController().startAllRoutes();
+                    } else {
+                        camelContext.getRouteController().startRoute(id);
+                    }
+                } else if ("stop".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.getRouteController().stopAllRoutes();
+                    } else {
+                        camelContext.getRouteController().stopRoute(id);
+                    }
+                } else if ("suspend".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.suspend();
+                    } else {
+                        camelContext.getRouteController().suspendRoute(id);
+                    }
+                } else if ("resume".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.resume();
+                    } else {
+                        camelContext.getRouteController().resumeRoute(id);
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 

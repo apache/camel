@@ -18,11 +18,42 @@ package org.apache.camel.openapi;
 
 import java.io.IOException;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import org.apache.camel.Exchange;
+
+/**
+ * Adapter for rendering API response
+ */
 public interface RestApiResponseAdapter {
 
+    /**
+     * Sets the generated OpenAPI model
+     */
+    void setOpenApi(OpenAPI openApi);
+
+    /**
+     * Gets the generated OpenAPI model
+     */
+    OpenAPI getOpenApi();
+
+    /**
+     * Adds a header
+     */
     void setHeader(String name, String value);
 
+    /**
+     * The content of the OpenAPI spec as byte array
+     */
     void writeBytes(byte[] bytes) throws IOException;
 
+    /**
+     * There is no Rest DSL and therefore no OpenAPI spec
+     */
     void noContent();
+
+    /**
+     * Copy content from this adapter into the given {@link Exchange}.
+     */
+    void copyResult(Exchange exchange);
+
 }

@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel-jbang",
+    "name": "source-dir",
+    "title": "Source Directory",
+    "description": "Information about Camel JBang source files",
+    "deprecated": false,
+    "javaType": "org.apache.camel.jbang.console.SourceDirDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jbang-console",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

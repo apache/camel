@@ -28,7 +28,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("log")
+@DevConsole(name = "log", description = "Logging framework")
 public class LogDevConsole extends AbstractDevConsole {
 
     // log4j support

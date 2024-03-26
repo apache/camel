@@ -16,10 +16,6 @@
  */
 package org.apache.camel.catalog.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.annotations.JdkService;
@@ -35,12 +31,17 @@ import org.apache.camel.tooling.model.TransformerModel;
  * Default {@link RuntimeCamelCatalog}.
  */
 @JdkService(RuntimeCamelCatalog.FACTORY)
-public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements RuntimeCamelCatalog {
+public class DefaultRuntimeCamelCatalog extends AbstractCachingCamelCatalog implements RuntimeCamelCatalog {
 
     private CamelContext camelContext;
-    // cache of operation -> result
-    private final Map<String, Object> cache = new HashMap<>();
-    private boolean caching = true;
+
+    public DefaultRuntimeCamelCatalog() {
+        this(true);
+    }
+
+    public DefaultRuntimeCamelCatalog(boolean caching) {
+        super(caching);
+    }
 
     @Override
     public CamelContext getCamelContext() {
@@ -53,20 +54,6 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
         this.setJSonSchemaResolver(new CamelContextJSonSchemaResolver(camelContext));
     }
 
-    /**
-     * To turn caching on or off
-     */
-    public boolean isCaching() {
-        return caching;
-    }
-
-    /**
-     * To turn caching on or off
-     */
-    public void setCaching(boolean caching) {
-        this.caching = caching;
-    }
-
     @Override
     public void start() {
         // noop
@@ -74,7 +61,7 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
 
     @Override
     public void stop() {
-        cache.clear();
+        super.clearCache();
     }
 
     @Override
@@ -146,21 +133,4 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
     public MainModel mainModel() {
         return cache("main-model", "main-model", k -> super.mainModel());
     }
-
-    @SuppressWarnings("unchecked")
-    private <T> T cache(String key, String name, Function<String, T> loader) {
-        if (caching) {
-            T t = (T) cache.get(key);
-            if (t == null) {
-                t = loader.apply(name);
-                if (t != null) {
-                    cache.put(key, t);
-                }
-            }
-            return t;
-        } else {
-            return loader.apply(name);
-        }
-    }
-
 }

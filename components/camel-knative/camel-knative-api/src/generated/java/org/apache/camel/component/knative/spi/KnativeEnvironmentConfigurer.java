@@ -21,8 +21,7 @@ public class KnativeEnvironmentConfigurer extends org.apache.camel.support.compo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeEnvironment target = (org.apache.camel.component.knative.spi.KnativeEnvironment) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "resources":
-        case "Resources": target.setResources(property(camelContext, java.util.List.class, value)); return true;
+        case "resources": target.setResources(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }
@@ -30,8 +29,7 @@ public class KnativeEnvironmentConfigurer extends org.apache.camel.support.compo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "resources":
-        case "Resources": return java.util.List.class;
+        case "resources": return java.util.List.class;
         default: return null;
         }
     }
@@ -40,8 +38,7 @@ public class KnativeEnvironmentConfigurer extends org.apache.camel.support.compo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeEnvironment target = (org.apache.camel.component.knative.spi.KnativeEnvironment) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "resources":
-        case "Resources": return target.getResources();
+        case "resources": return target.getResources();
         default: return null;
         }
     }
@@ -49,8 +46,7 @@ public class KnativeEnvironmentConfigurer extends org.apache.camel.support.compo
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "resources":
-        case "Resources": return org.apache.camel.component.knative.spi.KnativeResource.class;
+        case "resources": return org.apache.camel.component.knative.spi.KnativeResource.class;
         default: return null;
         }
     }

@@ -45,8 +45,8 @@ public class BeanParameterMethodCallThreeBodyOgnlTest extends ContextTestSupport
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("router", new MyRouter());
         jndi.bind("foo", new MyBean());
         return jndi;

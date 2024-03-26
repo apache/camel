@@ -38,25 +38,20 @@ public class Dhis2DeleteEndpointConfigurationConfigurer extends org.apache.camel
         org.apache.camel.component.dhis2.Dhis2DeleteEndpointConfiguration target = (org.apache.camel.component.dhis2.Dhis2DeleteEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.dhis2.internal.Dhis2ApiName.class, value)); return true;
+        case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.dhis2.internal.Dhis2ApiName.class, value)); return true;
         case "baseapiurl":
-        case "BaseApiUrl": target.setBaseApiUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "client":
-        case "Client": target.setClient(property(camelContext, org.hisp.dhis.integration.sdk.api.Dhis2Client.class, value)); return true;
+        case "baseApiUrl": target.setBaseApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "client": target.setClient(property(camelContext, org.hisp.dhis.integration.sdk.api.Dhis2Client.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
-        case "password":
-        case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "path":
-        case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "personalaccesstoken":
-        case "PersonalAccessToken": target.setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "personalAccessToken": target.setPersonalAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "queryparams":
-        case "QueryParams": target.setQueryParams(property(camelContext, java.util.Map.class, value)); return true;
-        case "resource":
-        case "Resource": target.setResource(property(camelContext, java.lang.Object.class, value)); return true;
-        case "username":
-        case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "queryParams": target.setQueryParams(property(camelContext, java.util.Map.class, value)); return true;
+        case "resource": target.setResource(property(camelContext, java.lang.Object.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -70,25 +65,20 @@ public class Dhis2DeleteEndpointConfigurationConfigurer extends org.apache.camel
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return org.apache.camel.component.dhis2.internal.Dhis2ApiName.class;
+        case "apiName": return org.apache.camel.component.dhis2.internal.Dhis2ApiName.class;
         case "baseapiurl":
-        case "BaseApiUrl": return java.lang.String.class;
-        case "client":
-        case "Client": return org.hisp.dhis.integration.sdk.api.Dhis2Client.class;
+        case "baseApiUrl": return java.lang.String.class;
+        case "client": return org.hisp.dhis.integration.sdk.api.Dhis2Client.class;
         case "methodname":
-        case "MethodName": return java.lang.String.class;
-        case "password":
-        case "Password": return java.lang.String.class;
-        case "path":
-        case "Path": return java.lang.String.class;
+        case "methodName": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "path": return java.lang.String.class;
         case "personalaccesstoken":
-        case "PersonalAccessToken": return java.lang.String.class;
+        case "personalAccessToken": return java.lang.String.class;
         case "queryparams":
-        case "QueryParams": return java.util.Map.class;
-        case "resource":
-        case "Resource": return java.lang.Object.class;
-        case "username":
-        case "Username": return java.lang.String.class;
+        case "queryParams": return java.util.Map.class;
+        case "resource": return java.lang.Object.class;
+        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -98,25 +88,20 @@ public class Dhis2DeleteEndpointConfigurationConfigurer extends org.apache.camel
         org.apache.camel.component.dhis2.Dhis2DeleteEndpointConfiguration target = (org.apache.camel.component.dhis2.Dhis2DeleteEndpointConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
-        case "ApiName": return target.getApiName();
+        case "apiName": return target.getApiName();
         case "baseapiurl":
-        case "BaseApiUrl": return target.getBaseApiUrl();
-        case "client":
-        case "Client": return target.getClient();
+        case "baseApiUrl": return target.getBaseApiUrl();
+        case "client": return target.getClient();
         case "methodname":
-        case "MethodName": return target.getMethodName();
-        case "password":
-        case "Password": return target.getPassword();
-        case "path":
-        case "Path": return target.getPath();
+        case "methodName": return target.getMethodName();
+        case "password": return target.getPassword();
+        case "path": return target.getPath();
         case "personalaccesstoken":
-        case "PersonalAccessToken": return target.getPersonalAccessToken();
+        case "personalAccessToken": return target.getPersonalAccessToken();
         case "queryparams":
-        case "QueryParams": return target.getQueryParams();
-        case "resource":
-        case "Resource": return target.getResource();
-        case "username":
-        case "Username": return target.getUsername();
+        case "queryParams": return target.getQueryParams();
+        case "resource": return target.getResource();
+        case "username": return target.getUsername();
         default: return null;
         }
     }
@@ -125,7 +110,7 @@ public class Dhis2DeleteEndpointConfigurationConfigurer extends org.apache.camel
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "queryparams":
-        case "QueryParams": return java.lang.Object.class;
+        case "queryParams": return java.lang.Object.class;
         default: return null;
         }
     }

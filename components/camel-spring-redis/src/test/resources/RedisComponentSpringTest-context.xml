@@ -23,7 +23,7 @@
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean id="idempotentRepository" class="org.apache.camel.component.redis.processor.idempotent.RedisIdempotentRepository">
+    <bean id="idempotentRepository" class="org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository">
         <constructor-arg value="test-repo"/>
     </bean>
 

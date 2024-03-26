@@ -53,8 +53,8 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("reverse-strategy", ExceptionPolicyStrategy.class, new DefaultExceptionPolicyStrategy() {
             @Override
             public Iterable<Throwable> createExceptionIterable(Throwable exception) {

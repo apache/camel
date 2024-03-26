@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Communicate with a remote Bonita BPM process engine.
+ */
 public fun UriDsl.bonita(i: BonitaUriDsl.() -> Unit) {
   BonitaUriDsl(this).apply(i)
 }
@@ -39,35 +42,69 @@ public class BonitaUriDsl(
 
   private var operation: String = ""
 
+  /**
+   * Operation to use
+   */
   public fun operation(operation: String) {
     this.operation = operation
     it.url("$operation")
   }
 
+  /**
+   * Hostname where Bonita engine runs
+   */
   public fun hostname(hostname: String) {
     it.property("hostname", hostname)
   }
 
+  /**
+   * Port of the server hosting Bonita engine
+   */
   public fun port(port: String) {
     it.property("port", port)
   }
 
+  /**
+   * Name of the process involved in the operation
+   */
   public fun processName(processName: String) {
     it.property("processName", processName)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
 
+  /**
+   * Password to authenticate to Bonita engine.
+   */
   public fun password(password: String) {
     it.property("password", password)
   }
 
+  /**
+   * Username to authenticate to Bonita engine.
+   */
   public fun username(username: String) {
     it.property("username", username)
   }

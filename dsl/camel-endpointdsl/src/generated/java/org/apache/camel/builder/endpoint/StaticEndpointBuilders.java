@@ -1508,6 +1508,92 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BedrockEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Operate on AWS Bedrock through its Agent.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.endpointBuilder("aws-bedrock-agent", path);
+    }
+    /**
+     * AWS Bedrock Agent (camel-aws-bedrock)
+     * Operate on AWS Bedrock through its Agent.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent-runtime:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder("aws-bedrock-agent-runtime", path);
+    }
+    /**
+     * AWS Bedrock Agent Runtime (camel-aws-bedrock)
+     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * 
+     * Category: ai,cloud
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-aws-bedrock
+     * 
+     * Syntax: <code>aws-bedrock-agent-runtime:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
      * 
@@ -9701,6 +9787,92 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * langChain4j Chat (camel-langchain-chat)
+     * LangChain4j Chat component
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * 
+     * Syntax: <code>langchain-chat:chatId</code>
+     * 
+     * Path parameter: chatId (required)
+     * The id
+     * 
+     * @param path chatId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.LangChainChatEndpointBuilder langchainChat(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.endpointBuilder("langchain-chat", path);
+    }
+    /**
+     * langChain4j Chat (camel-langchain-chat)
+     * LangChain4j Chat component
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * 
+     * Syntax: <code>langchain-chat:chatId</code>
+     * 
+     * Path parameter: chatId (required)
+     * The id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path chatId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.LangChainChatEndpointBuilder langchainChat(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * 
+     * Syntax: <code>langchain-embeddings:embeddingId</code>
+     * 
+     * Path parameter: embeddingId (required)
+     * The id
+     * 
+     * @param path embeddingId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.LangChainEmbeddingsEndpointBuilder langchainEmbeddings(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.endpointBuilder("langchain-embeddings", path);
+    }
+    /**
+     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings
+     * 
+     * Category: ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * 
+     * Syntax: <code>langchain-embeddings:embeddingId</code>
+     * 
+     * Path parameter: embeddingId (required)
+     * The id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path embeddingId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.LangChainEmbeddingsEndpointBuilder langchainEmbeddings(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 
@@ -10276,6 +10448,49 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Milvus (camel-milvus)
+     * Perform operations on the Milvus Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-milvus
+     * 
+     * Syntax: <code>milvus:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.MilvusEndpointBuilder milvus(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.endpointBuilder("milvus", path);
+    }
+    /**
+     * Milvus (camel-milvus)
+     * Perform operations on the Milvus Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-milvus
+     * 
+     * Syntax: <code>milvus:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.MilvusEndpointBuilder milvus(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Mina (camel-mina)
@@ -14819,16 +15034,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
+     * There are 54 enums and the value can be one of: ACCOUNT, ADDRESS,
      * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
      * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
      * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
      * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
      * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
      * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
-     * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
-     * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
+     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_NOTIFICATION,
+     * CALL_RECORDING, CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
      * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
      * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT,
      * RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD,
@@ -14864,16 +15078,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
+     * There are 54 enums and the value can be one of: ACCOUNT, ADDRESS,
      * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
      * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
      * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
      * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
      * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
      * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
-     * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
-     * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
+     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_NOTIFICATION,
+     * CALL_RECORDING, CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
      * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
      * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT,
      * RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD,
@@ -16111,7 +16324,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 373 enums and the value can be one of:
+     * There are 374 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -16175,7 +16388,7 @@ public class StaticEndpointBuilders {
      * GET_GROUP_MEMBERSHIPS_1, GET_GROUP_ORGANIZATION, GET_GROUP_USERS,
      * GET_GROUPS, GET_HELP_CENTER_LOCALES, GET_HOLIDAYS_FOR_SCHEDULE,
      * GET_HOLIDAYS_FOR_SCHEDULE_1, GET_INCREMENTAL_TICKETS_RESULT,
-     * GET_JOB_STATUS, GET_JOB_STATUS_ASYNC, GET_JOB_STATUSES,
+     * GET_JIRA_LINKS, GET_JOB_STATUS, GET_JOB_STATUS_ASYNC, GET_JOB_STATUSES,
      * GET_JOB_STATUSES_ASYNC, GET_LOCALES, GET_MACRO, GET_MACROS,
      * GET_OPEN_REQUESTS, GET_ORGANIZATION, GET_ORGANIZATION_FIELDS,
      * GET_ORGANIZATION_MEMBERSHIP, GET_ORGANIZATION_MEMBERSHIP_BY_USER,
@@ -16264,7 +16477,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 373 enums and the value can be one of:
+     * There are 374 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -16328,7 +16541,7 @@ public class StaticEndpointBuilders {
      * GET_GROUP_MEMBERSHIPS_1, GET_GROUP_ORGANIZATION, GET_GROUP_USERS,
      * GET_GROUPS, GET_HELP_CENTER_LOCALES, GET_HOLIDAYS_FOR_SCHEDULE,
      * GET_HOLIDAYS_FOR_SCHEDULE_1, GET_INCREMENTAL_TICKETS_RESULT,
-     * GET_JOB_STATUS, GET_JOB_STATUS_ASYNC, GET_JOB_STATUSES,
+     * GET_JIRA_LINKS, GET_JOB_STATUS, GET_JOB_STATUS_ASYNC, GET_JOB_STATUSES,
      * GET_JOB_STATUSES_ASYNC, GET_LOCALES, GET_MACRO, GET_MACROS,
      * GET_OPEN_REQUESTS, GET_ORGANIZATION, GET_ORGANIZATION_FIELDS,
      * GET_ORGANIZATION_MEMBERSHIP, GET_ORGANIZATION_MEMBERSHIP_BY_USER,

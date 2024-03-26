@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "OpensearchBulkRequestAggregationStrategy",
+    "javaType": "org.apache.camel.component.opensearch.aggregation.OpensearchBulkRequestAggregationStrategy",
+    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "title": "Opensearch Bulk Request Aggregation Strategy",
+    "description": "Aggregates two OpenSearch BulkOperation into a single BulkRequest",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-opensearch",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

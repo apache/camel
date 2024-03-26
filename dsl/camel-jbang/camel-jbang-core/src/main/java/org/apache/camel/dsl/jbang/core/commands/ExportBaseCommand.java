@@ -87,10 +87,6 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
-                        description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
-    protected String profile;
-
     @CommandLine.Option(names = { "--repos" },
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repos;
@@ -119,6 +115,14 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
+    @CommandLine.Option(names = { "--maven-central-enabled" },
+                        description = "Whether downloading JARs from Maven Central repository is enabled")
+    boolean mavenCentralEnabled = true;
+
+    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
+                        description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    boolean mavenApacheSnapshotEnabled = true;
+
     @CommandLine.Option(names = { "--main-classname" },
                         description = "The class name of the Camel Main application class",
                         defaultValue = "CamelApplication")
@@ -134,6 +138,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = {
             "--kamelets-version" }, description = "Apache Camel Kamelets version")
     protected String kameletsVersion;
+
+    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
+                        description = "Profile to export (dev, test, or prod).")
+    String profile;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
                         description = "Local directory for loading Kamelets (takes precedence)")
@@ -155,7 +163,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.8.1")
+                        defaultValue = "3.8.2")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -230,10 +238,6 @@ abstract class ExportBaseCommand extends CamelCommand {
         return export();
     }
 
-    public String getProfile() {
-        return profile;
-    }
-
     protected static String mavenRepositoriesAsPomXml(String repos) {
         StringBuilder sb = new StringBuilder();
         int i = 1;
@@ -285,7 +289,6 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
-        run.profile = profile;
         run.localKameletDir = localKameletDir;
         run.dependencies = dependencies;
         run.files = files;
@@ -852,6 +855,35 @@ abstract class ExportBaseCommand extends CamelCommand {
             System.err.println("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("Error copying the artifact: " + gav + " due to: " + e.getMessage());
+        }
+    }
+
+    protected void copyApplicationPropertiesFiles(File srcResourcesDir) throws Exception {
+        File[] files = new File(".").listFiles(f -> {
+            if (!f.isFile()) {
+                return false;
+            }
+            String ext = FileUtil.onlyExt(f.getName());
+            String name = FileUtil.onlyName(f.getName());
+            if (!"properties".equals(ext)) {
+                return false;
+            }
+            if (name.equals("application")) {
+                // skip generic as its handled specially
+                return false;
+            }
+            if (profile == null) {
+                // accept all kind of configuration files
+                return name.startsWith("application");
+            } else {
+                // only accept the configuration file that matches the profile
+                return name.equals("application-" + profile);
+            }
+        });
+        if (files != null) {
+            for (File f : files) {
+                safeCopy(f, new File(srcResourcesDir, f.getName()), true);
+            }
         }
     }
 

@@ -28,8 +28,10 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         map.put("Config", java.lang.String.class);
         map.put("FailureRateThreshold", java.lang.String.class);
         map.put("Id", java.lang.String.class);
+        map.put("IgnoreExceptions", java.util.List.class);
         map.put("MinimumNumberOfCalls", java.lang.String.class);
         map.put("PermittedNumberOfCallsInHalfOpenState", java.lang.String.class);
+        map.put("RecordExceptions", java.util.List.class);
         map.put("SlidingWindowSize", java.lang.String.class);
         map.put("SlidingWindowType", java.lang.String.class);
         map.put("SlowCallDurationThreshold", java.lang.String.class);
@@ -49,47 +51,49 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         org.apache.camel.model.Resilience4jConfigurationDefinition target = (org.apache.camel.model.Resilience4jConfigurationDefinition) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "automatictransitionfromopentohalfopenenabled":
-        case "AutomaticTransitionFromOpenToHalfOpenEnabled": target.setAutomaticTransitionFromOpenToHalfOpenEnabled(property(camelContext, java.lang.String.class, value)); return true;
+        case "automaticTransitionFromOpenToHalfOpenEnabled": target.setAutomaticTransitionFromOpenToHalfOpenEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadenabled":
-        case "BulkheadEnabled": target.setBulkheadEnabled(property(camelContext, java.lang.String.class, value)); return true;
+        case "bulkheadEnabled": target.setBulkheadEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadmaxconcurrentcalls":
-        case "BulkheadMaxConcurrentCalls": target.setBulkheadMaxConcurrentCalls(property(camelContext, java.lang.String.class, value)); return true;
+        case "bulkheadMaxConcurrentCalls": target.setBulkheadMaxConcurrentCalls(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadmaxwaitduration":
-        case "BulkheadMaxWaitDuration": target.setBulkheadMaxWaitDuration(property(camelContext, java.lang.String.class, value)); return true;
+        case "bulkheadMaxWaitDuration": target.setBulkheadMaxWaitDuration(property(camelContext, java.lang.String.class, value)); return true;
         case "circuitbreaker":
-        case "CircuitBreaker": target.setCircuitBreaker(property(camelContext, java.lang.String.class, value)); return true;
-        case "config":
-        case "Config": target.setConfig(property(camelContext, java.lang.String.class, value)); return true;
+        case "circuitBreaker": target.setCircuitBreaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "config": target.setConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "failureratethreshold":
-        case "FailureRateThreshold": target.setFailureRateThreshold(property(camelContext, java.lang.String.class, value)); return true;
-        case "id":
-        case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "failureRateThreshold": target.setFailureRateThreshold(property(camelContext, java.lang.String.class, value)); return true;
+        case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "ignoreexceptions":
+        case "ignoreExceptions": target.setIgnoreExceptions(property(camelContext, java.util.List.class, value)); return true;
         case "minimumnumberofcalls":
-        case "MinimumNumberOfCalls": target.setMinimumNumberOfCalls(property(camelContext, java.lang.String.class, value)); return true;
+        case "minimumNumberOfCalls": target.setMinimumNumberOfCalls(property(camelContext, java.lang.String.class, value)); return true;
         case "permittednumberofcallsinhalfopenstate":
-        case "PermittedNumberOfCallsInHalfOpenState": target.setPermittedNumberOfCallsInHalfOpenState(property(camelContext, java.lang.String.class, value)); return true;
+        case "permittedNumberOfCallsInHalfOpenState": target.setPermittedNumberOfCallsInHalfOpenState(property(camelContext, java.lang.String.class, value)); return true;
+        case "recordexceptions":
+        case "recordExceptions": target.setRecordExceptions(property(camelContext, java.util.List.class, value)); return true;
         case "slidingwindowsize":
-        case "SlidingWindowSize": target.setSlidingWindowSize(property(camelContext, java.lang.String.class, value)); return true;
+        case "slidingWindowSize": target.setSlidingWindowSize(property(camelContext, java.lang.String.class, value)); return true;
         case "slidingwindowtype":
-        case "SlidingWindowType": target.setSlidingWindowType(property(camelContext, java.lang.String.class, value)); return true;
+        case "slidingWindowType": target.setSlidingWindowType(property(camelContext, java.lang.String.class, value)); return true;
         case "slowcalldurationthreshold":
-        case "SlowCallDurationThreshold": target.setSlowCallDurationThreshold(property(camelContext, java.lang.String.class, value)); return true;
+        case "slowCallDurationThreshold": target.setSlowCallDurationThreshold(property(camelContext, java.lang.String.class, value)); return true;
         case "slowcallratethreshold":
-        case "SlowCallRateThreshold": target.setSlowCallRateThreshold(property(camelContext, java.lang.String.class, value)); return true;
+        case "slowCallRateThreshold": target.setSlowCallRateThreshold(property(camelContext, java.lang.String.class, value)); return true;
         case "throwexceptionwhenhalfopenoropenstate":
-        case "ThrowExceptionWhenHalfOpenOrOpenState": target.setThrowExceptionWhenHalfOpenOrOpenState(property(camelContext, java.lang.String.class, value)); return true;
+        case "throwExceptionWhenHalfOpenOrOpenState": target.setThrowExceptionWhenHalfOpenOrOpenState(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutcancelrunningfuture":
-        case "TimeoutCancelRunningFuture": target.setTimeoutCancelRunningFuture(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeoutCancelRunningFuture": target.setTimeoutCancelRunningFuture(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutduration":
-        case "TimeoutDuration": target.setTimeoutDuration(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeoutDuration": target.setTimeoutDuration(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutenabled":
-        case "TimeoutEnabled": target.setTimeoutEnabled(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeoutEnabled": target.setTimeoutEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutexecutorservice":
-        case "TimeoutExecutorService": target.setTimeoutExecutorService(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeoutExecutorService": target.setTimeoutExecutorService(property(camelContext, java.lang.String.class, value)); return true;
         case "waitdurationinopenstate":
-        case "WaitDurationInOpenState": target.setWaitDurationInOpenState(property(camelContext, java.lang.String.class, value)); return true;
+        case "waitDurationInOpenState": target.setWaitDurationInOpenState(property(camelContext, java.lang.String.class, value)); return true;
         case "writablestacktraceenabled":
-        case "WritableStackTraceEnabled": target.setWritableStackTraceEnabled(property(camelContext, java.lang.String.class, value)); return true;
+        case "writableStackTraceEnabled": target.setWritableStackTraceEnabled(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -103,47 +107,49 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "automatictransitionfromopentohalfopenenabled":
-        case "AutomaticTransitionFromOpenToHalfOpenEnabled": return java.lang.String.class;
+        case "automaticTransitionFromOpenToHalfOpenEnabled": return java.lang.String.class;
         case "bulkheadenabled":
-        case "BulkheadEnabled": return java.lang.String.class;
+        case "bulkheadEnabled": return java.lang.String.class;
         case "bulkheadmaxconcurrentcalls":
-        case "BulkheadMaxConcurrentCalls": return java.lang.String.class;
+        case "bulkheadMaxConcurrentCalls": return java.lang.String.class;
         case "bulkheadmaxwaitduration":
-        case "BulkheadMaxWaitDuration": return java.lang.String.class;
+        case "bulkheadMaxWaitDuration": return java.lang.String.class;
         case "circuitbreaker":
-        case "CircuitBreaker": return java.lang.String.class;
-        case "config":
-        case "Config": return java.lang.String.class;
+        case "circuitBreaker": return java.lang.String.class;
+        case "config": return java.lang.String.class;
         case "failureratethreshold":
-        case "FailureRateThreshold": return java.lang.String.class;
-        case "id":
-        case "Id": return java.lang.String.class;
+        case "failureRateThreshold": return java.lang.String.class;
+        case "id": return java.lang.String.class;
+        case "ignoreexceptions":
+        case "ignoreExceptions": return java.util.List.class;
         case "minimumnumberofcalls":
-        case "MinimumNumberOfCalls": return java.lang.String.class;
+        case "minimumNumberOfCalls": return java.lang.String.class;
         case "permittednumberofcallsinhalfopenstate":
-        case "PermittedNumberOfCallsInHalfOpenState": return java.lang.String.class;
+        case "permittedNumberOfCallsInHalfOpenState": return java.lang.String.class;
+        case "recordexceptions":
+        case "recordExceptions": return java.util.List.class;
         case "slidingwindowsize":
-        case "SlidingWindowSize": return java.lang.String.class;
+        case "slidingWindowSize": return java.lang.String.class;
         case "slidingwindowtype":
-        case "SlidingWindowType": return java.lang.String.class;
+        case "slidingWindowType": return java.lang.String.class;
         case "slowcalldurationthreshold":
-        case "SlowCallDurationThreshold": return java.lang.String.class;
+        case "slowCallDurationThreshold": return java.lang.String.class;
         case "slowcallratethreshold":
-        case "SlowCallRateThreshold": return java.lang.String.class;
+        case "slowCallRateThreshold": return java.lang.String.class;
         case "throwexceptionwhenhalfopenoropenstate":
-        case "ThrowExceptionWhenHalfOpenOrOpenState": return java.lang.String.class;
+        case "throwExceptionWhenHalfOpenOrOpenState": return java.lang.String.class;
         case "timeoutcancelrunningfuture":
-        case "TimeoutCancelRunningFuture": return java.lang.String.class;
+        case "timeoutCancelRunningFuture": return java.lang.String.class;
         case "timeoutduration":
-        case "TimeoutDuration": return java.lang.String.class;
+        case "timeoutDuration": return java.lang.String.class;
         case "timeoutenabled":
-        case "TimeoutEnabled": return java.lang.String.class;
+        case "timeoutEnabled": return java.lang.String.class;
         case "timeoutexecutorservice":
-        case "TimeoutExecutorService": return java.lang.String.class;
+        case "timeoutExecutorService": return java.lang.String.class;
         case "waitdurationinopenstate":
-        case "WaitDurationInOpenState": return java.lang.String.class;
+        case "waitDurationInOpenState": return java.lang.String.class;
         case "writablestacktraceenabled":
-        case "WritableStackTraceEnabled": return java.lang.String.class;
+        case "writableStackTraceEnabled": return java.lang.String.class;
         default: return null;
         }
     }
@@ -153,47 +159,60 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         org.apache.camel.model.Resilience4jConfigurationDefinition target = (org.apache.camel.model.Resilience4jConfigurationDefinition) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "automatictransitionfromopentohalfopenenabled":
-        case "AutomaticTransitionFromOpenToHalfOpenEnabled": return target.getAutomaticTransitionFromOpenToHalfOpenEnabled();
+        case "automaticTransitionFromOpenToHalfOpenEnabled": return target.getAutomaticTransitionFromOpenToHalfOpenEnabled();
         case "bulkheadenabled":
-        case "BulkheadEnabled": return target.getBulkheadEnabled();
+        case "bulkheadEnabled": return target.getBulkheadEnabled();
         case "bulkheadmaxconcurrentcalls":
-        case "BulkheadMaxConcurrentCalls": return target.getBulkheadMaxConcurrentCalls();
+        case "bulkheadMaxConcurrentCalls": return target.getBulkheadMaxConcurrentCalls();
         case "bulkheadmaxwaitduration":
-        case "BulkheadMaxWaitDuration": return target.getBulkheadMaxWaitDuration();
+        case "bulkheadMaxWaitDuration": return target.getBulkheadMaxWaitDuration();
         case "circuitbreaker":
-        case "CircuitBreaker": return target.getCircuitBreaker();
-        case "config":
-        case "Config": return target.getConfig();
+        case "circuitBreaker": return target.getCircuitBreaker();
+        case "config": return target.getConfig();
         case "failureratethreshold":
-        case "FailureRateThreshold": return target.getFailureRateThreshold();
-        case "id":
-        case "Id": return target.getId();
+        case "failureRateThreshold": return target.getFailureRateThreshold();
+        case "id": return target.getId();
+        case "ignoreexceptions":
+        case "ignoreExceptions": return target.getIgnoreExceptions();
         case "minimumnumberofcalls":
-        case "MinimumNumberOfCalls": return target.getMinimumNumberOfCalls();
+        case "minimumNumberOfCalls": return target.getMinimumNumberOfCalls();
         case "permittednumberofcallsinhalfopenstate":
-        case "PermittedNumberOfCallsInHalfOpenState": return target.getPermittedNumberOfCallsInHalfOpenState();
+        case "permittedNumberOfCallsInHalfOpenState": return target.getPermittedNumberOfCallsInHalfOpenState();
+        case "recordexceptions":
+        case "recordExceptions": return target.getRecordExceptions();
         case "slidingwindowsize":
-        case "SlidingWindowSize": return target.getSlidingWindowSize();
+        case "slidingWindowSize": return target.getSlidingWindowSize();
         case "slidingwindowtype":
-        case "SlidingWindowType": return target.getSlidingWindowType();
+        case "slidingWindowType": return target.getSlidingWindowType();
         case "slowcalldurationthreshold":
-        case "SlowCallDurationThreshold": return target.getSlowCallDurationThreshold();
+        case "slowCallDurationThreshold": return target.getSlowCallDurationThreshold();
         case "slowcallratethreshold":
-        case "SlowCallRateThreshold": return target.getSlowCallRateThreshold();
+        case "slowCallRateThreshold": return target.getSlowCallRateThreshold();
         case "throwexceptionwhenhalfopenoropenstate":
-        case "ThrowExceptionWhenHalfOpenOrOpenState": return target.getThrowExceptionWhenHalfOpenOrOpenState();
+        case "throwExceptionWhenHalfOpenOrOpenState": return target.getThrowExceptionWhenHalfOpenOrOpenState();
         case "timeoutcancelrunningfuture":
-        case "TimeoutCancelRunningFuture": return target.getTimeoutCancelRunningFuture();
+        case "timeoutCancelRunningFuture": return target.getTimeoutCancelRunningFuture();
         case "timeoutduration":
-        case "TimeoutDuration": return target.getTimeoutDuration();
+        case "timeoutDuration": return target.getTimeoutDuration();
         case "timeoutenabled":
-        case "TimeoutEnabled": return target.getTimeoutEnabled();
+        case "timeoutEnabled": return target.getTimeoutEnabled();
         case "timeoutexecutorservice":
-        case "TimeoutExecutorService": return target.getTimeoutExecutorService();
+        case "timeoutExecutorService": return target.getTimeoutExecutorService();
         case "waitdurationinopenstate":
-        case "WaitDurationInOpenState": return target.getWaitDurationInOpenState();
+        case "waitDurationInOpenState": return target.getWaitDurationInOpenState();
         case "writablestacktraceenabled":
-        case "WritableStackTraceEnabled": return target.getWritableStackTraceEnabled();
+        case "writableStackTraceEnabled": return target.getWritableStackTraceEnabled();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ignoreexceptions":
+        case "ignoreExceptions": return java.lang.String.class;
+        case "recordexceptions":
+        case "recordExceptions": return java.lang.String.class;
         default: return null;
         }
     }

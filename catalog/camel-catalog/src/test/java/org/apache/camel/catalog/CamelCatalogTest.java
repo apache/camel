@@ -24,13 +24,17 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EntityRef;
+import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -131,11 +135,24 @@ public class CamelCatalogTest {
     public void testFindTransformerNames() {
         List<String> names = catalog.findTransformerNames();
 
-        assertTrue(names.contains("application-cloudevents-json"));
+        assertTrue(names.contains("application-cloudevents+json"));
         assertTrue(names.contains("application-x-java-object"));
         assertTrue(names.contains("aws-cloudtrail-application-cloudevents"));
         assertTrue(names.contains("azure-storage-queue-application-cloudevents"));
         assertTrue(names.contains("http-application-cloudevents"));
+    }
+
+    @Test
+    public void testFindDevConsoleNames() {
+        List<String> names = catalog.findDevConsoleNames();
+
+        assertTrue(names.contains("aws2-s3"));
+        assertTrue(names.contains("aws-secrets"));
+        assertTrue(names.contains("gc"));
+        assertTrue(names.contains("inflight"));
+        assertTrue(names.contains("mina"));
+        assertTrue(names.contains("platform-http"));
+        assertTrue(names.contains("variables"));
     }
 
     @Test
@@ -891,6 +908,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testListDevConsolesAsJson() throws Exception {
+        String json = catalog.listDevConsolesAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
     public void testListModelsAsJson() throws Exception {
         String json = catalog.listModelsAsJson();
         assertNotNull(json);
@@ -1590,6 +1618,39 @@ public class CamelCatalogTest {
         Assertions.assertEquals("2023-07-06", rel.getEol());
         Assertions.assertEquals("lts", rel.getKind());
         Assertions.assertEquals("11", rel.getJdk());
+    }
+
+    @Test
+    public void capabilities() {
+        List<String> list = catalog.findCapabilityNames();
+        Assertions.assertEquals(1, list.size());
+
+        Optional<EntityRef> ref = catalog.findCapabilityRef("platform-http");
+        Assertions.assertTrue(ref.isPresent());
+        Assertions.assertEquals(Kind.other, ref.get().kind());
+        Assertions.assertEquals("platform-http-main", ref.get().name());
+
+        Optional<EntityRef> ref2 = catalog.findCapabilityRef("not-implemented");
+        Assertions.assertFalse(ref2.isPresent());
+    }
+
+    @Test
+    public void testFindPojoBeanNames() {
+        List<String> names = catalog.findBeansNames();
+
+        assertTrue(names.contains("GroupedBodyAggregationStrategy"));
+        assertTrue(names.contains("ZipAggregationStrategy"));
+    }
+
+    @Test
+    public void testPojoBeanModel() {
+        PojoBeanModel model = catalog.pojoBeanModel("ZipAggregationStrategy");
+        assertNotNull(model);
+
+        assertEquals(Kind.bean, model.getKind());
+        assertEquals("ZipAggregationStrategy", model.getName());
+        assertEquals("org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy", model.getJavaType());
+        assertEquals(6, model.getOptions().size());
     }
 
 }

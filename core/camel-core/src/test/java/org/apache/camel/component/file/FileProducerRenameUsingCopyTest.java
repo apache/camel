@@ -20,8 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("This test is regularly flaky")
 public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
 
     @Test
@@ -33,10 +36,13 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
 
+        // wait a bit for the file move to be completed
         assertMockEndpointsSatisfied();
 
-        assertFileExists(testFile("done/hello.txt"));
-        assertFileNotExists(testFile("hello.txt"));
+        Awaitility.await().untilAsserted(() -> {
+            assertFileExists(testFile("done/hello.txt"));
+            assertFileNotExists(testFile("hello.txt"));
+        });
     }
 
     @Override

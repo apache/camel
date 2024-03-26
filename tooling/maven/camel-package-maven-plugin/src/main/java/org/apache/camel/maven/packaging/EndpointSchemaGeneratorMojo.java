@@ -27,8 +27,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -202,6 +199,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             ComponentModel model = writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias,
                     extendsAlias, label, schemes, parentData);
+
             models.put(classElement, model);
         }
     }
@@ -290,6 +288,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (componentModel.isApi()) {
             enhanceComponentModelWithApiModel(componentModel);
         }
+
+        SchemaHelper.addModelMetadata(componentModel, project);
+        SchemaHelper.addModelMetadata(componentModel, classElement.getAnnotation(Metadata.class));
 
         String json = JsonMapper.createParameterJsonSchema(componentModel);
 
@@ -1073,7 +1074,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setKind("property");
                     option.setName(name);
                     option.setDisplayName(displayName);
-                    option.setType(getType(fieldTypeName, false, isDuration));
+                    option.setType(MojoHelper.getType(fieldTypeName, false, isDuration));
                     option.setJavaType(fieldTypeName);
                     option.setRequired(required);
                     option.setDefaultValue(defaultValue);
@@ -1360,7 +1361,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         option.setName(name);
         option.setDisplayName(displayName);
-        option.setType(getType(fieldTypeName, false, isDuration));
+        option.setType(MojoHelper.getType(fieldTypeName, false, isDuration));
         option.setJavaType(fieldTypeName);
         option.setRequired(required);
         option.setDefaultValue(defaultValue);
@@ -1549,7 +1550,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             option.setName(name);
             option.setKind("path");
             option.setDisplayName(displayName);
-            option.setType(getType(fieldTypeName, false, isDuration));
+            option.setType(MojoHelper.getType(fieldTypeName, false, isDuration));
             option.setJavaType(fieldTypeName);
             option.setRequired(required);
             option.setDefaultValue(defaultValue);
@@ -1869,79 +1870,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         String fieldTypeName = new GenericType(fieldType).toString();
         fieldTypeName = fieldTypeName.replace('$', '.');
         return fieldTypeName;
-    }
-
-    /**
-     * Gets the JSON schema type.
-     *
-     * @param  type the java type
-     * @return      the json schema type, is never null, but returns <tt>object</tt> as the generic type
-     */
-    public static String getType(String type, boolean enumType, boolean isDuration) {
-        if (enumType) {
-            return "enum";
-        } else if (isDuration) {
-            return "duration";
-        } else if (type == null) {
-            // return generic type for unknown type
-            return "object";
-        } else if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
-            return "string";
-        } else if (type.equals(File.class.getName())) {
-            return "string";
-        } else if (type.equals(Date.class.getName())) {
-            return "string";
-        } else if (type.startsWith("java.lang.Class")) {
-            return "string";
-        } else if (type.startsWith("java.util.List") || type.startsWith("java.util.Collection")) {
-            return "array";
-        }
-
-        String primitive = getPrimitiveType(type);
-        if (primitive != null) {
-            return primitive;
-        }
-
-        return "object";
-    }
-
-    /**
-     * Gets the JSON schema primitive type.
-     *
-     * @param  name the java type
-     * @return      the json schema primitive type, or <tt>null</tt> if not a primitive
-     */
-    public static String getPrimitiveType(String name) {
-        // special for byte[] or Object[] as its common to use
-        if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
-            return "string";
-        } else if ("java.lang.Byte[]".equals(name) || "Byte[]".equals(name)) {
-            return "array";
-        } else if ("java.lang.Object[]".equals(name) || "Object[]".equals(name)) {
-            return "array";
-        } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
-            return "array";
-        } else if ("java.lang.Character".equals(name) || "Character".equals(name) || "char".equals(name)) {
-            return "string";
-        } else if ("java.lang.String".equals(name) || "String".equals(name)) {
-            return "string";
-        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name) || "boolean".equals(name)) {
-            return "boolean";
-        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name) || "int".equals(name)) {
-            return "integer";
-        } else if ("java.lang.Long".equals(name) || "Long".equals(name) || "long".equals(name)) {
-            return "integer";
-        } else if ("java.lang.Short".equals(name) || "Short".equals(name) || "short".equals(name)) {
-            return "integer";
-        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name) || "byte".equals(name)) {
-            return "integer";
-        } else if ("java.lang.Float".equals(name) || "Float".equals(name) || "float".equals(name)) {
-            return "number";
-        } else if ("java.lang.Double".equals(name) || "Double".equals(name) || "double".equals(name)) {
-            return "number";
-        }
-
-        return null;
     }
 
     /**

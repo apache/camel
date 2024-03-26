@@ -42,7 +42,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test that all thread pools is removed when adding and removing a route dynamically. This test manipulates the thread
+ * Test that all thread pools are removed when adding and removing a route dynamically. This test manipulates the thread
  * pools, so it's not a good candidate for running in parallel.
  */
 @Tags({ @Tag("not-parallel") })

@@ -72,8 +72,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("orderItemHelper", new OrderItemHelper());
         jndi.bind("widgetInventory", new WidgetInventory());
         jndi.bind("gadgetInventory", new GadgetInventory());

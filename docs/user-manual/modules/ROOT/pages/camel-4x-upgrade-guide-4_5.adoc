@@ -54,6 +54,28 @@ It is very typical to define Rest DSL and for each service api, then call a Came
 By inlining these two, then you only have 1 route in Camel instead of 2. This helps reduce the clutter of routes
 that otherwise is in use when using Rest DSL and many services. You can restore to old behaviour by setting the option back to `inlineRoutes=false`.
 
+However, the inlining requires that each REST endpoint inlined with `direct` endpoints must use unique direct names, ie.
+
+[source,java]
+----
+rest("/rest")
+    .get("/").to("direct:printMethod")
+    .post("/").to("direct:printMethod")
+    .put("/").to("direct:printMethod");
+----
+
+Should be changed to:
+
+[source,java]
+----
+rest("/rest")
+    .get("/").to("direct:printMethod1")
+    .post("/").to("direct:printMethod2")
+    .put("/").to("direct:printMethod3");
+----
+
+Or to keep old behaviour, you can turn off inlining.
+
 Rest DSL will now eagerly resolve property placeholders that are used during building the `rest:` endpoint.
 
 For example with a Rest DSL using a placeholder (`app.mypath = helloapp`) in the `path`:
@@ -110,12 +132,68 @@ After:
 String uri = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
 ----
 
+=== camel-bom / camel-spring-boot-bom
+
+The Camel Maven BOMs (`camel-bom` and `camel-spring-boot-bom`) has been changed to use hardcoded
+Camel release versions to ensure the BOM is always correct.
+
 === camel-main
 
 The options `camel.main.backlogTracing`, `"camel.main.backlogTracingStandby`, and `camel.main.backlogTracingTemplates` has been
 moved into a new group `camel.debug` with more options to configure the backlog tracer.
 
 To enable backlog tracing you should now set `camel.trace.enabled=true` instead of `camel.main.backlogTracing=true`.
+
+=== camel-console
+
+The `@DevConsole` annotation has been enhanced to include more information.
+
+Migrate from
+
+[source,java]
+----
+@DevConsole("stub")
+----
+
+To
+
+[source,java]
+----
+@DevConsole(name = "stub", description = "Browse messages on stub endpoints")
+----
+
+We also renamed the `route-curcuit-breaker` console to `circuit-breaker`.
+
+=== camel-jbang
+
+The `--profile` option on `export` command has been removed.
+
+The `--profile` option on `run` command is now used by `camel-main` to choose profile mode when running Camel with JBang,
+or standalone with Camel Main. The default mode is `dev` for development which comes with some additional features enabled
+in Camel to gather more information that are relevant for development and the Camel JBang CLI.
+
+You can run with `--profile=prod` to turn off all of this, which makes Camel run more similar to a production situation.
+
+The command `camel generate rest` have removed all the shorthand arguments `such as `-i -o` instead use the long names `--input --output`.
+
+The shorthand `-p` option from `run` and `script` command has been removed. Use `--prop` instead.
+
+=== camel-jsonpath
+
+The `camel-jsonpath` will now work more similar as `camel-jq` when you specify a `resultType` and have a list of entities.
+Before `camel-jsonapath` would attempt to convert the `List` to the given `restultType` which often is not useable. What
+users want is to be able to convert each entry in the list to a given type such as a POJO.
+
+For example the snippet below select all books from a JSon document, which will be in a `List<Map>` object where each
+book is an entry as a `Map`. Before Camel would attempt to convert `List` to `Book` which would not be possible.
+From this release onwards, Camel will convert each entry to a `Book` so the result is `List<Book>`.
+
+This is also how `camel-jq` works.
+
+[source,java]
+----
+.transform().jsonpath(".book", Book.class)
+----
 
 === camel-kamelet
 
@@ -128,17 +206,76 @@ on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentatio
 
 === camel-micrometer and camel-metrics
 
+The `camel-micrometer` have renamed tag `serviceName` to `kind` and use naming that indicate that its from Camel:
+
+|===
+|**Before** | **After**
+| serviceName="MicrometerEventNotifierService" | kind="CamelExchangeEvent"
+| serviceName="MicrometerMessageHistoryService" | kind="CamelMessageHistory"
+| serviceName="MicrometerRoutePolicyService" | kind="CamelRoute"
+|===
+
 Due to Kamelets are changed to act more like a Camel component, and not expose internal details as JMX MBeans, then
 micrometer and metrics no longer include statistics for those Kamelet routes.
 
 The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
 on the `ManagementAgent` object. See more in the xref:jmx.adoc[JMX] documentation.
 
+Added context level metrics to `camel-micrometer`. The metrics with key `camel.route.policy` now include
+tag `eventType` that specifies if the metrics is for a route or the entire camel context.
+You can turn off context level metrics, by setting `contenxtEnabled=false` on the factory such as:
+
+[source,java]
+----
+factory.getPolicyConfiguration().setContextEnabled(false);
+----
+
+This can also be done easily from `application.properties` such as:
+
+[source,properties]
+----
+camel.metrics.routePolicyLevel=route
+----
+
 === camel-openapi-java and camel-rest-openapi
 
 Dropped support for the old Swagger 2.0 spec. Only OpenAPI v3 specs is supported now.
 Fixed maven dependencies to be JakartaEE compatible.
 
+When using Rest DSL and have `api-doc` enabled via `camel-rest` and `camel-openapi-java`, then
+the OpenAPI specification is now generated once during startup instead of on-demand when a client
+calls the `/api-doc` endpoint.
+
 === camel-platform-http-vertx
 
 Added a Cookie Handler allowing the addition, retrieval and expiry of Cookies.
+
+=== camel-shiro
+
+Upgraded Apache Shiro from 1.13 to 2.0.
+
+=== camel-twilio
+
+Upgraded to Twilio 10.1.0 which removed `call-feedback` and `call-feedback-summary` from the available APIs,
+to use from Camel.
+
+=== camel-elasticsearch / camel-opensearch
+
+The class `BulkRequestAggregationStrategy` has been renamed to `OpensearchBulkRequestAggregationStrategy`
+The class `BulkRequestAggregationStrategy` has been renamed to `ElasticsearchBulkRequestAggregationStrategy`
+
+=== camel-spring-redis
+
+The class `RedisIdempotentRepository` has been renamed to `SpringRedisIdempotentRepository`
+The class `RedisStringIdempotentRepository` has been renamed to `SpringRedisStringIdempotentRepository`
+
+
+== Camel Spring Boot
+
+The auto configuration with `camel.springboot.xxx` properties has been harmonized to use same naming for
+all the Camel runtimes (camel-main, canel-quarkus, and camel-spring-boot). These options have been marked
+as deprecated, and you can migrate to use `camel.main.xxx` naming instead.
+
+For example `camel.springboot.name = Foo` to `camel.main.name = Foo`.
+
+Only the special Spring Boot options are still named `camel.springboot.xxx`.

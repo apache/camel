@@ -22,6 +22,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.RssDataFormat
 
+/**
+ * Transform from ROME SyndFeed Java Objects to XML and vice-versa.
+ */
 public fun DataFormatDsl.rss(i: RssDataFormatDsl.() -> Unit) {
   def = RssDataFormatDsl().apply(i).def
 }
@@ -33,6 +36,9 @@ public class RssDataFormatDsl {
   init {
     def = RssDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }

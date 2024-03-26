@@ -34,12 +34,24 @@
     <properties>
         <camel.surefire.parallel>true</camel.surefire.parallel>
         <camel.surefire.parallel.factor>4</camel.surefire.parallel.factor>
+
+        <!-- Qdrant is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipTests.ppc64le>true</skipTests.ppc64le>
+        <skipTests.s390x>true</skipTests.s390x>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
+            <version>${langchain4j.version}</version>
         </dependency>
 
         <dependency>

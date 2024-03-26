@@ -5,8 +5,7 @@ metadata:
 spec:
   source:
     uri: {{ .Source }}
-    #properties:
-      #key: "value"
+    {{ .SourceProperties }}
 {{ .Steps }}
   sink:
     ref:
@@ -14,3 +13,4 @@ spec:
       apiVersion: camel.apache.org/v1
       name: {{ .Sink }}
     {{ .SinkProperties }}
+{{ .ErrorHandler }}
