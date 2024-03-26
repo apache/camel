@@ -16,15 +16,15 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 
-import java.util.Map;
-
 /**
- * Allows SPI to plugin a {@link RestOpenApiConsumerFactory} that creates the Camel {@link Consumer} responsible for handling
- * incoming HTTP requests from clients that request to access REST services which has been created using the
+ * Allows SPI to plugin a {@link RestOpenApiConsumerFactory} that creates the Camel {@link Consumer} responsible for
+ * handling incoming HTTP requests from clients that request to access REST services which has been created using the
  * <a href="http://camel.apache.org/rest-dsl">rest-dsl</a> for an entire open-api specification.
  *
  * @see RestApiConsumerFactory
@@ -39,7 +39,7 @@ public interface RestOpenApiConsumerFactory {
      *
      * @param  camelContext  the camel context
      * @param  processor     the processor
-     * @param  contextPath  the context-path
+     * @param  contextPath   the context-path
      * @param  configuration REST configuration
      * @param  parameters    additional parameters
      * @return               a newly created REST consumer
