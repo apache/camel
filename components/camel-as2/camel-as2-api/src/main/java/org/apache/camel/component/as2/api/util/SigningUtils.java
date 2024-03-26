@@ -31,7 +31,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.HttpException;
+import org.apache.hc.core5.http.HttpException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;

@@ -18,7 +18,7 @@ package org.apache.camel.component.as2.converter;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Converter;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ContentType;
 
 /**
  * Content type related converters.
