@@ -262,7 +262,7 @@ to use from Camel.
 === camel-elasticsearch / camel-opensearch
 
 The class `BulkRequestAggregationStrategy` has been renamed to `OpensearchBulkRequestAggregationStrategy`
-The class `BulkRequestAggregationStrategy` has been renamed to `ElasticsearchBulkRequestAggregationStrategy`
+The class `BulkRequestAggregationStrategy` has been renamed to `ElastichsearchBulkRequestAggregationStrategy`
 
 === camel-spring-redis
 

@@ -14,3 +14,7 @@ For example calling a route that fails due to an exception being thrown (even if
 then the variable is no longer set. Also, if the route is marked for rollback, or to stop continue routing with `.stop()`.
 
 This is the same logic that the routing engine uses, whether to continue routing the `Exchange` or not.
+
+=== camel-elasticsearch
+
+The class `ElastichsearchBulkRequestAggregationStrategy` has been renamed to `ElasticsearchBulkRequestAggregationStrategy`.
