@@ -17,4 +17,4 @@ This is the same logic that the routing engine uses, whether to continue routing
 
 === camel-elasticsearch
 
-The class `ElastichsearchBulkRequestAggregationStrategy` has been renamed to `ElasticsearchBulkRequestAggregationStrategy`.
+The class `org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy` has been renamed to `org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy`.
