@@ -766,19 +766,16 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.rest-api.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
+        // make it easy to load mock-data from file without having to add camel-mock to classpath
         addInitialProperty("camel.component.rest-openapi.mockIncludePattern", "file:camel-mock/**,classpath:camel-mock/**");
     }
 
     protected String startupInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("Using Java ").append(System.getProperty("java.version"));
-        String pid = getPid();
-        if (pid != null) {
-            sb.append(" with PID ").append(pid);
-        }
+        sb.append(" with PID ").append(getPid());
         sb.append(". Started by ").append(System.getProperty("user.name"));
         sb.append(" in ").append(System.getProperty("user.dir"));
-
         return sb.toString();
     }
 
