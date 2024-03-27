@@ -48,14 +48,15 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private final OpenAPI openAPI;
     private final String basePath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
-    private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
+    private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
 
-    public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, Processor processor) {
+    public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, Processor processor,
+                                RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
         super(processor);
         this.endpoint = endpoint;
         this.basePath = basePath;
         this.openAPI = openAPI;
-        this.restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
+        this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
     }
 
     @Override
@@ -66,14 +67,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    public RestOpenapiProcessorStrategy getRestOpenapiProcessorStrategy() {
-        return restOpenapiProcessorStrategy;
-    }
-
-    public void setRestOpenapiProcessorStrategy(RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
-        this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
     }
 
     @Override

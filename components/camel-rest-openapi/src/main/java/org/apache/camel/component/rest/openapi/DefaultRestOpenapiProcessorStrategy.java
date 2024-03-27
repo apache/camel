@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import joptsimple.internal.Strings;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
@@ -32,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Resource;
@@ -58,6 +60,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private String component = "direct";
     private String missingOperation;
     private String mockIncludePattern;
+    private final List<String> uris = new ArrayList<>();
 
     @Override
     public void validateOpenApi(OpenAPI openAPI) throws Exception {
@@ -93,6 +96,24 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 LOG.warn(msg + ". This validation error is ignored.");
             } else if ("mock".equalsIgnoreCase(missingOperation)) {
                 LOG.debug(msg + ". This validation error is ignored (Will return a mocked/empty response).");
+            }
+        }
+
+        // enlist open-api rest services
+        PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+        if (phc != null) {
+            String path = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
+            if (path == null || path.isEmpty() || path.equals("/")) {
+                path = "";
+            }
+            for (var p : openAPI.getPaths().entrySet()) {
+                String uri = path + p.getKey();
+                String verbs = Strings.join(p.getValue().readOperationsMap().keySet().stream()
+                        .map(Enum::name)
+                        .sorted()
+                        .collect(Collectors.toList()), ",");
+                phc.addHttpEndpoint(uri, verbs, null, null, null);
+                uris.add(uri);
             }
         }
     }
@@ -236,6 +257,12 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
+
+        PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+        if (phc != null) {
+            uris.forEach(phc::removeHttpEndpoint);
+            uris.clear();
+        }
     }
 
 }

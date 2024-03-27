@@ -30,8 +30,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -213,7 +211,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(final Processor processor) throws Exception {
         OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri);
         String path = determineBasePath(doc);
-        Processor target = new RestOpenApiProcessor(this, doc, path, processor);
+        Processor target = new RestOpenApiProcessor(this, doc, path, processor, restOpenapiProcessorStrategy);
         CamelContextAware.trySetCamelContext(target, getCamelContext());
         return createConsumerFor(path, target);
     }
@@ -510,7 +508,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentBasePath;
         }
 
-        final String specificationBasePath = getBasePathFromOpenApi(openapi);
+        final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
 
         if (isNotEmpty(specificationBasePath)) {
             return specificationBasePath;
@@ -526,46 +524,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;
-    }
-
-    public static String getBasePathFromOpenApi(final OpenAPI openApi) {
-        String basePath = null;
-        if (openApi.getServers() != null) {
-            for (Server server : openApi.getServers()) {
-                if (server.getUrl() != null) {
-                    try {
-                        URI serverUrl = new URI(parseVariables(server.getUrl(), server));
-                        basePath = serverUrl.getPath();
-                        // Is this really necessary?
-                        if (basePath.indexOf("//") == 0) {
-                            // strip off the first "/" if double "/" exists
-                            basePath = basePath.substring(1);
-                        }
-                        if ("/".equals(basePath)) {
-                            basePath = "";
-                        }
-                    } catch (URISyntaxException e) {
-                        //not a valid whole url, just the basePath
-                        basePath = server.getUrl();
-                    }
-                }
-            }
-        }
-        return basePath;
-    }
-
-    public static String parseVariables(String url, Server server) {
-        Pattern p = Pattern.compile("\\{(.*?)\\}");
-        Matcher m = p.matcher(url);
-        while (m.find()) {
-
-            String variable = m.group(1);
-            if (server != null && server.getVariables() != null && server.getVariables().get(variable) != null) {
-                String varValue = server.getVariables().get(variable).getDefault();
-                url = url.replace("{" + variable + "}", varValue);
-            }
-        }
-        return url;
     }
 
     String determineComponentName() {
@@ -753,7 +711,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (servers != null) {
             for (Server server : servers) {
                 try {
-                    uris.add(new URI(parseVariables(server.getUrl(), server)));
+                    uris.add(new URI(RestOpenApiHelper.parseVariables(server.getUrl(), server)));
                 } catch (URISyntaxException e) {
                     // ignore
                 }
