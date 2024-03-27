@@ -89,6 +89,8 @@ public class QdrantProducer extends DefaultAsyncProducer {
                     return retrieve(exchange, callback);
                 case DELETE:
                     return delete(exchange, callback);
+                case COLLECTION_INFO:
+                    return collectionInfo(exchange, callback);
                 default:
                     throw new UnsupportedOperationException("Unsupported action: " + action.name());
             }
@@ -163,6 +165,26 @@ public class QdrantProducer extends DefaultAsyncProducer {
                     } else {
                         in.setBody(new ArrayList<>(r));
                         in.setHeader(Qdrant.Headers.SIZE, r.size());
+                    }
+
+                    callback.done(false);
+                });
+
+        return false;
+    }
+
+    private boolean collectionInfo(Exchange exchange, AsyncCallback callback) throws Exception {
+        final String collection = getEndpoint().getCollection();
+        final Message in = exchange.getMessage();
+
+        call(
+                this.client.getCollectionInfoAsync(collection),
+
+                (r, t) -> {
+                    if (t != null) {
+                        exchange.setException(new QdrantActionException(QdrantAction.COLLECTION_INFO, t));
+                    } else {
+                        in.setBody(r);
                     }
 
                     callback.done(false);

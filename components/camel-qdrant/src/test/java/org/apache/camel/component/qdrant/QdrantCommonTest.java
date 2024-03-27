@@ -38,7 +38,15 @@ public final class QdrantCommonTest extends CamelTestSupport {
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
-        assertThat(result.getException()).isInstanceOf(InvalidPayloadException.class);
-        assertThat(result.getException().getMessage()).contains("No body available of type");
+
+        if (action == QdrantAction.COLLECTION_INFO) {
+            // null body is OK for collection info, but it throws an specific exception
+            // if the collection doesn't exist
+            assertThat(result.getException()).isInstanceOf(QdrantActionException.class);
+        } else {
+            assertThat(result.getException()).isInstanceOf(InvalidPayloadException.class);
+            assertThat(result.getException().getMessage()).contains("No body available of type");
+        }
+
     }
 }

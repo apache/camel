@@ -21,4 +21,5 @@ public enum QdrantAction {
     UPSERT,
     RETRIEVE,
     DELETE,
+    COLLECTION_INFO,
 }
