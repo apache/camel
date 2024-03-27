@@ -16387,7 +16387,9 @@ The flow used by the OAuth2 security scheme. Valid values are implicit, password
   <xs:complexType name="openApiDefinition">
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
-        <xs:sequence/>
+        <xs:sequence>
+          <xs:element minOccurs="0" name="apiContextPath" type="xs:string"/>
+        </xs:sequence>
         <xs:attribute name="specification" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -16412,6 +16414,16 @@ Sets the id of the route.
 <![CDATA[
 Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST
 service has been disabled then it cannot be enabled later at runtime. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="requestValidationEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable validation of the client request to check that the request contains valid and expected data. Default
+value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16757,8 +16769,8 @@ or camel-netty-http that includes a HTTP server.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a leading API context-path the REST API services will be using. This can be used when using components such as
-camel-servlet where the deployed web application is deployed using a context-path.
+Sets a leading context-path the REST API will be using. This can be used when using components such as camel-servlet
+where the deployed web application is deployed using a context-path.
 ]]>
         </xs:documentation>
       </xs:annotation>
