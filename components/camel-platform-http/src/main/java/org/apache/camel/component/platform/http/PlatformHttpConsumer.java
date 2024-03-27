@@ -27,6 +27,7 @@ import org.apache.camel.support.service.ServiceHelper;
 public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
 
     private Consumer delegatedConsumer;
+    private boolean register = true;
 
     public PlatformHttpConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -41,6 +42,14 @@ public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable
         return getEndpoint().getComponent();
     }
 
+    public boolean isRegister() {
+        return register;
+    }
+
+    public void setRegister(boolean register) {
+        this.register = register;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -51,14 +60,18 @@ public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable
     protected void doStart() throws Exception {
         super.doStart();
         ServiceHelper.startService(delegatedConsumer);
-        getComponent().addHttpEndpoint(getEndpoint().getPath(), getEndpoint().getHttpMethodRestrict(),
-                getEndpoint().getConsumes(), getEndpoint().getProduces(), delegatedConsumer);
+        if (register) {
+            getComponent().addHttpEndpoint(getEndpoint().getPath(), getEndpoint().getHttpMethodRestrict(),
+                    getEndpoint().getConsumes(), getEndpoint().getProduces(), delegatedConsumer);
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        getComponent().removeHttpEndpoint(getEndpoint().getPath());
+        if (register) {
+            getComponent().removeHttpEndpoint(getEndpoint().getPath());
+        }
         ServiceHelper.stopAndShutdownServices(delegatedConsumer);
     }
 

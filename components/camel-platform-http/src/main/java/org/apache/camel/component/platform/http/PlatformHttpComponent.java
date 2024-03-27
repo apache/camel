@@ -90,7 +90,7 @@ public class PlatformHttpComponent extends DefaultComponent
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
         return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, "application/json,text/yaml",
                 configuration,
-                parameters, true);
+                parameters, true, true);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class PlatformHttpComponent extends DefaultComponent
             String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
         return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
-                parameters, false);
+                parameters, false, true);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class PlatformHttpComponent extends DefaultComponent
             Map<String, Object> parameters)
             throws Exception {
         return doCreateConsumer(camelContext, processor, null, contextPath, null, null, null, configuration,
-                parameters, true);
+                parameters, true, false);
     }
 
     /**
@@ -196,7 +196,8 @@ public class PlatformHttpComponent extends DefaultComponent
     private Consumer doCreateConsumer(
             CamelContext camelContext, Processor processor, String verb, String basePath,
             String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api)
+            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters,
+            boolean api, boolean register)
             throws Exception {
 
         String path = basePath;
@@ -246,7 +247,8 @@ public class PlatformHttpComponent extends DefaultComponent
         endpoint.setProduces(produces);
 
         // configure consumer properties
-        Consumer consumer = endpoint.createConsumer(processor);
+        PlatformHttpConsumer consumer = (PlatformHttpConsumer) endpoint.createConsumer(processor);
+        consumer.setRegister(register);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());
         }
