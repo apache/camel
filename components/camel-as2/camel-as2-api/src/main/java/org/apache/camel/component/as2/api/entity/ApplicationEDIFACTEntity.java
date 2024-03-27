@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.io.IOException;
+
 import org.apache.camel.component.as2.api.AS2MediaType;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ContentType;
 
 public class ApplicationEDIFACTEntity extends ApplicationEntity {
 
@@ -27,4 +29,8 @@ public class ApplicationEDIFACTEntity extends ApplicationEntity {
               filename);
     }
 
+    @Override
+    public void close() throws IOException {
+        // do nothing
+    }
 }

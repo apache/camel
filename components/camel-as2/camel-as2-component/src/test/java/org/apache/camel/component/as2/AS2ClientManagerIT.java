@@ -64,19 +64,19 @@ import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpCoreContext;
-import org.apache.http.protocol.HttpDateGenerator;
-import org.apache.http.protocol.HttpRequestHandler;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.apache.hc.core5.http.message.BasicHttpResponse;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.protocol.HttpDateGenerator;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.AfterAll;
@@ -156,7 +156,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private static X509Certificate serverCert;
     private static RequestHandler requestHandler;
 
-    private static final HttpDateGenerator DATE_GENERATOR = new HttpDateGenerator();
+    private static final HttpDateGenerator DATE_GENERATOR = HttpDateGenerator.INSTANCE;
 
     private static KeyPair clientKeyPair;
     private static X509Certificate clientCert;
@@ -194,8 +194,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(result, "send result");
         LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
-        assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
-        HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+        assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
+        HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
         assertTrue(entity instanceof ApplicationEntity, "Request body does not contain EDI entity");
         String ediMessage = ((ApplicationEntity) entity).getEdiMessage();
@@ -222,10 +222,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
         assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
+                firstPart.getContentType(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
-                secondPart.getContentTypeValue(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+                secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
@@ -275,8 +275,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(result, "send result");
         LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
-        assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
-        HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+        assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
+        HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
         assertTrue(entity instanceof ApplicationEntity, "Request body does not contain EDI entity");
         String ediMessage = ((ApplicationEntity) entity).getEdiMessage();
@@ -328,8 +328,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(result, "send result");
         LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
-        assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
-        HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+        assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
+        HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
         assertTrue(entity instanceof ApplicationEntity, "Request body does not contain EDI entity");
         String ediMessage = ((ApplicationEntity) entity).getEdiMessage();
@@ -356,10 +356,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
         assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
+                firstPart.getContentType(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
-                secondPart.getContentTypeValue(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+                secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
@@ -416,8 +416,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         LOG.debug("send: {}", result);
 
         assertNotNull(request, "Request");
-        assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
-        HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+        assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
+        HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
         assertTrue(entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity,
                 "Request body does not contain ApplicationPkcs7Mime entity");
@@ -448,10 +448,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
         assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
+                firstPart.getContentType(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
-                secondPart.getContentTypeValue(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+                secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
 
         assertTrue(secondPart instanceof AS2MessageDispositionNotificationEntity, "");
@@ -511,8 +511,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(result, "send result");
         LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
-        assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
-        HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+        assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
+        HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
         assertTrue(entity instanceof MultipartSignedEntity, "Request body does not contain EDI entity");
 
@@ -550,10 +550,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
         assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
+                firstPart.getContentType(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
-                secondPart.getContentTypeValue(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+                secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
         assertNotNull(signatureEntity, "Signature Entity");
@@ -574,7 +574,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest) request, new Certificate[] { clientCert },
+                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert },
                         clientKeyPair.getPrivate());
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
@@ -621,8 +621,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(result, "send result");
         LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
-        assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
-        HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+        assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
+        HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
         assertTrue(entity instanceof MultipartSignedEntity, "Request body does not contain EDI entity");
 
@@ -660,10 +660,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
         assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
+                firstPart.getContentType(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
-                secondPart.getContentTypeValue(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+                secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
         assertNotNull(signatureEntity, "Signature Entity");
@@ -684,7 +684,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest) request, new Certificate[] { clientCert },
+                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert },
                         clientKeyPair.getPrivate());
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
@@ -727,8 +727,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(result, "send result");
         LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
-        assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
-        HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+        assertTrue(request instanceof ClassicHttpRequest, "Request does not contain body");
+        HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
         assertNotNull(entity, "Request body");
         assertTrue(entity instanceof ApplicationPkcs7MimeCompressedDataEntity, "Request body does not contain EDI entity");
 
@@ -767,10 +767,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
         assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
+                firstPart.getContentType(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
-                secondPart.getContentTypeValue(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+                secondPart.getContentType(),
                 "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
         assertNotNull(signatureEntity, "Signature Entity");
@@ -791,7 +791,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest) request, new Certificate[] { clientCert },
+                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert },
                         clientKeyPair.getPrivate());
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
@@ -812,7 +812,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         ApplicationEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, false,
                 ATTACHED_FILE_NAME);
-        HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", REQUEST_URI);
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", REQUEST_URI);
         HttpMessageUtils.setHeaderValue(request, AS2Header.SUBJECT, SUBJECT);
         String httpdate = DATE_GENERATOR.getCurrentDate();
         HttpMessageUtils.setHeaderValue(request, AS2Header.DATE, httpdate);
@@ -825,7 +825,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         EntityUtils.setMessageEntity(request, ediEntity);
 
         // Create response for MDN creation.
-        HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
+        HttpResponse response = new BasicHttpResponse(200, "OK");
         httpdate = DATE_GENERATOR.getCurrentDate();
         response.setHeader(AS2Header.DATE, httpdate);
         response.setHeader(AS2Header.SERVER, REPORTING_UA);
@@ -858,7 +858,6 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     @AfterAll
     public static void teardownTest() throws Exception {
         if (serverConnection != null) {
-            serverConnection.stopListening("/");
             serverConnection.close();
         }
     }
@@ -869,7 +868,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         private HttpResponse response;
 
         @Override
-        public void handle(HttpRequest request, HttpResponse response, HttpContext context)
+        public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                 throws HttpException, IOException {
             LOG.info("Received test message: {}", request);
             context.setAttribute(AS2ServerManager.FROM, MDN_FROM);

@@ -31,22 +31,24 @@ import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipar
 import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.component.as2.api.protocol.ResponseMDN;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.ConnectionClosedException;
-import org.apache.http.HttpException;
-import org.apache.http.HttpInetConnection;
-import org.apache.http.HttpServerConnection;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpCoreContext;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.HttpProcessorBuilder;
-import org.apache.http.protocol.HttpRequestHandler;
-import org.apache.http.protocol.HttpService;
-import org.apache.http.protocol.ResponseConnControl;
-import org.apache.http.protocol.ResponseContent;
-import org.apache.http.protocol.ResponseDate;
-import org.apache.http.protocol.ResponseServer;
-import org.apache.http.protocol.UriHttpRequestHandlerMapper;
+import org.apache.hc.core5.http.ConnectionClosedException;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.impl.io.HttpService;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.io.HttpServerConnection;
+import org.apache.hc.core5.http.io.HttpServerRequestHandler;
+import org.apache.hc.core5.http.io.support.BasicHttpServerRequestHandler;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
+import org.apache.hc.core5.http.protocol.RequestHandlerRegistry;
+import org.apache.hc.core5.http.protocol.ResponseConnControl;
+import org.apache.hc.core5.http.protocol.ResponseContent;
+import org.apache.hc.core5.http.protocol.ResponseDate;
+import org.apache.hc.core5.http.protocol.ResponseServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +63,8 @@ public class AS2ServerConnection {
 
         private final ServerSocket serversocket;
         private final HttpService httpService;
-        private final UriHttpRequestHandlerMapper reqistry;
+        private final RequestHandlerRegistry registry;
+        private final HttpServerRequestHandler handler;
 
         public RequestListenerThread(String as2Version,
                                      String originServer,
@@ -89,10 +92,11 @@ public class AS2ServerConnection {
                     signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey, mdnMessageTemplate,
                     validateSigningCertificateChain);
 
-            reqistry = new UriHttpRequestHandlerMapper();
+            registry = new RequestHandlerRegistry<>();
+            handler = new BasicHttpServerRequestHandler(registry);
 
             // Set up the HTTP service
-            httpService = new HttpService(inhttpproc, reqistry);
+            httpService = new HttpService(inhttpproc, handler);
         }
 
         @Override
@@ -119,13 +123,8 @@ public class AS2ServerConnection {
         }
 
         void registerHandler(String requestUriPattern, HttpRequestHandler httpRequestHandler) {
-            reqistry.register(requestUriPattern, httpRequestHandler);
+            registry.register(null, requestUriPattern, httpRequestHandler);
         }
-
-        void unregisterHandler(String requestUri) {
-            reqistry.unregister(requestUri);
-        }
-
     }
 
     class RequestHandlerThread extends Thread {
@@ -134,22 +133,15 @@ public class AS2ServerConnection {
 
         public RequestHandlerThread(HttpService httpService, Socket inSocket) throws IOException {
             final int bufSize = 8 * 1024;
-            final AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(bufSize);
+            Http1Config cfg = Http1Config.custom().setBufferSize(bufSize).build();
+            final AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(cfg);
             LOG.info("Incoming connection from {}", inSocket.getInetAddress());
             inConn.bind(inSocket);
 
-            setThreadName(inConn);
+            setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + getId());
 
             this.httpService = httpService;
             this.serverConnection = inConn;
-        }
-
-        private void setThreadName(HttpServerConnection serverConnection) {
-            if (serverConnection instanceof HttpInetConnection inetConnection) {
-                setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + inetConnection.getLocalPort());
-            } else {
-                setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + getId());
-            }
         }
 
         @Override
@@ -186,7 +178,6 @@ public class AS2ServerConnection {
             } finally {
                 try {
                     this.serverConnection.close();
-                    this.serverConnection.shutdown();
                 } catch (final IOException ignore) {
                 }
             }
@@ -264,12 +255,6 @@ public class AS2ServerConnection {
             synchronized (lock) {
                 listenerThread.registerHandler(requestUri, handler);
             }
-        }
-    }
-
-    public void stopListening(String requestUri) {
-        if (listenerThread != null) {
-            listenerThread.unregisterHandler(requestUri);
         }
     }
 

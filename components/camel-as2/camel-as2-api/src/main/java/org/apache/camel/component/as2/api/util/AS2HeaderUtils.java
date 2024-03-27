@@ -22,13 +22,14 @@ import java.util.List;
 
 import org.apache.camel.component.as2.api.entity.Importance;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.ParserCursor;
-import org.apache.http.message.TokenParser;
-import org.apache.http.util.CharArrayBuffer;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HeaderElement;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.message.MessageSupport;
+import org.apache.hc.core5.http.message.ParserCursor;
+import org.apache.hc.core5.http.message.TokenParser;
+import org.apache.hc.core5.util.CharArrayBuffer;
 
 public final class AS2HeaderUtils {
 
@@ -149,7 +150,7 @@ public final class AS2HeaderUtils {
         ObjectHelper.notNull(headerName, "headerName");
         for (Header header : headers) {
             if (header.getName().equalsIgnoreCase(headerName)) {
-                for (HeaderElement headerElement : header.getElements()) {
+                for (HeaderElement headerElement : MessageSupport.parse(header)) {
                     for (NameValuePair nameValuePair : headerElement.getParameters()) {
                         if (nameValuePair.getName().equalsIgnoreCase(parameterName)) {
                             return nameValuePair.getValue();

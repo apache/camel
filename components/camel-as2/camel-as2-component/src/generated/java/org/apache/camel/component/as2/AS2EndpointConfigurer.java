@@ -31,7 +31,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("compressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
         map.put("dispositionNotificationTo", java.lang.String.class);
         map.put("ediMessageTransferEncoding", java.lang.String.class);
-        map.put("ediMessageType", org.apache.http.entity.ContentType.class);
+        map.put("ediMessageType", org.apache.hc.core5.http.ContentType.class);
         map.put("from", java.lang.String.class);
         map.put("hostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("httpConnectionPoolSize", java.lang.Integer.class);
@@ -88,7 +88,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "edimessagetransferencoding":
         case "ediMessageTransferEncoding": target.getConfiguration().setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessagetype":
-        case "ediMessageType": target.getConfiguration().setEdiMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
+        case "ediMessageType": target.getConfiguration().setEdiMessageType(property(camelContext, org.apache.hc.core5.http.ContentType.class, value)); return true;
         case "encryptingalgorithm":
         case "encryptingAlgorithm": target.getConfiguration().setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
         case "encryptingcertificatechain":
@@ -173,7 +173,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "edimessagetransferencoding":
         case "ediMessageTransferEncoding": return java.lang.String.class;
         case "edimessagetype":
-        case "ediMessageType": return org.apache.http.entity.ContentType.class;
+        case "ediMessageType": return org.apache.hc.core5.http.ContentType.class;
         case "encryptingalgorithm":
         case "encryptingAlgorithm": return org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class;
         case "encryptingcertificatechain":

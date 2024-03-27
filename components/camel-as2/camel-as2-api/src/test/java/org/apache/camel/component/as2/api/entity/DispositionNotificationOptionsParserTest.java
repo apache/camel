@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2.api.entity;
 
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils.Parameter;
+import org.apache.hc.core5.http.ParseException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -35,7 +36,7 @@ public class DispositionNotificationOptionsParserTest {
     private static final String[] SIGNED_RECEIPT_MICALG_VALUES = { "sha1" };
 
     @Test
-    public void parseDispositionNotificationOptionsTest() {
+    public void parseDispositionNotificationOptionsTest() throws ParseException {
 
         DispositionNotificationOptions dispositionNotificationOptions
                 = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(TEST_NAME_VALUES, null);

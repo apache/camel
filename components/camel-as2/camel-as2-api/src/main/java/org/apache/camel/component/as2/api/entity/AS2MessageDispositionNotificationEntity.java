@@ -32,13 +32,12 @@ import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.MicUtils;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
 
 public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
@@ -68,7 +67,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     private Map<String, String> extensionFields = new HashMap<>();
     private ReceivedContentMic receivedContentMic;
 
-    public AS2MessageDispositionNotificationEntity(HttpEntityEnclosingRequest request,
+    public AS2MessageDispositionNotificationEntity(ClassicHttpRequest request,
                                                    HttpResponse response,
                                                    DispositionMode dispositionMode,
                                                    AS2DispositionType dispositionType,
@@ -81,8 +80,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    boolean isMainBody,
                                                    PrivateKey decryptingPrivateKey,
                                                    Certificate[] validateSigningCertificateChain) throws HttpException {
+        super(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset), null);
         setMainBody(isMainBody);
-        setContentType(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset));
 
         this.finalRecipient = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
         if (this.finalRecipient == null) {
@@ -121,6 +120,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    String[] warningFields,
                                                    Map<String, String> extensionFields,
                                                    ReceivedContentMic receivedContentMic) {
+        super(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION), null);
         this.reportingUA = reportingUA;
         this.mtnName = mtnName;
         this.finalRecipient = finalRecipient;
@@ -191,9 +191,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
             // Write out mime part headers if this is not the main body of
             // message.
             if (!isMainBody()) {
-                HeaderIterator it = headerIterator();
-                while (it.hasNext()) {
-                    Header header = it.nextHeader();
+                for (Header header : getAllHeaders()) {
                     canonicalOutstream.writeln(header.toString());
                 }
                 canonicalOutstream.writeln(); // ensure empty line between
@@ -263,4 +261,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        // do nothing
+    }
 }

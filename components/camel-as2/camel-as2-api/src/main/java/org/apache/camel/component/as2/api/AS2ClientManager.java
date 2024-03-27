@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
@@ -32,11 +33,12 @@ import org.apache.camel.component.as2.api.util.EncryptingUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.ProtocolVersion;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.bouncycastle.cms.CMSCompressedDataGenerator;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.operator.OutputCompressor;
@@ -245,7 +247,8 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.ENCRYPTING_ALGORITHM, encryptingAlgorithm);
         httpContext.setAttribute(AS2ClientManager.ENCRYPTING_CERTIFICATE_CHAIN, encryptingCertificateChain);
 
-        BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", requestUri);
+        request.setVersion(new ProtocolVersion("HTTP", 1, 1));
         httpContext.setAttribute(HTTP_REQUEST, request);
 
         // Create Message Body
@@ -390,6 +393,8 @@ public class AS2ClientManager {
             httpContext.setAttribute(AS2_CONNECTION, as2ClientConnection);
             response = as2ClientConnection.send(request, httpContext);
             EntityParser.parseAS2MessageEntity(response);
+        } catch (TimeoutException e) {
+            throw new HttpException("Send operation timed out", e);
         } catch (IOException e) {
             throw new HttpException("Failed to send http request message", e);
         } catch (InterruptedException e) {

@@ -222,7 +222,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -230,7 +230,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointConsumerBuilder ediMessageType(
-                org.apache.http.entity.ContentType ediMessageType) {
+                org.apache.hc.core5.http.ContentType ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -239,7 +239,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1183,7 +1183,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1191,7 +1191,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointProducerBuilder ediMessageType(
-                org.apache.http.entity.ContentType ediMessageType) {
+                org.apache.hc.core5.http.ContentType ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -1200,7 +1200,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2123,7 +2123,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2131,7 +2131,7 @@ public interface AS2EndpointBuilderFactory {
          * @return the dsl builder
          */
         default AS2EndpointBuilder ediMessageType(
-                org.apache.http.entity.ContentType ediMessageType) {
+                org.apache.hc.core5.http.ContentType ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -2140,7 +2140,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
          * 
          * Group: common
          * 

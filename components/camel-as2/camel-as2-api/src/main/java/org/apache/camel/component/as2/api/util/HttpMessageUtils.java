@@ -29,17 +29,16 @@ import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpMessage;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.entity.ContentType;
-import org.apache.http.io.SessionInputBuffer;
-import org.apache.http.util.CharArrayBuffer;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HeaderElement;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpMessage;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.MessageSupport;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 
 public final class HttpMessageUtils {
@@ -65,48 +64,18 @@ public final class HttpMessageUtils {
     public static <T> T getEntity(HttpMessage message, Class<T> type) {
         ObjectHelper.notNull(message, "message");
         ObjectHelper.notNull(type, "type");
-        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+        if (message instanceof BasicClassicHttpRequest httpEntityEnclosingRequest) {
             HttpEntity entity = httpEntityEnclosingRequest.getEntity();
             if (entity != null && type.isInstance(entity)) {
                 return type.cast(entity);
             }
-        } else if (message instanceof HttpResponse httpResponse) {
+        } else if (message instanceof BasicClassicHttpResponse httpResponse) {
             HttpEntity entity = httpResponse.getEntity();
             if (entity != null && type.isInstance(entity)) {
                 type.cast(entity);
             }
         }
         return null;
-    }
-
-    public static String parseBodyPartContent(SessionInputBuffer inBuffer, String boundary) throws HttpException {
-        try {
-            CharArrayBuffer bodyPartContentBuffer = new CharArrayBuffer(1024);
-            CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
-            boolean foundMultipartEndBoundary = false;
-            while (inBuffer.readLine(lineBuffer) != -1) {
-                if (EntityParser.isBoundaryDelimiter(lineBuffer, null, boundary)) {
-                    foundMultipartEndBoundary = true;
-                    // Remove previous line ending: this is associated with
-                    // boundary
-                    bodyPartContentBuffer.setLength(bodyPartContentBuffer.length() - 2);
-                    lineBuffer.clear();
-                    break;
-                }
-                lineBuffer.append("\r\n"); // add line delimiter
-                bodyPartContentBuffer.append(lineBuffer);
-                lineBuffer.clear();
-            }
-            if (!foundMultipartEndBoundary) {
-                throw new HttpException("Failed to find end boundary delimiter for body part");
-            }
-
-            return bodyPartContentBuffer.toString();
-        } catch (HttpException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new HttpException("Failed to parse body part content", e);
-        }
     }
 
     public static String getParameterValue(HttpMessage message, String headerName, String parameterName) {
@@ -117,7 +86,7 @@ public final class HttpMessageUtils {
         if (header == null) {
             return null;
         }
-        for (HeaderElement headerElement : header.getElements()) {
+        for (HeaderElement headerElement : MessageSupport.parse(header)) {
             for (NameValuePair nameValuePair : headerElement.getParameters()) {
                 if (nameValuePair.getName().equalsIgnoreCase(parameterName)) {
                     return nameValuePair.getValue();
@@ -229,7 +198,7 @@ public final class HttpMessageUtils {
             ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
         } else {
             throw new HttpException(
-                    "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue()
+                    "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentType()
                                     + "' for AS2 compressed and signed message");
         }
         return ediEntity;
@@ -241,7 +210,7 @@ public final class HttpMessageUtils {
         ApplicationEntity ediEntity;
 
         MimeEntity entity = envelopedDataEntity.getEncryptedEntity(decrpytingAndSigningInfo.getDecryptingPrivateKey());
-        String contentTypeString = entity.getContentTypeValue();
+        String contentTypeString = entity.getContentType();
         if (contentTypeString == null) {
             throw new HttpException("Failed to extract EDI message: content type missing from encrypted entity");
         }
@@ -269,7 +238,7 @@ public final class HttpMessageUtils {
                 } else {
 
                     throw new HttpException(
-                            "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue()
+                            "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentType()
                                             + "' for AS2 compressed and signed entity");
                 }
                 break;
@@ -300,7 +269,7 @@ public final class HttpMessageUtils {
         ApplicationEntity ediEntity;
 
         MimeEntity entity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider());
-        String contentTypeString = entity.getContentTypeValue();
+        String contentTypeString = entity.getContentType();
         if (contentTypeString == null) {
             throw new HttpException("Failed to extract EDI payload: content type missing from compressed entity");
         }
@@ -326,7 +295,7 @@ public final class HttpMessageUtils {
                 } else {
 
                     throw new HttpException(
-                            "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue()
+                            "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentType()
                                             + "' for AS2 compressed and signed entity");
                 }
                 break;

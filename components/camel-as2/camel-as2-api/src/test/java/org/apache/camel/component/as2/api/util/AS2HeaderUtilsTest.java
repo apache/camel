@@ -17,8 +17,8 @@
 package org.apache.camel.component.as2.api.util;
 
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils.Parameter;
-import org.apache.http.message.ParserCursor;
-import org.apache.http.util.CharArrayBuffer;
+import org.apache.hc.core5.http.message.ParserCursor;
+import org.apache.hc.core5.util.CharArrayBuffer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
