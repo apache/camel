@@ -185,7 +185,7 @@
         <google-cloud-functions-bom-version>2.39.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.44.1</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.36.0</google-cloud-secretmanager-bom-version>
-        <graaljs-version>23.1.2</graaljs-version>
+        <graaljs-version>24.0.0</graaljs-version>
         <graphql-java-version>21.4</graphql-java-version>
         <greenmail-version>2.0.1</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
