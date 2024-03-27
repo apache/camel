@@ -213,8 +213,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    rest().clientRequestValidation(true)
-                            .openApi().specification("openapi-v3.json").missingOperation("ignore");
+                    rest().openApi().specification("openapi-v3.json").missingOperation("ignore").requestValidationEnabled();
 
                     from("direct:updatePet")
                             .setBody().constant("{\"pet\": \"tony the tiger\"}");

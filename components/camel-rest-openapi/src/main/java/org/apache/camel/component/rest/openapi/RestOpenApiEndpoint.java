@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.ValidationReport;
-import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -48,6 +47,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
@@ -902,7 +902,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
      * @return              the specification
      */
     static OpenAPI loadSpecificationFrom(final CamelContext camelContext, final String uri) {
-        final OpenAPIParser openApiParser = new OpenAPIParser();
+        final OpenAPIV3Parser openApiParser = new OpenAPIV3Parser();
         final ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
 

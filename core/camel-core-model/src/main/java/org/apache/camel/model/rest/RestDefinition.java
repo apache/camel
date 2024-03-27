@@ -761,8 +761,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that
      * handles this REST call.
      *
-     * @param uri the uri of the endpoint
-     * @return this builder
+     * @param  uri the uri of the endpoint
+     * @return     this builder
      */
     public RestDefinition to(String uri) {
         // add to last verb
@@ -868,7 +868,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             addRouteDefinition(camelContext, filter, answer, config.getComponent(), config.getProducerComponent());
         }
         if (openApi != null) {
-            addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent(), config.getApiContextPath());
+            addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent(),
+                    config.getApiContextPath());
         }
 
         return answer;
@@ -1007,15 +1008,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         if (binding.getProduces() != null) {
             options.put("produces", binding.getProduces());
         }
-        if (component != null && !component.isEmpty()) {
-            options.put("consumerComponentName", component);
-        }
-        if (producerComponent != null && !producerComponent.isEmpty()) {
-            options.put("producerComponentName", producerComponent);
-        }
-        Boolean validate = parseBoolean(camelContext, getClientRequestValidation()); // TODO: move this to open-api so its all the same place
-        if (validate != null && validate) {
-            options.put("requestValidationEnabled", "true");
+        if (openApi.getRequestValidationEnabled() != null) {
+            options.put("requestValidationEnabled", openApi.getRequestValidationEnabled());
         }
         if (openApi.getMissingOperation() != null) {
             options.put("missingOperation", openApi.getMissingOperation());
@@ -1141,7 +1135,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 // register all the default values for the query and header parameters
                 RestParamType type = param.getType();
                 if ((RestParamType.query == type || RestParamType.header == type)
-                    && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
+                        && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), parseText(camelContext, param.getDefaultValue()));
                 }
                 // register which parameters are required

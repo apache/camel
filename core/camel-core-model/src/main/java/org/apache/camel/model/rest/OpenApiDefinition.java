@@ -46,6 +46,9 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
+    private String requestValidationEnabled;
+    @XmlAttribute
     @Metadata(enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
     @XmlAttribute
@@ -94,12 +97,24 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         this.disabled = disabled;
     }
 
+    public String getRequestValidationEnabled() {
+        return requestValidationEnabled;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check that the request contains valid and expected data.
+     */
+    public void setRequestValidationEnabled(String requestValidationEnabled) {
+        this.requestValidationEnabled = requestValidationEnabled;
+    }
+
     public String getMissingOperation() {
         return missingOperation;
     }
 
     /**
-     * Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.
+     * Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding
+     * route.
      */
     public void setMissingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
@@ -110,8 +125,8 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     }
 
     /**
-     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern.
-     * Multiple patterns can be specified separated by comma.
+     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
+     * patterns can be specified separated by comma.
      */
     public void setMockIncludePattern(String mockIncludePattern) {
         this.mockIncludePattern = mockIncludePattern;
@@ -140,8 +155,8 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     }
 
     /**
-     * Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint.
-     * This allows clients to obtain the specification from the running Camel application.
+     * Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to
+     * obtain the specification from the running Camel application.
      */
     public OpenApiDefinition apiContextPath(String apiDoc) {
         this.apiContextPath = apiDoc;
@@ -149,8 +164,31 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     }
 
     /**
-     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be
-     * enabled later at runtime.
+     * Whether to enable validation of the client request to check that the request contains valid and expected data.
+     */
+    public OpenApiDefinition requestValidationEnabled(String requestValidationEnabled) {
+        this.requestValidationEnabled = requestValidationEnabled;
+        return this;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check that the request contains valid and expected data.
+     */
+    public OpenApiDefinition requestValidationEnabled(boolean requestValidationEnabled) {
+        this.requestValidationEnabled = requestValidationEnabled ? "true" : "false";
+        return this;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check that the request contains valid and expected data.
+     */
+    public OpenApiDefinition requestValidationEnabled() {
+        return requestValidationEnabled(true);
+    }
+
+    /**
+     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be enabled later at
+     * runtime.
      */
     public OpenApiDefinition disabled(String disabled) {
         this.disabled = disabled;
@@ -158,8 +196,8 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     }
 
     /**
-     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be
-     * enabled later at runtime.
+     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be enabled later at
+     * runtime.
      */
     public OpenApiDefinition disabled(boolean disabled) {
         this.disabled = disabled ? "true" : "false";
@@ -167,15 +205,16 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     }
 
     /**
-     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be
-     * enabled later at runtime.
+     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be enabled later at
+     * runtime.
      */
     public OpenApiDefinition disabled() {
         return disabled(true);
     }
 
     /**
-     * Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.
+     * Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding
+     * route.
      */
     public OpenApiDefinition missingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
@@ -183,8 +222,8 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     }
 
     /**
-     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern.
-     * Multiple patterns can be specified separated by comma.
+     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
+     * patterns can be specified separated by comma.
      */
     public OpenApiDefinition mockIncludePattern(String mockIncludePattern) {
         this.mockIncludePattern = mockIncludePattern;

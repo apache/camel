@@ -3305,6 +3305,7 @@ public class ModelParser extends BaseParser {
                 case "disabled": def.setDisabled(val); break;
                 case "missingOperation": def.setMissingOperation(val); break;
                 case "mockIncludePattern": def.setMockIncludePattern(val); break;
+                case "requestValidationEnabled": def.setRequestValidationEnabled(val); break;
                 case "routeId": def.setRouteId(val); break;
                 case "specification": def.setSpecification(val); break;
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
