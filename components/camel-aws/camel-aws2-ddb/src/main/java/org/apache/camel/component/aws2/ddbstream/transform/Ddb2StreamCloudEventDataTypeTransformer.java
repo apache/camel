@@ -46,7 +46,7 @@ public class Ddb2StreamCloudEventDataTypeTransformer extends Transformer {
 
         if (message.getHeaders().containsKey(Ddb2StreamConstants.EVENT_SOURCE)) {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "aws.s3.ddbstream." + message.getHeader(Ddb2StreamConstants.EVENT_SOURCE, String.class));
+                    "aws.ddbstream." + message.getHeader(Ddb2StreamConstants.EVENT_SOURCE, String.class));
         }
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(Ddb2StreamConstants.EVENT_ID, String.class));
