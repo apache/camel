@@ -990,6 +990,15 @@ Route to be executed when Circuit Breaker EIP executes fallback
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="openApi" type="tns:openApiDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+To use OpenApi as contract-first with Camel Rest DSL.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="openIdConnect" type="tns:openIdConnectDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -16375,6 +16384,24 @@ The flow used by the OAuth2 security scheme. Valid values are implicit, password
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="openApiDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence/>
+        <xs:attribute name="specification" type="xs:string" use="required"/>
+        <xs:attribute name="disabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST
+service has been disabled then it cannot be enabled later at runtime. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="openIdConnectDefinition">
     <xs:complexContent>
       <xs:extension base="tns:restSecurityDefinition">
@@ -16819,6 +16846,7 @@ custom name of the data format, not to refer to an existing data format instance
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
+          <xs:element minOccurs="0" ref="tns:openApi"/>
           <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirements" type="tns:securityDefinition">
             <xs:annotation>

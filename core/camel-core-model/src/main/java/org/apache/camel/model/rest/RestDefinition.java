@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NodeIdFactory;
@@ -49,6 +50,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
+import static org.apache.camel.support.CamelContextHelper.parseBoolean;
 import static org.apache.camel.support.CamelContextHelper.parseText;
 
 /**
@@ -90,6 +92,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     @Metadata(label = "advanced")
     private String tag;
+    @XmlElement
+    private OpenApiDefinition openApi;
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
     @Metadata(label = "security")
     private RestSecuritiesDefinition securityDefinitions;
@@ -285,6 +289,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         this.apiDocs = apiDocs;
     }
 
+    public OpenApiDefinition getOpenApi() {
+        return openApi;
+    }
+
+    /**
+     * To use an existing OpenAPI specification as contract-first for Camel Rest DSL.
+     */
+    public void setOpenApi(OpenApiDefinition openApi) {
+        this.openApi = openApi;
+    }
+
     public Resource getResource() {
         return resource;
     }
@@ -295,6 +310,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * To use an existing OpenAPI specification as contract-first for Camel Rest DSL.
+     */
+    public RestDefinition openApi(String specification) {
+        openApi = new OpenApiDefinition();
+        return openApi.specification(specification);
+    }
 
     /**
      * To set the base path of this REST service
@@ -750,6 +773,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return "rest:" + verb.asVerb() + ":" + buildUri(camelContext, verb);
     }
 
+    /**
+     * Build the from endpoint uri for the open-api
+     */
+    public String buildFromUri(CamelContext camelContext, OpenApiDefinition openApi) {
+        return "rest-openapi:" + parseText(camelContext, openApi.getSpecification());
+    }
+
     // Implementation
     // -------------------------------------------------------------------------
 
@@ -803,6 +833,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
         }
 
+        // any open-api contracts
+        if (openApi != null) {
+            disabled = CamelContextHelper.parseBoolean(camelContext, openApi.getDisabled());
+            if (disabled != null && disabled) {
+                openApi = null;
+            }
+        }
+        if (!filter.isEmpty() && openApi != null) {
+            // we cannot have both code-first and contract-first in rest-dsl
+            throw new IllegalArgumentException("Cannot have both code-first and contract-first in Rest DSL");
+        }
+
         // sanity check this rest definition do not have duplicates
         validateUniquePaths(filter);
 
@@ -811,7 +853,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             // sanity check this rest definition do not have duplicates linked routes via direct endpoints
             validateUniqueDirects(filter);
         }
-        addRouteDefinition(camelContext, filter, answer, config.getComponent(), config.getProducerComponent());
+        if (!filter.isEmpty()) {
+            addRouteDefinition(camelContext, filter, answer, config.getComponent(), config.getProducerComponent());
+        }
+        if (openApi != null) {
+            addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent());
+        }
 
         return answer;
     }
@@ -909,6 +956,82 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     @SuppressWarnings("rawtypes")
+    private void addRouteDefinition(
+            CamelContext camelContext, OpenApiDefinition openApi, List<RouteDefinition> answer,
+            String component, String producerComponent) {
+
+        RouteDefinition route = new RouteDefinition();
+        // add dummy empty stop
+        route.getOutputs().add(new StopDefinition());
+
+        RestBindingDefinition binding = new RestBindingDefinition();
+        binding.setComponent(component);
+        if (binding.getBindingMode() != null) {
+            String mode = binding.getBindingMode();
+            if ("json".equals(mode)) {
+                binding.setConsumes("application/json");
+                binding.setProduces("application/json");
+            } else if ("xml".equals(mode)) {
+                binding.setConsumes("application/xml");
+                binding.setProduces("application/xml");
+            } else if ("json_xml".equals(mode)) {
+                binding.setConsumes("application/json;application/xml");
+                binding.setProduces("application/json;application/xml");
+            }
+        }
+        binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
+        binding.setClientRequestValidation(getClientRequestValidation());
+        binding.setEnableCORS(getEnableCORS());
+        binding.setEnableNoContentResponse(getEnableNoContentResponse());
+
+        route.setRestBindingDefinition(binding);
+
+        // append options
+        Map<String, Object> options = new HashMap<>();
+        if (binding.getConsumes() != null) {
+            options.put("consumes", binding.getConsumes());
+        }
+        if (binding.getProduces() != null) {
+            options.put("produces", binding.getProduces());
+        }
+        if (component != null && !component.isEmpty()) {
+            options.put("consumerComponentName", component);
+        }
+        if (producerComponent != null && !producerComponent.isEmpty()) {
+            options.put("producerComponentName", producerComponent);
+        }
+        Boolean validate = parseBoolean(camelContext, getClientRequestValidation());
+        if (validate != null && validate) {
+            options.put("requestValidationEnabled", "true");
+        }
+
+        // include optional description
+        String description = openApi.getDescription();
+        if (description == null) {
+            description = getDescriptionText();
+        }
+        if (description != null) {
+            options.put("description", parseText(camelContext, description));
+        }
+
+        // create the from endpoint uri which is using the rest-openapi component
+        String from = buildFromUri(camelContext, openApi);
+
+        // append additional options
+        if (!options.isEmpty()) {
+            try {
+                from = URISupport.appendParametersToURI(from, options);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        // the route should be from this rest endpoint
+        route.fromRest(from);
+        route.setRestDefinition(this);
+        answer.add(route);
+    }
+
     private void addRouteDefinition(
             CamelContext camelContext, List<VerbDefinition> verbs, List<RouteDefinition> answer,
             String component, String producerComponent) {

@@ -223,6 +223,7 @@ import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.HeadDefinition;
 import org.apache.camel.model.rest.MutualTLSDefinition;
 import org.apache.camel.model.rest.OAuth2Definition;
+import org.apache.camel.model.rest.OpenApiDefinition;
 import org.apache.camel.model.rest.OpenIdConnectDefinition;
 import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.PatchDefinition;
@@ -10347,6 +10348,66 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = {
+                    "open-api",
+                    "openApi"
+            },
+            types = org.apache.camel.model.rest.OpenApiDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Open Api",
+            description = "To use OpenApi as contract-first with Camel Rest DSL.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "specification", type = "string", required = true, displayName = "Specification")
+            }
+    )
+    public static class OpenApiDefinitionDeserializer extends YamlDeserializerBase<OpenApiDefinition> {
+        public OpenApiDefinitionDeserializer() {
+            super(OpenApiDefinition.class);
+        }
+
+        @Override
+        protected OpenApiDefinition newInstance() {
+            return new OpenApiDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(OpenApiDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "specification": {
+                    String val = asText(node);
+                    target.setSpecification(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
                     "open-id-connect",
                     "openIdConnect"
             },
@@ -14053,6 +14114,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetDefinition"),
                     @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadDefinition"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "openApi", type = "object:org.apache.camel.model.rest.OpenApiDefinition", description = "To use an existing OpenAPI specification as contract-first for Camel Rest DSL.", displayName = "Open Api"),
                     @YamlProperty(name = "patch", type = "array:org.apache.camel.model.rest.PatchDefinition"),
                     @YamlProperty(name = "path", type = "string", description = "Path of the rest service, such as /foo", displayName = "Path"),
                     @YamlProperty(name = "post", type = "array:org.apache.camel.model.rest.PostDefinition"),
@@ -14112,6 +14174,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enableNoContentResponse": {
                     String val = asText(node);
                     target.setEnableNoContentResponse(val);
+                    break;
+                }
+                case "openApi": {
+                    org.apache.camel.model.rest.OpenApiDefinition val = asType(node, org.apache.camel.model.rest.OpenApiDefinition.class);
+                    target.setOpenApi(val);
                     break;
                 }
                 case "path": {

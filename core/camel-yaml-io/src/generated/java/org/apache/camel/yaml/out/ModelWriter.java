@@ -981,6 +981,9 @@ public class ModelWriter extends BaseWriter {
     public void writeOAuth2Definition(OAuth2Definition def) throws IOException {
         doWriteOAuth2Definition("oauth2", def);
     }
+    public void writeOpenApiDefinition(OpenApiDefinition def) throws IOException {
+        doWriteOpenApiDefinition("openApi", def);
+    }
     public void writeOpenIdConnectDefinition(
             OpenIdConnectDefinition def)
             throws IOException {
@@ -4410,6 +4413,16 @@ public class ModelWriter extends BaseWriter {
         doWriteList(null, "scopes", def.getScopes(), this::doWriteRestPropertyDefinition);
         endElement(name);
     }
+    protected void doWriteOpenApiDefinition(
+            String name,
+            OpenApiDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteAttribute("specification", def.getSpecification());
+        doWriteAttribute("disabled", def.getDisabled());
+        endElement(name);
+    }
     protected void doWriteOpenIdConnectDefinition(
             String name,
             OpenIdConnectDefinition def)
@@ -4561,6 +4574,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("disabled", def.getDisabled());
         doWriteAttribute("tag", def.getTag());
         doWriteAttribute("consumes", def.getConsumes());
+        doWriteElement("openApi", def.getOpenApi(), this::doWriteOpenApiDefinition);
         doWriteList(null, "securityRequirements", def.getSecurityRequirements(), this::doWriteSecurityDefinition);
         doWriteList(null, null, def.getVerbs(), this::doWriteVerbDefinitionRef);
         doWriteElement("securityDefinitions", def.getSecurityDefinitions(), this::doWriteRestSecuritiesDefinition);
@@ -4939,6 +4953,7 @@ public class ModelWriter extends BaseWriter {
                 case "DeleteDefinition" -> doWriteDeleteDefinition("delete", (DeleteDefinition) v);
                 case "GetDefinition" -> doWriteGetDefinition("get", (GetDefinition) v);
                 case "HeadDefinition" -> doWriteHeadDefinition("head", (HeadDefinition) v);
+                case "OpenApiDefinition" -> doWriteOpenApiDefinition("openApi", (OpenApiDefinition) v);
                 case "PatchDefinition" -> doWritePatchDefinition("patch", (PatchDefinition) v);
                 case "PostDefinition" -> doWritePostDefinition("post", (PostDefinition) v);
                 case "PutDefinition" -> doWritePutDefinition("put", (PutDefinition) v);
