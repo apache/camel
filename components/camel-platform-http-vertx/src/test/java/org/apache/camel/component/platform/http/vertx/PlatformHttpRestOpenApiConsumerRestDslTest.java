@@ -18,7 +18,6 @@ package org.apache.camel.component.platform.http.vertx;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,10 +36,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    RestOpenApiComponent c = context.getComponent("rest-openapi", RestOpenApiComponent.class);
-                    c.setMissingOperation("ignore");
-
-                    rest().openApi("openapi-v3.json");
+                    rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
 
                     from("direct:getPetById")
                             .setBody().constant("{\"pet\": \"tony the tiger\"}");
@@ -99,10 +95,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    RestOpenApiComponent c = context.getComponent("rest-openapi", RestOpenApiComponent.class);
-                    c.setMissingOperation("mock");
-
-                    rest().openApi("openapi-v3.json");
+                    rest().openApi().specification("openapi-v3.json").missingOperation("mock");
 
                     from("direct:getPetById")
                             .setBody().constant("{\"pet\": \"tony the tiger\"}");
@@ -163,10 +156,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    RestOpenApiComponent c = context.getComponent("rest-openapi", RestOpenApiComponent.class);
-                    c.setMissingOperation("ignore");
-
-                    rest().openApi("openapi-v3.json");
+                    rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
 
                     from("direct:getPetById")
                             .setBody().constant("{\"pet\": \"tony the tiger\"}");
@@ -193,10 +183,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    RestOpenApiComponent c = context.getComponent("rest-openapi", RestOpenApiComponent.class);
-                    c.setMissingOperation("ignore");
-
-                    rest().openApi("openapi-v3.json");
+                    rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
 
                     from("direct:getPetById")
                             .setBody().constant("{\"pet\": \"tony the tiger\"}");
@@ -223,10 +210,8 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    RestOpenApiComponent c = context.getComponent("rest-openapi", RestOpenApiComponent.class);
-                    c.setMissingOperation("ignore");
-
-                    rest().clientRequestValidation(true).openApi("openapi-v3.json");
+                    rest().clientRequestValidation(true)
+                            .openApi().specification("openapi-v3.json").missingOperation("ignore");
 
                     from("direct:updatePet")
                             .setBody().constant("{\"pet\": \"tony the tiger\"}");
@@ -253,10 +238,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    RestOpenApiComponent c = context.getComponent("rest-openapi", RestOpenApiComponent.class);
-                    c.setMissingOperation("mock");
-
-                    rest().openApi("openapi-v3.json");
+                    rest().openApi().specification("openapi-v3.json").missingOperation("mock");
                 }
             });
 

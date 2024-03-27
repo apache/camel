@@ -39,8 +39,20 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     @XmlAttribute(required = true)
     private String specification;
     @XmlAttribute
+    private String routeId;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
+    @XmlAttribute
+    @Metadata(enums = "fail,ignore,mock", defaultValue = "fail")
+    private String missingOperation;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "classpath:camel-mock/**")
+    private String mockIncludePattern;
+
+    public void setRest(RestDefinition rest) {
+        this.rest = rest;
+    }
 
     @Override
     public String getShortName() {
@@ -72,11 +84,103 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         this.disabled = disabled;
     }
 
+    public String getMissingOperation() {
+        return missingOperation;
+    }
+
+    /**
+     * Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.
+     */
+    public void setMissingOperation(String missingOperation) {
+        this.missingOperation = missingOperation;
+    }
+
+    public String getMockIncludePattern() {
+        return mockIncludePattern;
+    }
+
+    /**
+     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     */
+    public void setMockIncludePattern(String mockIncludePattern) {
+        this.mockIncludePattern = mockIncludePattern;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    /**
+     * Sets the id of the route
+     */
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
-    public RestDefinition specification(String specification) {
+    /**
+     * Path to the OpenApi specification file.
+     */
+    public OpenApiDefinition specification(String specification) {
         this.specification = specification;
+        return this;
+    }
+
+    /**
+     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be
+     * enabled later at runtime.
+     */
+    public OpenApiDefinition disabled(String disabled) {
+        this.disabled = disabled;
+        return this;
+    }
+
+    /**
+     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be
+     * enabled later at runtime.
+     */
+    public OpenApiDefinition disabled(boolean disabled) {
+        this.disabled = disabled ? "true" : "false";
+        return this;
+    }
+
+    /**
+     * Whether to disable the OpenAPI entirely. Once the OpenAPI has been disabled then it cannot be
+     * enabled later at runtime.
+     */
+    public OpenApiDefinition disabled() {
+        return disabled(true);
+    }
+
+    /**
+     * Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.
+     */
+    public OpenApiDefinition missingOperation(String missingOperation) {
+        this.missingOperation = missingOperation;
+        return this;
+    }
+
+    /**
+     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     */
+    public OpenApiDefinition mockIncludePattern(String mockIncludePattern) {
+        this.mockIncludePattern = mockIncludePattern;
+        return this;
+    }
+
+    /**
+     * Sets the id of the route
+     */
+    public OpenApiDefinition routeId(String routeId) {
+        this.routeId = routeId;
+        return this;
+    }
+
+    public RestDefinition end() {
         return rest;
     }
 

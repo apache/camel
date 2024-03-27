@@ -3303,6 +3303,9 @@ public class ModelParser extends BaseParser {
         return doParse(new OpenApiDefinition(), (def, key, val) -> {
             switch (key) {
                 case "disabled": def.setDisabled(val); break;
+                case "missingOperation": def.setMissingOperation(val); break;
+                case "mockIncludePattern": def.setMockIncludePattern(val); break;
+                case "routeId": def.setRouteId(val); break;
                 case "specification": def.setSpecification(val); break;
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }

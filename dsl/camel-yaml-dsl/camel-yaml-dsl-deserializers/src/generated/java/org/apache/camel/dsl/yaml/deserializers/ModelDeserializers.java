@@ -10360,7 +10360,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "specification", type = "string", required = true, displayName = "Specification")
+                    @YamlProperty(name = "missingOperation", type = "enum:fail,ignore,mock", defaultValue = "fail", description = "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.", displayName = "Missing Operation"),
+                    @YamlProperty(name = "mockIncludePattern", type = "string", defaultValue = "classpath:camel-mock/**", description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.", displayName = "Mock Include Pattern"),
+                    @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
+                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenApi specification file.", displayName = "Specification")
             }
     )
     public static class OpenApiDefinitionDeserializer extends YamlDeserializerBase<OpenApiDefinition> {
@@ -10381,6 +10384,21 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "disabled": {
                     String val = asText(node);
                     target.setDisabled(val);
+                    break;
+                }
+                case "missingOperation": {
+                    String val = asText(node);
+                    target.setMissingOperation(val);
+                    break;
+                }
+                case "mockIncludePattern": {
+                    String val = asText(node);
+                    target.setMockIncludePattern(val);
+                    break;
+                }
+                case "routeId": {
+                    String val = asText(node);
+                    target.setRouteId(val);
                     break;
                 }
                 case "specification": {

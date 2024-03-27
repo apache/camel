@@ -238,7 +238,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     /**
      * Whether to enable validation of the client request to check:
-     *
+     * <p>
      * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
      * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
      * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
@@ -314,9 +314,20 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * To use an existing OpenAPI specification as contract-first for Camel Rest DSL.
      */
+    public OpenApiDefinition openApi() {
+        openApi = new OpenApiDefinition();
+        openApi.setRest(this);
+        return openApi;
+    }
+
+    /**
+     * To use an existing OpenAPI specification as contract-first for Camel Rest DSL.
+     */
     public RestDefinition openApi(String specification) {
         openApi = new OpenApiDefinition();
-        return openApi.specification(specification);
+        openApi.setRest(this);
+        openApi.specification(specification);
+        return this;
     }
 
     /**
@@ -750,8 +761,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that
      * handles this REST call.
      *
-     * @param  uri the uri of the endpoint
-     * @return     this builder
+     * @param uri the uri of the endpoint
+     * @return this builder
      */
     public RestDefinition to(String uri) {
         // add to last verb
@@ -961,6 +972,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             String component, String producerComponent) {
 
         RouteDefinition route = new RouteDefinition();
+        if (openApi.getRouteId() != null) {
+            route.routeId(parseText(camelContext, openApi.getRouteId()));
+        }
         // add dummy empty stop
         route.getOutputs().add(new StopDefinition());
 
@@ -983,7 +997,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         binding.setClientRequestValidation(getClientRequestValidation());
         binding.setEnableCORS(getEnableCORS());
         binding.setEnableNoContentResponse(getEnableNoContentResponse());
-
         route.setRestBindingDefinition(binding);
 
         // append options
@@ -1003,6 +1016,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         Boolean validate = parseBoolean(camelContext, getClientRequestValidation());
         if (validate != null && validate) {
             options.put("requestValidationEnabled", "true");
+        }
+        if (openApi.getMissingOperation() != null) {
+            options.put("missingOperation", openApi.getMissingOperation());
+        }
+        if (openApi.getMockIncludePattern() != null) {
+            options.put("mockIncludePattern", openApi.getMockIncludePattern());
         }
 
         // include optional description
@@ -1119,7 +1138,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 // register all the default values for the query and header parameters
                 RestParamType type = param.getType();
                 if ((RestParamType.query == type || RestParamType.header == type)
-                        && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
+                    && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), parseText(camelContext, param.getDefaultValue()));
                 }
                 // register which parameters are required

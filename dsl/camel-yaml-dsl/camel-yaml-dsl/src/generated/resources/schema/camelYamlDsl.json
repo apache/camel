@@ -14689,9 +14689,28 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "missingOperation" : {
+            "type" : "string",
+            "title" : "Missing Operation",
+            "description" : "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
+            "default" : "fail",
+            "enum" : [ "fail", "ignore", "mock" ]
+          },
+          "mockIncludePattern" : {
+            "type" : "string",
+            "title" : "Mock Include Pattern",
+            "description" : "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
+            "default" : "classpath:camel-mock/**"
+          },
+          "routeId" : {
+            "type" : "string",
+            "title" : "Route Id",
+            "description" : "Sets the id of the route"
+          },
           "specification" : {
             "type" : "string",
-            "title" : "Specification"
+            "title" : "Specification",
+            "description" : "Path to the OpenApi specification file."
           }
         },
         "required" : [ "specification" ]

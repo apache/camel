@@ -4419,6 +4419,9 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteAttribute("mockIncludePattern", def.getMockIncludePattern());
+        doWriteAttribute("missingOperation", def.getMissingOperation());
+        doWriteAttribute("routeId", def.getRouteId());
         doWriteAttribute("specification", def.getSpecification());
         doWriteAttribute("disabled", def.getDisabled());
         endElement(name);
