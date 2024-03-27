@@ -121,8 +121,3 @@ YAML::
 ----
 ====
 
-
-== Client Request Validation
-
-TODO: Does not yet work
-
