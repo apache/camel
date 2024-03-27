@@ -131,4 +131,29 @@ from("direct:in")
 ----
 ====
 
+=== INFO
+
+In the route below, we use the qdrant component to get information about the collection named `myCollection`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(Qdrant.Headers.ACTION)
+        .constant(QdrantAction.COLLECTION_INFO)
+    .to("qdrant:myCollection")
+    .process(this::process);
+----
+
+If there is a collection, you will receive a reply of type `Collections.CollectionInfo`.
+If there is not, the exchange will contain an exception of type `QdrantActionException` with a cause of type
+`StatusRuntimeException statusRuntimeException` and status `Status.NOT_FOUND`.
+====
+
+
+
+
 include::spring-boot:partial$starter.adoc[]
