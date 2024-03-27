@@ -192,8 +192,8 @@
                 <executions>
                     <execution>
                         <id>default-test</id>
-                        <phase>none
-                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>none</phase>
                     </execution>
                 </executions>
             </plugin>
