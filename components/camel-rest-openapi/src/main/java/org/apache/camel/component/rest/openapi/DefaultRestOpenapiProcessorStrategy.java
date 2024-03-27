@@ -124,6 +124,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         final String[] includes = mockIncludePattern != null ? mockIncludePattern.split(",") : null;
 
+        boolean json = false;
+        boolean xml = false;
         Resource found = null;
         if (includes != null) {
             Collection<Resource> accepted = new ArrayList<>();
@@ -135,8 +137,6 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 }
             }
 
-            boolean json = false;
-            boolean xml = false;
             String ct = ExchangeHelper.getContentType(exchange);
             if (ct != null) {
                 json = ct.contains("json");
@@ -151,6 +151,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 boolean matchExt = !json && !xml || json && onlyExt.equals("json") || xml && onlyExt.equals("xml");
                 if (match && matchExt) {
                     found = resource;
+                    json = onlyExt.equals("json");
+                    xml = onlyExt.equals("xml");
                     break;
                 }
             }
@@ -158,6 +160,11 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         if (found != null) {
             try {
                 // use the mock data as response
+                if (json) {
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                } else if (xml) {
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/xml");
+                }
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                 exchange.getMessage().setBody(IOHelper.loadText(found.getInputStream()));
             } catch (Exception e) {

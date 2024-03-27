@@ -766,6 +766,7 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.rest-api.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
+        addInitialProperty("camel.component.rest-openapi.mockIncludePattern", "file:camel-mock/**,classpath:camel-mock/**");
     }
 
     protected String startupInfo() {

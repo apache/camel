@@ -135,8 +135,8 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     private String missingOperation;
     @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern."
                             + " Multiple patterns can be specified separated by comma.",
-              label = "consumer,advanced", defaultValue = "classpath:camel-mock/*")
-    private String mockIncludePattern = "classpath:camel-mock/*";
+              label = "consumer,advanced", defaultValue = "classpath:camel-mock/**")
+    private String mockIncludePattern = "classpath:camel-mock/**";
     @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
     @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")

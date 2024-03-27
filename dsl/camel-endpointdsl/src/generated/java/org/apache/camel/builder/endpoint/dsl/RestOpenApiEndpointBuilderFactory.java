@@ -258,7 +258,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: classpath:camel-mock/*
+         * Default: classpath:camel-mock/**
          * Group: consumer (advanced)
          * 
          * @param mockIncludePattern the value to set

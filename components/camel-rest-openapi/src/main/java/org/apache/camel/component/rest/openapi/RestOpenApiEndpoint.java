@@ -171,7 +171,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private String missingOperation;
     @UriParam(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern."
                             + " Multiple patterns can be specified separated by comma.",
-              label = "consumer,advanced", defaultValue = "classpath:camel-mock/*")
+              label = "consumer,advanced", defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern;
 
     public RestOpenApiEndpoint() {
