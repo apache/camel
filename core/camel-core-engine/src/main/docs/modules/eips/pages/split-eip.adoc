@@ -150,7 +150,7 @@ from("direct:splitUsingBody")
 XML::
 +
 In XML, you use xref:components:languages:simple-language.adoc[Simple] to refer to the message body:
-
++
 [source,xml]
 ----
 <route>
@@ -233,7 +233,7 @@ from("direct:a")
 XML::
 +
 And in XML its intuitive as `</split>` marks the end of the block:
-
++
 [source,xml]
 ----
 <route>
@@ -280,7 +280,7 @@ from("direct:start")
 XML::
 +
 And in XML we can refer to the FQN class name with `#class:` syntax as shown below:
-
++
 [source,xml]
 ----
 <route>
