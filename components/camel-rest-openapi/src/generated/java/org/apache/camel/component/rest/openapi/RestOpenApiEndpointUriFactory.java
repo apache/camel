@@ -21,7 +21,8 @@ public class RestOpenApiEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(19);
+        props.add("apiContextPath");
         props.add("basePath");
         props.add("bridgeErrorHandler");
         props.add("componentName");

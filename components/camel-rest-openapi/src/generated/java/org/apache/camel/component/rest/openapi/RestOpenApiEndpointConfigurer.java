@@ -21,6 +21,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestOpenApiEndpoint target = (RestOpenApiEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apicontextpath":
+        case "apiContextPath": target.setApiContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "basepath":
         case "basePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -57,6 +59,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apicontextpath":
+        case "apiContextPath": return java.lang.String.class;
         case "basepath":
         case "basePath": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -94,6 +98,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RestOpenApiEndpoint target = (RestOpenApiEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apicontextpath":
+        case "apiContextPath": return target.getApiContextPath();
         case "basepath":
         case "basePath": return target.getBasePath();
         case "bridgeerrorhandler":

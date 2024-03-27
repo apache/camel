@@ -3310,7 +3310,13 @@ public class ModelParser extends BaseParser {
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+        }, (def, key) -> {
+            if ("apiContextPath".equals(key)) {
+                def.setApiContextPath(doParseText());
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
     }
     protected OpenIdConnectDefinition doParseOpenIdConnectDefinition() throws IOException, XmlPullParserException {
         return doParse(new OpenIdConnectDefinition(), (def, key, val) -> {

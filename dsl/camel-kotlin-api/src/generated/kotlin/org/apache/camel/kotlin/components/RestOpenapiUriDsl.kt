@@ -84,6 +84,13 @@ public class RestOpenapiUriDsl(
   }
 
   /**
+   * Sets the context-path to use for servicing the OpenAPI specification
+   */
+  public fun apiContextPath(apiContextPath: String) {
+    it.property("apiContextPath", apiContextPath)
+  }
+
+  /**
    * Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that
    * are not mapped to a corresponding route.
    */

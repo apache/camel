@@ -15336,7 +15336,7 @@
           "apiContextPath" : {
             "type" : "string",
             "title" : "Api Context Path",
-            "description" : "Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path."
+            "description" : "Sets a leading context-path the REST API will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path."
           },
           "apiContextRouteId" : {
             "type" : "string",

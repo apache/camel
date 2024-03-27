@@ -74,4 +74,16 @@ public interface RestOpenapiProcessorStrategy {
      */
     boolean process(Operation operation, String path, Exchange exchange, AsyncCallback callback);
 
+    /**
+     * Strategy for processing the OpenAPI specification (to return the contract)
+     *
+     * @param  exchange the exchange
+     * @param  callback the AsyncCallback will be invoked when the processing of the exchange is completed. If the
+     *                  exchange is completed synchronously, then the callback is also invoked synchronously. The
+     *                  callback should therefore be careful of starting recursive loop.
+     * @return          (doneSync) true to continue execute synchronously, false to continue being executed
+     *                  asynchronously
+     */
+    boolean processApiSpecification(String specificationUri, Exchange exchange, AsyncCallback callback);
+
 }

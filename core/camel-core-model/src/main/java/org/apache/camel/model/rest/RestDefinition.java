@@ -868,7 +868,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             addRouteDefinition(camelContext, filter, answer, config.getComponent(), config.getProducerComponent());
         }
         if (openApi != null) {
-            addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent());
+            addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent(), config.getApiContextPath());
         }
 
         return answer;
@@ -969,7 +969,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @SuppressWarnings("rawtypes")
     private void addRouteDefinition(
             CamelContext camelContext, OpenApiDefinition openApi, List<RouteDefinition> answer,
-            String component, String producerComponent) {
+            String component, String producerComponent, String apiContextPath) {
 
         RouteDefinition route = new RouteDefinition();
         if (openApi.getRouteId() != null) {
@@ -1013,7 +1013,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         if (producerComponent != null && !producerComponent.isEmpty()) {
             options.put("producerComponentName", producerComponent);
         }
-        Boolean validate = parseBoolean(camelContext, getClientRequestValidation());
+        Boolean validate = parseBoolean(camelContext, getClientRequestValidation()); // TODO: move this to open-api so its all the same place
         if (validate != null && validate) {
             options.put("requestValidationEnabled", "true");
         }
@@ -1022,6 +1022,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         if (openApi.getMockIncludePattern() != null) {
             options.put("mockIncludePattern", openApi.getMockIncludePattern());
+        }
+        if (openApi.getApiContextPath() != null) {
+            options.put("apiContextPath", openApi.getApiContextPath());
         }
 
         // include optional description

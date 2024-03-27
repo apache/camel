@@ -137,6 +137,8 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " Multiple patterns can be specified separated by comma.",
               label = "consumer,advanced", defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern = "classpath:camel-mock/**";
+    @Metadata(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
+    private String apiContextPath;
     @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
     @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
@@ -156,6 +158,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
             throws Exception {
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
+        endpoint.setApiContextPath(getApiContextPath());
         endpoint.setRequestValidationCustomizer(getRequestValidationCustomizer());
         endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRequestValidationLevels(PropertiesHelper.extractProperties(parameters, "validation."));
@@ -225,6 +228,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public void setMockIncludePattern(String mockIncludePattern) {
         this.mockIncludePattern = mockIncludePattern;
+    }
+
+    public String getApiContextPath() {
+        return apiContextPath;
+    }
+
+    public void setApiContextPath(String apiContextPath) {
+        this.apiContextPath = apiContextPath;
     }
 
     public void setBasePath(final String basePath) {

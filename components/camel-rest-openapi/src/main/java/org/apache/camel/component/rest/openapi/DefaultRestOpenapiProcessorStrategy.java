@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rest.openapi;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -61,6 +62,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private String component = "direct";
     private String missingOperation;
     private String mockIncludePattern;
+    private String apiContextPath;
     private final List<String> uris = new ArrayList<>();
 
     @Override
@@ -135,6 +137,28 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 uris.add(uri);
             }
         }
+    }
+
+    @Override
+    public boolean processApiSpecification(String specificationUri, Exchange exchange, AsyncCallback callback) {
+        try {
+            Resource res = PluginHelper.getResourceLoader(camelContext).resolveResource(specificationUri);
+            if (res != null && res.exists()) {
+                if (specificationUri.endsWith("json")) {
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                } else if (specificationUri.endsWith("yaml") || specificationUri.endsWith("yml")) {
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/yaml");
+                }
+                InputStream is = res.getInputStream();
+                String data = IOHelper.loadText(is);
+                exchange.getMessage().setBody(data);
+                IOHelper.close(is);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        callback.done(true);
+        return true;
     }
 
     @Override
@@ -254,6 +278,14 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     @Override
     public void setMockIncludePattern(String mockIncludePattern) {
         this.mockIncludePattern = mockIncludePattern;
+    }
+
+    public String getApiContextPath() {
+        return apiContextPath;
+    }
+
+    public void setApiContextPath(String apiContextPath) {
+        this.apiContextPath = apiContextPath;
     }
 
     @Override

@@ -47,14 +47,17 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private final RestOpenApiEndpoint endpoint;
     private final OpenAPI openAPI;
     private final String basePath;
+    private final String apiContextPath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
     private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
 
-    public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, Processor processor,
-                                RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
+    public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
+                                Processor processor, RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
         super(processor);
         this.endpoint = endpoint;
         this.basePath = basePath;
+        // ensure starts with leading slash
+        this.apiContextPath = apiContextPath != null && !apiContextPath.startsWith("/") ? "/" + apiContextPath : apiContextPath;
         this.openAPI = openAPI;
         this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
     }
@@ -113,6 +116,11 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             }
 
             return restOpenapiProcessorStrategy.process(operation, path, exchange, callback);
+        }
+
+        // is it the api-context path
+        if (path != null && path.equals(apiContextPath)) {
+            return restOpenapiProcessorStrategy.processApiSpecification(endpoint.getSpecificationUri(), exchange, callback);
         }
 
         // okay we cannot process this requires so return either 404 or 405.

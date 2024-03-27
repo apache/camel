@@ -80,6 +80,21 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the context-path to use for servicing the OpenAPI specification.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param apiContextPath the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder apiContextPath(
+                String apiContextPath) {
+            doSetProperty("apiContextPath", apiContextPath);
+            return this;
+        }
+        /**
          * Whether the consumer should fail,ignore or return a mock response for
          * OpenAPI operations that are not mapped to a corresponding route.
          * 

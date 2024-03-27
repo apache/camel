@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
+import java.io.FileInputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -255,6 +258,48 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
                                     {
                                       "pet": "donald the dock"
                                     }"""));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRestOpenApiContextPath() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    rest().openApi()
+                            .specification("openapi-v3.json")
+                            .apiContextPath("api-doc")
+                            .missingOperation("ignore");
+
+                    from("direct:getPetById")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/api/v3/pet/123")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+
+            String spec = IOHelper.loadText(new FileInputStream("src/test/resources/openapi-v3.json"));
+
+            given()
+                    .when()
+                    .get("/api/v3/api-doc")
+                    .then()
+                    .statusCode(200)
+                    .contentType("application/json")
+                    .body(equalTo(spec));
+
         } finally {
             context.stop();
         }

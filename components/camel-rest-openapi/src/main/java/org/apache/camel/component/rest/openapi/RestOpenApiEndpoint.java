@@ -171,6 +171,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                             + " Multiple patterns can be specified separated by comma.",
               label = "consumer,advanced", defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern;
+    @UriParam(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
+    private String apiContextPath;
 
     public RestOpenApiEndpoint() {
         // help tooling instantiate endpoint
@@ -211,7 +213,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(final Processor processor) throws Exception {
         OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri);
         String path = determineBasePath(doc);
-        Processor target = new RestOpenApiProcessor(this, doc, path, processor, restOpenapiProcessorStrategy);
+        Processor target = new RestOpenApiProcessor(this, doc, path, apiContextPath, processor, restOpenapiProcessorStrategy);
         CamelContextAware.trySetCamelContext(target, getCamelContext());
         return createConsumerFor(path, target);
     }
@@ -466,6 +468,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public String getMockIncludePattern() {
         return mockIncludePattern;
+    }
+
+    public String getApiContextPath() {
+        return apiContextPath;
+    }
+
+    public void setApiContextPath(String apiContextPath) {
+        this.apiContextPath = apiContextPath;
     }
 
     Producer createProducerFor(

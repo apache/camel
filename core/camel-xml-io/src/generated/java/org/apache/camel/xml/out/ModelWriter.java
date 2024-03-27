@@ -4424,6 +4424,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("routeId", def.getRouteId());
         doWriteAttribute("specification", def.getSpecification());
         doWriteAttribute("disabled", def.getDisabled());
+        doWriteElement("apiContextPath", def.getApiContextPath(), this::doWriteString);
         endElement(name);
     }
     protected void doWriteOpenIdConnectDefinition(
