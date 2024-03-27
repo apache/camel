@@ -261,13 +261,13 @@ to use from Camel.
 
 === camel-elasticsearch / camel-opensearch
 
-The class `BulkRequestAggregationStrategy` has been renamed to `OpensearchBulkRequestAggregationStrategy`
-The class `BulkRequestAggregationStrategy` has been renamed to `ElasticsearchBulkRequestAggregationStrategy`
+The class `org.apache.camel.component.opensearch.aggregation.BulkRequestAggregationStrategy` has been renamed to `org.apache.camel.component.opensearch.aggregation.OpensearchBulkRequestAggregationStrategy`
+The class `org.apache.camel.component.es.aggregation.BulkRequestAggregationStrategy` has been renamed to `org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy`
 
 === camel-spring-redis
 
-The class `RedisIdempotentRepository` has been renamed to `SpringRedisIdempotentRepository`
-The class `RedisStringIdempotentRepository` has been renamed to `SpringRedisStringIdempotentRepository`
+The class `org.apache.camel.component.redis.processor.idempotent.RedisIdempotentRepository` has been renamed to `org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository`
+The class `org.apache.camel.component.redis.processor.idempotent.RedisStringIdempotentRepository` has been renamed to `org.apache.camel.component.redis.processor.idempotent.SpringRedisStringIdempotentRepository`
 
 
 == Camel Spring Boot
