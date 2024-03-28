@@ -29,7 +29,7 @@
 
     <artifactId>camel-js-dsl</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: JavaScript DSL</name>
+    <name>Camel :: JavaScript DSL (deprecated)</name>
     <description>Camel DSL with JavaScript</description>
 
     <properties>

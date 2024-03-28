@@ -25,6 +25,7 @@ import jdk.jshell.spi.ExecutionControl;
 /**
  * A simple implementation of {@link LoaderDelegate} tailored for camel-k use case.
  */
+@Deprecated
 final class JshLoaderDelegate implements LoaderDelegate {
     private final JshClassLoader loader;
     private final Map<String, Class<?>> types;

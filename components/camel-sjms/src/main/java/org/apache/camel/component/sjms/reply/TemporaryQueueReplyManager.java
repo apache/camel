@@ -63,9 +63,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     @Override
     protected void handleReplyMessage(String correlationID, Message message, Session session) {
-        ReplyHandler handler = correlation.get(correlationID);
+        ReplyHandler handler = correlation.remove(correlationID);
         if (handler != null) {
-            correlation.remove(correlationID);
             handler.onReply(correlationID, message, session);
         } else {
             // we could not correlate the received reply message to a matching request and therefore
