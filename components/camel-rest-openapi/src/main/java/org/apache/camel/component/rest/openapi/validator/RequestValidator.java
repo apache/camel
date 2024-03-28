@@ -39,18 +39,19 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 public class RequestValidator {
+
     private static final Pattern REST_PATH_PARAM_PATTERN = Pattern.compile("\\{([^}]+)}");
 
-    private final OpenApiInteractionValidator openApiInteractionValidator;
-    private final RestOpenApiOperation restOpenApiOperation;
-    private final RequestValidationCustomizer requestValidationCustomizer;
+    private final OpenApiInteractionValidator validator;
+    private final RestOpenApiOperation operation;
+    private final RequestValidationCustomizer customizer;
 
-    public RequestValidator(OpenApiInteractionValidator openApiInteractionValidator,
-                            RestOpenApiOperation restOpenApiOperation,
-                            RequestValidationCustomizer requestValidationCustomizer) {
-        this.openApiInteractionValidator = openApiInteractionValidator;
-        this.restOpenApiOperation = restOpenApiOperation;
-        this.requestValidationCustomizer = requestValidationCustomizer;
+    public RequestValidator(OpenApiInteractionValidator validator,
+                            RestOpenApiOperation operation,
+                            RequestValidationCustomizer customizer) {
+        this.validator = validator;
+        this.operation = operation;
+        this.customizer = customizer;
     }
 
     public Set<String> validate(Exchange exchange) {
@@ -63,7 +64,7 @@ public class RequestValidator {
         }
 
         SimpleRequest.Builder builder
-                = new SimpleRequest.Builder(restOpenApiOperation.getMethod(), resolvePathParams(exchange));
+                = new SimpleRequest.Builder(operation.getMethod(), resolvePathParams(exchange));
         builder.withContentType(contentType);
 
         // Validate request body if available
@@ -81,7 +82,7 @@ public class RequestValidator {
         }
 
         // Validate required operation query params
-        restOpenApiOperation.getQueryParams()
+        operation.getQueryParams()
                 .stream()
                 .filter(parameter -> Objects.nonNull(parameter.getRequired()) && parameter.getRequired())
                 .forEach(parameter -> {
@@ -96,7 +97,7 @@ public class RequestValidator {
                 });
 
         // Validate operation required headers
-        restOpenApiOperation.getHeaders()
+        operation.getHeaders()
                 .stream()
                 .filter(parameter -> Objects.nonNull(parameter.getRequired()) && parameter.getRequired())
                 .forEach(parameter -> {
@@ -111,11 +112,11 @@ public class RequestValidator {
                 });
 
         // Apply any extra customizations to the validation request
-        requestValidationCustomizer.customizeSimpleRequestBuilder(builder, restOpenApiOperation, exchange);
+        customizer.customizeSimpleRequestBuilder(builder, operation, exchange);
 
         // Perform validation and capture errors
         Set<String> validationErrors = new LinkedHashSet<>();
-        openApiInteractionValidator.validateRequest(builder.build())
+        validator.validateRequest(builder.build())
                 .getMessages()
                 .stream()
                 .filter(validationMessage -> validationMessage.getLevel().equals(ValidationReport.Level.ERROR))
@@ -129,7 +130,7 @@ public class RequestValidator {
     }
 
     protected String resolvePathParams(Exchange exchange) {
-        String path = restOpenApiOperation.getUriTemplate();
+        String path = operation.getUriTemplate();
         Matcher matcher = REST_PATH_PARAM_PATTERN.matcher(path);
         String pathToProcess = path;
         while (matcher.find()) {

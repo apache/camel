@@ -200,14 +200,14 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName(componentName);
         component.setHost("http://localhost:" + petstore.port());
-        component.setSpecificationUri(RestOpenApiComponentV3YamlTest.class.getResource("/openapi-v3.yaml").toURI());
+        component.setSpecificationUri(RestOpenApiComponentV3YamlTest.class.getResource("/openapi-v3.yaml").toString());
 
         camelContext.addComponent("petStore", component);
 
         final RestOpenApiComponent altPetStore = new RestOpenApiComponent();
         altPetStore.setComponentName(componentName);
         altPetStore.setHost("http://localhost:" + petstore.port());
-        altPetStore.setSpecificationUri(RestOpenApiComponentV3YamlTest.class.getResource("/alt-openapi.yaml").toURI());
+        altPetStore.setSpecificationUri(RestOpenApiComponentV3YamlTest.class.getResource("/alt-openapi.yaml").toString());
 
         camelContext.addComponent("altPetStore", altPetStore);
 
@@ -243,7 +243,8 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
     @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
         petstore.stubFor(get(urlEqualTo("/openapi-v3.yaml")).willReturn(aResponse().withBody(
-                Files.readAllBytes(Paths.get(RestOpenApiComponentV3YamlTest.class.getResource("/openapi-v3.yaml").toURI())))));
+                Files.readAllBytes(
+                        Paths.get(RestOpenApiComponentV3YamlTest.class.getResource("/openapi-v3.yaml").getPath())))));
 
         petstore.stubFor(post(urlEqualTo("/api/v3/pet"))
                 .withRequestBody(equalTo(

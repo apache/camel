@@ -5,6 +5,10 @@ Apache Camel offers a REST styled DSL.
 The intention is to allow end users to define REST services (hosted by Camel) using a
 REST style with verbs such as get, post, delete etc.
 
+NOTE: From *Camel 4.6* onwards the Rest DSL has been improved with a _contract first_ approach using vanilla OpenAPI specification
+files. This is documented in the xref:rest-dsl-openapi.adoc[Rest DSL with OpenAPI contract first] page. This current page documents the
+_code first_ Rest DSL that Camel provides for a long time.
+
 == How it works
 
 The Rest DSL is a facade that builds xref:components::rest-component.adoc[Rest] endpoints as

@@ -270,6 +270,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "on-fallback": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
             case "onFallback": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
             case "org.apache.camel.model.OnFallbackDefinition": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
+            case "open-api": return new ModelDeserializers.OpenApiDefinitionDeserializer();
+            case "openApi": return new ModelDeserializers.OpenApiDefinitionDeserializer();
+            case "org.apache.camel.model.rest.OpenApiDefinition": return new ModelDeserializers.OpenApiDefinitionDeserializer();
             case "open-id-connect": return new ModelDeserializers.OpenIdConnectDefinitionDeserializer();
             case "openIdConnect": return new ModelDeserializers.OpenIdConnectDefinitionDeserializer();
             case "org.apache.camel.model.rest.OpenIdConnectDefinition": return new ModelDeserializers.OpenIdConnectDefinitionDeserializer();

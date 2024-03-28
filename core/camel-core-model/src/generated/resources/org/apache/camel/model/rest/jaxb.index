@@ -8,6 +8,7 @@ GetDefinition
 HeadDefinition
 MutualTLSDefinition
 OAuth2Definition
+OpenApiDefinition
 OpenIdConnectDefinition
 ParamDefinition
 PatchDefinition

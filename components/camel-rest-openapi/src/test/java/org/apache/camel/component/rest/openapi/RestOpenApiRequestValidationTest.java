@@ -22,7 +22,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -68,7 +67,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiRequestValidationTest extends CamelTestSupport {
@@ -362,7 +360,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         RestOpenApiEndpoint endpoint = context.getEndpoint(petStoreVersion + ":#addPet", RestOpenApiEndpoint.class);
         endpoint.createProducer();
         assertFalse(endpoint.isRequestValidationEnabled());
-        assertNull(endpoint.getRequestValidationCustomizer());
+        assertNotNull(endpoint.getRequestValidationCustomizer());
         assertTrue(endpoint.getRequestValidationLevels().isEmpty());
     }
 
@@ -551,7 +549,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     private RestOpenApiComponent createRestOpenApiComponent(String specificationUri) {
         RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName("http");
-        component.setSpecificationUri(URI.create("classpath:" + specificationUri));
+        component.setSpecificationUri("classpath:" + specificationUri);
         component.setConsumes("application/json");
         component.setProduces("application/json");
         component.setHost("http://localhost:" + wireMockServer.port());

@@ -14668,6 +14668,58 @@
         },
         "required" : [ "key" ]
       },
+      "org.apache.camel.model.rest.OpenApiDefinition" : {
+        "title" : "Open Api",
+        "description" : "To use OpenApi as contract-first with Camel Rest DSL.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "missingOperation" : {
+            "type" : "string",
+            "title" : "Missing Operation",
+            "description" : "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
+            "default" : "fail",
+            "enum" : [ "fail", "ignore", "mock" ]
+          },
+          "mockIncludePattern" : {
+            "type" : "string",
+            "title" : "Mock Include Pattern",
+            "description" : "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
+            "default" : "classpath:camel-mock/**"
+          },
+          "requestValidationEnabled" : {
+            "type" : "boolean",
+            "title" : "Request Validation Enabled",
+            "description" : "Whether to enable validation of the client request to check that the request contains valid and expected data."
+          },
+          "routeId" : {
+            "type" : "string",
+            "title" : "Route Id",
+            "description" : "Sets the id of the route"
+          },
+          "specification" : {
+            "type" : "string",
+            "title" : "Specification",
+            "description" : "Path to the OpenApi specification file."
+          }
+        },
+        "required" : [ "specification" ]
+      },
       "org.apache.camel.model.rest.OpenIdConnectDefinition" : {
         "title" : "Open Id Connect",
         "description" : "Rest security OpenID Connect definition",
@@ -15289,7 +15341,7 @@
           "apiContextPath" : {
             "type" : "string",
             "title" : "Api Context Path",
-            "description" : "Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path."
+            "description" : "Sets a leading context-path the REST API will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path."
           },
           "apiContextRouteId" : {
             "type" : "string",
@@ -15517,6 +15569,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "openApi" : {
+            "title" : "Open Api",
+            "description" : "To use an existing OpenAPI specification as contract-first for Camel Rest DSL.",
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.OpenApiDefinition"
           },
           "patch" : {
             "type" : "array",

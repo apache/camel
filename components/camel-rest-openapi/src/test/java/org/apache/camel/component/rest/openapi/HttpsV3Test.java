@@ -18,7 +18,6 @@ package org.apache.camel.component.rest.openapi;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -123,7 +122,7 @@ public abstract class HttpsV3Test extends CamelTestSupport {
         final String host = "https://localhost:" + petstore.httpsPort();
         component.setHost(host);
         // Workaround bug resolving relative references with file URLs in swagger parser
-        component.setSpecificationUri(new URI(host + getSpecName()));
+        component.setSpecificationUri(host + getSpecName());
         //        component.setSpecificationUri(HttpsV3Test.class.getResource(getSpecName()).toURI());
         camelContext.addComponent("petStore", component);
 
