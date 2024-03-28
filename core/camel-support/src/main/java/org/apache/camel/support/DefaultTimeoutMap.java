@@ -134,6 +134,11 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     @Override
     public V remove(K key) {
+        // if no contains, the lock is not necessary
+        if (!map.containsKey(key)) {
+            return null;
+        }
+
         V value = null;
         lock.lock();
         try {
