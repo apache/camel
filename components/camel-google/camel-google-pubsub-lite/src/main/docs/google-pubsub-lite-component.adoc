@@ -3,7 +3,7 @@
 :shortname: google-pubsub-lite
 :artifactid: camel-google-pubsub-lite
 :description: Send and receive messages to/from Google Cloud Platform PubSub Lite Service.
-:since: 4.5
+:since: 4.6
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
@@ -18,6 +18,11 @@
 The Google Pubsub Lite component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Lite Infrastructure] via
 the https://github.com/googleapis/java-pubsublite[Google Cloud Pub/Sub Lite Client for Java].
+
+The standard https://camel.apache.org/components/google-pubsub-component.html[Google Pub/Sub connector] isn't compatible with Pub/Sub Lite service due to API and message model differences. Please refer to the following links to learn more about these differences:
+
+* https://cloud.google.com/pubsub/docs/overview#lite[Pub/Sub Lite Overview]
+* https://cloud.google.com/pubsub/docs/choosing-pubsub-or-lite[Choosing between Pub/Sub or Pub/Sub Lite]
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
