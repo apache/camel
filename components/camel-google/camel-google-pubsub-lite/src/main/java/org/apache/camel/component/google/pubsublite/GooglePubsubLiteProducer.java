@@ -87,7 +87,7 @@ public class GooglePubsubLiteProducer extends DefaultProducer {
 
         Publisher publisher = endpoint.getComponent().getPublisher(topicName, endpoint);
 
-        Object body = exchange.getIn().getBody();
+        Object body = exchange.getMessage().getBody();
         ByteString byteString;
 
         if (body instanceof String) {
@@ -99,7 +99,7 @@ public class GooglePubsubLiteProducer extends DefaultProducer {
         }
 
         PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
-        Map<String, String> attributes = exchange.getIn().getHeader(ATTRIBUTES, Map.class);
+        Map<String, String> attributes = exchange.getMessage().getHeader(ATTRIBUTES, Map.class);
         if (attributes != null) {
             for (Map.Entry<String, String> attribute : attributes.entrySet()) {
                 if (!attribute.getKey().startsWith(RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX)) {
@@ -107,7 +107,7 @@ public class GooglePubsubLiteProducer extends DefaultProducer {
                 }
             }
         }
-        String orderingKey = exchange.getIn().getHeader(ORDERING_KEY, String.class);
+        String orderingKey = exchange.getMessage().getHeader(ORDERING_KEY, String.class);
         if (orderingKey != null) {
             messageBuilder.setOrderingKey(orderingKey);
         }
@@ -115,6 +115,6 @@ public class GooglePubsubLiteProducer extends DefaultProducer {
         PubsubMessage message = messageBuilder.build();
 
         ApiFuture<String> messageIdFuture = publisher.publish(message);
-        exchange.getIn().setHeader(GooglePubsubLiteConstants.MESSAGE_ID, messageIdFuture.get());
+        exchange.getMessage().setHeader(GooglePubsubLiteConstants.MESSAGE_ID, messageIdFuture.get());
     }
 }

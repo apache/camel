@@ -54,16 +54,17 @@ public class GooglePubsubLiteProducerTest extends CamelTestSupport {
         GooglePubsubLiteProducer producer = new GooglePubsubLiteProducer(mockEndpoint);
         String testPayload = "Test Payload";
 
+        when(mockExchange.getIn()).thenReturn(mockMessage);
         when(mockEndpoint.getProjectId()).thenReturn(123456789012L);
         when(mockEndpoint.getLocation()).thenReturn("europe-west3");
         when(mockEndpoint.getDestinationName()).thenReturn("testDestination");
         when(mockEndpoint.getComponent()).thenReturn(mock(GooglePubsubLiteComponent.class));
         when(mockEndpoint.getComponent().getPublisher(any(), any())).thenReturn(mockPublisher);
 
-        when(mockExchange.getIn()).thenReturn(mockMessage);
+        when(mockExchange.getMessage()).thenReturn(mockMessage);
         when(mockMessage.getBody()).thenReturn(testPayload.getBytes());
-        when(mockExchange.getIn().getHeader(GooglePubsubLiteConstants.ATTRIBUTES, Map.class)).thenReturn(null);
-        when(mockExchange.getIn().getHeader(GooglePubsubLiteConstants.ORDERING_KEY, String.class)).thenReturn(null);
+        when(mockExchange.getMessage().getHeader(GooglePubsubLiteConstants.ATTRIBUTES, Map.class)).thenReturn(null);
+        when(mockExchange.getMessage().getHeader(GooglePubsubLiteConstants.ORDERING_KEY, String.class)).thenReturn(null);
 
         when(mockPublisher.publish(any())).thenReturn(ApiFutures.immediateFuture("messageId"));
 

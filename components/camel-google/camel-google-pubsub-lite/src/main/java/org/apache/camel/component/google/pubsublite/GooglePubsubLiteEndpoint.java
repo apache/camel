@@ -94,11 +94,6 @@ public class GooglePubsubLiteEndpoint extends DefaultEndpoint {
 
     public GooglePubsubLiteEndpoint(String uri, Component component) {
         super(uri, component);
-
-        if (!(component instanceof GooglePubsubLiteComponent)) {
-            throw new IllegalArgumentException(
-                    "The component provided is not GooglePubsubLiteComponent : " + component.getClass().getName());
-        }
     }
 
     @Override

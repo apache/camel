@@ -29,7 +29,11 @@ import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.stub.PublisherStubSettings;
 import com.google.cloud.pubsublite.SubscriptionPath;
 import com.google.cloud.pubsublite.TopicPath;
-import com.google.cloud.pubsublite.cloudpubsub.*;
+import com.google.cloud.pubsublite.cloudpubsub.FlowControlSettings;
+import com.google.cloud.pubsublite.cloudpubsub.Publisher;
+import com.google.cloud.pubsublite.cloudpubsub.PublisherSettings;
+import com.google.cloud.pubsublite.cloudpubsub.Subscriber;
+import com.google.cloud.pubsublite.cloudpubsub.SubscriberSettings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
@@ -83,7 +87,7 @@ public class GooglePubsubLiteComponent extends DefaultComponent {
 
     private RemovalListener<String, Publisher> removalListener = removal -> {
         Publisher publisher = removal.getValue();
-        if (publisher == null) {
+        if (ObjectHelper.isNotEmpty(publisher)) {
             return;
         }
         publisher.stopAsync();
