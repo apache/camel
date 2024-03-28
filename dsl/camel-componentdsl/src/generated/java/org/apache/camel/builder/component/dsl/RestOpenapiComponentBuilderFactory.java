@@ -124,6 +124,21 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the context-path to use for servicing the OpenAPI specification.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param apiContextPath the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder apiContextPath(
+                java.lang.String apiContextPath) {
+            doSetProperty("apiContextPath", apiContextPath);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -185,6 +200,24 @@ public interface RestOpenapiComponentBuilderFactory {
         default RestOpenapiComponentBuilder consumerComponentName(
                 java.lang.String consumerComponentName) {
             doSetProperty("consumerComponentName", consumerComponentName);
+            return this;
+        }
+        /**
+         * Used for inclusive filtering of mock data from directories. The
+         * pattern is using Ant-path style pattern. Multiple patterns can be
+         * specified separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: classpath:camel-mock/**
+         * Group: consumer (advanced)
+         * 
+         * @param mockIncludePattern the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder mockIncludePattern(
+                java.lang.String mockIncludePattern) {
+            doSetProperty("mockIncludePattern", mockIncludePattern);
             return this;
         }
         /**
@@ -378,9 +411,11 @@ public interface RestOpenapiComponentBuilderFactory {
             case "requestValidationEnabled": ((RestOpenApiComponent) component).setRequestValidationEnabled((boolean) value); return true;
             case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.lang.String) value); return true;
             case "requestValidationCustomizer": ((RestOpenApiComponent) component).setRequestValidationCustomizer((org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer) value); return true;
+            case "apiContextPath": ((RestOpenApiComponent) component).setApiContextPath((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "missingOperation": ((RestOpenApiComponent) component).setMissingOperation((java.lang.String) value); return true;
             case "consumerComponentName": ((RestOpenApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;
+            case "mockIncludePattern": ((RestOpenApiComponent) component).setMockIncludePattern((java.lang.String) value); return true;
             case "restOpenapiProcessorStrategy": ((RestOpenApiComponent) component).setRestOpenapiProcessorStrategy((org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy) value); return true;
             case "host": ((RestOpenApiComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
