@@ -65,7 +65,7 @@ class DynamicClassLoader extends URLClassLoader {
             return loadClass(clazzName);
         } catch (ClassNotFoundException e) {
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-            cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, clazzName.replace('.', '/'), null, "java/lang/Object", null);
+            cw.visit(Opcodes.V17, Opcodes.ACC_PUBLIC, clazzName.replace('.', '/'), null, "java/lang/Object", null);
             cw.visitEnd();
             return defineClass(clazzName, cw.toByteArray());
         }
