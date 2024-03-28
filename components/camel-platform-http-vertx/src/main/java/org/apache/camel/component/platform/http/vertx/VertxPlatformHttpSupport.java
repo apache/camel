@@ -66,16 +66,17 @@ public final class VertxPlatformHttpSupport {
     }
 
     static Object toHttpResponse(
-            HttpServerResponse response, Message message, HeaderFilterStrategy headerFilterStrategy,
+            RoutingContext ctx, Message message, HeaderFilterStrategy headerFilterStrategy,
             boolean muteExceptions) {
         final Exchange exchange = message.getExchange();
 
+        HttpServerResponse response = ctx.response();
         final int code = determineResponseCode(exchange, message.getBody());
         response.setStatusCode(code);
 
         // copy headers from Message to Response
         if (headerFilterStrategy != null) {
-            copyMessageHeadersToResponse(response, message, headerFilterStrategy, exchange);
+            copyMessageHeadersToResponse(response, ctx.pathParams(), message, headerFilterStrategy, exchange);
         }
 
         final Object body = getBody(message, muteExceptions, exchange);
@@ -130,11 +131,18 @@ public final class VertxPlatformHttpSupport {
     }
 
     private static void copyMessageHeadersToResponse(
-            HttpServerResponse response, Message message, HeaderFilterStrategy headerFilterStrategy, Exchange exchange) {
+            HttpServerResponse response, Map<String, String> pathParams,
+            Message message, HeaderFilterStrategy headerFilterStrategy, Exchange exchange) {
         final TypeConverter tc = exchange.getContext().getTypeConverter();
 
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             final String key = entry.getKey();
+
+            // skip headers that are path-params as we do not want to leak them back to the caller
+            if (pathParams.containsKey(key)) {
+                continue;
+            }
+
             final Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
@@ -170,7 +178,7 @@ public final class VertxPlatformHttpSupport {
 
     static Future<Void> writeResponse(
             RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
-        final Object body = toHttpResponse(ctx.response(), camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
+        final Object body = toHttpResponse(ctx, camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
         final Promise<Void> promise = Promise.promise();
 
         if (body == null) {
