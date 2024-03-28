@@ -242,6 +242,8 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     public ScheduledExecutorService newSingleThreadScheduledExecutor(Object source, String name) {
         ThreadPoolProfile profile = new ThreadPoolProfile(name);
         profile.setPoolSize(1);
+        profile.setMaxPoolSize(1);
+        profile.setKeepAliveTime(0L);
         profile.setAllowCoreThreadTimeOut(false);
         return newScheduledThreadPool(source, name, profile);
     }
