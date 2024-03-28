@@ -15,37 +15,28 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.common;
+package org.apache.camel.dsl.jbang.core.commands.bind;
+
+import java.util.Map;
 
 /**
- * Printer interface used by commands to write output to given print stream. By default, uses System out print stream,
- * but unit tests for instance may use a different print stream.
+ * Binding provider able to create an endpoint that can be used as a source/sink/step in a Pipe specification. Endpoints
+ * may represent a Kamelet, Camel endpoint URI or a Kubernetes object reference such as a reference to a Knative broker
+ * for instance. Implementations must not hold any state as the binding provider instance is used for multiple calls.
  */
-public interface Printer {
+public interface BindingProvider {
 
-    default void println() {
-        System.out.println();
+    String getEndpoint(
+            EndpointType type, String uriExpression, Map<String, Object> endpointProperties, TemplateProvider templateProvider)
+            throws Exception;
+
+    boolean canHandle(String uriExpression);
+
+    enum EndpointType {
+        SOURCE,
+        SINK,
+        STEP,
+        ERROR_HANDLER
     }
 
-    default void println(String line) {
-        System.out.println(line);
-    }
-
-    default void print(String output) {
-        System.out.print(output);
-    }
-
-    default void printf(String format, Object... args) {
-        System.out.printf(format, args);
-    }
-
-    default void printErr(Exception e) {
-        printf("Error: %s%n", e.getMessage());
-    }
-
-    /**
-     * Default printer uses System out print stream.
-     */
-    class SystemOutPrinter implements Printer {
-    }
 }

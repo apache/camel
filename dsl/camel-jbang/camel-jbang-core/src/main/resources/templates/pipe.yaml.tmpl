@@ -4,10 +4,8 @@ metadata:
   name: {{ .Name }}
 spec:
   source:
-    uri: {{ .Source }}
-    {{ .SourceProperties }}
+{{ .Source }}
 {{ .Steps }}
   sink:
-    uri: {{ .Sink }}
-    {{ .SinkProperties }}
+{{ .Sink }}
 {{ .ErrorHandler }}
