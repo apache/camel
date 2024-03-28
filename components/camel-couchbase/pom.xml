@@ -92,9 +92,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <reuseForks>true</reuseForks>
-                        </configuration>
                         <executions>
                             <execution>
                                 <id>integration-test</id>
@@ -114,7 +111,6 @@
                                 </goals>
                                 <configuration>
                                     <groups>couchbase-7</groups>
-                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
                                     <systemPropertyVariables>
                                         <couchbase.container>couchbase/server:7.1.5</couchbase.container>
                                     </systemPropertyVariables>

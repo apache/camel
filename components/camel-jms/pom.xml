@@ -239,13 +239,6 @@
                                     <reuseForks>true</reuseForks>
                                     <excludedGroups>not-parallel</excludedGroups>
                                     <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-                                    <systemPropertyVariables>
-                                        <junit.jupiter.execution.parallel.enabled>${camel.failsafe.parallel}</junit.jupiter.execution.parallel.enabled>
-                                        <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
-                                        <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
-                                        <junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
-                                        <junit.jupiter.execution.parallel.config.dynamic.factor>${camel.failsafe.parallel.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>
-                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                             <execution>

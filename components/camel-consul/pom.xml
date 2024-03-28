@@ -173,7 +173,6 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <skipITs>${skipTests}</skipITs>
-                            <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                  <consul.container>icr.io/ppc64le-oss/consul-ppc64le:1.9.4</consul.container>
                            </systemPropertyVariables>

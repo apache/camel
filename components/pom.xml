@@ -525,11 +525,17 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <reuseForks>true</reuseForks>
+                            <argLine>${camel.failsafe.fork.vmargs}</argLine>
+                            <reuseForks>${camel.failsafe.reuseForks}</reuseForks>
                             <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
+                                <junit.jupiter.execution.parallel.enabled>${camel.failsafe.parallel}</junit.jupiter.execution.parallel.enabled>
+                                <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
+                                <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
+                                <junit.jupiter.execution.parallel.config.strategy>${camel.failsafe.parallel.strategy}</junit.jupiter.execution.parallel.config.strategy>
+                                <junit.jupiter.execution.parallel.config.dynamic.factor>${camel.failsafe.parallel.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>
                             </systemPropertyVariables>
                         </configuration>
                         <executions>
