@@ -56,7 +56,7 @@ public interface RestOpenapiComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param basePath the value to set
          * @return the dsl builder
@@ -66,40 +66,141 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
-         * Name of the Camel component that will perform the requests. The
-         * component must be present in Camel registry and it must implement
-         * RestProducerFactory service provider interface. If not set CLASSPATH
-         * is searched for single component that implements RestProducerFactory
-         * SPI. Can be overridden in endpoint configuration.
+         * Enable validation of requests against the configured OpenAPI
+         * specification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Default: false
+         * Group: common
          * 
-         * @param componentName the value to set
+         * @param requestValidationEnabled the value to set
          * @return the dsl builder
          */
-        default RestOpenapiComponentBuilder componentName(
-                java.lang.String componentName) {
-            doSetProperty("componentName", componentName);
+        default RestOpenapiComponentBuilder requestValidationEnabled(
+                boolean requestValidationEnabled) {
+            doSetProperty("requestValidationEnabled", requestValidationEnabled);
             return this;
         }
         /**
-         * What payload type this component capable of consuming. Could be one
-         * type, like application/json or multiple types as application/json,
-         * application/xml; q=0.5 according to the RFC7231. This equates to the
-         * value of Accept HTTP header. If set overrides any value found in the
-         * OpenApi specification. Can be overridden in endpoint configuration.
+         * Path to the OpenApi specification file. The scheme, host base path
+         * are taken from this specification, but these can be overridden with
+         * properties on the component or endpoint level. If not given the
+         * component tries to load openapi.json resource. Note that the host
+         * defined on the component and endpoint of this Component should
+         * contain the scheme, hostname and optionally the port in the URI
+         * syntax (i.e. https://api.example.com:8080). Can be overridden in
+         * endpoint configuration.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Default: openapi.json
+         * Group: common
          * 
-         * @param consumes the value to set
+         * @param specificationUri the value to set
          * @return the dsl builder
          */
-        default RestOpenapiComponentBuilder consumes(java.lang.String consumes) {
-            doSetProperty("consumes", consumes);
+        default RestOpenapiComponentBuilder specificationUri(
+                java.lang.String specificationUri) {
+            doSetProperty("specificationUri", specificationUri);
+            return this;
+        }
+        /**
+         * If request validation is enabled, this option provides the capability
+         * to customize the creation of OpenApiInteractionValidator used to
+         * validate requests.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param requestValidationCustomizer the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder requestValidationCustomizer(
+                org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer requestValidationCustomizer) {
+            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the consumer should fail,ignore or return a mock response for
+         * OpenAPI operations that are not mapped to a corresponding route.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: fail
+         * Group: consumer
+         * 
+         * @param missingOperation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder missingOperation(
+                java.lang.String missingOperation) {
+            doSetProperty("missingOperation", missingOperation);
+            return this;
+        }
+        /**
+         * Name of the Camel component that will service the requests. The
+         * component must be present in Camel registry and it must implement
+         * RestOpenApiConsumerFactory service provider interface. If not set
+         * CLASSPATH is searched for single component that implements
+         * RestOpenApiConsumerFactory SPI. Can be overridden in endpoint
+         * configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param consumerComponentName the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder consumerComponentName(
+                java.lang.String consumerComponentName) {
+            doSetProperty("consumerComponentName", consumerComponentName);
+            return this;
+        }
+        /**
+         * To use a custom strategy for how to process Rest DSL requests.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param restOpenapiProcessorStrategy the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder restOpenapiProcessorStrategy(
+                org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
+            doSetProperty("restOpenapiProcessorStrategy", restOpenapiProcessorStrategy);
             return this;
         }
         /**
@@ -148,6 +249,43 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
+         * Name of the Camel component that will perform the requests. The
+         * component must be present in Camel registry and it must implement
+         * RestProducerFactory service provider interface. If not set CLASSPATH
+         * is searched for single component that implements RestProducerFactory
+         * SPI. Can be overridden in endpoint configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param componentName the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder componentName(
+                java.lang.String componentName) {
+            doSetProperty("componentName", componentName);
+            return this;
+        }
+        /**
+         * What payload type this component capable of consuming. Could be one
+         * type, like application/json or multiple types as application/json,
+         * application/xml; q=0.5 according to the RFC7231. This equates to the
+         * value of Accept HTTP header. If set overrides any value found in the
+         * OpenApi specification. Can be overridden in endpoint configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder consumes(java.lang.String consumes) {
+            doSetProperty("consumes", consumes);
+            return this;
+        }
+        /**
          * What payload type this component is producing. For example
          * application/json according to the RFC7231. This equates to the value
          * of Content-Type HTTP header. If set overrides any value present in
@@ -156,73 +294,13 @@ public interface RestOpenapiComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param produces the value to set
          * @return the dsl builder
          */
         default RestOpenapiComponentBuilder produces(java.lang.String produces) {
             doSetProperty("produces", produces);
-            return this;
-        }
-        /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Default:
-         * org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer
-         * Group: producer
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default RestOpenapiComponentBuilder requestValidationCustomizer(
-                org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
-         * Enable validation of requests against the configured OpenAPI
-         * specification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param requestValidationEnabled the value to set
-         * @return the dsl builder
-         */
-        default RestOpenapiComponentBuilder requestValidationEnabled(
-                boolean requestValidationEnabled) {
-            doSetProperty("requestValidationEnabled", requestValidationEnabled);
-            return this;
-        }
-        /**
-         * Path to the OpenApi specification file. The scheme, host base path
-         * are taken from this specification, but these can be overridden with
-         * properties on the component or endpoint level. If not given the
-         * component tries to load openapi.json resource. Note that the host
-         * defined on the component and endpoint of this Component should
-         * contain the scheme, hostname and optionally the port in the URI
-         * syntax (i.e. https://api.example.com:8080). Can be overridden in
-         * endpoint configuration.
-         * 
-         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
-         * 
-         * Default: openapi.json
-         * Group: producer
-         * 
-         * @param specificationUri the value to set
-         * @return the dsl builder
-         */
-        default RestOpenapiComponentBuilder specificationUri(
-                java.net.URI specificationUri) {
-            doSetProperty("specificationUri", specificationUri);
             return this;
         }
         /**
@@ -297,14 +375,18 @@ public interface RestOpenapiComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "basePath": ((RestOpenApiComponent) component).setBasePath((java.lang.String) value); return true;
-            case "componentName": ((RestOpenApiComponent) component).setComponentName((java.lang.String) value); return true;
-            case "consumes": ((RestOpenApiComponent) component).setConsumes((java.lang.String) value); return true;
+            case "requestValidationEnabled": ((RestOpenApiComponent) component).setRequestValidationEnabled((boolean) value); return true;
+            case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.lang.String) value); return true;
+            case "requestValidationCustomizer": ((RestOpenApiComponent) component).setRequestValidationCustomizer((org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer) value); return true;
+            case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "missingOperation": ((RestOpenApiComponent) component).setMissingOperation((java.lang.String) value); return true;
+            case "consumerComponentName": ((RestOpenApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;
+            case "restOpenapiProcessorStrategy": ((RestOpenApiComponent) component).setRestOpenapiProcessorStrategy((org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy) value); return true;
             case "host": ((RestOpenApiComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "componentName": ((RestOpenApiComponent) component).setComponentName((java.lang.String) value); return true;
+            case "consumes": ((RestOpenApiComponent) component).setConsumes((java.lang.String) value); return true;
             case "produces": ((RestOpenApiComponent) component).setProduces((java.lang.String) value); return true;
-            case "requestValidationCustomizer": ((RestOpenApiComponent) component).setRequestValidationCustomizer((org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer) value); return true;
-            case "requestValidationEnabled": ((RestOpenApiComponent) component).setRequestValidationEnabled((boolean) value); return true;
-            case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.net.URI) value); return true;
             case "autowiredEnabled": ((RestOpenApiComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "sslContextParameters": ((RestOpenApiComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((RestOpenApiComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;

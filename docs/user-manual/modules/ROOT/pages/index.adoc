@@ -62,6 +62,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
 * xref:components::jmx-component.adoc[Camel JMX]
 * xref:rest-dsl.adoc[Working with REST and Rest DSL]
+** xref:rest-dsl-openapi.adoc[Rest DSL contract first with OpenAPI]
 * xref:writing-components.adoc[Writing Custom Camel Components]
 
 === xref:architecture.adoc[Architecture]

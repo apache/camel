@@ -25,6 +25,7 @@
 *** xref:notify-builder.adoc[NotifyBuilder]
 *** xref:advice-with.adoc[AdviceWith]
 ** xref:rest-dsl.adoc[Working with REST and Rest DSL]
+*** xref:rest-dsl-openapi.adoc[Rest DSL contract first]
 ** xref:writing-components.adoc[Writing Components]
 ** xref:release-guide.adoc[Release guide]
 *** xref:release-guide-website.adoc[Adding doc versions to the website]

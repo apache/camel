@@ -990,6 +990,15 @@ Route to be executed when Circuit Breaker EIP executes fallback
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="openApi" type="tns:openApiDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+To use OpenApi as contract-first with Camel Rest DSL.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="openIdConnect" type="tns:openIdConnectDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -16375,6 +16384,73 @@ The flow used by the OAuth2 security scheme. Valid values are implicit, password
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="openApiDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="apiContextPath" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="specification" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Path to the OpenApi specification file.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="routeId" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the id of the route.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="disabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST
+service has been disabled then it cannot be enabled later at runtime. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="requestValidationEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable validation of the client request to check that the request contains valid and expected data. Default
+value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="missingOperation" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.
+Default value: fail
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mockIncludePattern" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
+patterns can be specified separated by comma. Default value: classpath:camel-mock/**
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="openIdConnectDefinition">
     <xs:complexContent>
       <xs:extension base="tns:restSecurityDefinition">
@@ -16693,8 +16769,8 @@ or camel-netty-http that includes a HTTP server.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a leading API context-path the REST API services will be using. This can be used when using components such as
-camel-servlet where the deployed web application is deployed using a context-path.
+Sets a leading context-path the REST API will be using. This can be used when using components such as camel-servlet
+where the deployed web application is deployed using a context-path.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16819,6 +16895,7 @@ custom name of the data format, not to refer to an existing data format instance
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
+          <xs:element minOccurs="0" ref="tns:openApi"/>
           <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirements" type="tns:securityDefinition">
             <xs:annotation>

@@ -18,3 +18,8 @@ This is the same logic that the routing engine uses, whether to continue routing
 === camel-elasticsearch
 
 The class `org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy` has been renamed to `org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy`.
+
+=== camel-rest-openapi
+
+The `specifciationUri` in the `rest-api` component has changed from being a `java.net.URI` to a `String` type
+, as it uses Camels `ResourceLoader` to load from pluggable resources and also more tooling friendly.

@@ -1,0 +1,123 @@
+= REST DSL with contract first OpenAPI
+
+From *Camel 4.6* onwards the xref:rest-dsl.adoc[Rest DSL] has been improved with a _contract first_
+approach using vanilla OpenAPI specification.
+
+== How it works
+
+The Rest DSL OpenAPI is a facade that builds xref:components::rest-openapi-component.adoc[Rest OpenAPI] endpoint as
+consumer for Camel routes. The actual HTTP transport is leveraged by using the xref:components::platform-http-component.adoc[Platform HTTP],
+which makes it plugin to Camel Spring Boot, Camel Quarkus or can run standalone with Camel Main.
+
+== Contract first
+
+The _contract first_ approach requires you to have an existing OpenAPI v3 specification file.
+This contract is a standard OpenAPI contract, and you can use any existing API design tool to build such contracts.
+
+TIP: Camel support OpenAPI v3.0 and v3.1.
+
+In Camel, you then use the Rest DSL in _contract first_ mode. For example having a contracted in a file named `my-contract.json`,
+you can then copy this file to `src/main/resources` so its loaded from classpath.
+
+In Camel Rest DSL you can then very easily define _contract first_ as shown below:
+
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+@Override
+public void configure() throws Exception {
+    rest().openApi("petstore-v3.json");
+}
+----
+XML::
++
+[source,xml]
+----
+<rest>
+  <openApi specification="petstore-v3.json"/>
+</rest>
+----
+YAML::
++
+[source,yaml]
+----
+- rest:
+    openApi:
+      specification: petstore-v3.json
+----
+====
+
+When Camel startup the OpenAPI specification file is loaded and parsed. For every APIs
+Camel builds HTTP REST endpoint, which are routed 1:1 to Camel routes using the `direct:operationId` naming convention.
+
+The _pestore_ has 18 APIs here we look at the 5 user APIs:
+
+[source,text]
+----
+ http://0.0.0.0:8080/api/v3/user                       (POST)   (accept:application/json,application/x-www-form-urlencoded,application/xml produce:application/json,application/xml)
+ http://0.0.0.0:8080/api/v3/user/createWithList        (POST)   (accept:application/json produce:application/json,application/xml)
+ http://0.0.0.0:8080/api/v3/user/login                 (GET)    (produce:application/json,application/xml)
+ http://0.0.0.0:8080/api/v3/user/logout                (GET)
+ http://0.0.0.0:8080/api/v3/user/{username}            (DELETE,GET,PUT)
+----
+
+These APIs are outputted using the URI that clients can use to call the service.
+Each of these APIs has a unique _operation id_ which is what Camel uses for calling the route. This gives:
+
+[source,text]
+----
+ http://0.0.0.0:8080/api/v3/user                       direct:createUser
+ http://0.0.0.0:8080/api/v3/user/createWithList        direct:createUsersWithListInput
+ http://0.0.0.0:8080/api/v3/user/login                 direct:loginUser
+ http://0.0.0.0:8080/api/v3/user/logout                direct:logoutUser
+ http://0.0.0.0:8080/api/v3/user/{username}            direct:getUserByName
+----
+
+You should then implement a route for each API that starts from those direct endpoints listed above, such as:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+@Override
+public void configure() throws Exception {
+    rest().openApi("petstore-v3.json");
+
+    from("direct:getUserByName")
+       ... // do something here
+}
+----
+XML::
++
+[source,xml]
+----
+<rest>
+  <openApi specification="petstore-v3.json"/>
+</rest>
+<route>
+  <from uri="direct:getUserByName"/>
+  // do something here
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- rest:
+    openApi:
+      specification: petstore-v3.json
+- route:
+    from:
+      uri: direct:getUserByName
+      steps:
+        - log:
+            message: "do something here"
+----
+====
+

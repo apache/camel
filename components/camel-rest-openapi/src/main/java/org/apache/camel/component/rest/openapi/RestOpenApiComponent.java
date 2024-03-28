@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.rest.openapi;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer;
 import org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
@@ -32,7 +32,6 @@ import org.apache.camel.util.PropertiesHelper;
 
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isMediaRange;
-import static org.apache.camel.util.ObjectHelper.notNull;
 import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
@@ -48,7 +47,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * <pre>
  * from(...).to("rest-openapi:https://petstore3.swagger.io/api/v3/openapi.json#getPetById")
  * </pre>
- *
+ * <p>
  * This relies on only one {@link RestProducerFactory} component being available to Camel, you can use specific, for
  * instance preconfigured component by using the {@code componentName} endpoint property. For example using Undertow
  * component in Java DSL:
@@ -62,7 +61,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  *
  * from(...).to("rest-openapi:https://petstore3.swagger.io/api/v3/openapi.json#getPetById?componentName=myUndertow")
  * </pre>
- *
+ * <p>
  * The most concise way of using this component would be to define it in the Camel context under a meaningful name, for
  * example:
  *
@@ -78,32 +77,34 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  */
 @Component("rest-openapi")
 public final class RestOpenApiComponent extends DefaultComponent implements SSLContextParametersAware {
+
     public static final String DEFAULT_BASE_PATH = "/";
 
-    static final URI DEFAULT_SPECIFICATION_URI = URI.create(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI_STR);
+    static final String DEFAULT_SPECIFICATION_URI = "openapi.json";
 
-    static final String DEFAULT_SPECIFICATION_URI_STR = "openapi.json";
-
-    @Metadata(
-              description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in OpenApi specification.",
-              defaultValue = "", label = "producer")
+    @Metadata(description = "Path to the OpenApi specification file. The scheme, host base path are taken from this"
+                            + " specification, but these can be overridden with properties on the component or endpoint level. If not"
+                            + " given the component tries to load `openapi.json` resource. Note that the `host` defined on the"
+                            + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
+                            + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overridden in endpoint"
+                            + " configuration.",
+              defaultValue = DEFAULT_SPECIFICATION_URI, label = "common")
+    private String specificationUri;
+    @Metadata(description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in OpenApi specification.",
+              label = "common")
     private String basePath = "";
-
     @Metadata(description = "Name of the Camel component that will perform the requests. The component must be present"
                             + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
                             + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in"
                             + " endpoint configuration.",
-              label = "producer", required = false)
+              label = "producer,advanced")
     private String componentName;
-
-    @Metadata(
-              description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
-                            + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
-                            + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification."
-                            + " Can be overridden in endpoint configuration",
-              label = "producer")
-    private String consumes;
-
+    @Metadata(description = "Name of the Camel component that will service the requests. The component must be present"
+                            + " in Camel registry and it must implement RestOpenApiConsumerFactory service provider interface. If not set"
+                            + " CLASSPATH is searched for single component that implements RestOpenApiConsumerFactory SPI.  Can be overridden in"
+                            + " endpoint configuration.",
+              label = "consumer,advanced")
+    private String consumerComponentName;
     @Metadata(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
                             + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
                             + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
@@ -112,40 +113,39 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " configuration.",
               label = "producer")
     private String host;
-
-    @Metadata(
-              description = "What payload type this component is producing. For example `application/json`"
+    @Metadata(description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
+                            + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
+                            + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification."
+                            + " Can be overridden in endpoint configuration",
+              label = "producer,advanced")
+    private String consumes;
+    @Metadata(description = "What payload type this component is producing. For example `application/json`"
                             + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
                             + " any value present in the OpenApi specification. Can be overridden in endpoint configuration.",
-              label = "producer")
+              label = "producer,advanced")
     private String produces;
-
-    @Metadata(description = "Path to the OpenApi specification file. The scheme, host base path are taken from this"
-                            + " specification, but these can be overridden with properties on the component or endpoint level. If not"
-                            + " given the component tries to load `openapi.json` resource. Note that the `host` defined on the"
-                            + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
-                            + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overridden in endpoint"
-                            + " configuration.",
-              defaultValue = DEFAULT_SPECIFICATION_URI_STR, label = "producer")
-    private URI specificationUri;
-
-    @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters"
-                            + " set in the Camel context ",
-              label = "security")
-    private SSLContextParameters sslContextParameters;
-
-    @Metadata(description = "Enable usage of global SSL context parameters.", label = "security",
-              defaultValue = "false")
-    private boolean useGlobalSslContextParameters;
-
-    @Metadata(description = "Enable validation of requests against the configured OpenAPI specification",
-              defaultValue = "false")
+    @Metadata(label = "common", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
-
     @Metadata(description = "If request validation is enabled, this option provides the capability to customize"
                             + " the creation of OpenApiInteractionValidator used to validate requests.",
-              defaultValue = "org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer")
-    private RequestValidationCustomizer requestValidationCustomizer;
+              label = "common,advanced")
+    private RequestValidationCustomizer requestValidationCustomizer = new DefaultRequestValidationCustomizer();
+    @Metadata(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
+              label = "consumer", enums = "fail,ignore,mock", defaultValue = "fail")
+    private String missingOperation;
+    @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern."
+                            + " Multiple patterns can be specified separated by comma.",
+              label = "consumer,advanced", defaultValue = "classpath:camel-mock/**")
+    private String mockIncludePattern = "classpath:camel-mock/**";
+    @Metadata(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
+    private String apiContextPath;
+    @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
+    private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
+    @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
+    private boolean useGlobalSslContextParameters;
+    @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context ",
+              label = "security")
+    private SSLContextParameters sslContextParameters;
 
     public RestOpenApiComponent() {
     }
@@ -158,7 +158,13 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
             throws Exception {
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
+        endpoint.setApiContextPath(getApiContextPath());
+        endpoint.setRequestValidationCustomizer(getRequestValidationCustomizer());
+        endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRequestValidationLevels(PropertiesHelper.extractProperties(parameters, "validation."));
+        endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
+        endpoint.setMissingOperation(getMissingOperation());
+        endpoint.setMockIncludePattern(getMockIncludePattern());
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -169,6 +175,10 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public String getComponentName() {
         return componentName;
+    }
+
+    public String getConsumerComponentName() {
+        return consumerComponentName;
     }
 
     public String getConsumes() {
@@ -183,7 +193,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         return produces;
     }
 
-    public URI getSpecificationUri() {
+    public String getSpecificationUri() {
         return specificationUri;
     }
 
@@ -196,12 +206,48 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         return useGlobalSslContextParameters;
     }
 
+    public RestOpenapiProcessorStrategy getRestOpenapiProcessorStrategy() {
+        return restOpenapiProcessorStrategy;
+    }
+
+    public void setRestOpenapiProcessorStrategy(RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
+        this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
+    }
+
+    public String getMissingOperation() {
+        return missingOperation;
+    }
+
+    public void setMissingOperation(String missingOperation) {
+        this.missingOperation = missingOperation;
+    }
+
+    public String getMockIncludePattern() {
+        return mockIncludePattern;
+    }
+
+    public void setMockIncludePattern(String mockIncludePattern) {
+        this.mockIncludePattern = mockIncludePattern;
+    }
+
+    public String getApiContextPath() {
+        return apiContextPath;
+    }
+
+    public void setApiContextPath(String apiContextPath) {
+        this.apiContextPath = apiContextPath;
+    }
+
     public void setBasePath(final String basePath) {
         this.basePath = notEmpty(basePath, "basePath");
     }
 
     public void setComponentName(final String componentName) {
         this.componentName = notEmpty(componentName, "componentName");
+    }
+
+    public void setConsumerComponentName(String consumerComponentName) {
+        this.consumerComponentName = consumerComponentName;
     }
 
     public void setConsumes(final String consumes) {
@@ -216,8 +262,8 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         this.produces = isMediaRange(produces, "produces");
     }
 
-    public void setSpecificationUri(final URI specificationUri) {
-        this.specificationUri = notNull(specificationUri, "specificationUri");
+    public void setSpecificationUri(String specificationUri) {
+        this.specificationUri = specificationUri;
     }
 
     public void setSslContextParameters(final SSLContextParameters sslContextParameters) {
@@ -237,8 +283,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         return this.requestValidationEnabled;
     }
 
-    public void setRequestValidationCustomizer(
-            RequestValidationCustomizer requestValidationCustomizer) {
+    public void setRequestValidationCustomizer(RequestValidationCustomizer requestValidationCustomizer) {
         this.requestValidationCustomizer = requestValidationCustomizer;
     }
 

@@ -223,6 +223,7 @@ import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.HeadDefinition;
 import org.apache.camel.model.rest.MutualTLSDefinition;
 import org.apache.camel.model.rest.OAuth2Definition;
+import org.apache.camel.model.rest.OpenApiDefinition;
 import org.apache.camel.model.rest.OpenIdConnectDefinition;
 import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.PatchDefinition;
@@ -10347,6 +10348,90 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = {
+                    "open-api",
+                    "openApi"
+            },
+            types = org.apache.camel.model.rest.OpenApiDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Open Api",
+            description = "To use OpenApi as contract-first with Camel Rest DSL.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "missingOperation", type = "enum:fail,ignore,mock", defaultValue = "fail", description = "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.", displayName = "Missing Operation"),
+                    @YamlProperty(name = "mockIncludePattern", type = "string", defaultValue = "classpath:camel-mock/**", description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.", displayName = "Mock Include Pattern"),
+                    @YamlProperty(name = "requestValidationEnabled", type = "boolean", description = "Whether to enable validation of the client request to check that the request contains valid and expected data.", displayName = "Request Validation Enabled"),
+                    @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
+                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenApi specification file.", displayName = "Specification")
+            }
+    )
+    public static class OpenApiDefinitionDeserializer extends YamlDeserializerBase<OpenApiDefinition> {
+        public OpenApiDefinitionDeserializer() {
+            super(OpenApiDefinition.class);
+        }
+
+        @Override
+        protected OpenApiDefinition newInstance() {
+            return new OpenApiDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(OpenApiDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "missingOperation": {
+                    String val = asText(node);
+                    target.setMissingOperation(val);
+                    break;
+                }
+                case "mockIncludePattern": {
+                    String val = asText(node);
+                    target.setMockIncludePattern(val);
+                    break;
+                }
+                case "requestValidationEnabled": {
+                    String val = asText(node);
+                    target.setRequestValidationEnabled(val);
+                    break;
+                }
+                case "routeId": {
+                    String val = asText(node);
+                    target.setRouteId(val);
+                    break;
+                }
+                case "specification": {
+                    String val = asText(node);
+                    target.setSpecification(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
                     "open-id-connect",
                     "openIdConnect"
             },
@@ -13796,7 +13881,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiComponent", type = "enum:openapi,swagger", description = "The name of the Camel component to use as the REST API. If no API Component has been explicit configured, then Camel will lookup if there is a Camel component responsible for servicing and generating the REST API documentation, or if a org.apache.camel.spi.RestApiProcessorFactory is registered in the registry. If either one is found, then that is being used.", displayName = "Api Component"),
-                    @YamlProperty(name = "apiContextPath", type = "string", description = "Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.", displayName = "Api Context Path"),
+                    @YamlProperty(name = "apiContextPath", type = "string", description = "Sets a leading context-path the REST API will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.", displayName = "Api Context Path"),
                     @YamlProperty(name = "apiContextRouteId", type = "string", description = "Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id.", displayName = "Api Context Route Id"),
                     @YamlProperty(name = "apiHost", type = "string", description = "To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the generated host with this configured hostname", displayName = "Api Host"),
                     @YamlProperty(name = "apiProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the api documentation. For example set property api.title to my cool stuff", displayName = "Api Property"),
@@ -14053,6 +14138,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetDefinition"),
                     @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadDefinition"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "openApi", type = "object:org.apache.camel.model.rest.OpenApiDefinition", description = "To use an existing OpenAPI specification as contract-first for Camel Rest DSL.", displayName = "Open Api"),
                     @YamlProperty(name = "patch", type = "array:org.apache.camel.model.rest.PatchDefinition"),
                     @YamlProperty(name = "path", type = "string", description = "Path of the rest service, such as /foo", displayName = "Path"),
                     @YamlProperty(name = "post", type = "array:org.apache.camel.model.rest.PostDefinition"),
@@ -14112,6 +14198,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enableNoContentResponse": {
                     String val = asText(node);
                     target.setEnableNoContentResponse(val);
+                    break;
+                }
+                case "openApi": {
+                    org.apache.camel.model.rest.OpenApiDefinition val = asType(node, org.apache.camel.model.rest.OpenApiDefinition.class);
+                    target.setOpenApi(val);
                     break;
                 }
                 case "path": {

@@ -98,7 +98,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                             ? config.getApiComponent() : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
                     String path = config.getApiContextPath() != null ? config.getApiContextPath() : "api-doc";
                     String uri = String.format(
-                            "rest-api:%s/%s?componentName=%s&apiComponentName=%s&contextIdPattern=#name#",
+                            "rest-api:%s/%s?componentName=%s&apiComponentName=%s",
                             path, camelContext.getName(), componentName, apiComponent);
 
                     restApiEndpoint = camelContext.getEndpoint(uri);

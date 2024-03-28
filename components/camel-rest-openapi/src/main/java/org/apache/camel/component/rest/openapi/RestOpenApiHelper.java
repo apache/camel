@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest.openapi;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +25,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 import org.apache.camel.spi.ContentTypeAware;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.ObjectHelper;
@@ -88,6 +92,46 @@ final class RestOpenApiHelper {
             return false;
         }
         return location.toLowerCase().endsWith(".yml") || location.toLowerCase().endsWith(".yaml");
+    }
+
+    public static String getBasePathFromOpenApi(final OpenAPI openApi) {
+        String basePath = null;
+        if (openApi.getServers() != null) {
+            for (Server server : openApi.getServers()) {
+                if (server.getUrl() != null) {
+                    try {
+                        URI serverUrl = new URI(parseVariables(server.getUrl(), server));
+                        basePath = serverUrl.getPath();
+                        // Is this really necessary?
+                        if (basePath.indexOf("//") == 0) {
+                            // strip off the first "/" if double "/" exists
+                            basePath = basePath.substring(1);
+                        }
+                        if ("/".equals(basePath)) {
+                            basePath = "";
+                        }
+                    } catch (URISyntaxException e) {
+                        //not a valid whole url, just the basePath
+                        basePath = server.getUrl();
+                    }
+                }
+            }
+        }
+        return basePath;
+    }
+
+    public static String parseVariables(String url, Server server) {
+        Pattern p = Pattern.compile("\\{(.*?)\\}");
+        Matcher m = p.matcher(url);
+        while (m.find()) {
+
+            String variable = m.group(1);
+            if (server != null && server.getVariables() != null && server.getVariables().get(variable) != null) {
+                String varValue = server.getVariables().get(variable).getDefault();
+                url = url.replace("{" + variable + "}", varValue);
+            }
+        }
+        return url;
     }
 
 }

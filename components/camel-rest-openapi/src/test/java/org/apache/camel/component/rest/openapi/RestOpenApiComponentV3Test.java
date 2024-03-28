@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
@@ -200,14 +201,15 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName(componentName);
         component.setHost("http://localhost:" + petstore.port());
-        component.setSpecificationUri(RestOpenApiComponentV3Test.class.getResource("/openapi-v3.json").toURI());
+        component.setSpecificationUri(
+                Objects.requireNonNull(RestOpenApiComponentV3Test.class.getResource("/openapi-v3.json")).toString());
 
         camelContext.addComponent("petStore", component);
 
         final RestOpenApiComponent altPetStore = new RestOpenApiComponent();
         altPetStore.setComponentName(componentName);
         altPetStore.setHost("http://localhost:" + petstore.port());
-        altPetStore.setSpecificationUri(RestOpenApiComponentV3Test.class.getResource("/alt-openapi.json").toURI());
+        altPetStore.setSpecificationUri(RestOpenApiComponentV3Test.class.getResource("/alt-openapi.json").toString());
 
         camelContext.addComponent("altPetStore", altPetStore);
 

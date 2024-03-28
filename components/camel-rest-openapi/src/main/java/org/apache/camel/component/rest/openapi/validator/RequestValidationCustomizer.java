@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
  * An abstraction for customizing the behavior of OpenApi request validation.
  */
 public interface RequestValidationCustomizer {
+
     /**
      * Customizes the creation of a {@link OpenApiInteractionValidator}. The default implementation enables validation
      * of only the request body.
