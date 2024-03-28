@@ -9,7 +9,7 @@
     "javaType": "org.apache.camel.component.mllp.MllpConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mllp",
-    "version": "4.5.0-SNAPSHOT"
+    "version": "4.6.0-SNAPSHOT"
   }
 }
 
