@@ -29,7 +29,7 @@
 
     <artifactId>camel-jsh-dsl</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: JavaShell DSL</name>
+    <name>Camel :: JavaShell DSL (deprecated)</name>
     <description>Camel DSL with JavaShell</description>
 
     <properties>

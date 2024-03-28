@@ -62,7 +62,8 @@ public class Jolokia extends ProcessBaseCommand {
             } else {
                 // find a new free port to use when starting a new connection
                 long port = AvailablePortFinder.getNextAvailable(8778, 10000);
-                options = new OptionsAndArgs(null, "--port", Long.toString(port), "start", Long.toString(pid));
+                options = new OptionsAndArgs(
+                        null, "--port", Long.toString(port), "--discoveryEnabled", "true", "start", Long.toString(pid));
             }
             VirtualMachineHandlerOperations vmHandler = PlatformUtils.createVMAccess(options);
             CommandDispatcher dispatcher = new CommandDispatcher(options);

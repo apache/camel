@@ -24,6 +24,7 @@ import jdk.jshell.spi.ExecutionControl;
 /**
  * An implementation of a {@link ClassLoader} that allow hold class bytecode.
  */
+@Deprecated
 final class JshClassLoader extends ClassLoader {
     private final Map<String, ExecutionControl.ClassBytecodes> types;
 
