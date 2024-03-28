@@ -4,7 +4,7 @@
 :artifactid: camel-dynamic-router
 :description: The Dynamic Router control endpoint for operations that allow routing participants to subscribe or unsubscribe to participate in dynamic message routing.
 :since: 4.4
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
