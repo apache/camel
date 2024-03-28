@@ -117,38 +117,44 @@ public interface StreamCachingStrategy extends StaticService {
     boolean isEnabled();
 
     /**
-     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
-     * {@link java.io.InputStream} is allowed.
+     * To filter stream caching of a given set of allowed/denied classes. Classes inheriting from any of the specified
+     * classes will be cached.
+     * By default, all classes that inherit from {@link java.io.InputStream} are allowed.
      */
     void setAllowClasses(Class<?>... classes);
 
     /**
-     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
-     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     * To filter stream caching of a given set of allowed/denied classes. Classes inheriting from any of the specified
+     * classes will be cached. Multiple class names can be separated by a comma.
+     * By default, all classes that inherit from {@link java.io.InputStream} are allowed.
      */
     void setAllowClasses(String names);
 
     /**
-     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
-     * {@link java.io.InputStream} is allowed.
+     * To filter stream caching of a given set of allowed/denied classes. Classes inheriting from any of the specified
+     * classes will be cached. Multiple class names can be separated by a comma.
+     * By default, all classes that inherit from {@link java.io.InputStream} are allowed.
      */
     Collection<Class<?>> getAllowClasses();
 
     /**
-     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
-     * {@link java.io.InputStream} is allowed.
+     * To filter stream caching of a given set of allowed/denied classes. Classes inheriting from any of the specified
+     * classes will be cached.
+     * By default, all classes that inherit from {@link java.io.InputStream} are allowed.
      */
     void setDenyClasses(Class<?>... classes);
 
     /**
-     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
-     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     * To filter stream caching of a given set of allowed/denied classes. Classes inheriting from any of the specified
+     * classes will be cached. Multiple class names can be separated by a comma.
+     * By default, all classes that inherit from {@link java.io.InputStream} are allowed.
      */
     void setDenyClasses(String names);
 
     /**
-     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
-     * {@link java.io.InputStream} is allowed.
+     * To filter stream caching of a given set of allowed/denied classes. Classes inheriting from any of the specified
+     * classes will be cached.
+     * By default, all classes that inherit from {@link java.io.InputStream} are allowed.
      */
     Collection<Class<?>> getDenyClasses();
 
@@ -162,7 +168,7 @@ public interface StreamCachingStrategy extends StaticService {
     void setSpoolEnabled(boolean spoolEnabled);
 
     /**
-     * Is spooling to disk enabled.
+     * Whether disk spooling is enabled.
      */
     boolean isSpoolEnabled();
 
@@ -179,7 +185,7 @@ public interface StreamCachingStrategy extends StaticService {
     void setSpoolDirectory(String path);
 
     /**
-     * Threshold in bytes when overflow to disk is activated.
+     * Threshold in bytes above which disk overflow is enabled.
      * <p/>
      * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb). Use
      * <tt>-1</tt> to disable overflow to disk.
@@ -189,7 +195,7 @@ public interface StreamCachingStrategy extends StaticService {
     long getSpoolThreshold();
 
     /**
-     * Sets a percentage (1-99) of used heap memory threshold to activate spooling to disk.
+     * Sets a percentage (1-99) of used heap memory to use as a threshold to enable disk spooling.
      *
      * @param percentage percentage of used heap memory.
      */
@@ -198,7 +204,7 @@ public interface StreamCachingStrategy extends StaticService {
     int getSpoolUsedHeapMemoryThreshold();
 
     /**
-     * Sets what the upper bounds should be when {@link #setSpoolUsedHeapMemoryThreshold(int)} is in use.
+     * Sets the upper limit type when {@link #setSpoolUsedHeapMemoryThreshold(int)} is used.
      *
      * @param bounds the bounds
      */
@@ -207,16 +213,16 @@ public interface StreamCachingStrategy extends StaticService {
     SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit();
 
     /**
-     * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
+     * Defines the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
      * <p/>
-     * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
+     * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}.
      */
     void setBufferSize(int bufferSize);
 
     int getBufferSize();
 
     /**
-     * Sets a cipher name to use when spooling to disk to write with encryption.
+     * Defines the cypher name to use to encrypt data during disk spooling.
      * <p/>
      * By default the data is not encrypted.
      */
@@ -225,39 +231,40 @@ public interface StreamCachingStrategy extends StaticService {
     String getSpoolCipher();
 
     /**
-     * Whether to remove the temporary directory when stopping.
+     * Whether to delete the temporary directory on shutdown.
      * <p/>
-     * This option is default <tt>true</tt>
+     * This option defaults to <tt>true</tt>
      */
     void setRemoveSpoolDirectoryWhenStopping(boolean remove);
 
     boolean isRemoveSpoolDirectoryWhenStopping();
 
     /**
-     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules returns
-     * <tt>true</tt> then {@link #shouldSpoolCache(long)} returns <tt>true</tt>. If this option is <tt>false</tt>, then
-     * <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must return <tt>true</tt>.
+     * Specifies whether if any of the rules specified by {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule}
+     * returns <tt>true</tt>, then {@link #shouldSpoolCache(long)} will also return <tt>true</tt>.
+     * If this option is set to <tt>false</tt>, then <b>all</b> the rules specified by
+     * {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must return <tt>true</tt>.
      * <p/>
-     * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
+     * The default value is <tt>false</tt>, indicating that all rules must return <tt>true</tt>.
      */
     void setAnySpoolRules(boolean any);
 
     boolean isAnySpoolRules();
 
     /**
-     * Gets the utilization statistics.
+     * Gets usage statistics.
      */
     Statistics getStatistics();
 
     /**
-     * Adds the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rule to be used.
+     * Adds a {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rule to use.
      */
     void addSpoolRule(SpoolRule rule);
 
     /**
-     * Determines if the stream should be spooled or not. For example if the stream length is over a threshold.
+     * Determines if the stream should be spooled or not. For example if the stream length exceeds a threshold.
      * <p/>
-     * This allows implementations to use custom strategies to determine if spooling is needed or not.
+     * This allows implementations to use custom strategies to determine whether or not spooling is necessary.
      *
      * @param  length the length of the stream
      * @return        <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
@@ -265,7 +272,7 @@ public interface StreamCachingStrategy extends StaticService {
     boolean shouldSpoolCache(long length);
 
     /**
-     * Caches the body aas a {@link StreamCache}.
+     * Caches the body as a {@link StreamCache}.
      *
      * @param  exchange the exchange
      * @return          the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
