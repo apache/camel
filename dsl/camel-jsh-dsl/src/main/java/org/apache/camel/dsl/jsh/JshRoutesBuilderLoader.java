@@ -44,6 +44,7 @@ import org.apache.camel.util.IOHelper;
 @ManagedResource(description = "Managed JShell RoutesBuilderLoader")
 @Experimental
 @RoutesLoader("jsh")
+@Deprecated
 public class JshRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     public static final String EXTENSION = "jsh";
 
