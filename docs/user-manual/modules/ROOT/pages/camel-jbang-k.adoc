@@ -339,6 +339,121 @@ This Pipe explicitly defines Camel endpoint URIs that act as a source and sink.
 
 NOTE: You can also specify endpoint parameters directly on the source/sink like `--source timer:tick?period=5000`
 
+=== Binding to Knative broker
+
+You can reference Knative eventing resources as source or sink in a Pipe resource.
+The reference to the Knative resource is identified by the apiVersion, kind and resource name. Users may add properties to the object reference as usual.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+  annotations:
+    camel.apache.org/operator.id: camel-k
+spec:
+  source: # <1>
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: timer-source
+    properties:
+      message: "Camel rocks!"
+  sink: # <2>
+    ref:
+      kind: Broker
+      apiVersion: eventing.knative.dev/v1
+      name: default
+    properties:
+      type: org.apache.camel.event.my-event # <3>
+----
+<1> Reference to the source that provides data
+<2> Reference to the Knative broker where data should be sent to
+<3> The CloudEvents event type that is used for the events
+
+NOTE: Knative eventing uses CloudEvents data format by default. Camel provides the concept of data types that is able to transform from many different component data formats to CloudEvents data type. The data type transformation will set proper event properties such as ce-type, ce-source or ce-subject.
+
+When referencing a Knative broker as a source the `type` property is mandatory in order to filter the event stream.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+  annotations:
+    camel.apache.org/operator.id: camel-k
+spec:
+  source: # <1>
+    ref:
+      kind: Broker
+      apiVersion: eventing.knative.dev/v1
+      name: default
+    properties:
+      type: org.apache.camel.event.my-event # <2>
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: log-sink
+----
+<1> Reference to the source Knative broker that provides the events
+<2> Filter the event stream for events with the given CloudEvents event type
+
+=== Binding to Knative channels
+
+Knative eventing provides the channel resource for a subscription consumer model.
+Camel K is able to automatically manage the subscription when referencing Knative eventing channels as a source or sink in a Pipe.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+  annotations:
+    camel.apache.org/operator.id: camel-k
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: timer-source
+    properties:
+      message: "Camel rocks!"
+  sink: # <1>
+    ref:
+      kind: InMemoryChannel
+      apiVersion: messaging.knative.dev/v1
+      name: my-messages
+----
+<1> Reference to the Knative message channel that receives the events
+
+The same approach can be used to subscribe to a message chanel as a consumer to act as a source in a Pipe.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+  annotations:
+    camel.apache.org/operator.id: camel-k
+spec:
+  source: # <1>
+    ref:
+      kind: InMemoryChannel
+      apiVersion: messaging.knative.dev/v1
+      name: my-messages
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: log-sink
+----
+<1> Reference to the source Knative message channel that provides the events
+
 === Error handling
 
 You can configure an error handler in order to specify what to do when some event ends up with failure.

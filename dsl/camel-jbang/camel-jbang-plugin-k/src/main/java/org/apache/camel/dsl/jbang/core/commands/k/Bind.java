@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.bind.TemplateProvider;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.v1.Pipe;
 import org.apache.camel.v1.integrationspec.Traits;
@@ -37,7 +38,7 @@ import picocli.CommandLine.Command;
          sortOptions = false)
 public class Bind extends KubeBaseCommand {
 
-    private final org.apache.camel.dsl.jbang.core.commands.Bind delegate;
+    private final org.apache.camel.dsl.jbang.core.commands.bind.Bind delegate;
 
     @CommandLine.Parameters(description = "The name of the Pipe resource created on the cluster.", arity = "1",
                             paramLabel = "<name>", parameterConsumer = NameConsumer.class)
@@ -96,12 +97,12 @@ public class Bind extends KubeBaseCommand {
 
     public Bind(CamelJBangMain main) {
         super(main);
-        delegate = new org.apache.camel.dsl.jbang.core.commands.Bind(
-                main, new org.apache.camel.dsl.jbang.core.commands.Bind.TemplateProvider() {
+        delegate = new org.apache.camel.dsl.jbang.core.commands.bind.Bind(
+                main, new TemplateProvider() {
                     @Override
-                    public InputStream getPipeTemplate(String in, String out) {
+                    public InputStream getPipeTemplate() {
                         return Bind.class.getClassLoader()
-                                .getResourceAsStream("templates/pipe-" + in + "-" + out + ".yaml.tmpl");
+                                .getResourceAsStream("templates/pipe.yaml.tmpl");
                     }
                 });
     }

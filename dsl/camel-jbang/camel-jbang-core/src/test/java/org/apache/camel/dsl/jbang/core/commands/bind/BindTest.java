@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.core.commands.bind;
 
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,72 @@ class BindTest extends CamelCommandBaseTest {
     @Test
     public void shouldBindKameletSourceToKameletSink() throws Exception {
         Bind command = createCommand("timer", "log");
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    #properties:
+                      #key: "value"
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindNamespacedKamelets() throws Exception {
+        Bind command = createCommand("timer", "log");
+        command.source = "my-namespace/timer-source";
+        command.sink = "my-namespace/log-sink";
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                      namespace: my-namespace
+                    properties:
+                      message: "hello world"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                      namespace: my-namespace
+                    #properties:
+                      #key: "value"
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindKameletsExplicitPrefix() throws Exception {
+        Bind command = createCommand("timer", "log");
+        command.source = "kamelet:timer-source";
+        command.sink = "kamelet:log-sink";
+
         command.doCall();
 
         String output = printer.getOutput();
@@ -79,6 +147,38 @@ class BindTest extends CamelCommandBaseTest {
                     properties:
                       message: Hello
                       period: 5000
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    properties:
+                      showHeaders: true
+                """.trim(), output);
+    }
+
+    @Test
+    public void shouldBindKameletsWithUriProperties() throws Exception {
+        Bind command = createCommand("timer", "log");
+        command.source = "timer-source?message=Hi";
+        command.sink = "log-sink?showHeaders=true";
+
+        command.doCall();
+
+        String output = printer.getOutput();
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: timer-to-log
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: Hi
                   sink:
                     ref:
                       kind: Kamelet
