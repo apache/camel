@@ -26,6 +26,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "engine": target.setEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         default: return false;
         }
     }
@@ -38,6 +40,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "engine": return org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         default: return null;
         }
     }
@@ -51,6 +55,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "engine": return target.getEngine();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         default: return null;
         }
     }

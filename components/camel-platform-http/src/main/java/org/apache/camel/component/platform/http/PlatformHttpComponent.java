@@ -37,7 +37,7 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestOpenApiConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Exposes HTTP endpoints leveraging the given platform's (SpringBoot, WildFly, Quarkus, ...) HTTP server.
  */
 @Component("platform-http")
-public class PlatformHttpComponent extends DefaultComponent
+public class PlatformHttpComponent extends HeaderFilterStrategyComponent
         implements RestConsumerFactory, RestApiConsumerFactory, RestOpenApiConsumerFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PlatformHttpComponent.class);
@@ -77,6 +77,7 @@ public class PlatformHttpComponent extends DefaultComponent
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         PlatformHttpEndpoint endpoint = new PlatformHttpEndpoint(uri, remaining, this);
         endpoint.setPlatformHttpEngine(engine);
+        setEndpointHeaderFilterStrategy(endpoint);
         setProperties(endpoint, parameters);
         return endpoint;
     }
