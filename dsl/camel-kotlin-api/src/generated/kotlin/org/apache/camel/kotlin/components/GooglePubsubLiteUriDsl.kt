@@ -88,15 +88,6 @@ public class GooglePubsubLiteUriDsl(
   }
 
   /**
-   * The Service account key that can be used as credentials for the PubSub publisher/subscriber. It
-   * can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to
-   * load the resource from different systems.
-   */
-  public fun serviceAccountKey(serviceAccountKey: String) {
-    it.property("serviceAccountKey", serviceAccountKey)
-  }
-
-  /**
    * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack
    * explicitly
    */
@@ -229,5 +220,14 @@ public class GooglePubsubLiteUriDsl(
    */
   public fun serializer(serializer: String) {
     it.property("serializer", serializer)
+  }
+
+  /**
+   * The Service account key that can be used as credentials for the PubSub publisher/subscriber. It
+   * can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to
+   * load the resource from different systems.
+   */
+  public fun serviceAccountKey(serviceAccountKey: String) {
+    it.property("serviceAccountKey", serviceAccountKey)
   }
 }

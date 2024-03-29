@@ -35,7 +35,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Google Pubsub Lite component.
+     * Builder for endpoint consumers for the Google PubSub Lite component.
      */
     public interface GooglePubsubLiteEndpointConsumerBuilder
             extends
@@ -55,24 +55,6 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          */
         default GooglePubsubLiteEndpointConsumerBuilder loggerId(String loggerId) {
             doSetProperty("loggerId", loggerId);
-            return this;
-        }
-        /**
-         * The Service account key that can be used as credentials for the
-         * PubSub publisher/subscriber. It can be loaded by default from
-         * classpath, but you can prefix with classpath:, file:, or http: to
-         * load the resource from different systems.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceAccountKey the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubLiteEndpointConsumerBuilder serviceAccountKey(
-                String serviceAccountKey) {
-            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
@@ -212,10 +194,28 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
             doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
+        /**
+         * The Service account key that can be used as credentials for the
+         * PubSub publisher/subscriber. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubLiteEndpointConsumerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
+            return this;
+        }
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Google Pubsub Lite
+     * Advanced builder for endpoint consumers for the Google PubSub Lite
      * component.
      */
     public interface AdvancedGooglePubsubLiteEndpointConsumerBuilder
@@ -352,7 +352,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Google Pubsub Lite component.
+     * Builder for endpoint producers for the Google PubSub Lite component.
      */
     public interface GooglePubsubLiteEndpointProducerBuilder
             extends
@@ -382,7 +382,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param serviceAccountKey the value to set
          * @return the dsl builder
@@ -395,7 +395,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Google Pubsub Lite
+     * Advanced builder for endpoint producers for the Google PubSub Lite
      * component.
      */
     public interface AdvancedGooglePubsubLiteEndpointProducerBuilder
@@ -507,7 +507,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Google Pubsub Lite component.
+     * Builder for endpoint for the Google PubSub Lite component.
      */
     public interface GooglePubsubLiteEndpointBuilder
             extends
@@ -538,7 +538,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param serviceAccountKey the value to set
          * @return the dsl builder
@@ -551,7 +551,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Google Pubsub Lite component.
+     * Advanced builder for endpoint for the Google PubSub Lite component.
      */
     public interface AdvancedGooglePubsubLiteEndpointBuilder
             extends
@@ -564,12 +564,12 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
 
     public interface GooglePubsubLiteBuilders {
         /**
-         * Google Pubsub Lite (camel-google-pubsub-lite)
+         * Google PubSub Lite (camel-google-pubsub-lite)
          * Send and receive messages to/from Google Cloud Platform PubSub Lite
          * Service.
          * 
          * Category: cloud,messaging
-         * Since: 4.5
+         * Since: 4.6
          * Maven coordinates: org.apache.camel:camel-google-pubsub-lite
          * 
          * @return the dsl builder for the headers' name.
@@ -578,12 +578,12 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
             return GooglePubsubLiteHeaderNameBuilder.INSTANCE;
         }
         /**
-         * Google Pubsub Lite (camel-google-pubsub-lite)
+         * Google PubSub Lite (camel-google-pubsub-lite)
          * Send and receive messages to/from Google Cloud Platform PubSub Lite
          * Service.
          * 
          * Category: cloud,messaging
-         * Since: 4.5
+         * Since: 4.6
          * Maven coordinates: org.apache.camel:camel-google-pubsub-lite
          * 
          * Syntax:
@@ -606,12 +606,12 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
             return GooglePubsubLiteEndpointBuilderFactory.endpointBuilder("google-pubsub-lite", path);
         }
         /**
-         * Google Pubsub Lite (camel-google-pubsub-lite)
+         * Google PubSub Lite (camel-google-pubsub-lite)
          * Send and receive messages to/from Google Cloud Platform PubSub Lite
          * Service.
          * 
          * Category: cloud,messaging
-         * Since: 4.5
+         * Since: 4.6
          * Maven coordinates: org.apache.camel:camel-google-pubsub-lite
          * 
          * Syntax:
@@ -640,7 +640,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
     }
 
     /**
-     * The builder of headers' name for the Google Pubsub Lite component.
+     * The builder of headers' name for the Google PubSub Lite component.
      */
     public static class GooglePubsubLiteHeaderNameBuilder {
         /**

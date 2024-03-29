@@ -1,9 +1,9 @@
-= Google Pubsub Lite Component
-:doctitle: Google Pubsub Lite
+= Google PubSub Lite Component
+:doctitle: Google PubSub Lite
 :shortname: google-pubsub-lite
 :artifactid: camel-google-pubsub-lite
 :description: Send and receive messages to/from Google Cloud Platform PubSub Lite Service.
-:since: 4.5
+:since: 4.6
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported

@@ -54,34 +54,29 @@ import org.slf4j.LoggerFactory;
 public class GooglePubsubLiteComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubsubLiteComponent.class);
 
-    @Metadata(label = "common",
+    @Metadata(label = "security",
               description = "The Service account key that can be used as credentials for the PubSub Lite publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
 
-    @Metadata(
-              label = "producer",
+    @Metadata(label = "producer,advanced", defaultValue = "100",
               description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics.")
     private int publisherCacheSize = 100;
 
-    @Metadata(
-              label = "producer",
+    @Metadata(label = "producer,advanced", defaultValue = "180000",
               description = "How many milliseconds should each producer stay alive in the cache.")
     private int publisherCacheTimeout = 180000;
 
-    @Metadata(
-              label = "consumer",
+    @Metadata(label = "consumer,advanced", defaultValue = "10485760",
               description = "How many milliseconds should each producer stay alive in the cache. " +
                             "Must be greater than the allowed size of the largest message (1 MiB).")
     private long consumerBytesOutstanding = 10 * 1024 * 1024;
 
-    @Metadata(
-              label = "consumer",
+    @Metadata(label = "consumer", defaultValue = "1000",
               description = "The number of messages that may be outstanding to the client. Must be >0.")
     private long consumerMessagesOutstanding = 1000;
 
-    @Metadata(
-              label = "advanced",
+    @Metadata(label = "producer,advanced", defaultValue = "60000",
               description = "How many milliseconds should a producer be allowed to terminate.")
     private int publisherTerminationTimeout = 60000;
 

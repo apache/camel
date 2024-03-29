@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Built on top of the Google Cloud Pub/Sub Lite libraries.
  */
-@UriEndpoint(firstVersion = "4.5.0", scheme = "google-pubsub-lite", title = "Google Pubsub Lite",
+@UriEndpoint(firstVersion = "4.6.0", scheme = "google-pubsub-lite", title = "Google PubSub Lite",
              syntax = "google-pubsub-lite:projectId:location:destinationName",
              category = { Category.CLOUD, Category.MESSAGING },
              headersClass = GooglePubsubLiteConstants.class)
@@ -56,7 +56,7 @@ public class GooglePubsubLiteEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String destinationName;
 
-    @UriParam(label = "common",
+    @UriParam(label = "security",
               description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
@@ -64,12 +64,12 @@ public class GooglePubsubLiteEndpoint extends DefaultEndpoint {
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
     private String loggerId;
 
-    @UriParam(label = "consumer", name = "concurrentConsumers",
+    @UriParam(label = "consumer",
               description = "The number of parallel streams consuming from the subscription",
               defaultValue = "1")
     private Integer concurrentConsumers = 1;
 
-    @UriParam(label = "consumer", name = "maxMessagesPerPoll",
+    @UriParam(label = "consumer",
               description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
     private Integer maxMessagesPerPoll = 1;
 

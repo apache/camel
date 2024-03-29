@@ -5715,12 +5715,12 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Google Pubsub Lite (camel-google-pubsub-lite)
+     * Google PubSub Lite (camel-google-pubsub-lite)
      * Send and receive messages to/from Google Cloud Platform PubSub Lite
      * Service.
      * 
      * Category: cloud,messaging
-     * Since: 4.5
+     * Since: 4.6
      * Maven coordinates: org.apache.camel:camel-google-pubsub-lite
      * 
      * Syntax:
@@ -5744,12 +5744,12 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GooglePubsubLiteEndpointBuilderFactory.endpointBuilder("google-pubsub-lite", path);
     }
     /**
-     * Google Pubsub Lite (camel-google-pubsub-lite)
+     * Google PubSub Lite (camel-google-pubsub-lite)
      * Send and receive messages to/from Google Cloud Platform PubSub Lite
      * Service.
      * 
      * Category: cloud,messaging
-     * Since: 4.5
+     * Since: 4.6
      * Maven coordinates: org.apache.camel:camel-google-pubsub-lite
      * 
      * Syntax:
