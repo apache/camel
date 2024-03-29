@@ -39,6 +39,7 @@
         <module>camel-google-functions</module>
         <module>camel-google-mail</module>
         <module>camel-google-pubsub</module>
+        <module>camel-google-pubsub-lite</module>
         <module>camel-google-secret-manager</module>
         <module>camel-google-sheets</module>
         <module>camel-google-storage</module>
