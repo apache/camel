@@ -16,14 +16,15 @@
  */
 package org.apache.camel.support.http;
 
-import org.apache.camel.util.StringHelper;
-
 import java.util.Locale;
+
+import org.apache.camel.util.StringHelper;
 
 public final class RestUtil {
 
     /**
-     * Used for validating incoming REST calls whether Camel can process according to consumes/produces and Accept/Content-Type headers.
+     * Used for validating incoming REST calls whether Camel can process according to consumes/produces and
+     * Accept/Content-Type headers.
      */
     public static boolean isValidOrAcceptedContentType(String valid, String target) {
         if (valid == null || target == null) {
