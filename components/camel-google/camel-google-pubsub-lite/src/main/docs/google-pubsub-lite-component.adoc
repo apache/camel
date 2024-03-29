@@ -15,11 +15,12 @@
 
 *{component-header}*
 
-The Google Pubsub Lite component provides access
+The Google PubSub Lite component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Lite Infrastructure] via
 the https://github.com/googleapis/java-pubsublite[Google Cloud Pub/Sub Lite Client for Java].
 
-The standard https://camel.apache.org/components/google-pubsub-component.html[Google Pub/Sub connector] isn't compatible with Pub/Sub Lite service due to API and message model differences. Please refer to the following links to learn more about these differences:
+The standard xref:google-pubsub-component[Google Pub/Sub component] isn't compatible with Pub/Sub Lite service due to API and message model differences.
+Please refer to the following links to learn more about these differences:
 
 * https://cloud.google.com/pubsub/docs/overview#lite[Pub/Sub Lite Overview]
 * https://cloud.google.com/pubsub/docs/choosing-pubsub-or-lite[Choosing between Pub/Sub or Pub/Sub Lite]
@@ -39,7 +40,7 @@ for this component:
 
 == URI Format
 
-The Google Pubsub Component uses the following URI format:
+The Google PubSub Component uses the following URI format:
 
 ----
 google-pubsub-lite://project-id:location:destinationName?[options]
@@ -78,6 +79,7 @@ A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as P
 When producing messages set the message header `GooglePubsubConstants.ORDERING_KEY` . This will be set as the PubSub Lite orderingKey for the message. More information in https://cloud.google.com/pubsub/lite/docs/publishing#using_ordering_keys[Using ordering keys].
 
 == Consumer Endpoints
+
 Google PubSub Lite will redeliver the message if it has not been acknowledged within the time period set as a configuration option on the subscription.
 
 The component will acknowledge the message once exchange processing has been completed.
