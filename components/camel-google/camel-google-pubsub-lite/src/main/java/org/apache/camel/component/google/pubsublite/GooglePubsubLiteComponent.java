@@ -68,11 +68,11 @@ public class GooglePubsubLiteComponent extends DefaultComponent {
     private int publisherCacheTimeout = 180000;
 
     @Metadata(label = "consumer,advanced", defaultValue = "10485760",
-              description = "How many milliseconds should each producer stay alive in the cache. " +
+              description = "The number of quota bytes that may be outstanding to the client. " +
                             "Must be greater than the allowed size of the largest message (1 MiB).")
     private long consumerBytesOutstanding = 10 * 1024 * 1024;
 
-    @Metadata(label = "consumer", defaultValue = "1000",
+    @Metadata(label = "consumer,advanced", defaultValue = "1000",
               description = "The number of messages that may be outstanding to the client. Must be >0.")
     private long consumerMessagesOutstanding = 1000;
 
