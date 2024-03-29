@@ -6,7 +6,7 @@
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: rest-openapi
 
@@ -147,7 +147,7 @@ Start by defining a _RestOpenApiComponent_ bean:
 @Bean
 public Component petstore(CamelContext camelContext) {
     RestOpenApiComponent petstore = new RestOpenApiComponent(camelContext);
-    petstore.setSpecificationUri(new URI("https://petstore3.swagger.io/api/v3/openapi.json"));
+    petstore.setSpecificationUri("https://petstore3.swagger.io/api/v3/openapi.json");
     petstore.setHost("https://petstore3.swagger.io");
     return petstore;
 }

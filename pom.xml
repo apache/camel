@@ -29,7 +29,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.5.0-SNAPSHOT</version>
+    <version>4.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -124,7 +124,7 @@
         <flatten-maven-plugin-version>1.6.0</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <license-maven-plugin-version>4.3</license-maven-plugin-version>
-        <maven-assembly-plugin-version>3.7.0</maven-assembly-plugin-version>
+        <maven-assembly-plugin-version>3.7.1</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.13.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.6.1</maven-dependency-plugin-version>
         <maven-enforcer-plugin-version>3.4.1</maven-enforcer-plugin-version>

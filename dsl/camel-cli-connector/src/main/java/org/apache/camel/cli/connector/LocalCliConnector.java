@@ -178,9 +178,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             traceFile = createLockFile(lockFile.getName() + "-trace.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
-            LOG.info("Management from Camel JBang enabled");
+            LOG.info("Camel JBang CLI enabled");
         } else {
-            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel JBang.", getPid());
+            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel JBang CLI.", getPid());
         }
     }
 

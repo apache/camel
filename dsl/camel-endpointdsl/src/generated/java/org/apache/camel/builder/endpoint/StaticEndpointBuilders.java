@@ -12751,8 +12751,9 @@ public class StaticEndpointBuilders {
      * loads openapi.json file
      * Default value: openapi.json
      * 
-     * Path parameter: operationId (required)
-     * ID of the operation from the OpenApi specification.
+     * Path parameter: operationId
+     * ID of the operation from the OpenApi specification. This is required when
+     * using producer
      * 
      * @param path specificationUri#operationId
      * @return the dsl builder
@@ -12788,8 +12789,9 @@ public class StaticEndpointBuilders {
      * loads openapi.json file
      * Default value: openapi.json
      * 
-     * Path parameter: operationId (required)
-     * ID of the operation from the OpenApi specification.
+     * Path parameter: operationId
+     * ID of the operation from the OpenApi specification. This is required when
+     * using producer
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

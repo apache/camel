@@ -100,6 +100,7 @@ Learn about additional ways to customize your integrations. Explore alternatives
 ** xref:manual::property-binding.adoc[Property Binding]
 ** xref:manual::registry.adoc[Registry]
 ** xref:manual::rest-dsl.adoc[Rest DSL]
+** xref:manual::rest-dsl-openapi.adoc[Rest DSL contract first with OpenAPI]
 ** xref:manual::route-configuration.adoc[Route Configuration]
 ** xref:manual::service-registry.adoc[Service Registry]
 ** xref:manual::spring.adoc[Spring]

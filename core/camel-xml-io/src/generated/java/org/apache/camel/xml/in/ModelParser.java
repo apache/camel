@@ -1121,6 +1121,7 @@ public class ModelParser extends BaseParser {
                 case "patch": doAdd(doParsePatchDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "post": doAdd(doParsePostDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "put": doAdd(doParsePutDefinition(), def.getVerbs(), def::setVerbs); break;
+                case "openApi": def.setOpenApi(doParseOpenApiDefinition()); break;
                 case "securityDefinitions": def.setSecurityDefinitions(doParseRestSecuritiesDefinition()); break;
                 case "securityRequirements": doAdd(doParseSecurityDefinition(), def.getSecurityRequirements(), def::setSecurityRequirements); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
@@ -3297,6 +3298,26 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, noElementHandler(), noValueHandler());
+    }
+    protected OpenApiDefinition doParseOpenApiDefinition() throws IOException, XmlPullParserException {
+        return doParse(new OpenApiDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "disabled": def.setDisabled(val); break;
+                case "missingOperation": def.setMissingOperation(val); break;
+                case "mockIncludePattern": def.setMockIncludePattern(val); break;
+                case "requestValidationEnabled": def.setRequestValidationEnabled(val); break;
+                case "routeId": def.setRouteId(val); break;
+                case "specification": def.setSpecification(val); break;
+                default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, (def, key) -> {
+            if ("apiContextPath".equals(key)) {
+                def.setApiContextPath(doParseText());
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
     }
     protected OpenIdConnectDefinition doParseOpenIdConnectDefinition() throws IOException, XmlPullParserException {
         return doParse(new OpenIdConnectDefinition(), (def, key, val) -> {

@@ -4,7 +4,7 @@
 :artifactid: camel-core-languages
 :description: Gets a variable
 :since: 4.4
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: core

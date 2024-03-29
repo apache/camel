@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -69,7 +69,7 @@
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
         <aws-java-sdk2-version>2.25.19</aws-java-sdk2-version>
-        <aws-xray-version>2.15.1</aws-xray-version>
+        <aws-xray-version>2.15.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.21</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
         <beanio-version>3.0.0</beanio-version>
@@ -216,7 +216,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.23.9.1</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.87</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.88</huaweicloud-sdk-version>
         <ical4j-version>3.2.16</ical4j-version>
         <icu4j-version>74.2</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
@@ -253,7 +253,7 @@
         <jakarta-xml-soap-api-version>3.0.1</jakarta-xml-soap-api-version>
         <jakarta-xml-ws-api-version>4.0.1</jakarta-xml-ws-api-version>
         <glassfish-javax-json>1.1.4</glassfish-javax-json>
-        <glassfish-jaxb-runtime-version>4.0.4</glassfish-jaxb-runtime-version>
+        <glassfish-jaxb-runtime-version>4.0.5</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>3.1.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
@@ -328,7 +328,7 @@
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.2.1</maven-archetype-packaging-version>
-        <maven-owasp-plugin-version>9.0.9</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>9.0.10</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.6.3</maven-javadoc-plugin-version>
         <maven-plugin-plugin-version>3.11.0</maven-plugin-plugin-version>
@@ -355,7 +355,7 @@
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.8</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
-        <mockwebserver-version>6.10.0</mockwebserver-version>
+        <mockwebserver-version>6.11.0</mockwebserver-version>
         <mockito-version>5.11.0</mockito-version>
         <mongo-java-driver-version>4.11.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
@@ -411,7 +411,7 @@
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.6.4</reactor-version>
         <reactor-netty-version>1.1.17</reactor-netty-version>
-        <redisson-version>3.26.0</redisson-version>
+        <redisson-version>3.27.2</redisson-version>
         <resilience4j-version>2.2.0</resilience4j-version>
         <rest-assured-version>5.4.0</rest-assured-version>
         <roaster-version>2.29.0.Final</roaster-version>
@@ -444,7 +444,7 @@
         <spring-rabbitmq-version>3.1.2</spring-rabbitmq-version>
         <spring-security-version>6.2.3</spring-security-version>
         <spring-ws-version>4.0.10</spring-ws-version>
-        <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
+        <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
         <sshd-version>2.12.1</sshd-version>

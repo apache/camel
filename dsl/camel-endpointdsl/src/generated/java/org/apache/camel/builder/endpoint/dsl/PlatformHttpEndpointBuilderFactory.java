@@ -320,6 +320,17 @@ public interface PlatformHttpEndpointBuilderFactory {
             doSetProperty("produces", produces);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Platform HTTP component.
+     */
+    public interface AdvancedPlatformHttpEndpointBuilder
+            extends
+                EndpointConsumerBuilder {
+        default PlatformHttpEndpointBuilder basic() {
+            return (PlatformHttpEndpointBuilder) this;
+        }
         /**
          * Whether to enable the Cookie Handler that allows Cookie addition,
          * expiry, and retrieval (currently only supported by
@@ -333,7 +344,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @param useCookieHandler the value to set
          * @return the dsl builder
          */
-        default PlatformHttpEndpointBuilder useCookieHandler(
+        default AdvancedPlatformHttpEndpointBuilder useCookieHandler(
                 boolean useCookieHandler) {
             doSetProperty("useCookieHandler", useCookieHandler);
             return this;
@@ -352,7 +363,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @param useCookieHandler the value to set
          * @return the dsl builder
          */
-        default PlatformHttpEndpointBuilder useCookieHandler(
+        default AdvancedPlatformHttpEndpointBuilder useCookieHandler(
                 String useCookieHandler) {
             doSetProperty("useCookieHandler", useCookieHandler);
             return this;
@@ -369,7 +380,8 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @param useStreaming the value to set
          * @return the dsl builder
          */
-        default PlatformHttpEndpointBuilder useStreaming(boolean useStreaming) {
+        default AdvancedPlatformHttpEndpointBuilder useStreaming(
+                boolean useStreaming) {
             doSetProperty("useStreaming", useStreaming);
             return this;
         }
@@ -386,20 +398,10 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @param useStreaming the value to set
          * @return the dsl builder
          */
-        default PlatformHttpEndpointBuilder useStreaming(String useStreaming) {
+        default AdvancedPlatformHttpEndpointBuilder useStreaming(
+                String useStreaming) {
             doSetProperty("useStreaming", useStreaming);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Platform HTTP component.
-     */
-    public interface AdvancedPlatformHttpEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
-        default PlatformHttpEndpointBuilder basic() {
-            return (PlatformHttpEndpointBuilder) this;
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,

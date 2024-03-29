@@ -62,11 +62,111 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * ID of the operation from the OpenApi specification.
+   * ID of the operation from the OpenApi specification. This is required when using producer
    */
   public fun operationId(operationId: String) {
     this.operationId = operationId
     it.url("$specificationUri#$operationId")
+  }
+
+  /**
+   * Enable validation of requests against the configured OpenAPI specification
+   */
+  public fun requestValidationEnabled(requestValidationEnabled: String) {
+    it.property("requestValidationEnabled", requestValidationEnabled)
+  }
+
+  /**
+   * Enable validation of requests against the configured OpenAPI specification
+   */
+  public fun requestValidationEnabled(requestValidationEnabled: Boolean) {
+    it.property("requestValidationEnabled", requestValidationEnabled.toString())
+  }
+
+  /**
+   * Sets the context-path to use for servicing the OpenAPI specification
+   */
+  public fun apiContextPath(apiContextPath: String) {
+    it.property("apiContextPath", apiContextPath)
+  }
+
+  /**
+   * Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that
+   * are not mapped to a corresponding route.
+   */
+  public fun missingOperation(missingOperation: String) {
+    it.property("missingOperation", missingOperation)
+  }
+
+  /**
+   * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions
+   * (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the
+   * likes, will now be processed as a message and handled by the routing Error Handler. Important:
+   * This is only possible if the 3rd party component allows Camel to be alerted if an exception was
+   * thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not
+   * possible. In other situations we may improve the Camel component to hook into the 3rd party
+   * component and make this possible for future releases. By default the consumer will use the
+   * org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or
+   * ERROR level and ignored.
+   */
+  public fun bridgeErrorHandler(bridgeErrorHandler: String) {
+    it.property("bridgeErrorHandler", bridgeErrorHandler)
+  }
+
+  /**
+   * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions
+   * (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the
+   * likes, will now be processed as a message and handled by the routing Error Handler. Important:
+   * This is only possible if the 3rd party component allows Camel to be alerted if an exception was
+   * thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not
+   * possible. In other situations we may improve the Camel component to hook into the 3rd party
+   * component and make this possible for future releases. By default the consumer will use the
+   * org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or
+   * ERROR level and ignored.
+   */
+  public fun bridgeErrorHandler(bridgeErrorHandler: Boolean) {
+    it.property("bridgeErrorHandler", bridgeErrorHandler.toString())
+  }
+
+  /**
+   * Name of the Camel component that will service the requests. The component must be present in
+   * Camel registry and it must implement RestOpenApiConsumerFactory service provider interface. If not
+   * set CLASSPATH is searched for single component that implements RestOpenApiConsumerFactory SPI.
+   * Overrides component configuration.
+   */
+  public fun consumerComponentName(consumerComponentName: String) {
+    it.property("consumerComponentName", consumerComponentName)
+  }
+
+  /**
+   * To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is
+   * enabled then this option is not in use. By default the consumer will deal with exceptions, that
+   * will be logged at WARN or ERROR level and ignored.
+   */
+  public fun exceptionHandler(exceptionHandler: String) {
+    it.property("exceptionHandler", exceptionHandler)
+  }
+
+  /**
+   * Sets the exchange pattern when the consumer creates an exchange.
+   */
+  public fun exchangePattern(exchangePattern: String) {
+    it.property("exchangePattern", exchangePattern)
+  }
+
+  /**
+   * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style
+   * pattern. Multiple patterns can be specified separated by comma.
+   */
+  public fun mockIncludePattern(mockIncludePattern: String) {
+    it.property("mockIncludePattern", mockIncludePattern)
+  }
+
+  /**
+   * To use a custom strategy for how to process Rest DSL requests
+   */
+  public fun restOpenapiProcessorStrategy(restOpenapiProcessorStrategy: String) {
+    it.property("restOpenapiProcessorStrategy", restOpenapiProcessorStrategy)
   }
 
   /**
@@ -75,16 +175,6 @@ public class RestOpenapiUriDsl(
    */
   public fun basePath(basePath: String) {
     it.property("basePath", basePath)
-  }
-
-  /**
-   * Name of the Camel component that will perform the requests. The component must be present in
-   * Camel registry and it must implement RestProducerFactory service provider interface. If not set
-   * CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides
-   * component configuration.
-   */
-  public fun componentName(componentName: String) {
-    it.property("componentName", componentName)
   }
 
   /**
@@ -118,35 +208,13 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * If request validation is enabled, this option provides the capability to customize the creation
-   * of OpenApiInteractionValidator used to validate requests.
+   * Name of the Camel component that will perform the requests. The component must be present in
+   * Camel registry and it must implement RestProducerFactory service provider interface. If not set
+   * CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides
+   * component configuration.
    */
-  public fun requestValidationCustomizer(requestValidationCustomizer: String) {
-    it.property("requestValidationCustomizer", requestValidationCustomizer)
-  }
-
-  /**
-   * Enable validation of requests against the configured OpenAPI specification
-   */
-  public fun requestValidationEnabled(requestValidationEnabled: String) {
-    it.property("requestValidationEnabled", requestValidationEnabled)
-  }
-
-  /**
-   * Enable validation of requests against the configured OpenAPI specification
-   */
-  public fun requestValidationEnabled(requestValidationEnabled: Boolean) {
-    it.property("requestValidationEnabled", requestValidationEnabled.toString())
-  }
-
-  /**
-   * Levels for specific OpenAPI request validation options. Multiple options can be specified as
-   * URI options prefixed by 'validation.'. For example,
-   * validation.request.body=ERROR&validation.request.body.unexpected=IGNORED. Supported values are
-   * INFO, ERROR, WARN & IGNORE.
-   */
-  public fun requestValidationLevels(requestValidationLevels: String) {
-    it.property("requestValidationLevels", requestValidationLevels)
+  public fun componentName(componentName: String) {
+    it.property("componentName", componentName)
   }
 
   /**
@@ -171,5 +239,23 @@ public class RestOpenapiUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
+  }
+
+  /**
+   * If request validation is enabled, this option provides the capability to customize the creation
+   * of OpenApiInteractionValidator used to validate requests.
+   */
+  public fun requestValidationCustomizer(requestValidationCustomizer: String) {
+    it.property("requestValidationCustomizer", requestValidationCustomizer)
+  }
+
+  /**
+   * Levels for specific OpenAPI request validation options. Multiple options can be specified as
+   * URI options prefixed by 'validation.'. For example,
+   * validation.request.body=ERROR&validation.request.body.unexpected=IGNORED. Supported values are
+   * INFO, ERROR, WARN & IGNORE.
+   */
+  public fun requestValidationLevels(requestValidationLevels: String) {
+    it.property("requestValidationLevels", requestValidationLevels)
   }
 }

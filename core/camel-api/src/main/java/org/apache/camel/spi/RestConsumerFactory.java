@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
  * <a href="http://camel.apache.org/rest-dsl">rest-dsl</a>.
  *
  * @see RestApiConsumerFactory
+ * @see RestOpenApiConsumerFactory
  * @see RestApiProcessorFactory
  */
 public interface RestConsumerFactory {

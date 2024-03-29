@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rest.openapi;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,9 +50,9 @@ import static org.mockito.Mockito.when;
 
 public class RestOpenApiEndpointV3Test {
 
-    URI componentJsonUri = URI.create("component.json");
+    String componentJsonUri = "component.json";
 
-    URI endpointUri = URI.create("endpoint.json");
+    String endpointUri = "endpoint.json";
 
     @Test
     public void shouldComplainForUnknownOperations() {
@@ -381,9 +380,8 @@ public class RestOpenApiEndpointV3Test {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
-        final URI uri = URI.create("non-existant.json");
         assertThrows(IllegalArgumentException.class,
-                () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, uri));
+                () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "non-existant.json"));
     }
 
     @Test
