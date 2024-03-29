@@ -151,7 +151,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
              defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI,
              defaultValueNote = "By default loads `openapi.json` file", label = "common")
     private String specificationUri;
-    @UriParam(description = "Enable validation of requests against the configured OpenAPI specification")
+    @UriParam(label = "consumes",
+              description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
+    private boolean clientRequestValidation;
+    @UriParam(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
     @UriParam(description = "If request validation is enabled, this option provides the capability to customize"
                             + " the creation of OpenApiInteractionValidator used to validate requests.",
@@ -436,6 +439,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public boolean isRequestValidationEnabled() {
         return requestValidationEnabled;
+    }
+
+    public boolean isClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    public void setClientRequestValidation(boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public void setRequestValidationLevels(Map<String, Object> requestValidationLevels) {

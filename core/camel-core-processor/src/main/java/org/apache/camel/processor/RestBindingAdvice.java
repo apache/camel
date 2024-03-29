@@ -40,6 +40,8 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
+
 /**
  * A {@link CamelInternalProcessorAdvice} that binds the REST DSL incoming and outgoing messages from sources of json or
  * xml to Java Objects.
@@ -582,40 +584,6 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (allowCredentials != null) {
             msg.setHeader("Access-Control-Allow-Credentials", allowCredentials);
         }
-    }
-
-    private static boolean isValidOrAcceptedContentType(String valid, String target) {
-        if (valid == null || target == null) {
-            return true;
-        }
-
-        // Any MIME type
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept#Directives
-        if (target.contains("*/*")) {
-            return true;
-        }
-
-        //  content-type is before optional charset
-        target = StringHelper.before(target, ";", target);
-
-        valid = valid.toLowerCase(Locale.ENGLISH);
-        target = target.toLowerCase(Locale.ENGLISH);
-
-        if (valid.contains(target)) {
-            return true;
-        }
-
-        boolean isXml = valid.contains("xml");
-        if (isXml && !target.contains("xml")) {
-            return false;
-        }
-
-        boolean isJson = valid.contains("json");
-        if (isJson && !target.contains("json")) {
-            return false;
-        }
-
-        return false;
     }
 
 }

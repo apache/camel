@@ -70,20 +70,6 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * Enable validation of requests against the configured OpenAPI specification
-   */
-  public fun requestValidationEnabled(requestValidationEnabled: String) {
-    it.property("requestValidationEnabled", requestValidationEnabled)
-  }
-
-  /**
-   * Enable validation of requests against the configured OpenAPI specification
-   */
-  public fun requestValidationEnabled(requestValidationEnabled: Boolean) {
-    it.property("requestValidationEnabled", requestValidationEnabled.toString())
-  }
-
-  /**
    * Sets the context-path to use for servicing the OpenAPI specification
    */
   public fun apiContextPath(apiContextPath: String) {
@@ -208,6 +194,20 @@ public class RestOpenapiUriDsl(
   }
 
   /**
+   * Enable validation of requests against the configured OpenAPI specification
+   */
+  public fun requestValidationEnabled(requestValidationEnabled: String) {
+    it.property("requestValidationEnabled", requestValidationEnabled)
+  }
+
+  /**
+   * Enable validation of requests against the configured OpenAPI specification
+   */
+  public fun requestValidationEnabled(requestValidationEnabled: Boolean) {
+    it.property("requestValidationEnabled", requestValidationEnabled.toString())
+  }
+
+  /**
    * Name of the Camel component that will perform the requests. The component must be present in
    * Camel registry and it must implement RestProducerFactory service provider interface. If not set
    * CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides
@@ -257,5 +257,21 @@ public class RestOpenapiUriDsl(
    */
   public fun requestValidationLevels(requestValidationLevels: String) {
     it.property("requestValidationLevels", requestValidationLevels)
+  }
+
+  /**
+   * Whether to enable validation of the client request to check if the incoming request is valid
+   * according to the OpenAPI specification
+   */
+  public fun clientRequestValidation(clientRequestValidation: String) {
+    it.property("clientRequestValidation", clientRequestValidation)
+  }
+
+  /**
+   * Whether to enable validation of the client request to check if the incoming request is valid
+   * according to the OpenAPI specification
+   */
+  public fun clientRequestValidation(clientRequestValidation: Boolean) {
+    it.property("clientRequestValidation", clientRequestValidation.toString())
   }
 }
