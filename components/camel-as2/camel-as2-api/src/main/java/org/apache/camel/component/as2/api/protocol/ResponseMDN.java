@@ -45,14 +45,15 @@ import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -107,9 +108,9 @@ public class ResponseMDN implements HttpResponseInterceptor {
     }
 
     @Override
-    public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
+    public void process(HttpResponse response, EntityDetails entity, HttpContext context) throws HttpException, IOException {
 
-        int statusCode = response.getStatusLine().getStatusCode();
+        int statusCode = response.getCode();
         if (statusCode < 200 || statusCode >= 300) {
             // RFC4130 - 7.6 - Status codes in the 200 range SHOULD also be used when an entity is returned
             // (a signed receipt in a multipart/signed content type or an unsigned
@@ -121,7 +122,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
 
         HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
-        if (request == null || !(request instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest)) {
+        if (request == null || !(request instanceof ClassicHttpRequest httpEntityEnclosingRequest)) {
             // Not an enclosing request so nothing to do.
             return;
         }
@@ -232,14 +233,14 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                             multipartReportEntity, gen,
                             StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
-                    response.setHeader(multipartSignedEntity.getContentType());
+                    response.setHeader(AS2Header.CONTENT_TYPE, multipartSignedEntity.getContentType());
                     EntityUtils.setMessageEntity(response, multipartSignedEntity);
                 } catch (Exception e) {
                     LOG.warn("failed to sign receipt");
                 }
             } else {
                 // Create unsigned receipt
-                response.setHeader(multipartReportEntity.getContentType());
+                response.setHeader(AS2Header.CONTENT_TYPE, multipartReportEntity.getContentType());
                 EntityUtils.setMessageEntity(response, multipartReportEntity);
             }
         }
@@ -250,7 +251,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
     }
 
     private String createMdnDescription(
-            HttpEntityEnclosingRequest request,
+            ClassicHttpRequest request,
             HttpResponse response,
             DispositionMode dispositionMode,
             AS2DispositionType dispositionType,
@@ -266,13 +267,13 @@ public class ResponseMDN implements HttpResponseInterceptor {
             Context context = new VelocityContext();
             context.put("request", request);
             Map<String, Object> requestHeaders = new HashMap<>();
-            for (Header header : request.getAllHeaders()) {
+            for (Header header : request.getHeaders()) {
                 requestHeaders.put(header.getName(), header.getValue());
             }
             context.put("requestHeaders", requestHeaders);
 
             Map<String, Object> responseHeaders = new HashMap<>();
-            for (Header header : response.getAllHeaders()) {
+            for (Header header : response.getHeaders()) {
                 responseHeaders.put(header.getName(), header.getValue());
             }
             context.put("responseHeaders", responseHeaders);

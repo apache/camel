@@ -22,7 +22,7 @@ import java.security.cert.X509Certificate;
 
 import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.HttpException;
+import org.apache.hc.core5.http.HttpException;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.jcajce.JceCMSContentEncryptorBuilder;

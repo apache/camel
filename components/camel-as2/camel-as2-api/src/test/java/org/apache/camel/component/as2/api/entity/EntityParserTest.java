@@ -36,14 +36,15 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.impl.EnglishReasonPhraseCatalog;
-import org.apache.http.impl.io.HttpTransportMetricsImpl;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.ProtocolVersion;
+import org.apache.hc.core5.http.impl.BasicHttpTransportMetrics;
+import org.apache.hc.core5.http.impl.EnglishReasonPhraseCatalog;
+import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.Extension;
@@ -192,16 +193,15 @@ public class EntityParserTest {
 
     @Test
     public void parseMessageDispositionNotificationReportMessageTest() throws Exception {
-        HttpResponse response = new BasicHttpResponse(
-                HttpVersion.HTTP_1_1, HttpStatus.SC_OK, EnglishReasonPhraseCatalog.INSTANCE.getReason(HttpStatus.SC_OK, null));
+        HttpResponse response = new BasicClassicHttpResponse(
+                HttpStatus.SC_OK, EnglishReasonPhraseCatalog.INSTANCE.getReason(HttpStatus.SC_OK, null));
+        response.setVersion(new ProtocolVersion("HTTP", 1, 1));
         HttpMessageUtils.setHeaderValue(response, AS2Header.CONTENT_TRANSFER_ENCODING,
                 DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
 
-        BasicHttpEntity entity = new BasicHttpEntity();
-        entity.setContentType(REPORT_CONTENT_TYPE_VALUE);
         InputStream is = new ByteArrayInputStream(
                 DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
-        entity.setContent(is);
+        BasicHttpEntity entity = new BasicHttpEntity(is, ContentType.parse(REPORT_CONTENT_TYPE_VALUE));
         EntityUtils.setMessageEntity(response, entity);
 
         EntityParser.parseAS2MessageEntity(response);
@@ -217,11 +217,10 @@ public class EntityParserTest {
         InputStream is = new ByteArrayInputStream(
                 DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer
-                = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
-        inbuffer.bind(is);
+                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = EntityParser
-                .parseMultipartReportEntityBody(inbuffer, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY,
+                .parseMultipartReportEntityBody(inbuffer, is, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY,
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME,
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
 
@@ -240,10 +239,9 @@ public class EntityParserTest {
 
         InputStream is = new ByteArrayInputStream(TEXT_PLAIN_CONTENT.getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer
-                = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
-        inbuffer.bind(is);
+                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
-        TextPlainEntity textPlainEntity = EntityParser.parseTextPlainEntityBody(inbuffer, TEXT_PLAIN_CONTENT_BOUNDARY,
+        TextPlainEntity textPlainEntity = EntityParser.parseTextPlainEntityBody(inbuffer, is, TEXT_PLAIN_CONTENT_BOUNDARY,
                 TEXT_PLAIN_CONTENT_CHARSET_NAME, TEXT_PLAIN_CONTENT_TRANSFER_ENCODING);
 
         String text = textPlainEntity.getText();
@@ -257,11 +255,10 @@ public class EntityParserTest {
         InputStream is = new ByteArrayInputStream(
                 DISPOSITION_NOTIFICATION_CONTENT.getBytes(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer
-                = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
-        inbuffer.bind(is);
+                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
         AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = EntityParser
-                .parseMessageDispositionNotificationEntityBody(inbuffer, DISPOSITION_NOTIFICATION_CONTENT_BOUNDARY,
+                .parseMessageDispositionNotificationEntityBody(inbuffer, is, DISPOSITION_NOTIFICATION_CONTENT_BOUNDARY,
                         DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME);
 
         assertEquals(EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA(),
@@ -345,7 +342,7 @@ public class EntityParserTest {
                 textEntity, cmsEnvelopeDataGenerator, contentEncryptor, "binary", true);
 
         MimeEntity decryptedMimeEntity = applicationPkcs7MimeEntity.getEncryptedEntity(encryptKP.getPrivate());
-        assertEquals("text/plain; charset=US-ASCII", decryptedMimeEntity.getContentTypeValue(),
+        assertEquals("text/plain; charset=US-ASCII", decryptedMimeEntity.getContentType(),
                 "Decrypted entity has unexpected content type");
         assertEquals("This is a super secret messatge!", ((TextPlainEntity) decryptedMimeEntity).getText(),
                 "Decrypted entity has unexpected content");

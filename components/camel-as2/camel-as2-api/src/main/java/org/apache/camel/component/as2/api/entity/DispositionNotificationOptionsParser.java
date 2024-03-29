@@ -22,9 +22,9 @@ import java.util.Map;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils.Parameter;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.ParseException;
-import org.apache.http.message.ParserCursor;
-import org.apache.http.util.CharArrayBuffer;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.message.ParserCursor;
+import org.apache.hc.core5.util.CharArrayBuffer;
 
 public class DispositionNotificationOptionsParser {
 

@@ -27,9 +27,9 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MicAlgorithm;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +80,7 @@ public final class MicUtils {
     }
 
     public static ReceivedContentMic createReceivedContentMic(
-            HttpEntityEnclosingRequest request, Certificate[] validateSigningCertificateChain, PrivateKey decryptingPrivateKey)
+            ClassicHttpRequest request, Certificate[] validateSigningCertificateChain, PrivateKey decryptingPrivateKey)
             throws HttpException {
 
         String dispositionNotificationOptionsString

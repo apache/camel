@@ -30,10 +30,10 @@ import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.util.DispositionNotificationContentUtils.Field.Element;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.ParseException;
-import org.apache.http.message.ParserCursor;
-import org.apache.http.message.TokenParser;
-import org.apache.http.util.CharArrayBuffer;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.message.ParserCursor;
+import org.apache.hc.core5.http.message.TokenParser;
+import org.apache.hc.core5.util.CharArrayBuffer;
 
 public final class DispositionNotificationContentUtils {
 
@@ -253,7 +253,7 @@ public final class DispositionNotificationContentUtils {
                 receivedContentMic);
     }
 
-    public static Field parseDispositionField(CharArrayBuffer fieldLine) {
+    public static Field parseDispositionField(CharArrayBuffer fieldLine) throws ParseException {
         final int colon = fieldLine.indexOf(':');
         if (colon == -1) {
             throw new ParseException("Invalid field: " + fieldLine.toString());

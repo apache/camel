@@ -21,25 +21,23 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Map;
 
-import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpResponse;
 
 public class DispositionNotificationMultipartReportEntity extends MultipartReportEntity {
 
     protected DispositionNotificationMultipartReportEntity(String boundary, boolean isMainBody) {
-        this.boundary = boundary;
-        this.isMainBody = isMainBody;
-        removeHeaders(AS2Header.CONTENT_TYPE);
-        setContentType(getContentTypeValue(boundary));
+        super(ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
+                                + "report-type=disposition-notification; boundary=\"" + boundary + "\""),
+              null, isMainBody, boundary);
     }
 
-    public DispositionNotificationMultipartReportEntity(HttpEntityEnclosingRequest request,
+    public DispositionNotificationMultipartReportEntity(ClassicHttpRequest request,
                                                         HttpResponse response,
                                                         DispositionMode dispositionMode,
                                                         AS2DispositionType dispositionType,
@@ -55,9 +53,9 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
                                                         String mdnMessage,
                                                         Certificate[] validateSigningCertificateChain)
                                                                                                        throws HttpException {
-        super(charset, isMainBody, boundary);
-        removeHeaders(AS2Header.CONTENT_TYPE);
-        setContentType(getContentTypeValue(boundary));
+        super(ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
+                                + "report-type=disposition-notification; boundary=\"" + boundary + "\""),
+              null, isMainBody, boundary);
         ObjectHelper.notNull(dispositionMode, "dispositionMode");
         ObjectHelper.notNull(dispositionType, "dispositionType");
         ObjectHelper.notNull(mdnMessage, "mdnMessageTemplate");
@@ -75,12 +73,6 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
 
     protected TextPlainEntity buildPlainTextReport(String mdnMessage) {
         return new TextPlainEntity(mdnMessage, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.SEVENBIT, false);
-    }
-
-    protected String getContentTypeValue(String boundary) {
-        ContentType contentType = ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
-                                                    + "report-type=disposition-notification; boundary=\"" + boundary + "\"");
-        return contentType.toString();
     }
 
 }

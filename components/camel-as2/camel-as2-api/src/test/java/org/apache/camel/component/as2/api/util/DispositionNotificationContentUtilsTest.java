@@ -26,9 +26,9 @@ import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificati
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
-import org.apache.http.impl.io.HttpTransportMetricsImpl;
-import org.apache.http.message.BasicLineParser;
-import org.apache.http.util.CharArrayBuffer;
+import org.apache.hc.core5.http.impl.BasicHttpTransportMetrics;
+import org.apache.hc.core5.http.message.BasicLineParser;
+import org.apache.hc.core5.util.CharArrayBuffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,11 +78,11 @@ public class DispositionNotificationContentUtilsTest {
 
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_CONTENT.getBytes());
 
-        AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
-        inbuffer.bind(is);
+        AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 8 * 1024);
 
         List<CharArrayBuffer> dispositionNotificationFields
-                = EntityParser.parseBodyPartFields(inbuffer, null, BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
+                = EntityParser.parseBodyPartFields(inbuffer, is, null, BasicLineParser.INSTANCE,
+                        new ArrayList<CharArrayBuffer>());
         AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
                 = DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
 

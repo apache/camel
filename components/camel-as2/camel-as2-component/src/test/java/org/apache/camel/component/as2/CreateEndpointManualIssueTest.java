@@ -37,8 +37,8 @@ public class CreateEndpointManualIssueTest {
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.start();
 
-        org.apache.http.entity.ContentType contentTypeEdifact
-                = org.apache.http.entity.ContentType.create("application/edifact", (Charset) null);
+        org.apache.hc.core5.http.ContentType contentTypeEdifact
+                = org.apache.hc.core5.http.ContentType.create("application/edifact", (Charset) null);
 
         String methodName = "send";
         AS2ApiName as2ApiNameClient = AS2ApiName.CLIENT;
