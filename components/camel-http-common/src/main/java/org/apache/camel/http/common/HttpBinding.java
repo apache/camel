@@ -218,7 +218,7 @@ public interface HttpBinding {
     /**
      * Sets the header filter strategy to use.
      * <p/>
-     * Will default use {@link org.apache.camel.http.common.HttpHeaderFilterStrategy}
+     * Will default use {@link org.apache.camel.http.base.HttpHeaderFilterStrategy}
      *
      * @param headerFilterStrategy the custom strategy
      */

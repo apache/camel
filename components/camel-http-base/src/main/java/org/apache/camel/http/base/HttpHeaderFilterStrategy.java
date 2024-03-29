@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.http.common;
+package org.apache.camel.http.base;
 
 import java.util.Set;
 
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.http.HttpUtil;
 
-/**
- * @deprecated use {@link org.apache.camel.http.base.HttpHeaderFilterStrategy}
- */
-@Deprecated
-public class HttpHeaderFilterStrategy extends org.apache.camel.http.base.HttpHeaderFilterStrategy {
+public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public HttpHeaderFilterStrategy() {
         initialize();
