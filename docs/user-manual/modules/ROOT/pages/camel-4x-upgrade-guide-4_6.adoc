@@ -15,6 +15,10 @@ then the variable is no longer set. Also, if the route is marked for rollback, o
 
 This is the same logic that the routing engine uses, whether to continue routing the `Exchange` or not.
 
+=== camel-as2
+
+The `camel-as2` component has upgraded HTTP Client 4.x to 5.x and because of that, there are some options that have changed.
+
 === camel-elasticsearch
 
 The class `org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy` has been renamed to `org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy`.
