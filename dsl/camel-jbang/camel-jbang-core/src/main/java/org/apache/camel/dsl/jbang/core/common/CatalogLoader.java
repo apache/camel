@@ -151,11 +151,12 @@ public final class CatalogLoader {
         String camelQuarkusVersion = null;
         CamelCatalog answer = new DefaultCamelCatalog(true);
 
-        // quarkus version must end with .Final
         if (quarkusVersion == null) {
             return answer;
         }
-        if (!quarkusVersion.endsWith(".Final")) {
+        // quarkus 3.2.x and older must have .Final
+        boolean finalSuffix = VersionHelper.isLE(quarkusVersion, "3.2");
+        if (finalSuffix && !quarkusVersion.endsWith(".Final")) {
             quarkusVersion += ".Final";
         }
 
