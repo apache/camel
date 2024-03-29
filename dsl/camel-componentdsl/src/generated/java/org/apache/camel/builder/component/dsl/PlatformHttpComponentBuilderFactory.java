@@ -116,6 +116,24 @@ public interface PlatformHttpComponentBuilderFactory {
             doSetProperty("engine", engine);
             return this;
         }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     class PlatformHttpComponentBuilderImpl
@@ -136,6 +154,7 @@ public interface PlatformHttpComponentBuilderFactory {
             case "bridgeErrorHandler": ((PlatformHttpComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "autowiredEnabled": ((PlatformHttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "engine": ((PlatformHttpComponent) component).setEngine((org.apache.camel.component.platform.http.spi.PlatformHttpEngine) value); return true;
+            case "headerFilterStrategy": ((PlatformHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             default: return false;
             }
         }
