@@ -869,7 +869,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         if (openApi != null) {
             addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent(),
-                    config.getApiContextPath());
+                    config.getApiContextPath(), config.isClientRequestValidation());
         }
 
         return answer;
@@ -970,7 +970,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @SuppressWarnings("rawtypes")
     private void addRouteDefinition(
             CamelContext camelContext, OpenApiDefinition openApi, List<RouteDefinition> answer,
-            String component, String producerComponent, String apiContextPath) {
+            String component, String producerComponent, String apiContextPath,
+            boolean clientValidation) {
 
         RouteDefinition route = new RouteDefinition();
         if (openApi.getRouteId() != null) {
@@ -1008,8 +1009,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         if (binding.getProduces() != null) {
             options.put("produces", binding.getProduces());
         }
-        if (openApi.getRequestValidationEnabled() != null) {
-            options.put("requestValidationEnabled", openApi.getRequestValidationEnabled());
+        if (getClientRequestValidation() != null) {
+            options.put("clientRequestValidation", getClientRequestValidation());
+        } else if (clientValidation) {
+            options.put("clientRequestValidation", "true");
         }
         if (openApi.getMissingOperation() != null) {
             options.put("missingOperation", openApi.getMissingOperation());

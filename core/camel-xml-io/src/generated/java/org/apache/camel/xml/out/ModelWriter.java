@@ -4424,7 +4424,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("routeId", def.getRouteId());
         doWriteAttribute("specification", def.getSpecification());
         doWriteAttribute("disabled", def.getDisabled());
-        doWriteAttribute("requestValidationEnabled", def.getRequestValidationEnabled());
         doWriteElement("apiContextPath", def.getApiContextPath(), this::doWriteString);
         endElement(name);
     }

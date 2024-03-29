@@ -24,7 +24,7 @@ import org.apache.camel.support.http.HttpUtil;
  * {@code camel-http-common} not to depend on {@code jakarta.servlet-api} and then use the
  * {@code HttpHeaderFilterStrategy} from there.
  *
- * @deprecated  use {@link org.apache.camel.http.common.HttpHeaderFilterStrategy} instead.
+ * @deprecated use {@link org.apache.camel.http.common.HttpHeaderFilterStrategy} instead.
  */
 @Deprecated
 public class PlatformHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {

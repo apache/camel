@@ -216,7 +216,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore&requestValidationEnabled=true")
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore&clientRequestValidation=true")
                             .log("dummy");
 
                     from("direct:updatePet")
@@ -230,7 +230,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
                     .when()
                     .put("/api/v3/pet")
                     .then()
-                    .statusCode(405); // no request body
+                    .statusCode(400); // no request body
         } finally {
             context.stop();
         }

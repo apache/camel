@@ -10362,7 +10362,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "missingOperation", type = "enum:fail,ignore,mock", defaultValue = "fail", description = "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.", displayName = "Missing Operation"),
                     @YamlProperty(name = "mockIncludePattern", type = "string", defaultValue = "classpath:camel-mock/**", description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.", displayName = "Mock Include Pattern"),
-                    @YamlProperty(name = "requestValidationEnabled", type = "boolean", description = "Whether to enable validation of the client request to check that the request contains valid and expected data.", displayName = "Request Validation Enabled"),
                     @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
                     @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenApi specification file.", displayName = "Specification")
             }
@@ -10395,11 +10394,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "mockIncludePattern": {
                     String val = asText(node);
                     target.setMockIncludePattern(val);
-                    break;
-                }
-                case "requestValidationEnabled": {
-                    String val = asText(node);
-                    target.setRequestValidationEnabled(val);
                     break;
                 }
                 case "routeId": {

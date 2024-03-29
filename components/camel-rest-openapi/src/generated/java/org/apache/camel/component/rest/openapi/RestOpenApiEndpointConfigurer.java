@@ -27,6 +27,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "basePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clientrequestvalidation":
+        case "clientRequestValidation": target.setClientRequestValidation(property(camelContext, boolean.class, value)); return true;
         case "componentname":
         case "componentName": target.setComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "consumercomponentname":
@@ -65,6 +67,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "basePath": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "clientrequestvalidation":
+        case "clientRequestValidation": return boolean.class;
         case "componentname":
         case "componentName": return java.lang.String.class;
         case "consumercomponentname":
@@ -104,6 +108,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "basePath": return target.getBasePath();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "clientrequestvalidation":
+        case "clientRequestValidation": return target.isClientRequestValidation();
         case "componentname":
         case "componentName": return target.getComponentName();
         case "consumercomponentname":

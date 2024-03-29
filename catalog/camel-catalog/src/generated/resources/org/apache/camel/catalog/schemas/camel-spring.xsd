@@ -16418,16 +16418,6 @@ service has been disabled then it cannot be enabled later at runtime. Default va
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="requestValidationEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to enable validation of the client request to check that the request contains valid and expected data. Default
-value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="missingOperation" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

@@ -45,41 +45,6 @@ public interface RestOpenApiEndpointBuilderFactory {
             return (AdvancedRestOpenApiEndpointConsumerBuilder) this;
         }
         /**
-         * Enable validation of requests against the configured OpenAPI
-         * specification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param requestValidationEnabled the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointConsumerBuilder requestValidationEnabled(
-                boolean requestValidationEnabled) {
-            doSetProperty("requestValidationEnabled", requestValidationEnabled);
-            return this;
-        }
-        /**
-         * Enable validation of requests against the configured OpenAPI
-         * specification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param requestValidationEnabled the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointConsumerBuilder requestValidationEnabled(
-                String requestValidationEnabled) {
-            doSetProperty("requestValidationEnabled", requestValidationEnabled);
-            return this;
-        }
-        /**
          * Sets the context-path to use for servicing the OpenAPI specification.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -109,6 +74,41 @@ public interface RestOpenApiEndpointBuilderFactory {
         default RestOpenApiEndpointConsumerBuilder missingOperation(
                 String missingOperation) {
             doSetProperty("missingOperation", missingOperation);
+            return this;
+        }
+        /**
+         * Whether to enable validation of the client request to check if the
+         * incoming request is valid according to the OpenAPI specification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumes
+         * 
+         * @param clientRequestValidation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder clientRequestValidation(
+                boolean clientRequestValidation) {
+            doSetProperty("clientRequestValidation", clientRequestValidation);
+            return this;
+        }
+        /**
+         * Whether to enable validation of the client request to check if the
+         * incoming request is valid according to the OpenAPI specification.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumes
+         * 
+         * @param clientRequestValidation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder clientRequestValidation(
+                String clientRequestValidation) {
+            doSetProperty("clientRequestValidation", clientRequestValidation);
             return this;
         }
     }
@@ -410,41 +410,6 @@ public interface RestOpenApiEndpointBuilderFactory {
             return (AdvancedRestOpenApiEndpointProducerBuilder) this;
         }
         /**
-         * Enable validation of requests against the configured OpenAPI
-         * specification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param requestValidationEnabled the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointProducerBuilder requestValidationEnabled(
-                boolean requestValidationEnabled) {
-            doSetProperty("requestValidationEnabled", requestValidationEnabled);
-            return this;
-        }
-        /**
-         * Enable validation of requests against the configured OpenAPI
-         * specification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param requestValidationEnabled the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointProducerBuilder requestValidationEnabled(
-                String requestValidationEnabled) {
-            doSetProperty("requestValidationEnabled", requestValidationEnabled);
-            return this;
-        }
-        /**
          * API basePath, for example /v3. Default is unset, if set overrides the
          * value present in OpenApi specification and in the component
          * configuration.
@@ -513,6 +478,76 @@ public interface RestOpenApiEndpointBuilderFactory {
          */
         default RestOpenApiEndpointProducerBuilder produces(String produces) {
             doSetProperty("produces", produces);
+            return this;
+        }
+        /**
+         * Enable validation of requests against the configured OpenAPI
+         * specification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param requestValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointProducerBuilder requestValidationEnabled(
+                boolean requestValidationEnabled) {
+            doSetProperty("requestValidationEnabled", requestValidationEnabled);
+            return this;
+        }
+        /**
+         * Enable validation of requests against the configured OpenAPI
+         * specification.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param requestValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointProducerBuilder requestValidationEnabled(
+                String requestValidationEnabled) {
+            doSetProperty("requestValidationEnabled", requestValidationEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable validation of the client request to check if the
+         * incoming request is valid according to the OpenAPI specification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumes
+         * 
+         * @param clientRequestValidation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointProducerBuilder clientRequestValidation(
+                boolean clientRequestValidation) {
+            doSetProperty("clientRequestValidation", clientRequestValidation);
+            return this;
+        }
+        /**
+         * Whether to enable validation of the client request to check if the
+         * incoming request is valid according to the OpenAPI specification.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumes
+         * 
+         * @param clientRequestValidation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointProducerBuilder clientRequestValidation(
+                String clientRequestValidation) {
+            doSetProperty("clientRequestValidation", clientRequestValidation);
             return this;
         }
     }
@@ -689,38 +724,38 @@ public interface RestOpenApiEndpointBuilderFactory {
             return (AdvancedRestOpenApiEndpointBuilder) this;
         }
         /**
-         * Enable validation of requests against the configured OpenAPI
-         * specification.
+         * Whether to enable validation of the client request to check if the
+         * incoming request is valid according to the OpenAPI specification.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: common
+         * Group: consumes
          * 
-         * @param requestValidationEnabled the value to set
+         * @param clientRequestValidation the value to set
          * @return the dsl builder
          */
-        default RestOpenApiEndpointBuilder requestValidationEnabled(
-                boolean requestValidationEnabled) {
-            doSetProperty("requestValidationEnabled", requestValidationEnabled);
+        default RestOpenApiEndpointBuilder clientRequestValidation(
+                boolean clientRequestValidation) {
+            doSetProperty("clientRequestValidation", clientRequestValidation);
             return this;
         }
         /**
-         * Enable validation of requests against the configured OpenAPI
-         * specification.
+         * Whether to enable validation of the client request to check if the
+         * incoming request is valid according to the OpenAPI specification.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
          * Default: false
-         * Group: common
+         * Group: consumes
          * 
-         * @param requestValidationEnabled the value to set
+         * @param clientRequestValidation the value to set
          * @return the dsl builder
          */
-        default RestOpenApiEndpointBuilder requestValidationEnabled(
-                String requestValidationEnabled) {
-            doSetProperty("requestValidationEnabled", requestValidationEnabled);
+        default RestOpenApiEndpointBuilder clientRequestValidation(
+                String clientRequestValidation) {
+            doSetProperty("clientRequestValidation", clientRequestValidation);
             return this;
         }
     }

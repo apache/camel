@@ -46,9 +46,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String requestValidationEnabled;
-    @XmlAttribute
     @Metadata(enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
     @XmlAttribute
@@ -95,17 +92,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
      */
     public void setDisabled(String disabled) {
         this.disabled = disabled;
-    }
-
-    public String getRequestValidationEnabled() {
-        return requestValidationEnabled;
-    }
-
-    /**
-     * Whether to enable validation of the client request to check that the request contains valid and expected data.
-     */
-    public void setRequestValidationEnabled(String requestValidationEnabled) {
-        this.requestValidationEnabled = requestValidationEnabled;
     }
 
     public String getMissingOperation() {
@@ -161,29 +147,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     public OpenApiDefinition apiContextPath(String apiDoc) {
         this.apiContextPath = apiDoc;
         return this;
-    }
-
-    /**
-     * Whether to enable validation of the client request to check that the request contains valid and expected data.
-     */
-    public OpenApiDefinition requestValidationEnabled(String requestValidationEnabled) {
-        this.requestValidationEnabled = requestValidationEnabled;
-        return this;
-    }
-
-    /**
-     * Whether to enable validation of the client request to check that the request contains valid and expected data.
-     */
-    public OpenApiDefinition requestValidationEnabled(boolean requestValidationEnabled) {
-        this.requestValidationEnabled = requestValidationEnabled ? "true" : "false";
-        return this;
-    }
-
-    /**
-     * Whether to enable validation of the client request to check that the request contains valid and expected data.
-     */
-    public OpenApiDefinition requestValidationEnabled() {
-        return requestValidationEnabled(true);
     }
 
     /**

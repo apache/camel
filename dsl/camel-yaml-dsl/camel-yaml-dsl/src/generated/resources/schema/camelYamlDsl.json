@@ -14702,11 +14702,6 @@
             "description" : "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
             "default" : "classpath:camel-mock/**"
           },
-          "requestValidationEnabled" : {
-            "type" : "boolean",
-            "title" : "Request Validation Enabled",
-            "description" : "Whether to enable validation of the client request to check that the request contains valid and expected data."
-          },
           "routeId" : {
             "type" : "string",
             "title" : "Route Id",
