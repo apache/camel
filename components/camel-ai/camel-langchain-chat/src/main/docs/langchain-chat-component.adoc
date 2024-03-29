@@ -1,8 +1,8 @@
-= Langchain4j Chat Component
-:doctitle: Langchain4j Chat
+= langChain4j Chat Component
+:doctitle: langChain4j Chat
 :shortname: langchain-chat
 :artifactid: camel-langchain-chat
-:description: Langchain4j Chat
+:description: LangChain4j Chat component
 :since: 4.5
 :supportlevel: Preview
 :tabs-sync-option:
@@ -143,7 +143,3 @@ messages.add(new SystemMessage("You are asked to provide recommendations for a r
 
 String response = template.requestBody("direct:send-multiple", messages, String.class);
 ----
-
-
-
-
