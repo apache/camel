@@ -1,0 +1,145 @@
+= langChain4j Chat Component
+:doctitle: langChain4j Chat
+:shortname: langchain4j-chat
+:artifactid: camel-langchain4j-chat
+:description: LangChain4j Chat component
+:since: 4.5
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: langchain4j-chat
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The LangChain4j Chat Component allows you to integrate with any LLM supported by https://github.com/langchain4j/langchain4j[LangChain4j].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-langchain4j-chat</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source]
+----
+langchain4j-chat:chatIdId[?options]
+----
+
+Where *chatId* can be any string to uniquely identify the endpoint
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+include::spring-boot:partial$starter.adoc[]
+
+== Using a specific Chat Model
+The Camel LangChain4j chat component provides an abstraction for interacting with various types of Large Language Models (LLMs) supported by https://github.com/langchain4j/langchain4j[LangChain4j].
+
+To integrate with a specific Large Language Model, users should follow these steps:
+
+=== Example of Integrating with OpenAI
+Add the dependency for LangChain4j OpenAI support:
+
+[source,xml]
+----
+<dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-open-ai</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+Init the OpenAI Chat Language Model, add add it to the Camel Registry:
+[source, java]
+----
+ChatLanguageModel model = OpenAiChatModel.builder()
+                .apiKey(openApiKey)
+                .modelName(GPT_3_5_TURBO)
+                .temperature(0.3)
+                .timeout(ofSeconds(3000))
+                .build();
+context.getRegistry().bind("chatModel", model);
+----
+
+Use the model in the Camel LangChain4j Chat Producer
+[source, java]
+----
+ from("direct:chat")
+      .to("langchain4j-chat:test?chatModel=#chatModel")
+
+----
+
+[NOTE]
+====
+To switch to another Large Language Model and its corresponding dependency, simply replace the `langchain4j-open-ai` dependency with the appropriate dependency for the desired model. Update the initialization parameters accordingly in the code snippet provided above.
+====
+
+== Send a prompt with variables
+To send a prompt with variables, use the Operation type `LangChain4jChatOperations.CHAT_SINGLE_MESSAGE_WITH_PROMPT`.
+This operation allows you to send a single prompt message with dynamic variables, which will be replaced with values provided in the request.
+
+Example of route :
+[source, java]
+----
+ from("direct:chat")
+      .to("langchain4j-chat:test?chatModel=#chatModel&chatOperation=CHAT_SINGLE_MESSAGE_WITH_PROMPT")
+
+----
+
+Example of usage:
+[source, java]
+----
+var promptTemplate = "Create a recipe for a {{dishType}} with the following ingredients: {{ingredients}}";
+
+Map<String, Object> variables = new HashMap<>();
+variables.put("dishType", "oven dish");
+variables.put("ingredients", "potato, tomato, feta, olive oil");
+
+String response = template.requestBodyAndHeader("direct:chat", variables,
+                LangChain4jChat.Headers.PROMPT_TEMPLATE, promptTemplate, String.class);
+----
+
+== Chat with history
+You can send a new prompt along with the chat message history by passing all messages in a list of type `dev.langchain4j.data.message.ChatMessage`.
+Use the Operation type `LangChain4jChatOperations.CHAT_MULTIPLE_MESSAGES`.
+This operation allows you to continue the conversation with the context of previous messages.
+
+Example of route :
+[source, java]
+----
+ from("direct:chat")
+      .to("langchain4j-chat:test?chatModel=#chatModel&chatOperation=CHAT_MULTIPLE_MESSAGES")
+
+----
+
+Example of usage:
+[source, java]
+----
+List<ChatMessage> messages = new ArrayList<>();
+messages.add(new SystemMessage("You are asked to provide recommendations for a restaurant based on user reviews."));
+// Add more chat messages as needed
+
+String response = template.requestBody("direct:send-multiple", messages, String.class);
+----

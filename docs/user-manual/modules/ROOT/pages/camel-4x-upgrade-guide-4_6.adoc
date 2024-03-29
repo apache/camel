@@ -27,3 +27,29 @@ The class `org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAg
 
 The `specifciationUri` in the `rest-api` component has changed from being a `java.net.URI` to a `String` type
 , as it uses Camels `ResourceLoader` to load from pluggable resources and also more tooling friendly.
+
+=== camel-langchain4j-chat
+
+The Camel Langchain4j Chat component name has been changed from `camel-langchain-chat`to `camel-langchain4j-chat` to adhere to the standardized naming conventions within the LangChain4j ecosystem.
+
+If you are migrating from Camel 4.5, please ensure the following:
+
+- Update your maven dependencies, changing from `camel-langchain-chat`to `camel-langchain4j-chat`
+- Adjust your endpoints, replacing `langchain-chat` with `langchain4j-chat`
+- Transfer any Camel class references from `org.apache.camel.component.chat.ChatLangchain*` to `org.apache.camel.component.langchain4j.chat.ChatLangchain4j*`
+- Modify the header name `The prompt Template`  from  `CamelLangChainChatPromptTemplate` to `CamelLangChain4jChatPromptTemplate`
+
+=== camel-langchain4j-embeddings
+
+The Camel Langchain4j Embeddings component name has been changed from `camel-langchain-embedings` to `camel-langchain4j-embedings` to adhere to the standardized naming conventions within the LangChain4j ecosystem.
+
+If you are migrating from Camel 4.5, please ensure the following
+
+- Update your maven dependencies, changing from  `camel-langchain-embedings`to `camel-langchain4j-embedings`
+- Adjust your endpoints, replacing `langchain-embedings` with `langchain4j-embedings`
+- Transfer any Camel class references from `org.apache.camel.component.langchain.embeddings.LangChainEmbeddings*` to `org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings*`
+- Modify the header name `The Finish Reason` from  `CamelLangChainEmbeddingsFinishReason` to `CamelLangChain4jEmbeddingsFinishReason`
+- Modify the header name `The Input Token Count` from  `CamelLangChainEmbeddingsInputTokenCount` to `CamelLangChain4jEmbeddingsInputTokenCount`
+- Modify the header name `The Output Token Count` from  `CamelLangChainEmbeddingsOutputTokenCount` to `CamelLangChain4jEmbeddingsOutputTokenCount`
+- Modify the header name `The Total Token Count` from  `CamelLangChainEmbeddingsTotalTokenCount` to `CamelLangChain4jEmbeddingsTotalTokenCount`
+- Modify the header name `A dense vector embedding of a text` from  `CamelLangChainEmbeddingsVector` to `CamelLangChain4jEmbeddingsVector`

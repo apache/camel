@@ -36,8 +36,8 @@
     <modules>
         <module>camel-chatscript</module>
         <module>camel-djl</module>
-        <module>camel-langchain-chat</module>
-        <module>camel-langchain-embeddings</module>
+        <module>camel-langchain4j-chat</module>
+        <module>camel-langchain4j-embeddings</module>
     </modules>
 
 </project>

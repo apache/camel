@@ -2781,30 +2781,30 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KuduComponentBuilderFactory.kudu();
     }
     /**
-     * langChain4j Chat (camel-langchain-chat)
+     * langChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
      * Since: 4.5
-     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * Maven coordinates: org.apache.camel:camel-langchain4j-chat
      * 
      * @return the dsl builder
      */
-    static org.apache.camel.builder.component.dsl.LangchainChatComponentBuilderFactory.LangchainChatComponentBuilder langchainChat() {
-        return org.apache.camel.builder.component.dsl.LangchainChatComponentBuilderFactory.langchainChat();
+    static org.apache.camel.builder.component.dsl.Langchain4jChatComponentBuilderFactory.Langchain4jChatComponentBuilder langchain4jChat() {
+        return org.apache.camel.builder.component.dsl.Langchain4jChatComponentBuilderFactory.langchain4jChat();
     }
     /**
-     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
      * 
      * Category: ai
      * Since: 4.5
-     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddings
      * 
      * @return the dsl builder
      */
-    static org.apache.camel.builder.component.dsl.LangchainEmbeddingsComponentBuilderFactory.LangchainEmbeddingsComponentBuilder langchainEmbeddings() {
-        return org.apache.camel.builder.component.dsl.LangchainEmbeddingsComponentBuilderFactory.langchainEmbeddings();
+    static org.apache.camel.builder.component.dsl.Langchain4jEmbeddingsComponentBuilderFactory.Langchain4jEmbeddingsComponentBuilder langchain4jEmbeddings() {
+        return org.apache.camel.builder.component.dsl.Langchain4jEmbeddingsComponentBuilderFactory.langchain4jEmbeddings();
     }
     /**
      * Language (camel-language)

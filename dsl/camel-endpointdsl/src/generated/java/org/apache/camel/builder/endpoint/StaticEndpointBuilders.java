@@ -9848,14 +9848,14 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * langChain4j Chat (camel-langchain-chat)
+     * langChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
      * Since: 4.5
-     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * Maven coordinates: org.apache.camel:camel-langchain4j-chat
      * 
-     * Syntax: <code>langchain-chat:chatId</code>
+     * Syntax: <code>langchain4j-chat:chatId</code>
      * 
      * Path parameter: chatId (required)
      * The id
@@ -9863,19 +9863,19 @@ public class StaticEndpointBuilders {
      * @param path chatId
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.LangChainChatEndpointBuilder langchainChat(
+    public static org.apache.camel.builder.endpoint.dsl.LangChain4jChatEndpointBuilderFactory.LangChain4jChatEndpointBuilder langchain4jChat(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.endpointBuilder("langchain-chat", path);
+        return org.apache.camel.builder.endpoint.dsl.LangChain4jChatEndpointBuilderFactory.endpointBuilder("langchain4j-chat", path);
     }
     /**
-     * langChain4j Chat (camel-langchain-chat)
+     * langChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
      * Since: 4.5
-     * Maven coordinates: org.apache.camel:camel-langchain-chat
+     * Maven coordinates: org.apache.camel:camel-langchain4j-chat
      * 
-     * Syntax: <code>langchain-chat:chatId</code>
+     * Syntax: <code>langchain4j-chat:chatId</code>
      * 
      * Path parameter: chatId (required)
      * The id
@@ -9885,20 +9885,20 @@ public class StaticEndpointBuilders {
      * @param path chatId
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.LangChainChatEndpointBuilder langchainChat(
+    public static org.apache.camel.builder.endpoint.dsl.LangChain4jChatEndpointBuilderFactory.LangChain4jChatEndpointBuilder langchain4jChat(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.LangChainChatEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.LangChain4jChatEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
      * 
      * Category: ai
      * Since: 4.5
-     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddings
      * 
-     * Syntax: <code>langchain-embeddings:embeddingId</code>
+     * Syntax: <code>langchain4j-embeddings:embeddingId</code>
      * 
      * Path parameter: embeddingId (required)
      * The id
@@ -9906,19 +9906,19 @@ public class StaticEndpointBuilders {
      * @param path embeddingId
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.LangChainEmbeddingsEndpointBuilder langchainEmbeddings(
+    public static org.apache.camel.builder.endpoint.dsl.LangChain4jEmbeddingsEndpointBuilderFactory.LangChain4jEmbeddingsEndpointBuilder langchain4jEmbeddings(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.endpointBuilder("langchain-embeddings", path);
+        return org.apache.camel.builder.endpoint.dsl.LangChain4jEmbeddingsEndpointBuilderFactory.endpointBuilder("langchain4j-embeddings", path);
     }
     /**
-     * LangChain4j Embeddings (camel-langchain-embeddings)
+     * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
      * 
      * Category: ai
      * Since: 4.5
-     * Maven coordinates: org.apache.camel:camel-langchain-embeddings
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddings
      * 
-     * Syntax: <code>langchain-embeddings:embeddingId</code>
+     * Syntax: <code>langchain4j-embeddings:embeddingId</code>
      * 
      * Path parameter: embeddingId (required)
      * The id
@@ -9928,10 +9928,10 @@ public class StaticEndpointBuilders {
      * @param path embeddingId
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.LangChainEmbeddingsEndpointBuilder langchainEmbeddings(
+    public static org.apache.camel.builder.endpoint.dsl.LangChain4jEmbeddingsEndpointBuilderFactory.LangChain4jEmbeddingsEndpointBuilder langchain4jEmbeddings(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.LangChainEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.LangChain4jEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Language (camel-language)
