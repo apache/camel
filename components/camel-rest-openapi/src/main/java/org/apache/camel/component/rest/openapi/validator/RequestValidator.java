@@ -16,144 +16,39 @@
  */
 package org.apache.camel.component.rest.openapi.validator;
 
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.atlassian.oai.validator.OpenApiInteractionValidator;
-import com.atlassian.oai.validator.model.SimpleRequest;
-import com.atlassian.oai.validator.report.ValidationReport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.Message;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.support.MessageHelper;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
-public class RequestValidator {
+public interface RequestValidator {
 
-    private static final Pattern REST_PATH_PARAM_PATTERN = Pattern.compile("\\{([^}]+)}");
+    /**
+     * Sets the default operation.
+     */
+    void setOperation(RestOpenApiOperation operation);
 
-    private final OpenApiInteractionValidator validator;
-    private final RestOpenApiOperation operation;
-    private final RequestValidationCustomizer customizer;
+    /**
+     * Gets the default operation.
+     */
+    RestOpenApiOperation getOperation();
 
-    public RequestValidator(OpenApiInteractionValidator validator,
-                            RestOpenApiOperation operation,
-                            RequestValidationCustomizer customizer) {
-        this.validator = validator;
-        this.operation = operation;
-        this.customizer = customizer;
+    /**
+     * Validates the {@link Exchange} with the custom operation.
+     *
+     * @param  exchange  the exchange
+     * @param  operation operation to use
+     * @return           null if no validation error, otherwise a set of errors
+     */
+    Set<String> validate(Exchange exchange, RestOpenApiOperation operation);
+
+    /**
+     * Validates the {@link Exchange} with the default operation
+     *
+     * @param  exchange the exchange
+     * @return          null if no validation error, otherwise a set of errors
+     */
+    default Set<String> validate(Exchange exchange) {
+        return validate(exchange, getOperation());
     }
 
-    public Set<String> validate(Exchange exchange) {
-        Message message = exchange.getMessage();
-        String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
-        String charsetFromExchange = getCharsetFromExchange(exchange);
-        Charset charset = null;
-        if (ObjectHelper.isNotEmpty(charsetFromExchange)) {
-            charset = Charset.forName(charsetFromExchange);
-        }
-
-        SimpleRequest.Builder builder
-                = new SimpleRequest.Builder(operation.getMethod(), resolvePathParams(exchange));
-        builder.withContentType(contentType);
-
-        // Validate request body if available
-        Object body = message.getBody();
-        if (ObjectHelper.isNotEmpty(body)) {
-            if (body instanceof InputStream) {
-                builder.withBody((InputStream) body);
-            } else if (body instanceof byte[]) {
-                builder.withBody((byte[]) body);
-            } else {
-                TypeConverter typeConverter = exchange.getContext().getTypeConverter();
-                String stringBody = typeConverter.tryConvertTo(String.class, body);
-                builder.withBody(stringBody, charset);
-            }
-        }
-
-        // Validate required operation query params
-        operation.getQueryParams()
-                .stream()
-                .filter(parameter -> Objects.nonNull(parameter.getRequired()) && parameter.getRequired())
-                .forEach(parameter -> {
-                    Object header = exchange.getMessage().getHeader(parameter.getName());
-                    if (ObjectHelper.isNotEmpty(header)) {
-                        if (header instanceof String) {
-                            builder.withQueryParam(parameter.getName(), (String) header);
-                        } else if (header instanceof List) {
-                            builder.withQueryParam(parameter.getName(), (List<String>) header);
-                        }
-                    }
-                });
-
-        // Validate operation required headers
-        operation.getHeaders()
-                .stream()
-                .filter(parameter -> Objects.nonNull(parameter.getRequired()) && parameter.getRequired())
-                .forEach(parameter -> {
-                    Object header = exchange.getMessage().getHeader(parameter.getName());
-                    if (ObjectHelper.isNotEmpty(header)) {
-                        if (header instanceof String) {
-                            builder.withHeader(parameter.getName(), (String) header);
-                        } else if (header instanceof List) {
-                            builder.withHeader(parameter.getName(), (List<String>) header);
-                        }
-                    }
-                });
-
-        // Apply any extra customizations to the validation request
-        customizer.customizeSimpleRequestBuilder(builder, operation, exchange);
-
-        // Perform validation and capture errors
-        Set<String> validationErrors = new LinkedHashSet<>();
-        validator.validateRequest(builder.build())
-                .getMessages()
-                .stream()
-                .filter(validationMessage -> validationMessage.getLevel().equals(ValidationReport.Level.ERROR))
-                .map(ValidationReport.Message::getMessage)
-                .forEach(validationErrors::add);
-
-        // Reset stream cache (if available) so it can be read again
-        MessageHelper.resetStreamCache(message);
-
-        return Collections.unmodifiableSet(validationErrors);
-    }
-
-    protected String resolvePathParams(Exchange exchange) {
-        String path = operation.getUriTemplate();
-        Matcher matcher = REST_PATH_PARAM_PATTERN.matcher(path);
-        String pathToProcess = path;
-        while (matcher.find()) {
-            String paramName = matcher.group(1);
-            String paramValue = exchange.getMessage().getHeader(paramName, String.class);
-            if (ObjectHelper.isNotEmpty(paramValue)) {
-                pathToProcess = pathToProcess.replace("{" + paramName + "}", UnsafeUriCharactersEncoder.encode(paramValue));
-            }
-        }
-        return pathToProcess;
-    }
-
-    protected String getCharsetFromExchange(Exchange exchange) {
-        String charset = null;
-        if (exchange != null) {
-            String contentType = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
-            if (ObjectHelper.isNotEmpty(contentType)) {
-                charset = IOHelper.getCharsetNameFromContentType(contentType);
-                if (ObjectHelper.isEmpty(charset)) {
-                    charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
-                }
-            }
-        }
-        return charset;
-    }
 }

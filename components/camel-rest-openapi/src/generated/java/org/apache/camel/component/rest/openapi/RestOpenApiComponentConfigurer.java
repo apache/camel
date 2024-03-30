@@ -44,8 +44,6 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "mockincludepattern":
         case "mockIncludePattern": target.setMockIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
-        case "requestvalidationcustomizer":
-        case "requestValidationCustomizer": target.setRequestValidationCustomizer(property(camelContext, org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class, value)); return true;
         case "requestvalidationenabled":
         case "requestValidationEnabled": target.setRequestValidationEnabled(property(camelContext, boolean.class, value)); return true;
         case "restopenapiprocessorstrategy":
@@ -86,8 +84,6 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "mockincludepattern":
         case "mockIncludePattern": return java.lang.String.class;
         case "produces": return java.lang.String.class;
-        case "requestvalidationcustomizer":
-        case "requestValidationCustomizer": return org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer.class;
         case "requestvalidationenabled":
         case "requestValidationEnabled": return boolean.class;
         case "restopenapiprocessorstrategy":
@@ -129,8 +125,6 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "mockincludepattern":
         case "mockIncludePattern": return target.getMockIncludePattern();
         case "produces": return target.getProduces();
-        case "requestvalidationcustomizer":
-        case "requestValidationCustomizer": return target.getRequestValidationCustomizer();
         case "requestvalidationenabled":
         case "requestValidationEnabled": return target.isRequestValidationEnabled();
         case "restopenapiprocessorstrategy":

@@ -89,24 +89,6 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Group: common (advanced)
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default RestOpenapiComponentBuilder requestValidationCustomizer(
-                org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
          * Sets the context-path to use for servicing the OpenAPI specification.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -426,7 +408,6 @@ public interface RestOpenapiComponentBuilderFactory {
             switch (name) {
             case "basePath": ((RestOpenApiComponent) component).setBasePath((java.lang.String) value); return true;
             case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.lang.String) value); return true;
-            case "requestValidationCustomizer": ((RestOpenApiComponent) component).setRequestValidationCustomizer((org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer) value); return true;
             case "apiContextPath": ((RestOpenApiComponent) component).setApiContextPath((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "missingOperation": ((RestOpenApiComponent) component).setMissingOperation((java.lang.String) value); return true;

@@ -28,7 +28,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.parameters.Parameter;
-import joptsimple.internal.Strings;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -155,7 +154,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         if (o.getRequestBody() != null) {
             Content c = o.getRequestBody().getContent();
             if (c != null) {
-                consumes = Strings.join(c.keySet().stream().sorted().collect(Collectors.toList()), ",");
+                consumes = c.keySet().stream().sorted().collect(Collectors.joining(","));
             }
         }
         // the operation may have specific information what it can produce
@@ -163,7 +162,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             for (var a : o.getResponses().values()) {
                 Content c = a.getContent();
                 if (c != null) {
-                    produces = Strings.join(c.keySet().stream().sorted().collect(Collectors.toList()), ",");
+                    produces = c.keySet().stream().sorted().collect(Collectors.joining(","));
                 }
             }
         }

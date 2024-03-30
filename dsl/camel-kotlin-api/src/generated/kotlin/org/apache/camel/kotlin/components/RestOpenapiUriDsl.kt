@@ -242,24 +242,6 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * If request validation is enabled, this option provides the capability to customize the creation
-   * of OpenApiInteractionValidator used to validate requests.
-   */
-  public fun requestValidationCustomizer(requestValidationCustomizer: String) {
-    it.property("requestValidationCustomizer", requestValidationCustomizer)
-  }
-
-  /**
-   * Levels for specific OpenAPI request validation options. Multiple options can be specified as
-   * URI options prefixed by 'validation.'. For example,
-   * validation.request.body=ERROR&validation.request.body.unexpected=IGNORED. Supported values are
-   * INFO, ERROR, WARN & IGNORE.
-   */
-  public fun requestValidationLevels(requestValidationLevels: String) {
-    it.property("requestValidationLevels", requestValidationLevels)
-  }
-
-  /**
    * Whether to enable validation of the client request to check if the incoming request is valid
    * according to the OpenAPI specification
    */
