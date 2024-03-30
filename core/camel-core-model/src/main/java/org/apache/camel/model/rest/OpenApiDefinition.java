@@ -39,7 +39,7 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     @XmlAttribute(required = true)
     private String specification;
     @Metadata
-    private String apiContextPath;
+    private String apiContextPath; // TODO: use from RestConfiguration instead
     @XmlAttribute
     private String routeId;
     @XmlAttribute
