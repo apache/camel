@@ -48,8 +48,6 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
         case "requestvalidationenabled":
         case "requestValidationEnabled": target.setRequestValidationEnabled(property(camelContext, boolean.class, value)); return true;
-        case "requestvalidationlevels":
-        case "requestValidationLevels": target.setRequestValidationLevels(property(camelContext, java.util.Map.class, value)); return true;
         case "restopenapiprocessorstrategy":
         case "restOpenapiProcessorStrategy": target.setRestOpenapiProcessorStrategy(property(camelContext, org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy.class, value)); return true;
         default: return false;
@@ -86,8 +84,6 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "produces": return java.lang.String.class;
         case "requestvalidationenabled":
         case "requestValidationEnabled": return boolean.class;
-        case "requestvalidationlevels":
-        case "requestValidationLevels": return java.util.Map.class;
         case "restopenapiprocessorstrategy":
         case "restOpenapiProcessorStrategy": return org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy.class;
         default: return null;
@@ -125,19 +121,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "produces": return target.getProduces();
         case "requestvalidationenabled":
         case "requestValidationEnabled": return target.isRequestValidationEnabled();
-        case "requestvalidationlevels":
-        case "requestValidationLevels": return target.getRequestValidationLevels();
         case "restopenapiprocessorstrategy":
         case "restOpenapiProcessorStrategy": return target.getRestOpenapiProcessorStrategy();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "requestvalidationlevels":
-        case "requestValidationLevels": return java.lang.Object.class;
         default: return null;
         }
     }

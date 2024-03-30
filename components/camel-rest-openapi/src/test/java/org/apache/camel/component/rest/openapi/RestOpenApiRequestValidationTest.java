@@ -189,18 +189,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("petStoreVersions")
-    void requestValidationWithCustomLevels(String petStoreVersion) {
-        Pet pet = new Pet();
-        pet.setId(10);
-        pet.setName("doggie");
-
-        Pet createdPet = template.requestBodyAndHeader("direct:customLevels", pet, "petStoreVersion", petStoreVersion,
-                Pet.class);
-        assertEquals(10, createdPet.getId());
-    }
-
-    @ParameterizedTest
-    @MethodSource("petStoreVersions")
     void requestValidationWithValidJsonBody(String petStoreVersion) {
         Pet pet = new Pet();
         pet.setId(10);
@@ -337,7 +325,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         RestOpenApiEndpoint endpoint = context.getEndpoint(petStoreVersion + ":#addPet", RestOpenApiEndpoint.class);
         endpoint.createProducer();
         assertFalse(endpoint.isRequestValidationEnabled());
-        assertTrue(endpoint.getRequestValidationLevels().isEmpty());
     }
 
     @ParameterizedTest
@@ -503,11 +490,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
                 from("direct:binaryContent")
                         .toD("${header.petStoreVersion}:uploadFile?requestValidationEnabled=true&produces=application/octet-stream")
-                        .unmarshal(jacksonDataFormat);
-
-                from("direct:customLevels")
-                        .marshal(jacksonDataFormat)
-                        .toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true&validation.request.body=IGNORE")
                         .unmarshal(jacksonDataFormat);
 
                 from("direct:headerParam")

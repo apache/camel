@@ -242,16 +242,6 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * Levels for specific OpenAPI request validation options. Multiple options can be specified as
-   * URI options prefixed by 'validation.'. For example,
-   * validation.request.body=ERROR&validation.request.body.unexpected=IGNORED. Supported values are
-   * INFO, ERROR, WARN & IGNORE.
-   */
-  public fun requestValidationLevels(requestValidationLevels: String) {
-    it.property("requestValidationLevels", requestValidationLevels)
-  }
-
-  /**
    * Whether to enable validation of the client request to check if the incoming request is valid
    * according to the OpenAPI specification
    */

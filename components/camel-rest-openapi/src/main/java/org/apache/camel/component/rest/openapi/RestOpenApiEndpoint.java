@@ -153,11 +153,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private boolean clientRequestValidation;
     @UriParam(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
-    @UriParam(description = "Levels for specific OpenAPI request validation options. Multiple options can be"
-                            + " specified as URI options prefixed by 'validation.'. For example, validation.request.body=ERROR"
-                            + "&validation.request.body.unexpected=IGNORED. Supported values are INFO, ERROR, WARN & IGNORE.",
-              label = "advanced", prefix = "validation.", multiValue = true)
-    private Map<String, Object> requestValidationLevels = new HashMap<>();
     @UriParam(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
     @UriParam(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
@@ -433,14 +428,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         this.clientRequestValidation = clientRequestValidation;
     }
 
-    public void setRequestValidationLevels(Map<String, Object> requestValidationLevels) {
-        this.requestValidationLevels = requestValidationLevels;
-    }
-
-    public Map<String, Object> getRequestValidationLevels() {
-        return requestValidationLevels;
-    }
-
     public RestOpenapiProcessorStrategy getRestOpenapiProcessorStrategy() {
         return restOpenapiProcessorStrategy;
     }
@@ -533,10 +520,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     String determineComponentName() {
         return Optional.ofNullable(componentName).orElse(getComponent().getComponentName());
-    }
-
-    String determineConsumerComponentName() {
-        return Optional.ofNullable(consumerComponentName).orElse(getComponent().getConsumerComponentName());
     }
 
     Map<String, Object> determineEndpointParameters(final OpenAPI openapi, final Operation operation) {
