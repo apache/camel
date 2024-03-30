@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,7 +47,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -369,33 +367,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
         String result = template.requestBodyAndHeaders("direct:headerParam", null, headers, String.class);
         assertEquals("Fruit deleted", result);
-    }
-
-    @ParameterizedTest
-    @MethodSource("fruitsApiVersions")
-    @Disabled
-    void requestValidationRequiredFormParamsNotPresent(String fruitsApiVersion) {
-        Exchange exchange = template.request("direct:formParam", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getMessage().setHeader("fruitsApiVersion", fruitsApiVersion);
-                exchange.getMessage().setBody("name=&color=");
-            }
-        });
-
-        Exception exception = exchange.getException();
-        assertNotNull(exception);
-        assertInstanceOf(RestOpenApiValidationException.class, exception);
-
-        RestOpenApiValidationException validationException = (RestOpenApiValidationException) exception;
-        Set<String> errors = validationException.getValidationErrors();
-        // [Path '/name'] Instance type (null) does not match any allowed primitive type string
-        assertEquals(2, errors.size());
-        Iterator<String> iterator = errors.iterator();
-        assertEquals("[Path '/color'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])",
-                iterator.next());
-        assertEquals("[Path '/name'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])",
-                iterator.next());
     }
 
     @ParameterizedTest
