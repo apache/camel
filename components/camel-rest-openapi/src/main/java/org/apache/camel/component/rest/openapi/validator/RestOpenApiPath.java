@@ -16,8 +16,39 @@
  */
 package org.apache.camel.component.rest.openapi.validator;
 
-/**
- * A noop {@link RequestValidationCustomizer} implementation.
- */
-public class DefaultRequestValidationCustomizer implements RequestValidationCustomizer {
+import io.swagger.v3.oas.models.Operation;
+import org.apache.camel.support.RestConsumerContextPathMatcher;
+
+class RestOpenApiPath implements RestConsumerContextPathMatcher.ConsumerPath<Operation> {
+
+    private final String verb;
+    private final String path;
+    private final Operation consumer;
+
+    public RestOpenApiPath(String verb, String path, Operation consumer) {
+        this.verb = verb;
+        this.path = path;
+        this.consumer = consumer;
+    }
+
+    @Override
+    public String getRestrictMethod() {
+        return verb;
+    }
+
+    @Override
+    public String getConsumerPath() {
+        return path;
+    }
+
+    @Override
+    public Operation getConsumer() {
+        return consumer;
+    }
+
+    @Override
+    public boolean isMatchOnUriPrefix() {
+        return false;
+    }
+
 }

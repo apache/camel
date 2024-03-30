@@ -317,42 +317,6 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestOpenApiEndpointConsumerBuilder requestValidationCustomizer(
-                org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestOpenApiEndpointConsumerBuilder requestValidationCustomizer(
-                String requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
          * Levels for specific OpenAPI request validation options. Multiple
          * options can be specified as URI options prefixed by 'validation.'.
          * For example,
@@ -630,42 +594,6 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestOpenApiEndpointProducerBuilder requestValidationCustomizer(
-                org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestOpenApiEndpointProducerBuilder requestValidationCustomizer(
-                String requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
          * Levels for specific OpenAPI request validation options. Multiple
          * options can be specified as URI options prefixed by 'validation.'.
          * For example,
@@ -769,42 +697,6 @@ public interface RestOpenApiEndpointBuilderFactory {
                 AdvancedRestOpenApiEndpointProducerBuilder {
         default RestOpenApiEndpointBuilder basic() {
             return (RestOpenApiEndpointBuilder) this;
-        }
-        /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestOpenApiEndpointBuilder requestValidationCustomizer(
-                org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
-        }
-        /**
-         * If request validation is enabled, this option provides the capability
-         * to customize the creation of OpenApiInteractionValidator used to
-         * validate requests.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param requestValidationCustomizer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestOpenApiEndpointBuilder requestValidationCustomizer(
-                String requestValidationCustomizer) {
-            doSetProperty("requestValidationCustomizer", requestValidationCustomizer);
-            return this;
         }
         /**
          * Levels for specific OpenAPI request validation options. Multiple

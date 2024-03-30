@@ -42,7 +42,7 @@ public class RestOpenApiOperation {
         this.headers = resolveParametersForType("header");
     }
 
-    public Object getOperation() {
+    public Operation getOperation() {
         return operation;
     }
 

@@ -21,8 +21,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer;
-import org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
@@ -129,10 +127,6 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     private boolean clientRequestValidation;
     @Metadata(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
-    @Metadata(description = "If request validation is enabled, this option provides the capability to customize"
-                            + " the creation of OpenApiInteractionValidator used to validate requests.",
-              label = "common,advanced")
-    private RequestValidationCustomizer requestValidationCustomizer = new DefaultRequestValidationCustomizer();
     @Metadata(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
               label = "consumer", enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
@@ -163,7 +157,6 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
         endpoint.setApiContextPath(getApiContextPath());
         endpoint.setClientRequestValidation(isClientRequestValidation());
-        endpoint.setRequestValidationCustomizer(getRequestValidationCustomizer());
         endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRequestValidationLevels(PropertiesHelper.extractProperties(parameters, "validation."));
         endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
@@ -295,11 +288,4 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         this.clientRequestValidation = clientRequestValidation;
     }
 
-    public void setRequestValidationCustomizer(RequestValidationCustomizer requestValidationCustomizer) {
-        this.requestValidationCustomizer = requestValidationCustomizer;
-    }
-
-    public RequestValidationCustomizer getRequestValidationCustomizer() {
-        return requestValidationCustomizer;
-    }
 }

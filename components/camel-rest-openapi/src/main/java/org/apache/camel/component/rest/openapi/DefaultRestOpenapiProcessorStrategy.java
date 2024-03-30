@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
-import joptsimple.internal.Strings;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
@@ -111,24 +110,24 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             }
             for (var p : openAPI.getPaths().entrySet()) {
                 String uri = path + p.getKey();
-                String verbs = Strings.join(p.getValue().readOperationsMap().keySet().stream()
+                String verbs = p.getValue().readOperationsMap().keySet().stream()
                         .map(Enum::name)
                         .sorted()
-                        .collect(Collectors.toList()), ",");
+                        .collect(Collectors.joining(","));
                 String consumes = null;
                 String produces = null;
                 for (var o : p.getValue().readOperations()) {
                     if (o.getRequestBody() != null) {
                         Content c = o.getRequestBody().getContent();
                         if (c != null) {
-                            consumes = Strings.join(c.keySet().stream().sorted().collect(Collectors.toList()), ",");
+                            consumes = c.keySet().stream().sorted().collect(Collectors.joining(","));
                         }
                     }
                     if (o.getResponses() != null) {
                         for (var a : o.getResponses().values()) {
                             Content c = a.getContent();
                             if (c != null) {
-                                produces = Strings.join(c.keySet().stream().sorted().collect(Collectors.toList()), ",");
+                                produces = c.keySet().stream().sorted().collect(Collectors.joining(","));
                             }
                         }
                     }

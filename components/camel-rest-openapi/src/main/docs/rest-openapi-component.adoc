@@ -190,75 +190,21 @@ String getPetJsonById(int petId) {
 API requests can be validated against the configured OpenAPI specification before they are sent by setting the `requestValidationEnabled` option to `true`.
 Validation is provided by the https://bitbucket.org/atlassian/swagger-request-validator/src/master/[swagger-request-validator].
 
-By default, the following checks are enabled and will cause request validation to fail if the requirements are not fulfilled.
+The validator checks for the following conditions:
 
-|===
-|Configuration key |Description
+* request body - Checks if the request body is required and whether there is any body on the Camel Exchange.
 
-|validation.request.body
-|Validates the request body. If the content type of the request is `application/json`, the JSON content
-will be validated against the schema defined in the OpenAPI specification.
+* valid json - Checks if the content-type is `application/json` that the message body can be parsed as valid JSon.
 
-|validation.request.contentType.notAllowed
-|Validates whether the `Content-Type` header for the request is valid for the API operation.
+* content-type - Validates whether the `Content-Type` header for the request is valid for the API operation.
 The value is taken from the `Content-Type` Camel message exchange header.
 
-|validation.request.path.missing
-|Validates whether the resolved request path is valid for the API operation.
-
-|validation.request.parameter.header.missing
-|Validates whether an HTTP header required by the API operation is present. The header is
+* request parameters - Validates whether an HTTP header required by the API operation is present. The header is
 expected to be present among the Camel message exchange headers.
 
-|validation.request.parameter.query.missing
-|Validates whether an HTTP query parameter required by the API operation is present. The query parameter is
+* query parameters - Validates whether an HTTP query parameter required by the API operation is present. The query parameter is
 expected to be present among the Camel message exchange headers.
-|===
 
 If any of the validation checks fail, then a `RestOpenApiValidationException` is thrown. The exception object
 has a `getValidationErrors` method that returns the error messages from the validator.
 
-=== Customizing validation
-
-==== Validation levels
-
-You can override the configuration options mentioned above and configure new ones via the `validationLevels` option.
-You can configure additional options on the `rest-openapi` endpoint URI with options prefixed with `validation.`.
-
-For example, to disable the `validation.request.body` check and enable the `validation.request.body.unexpected` check.
-
-[source,java]
-----
-.to("rest-openapi#myOperation?validationEnabled=true&validation.request.body=IGNORE&validation.request.body.unexpected=ERROR")
-----
-
-The full list of validation options can be found https://bitbucket.org/atlassian/swagger-request-validator/src/master/swagger-request-validator-core/src/main/resources/swagger/validation/messages.properties[here].
-
-==== RequestValidationCustomizer
-
-You can get complete control for the setup of the validation options with a custom `RequestValidationCustomizer`. For example.
-
-[source,java]
-----
-public class CustomRequestValidationCustomizer implements RequestValidationCustomizer {
-        @Override
-        public void customizeOpenApiInteractionValidator(OpenApiInteractionValidator.Builder builder) {
-            // Apply customizations to the OpenApiInteractionValidator builder
-        }
-
-        @Override
-        public void customizeSimpleRequestBuilder(
-                SimpleRequest.Builder builder, RestOpenApiOperation openApiOperation, Exchange exchange) {
-            // Apply customizations to the SimpleRequest builder
-        }
-}
-----
-
-Assuming `CustomRequestValidationCustomizer` is bound to the Camel registry, you can reference it in the endpoint URI.
-
-[source,java]
-----
-.to("rest-openapi#myOperation?requestValidationEnabled=true&requestValidationCustomizer=#customRequestValidationCustomizer")
-----
-
-include::spring-boot:partial$starter.adoc[]

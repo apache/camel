@@ -105,30 +105,6 @@
             <version>${jackson2-version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.atlassian.oai</groupId>
-            <artifactId>swagger-request-validator-core</artifactId>
-            <version>${swagger-request-validator-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.swagger.parser.v3</groupId>
-                    <artifactId>swagger-parser-v2-converter</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.swagger.core.v3</groupId>
-                    <artifactId>swagger-models</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.swagger.core.v3</groupId>
-                    <artifactId>swagger-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>findbugs</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
