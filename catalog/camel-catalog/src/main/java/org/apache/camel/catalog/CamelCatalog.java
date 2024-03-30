@@ -250,6 +250,8 @@ public interface CamelCatalog {
                 return findModelNames();
             case bean:
                 return findBeansNames();
+            case model:
+                return findModelNames();
             default:
                 throw new IllegalArgumentException("Unexpected kind " + kind);
         }
@@ -627,6 +629,10 @@ public interface CamelCatalog {
             case other:
                 return otherModel(name);
             case eip:
+                return eipModel(name);
+            case bean:
+                return pojoBeanModel(name);
+            case model:
                 return eipModel(name);
             default:
                 throw new IllegalArgumentException("Unexpected kind " + kind);
