@@ -1709,12 +1709,12 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-langchain-chat</artifactId>
+                <artifactId>camel-langchain4j-chat</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-langchain-embeddings</artifactId>
+                <artifactId>camel-langchain4j-embeddings</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -1,1 +1,0 @@
-../../../../../components/camel-ai/camel-langchain-chat/src/main/docs/langchain-chat-component.adoc

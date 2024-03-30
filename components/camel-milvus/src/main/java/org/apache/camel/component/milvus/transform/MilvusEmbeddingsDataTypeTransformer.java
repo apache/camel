@@ -31,7 +31,8 @@ import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
 /**
- * Maps a LangChain Embeddings to a Milvus InsertParam/Upsert Param to write an embeddings vector on a Milvus Database.
+ * Maps a LangChain4j Embeddings to a Milvus InsertParam/Upsert Param to write an embeddings vector on a Milvus
+ * Database.
  */
 @DataTypeTransformer(name = "milvus:embeddings",
                      description = "Prepares the message to become an object writable by Milvus component")
@@ -39,7 +40,7 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader("CamelLangChainEmbeddingsVector", Embedding.class);
+        Embedding embedding = message.getHeader("CamelLangChain4jEmbeddingsVector", Embedding.class);
         String textFieldName = message.getHeader(Milvus.Headers.TEXT_FIELD_NAME, () -> "text", String.class);
         String vectorFieldName = message.getHeader(Milvus.Headers.VECTOR_FIELD_NAME, () -> "vector", String.class);
         String collectionName = message.getHeader(Milvus.Headers.COLLECTION_NAME, () -> "embeddings", String.class);
