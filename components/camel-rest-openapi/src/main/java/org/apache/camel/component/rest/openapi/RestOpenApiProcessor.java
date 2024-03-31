@@ -51,8 +51,8 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiProcessor.class);
 
-    private static final List<String> METHODS
-            = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
+    // just use the most common verbs
+    private static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH");
 
     private CamelContext camelContext;
     private final RestOpenApiEndpoint endpoint;
@@ -116,12 +116,14 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         // okay we cannot process this requires so return either 404 or 405.
         // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
         final String contextPath = path;
-        boolean hasAnyMethod
-                = METHODS.stream().anyMatch(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null);
-        if (hasAnyMethod) {
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 405);
-        } else {
+        List<String> allow = METHODS.stream()
+                .filter(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null).toList();
+        if (allow.isEmpty()) {
             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+        } else {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 405);
+            // include list of allowed VERBs
+            exchange.getMessage().setHeader("Allow", String.join(", ", allow));
         }
         exchange.setRouteStop(true);
         callback.done(true);
