@@ -171,6 +171,16 @@ public final class RestConsumerContextPathMatcher {
                     .sorted(Comparator.comparingInt(o -> -1 * o.getConsumerPath().length())).findFirst().orElse(null);
         }
 
+        // is there a direct match by with a different VERB, as then this call is not allowed
+        if (answer == null) {
+            for (ConsumerPath<T> entry : consumerPaths) {
+                if (matchRestPath(requestPath, entry.getConsumerPath(), false)) {
+                    // okay we have direct match but for another VERB so this call is not allowed
+                    return null;
+                }
+            }
+        }
+
         if (answer != null) {
             return answer;
         }
