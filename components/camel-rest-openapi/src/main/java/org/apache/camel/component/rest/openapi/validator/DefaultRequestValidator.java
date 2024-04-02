@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -30,13 +28,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 public class DefaultRequestValidator implements RequestValidator {
-
-    private static final Pattern REST_PATH_PARAM_PATTERN = Pattern.compile("\\{([^}]+)}");
 
     private RestOpenApiOperation operation;
 
@@ -124,20 +119,6 @@ public class DefaultRequestValidator implements RequestValidator {
         MessageHelper.resetStreamCache(message);
 
         return Collections.unmodifiableSet(validationErrors);
-    }
-
-    protected String resolvePathParams(Exchange exchange, RestOpenApiOperation o) {
-        String path = o.getUriTemplate();
-        Matcher matcher = REST_PATH_PARAM_PATTERN.matcher(path);
-        String pathToProcess = path;
-        while (matcher.find()) {
-            String paramName = matcher.group(1);
-            String paramValue = exchange.getMessage().getHeader(paramName, String.class);
-            if (ObjectHelper.isNotEmpty(paramValue)) {
-                pathToProcess = pathToProcess.replace("{" + paramName + "}", UnsafeUriCharactersEncoder.encode(paramValue));
-            }
-        }
-        return pathToProcess;
     }
 
 }

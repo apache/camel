@@ -33,6 +33,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RestConfiguration;
@@ -95,17 +96,31 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                 = RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
         if (m != null) {
             Operation o = m.getConsumer();
+
+            // before and after processors for binding
+            Processor before = null;
+            Processor after = null;
+            if (m instanceof RestOpenApiConsumerPath mp) {
+                before = mp.getBindingBefore();
+                after = mp.getBindingAfter();
+            }
+
             // binding mode
             RestConfiguration config = camelContext.getRestConfiguration();
             RestConfiguration.RestBindingMode bindingMode = config.getBindingMode();
+
+            // map path-parameters from operation to camel headers
+            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), path, m.getConsumerPath());
+
             // we have found the op to call, but if validation is enabled then we need
             // to validate the incoming request first
             if (endpoint.isClientRequestValidation() && isInvalidClientRequest(exchange, callback, o, bindingMode)) {
                 // okay some validation error so return true
                 return true;
             }
+
             // process the incoming request
-            return restOpenapiProcessorStrategy.process(o, path, exchange, callback);
+            return restOpenapiProcessorStrategy.process(o, path, before, after, exchange, callback);
         }
 
         // is it the api-context path
@@ -315,7 +330,9 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             String path = e.getKey(); // path
             for (var o : e.getValue().readOperationsMap().entrySet()) {
                 String v = o.getKey().name(); // verb
-                paths.add(new RestOpenApiConsumerPath(v, path, o.getValue()));
+                RestOpenApiBindingBefore before = new RestOpenApiBindingBefore();
+                RestOpenApiBindingAfter after = new RestOpenApiBindingAfter();
+                paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), before, after));
             }
         }
         ServiceHelper.buildService(restOpenapiProcessorStrategy);

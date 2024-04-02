@@ -32,6 +32,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
@@ -161,7 +162,10 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     }
 
     @Override
-    public boolean process(Operation operation, String path, Exchange exchange, AsyncCallback callback) {
+    public boolean process(
+            Operation operation, String path,
+            Processor beforeBinding, Processor afterBinding,
+            Exchange exchange, AsyncCallback callback) {
         if ("mock".equalsIgnoreCase(missingOperation)) {
             // check if there is a route
             Endpoint e = camelContext.hasEndpoint(component + ":" + operation.getOperationId());
@@ -172,11 +176,26 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             }
         }
 
+        if (beforeBinding != null) {
+            try {
+                beforeBinding.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
+        }
+
         Endpoint e = camelContext.getEndpoint(component + ":" + operation.getOperationId());
         AsyncProducer p = producerCache.acquireProducer(e);
         return p.process(exchange, doneSync -> {
             try {
                 producerCache.releaseProducer(e, p);
+                if (afterBinding != null) {
+                    afterBinding.process(exchange);
+                }
+            } catch (Exception ex) {
+                exchange.setException(ex);
             } finally {
                 callback.done(doneSync);
             }

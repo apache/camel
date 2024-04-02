@@ -17,6 +17,7 @@
 package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.Operation;
+import org.apache.camel.Processor;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 
 class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.ConsumerPath<Operation> {
@@ -24,11 +25,16 @@ class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.Consumer
     private final String verb;
     private final String path;
     private final Operation consumer;
+    private final Processor bindingBefore;
+    private final Processor bindingAfter;
 
-    public RestOpenApiConsumerPath(String verb, String path, Operation consumer) {
+    public RestOpenApiConsumerPath(String verb, String path, Operation consumer,
+                                   Processor bindingBefore, Processor bindingAfter) {
         this.verb = verb;
         this.path = path;
         this.consumer = consumer;
+        this.bindingBefore = bindingBefore;
+        this.bindingAfter = bindingAfter;
     }
 
     @Override
@@ -49,5 +55,13 @@ class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.Consumer
     @Override
     public boolean isMatchOnUriPrefix() {
         return false;
+    }
+
+    public Processor getBindingBefore() {
+        return bindingBefore;
+    }
+
+    public Processor getBindingAfter() {
+        return bindingAfter;
     }
 }
