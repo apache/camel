@@ -41,10 +41,12 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
 
                     from("direct:getPetById")
                             .process(e -> {
+                                // build response body as POJO
                                 Pet pet = new Pet();
                                 pet.setId(e.getMessage().getHeader("petId", long.class));
                                 pet.setName("tony the tiger");
                                 pet.setStatus(Pet.Status.AVAILABLE);
+                                e.getMessage().setBody(pet);
                             });
                 }
             });
@@ -56,7 +58,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
                     .get("/api/v3/pet/123")
                     .then()
                     .statusCode(200)
-                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+                    .body(equalTo("{\"id\":123,\"name\":\"tony the tiger\",\"status\":\"AVAILABLE\"}"));
 
         } finally {
             context.stop();

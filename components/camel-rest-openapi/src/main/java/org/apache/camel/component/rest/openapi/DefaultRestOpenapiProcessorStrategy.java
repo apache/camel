@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -32,7 +33,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
@@ -42,6 +42,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
+import org.apache.camel.support.processor.RestBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -164,36 +165,35 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     @Override
     public boolean process(
             Operation operation, String path,
-            Processor beforeBinding, Processor afterBinding,
+            RestBindingSupport binding,
             Exchange exchange, AsyncCallback callback) {
+
         if ("mock".equalsIgnoreCase(missingOperation)) {
             // check if there is a route
             Endpoint e = camelContext.hasEndpoint(component + ":" + operation.getOperationId());
             if (e == null) {
+                // no route then try to load mock data as the answer
                 loadMockData(operation, path, exchange);
                 callback.done(true);
                 return true;
             }
         }
 
-        if (beforeBinding != null) {
-            try {
-                beforeBinding.process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-                callback.done(true);
-                return true;
-            }
+        Map<String, Object> state;
+        try {
+            state = binding.before(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
-        Endpoint e = camelContext.getEndpoint(component + ":" + operation.getOperationId());
-        AsyncProducer p = producerCache.acquireProducer(e);
+        final Endpoint e = camelContext.getEndpoint(component + ":" + operation.getOperationId());
+        final AsyncProducer p = producerCache.acquireProducer(e);
         return p.process(exchange, doneSync -> {
             try {
                 producerCache.releaseProducer(e, p);
-                if (afterBinding != null) {
-                    afterBinding.process(exchange);
-                }
+                binding.after(exchange, state);
             } catch (Exception ex) {
                 exchange.setException(ex);
             } finally {
