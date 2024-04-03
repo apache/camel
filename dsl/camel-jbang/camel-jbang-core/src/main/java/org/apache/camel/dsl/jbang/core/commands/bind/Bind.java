@@ -77,6 +77,7 @@ public class Bind extends CamelCommand {
             new KameletBindingProvider(),
             new KnativeBrokerBindingProvider(),
             new KnativeChannelBindingProvider(),
+            new StrimziKafkaTopicBindingProvider(),
             new ObjectReferenceBindingProvider(),
             new UriBindingProvider()
     };

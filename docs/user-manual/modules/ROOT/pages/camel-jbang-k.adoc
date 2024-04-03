@@ -454,6 +454,45 @@ spec:
 ----
 <1> Reference to the source Knative message channel that provides the events
 
+=== Binding to Kafka topics
+
+Kafka topic resources may act as a source or sink in a Pipe.
+Strimzi provides KafkaTopic resources that you can reference in your Pipe.
+
+The reference to the Strimzi resource is identified by the apiVersion, kind and resource name. Users may add properties to the object reference such as the brokers bootstrap URI.
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+  annotations:
+    camel.apache.org/operator.id: camel-k
+spec:
+  source: # <1>
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: timer-source
+    properties:
+      message: "Camel rocks!"
+  sink: # <2>
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta2
+      name: my-topic
+    properties:
+      brokers: "my-cluster-kafka-bootstrap:9092" # <3>
+----
+<1> Reference to the source that provides data
+<2> Reference to the Strimzi Kafka topic where data should be sent to
+<3> The Kafka brokers bootstrap URI
+
+NOTE: Camel K is able to auto resolve the Kafka broker bootstrap URI by resolving the Strimzi Kafka resources in the same namespace. The operator may perform a lookup of the bootstrap URI and inject this as a property to the Camel component at runtime.
+
+You can set the `brokers` property to explicitly point to the Strimzi Kafka broker.
+
 === Error handling
 
 You can configure an error handler in order to specify what to do when some event ends up with failure.
