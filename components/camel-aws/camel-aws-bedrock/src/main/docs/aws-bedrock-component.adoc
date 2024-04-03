@@ -555,8 +555,71 @@ Json schema for request
 }
 --------------------------------------------------------------------------------
 
-- Claude 3 Sonnet with id `anthropic.claude-3-sonnet-20240229-v1:0"`
+- Claude 3 Sonnet with id `anthropic.claude-3-sonnet-20240229-v1:0`
 Claude 3 Sonnet by Anthropic strikes the ideal balance between intelligence and speed—particularly for enterprise workloads.
+
+Json schema for request
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "messages": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": "string"
+            },
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "text"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "content"
+          ]
+        }
+      ]
+    },
+    "max_tokens": {
+      "type": "integer"
+    },
+    "anthropic_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "messages",
+    "max_tokens",
+    "anthropic_version"
+  ]
+}
+--------------------------------------------------------------------------------
+
+- Claude 3 Haiku with id `anthropic.claude-3-haiku-20240307-v1:0`
+Claude 3 Haiku is Anthropic's fastest, most compact model for near-instant responsiveness. It answers simple queries and requests with speed.
 
 Json schema for request
 
