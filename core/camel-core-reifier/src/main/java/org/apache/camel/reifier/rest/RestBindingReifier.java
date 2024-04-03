@@ -65,12 +65,13 @@ public class RestBindingReifier extends AbstractReifier {
             validation = parseBoolean(definition.getClientRequestValidation(), false);
         }
         rbc.setClientRequestValidation(validation);
-        rbc.setRequiredBody(definition.getRequiredBody() != null && definition.getRequiredBody());
         rbc.setConsumes(parseString(definition.getConsumes()));
         rbc.setProduces(parseString(definition.getProduces()));
         rbc.setCorsHeaders(config.getCorsHeaders());
-        rbc.setRequiredQueryParameters(definition.getRequiredQueryParameters());
         rbc.setQueryDefaultValues(definition.getDefaultValues());
+        rbc.setRequiredBody(definition.getRequiredBody() != null && definition.getRequiredBody());
+        rbc.setRequiredQueryParameters(definition.getRequiredQueryParameters());
+        rbc.setRequiredHeaders(definition.getRequiredHeaders());
         rbc.setType(parseString(definition.getType()));
         rbc.setTypeClass(definition.getTypeClass());
         rbc.setOutType(parseString(definition.getOutType()));

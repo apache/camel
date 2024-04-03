@@ -32,6 +32,13 @@ import org.apache.camel.support.PropertyBindingSupport;
  */
 public class RestBindingFactory {
 
+    /**
+     * Builds the {@link RestBindingSupport} from the given configuration
+     *
+     * @param camelContext the camel context
+     * @param bc           the binding configuration
+     * @return             the created binding advice
+     */
     public static RestBindingSupport build(CamelContext camelContext, RestBindingConfiguration bc) throws Exception {
         String mode = bc.getBindingMode();
 
