@@ -444,7 +444,7 @@ class BedrockProducerIT extends CamelTestSupport {
 
                 from("direct:send_anthropic_v3_haiku_model")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
-                                + BedrockModels.ANTROPHIC_CLAUDE_HAIKU_V3.model)
+                            + BedrockModels.ANTROPHIC_CLAUDE_HAIKU_V3.model)
                         .log("Completions: ${body}")
                         .to(result);
             }
