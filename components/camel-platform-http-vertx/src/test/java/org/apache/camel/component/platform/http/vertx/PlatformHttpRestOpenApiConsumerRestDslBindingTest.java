@@ -86,7 +86,6 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
                             .process(e -> {
                                 Pet pet = e.getMessage().getBody(Pet.class);
                                 pet.setStatus(Pet.Status.PENDING);
-                                e.getMessage().setBody(pet);
                             });
                 }
             });
