@@ -336,6 +336,44 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testInvokeAnthropicV3HaikuModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_anthropic_v3_haiku_model", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+
+            ArrayNode content = mapper.createArrayNode();
+
+            ObjectNode textContent = mapper.createObjectNode();
+
+            textContent.putIfAbsent("type", new TextNode("text"));
+            textContent.putIfAbsent("text", new TextNode("Can you tell the history of Mayflower?"));
+
+            content.add(textContent);
+
+            element.putIfAbsent("content", content);
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -401,6 +439,12 @@ class BedrockProducerIT extends CamelTestSupport {
                 from("direct:send_anthropic_v3_model")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
                             + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_anthropic_v3_haiku_model")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
+                                + BedrockModels.ANTROPHIC_CLAUDE_HAIKU_V3.model)
                         .log("Completions: ${body}")
                         .to(result);
             }
