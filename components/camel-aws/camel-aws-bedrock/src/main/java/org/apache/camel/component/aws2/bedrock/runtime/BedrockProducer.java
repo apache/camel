@@ -249,7 +249,7 @@ public class BedrockProducer extends DefaultProducer {
                     throw new RuntimeException(e);
                 }
             }
-            case "anthropic.claude-3-sonnet-20240229-v1:0" -> {
+            case "anthropic.claude-3-sonnet-20240229-v1:0", "anthropic.claude-3-haiku-20240307-v1:0" -> {
                 try {
                     setAnthropicV3Text(result, message);
                 } catch (JsonProcessingException e) {
