@@ -28,23 +28,23 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 /**
- * Factory to create {@link RestBindingSupport} from the given configuration.
+ * Factory to create {@link RestBindingAdvice} from the given configuration.
  */
-public class RestBindingFactory {
+public class RestBindingAdviceFactory {
 
     /**
-     * Builds the {@link RestBindingSupport} from the given configuration
+     * Builds the {@link RestBindingAdvice} from the given configuration
      *
      * @param camelContext the camel context
      * @param bc           the binding configuration
      * @return             the created binding advice
      */
-    public static RestBindingSupport build(CamelContext camelContext, RestBindingConfiguration bc) throws Exception {
+    public static RestBindingAdvice build(CamelContext camelContext, RestBindingConfiguration bc) throws Exception {
         String mode = bc.getBindingMode();
 
         if ("off".equals(mode)) {
             // binding mode is off, so create off mode binding processor
-            return new RestBindingSupport(
+            return new RestBindingAdvice(
                     camelContext, null, null, null, null,
                     bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
                     bc.isEnableCORS(),
@@ -116,7 +116,7 @@ public class RestBindingFactory {
             }
         }
 
-        return new RestBindingSupport(
+        return new RestBindingAdvice(
                 camelContext, json, jaxb, outJson, outJaxb,
                 bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
                 bc.isEnableCORS(),

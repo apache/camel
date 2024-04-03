@@ -42,9 +42,9 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.RestBindingAdvice;
+import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
-import org.apache.camel.support.processor.RestBindingFactory;
-import org.apache.camel.support.processor.RestBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -328,7 +328,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             for (var o : e.getValue().readOperationsMap().entrySet()) {
                 String v = o.getKey().name(); // verb
                 // create per operation binding
-                RestBindingSupport binding = createRestBinding(o.getValue());
+                RestBindingAdvice binding = createRestBinding(o.getValue());
                 ServiceHelper.buildService(binding);
                 paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
             }
@@ -336,7 +336,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         ServiceHelper.buildService(restOpenapiProcessorStrategy);
     }
 
-    private RestBindingSupport createRestBinding(Operation o) throws Exception {
+    private RestBindingAdvice createRestBinding(Operation o) throws Exception {
         RestConfiguration config = camelContext.getRestConfiguration();
         RestConfiguration.RestBindingMode mode = config.getBindingMode();
 
@@ -413,7 +413,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
         // TODO: type/outType
 
-        return RestBindingFactory.build(camelContext, bc);
+        return RestBindingAdviceFactory.build(camelContext, bc);
     }
 
     @Override

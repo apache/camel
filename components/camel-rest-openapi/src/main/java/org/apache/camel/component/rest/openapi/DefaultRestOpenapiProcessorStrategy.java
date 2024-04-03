@@ -42,7 +42,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
-import org.apache.camel.support.processor.RestBindingSupport;
+import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -165,7 +165,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     @Override
     public boolean process(
             Operation operation, String path,
-            RestBindingSupport binding,
+            RestBindingAdvice binding,
             Exchange exchange, AsyncCallback callback) {
 
         if ("mock".equalsIgnoreCase(missingOperation)) {

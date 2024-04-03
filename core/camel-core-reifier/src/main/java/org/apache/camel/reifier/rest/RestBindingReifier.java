@@ -23,8 +23,8 @@ import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.processor.RestBindingConfiguration;
-import org.apache.camel.support.processor.RestBindingFactory;
-import org.apache.camel.support.processor.RestBindingSupport;
+import org.apache.camel.support.processor.RestBindingAdviceFactory;
+import org.apache.camel.support.processor.RestBindingAdvice;
 
 public class RestBindingReifier extends AbstractReifier {
 
@@ -35,7 +35,7 @@ public class RestBindingReifier extends AbstractReifier {
         this.definition = definition;
     }
 
-    public RestBindingSupport createRestBindingAdvice() throws Exception {
+    public RestBindingAdvice createRestBindingAdvice() throws Exception {
         RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, definition.getComponent());
         RestBindingConfiguration rbc = new RestBindingConfiguration();
 
@@ -77,7 +77,8 @@ public class RestBindingReifier extends AbstractReifier {
         rbc.setOutType(parseString(definition.getOutType()));
         rbc.setOutTypeClass(definition.getOutTypeClass());
 
-        return RestBindingFactory.build(camelContext, rbc);
+        // use factory to create advice
+        return RestBindingAdviceFactory.build(camelContext, rbc);
     }
 
 }

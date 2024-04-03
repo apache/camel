@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Configuration for {@link RestBindingSupport}.
+ * Configuration for {@link RestBindingAdvice}.
  */
 public class RestBindingConfiguration {
 

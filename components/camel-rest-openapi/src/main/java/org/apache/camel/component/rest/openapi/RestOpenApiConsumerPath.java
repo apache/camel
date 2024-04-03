@@ -18,17 +18,17 @@ package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
-import org.apache.camel.support.processor.RestBindingSupport;
+import org.apache.camel.support.processor.RestBindingAdvice;
 
 class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.ConsumerPath<Operation> {
 
     private final String verb;
     private final String path;
     private final Operation consumer;
-    private final RestBindingSupport binding;
+    private final RestBindingAdvice binding;
 
     public RestOpenApiConsumerPath(String verb, String path, Operation consumer,
-                                   RestBindingSupport binding) {
+                                   RestBindingAdvice binding) {
         this.verb = verb;
         this.path = path;
         this.consumer = consumer;
@@ -55,7 +55,7 @@ class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.Consumer
         return false;
     }
 
-    public RestBindingSupport getBinding() {
+    public RestBindingAdvice getBinding() {
         return binding;
     }
 }

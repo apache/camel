@@ -49,11 +49,11 @@ import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentTyp
  * <p/>
  * The rest producer side is implemented in {@link org.apache.camel.component.rest.RestProducerBindingProcessor}
  *
- * @see RestBindingFactory
+ * @see RestBindingAdviceFactory
  */
-public class RestBindingSupport extends ServiceSupport implements CamelInternalProcessorAdvice<Map<String, Object>> {
+public class RestBindingAdvice extends ServiceSupport implements CamelInternalProcessorAdvice<Map<String, Object>> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestBindingSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RestBindingAdvice.class);
     private static final String STATE_KEY_DO_MARSHAL = "doMarshal";
     private static final String STATE_KEY_ACCEPT = "accept";
     private static final String STATE_JSON = "json";
@@ -77,17 +77,17 @@ public class RestBindingSupport extends ServiceSupport implements CamelInternalP
     private final Set<String> requiredHeaders;
 
     /**
-     * Use {@link RestBindingFactory} to create.
+     * Use {@link RestBindingAdviceFactory} to create.
      */
-    public RestBindingSupport(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
-                              DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                              String consumes, String produces, String bindingMode,
-                              boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
-                              boolean enableNoContentResponse,
-                              Map<String, String> corsHeaders,
-                              Map<String, String> queryDefaultValues,
-                              boolean requiredBody, Set<String> requiredQueryParameters,
-                              Set<String> requiredHeaders) throws Exception {
+    public RestBindingAdvice(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
+                             DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
+                             String consumes, String produces, String bindingMode,
+                             boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
+                             boolean enableNoContentResponse,
+                             Map<String, String> corsHeaders,
+                             Map<String, String> queryDefaultValues,
+                             boolean requiredBody, Set<String> requiredQueryParameters,
+                             Set<String> requiredHeaders) throws Exception {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);

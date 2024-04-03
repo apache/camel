@@ -20,7 +20,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.processor.RestBindingSupport;
+import org.apache.camel.support.processor.RestBindingAdvice;
 
 /**
  * Strategy for processing the Rest DSL that services an OpenAPI spec.
@@ -76,7 +76,7 @@ public interface RestOpenapiProcessorStrategy {
      */
     boolean process(
             Operation operation, String path,
-            RestBindingSupport binding,
+            RestBindingAdvice binding,
             Exchange exchange, AsyncCallback callback);
 
     /**
