@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.FileDataSource;
@@ -32,6 +33,7 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -71,12 +73,13 @@ public class MailAttachmentsUmlautIssueTest extends CamelTestSupport {
         producer.process(exchange);
 
         // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
-        Thread.sleep(2000);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         Exchange out = mock.assertExchangeReceived(0);
-        mock.assertIsSatisfied();
+
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            mock.assertIsSatisfied();
+        });
 
         // plain text
         assertEquals("Hello World", out.getIn().getBody(String.class));
