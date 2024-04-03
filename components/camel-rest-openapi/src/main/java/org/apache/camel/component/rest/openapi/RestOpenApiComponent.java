@@ -29,7 +29,6 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isMediaRange;
-import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * An awesome REST component backed by OpenApi specifications. Creates endpoints that connect to REST APIs defined by
@@ -121,7 +120,10 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " any value present in the OpenApi specification. Can be overridden in endpoint configuration.",
               label = "producer,advanced")
     private String produces;
-    @Metadata(label = "consumes",
+    @Metadata(label = "consumer,advanced",
+              description = "Java package name where POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.")
+    private String bindingPackageName;
+    @Metadata(label = "consumer",
               description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
     @Metadata(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
@@ -155,6 +157,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
             throws Exception {
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
         endpoint.setApiContextPath(getApiContextPath());
+        endpoint.setBindingPackageName(getBindingPackageName());
         endpoint.setClientRequestValidation(isClientRequestValidation());
         endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
@@ -234,11 +237,11 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     }
 
     public void setBasePath(final String basePath) {
-        this.basePath = notEmpty(basePath, "basePath");
+        this.basePath = basePath;
     }
 
     public void setComponentName(final String componentName) {
-        this.componentName = notEmpty(componentName, "componentName");
+        this.componentName = componentName;
     }
 
     public void setConsumerComponentName(String consumerComponentName) {
@@ -286,4 +289,11 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         this.clientRequestValidation = clientRequestValidation;
     }
 
+    public String getBindingPackageName() {
+        return bindingPackageName;
+    }
+
+    public void setBindingPackageName(String bindingPackageName) {
+        this.bindingPackageName = bindingPackageName;
+    }
 }

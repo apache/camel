@@ -60,6 +60,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestOpenApiConsumerFactory;
@@ -129,7 +130,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                             + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
                             + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification and."
                             + " in the component configuration",
-              label = "producer")
+              label = "consumer")
     private String consumes;
     @UriParam(description = "What payload type this component is producing. For example `application/json`"
                             + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
@@ -148,7 +149,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
              defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI,
              defaultValueNote = "By default loads `openapi.json` file", label = "common")
     private String specificationUri;
-    @UriParam(label = "consumes",
+    @Metadata(label = "consumer,advanced",
+              description = "Java package name where POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.")
+    private String bindingPackageName;
+    @UriParam(label = "consumer",
               description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
     @UriParam(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
@@ -458,6 +462,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
+    }
+
+    public String getBindingPackageName() {
+        return bindingPackageName;
+    }
+
+    public void setBindingPackageName(String bindingPackageName) {
+        this.bindingPackageName = bindingPackageName;
     }
 
     Producer createProducerFor(
