@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.Store;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -65,14 +68,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
 
     private void waitForActionCalled() throws InterruptedException {
         // Wait for a maximum of 500 ms for the action to be called
-        for (int i = 0; i < 50; i++) {
-            if (action.hasBeenCalled()) {
-                break;
-            }
-            LOG.debug("Sleeping for 10 millis to wait for action call");
-            Thread.sleep(10);
-        }
-        assertEquals(true, action.hasBeenCalled());
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(true, action.hasBeenCalled()));
     }
 
     private void prepareMailbox() throws Exception {
