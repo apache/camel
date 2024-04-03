@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.support.processor;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,8 +33,8 @@ import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.processor.MarshalProcessor;
-import org.apache.camel.support.processor.UnmarshalProcessor;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,15 +42,16 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 /**
- * A {@link CamelInternalProcessorAdvice} that binds the REST DSL incoming and outgoing messages from sources of json or
- * xml to Java Objects.
+ * Used for Rest DSL with binding to json/xml for incoming requests and outgoing responses.
  * <p/>
  * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform from xml/json to Java
  * Objects and reverse again.
  * <p/>
  * The rest producer side is implemented in {@link org.apache.camel.component.rest.RestProducerBindingProcessor}
+ *
+ * @see RestBindingAdviceFactory
  */
-public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<String, Object>> {
+public class RestBindingAdvice extends ServiceSupport implements CamelInternalProcessorAdvice<Map<String, Object>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestBindingAdvice.class);
     private static final String STATE_KEY_DO_MARSHAL = "doMarshal";
@@ -75,6 +76,9 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     private final Set<String> requiredQueryParameters;
     private final Set<String> requiredHeaders;
 
+    /**
+     * Use {@link RestBindingAdviceFactory} to create.
+     */
     public RestBindingAdvice(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                              DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                              String consumes, String produces, String bindingMode,
@@ -585,4 +589,13 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(jsonUnmarshal, xmlUnmarshal, jsonMarshal, xmlMarshal);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(jsonUnmarshal, xmlUnmarshal, jsonMarshal, xmlMarshal);
+    }
 }

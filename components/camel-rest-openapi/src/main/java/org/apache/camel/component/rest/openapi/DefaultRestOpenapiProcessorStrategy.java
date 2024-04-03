@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -41,6 +42,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
+import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -161,22 +163,39 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     }
 
     @Override
-    public boolean process(Operation operation, String path, Exchange exchange, AsyncCallback callback) {
+    public boolean process(
+            Operation operation, String path,
+            RestBindingAdvice binding,
+            Exchange exchange, AsyncCallback callback) {
+
         if ("mock".equalsIgnoreCase(missingOperation)) {
             // check if there is a route
             Endpoint e = camelContext.hasEndpoint(component + ":" + operation.getOperationId());
             if (e == null) {
+                // no route then try to load mock data as the answer
                 loadMockData(operation, path, exchange);
                 callback.done(true);
                 return true;
             }
         }
 
-        Endpoint e = camelContext.getEndpoint(component + ":" + operation.getOperationId());
-        AsyncProducer p = producerCache.acquireProducer(e);
+        Map<String, Object> state;
+        try {
+            state = binding.before(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+
+        final Endpoint e = camelContext.getEndpoint(component + ":" + operation.getOperationId());
+        final AsyncProducer p = producerCache.acquireProducer(e);
         return p.process(exchange, doneSync -> {
             try {
                 producerCache.releaseProducer(e, p);
+                binding.after(exchange, state);
+            } catch (Exception ex) {
+                exchange.setException(ex);
             } finally {
                 callback.done(doneSync);
             }

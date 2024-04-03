@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RestConfiguration;
@@ -40,6 +42,9 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.RestBindingAdvice;
+import org.apache.camel.support.processor.RestBindingAdviceFactory;
+import org.apache.camel.support.processor.RestBindingConfiguration;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -93,19 +98,25 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
         RestConsumerContextPathMatcher.ConsumerPath<Operation> m
                 = RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
-        if (m != null) {
-            Operation o = m.getConsumer();
+        if (m instanceof RestOpenApiConsumerPath rcp) {
+            Operation o = rcp.getConsumer();
+
             // binding mode
             RestConfiguration config = camelContext.getRestConfiguration();
             RestConfiguration.RestBindingMode bindingMode = config.getBindingMode();
+
+            // map path-parameters from operation to camel headers
+            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), path, rcp.getConsumerPath());
+
             // we have found the op to call, but if validation is enabled then we need
             // to validate the incoming request first
             if (endpoint.isClientRequestValidation() && isInvalidClientRequest(exchange, callback, o, bindingMode)) {
                 // okay some validation error so return true
                 return true;
             }
+
             // process the incoming request
-            return restOpenapiProcessorStrategy.process(o, path, exchange, callback);
+            return restOpenapiProcessorStrategy.process(o, path, rcp.getBinding(), exchange, callback);
         }
 
         // is it the api-context path
@@ -310,15 +321,99 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         super.doBuild();
 
         CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
+
         // register all openapi paths
         for (var e : openAPI.getPaths().entrySet()) {
             String path = e.getKey(); // path
             for (var o : e.getValue().readOperationsMap().entrySet()) {
                 String v = o.getKey().name(); // verb
-                paths.add(new RestOpenApiConsumerPath(v, path, o.getValue()));
+                // create per operation binding
+                RestBindingAdvice binding = createRestBinding(o.getValue());
+                ServiceHelper.buildService(binding);
+                paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
             }
         }
         ServiceHelper.buildService(restOpenapiProcessorStrategy);
+    }
+
+    private RestBindingAdvice createRestBinding(Operation o) throws Exception {
+        RestConfiguration config = camelContext.getRestConfiguration();
+        RestConfiguration.RestBindingMode mode = config.getBindingMode();
+
+        RestBindingConfiguration bc = new RestBindingConfiguration();
+        bc.setBindingMode(mode.name());
+        bc.setEnableCORS(config.isEnableCORS());
+        bc.setCorsHeaders(config.getCorsHeaders());
+        bc.setClientRequestValidation(config.isClientRequestValidation());
+        bc.setEnableNoContentResponse(config.isEnableNoContentResponse());
+        bc.setSkipBindingOnErrorCode(config.isSkipBindingOnErrorCode());
+
+        String consumes = endpoint.getConsumes();
+        String produces = endpoint.getProduces();
+        // the operation may have specific information what it can consume
+        if (o.getRequestBody() != null) {
+            Content c = o.getRequestBody().getContent();
+            if (c != null) {
+                consumes = c.keySet().stream().sorted().collect(Collectors.joining(","));
+            }
+        }
+        // the operation may have specific information what it can produce
+        if (o.getResponses() != null) {
+            for (var a : o.getResponses().values()) {
+                Content c = a.getContent();
+                if (c != null) {
+                    produces = c.keySet().stream().sorted().collect(Collectors.joining(","));
+                }
+            }
+        }
+        bc.setConsumes(consumes);
+        bc.setProduces(produces);
+
+        boolean requiredBody = false;
+        if (o.getRequestBody() != null) {
+            requiredBody = Boolean.TRUE == o.getRequestBody().getRequired();
+        }
+        bc.setRequiredBody(requiredBody);
+
+        Set<String> requiredQueryParameters = null;
+        if (o.getParameters() != null) {
+            requiredQueryParameters = o.getParameters().stream()
+                    .filter(p -> "query".equals(p.getIn()))
+                    .filter(p -> Boolean.TRUE == p.getRequired())
+                    .map(Parameter::getName)
+                    .collect(Collectors.toSet());
+        }
+        if (requiredQueryParameters != null) {
+            bc.setRequiredQueryParameters(requiredQueryParameters);
+        }
+
+        Set<String> requiredHeaders = null;
+        if (o.getParameters() != null) {
+            requiredHeaders = o.getParameters().stream()
+                    .filter(p -> "header".equals(p.getIn()))
+                    .filter(p -> Boolean.TRUE == p.getRequired())
+                    .map(Parameter::getName)
+                    .collect(Collectors.toSet());
+        }
+        if (requiredHeaders != null) {
+            bc.setRequiredHeaders(requiredHeaders);
+        }
+        // TODO: should type be string/int/long for basic types?
+        Map<String, String> defaultQueryValues = null;
+        if (o.getParameters() != null) {
+            defaultQueryValues = o.getParameters().stream()
+                    .filter(p -> "query".equals(p.getIn()))
+                    .filter(p -> p.getSchema() != null)
+                    .filter(p -> p.getSchema().getDefault() != null)
+                    .collect(Collectors.toMap(Parameter::getName, p -> p.getSchema().getDefault().toString()));
+        }
+        if (defaultQueryValues != null) {
+            bc.setQueryDefaultValues(defaultQueryValues);
+        }
+
+        // TODO: type/outType
+
+        return RestBindingAdviceFactory.build(camelContext, bc);
     }
 
     @Override
@@ -337,12 +432,22 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     protected void doStart() throws Exception {
         super.doStart();
         ServiceHelper.startService(restOpenapiProcessorStrategy);
+        for (var p : paths) {
+            if (p instanceof RestOpenApiConsumerPath rcp) {
+                ServiceHelper.startService(rcp.getBinding());
+            }
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        paths.clear();
         ServiceHelper.stopService(restOpenapiProcessorStrategy);
+        for (var p : paths) {
+            if (p instanceof RestOpenApiConsumerPath rcp) {
+                ServiceHelper.stopService(rcp.getBinding());
+            }
+        }
+        paths.clear();
     }
 }

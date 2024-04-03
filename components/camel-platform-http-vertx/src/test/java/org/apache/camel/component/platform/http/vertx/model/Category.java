@@ -14,41 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rest.openapi.validator;
+package org.apache.camel.component.platform.http.vertx.model;
 
-import io.swagger.v3.oas.models.Operation;
-import org.apache.camel.support.RestConsumerContextPathMatcher;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
-class RestOpenApiPath implements RestConsumerContextPathMatcher.ConsumerPath<Operation> {
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-    private final String verb;
-    private final String path;
-    private final Operation consumer;
+/**
+ * The structure of this class must adhere to the schema defined in the Pet Store OpenAPI specification JSON / YAML.
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@XmlRootElement(name = "Category")
+public class Category {
+    private Long id;
+    private String name;
 
-    public RestOpenApiPath(String verb, String path, Operation consumer) {
-        this.verb = verb;
-        this.path = path;
-        this.consumer = consumer;
+    public Long getId() {
+        return id;
     }
 
-    @Override
-    public String getRestrictMethod() {
-        return verb;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    @Override
-    public String getConsumerPath() {
-        return path;
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public Operation getConsumer() {
-        return consumer;
+    public void setName(String name) {
+        this.name = name;
     }
-
-    @Override
-    public boolean isMatchOnUriPrefix() {
-        return false;
-    }
-
 }

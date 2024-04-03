@@ -18,17 +18,21 @@ package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
+import org.apache.camel.support.processor.RestBindingAdvice;
 
 class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.ConsumerPath<Operation> {
 
     private final String verb;
     private final String path;
     private final Operation consumer;
+    private final RestBindingAdvice binding;
 
-    public RestOpenApiConsumerPath(String verb, String path, Operation consumer) {
+    public RestOpenApiConsumerPath(String verb, String path, Operation consumer,
+                                   RestBindingAdvice binding) {
         this.verb = verb;
         this.path = path;
         this.consumer = consumer;
+        this.binding = binding;
     }
 
     @Override
@@ -49,5 +53,9 @@ class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.Consumer
     @Override
     public boolean isMatchOnUriPrefix() {
         return false;
+    }
+
+    public RestBindingAdvice getBinding() {
+        return binding;
     }
 }
