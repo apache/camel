@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -398,7 +399,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         if (requiredHeaders != null) {
             bc.setRequiredHeaders(requiredHeaders);
         }
-        // TODO: should type be string/int/long for basic types?
         Map<String, String> defaultQueryValues = null;
         if (o.getParameters() != null) {
             defaultQueryValues = o.getParameters().stream()
@@ -411,9 +411,84 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             bc.setQueryDefaultValues(defaultQueryValues);
         }
 
-        // TODO: type/outType
+        // input and output types binding to java classes
+        if (o.getRequestBody() != null) {
+            Content c = o.getRequestBody().getContent();
+            if (c != null) {
+                for (var m : c.entrySet()) {
+                    String mt = m.getKey();
+                    if (mt.contains("json") || mt.contains("xml")) {
+                        Schema s = m.getValue().getSchema();
+                        // $ref is null, so we need to know the schema name via XML
+                        if (s != null && s.getXml() != null) {
+                            String ref = s.getXml().getName();
+                            boolean array = "array".equals(s.getType());
+                            if (ref != null) {
+                                Class<?> clazz = loadBindingClass(camelContext, ref);
+                                if (clazz != null) {
+                                    String name = clazz.getName();
+                                    if (array) {
+                                        name = name + "[]";
+                                    }
+                                    bc.setType(name);
+                                    break; // okay set this just once
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (o.getResponses() != null) {
+            for (var a : o.getResponses().values()) {
+                Content c = a.getContent();
+                if (c != null) {
+                    for (var m : c.entrySet()) {
+                        String mt = m.getKey();
+                        if (mt.contains("json") || mt.contains("xml")) {
+                            Schema s = m.getValue().getSchema();
+                            // $ref is null, so we need to know the schema name via XML
+                            if (s != null && s.getXml() != null) {
+                                String ref = s.getXml().getName();
+                                boolean array = "array".equals(s.getType());
+                                if (ref != null) {
+                                    Class<?> clazz = loadBindingClass(camelContext, ref);
+                                    if (clazz != null) {
+                                        String name = clazz.getName();
+                                        if (array) {
+                                            name = name + "[]";
+                                        }
+                                        bc.setOutType(name);
+                                        break; // okay set this just once
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         return RestBindingAdviceFactory.build(camelContext, bc);
+    }
+
+    private Class<?> loadBindingClass(CamelContext camelContext, String ref) {
+        if (ref == null) {
+            return null;
+        }
+
+        // must refer to a class name, so upper case
+        ref = Character.toUpperCase(ref.charAt(0)) + ref.substring(1);
+        if (endpoint.getBindingPackageName() != null) {
+            for (String pck : endpoint.getBindingPackageName().split(",")) {
+                String fqn = pck + "." + ref;
+                Class<?> clazz = camelContext.getClassResolver().resolveClass(fqn);
+                if (clazz != null) {
+                    return clazz;
+                }
+            }
+        }
+        return camelContext.getClassResolver().resolveClass(ref);
     }
 
     @Override

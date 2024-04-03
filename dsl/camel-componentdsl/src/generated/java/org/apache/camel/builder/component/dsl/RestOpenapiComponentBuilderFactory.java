@@ -131,6 +131,23 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable validation of the client request to check if the
+         * incoming request is valid according to the OpenAPI specification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param clientRequestValidation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder clientRequestValidation(
+                boolean clientRequestValidation) {
+            doSetProperty("clientRequestValidation", clientRequestValidation);
+            return this;
+        }
+        /**
          * Whether the consumer should fail,ignore or return a mock response for
          * OpenAPI operations that are not mapped to a corresponding route.
          * 
@@ -145,6 +162,23 @@ public interface RestOpenapiComponentBuilderFactory {
         default RestOpenapiComponentBuilder missingOperation(
                 java.lang.String missingOperation) {
             doSetProperty("missingOperation", missingOperation);
+            return this;
+        }
+        /**
+         * Java package name where POJO classes are located when using binding
+         * mode is enabled for JSon or XML. Multiple package names can be
+         * separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param bindingPackageName the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder bindingPackageName(
+                java.lang.String bindingPackageName) {
+            doSetProperty("bindingPackageName", bindingPackageName);
             return this;
         }
         /**
@@ -340,23 +374,6 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether to enable validation of the client request to check if the
-         * incoming request is valid according to the OpenAPI specification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumes
-         * 
-         * @param clientRequestValidation the value to set
-         * @return the dsl builder
-         */
-        default RestOpenapiComponentBuilder clientRequestValidation(
-                boolean clientRequestValidation) {
-            doSetProperty("clientRequestValidation", clientRequestValidation);
-            return this;
-        }
-        /**
          * Customize TLS parameters used by the component. If not set defaults
          * to the TLS parameters set in the Camel context.
          * 
@@ -410,7 +427,9 @@ public interface RestOpenapiComponentBuilderFactory {
             case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.lang.String) value); return true;
             case "apiContextPath": ((RestOpenApiComponent) component).setApiContextPath((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "clientRequestValidation": ((RestOpenApiComponent) component).setClientRequestValidation((boolean) value); return true;
             case "missingOperation": ((RestOpenApiComponent) component).setMissingOperation((java.lang.String) value); return true;
+            case "bindingPackageName": ((RestOpenApiComponent) component).setBindingPackageName((java.lang.String) value); return true;
             case "consumerComponentName": ((RestOpenApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;
             case "mockIncludePattern": ((RestOpenApiComponent) component).setMockIncludePattern((java.lang.String) value); return true;
             case "restOpenapiProcessorStrategy": ((RestOpenApiComponent) component).setRestOpenapiProcessorStrategy((org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy) value); return true;
@@ -421,7 +440,6 @@ public interface RestOpenapiComponentBuilderFactory {
             case "consumes": ((RestOpenApiComponent) component).setConsumes((java.lang.String) value); return true;
             case "produces": ((RestOpenApiComponent) component).setProduces((java.lang.String) value); return true;
             case "autowiredEnabled": ((RestOpenApiComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "clientRequestValidation": ((RestOpenApiComponent) component).setClientRequestValidation((boolean) value); return true;
             case "sslContextParameters": ((RestOpenApiComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((RestOpenApiComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

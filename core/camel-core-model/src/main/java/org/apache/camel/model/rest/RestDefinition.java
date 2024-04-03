@@ -980,20 +980,22 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // add dummy empty stop
         route.getOutputs().add(new StopDefinition());
 
+        String mode = getBindingMode();
+        if (mode == null) {
+            mode = camelContext.getRestConfiguration().getBindingMode().name();
+        }
+
         RestBindingDefinition binding = new RestBindingDefinition();
         binding.setComponent(component);
-        if (binding.getBindingMode() != null) {
-            String mode = binding.getBindingMode();
-            if ("json".equals(mode)) {
-                binding.setConsumes("application/json");
-                binding.setProduces("application/json");
-            } else if ("xml".equals(mode)) {
-                binding.setConsumes("application/xml");
-                binding.setProduces("application/xml");
-            } else if ("json_xml".equals(mode)) {
-                binding.setConsumes("application/json;application/xml");
-                binding.setProduces("application/json;application/xml");
-            }
+        if ("json".equals(mode)) {
+            binding.setConsumes("application/json");
+            binding.setProduces("application/json");
+        } else if ("xml".equals(mode)) {
+            binding.setConsumes("application/xml");
+            binding.setProduces("application/xml");
+        } else if ("json_xml".equals(mode)) {
+            binding.setConsumes("application/json;application/xml");
+            binding.setProduces("application/json;application/xml");
         }
         binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
         binding.setClientRequestValidation(getClientRequestValidation());

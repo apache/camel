@@ -19,6 +19,7 @@ package org.apache.camel.component.platform.http.vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.vertx.model.Pet;
+import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
 
     @Test
-    public void testRestOpenApi() throws Exception {
+    public void testRestOpenApiOutType() throws Exception {
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
 
         try {
@@ -59,6 +60,46 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo("{\"id\":123,\"name\":\"tony the tiger\",\"status\":\"AVAILABLE\"}"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRestOpenApiInType() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    // TODO: make it easy to set binding package name
+                    RestOpenApiComponent rac = context.getComponent("rest-openapi", RestOpenApiComponent.class);
+                    rac.setBindingPackageName(Pet.class.getPackageName());
+
+                    restConfiguration().bindingMode(RestBindingMode.json);
+
+                    rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
+
+                    from("direct:updatePet")
+                            .process(e -> {
+                                Pet pet = e.getMessage().getBody(Pet.class);
+                                pet.setStatus(Pet.Status.PENDING);
+                            });
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .contentType("application/json")
+                    .body("{\"id\":123,\"name\":\"tony the tiger\"}")
+                    .put("/api/v3/pet")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("{\"id\":123,\"name\":\"tony the tiger\",\"status\":\"PENDING\"}"));
 
         } finally {
             context.stop();
