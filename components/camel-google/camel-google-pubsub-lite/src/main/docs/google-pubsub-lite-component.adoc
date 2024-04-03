@@ -19,7 +19,7 @@ The Google PubSub Lite component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Lite Infrastructure] via
 the https://github.com/googleapis/java-pubsublite[Google Cloud Pub/Sub Lite Client for Java].
 
-The standard xref:google-pubsub-component[Google Pub/Sub component] isn't compatible with Pub/Sub Lite service due to API and message model differences.
+The standard xref:google-pubsub-component.adoc[Google Pub/Sub component] isn't compatible with Pub/Sub Lite service due to API and message model differences.
 Please refer to the following links to learn more about these differences:
 
 * https://cloud.google.com/pubsub/docs/overview#lite[Pub/Sub Lite Overview]
