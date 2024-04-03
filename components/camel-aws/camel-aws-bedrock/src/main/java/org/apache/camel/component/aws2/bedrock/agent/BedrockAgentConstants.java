@@ -38,7 +38,7 @@ public interface BedrockAgentConstants {
     String KNOWLEDGE_BASE_ID = "CamelAwsBedrockAgentKnowledgeBaseId";
 
     @Metadata(description = "The header contains the id of the ingestion job",
-            javaType = "String", label = "producer")
+              javaType = "String", label = "producer")
     String INGESTION_JOB_ID = "CamelAwsBedrockAgentIngestionJobId";
 
     @Metadata(description = "The header contains the status of the ingestion job",
@@ -46,6 +46,6 @@ public interface BedrockAgentConstants {
     String INGESTION_JOB_STATUS = "CamelAwsBedrockAgentIngestionJobStatus";
 
     @Metadata(description = "The header contains the failure reasons of the ingestion job",
-            javaType = "java.util.List", label = "common")
+              javaType = "java.util.List", label = "common")
     String INGESTION_JOB_FAILURE_REASONS = "CamelAwsBedrockAgentIngestionJobFailureReasons";
 }

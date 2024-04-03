@@ -71,7 +71,8 @@ public class BedrockAgentIngestionJobConsumer extends ScheduledPollConsumer {
         exchange.getMessage().setBody(response.ingestionJob());
         exchange.getMessage().setHeader(BedrockAgentConstants.INGESTION_JOB_STATUS, response.ingestionJob().status());
         if (response.ingestionJob().hasFailureReasons()) {
-            exchange.getMessage().setHeader(BedrockAgentConstants.INGESTION_JOB_FAILURE_REASONS, response.ingestionJob().failureReasons());
+            exchange.getMessage().setHeader(BedrockAgentConstants.INGESTION_JOB_FAILURE_REASONS,
+                    response.ingestionJob().failureReasons());
         }
         return exchange;
     }
