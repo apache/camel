@@ -33,20 +33,21 @@ import org.apache.camel.support.PropertyBindingSupport;
 public class RestBindingFactory {
 
     public static RestBindingSupport build(CamelContext camelContext, RestBindingConfiguration bc) throws Exception {
-        RestConfiguration config = camelContext.getRestConfiguration();
-        String mode = config.getBindingMode().name();
+        String mode = bc.getBindingMode();
 
         if ("off".equals(mode)) {
             // binding mode is off, so create off mode binding processor
             return new RestBindingSupport(
                     camelContext, null, null, null, null,
-                    bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(), bc.isEnableCORS(),
+                    bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
+                    bc.isEnableCORS(),
                     bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
                     bc.getQueryDefaultValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),
                     bc.getRequiredHeaders());
         }
 
         // setup json data format
+        RestConfiguration config = camelContext.getRestConfiguration();
         DataFormat json = null;
         DataFormat outJson = null;
         if (mode.contains("json") || "auto".equals(mode)) {
@@ -101,23 +102,24 @@ public class RestBindingFactory {
 
             if (jaxb != null) {
                 // to setup JAXB we need to use camel-jaxb
-                PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext).
-                        setupJaxb(camelContext, config,
-                                bc.getType(), bc.getTypeClass(),
-                                bc.getOutType(), bc.getOutTypeClass(),
-                                jaxb, outJaxb);
+                PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext).setupJaxb(camelContext, config,
+                        bc.getType(), bc.getTypeClass(),
+                        bc.getOutType(), bc.getOutTypeClass(),
+                        jaxb, outJaxb);
             }
         }
 
         return new RestBindingSupport(
                 camelContext, json, jaxb, outJson, outJaxb,
-                bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(), bc.isEnableCORS(),
+                bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
+                bc.isEnableCORS(),
                 bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
                 bc.getQueryDefaultValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),
                 bc.getRequiredHeaders());
     }
 
-    protected static void setupJson(CamelContext camelContext,
+    protected static void setupJson(
+            CamelContext camelContext,
             RestConfiguration config, String type, Class<?> typeClass, String outType, Class<?> outTypeClass, DataFormat json,
             DataFormat outJson)
             throws Exception {
@@ -164,7 +166,8 @@ public class RestBindingFactory {
         setAdditionalConfiguration(camelContext, config, outJson, "json.out.");
     }
 
-    private static void setAdditionalConfiguration(CamelContext camelContext, RestConfiguration config, DataFormat dataFormat, String prefix) {
+    private static void setAdditionalConfiguration(
+            CamelContext camelContext, RestConfiguration config, DataFormat dataFormat, String prefix) {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties
@@ -195,7 +198,7 @@ public class RestBindingFactory {
 
     private static boolean isKeyKnownPrefix(String key) {
         return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.")
-               || key.startsWith("xml.out.");
+                || key.startsWith("xml.out.");
     }
 
     private static Object lookupByName(CamelContext camelContext, String name) {

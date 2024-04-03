@@ -16,6 +16,11 @@
  */
 package org.apache.camel.support.processor;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -34,15 +39,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 /**
  * Used for Rest DSL with binding to json/xml for incoming requests and outgoing responses.
+ * <p/>
+ * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform from xml/json to Java
+ * Objects and reverse again.
+ * <p/>
+ * The rest producer side is implemented in {@link org.apache.camel.component.rest.RestProducerBindingProcessor}
  *
  * @see RestBindingFactory
  */
@@ -75,14 +80,14 @@ public class RestBindingSupport extends ServiceSupport implements CamelInternalP
      * Use {@link RestBindingFactory} to create.
      */
     public RestBindingSupport(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
-                             DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                             String consumes, String produces, String bindingMode,
-                             boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
-                             boolean enableNoContentResponse,
-                             Map<String, String> corsHeaders,
-                             Map<String, String> queryDefaultValues,
-                             boolean requiredBody, Set<String> requiredQueryParameters,
-                             Set<String> requiredHeaders) throws Exception {
+                              DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
+                              String consumes, String produces, String bindingMode,
+                              boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
+                              boolean enableNoContentResponse,
+                              Map<String, String> corsHeaders,
+                              Map<String, String> queryDefaultValues,
+                              boolean requiredBody, Set<String> requiredQueryParameters,
+                              Set<String> requiredHeaders) throws Exception {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -285,7 +290,7 @@ public class RestBindingSupport extends ServiceSupport implements CamelInternalP
                 }
             }
             if (requiredQueryParameters != null
-                && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
+                    && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
                 // this is a bad request, the client did not include some required query parameters
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
                 exchange.getMessage().setBody("Some of the required query parameters are missing.");
