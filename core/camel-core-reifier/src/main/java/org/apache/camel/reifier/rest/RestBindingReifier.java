@@ -22,9 +22,9 @@ import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.processor.RestBindingConfiguration;
-import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingAdvice;
+import org.apache.camel.support.processor.RestBindingAdviceFactory;
+import org.apache.camel.support.processor.RestBindingConfiguration;
 
 public class RestBindingReifier extends AbstractReifier {
 

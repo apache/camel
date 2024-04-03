@@ -35,9 +35,9 @@ public class RestBindingAdviceFactory {
     /**
      * Builds the {@link RestBindingAdvice} from the given configuration
      *
-     * @param camelContext the camel context
-     * @param bc           the binding configuration
-     * @return             the created binding advice
+     * @param  camelContext the camel context
+     * @param  bc           the binding configuration
+     * @return              the created binding advice
      */
     public static RestBindingAdvice build(CamelContext camelContext, RestBindingConfiguration bc) throws Exception {
         String mode = bc.getBindingMode();
