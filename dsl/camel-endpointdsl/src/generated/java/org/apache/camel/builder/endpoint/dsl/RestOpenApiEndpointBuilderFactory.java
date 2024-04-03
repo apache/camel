@@ -59,30 +59,13 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the consumer should fail,ignore or return a mock response for
-         * OpenAPI operations that are not mapped to a corresponding route.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: fail
-         * Group: consumer
-         * 
-         * @param missingOperation the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointConsumerBuilder missingOperation(
-                String missingOperation) {
-            doSetProperty("missingOperation", missingOperation);
-            return this;
-        }
-        /**
          * Whether to enable validation of the client request to check if the
          * incoming request is valid according to the OpenAPI specification.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumes
+         * Group: consumer
          * 
          * @param clientRequestValidation the value to set
          * @return the dsl builder
@@ -100,7 +83,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumes
+         * Group: consumer
          * 
          * @param clientRequestValidation the value to set
          * @return the dsl builder
@@ -108,6 +91,41 @@ public interface RestOpenApiEndpointBuilderFactory {
         default RestOpenApiEndpointConsumerBuilder clientRequestValidation(
                 String clientRequestValidation) {
             doSetProperty("clientRequestValidation", clientRequestValidation);
+            return this;
+        }
+        /**
+         * What payload type this component capable of consuming. Could be one
+         * type, like application/json or multiple types as application/json,
+         * application/xml; q=0.5 according to the RFC7231. This equates to the
+         * value of Accept HTTP header. If set overrides any value found in the
+         * OpenApi specification and. in the component configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder consumes(String consumes) {
+            doSetProperty("consumes", consumes);
+            return this;
+        }
+        /**
+         * Whether the consumer should fail,ignore or return a mock response for
+         * OpenAPI operations that are not mapped to a corresponding route.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: fail
+         * Group: consumer
+         * 
+         * @param missingOperation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder missingOperation(
+                String missingOperation) {
+            doSetProperty("missingOperation", missingOperation);
             return this;
         }
     }
@@ -343,24 +361,6 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
-         * What payload type this component capable of consuming. Could be one
-         * type, like application/json or multiple types as application/json,
-         * application/xml; q=0.5 according to the RFC7231. This equates to the
-         * value of Accept HTTP header. If set overrides any value found in the
-         * OpenApi specification and. in the component configuration.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param consumes the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointProducerBuilder consumes(String consumes) {
-            doSetProperty("consumes", consumes);
-            return this;
-        }
-        /**
          * Scheme hostname and port to direct the HTTP requests to in the form
          * of https://hostname:port. Can be configured at the endpoint,
          * component or in the corresponding REST configuration in the Camel
@@ -430,41 +430,6 @@ public interface RestOpenApiEndpointBuilderFactory {
         default RestOpenApiEndpointProducerBuilder requestValidationEnabled(
                 String requestValidationEnabled) {
             doSetProperty("requestValidationEnabled", requestValidationEnabled);
-            return this;
-        }
-        /**
-         * Whether to enable validation of the client request to check if the
-         * incoming request is valid according to the OpenAPI specification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumes
-         * 
-         * @param clientRequestValidation the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointProducerBuilder clientRequestValidation(
-                boolean clientRequestValidation) {
-            doSetProperty("clientRequestValidation", clientRequestValidation);
-            return this;
-        }
-        /**
-         * Whether to enable validation of the client request to check if the
-         * incoming request is valid according to the OpenAPI specification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumes
-         * 
-         * @param clientRequestValidation the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointProducerBuilder clientRequestValidation(
-                String clientRequestValidation) {
-            doSetProperty("clientRequestValidation", clientRequestValidation);
             return this;
         }
     }
@@ -557,41 +522,6 @@ public interface RestOpenApiEndpointBuilderFactory {
                 RestOpenApiEndpointProducerBuilder {
         default AdvancedRestOpenApiEndpointBuilder advanced() {
             return (AdvancedRestOpenApiEndpointBuilder) this;
-        }
-        /**
-         * Whether to enable validation of the client request to check if the
-         * incoming request is valid according to the OpenAPI specification.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumes
-         * 
-         * @param clientRequestValidation the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointBuilder clientRequestValidation(
-                boolean clientRequestValidation) {
-            doSetProperty("clientRequestValidation", clientRequestValidation);
-            return this;
-        }
-        /**
-         * Whether to enable validation of the client request to check if the
-         * incoming request is valid according to the OpenAPI specification.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumes
-         * 
-         * @param clientRequestValidation the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointBuilder clientRequestValidation(
-                String clientRequestValidation) {
-            doSetProperty("clientRequestValidation", clientRequestValidation);
-            return this;
         }
     }
 

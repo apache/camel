@@ -77,6 +77,32 @@ public class RestOpenapiUriDsl(
   }
 
   /**
+   * Whether to enable validation of the client request to check if the incoming request is valid
+   * according to the OpenAPI specification
+   */
+  public fun clientRequestValidation(clientRequestValidation: String) {
+    it.property("clientRequestValidation", clientRequestValidation)
+  }
+
+  /**
+   * Whether to enable validation of the client request to check if the incoming request is valid
+   * according to the OpenAPI specification
+   */
+  public fun clientRequestValidation(clientRequestValidation: Boolean) {
+    it.property("clientRequestValidation", clientRequestValidation.toString())
+  }
+
+  /**
+   * What payload type this component capable of consuming. Could be one type, like application/json
+   * or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This
+   * equates to the value of Accept HTTP header. If set overrides any value found in the OpenApi
+   * specification and. in the component configuration
+   */
+  public fun consumes(consumes: String) {
+    it.property("consumes", consumes)
+  }
+
+  /**
    * Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that
    * are not mapped to a corresponding route.
    */
@@ -164,16 +190,6 @@ public class RestOpenapiUriDsl(
   }
 
   /**
-   * What payload type this component capable of consuming. Could be one type, like application/json
-   * or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This
-   * equates to the value of Accept HTTP header. If set overrides any value found in the OpenApi
-   * specification and. in the component configuration
-   */
-  public fun consumes(consumes: String) {
-    it.property("consumes", consumes)
-  }
-
-  /**
    * Scheme hostname and port to direct the HTTP requests to in the form of https://hostname:port.
    * Can be configured at the endpoint, component or in the corresponding REST configuration in the
    * Camel Context. If you give this component a name (e.g. petstore) that REST configuration is
@@ -239,21 +255,5 @@ public class RestOpenapiUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
-  }
-
-  /**
-   * Whether to enable validation of the client request to check if the incoming request is valid
-   * according to the OpenAPI specification
-   */
-  public fun clientRequestValidation(clientRequestValidation: String) {
-    it.property("clientRequestValidation", clientRequestValidation)
-  }
-
-  /**
-   * Whether to enable validation of the client request to check if the incoming request is valid
-   * according to the OpenAPI specification
-   */
-  public fun clientRequestValidation(clientRequestValidation: Boolean) {
-    it.property("clientRequestValidation", clientRequestValidation.toString())
   }
 }
