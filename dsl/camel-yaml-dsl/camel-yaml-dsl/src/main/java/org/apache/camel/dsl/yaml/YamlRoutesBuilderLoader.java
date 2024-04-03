@@ -112,7 +112,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     @Deprecated
     private static final String BINDING_VERSION = "camel.apache.org/v1alpha1";
     private static final String PIPE_VERSION = "camel.apache.org/v1";
-    private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1";
+    private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1beta2";
     private static final String KNATIVE_MESSAGING_VERSION = "messaging.knative.dev/v1";
     private static final String KNATIVE_EVENTING_VERSION = "eventing.knative.dev/v1";
     private static final String KNATIVE_EVENT_TYPE = "org.apache.camel.event";

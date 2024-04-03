@@ -20,6 +20,8 @@ package org.apache.camel.dsl.jbang.core.commands.bind;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.camel.util.StringHelper;
+
 /**
  * Helper class provides access to the templates that construct the Pipe resource. Subclasses may overwrite the provider
  * to inject their own templates.
@@ -58,8 +60,15 @@ public interface TemplateProvider {
 
         sb.append("properties:\n");
         for (Map.Entry<String, Object> propertyEntry : props.entrySet()) {
+            String propValue = propertyEntry.getValue().toString();
+
+            // Take care of Strings with colon - need to quote these values to avoid breaking YAML
+            if (propValue.contains(":") && !StringHelper.isQuoted(propValue)) {
+                propValue = "\"%s\"".formatted(propValue);
+            }
+
             sb.append("      ").append(propertyEntry.getKey()).append(": ")
-                    .append(propertyEntry.getValue()).append("\n");
+                    .append(propValue).append("\n");
         }
         return sb.toString().trim();
     }
