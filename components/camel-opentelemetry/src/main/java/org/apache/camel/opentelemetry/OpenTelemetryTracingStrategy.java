@@ -36,6 +36,8 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
 
     private final OpenTelemetryTracer tracer;
 
+    private boolean propagateContext;
+
     public OpenTelemetryTracingStrategy(OpenTelemetryTracer tracer) {
         this.tracer = tracer;
     }
@@ -45,11 +47,34 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
             CamelContext camelContext,
             NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
-        if (!shouldTrace(processorDefinition)) {
+        if (shouldTrace(processorDefinition)) {
+            return new PropagateContextAndCreateSpan(processorDefinition, target);
+        } else if (isPropagateContext()) {
+            return new PropagateContext(target);
+        } else {
             return new DelegateAsyncProcessor(target);
         }
+    }
 
-        return new DelegateAsyncProcessor((Exchange exchange) -> {
+    public boolean isPropagateContext() {
+        return propagateContext;
+    }
+
+    public void setPropagateContext(boolean propagateContext) {
+        this.propagateContext = propagateContext;
+    }
+
+    private class PropagateContextAndCreateSpan implements Processor {
+        private final NamedNode processorDefinition;
+        private final Processor target;
+
+        public PropagateContextAndCreateSpan(NamedNode processorDefinition, Processor target) {
+            this.processorDefinition = processorDefinition;
+            this.target = target;
+        }
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
             Span span = null;
             OpenTelemetrySpanAdapter spanWrapper = (OpenTelemetrySpanAdapter) ActiveSpanManager.getSpan(exchange);
             if (spanWrapper != null) {
@@ -86,7 +111,48 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
 
                 processorSpan.end();
             }
-        });
+        }
+    }
+
+    private class PropagateContext implements Processor {
+        private final Processor target;
+
+        public PropagateContext(Processor target) {
+            this.target = target;
+        }
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Span span = null;
+            OpenTelemetrySpanAdapter spanWrapper = (OpenTelemetrySpanAdapter) ActiveSpanManager.getSpan(exchange);
+            if (spanWrapper != null) {
+                span = spanWrapper.getOpenTelemetrySpan();
+            }
+
+            if (span == null) {
+                target.process(exchange);
+                return;
+            }
+
+            boolean activateExchange = !(target instanceof GetCorrelationContextProcessor
+                    || target instanceof SetCorrelationContextProcessor);
+
+            if (activateExchange) {
+                ActiveSpanManager.activate(exchange, new OpenTelemetrySpanAdapter(span));
+            }
+
+            try {
+                target.process(exchange);
+            } catch (Exception ex) {
+                span.setStatus(StatusCode.ERROR);
+                span.recordException(ex);
+                throw ex;
+            } finally {
+                if (activateExchange) {
+                    ActiveSpanManager.deactivate(exchange);
+                }
+            }
+        }
     }
 
     private static String getComponentName(NamedNode processorDefinition) {

@@ -94,6 +94,10 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         return null;
     }
 
+    protected OpenTelemetryTracer getOttracer() {
+        return ottracer;
+    }
+
     protected void verify() {
         verify(expected, false);
     }
