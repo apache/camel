@@ -213,6 +213,15 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
     }
 
     /**
+     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML.
+     * Multiple package names can be separated by comma.
+     */
+    public RestConfigurationProperties withBindingPackageScan(String bindingPackageScan) {
+        setBindingPackageScan(bindingPackageScan);
+        return this;
+    }
+
+    /**
      * Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
      * messages that do not bind to json / xml etc, as success messages otherwise will do.
      */

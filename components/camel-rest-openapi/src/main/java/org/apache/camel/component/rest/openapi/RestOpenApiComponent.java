@@ -171,10 +171,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     protected void doInit() throws Exception {
         super.doInit();
 
-        // use package scan for binding model classes
-        String current = getCamelContext().getCamelContextExtension().getBasePackageScan();
-        if (current != null && bindingPackageScan == null) {
-            bindingPackageScan = current;
+        if (bindingPackageScan == null) {
+            // prioritize use rest configuration
+            String base = getCamelContext().getRestConfiguration().getBindingPackageScan();
+            if (base == null) {
+                // over general base package from camel context
+                base = getCamelContext().getCamelContextExtension().getBasePackageScan();
+            }
+            bindingPackageScan = base;
         }
     }
 

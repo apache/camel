@@ -73,11 +73,9 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    // TODO: make it easy to set binding package name in rest configuration
-                    context.getCamelContextExtension()
-                            .setBasePackageScan("org.apache.camel.component.platform.http.vertx.model");
-
-                    restConfiguration().bindingMode(RestBindingMode.json);
+                    // turn on json binding and scan for POJO classes in the model package
+                    restConfiguration().bindingMode(RestBindingMode.json)
+                            .bindingPackageScan("org.apache.camel.component.platform.http.vertx.model");
 
                     rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
 

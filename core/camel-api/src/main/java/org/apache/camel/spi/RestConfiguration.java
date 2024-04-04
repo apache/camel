@@ -63,6 +63,7 @@ public class RestConfiguration {
     private boolean apiVendorExtension;
     private RestHostNameResolver hostNameResolver = RestHostNameResolver.allLocalIp;
     private RestBindingMode bindingMode = RestBindingMode.off;
+    private String bindingPackageScan;
     private boolean skipBindingOnErrorCode = true;
     private boolean clientRequestValidation;
     private boolean inlineRoutes = true;
@@ -360,6 +361,18 @@ public class RestConfiguration {
      */
     public void setBindingMode(String bindingMode) {
         this.bindingMode = RestBindingMode.valueOf(bindingMode);
+    }
+
+    public String getBindingPackageScan() {
+        return bindingPackageScan;
+    }
+
+    /**
+     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML.
+     * Multiple package names can be separated by comma.
+     */
+    public void setBindingPackageScan(String bindingPackageScan) {
+        this.bindingPackageScan = bindingPackageScan;
     }
 
     /**

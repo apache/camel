@@ -1752,6 +1752,7 @@ public class ModelParser extends BaseParser {
                 case "apiHost": def.setApiHost(val); break;
                 case "apiVendorExtension": def.setApiVendorExtension(val); break;
                 case "bindingMode": def.setBindingMode(RestBindingMode.valueOf(val)); break;
+                case "bindingPackageScan": def.setBindingPackageScan(val); break;
                 case "clientRequestValidation": def.setClientRequestValidation(val); break;
                 case "component": def.setComponent(val); break;
                 case "contextPath": def.setContextPath(val); break;

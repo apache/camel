@@ -27,6 +27,7 @@ public class RestBindingConfiguration {
     private String consumes;
     private String produces;
     private String bindingMode;
+    private String bindingPackageScan;
     private boolean skipBindingOnErrorCode;
     private boolean clientRequestValidation;
     private boolean enableCORS;
@@ -63,6 +64,14 @@ public class RestBindingConfiguration {
 
     public void setBindingMode(String bindingMode) {
         this.bindingMode = bindingMode;
+    }
+
+    public String getBindingPackageScan() {
+        return bindingPackageScan;
+    }
+
+    public void setBindingPackageScan(String bindingPackageScan) {
+        this.bindingPackageScan = bindingPackageScan;
     }
 
     public boolean isSkipBindingOnErrorCode() {
