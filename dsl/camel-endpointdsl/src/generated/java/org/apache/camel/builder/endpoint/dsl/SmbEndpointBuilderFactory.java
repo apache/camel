@@ -826,6 +826,39 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * An optional SMB client configuration, can be used to configure client
+         * specific configurations, like timeouts.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.hierynomus.smbj.SmbConfig&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbConfig the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder smbConfig(
+                com.hierynomus.smbj.SmbConfig smbConfig) {
+            doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * An optional SMB client configuration, can be used to configure client
+         * specific configurations, like timeouts.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.hierynomus.smbj.SmbConfig&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbConfig the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder smbConfig(String smbConfig) {
+            doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
          * An optional SMB I/O bean to use to setup the file access attributes
          * when reading/writing a file.
          * 

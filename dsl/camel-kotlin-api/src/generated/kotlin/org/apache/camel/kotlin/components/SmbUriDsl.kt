@@ -173,6 +173,14 @@ public class SmbUriDsl(
   }
 
   /**
+   * An optional SMB client configuration, can be used to configure client specific configurations,
+   * like timeouts
+   */
+  public fun smbConfig(smbConfig: String) {
+    it.property("smbConfig", smbConfig)
+  }
+
+  /**
    * An optional SMB I/O bean to use to setup the file access attributes when reading/writing a file
    */
   public fun smbIoBean(smbIoBean: String) {

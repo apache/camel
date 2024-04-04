@@ -18,7 +18,9 @@ package org.apache.camel.component.smb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
+import com.hierynomus.smbj.SmbConfig;
 import com.hierynomus.smbj.share.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -58,7 +60,13 @@ public class SmbComponentIT extends CamelTestSupport {
             }
 
             public void configure() {
-                fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(),
+                SmbConfig config = SmbConfig.builder()
+                        .withTimeout(120, TimeUnit.SECONDS) // Timeout sets Read, Write, and Transact timeouts (default is 60 seconds)
+                        .withSoTimeout(180, TimeUnit.SECONDS) // Socket Timeout (default is 0 seconds, blocks forever)
+                        .build();
+                context.getRegistry().bind("smbConfig", config);
+
+                fromF("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig", service.address(), service.shareName(),
                         service.userName(), service.password())
                         .process(this::process)
                         .to("mock:result");

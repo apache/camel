@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.smb;
 
+import com.hierynomus.smbj.SmbConfig;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -51,6 +52,12 @@ public class SmbConfiguration {
                                                          + "which by default use MemoryIdempotentRepository if none is specified.")
     protected IdempotentRepository idempotentRepository
             = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
+
+    @Metadata(autowired = true)
+    @UriParam(label = "advanced",
+              description = "An optional SMB client configuration, can be used to configure client specific "
+                            + " configurations, like timeouts")
+    private SmbConfig smbConfig;
 
     public String getUsername() {
         return username;
@@ -106,5 +113,13 @@ public class SmbConfiguration {
 
     public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
+    }
+
+    public SmbConfig getSmbConfig() {
+        return smbConfig;
+    }
+
+    public void setSmbConfig(SmbConfig smbConfig) {
+        this.smbConfig = smbConfig;
     }
 }

@@ -57,6 +57,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "searchPattern": target.getConfiguration().setSearchPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "smbconfig":
+        case "smbConfig": target.getConfiguration().setSmbConfig(property(camelContext, com.hierynomus.smbj.SmbConfig.class, value)); return true;
         case "smbiobean":
         case "smbIoBean": target.getConfiguration().setSmbIoBean(property(camelContext, org.apache.camel.component.smb.SmbIOBean.class, value)); return true;
         case "startscheduler":
@@ -68,6 +70,11 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"smbConfig"};
     }
 
     @Override
@@ -109,6 +116,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "searchPattern": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "smbconfig":
+        case "smbConfig": return com.hierynomus.smbj.SmbConfig.class;
         case "smbiobean":
         case "smbIoBean": return org.apache.camel.component.smb.SmbIOBean.class;
         case "startscheduler":
@@ -162,6 +171,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "searchPattern": return target.getConfiguration().getSearchPattern();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "smbconfig":
+        case "smbConfig": return target.getConfiguration().getSmbConfig();
         case "smbiobean":
         case "smbIoBean": return target.getConfiguration().getSmbIoBean();
         case "startscheduler":
