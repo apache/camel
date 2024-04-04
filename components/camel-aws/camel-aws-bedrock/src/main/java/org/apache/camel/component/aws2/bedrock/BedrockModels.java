@@ -28,7 +28,8 @@ public enum BedrockModels {
     ANTROPHIC_CLAUDE_V2("anthropic.claude-v2"),
     ANTROPHIC_CLAUDE_V2_1("anthropic.claude-v2:1"),
     ANTROPHIC_CLAUDE_V3("anthropic.claude-3-sonnet-20240229-v1:0"),
-    ANTROPHIC_CLAUDE_HAIKU_V3("anthropic.claude-3-haiku-20240307-v1:0");
+    ANTROPHIC_CLAUDE_HAIKU_V3("anthropic.claude-3-haiku-20240307-v1:0"),
+    MISTRAL_7B_INSTRUCT("mistral.mistral-7b-instruct-v0:2");
 
     public final String model;
 

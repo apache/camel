@@ -256,6 +256,13 @@ public class BedrockProducer extends DefaultProducer {
                     throw new RuntimeException(e);
                 }
             }
+            case "mistral.mistral-7b-instruct-v0:2" -> {
+                try {
+                    setMistralText(result, message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             default -> throw new IllegalStateException("Unexpected value: " + getConfiguration().getModelId());
         }
     }
@@ -277,6 +284,12 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     private void setAnthropicV3Text(InvokeModelResponse result, Message message) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        message.setBody(jsonString);
+    }
+
+    private void setMistralText(InvokeModelResponse result, Message message) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString);
