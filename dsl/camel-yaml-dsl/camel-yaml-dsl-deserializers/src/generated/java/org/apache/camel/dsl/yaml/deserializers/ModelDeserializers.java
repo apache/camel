@@ -13881,6 +13881,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the api documentation. For example set property api.title to my cool stuff", displayName = "Api Property"),
                     @YamlProperty(name = "apiVendorExtension", type = "boolean", description = "Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.", displayName = "Api Vendor Extension"),
                     @YamlProperty(name = "bindingMode", type = "enum:auto,json,json_xml,off,xml", defaultValue = "off", description = "Sets the binding mode to use. The default value is off", displayName = "Binding Mode"),
+                    @YamlProperty(name = "bindingPackageScan", type = "string", description = "Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.", displayName = "Binding Package Scan"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
                     @YamlProperty(name = "component", type = "enum:platform-http,servlet,jetty,undertow,netty-http,coap", description = "The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used.", displayName = "Component"),
                     @YamlProperty(name = "componentProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the rest component in use.", displayName = "Component Property"),
@@ -13951,6 +13952,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "bindingMode": {
                     target.setBindingMode(asEnum(node, org.apache.camel.model.rest.RestBindingMode.class));
+                    break;
+                }
+                case "bindingPackageScan": {
+                    String val = asText(node);
+                    target.setBindingPackageScan(val);
                     break;
                 }
                 case "clientRequestValidation": {

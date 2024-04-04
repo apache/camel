@@ -165,20 +165,20 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
-         * Java package name where POJO classes are located when using binding
-         * mode is enabled for JSon or XML. Multiple package names can be
-         * separated by comma.
+         * Package name to use as base (offset) for classpath scanning of POJO
+         * classes are located when using binding mode is enabled for JSon or
+         * XML. Multiple package names can be separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
-         * @param bindingPackageName the value to set
+         * @param bindingPackageScan the value to set
          * @return the dsl builder
          */
-        default RestOpenapiComponentBuilder bindingPackageName(
-                java.lang.String bindingPackageName) {
-            doSetProperty("bindingPackageName", bindingPackageName);
+        default RestOpenapiComponentBuilder bindingPackageScan(
+                java.lang.String bindingPackageScan) {
+            doSetProperty("bindingPackageScan", bindingPackageScan);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface RestOpenapiComponentBuilderFactory {
             case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientRequestValidation": ((RestOpenApiComponent) component).setClientRequestValidation((boolean) value); return true;
             case "missingOperation": ((RestOpenApiComponent) component).setMissingOperation((java.lang.String) value); return true;
-            case "bindingPackageName": ((RestOpenApiComponent) component).setBindingPackageName((java.lang.String) value); return true;
+            case "bindingPackageScan": ((RestOpenApiComponent) component).setBindingPackageScan((java.lang.String) value); return true;
             case "consumerComponentName": ((RestOpenApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;
             case "mockIncludePattern": ((RestOpenApiComponent) component).setMockIncludePattern((java.lang.String) value); return true;
             case "restOpenapiProcessorStrategy": ((RestOpenApiComponent) component).setRestOpenapiProcessorStrategy((org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy) value); return true;
