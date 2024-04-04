@@ -16,66 +16,21 @@
  */
 package org.apache.camel.test.infra.openldap.services;
 
-import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.FixedHostPortGenericContainer;
-import org.testcontainers.containers.GenericContainer;
 
-public class OpenldapLocalContainerService implements OpenldapService, ContainerService<GenericContainer> {
-
-    public static final String OPENLDAP_CONTAINER_PROPERTY = "openldap.container";
-    public static final String CONTAINER_NAME = "openldap";
+public class OpenldapLocalContainerService implements OpenldapService, ContainerService<OpenLdapContainer> {
     public static final int CONTAINER_PORT_LDAP = 389;
     public static final int CONTAINER_PORT_LDAP_OVER_SSL = 636;
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenldapLocalContainerService.class);
 
-    private final GenericContainer container;
+    private final OpenLdapContainer container;
 
     public OpenldapLocalContainerService() {
-        this(LocalPropertyResolver.getProperty(OpenldapLocalContainerService.class, OPENLDAP_CONTAINER_PROPERTY));
-    }
-
-    public OpenldapLocalContainerService(int port, int sslPort) {
-        String imageName = System.getProperty(
-                OpenldapProperties.OPENLDAP_CONTAINER,
-                LocalPropertyResolver.getProperty(OpenldapLocalContainerService.class, OPENLDAP_CONTAINER_PROPERTY));
-
-        container = initContainer(imageName, port, sslPort);
-    }
-
-    public OpenldapLocalContainerService(String imageName) {
-        container = initContainer(imageName, null, null);
-    }
-
-    public OpenldapLocalContainerService(GenericContainer container) {
-        this.container = container;
-    }
-
-    protected GenericContainer initContainer(String imageName, Integer port, Integer sslPort) {
-        GenericContainer ret;
-
-        if (port == null) {
-            ret = new GenericContainer(imageName)
-                    .withExposedPorts(CONTAINER_PORT_LDAP, CONTAINER_PORT_LDAP_OVER_SSL);
-        } else {
-            @SuppressWarnings("deprecation")
-            FixedHostPortGenericContainer fixedPortContainer = new FixedHostPortGenericContainer(imageName)
-                    .withFixedExposedPort(port, CONTAINER_PORT_LDAP);
-
-            if (sslPort != null) {
-                fixedPortContainer.withFixedExposedPort(sslPort, CONTAINER_PORT_LDAP_OVER_SSL);
-            }
-
-            ret = fixedPortContainer;
-        }
-
-        ret.withNetworkAliases(CONTAINER_NAME);
-
-        return ret;
+        container = new OpenLdapContainer();
     }
 
     @Override
@@ -100,7 +55,7 @@ public class OpenldapLocalContainerService implements OpenldapService, Container
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public OpenLdapContainer getContainer() {
         return container;
     }
 
