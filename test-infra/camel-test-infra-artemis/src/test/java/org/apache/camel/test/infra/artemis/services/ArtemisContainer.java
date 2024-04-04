@@ -16,28 +16,28 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.camel.test.infra.common.TestUtils;
+import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.messaging.services.MessagingContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.images.builder.ImageFromDockerfile;
+import org.testcontainers.utility.DockerImageName;
 
 public class ArtemisContainer extends GenericContainer<ArtemisContainer> implements MessagingContainer {
     private static final int DEFAULT_MQTT_PORT = 1883;
     private static final int DEFAULT_AMQP_PORT = 5672;
     private static final int DEFAULT_ADMIN_PORT = 8161;
     private static final int DEFAULT_ACCEPTOR_PORT = 61616;
-    private static final String FROM_IMAGE_NAME = "fedora:38";
-    private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public ArtemisContainer() {
-        super(new ImageFromDockerfile("localhost/apache-artemis:camel", false)
-                .withFileFromClasspath("Dockerfile",
-                        "org/apache/camel/test/infra/artemis/services/Dockerfile")
-                .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME)));
+        super(DockerImageName
+                .parse(LocalPropertyResolver.getProperty(ArtemisContainer.class, ArtemisProperties.ARTEMIS_CONTAINER)));
 
-        withExposedPorts(DEFAULT_MQTT_PORT, DEFAULT_AMQP_PORT,
-                DEFAULT_ADMIN_PORT, DEFAULT_ACCEPTOR_PORT)
+        this.withEnv("AMQ_EXTRA_ARGS", "--relax-jolokia")
+                .withEnv("AMQ_USER", "admin")
+                .withEnv("AMQ_PASSWORD", "admin")
+                .withExposedPorts(DEFAULT_MQTT_PORT, DEFAULT_AMQP_PORT,
+                        DEFAULT_ADMIN_PORT, DEFAULT_ACCEPTOR_PORT)
                 .waitingFor(Wait.forListeningPort());
     }
 
