@@ -27,11 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import jakarta.xml.bind.annotation.XmlRootElement;
-
-import javax.annotation.processing.Generated;
-
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
@@ -43,6 +38,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupStep;
+import org.apache.camel.component.platform.http.PlatformHttpConsumer;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
@@ -59,6 +55,7 @@ import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +77,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
     private final AtomicBoolean packageScanInit = new AtomicBoolean();
     private final Set<Class<?>> scannedClasses = new HashSet<>();
+    private PlatformHttpConsumer platformHttpConsumer;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 Processor processor, RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -102,16 +100,28 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         this.camelContext = camelContext;
     }
 
+    public PlatformHttpConsumer getPlatformHttpConsumer() {
+        return platformHttpConsumer;
+    }
+
+    public void setPlatformHttpConsumer(PlatformHttpConsumer platformHttpConsumer) {
+        this.platformHttpConsumer = platformHttpConsumer;
+    }
+
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
-        if (path != null && path.startsWith(basePath)) {
-            path = path.substring(basePath.length());
+        // use HTTP_URI as this works for all runtimes
+        String uri = exchange.getMessage().getHeader(Exchange.HTTP_URI, String.class);
+        if (uri != null) {
+            uri = URISupport.stripQuery(uri);
+        }
+        if (uri != null && uri.startsWith(basePath)) {
+            uri = uri.substring(basePath.length());
         }
         String verb = exchange.getMessage().getHeader(Exchange.HTTP_METHOD, String.class);
 
         RestConsumerContextPathMatcher.ConsumerPath<Operation> m
-                = RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
+                = RestConsumerContextPathMatcher.matchBestPath(verb, uri, paths);
         if (m instanceof RestOpenApiConsumerPath rcp) {
             Operation o = rcp.getConsumer();
 
@@ -120,7 +130,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             RestConfiguration.RestBindingMode bindingMode = config.getBindingMode();
 
             // map path-parameters from operation to camel headers
-            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), path, rcp.getConsumerPath());
+            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), uri, rcp.getConsumerPath());
 
             // we have found the op to call, but if validation is enabled then we need
             // to validate the incoming request first
@@ -130,17 +140,17 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             }
 
             // process the incoming request
-            return restOpenapiProcessorStrategy.process(o, path, rcp.getBinding(), exchange, callback);
+            return restOpenapiProcessorStrategy.process(o, uri, rcp.getBinding(), exchange, callback);
         }
 
         // is it the api-context path
-        if (path != null && path.equals(apiContextPath)) {
+        if (uri != null && uri.equals(apiContextPath)) {
             return restOpenapiProcessorStrategy.processApiSpecification(endpoint.getSpecificationUri(), exchange, callback);
         }
 
         // okay we cannot process this requires so return either 404 or 405.
         // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
-        final String contextPath = path;
+        final String contextPath = uri;
         List<String> allow = METHODS.stream()
                 .filter(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null).toList();
         if (allow.isEmpty()) {
@@ -499,10 +509,8 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                         "OpenAPI binding classes package scan");
                 String[] pcks = base.split(",");
                 PackageScanClassResolver resolver = PluginHelper.getPackageScanClassResolver(camelContext);
-                // discover POJO generated classes for JSon/XML
-                scannedClasses.addAll(resolver.findAnnotated(Generated.class, pcks));
-                scannedClasses.addAll(resolver.findAnnotated(JsonTypeName.class, pcks));
-                scannedClasses.addAll(resolver.findAnnotated(XmlRootElement.class, pcks));
+                // just add all classes as the POJOs can be generated with all kind of tools and with and without annotations
+                scannedClasses.addAll(resolver.findImplementations(Object.class, pcks));
                 if (!scannedClasses.isEmpty()) {
                     LOG.info("Binding package scan found {} classes in packages: {}", scannedClasses.size(), base);
                 }
@@ -532,7 +540,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         ServiceHelper.initService(restOpenapiProcessorStrategy);
 
         // validate openapi contract
-        restOpenapiProcessorStrategy.validateOpenApi(openAPI);
+        restOpenapiProcessorStrategy.validateOpenApi(openAPI, platformHttpConsumer);
     }
 
     @Override

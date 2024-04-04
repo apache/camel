@@ -107,7 +107,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
         return consumer;
     }
 
-    protected Consumer createDelegateConsumer(Processor processor) throws Exception {
+    protected Consumer createPlatformHttpConsumer(Processor processor) throws Exception {
         Consumer consumer = getOrCreateEngine().createConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;

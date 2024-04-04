@@ -20,6 +20,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.platform.http.PlatformHttpConsumer;
 import org.apache.camel.support.processor.RestBindingAdvice;
 
 /**
@@ -54,10 +55,11 @@ public interface RestOpenapiProcessorStrategy {
     /**
      * Validates the OpenAPI specification on startup
      *
-     * @param  openAPI   the openapi specification
-     * @throws Exception is thrown if validation error on startup
+     * @param  openAPI              the openapi specification
+     * @param  platformHttpConsumer the platform http consumer
+     * @throws Exception            is thrown if validation error on startup
      */
-    default void validateOpenApi(OpenAPI openAPI) throws Exception {
+    default void validateOpenApi(OpenAPI openAPI, PlatformHttpConsumer platformHttpConsumer) throws Exception {
         // noop
     }
 
