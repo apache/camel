@@ -16,20 +16,22 @@
  */
 package org.apache.camel.component.platform.http;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
+import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 
-public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
+public class DefaultPlatformHttpConsumer extends DefaultConsumer
+        implements PlatformHttpConsumerAware, Suspendable, SuspendableService {
 
-    private Consumer platformHttpConsumer;
+    private PlatformHttpConsumer platformHttpConsumer;
     private boolean register = true;
 
-    public PlatformHttpConsumer(Endpoint endpoint, Processor processor) {
+    public DefaultPlatformHttpConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
@@ -50,7 +52,8 @@ public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable
         this.register = register;
     }
 
-    public Consumer getDelegtePlatformHttpConsumer() {
+    @Override
+    public PlatformHttpConsumer getPlatformHttpConsumer() {
         return platformHttpConsumer;
     }
 
@@ -62,7 +65,7 @@ public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable
         ServiceHelper.initService(platformHttpConsumer);
     }
 
-    protected void configurePlatformHttpConsumer(Consumer platformHttpConsumer) {
+    protected void configurePlatformHttpConsumer(PlatformHttpConsumer platformHttpConsumer) {
         // noop
     }
 

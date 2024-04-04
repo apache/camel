@@ -38,7 +38,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupStep;
-import org.apache.camel.component.platform.http.PlatformHttpConsumer;
+import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
@@ -77,7 +77,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
     private final AtomicBoolean packageScanInit = new AtomicBoolean();
     private final Set<Class<?>> scannedClasses = new HashSet<>();
-    private PlatformHttpConsumer platformHttpConsumer;
+    private PlatformHttpConsumerAware platformHttpConsumer;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 Processor processor, RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -100,11 +100,11 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         this.camelContext = camelContext;
     }
 
-    public PlatformHttpConsumer getPlatformHttpConsumer() {
+    public PlatformHttpConsumerAware getPlatformHttpConsumer() {
         return platformHttpConsumer;
     }
 
-    public void setPlatformHttpConsumer(PlatformHttpConsumer platformHttpConsumer) {
+    public void setPlatformHttpConsumer(PlatformHttpConsumerAware platformHttpConsumer) {
         this.platformHttpConsumer = platformHttpConsumer;
     }
 

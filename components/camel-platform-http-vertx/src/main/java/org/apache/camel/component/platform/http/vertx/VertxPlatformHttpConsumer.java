@@ -51,6 +51,7 @@ import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.cookie.CookieConfiguration;
 import org.apache.camel.component.platform.http.cookie.CookieHandler;
 import org.apache.camel.component.platform.http.spi.Method;
+import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.FileUtil;
@@ -67,7 +68,8 @@ import static org.apache.camel.util.CollectionHelper.appendEntry;
  * A {@link org.apache.camel.Consumer} for the {@link org.apache.camel.component.platform.http.spi.PlatformHttpEngine}
  * based on Vert.x Web.
  */
-public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
+public class VertxPlatformHttpConsumer extends DefaultConsumer
+        implements PlatformHttpConsumer, Suspendable, SuspendableService {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpConsumer.class);
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 

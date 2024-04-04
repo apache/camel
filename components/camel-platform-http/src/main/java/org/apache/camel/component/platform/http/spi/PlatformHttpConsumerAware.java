@@ -16,28 +16,14 @@
  */
 package org.apache.camel.component.platform.http.spi;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
-
 /**
- * An abstraction of an HTTP Server engine on which HTTP endpoints can be deployed.
+ * An interface to represent an object that has been injected with {@link PlatformHttpConsumer}.
  */
-public interface PlatformHttpEngine {
+public interface PlatformHttpConsumerAware {
 
     /**
-     * Creates a new {@link PlatformHttpConsumer} for the given {@link PlatformHttpEndpoint}.
-     *
-     * @param  platformHttpEndpoint the {@link PlatformHttpEndpoint} to create a consumer for
-     * @param  processor            the Processor to pass to
-     * @return                      a new {@link PlatformHttpConsumer}
+     * Gets the {@link PlatformHttpConsumer}.
      */
-    PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor);
-
-    /**
-     * The port number the HTTP server is using, if possible to determine.
-     */
-    default int getServerPort() {
-        return 0;
-    }
+    PlatformHttpConsumer getPlatformHttpConsumer();
 
 }

@@ -57,7 +57,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.platform.http.PlatformHttpConsumer;
+import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
@@ -296,9 +296,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (factory != null) {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
             Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
-            PlatformHttpConsumer consumer
-                    = (PlatformHttpConsumer) factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
-            processor.setPlatformHttpConsumer(consumer);
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
+            if (consumer instanceof PlatformHttpConsumerAware phca) {
+                processor.setPlatformHttpConsumer(phca);
+            }
             configureConsumer(consumer);
             return consumer;
         } else {

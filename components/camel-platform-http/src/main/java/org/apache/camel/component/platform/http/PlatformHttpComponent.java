@@ -248,7 +248,7 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
         endpoint.setProduces(produces);
 
         // configure consumer properties
-        PlatformHttpConsumer consumer = (PlatformHttpConsumer) endpoint.createConsumer(processor);
+        DefaultPlatformHttpConsumer consumer = endpoint.createConsumer(processor);
         consumer.setRegister(register);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());

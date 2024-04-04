@@ -36,7 +36,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
-import org.apache.camel.component.platform.http.PlatformHttpConsumer;
+import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Resource;
@@ -67,7 +67,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private final List<String> uris = new ArrayList<>();
 
     @Override
-    public void validateOpenApi(OpenAPI openAPI, PlatformHttpConsumer platformHttpConsumer) throws Exception {
+    public void validateOpenApi(OpenAPI openAPI, PlatformHttpConsumerAware platformHttpConsumer) throws Exception {
         List<String> ids = new ArrayList<>();
         for (var e : openAPI.getPaths().entrySet()) {
             for (var o : e.getValue().readOperations()) {
@@ -134,7 +134,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                         }
                     }
                 }
-                phc.addHttpEndpoint(uri, verbs, consumes, produces, platformHttpConsumer.getDelegtePlatformHttpConsumer());
+                phc.addHttpEndpoint(uri, verbs, consumes, produces, platformHttpConsumer.getPlatformHttpConsumer());
                 uris.add(uri);
             }
         }

@@ -19,10 +19,10 @@ package org.apache.camel.component.platform.http;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
-import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.platform.http.cookie.CookieConfiguration;
+import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -101,14 +101,14 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer consumer = new PlatformHttpConsumer(this, processor);
+    public DefaultPlatformHttpConsumer createConsumer(Processor processor) throws Exception {
+        DefaultPlatformHttpConsumer consumer = new DefaultPlatformHttpConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }
 
-    protected Consumer createPlatformHttpConsumer(Processor processor) throws Exception {
-        Consumer consumer = getOrCreateEngine().createConsumer(this, processor);
+    protected PlatformHttpConsumer createPlatformHttpConsumer(Processor processor) throws Exception {
+        PlatformHttpConsumer consumer = getOrCreateEngine().createConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }
