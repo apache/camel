@@ -628,42 +628,6 @@ public interface SmbEndpointBuilderFactory {
             return (SmbEndpointBuilder) this;
         }
         /**
-         * A pluggable repository org.apache.camel.spi.IdempotentRepository
-         * which by default use MemoryIdempotentRepository if none is specified.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
-         * 
-         * Group: consumer
-         * 
-         * @param idempotentRepository the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder idempotentRepository(
-                org.apache.camel.spi.IdempotentRepository idempotentRepository) {
-            doSetProperty("idempotentRepository", idempotentRepository);
-            return this;
-        }
-        /**
-         * A pluggable repository org.apache.camel.spi.IdempotentRepository
-         * which by default use MemoryIdempotentRepository if none is specified.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
-         * 
-         * Group: consumer
-         * 
-         * @param idempotentRepository the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder idempotentRepository(
-                String idempotentRepository) {
-            doSetProperty("idempotentRepository", idempotentRepository);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -826,6 +790,42 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryIdempotentRepository if none is specified.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder idempotentRepository(
+                org.apache.camel.spi.IdempotentRepository idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryIdempotentRepository if none is specified.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder idempotentRepository(
+                String idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
          * An optional SMB client configuration, can be used to configure client
          * specific configurations, like timeouts.
          * 
@@ -913,7 +913,7 @@ public interface SmbEndpointBuilderFactory {
          * The share port number
          * Default value: 445
          * 
-         * Path parameter: shareName
+         * Path parameter: shareName (required)
          * The name of the share to connect to.
          * 
          * @param path hostname:port/shareName
@@ -939,7 +939,7 @@ public interface SmbEndpointBuilderFactory {
          * The share port number
          * Default value: 445
          * 
-         * Path parameter: shareName
+         * Path parameter: shareName (required)
          * The name of the share to connect to.
          * 
          * @param componentName to use a custom component name for the endpoint

@@ -13734,7 +13734,7 @@ public class StaticEndpointBuilders {
      * The share port number
      * Default value: 445
      * 
-     * Path parameter: shareName
+     * Path parameter: shareName (required)
      * The name of the share to connect to.
      * 
      * @param path hostname:port/shareName
@@ -13761,7 +13761,7 @@ public class StaticEndpointBuilders {
      * The share port number
      * Default value: 445
      * 
-     * Path parameter: shareName
+     * Path parameter: shareName (required)
      * The name of the share to connect to.
      * 
      * @param componentName to use a custom component name for the endpoint

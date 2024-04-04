@@ -28,31 +28,24 @@ public class SmbConfiguration {
 
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
 
-    @UriParam(label = "security", description = "The username required to access the share", secret = true)
-    private String username;
-
-    @UriParam(label = "security", description = "The password to access the share", secret = true)
-    private String password;
-
-    @UriParam(label = "security", description = "The user domain")
-    private String domain;
-
     @Metadata(required = true)
     @UriParam(description = "The path, within the share, to consume the files from")
     private String path;
-
     @UriParam(defaultValue = "*.txt", description = "The search pattern used to list the files")
     private String searchPattern;
-
+    @UriParam(label = "security", description = "The username required to access the share", secret = true)
+    private String username;
+    @UriParam(label = "security", description = "The password to access the share", secret = true)
+    private String password;
+    @UriParam(label = "security", description = "The user domain")
+    private String domain;
     @UriParam(label = "advanced",
               description = "An optional SMB I/O bean to use to setup the file access attributes when reading/writing a file")
     private SmbIOBean smbIoBean = new SmbReadBean();
-
-    @UriParam(label = "advanced,consumer", description = "A pluggable repository org.apache.camel.spi.IdempotentRepository "
-                                                         + "which by default use MemoryIdempotentRepository if none is specified.")
+    @UriParam(label = "advanced", description = "A pluggable repository org.apache.camel.spi.IdempotentRepository "
+                                                + "which by default use MemoryIdempotentRepository if none is specified.")
     protected IdempotentRepository idempotentRepository
             = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
-
     @Metadata(autowired = true)
     @UriParam(label = "advanced",
               description = "An optional SMB client configuration, can be used to configure client specific "

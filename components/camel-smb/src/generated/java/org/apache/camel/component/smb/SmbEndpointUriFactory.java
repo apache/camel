@@ -53,9 +53,8 @@ public class SmbEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
+        Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
-        secretProps.add("shareName");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);
@@ -77,7 +76,7 @@ public class SmbEndpointUriFactory extends org.apache.camel.support.component.En
 
         uri = buildPathParameter(syntax, uri, "hostname", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", 445, false, copy);
-        uri = buildPathParameter(syntax, uri, "shareName", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "shareName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

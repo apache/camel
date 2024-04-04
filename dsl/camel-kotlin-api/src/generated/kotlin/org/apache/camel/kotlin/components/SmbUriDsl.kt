@@ -80,14 +80,6 @@ public class SmbUriDsl(
   }
 
   /**
-   * A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use
-   * MemoryIdempotentRepository if none is specified.
-   */
-  public fun idempotentRepository(idempotentRepository: String) {
-    it.property("idempotentRepository", idempotentRepository)
-  }
-
-  /**
    * The path, within the share, to consume the files from
    */
   public fun path(path: String) {
@@ -170,6 +162,14 @@ public class SmbUriDsl(
    */
   public fun pollStrategy(pollStrategy: String) {
     it.property("pollStrategy", pollStrategy)
+  }
+
+  /**
+   * A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use
+   * MemoryIdempotentRepository if none is specified.
+   */
+  public fun idempotentRepository(idempotentRepository: String) {
+    it.property("idempotentRepository", idempotentRepository)
   }
 
   /**
