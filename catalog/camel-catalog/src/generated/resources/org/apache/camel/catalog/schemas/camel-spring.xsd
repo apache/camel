@@ -16805,6 +16805,16 @@ Sets the binding mode to use. The default value is off. Default value: off
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="bindingPackageScan" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is
+enabled for JSon or XML. Multiple package names can be separated by comma.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="skipBindingOnErrorCode" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">

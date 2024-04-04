@@ -321,8 +321,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML.
-     * Multiple package names can be separated by comma.
+     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode
+     * is enabled for JSon or XML. Multiple package names can be separated by comma.
      */
     public void setBindingPackageScan(String bindingPackageScan) {
         this.bindingPackageScan = bindingPackageScan;
@@ -674,8 +674,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML.
-     * Multiple package names can be separated by comma.
+     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode
+     * is enabled for JSon or XML. Multiple package names can be separated by comma.
      */
     public RestConfigurationDefinition bindingPackageScan(String bindingPackageScan) {
         setBindingPackageScan(bindingPackageScan);
