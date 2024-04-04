@@ -997,6 +997,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             binding.setConsumes("application/json;application/xml");
             binding.setProduces("application/json;application/xml");
         }
+        binding.setBindingMode(mode);
         binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
         binding.setClientRequestValidation(getClientRequestValidation());
         binding.setEnableCORS(getEnableCORS());
@@ -1006,24 +1007,24 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // append options
         Map<String, Object> options = new HashMap<>();
         if (binding.getConsumes() != null) {
-            options.put("consumes", binding.getConsumes());
+            options.put("consumes", parseText(camelContext, binding.getConsumes()));
         }
         if (binding.getProduces() != null) {
-            options.put("produces", binding.getProduces());
+            options.put("produces", parseText(camelContext, binding.getProduces()));
         }
         if (getClientRequestValidation() != null) {
-            options.put("clientRequestValidation", getClientRequestValidation());
+            options.put("clientRequestValidation", parseBoolean(camelContext, getClientRequestValidation()));
         } else if (clientValidation) {
             options.put("clientRequestValidation", "true");
         }
         if (openApi.getMissingOperation() != null) {
-            options.put("missingOperation", openApi.getMissingOperation());
+            options.put("missingOperation", parseText(camelContext, openApi.getMissingOperation()));
         }
         if (openApi.getMockIncludePattern() != null) {
-            options.put("mockIncludePattern", openApi.getMockIncludePattern());
+            options.put("mockIncludePattern", parseText(camelContext, openApi.getMockIncludePattern()));
         }
         if (openApi.getApiContextPath() != null) {
-            options.put("apiContextPath", openApi.getApiContextPath());
+            options.put("apiContextPath", parseText(camelContext, openApi.getApiContextPath()));
         }
 
         // include optional description

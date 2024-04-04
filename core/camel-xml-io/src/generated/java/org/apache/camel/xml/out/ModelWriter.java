@@ -4541,6 +4541,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("host", def.getHost());
         doWriteAttribute("producerComponent", def.getProducerComponent());
         doWriteAttribute("enableCORS", def.getEnableCORS());
+        doWriteAttribute("bindingPackageScan", def.getBindingPackageScan());
         doWriteAttribute("useXForwardHeaders", def.getUseXForwardHeaders());
         doWriteAttribute("apiHost", def.getApiHost());
         doWriteAttribute("contextPath", def.getContextPath());

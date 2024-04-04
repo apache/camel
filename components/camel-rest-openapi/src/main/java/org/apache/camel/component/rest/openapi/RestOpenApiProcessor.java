@@ -18,13 +18,18 @@ package org.apache.camel.component.rest.openapi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
@@ -35,12 +40,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.StartupStep;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.RestBindingAdvice;
@@ -67,6 +76,8 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private final String apiContextPath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
     private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
+    private final AtomicBoolean packageScanInit = new AtomicBoolean();
+    private final Set<Class<?>> scannedClasses = new HashSet<>();
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 Processor processor, RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -334,6 +345,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                 paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
             }
         }
+        scannedClasses.clear(); // no longer needed
         ServiceHelper.buildService(restOpenapiProcessorStrategy);
     }
 
@@ -477,18 +489,35 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             return null;
         }
 
-        // must refer to a class name, so upper case
-        ref = Character.toUpperCase(ref.charAt(0)) + ref.substring(1);
-        if (endpoint.getBindingPackageName() != null) {
-            for (String pck : endpoint.getBindingPackageName().split(",")) {
-                String fqn = pck + "." + ref;
-                Class<?> clazz = camelContext.getClassResolver().resolveClass(fqn);
-                if (clazz != null) {
-                    return clazz;
+        if (packageScanInit.compareAndSet(false, true)) {
+            String base = endpoint.getBindingPackageScan();
+            if (base != null) {
+                StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
+                StartupStep step = recorder.beginStep(RestOpenApiProcessor.class, "openapi-binding",
+                        "OpenAPI binding classes package scan");
+                String[] pcks = base.split(",");
+                PackageScanClassResolver resolver = PluginHelper.getPackageScanClassResolver(camelContext);
+                // discover POJO generated classes for JSon/XML
+                scannedClasses.addAll(resolver.findAnnotated(JsonTypeName.class, pcks));
+                scannedClasses.addAll(resolver.findAnnotated(XmlRootElement.class, pcks));
+                if (!scannedClasses.isEmpty()) {
+                    LOG.info("Binding package scan found {} classes in packages: {}", scannedClasses.size(), base);
                 }
+                recorder.endStep(step);
             }
         }
-        return camelContext.getClassResolver().resolveClass(ref);
+
+        // must refer to a class name, so upper case
+        ref = Character.toUpperCase(ref.charAt(0)) + ref.substring(1);
+        // find class via simple name
+        for (Class<?> clazz : scannedClasses) {
+            if (clazz.getSimpleName().equals(ref)) {
+                return clazz;
+            }
+        }
+
+        // class not found
+        return null;
     }
 
     @Override

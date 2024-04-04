@@ -45,6 +45,7 @@ public class RestBindingReifier extends AbstractReifier {
             mode = parse(RestBindingMode.class, definition.getBindingMode()).name();
         }
         rbc.setBindingMode(mode);
+        rbc.setBindingPackageScan(config.getBindingPackageScan());
         boolean cors = config.isEnableCORS();
         if (definition.getEnableCORS() != null) {
             cors = parseBoolean(definition.getEnableCORS(), false);

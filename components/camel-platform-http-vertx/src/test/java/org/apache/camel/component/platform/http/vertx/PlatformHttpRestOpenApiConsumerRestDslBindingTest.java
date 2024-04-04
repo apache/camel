@@ -19,7 +19,6 @@ package org.apache.camel.component.platform.http.vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.vertx.model.Pet;
-import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
@@ -74,11 +73,9 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    // TODO: make it easy to set binding package name
-                    RestOpenApiComponent rac = context.getComponent("rest-openapi", RestOpenApiComponent.class);
-                    rac.setBindingPackageName(Pet.class.getPackageName());
-
-                    restConfiguration().bindingMode(RestBindingMode.json);
+                    // turn on json binding and scan for POJO classes in the model package
+                    restConfiguration().bindingMode(RestBindingMode.json)
+                            .bindingPackageScan("org.apache.camel.component.platform.http.vertx.model");
 
                     rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
 

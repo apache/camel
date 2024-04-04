@@ -83,6 +83,9 @@ public class RestConfigurationDefinition {
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private RestBindingMode bindingMode;
     @XmlAttribute
+    @Metadata(label = "consumer,advanced")
+    private String bindingPackageScan;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
     @XmlAttribute
@@ -311,6 +314,18 @@ public class RestConfigurationDefinition {
      */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
+    }
+
+    public String getBindingPackageScan() {
+        return bindingPackageScan;
+    }
+
+    /**
+     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode
+     * is enabled for JSon or XML. Multiple package names can be separated by comma.
+     */
+    public void setBindingPackageScan(String bindingPackageScan) {
+        this.bindingPackageScan = bindingPackageScan;
     }
 
     public String getSkipBindingOnErrorCode() {
@@ -659,6 +674,15 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode
+     * is enabled for JSon or XML. Multiple package names can be separated by comma.
+     */
+    public RestConfigurationDefinition bindingPackageScan(String bindingPackageScan) {
+        setBindingPackageScan(bindingPackageScan);
+        return this;
+    }
+
+    /**
      * To specify whether to skip binding output if there is a custom HTTP error code
      */
     public RestConfigurationDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
@@ -955,6 +979,9 @@ public class RestConfigurationDefinition {
         }
         if (bindingMode != null) {
             target.setBindingMode(bindingMode.name());
+        }
+        if (bindingPackageScan != null) {
+            target.setBindingPackageScan(bindingPackageScan);
         }
         if (skipBindingOnErrorCode != null) {
             target.setSkipBindingOnErrorCode(CamelContextHelper.parseBoolean(context, skipBindingOnErrorCode));

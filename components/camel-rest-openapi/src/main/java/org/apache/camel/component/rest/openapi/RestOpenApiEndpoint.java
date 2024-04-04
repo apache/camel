@@ -150,8 +150,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
              defaultValueNote = "By default loads `openapi.json` file", label = "common")
     private String specificationUri;
     @Metadata(label = "consumer,advanced",
-              description = "Java package name where POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.")
-    private String bindingPackageName;
+              description = "Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.")
+    private String bindingPackageScan;
     @UriParam(label = "consumer",
               description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
@@ -464,12 +464,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         this.apiContextPath = apiContextPath;
     }
 
-    public String getBindingPackageName() {
-        return bindingPackageName;
+    public String getBindingPackageScan() {
+        return bindingPackageScan;
     }
 
-    public void setBindingPackageName(String bindingPackageName) {
-        this.bindingPackageName = bindingPackageName;
+    public void setBindingPackageScan(String bindingPackageScan) {
+        this.bindingPackageScan = bindingPackageScan;
     }
 
     Producer createProducerFor(
