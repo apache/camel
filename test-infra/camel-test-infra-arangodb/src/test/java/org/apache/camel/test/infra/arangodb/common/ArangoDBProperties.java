@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.arangodb.common;
 
 public final class ArangoDBProperties {
     public static final String ARANGODB_CONTAINER = "arangodb.container";
+    public static final String ARANGODB_CONTAINER_STARTUP = "arangodb.container.startup.attempts";
     public static final String ARANGODB_HOST = "arangodb.host";
     public static final String ARANGODB_PORT = "arangodb.port";
 
