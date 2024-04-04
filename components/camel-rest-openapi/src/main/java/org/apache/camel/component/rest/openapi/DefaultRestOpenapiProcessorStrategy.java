@@ -96,9 +96,9 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             if ("fail".equalsIgnoreCase(missingOperation)) {
                 throw new IllegalArgumentException(msg);
             } else if ("ignore".equalsIgnoreCase(missingOperation)) {
-                LOG.warn(msg + ". This validation error is ignored.");
+                LOG.warn(msg + "\nThis validation error is ignored.");
             } else if ("mock".equalsIgnoreCase(missingOperation)) {
-                LOG.debug(msg + ". This validation error is ignored (Will return a mocked/empty response).");
+                LOG.debug(msg + "\nThis validation error is ignored (Will return a mocked/empty response).");
             }
         }
 
