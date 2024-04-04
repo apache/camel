@@ -27,14 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-<<<<<<< HEAD
-=======
-import jakarta.xml.bind.annotation.XmlRootElement;
-
-import javax.annotation.processing.Generated;
-
-import com.fasterxml.jackson.annotation.JsonTypeName;
->>>>>>> 7d080d57250 (CAMEL-20557: Rest DSL to use openapi spec directly)
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
@@ -517,15 +509,8 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                         "OpenAPI binding classes package scan");
                 String[] pcks = base.split(",");
                 PackageScanClassResolver resolver = PluginHelper.getPackageScanClassResolver(camelContext);
-<<<<<<< HEAD
                 // just add all classes as the POJOs can be generated with all kind of tools and with and without annotations
                 scannedClasses.addAll(resolver.findImplementations(Object.class, pcks));
-=======
-                // discover POJO generated classes for JSon/XML
-                scannedClasses.addAll(resolver.findAnnotated(Generated.class, pcks));
-                scannedClasses.addAll(resolver.findAnnotated(JsonTypeName.class, pcks));
-                scannedClasses.addAll(resolver.findAnnotated(XmlRootElement.class, pcks));
->>>>>>> 7d080d57250 (CAMEL-20557: Rest DSL to use openapi spec directly)
                 if (!scannedClasses.isEmpty()) {
                     LOG.info("Binding package scan found {} classes in packages: {}", scannedClasses.size(), base);
                 }
