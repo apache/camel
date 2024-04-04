@@ -121,8 +121,8 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
               label = "producer,advanced")
     private String produces;
     @Metadata(label = "consumer,advanced",
-              description = "Java package name where POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.")
-    private String bindingPackageName;
+              description = "Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.")
+    private String bindingPackageScan;
     @Metadata(label = "consumer",
               description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
@@ -157,7 +157,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
             throws Exception {
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
         endpoint.setApiContextPath(getApiContextPath());
-        endpoint.setBindingPackageName(getBindingPackageName());
+        endpoint.setBindingPackageScan(getBindingPackageScan());
         endpoint.setClientRequestValidation(isClientRequestValidation());
         endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
@@ -165,6 +165,17 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         endpoint.setMockIncludePattern(getMockIncludePattern());
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // use package scan for binding model classes
+        String current = getCamelContext().getCamelContextExtension().getBasePackageScan();
+        if (current != null && bindingPackageScan == null) {
+            bindingPackageScan = current;
+        }
     }
 
     public String getBasePath() {
@@ -289,11 +300,11 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         this.clientRequestValidation = clientRequestValidation;
     }
 
-    public String getBindingPackageName() {
-        return bindingPackageName;
+    public String getBindingPackageScan() {
+        return bindingPackageScan;
     }
 
-    public void setBindingPackageName(String bindingPackageName) {
-        this.bindingPackageName = bindingPackageName;
+    public void setBindingPackageScan(String bindingPackageScan) {
+        this.bindingPackageScan = bindingPackageScan;
     }
 }

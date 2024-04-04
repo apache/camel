@@ -63,7 +63,6 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private String component = "direct";
     private String missingOperation;
     private String mockIncludePattern;
-    private String apiContextPath;
     private final List<String> uris = new ArrayList<>();
 
     @Override
@@ -280,10 +279,12 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         this.component = component;
     }
 
+    @Override
     public String getMissingOperation() {
         return missingOperation;
     }
 
+    @Override
     public void setMissingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
     }
@@ -296,14 +297,6 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     @Override
     public void setMockIncludePattern(String mockIncludePattern) {
         this.mockIncludePattern = mockIncludePattern;
-    }
-
-    public String getApiContextPath() {
-        return apiContextPath;
-    }
-
-    public void setApiContextPath(String apiContextPath) {
-        this.apiContextPath = apiContextPath;
     }
 
     @Override

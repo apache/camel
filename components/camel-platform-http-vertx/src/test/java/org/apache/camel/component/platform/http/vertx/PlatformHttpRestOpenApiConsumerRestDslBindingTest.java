@@ -74,9 +74,8 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    // TODO: make it easy to set binding package name
-                    RestOpenApiComponent rac = context.getComponent("rest-openapi", RestOpenApiComponent.class);
-                    rac.setBindingPackageName(Pet.class.getPackageName());
+                    // TODO: make it easy to set binding package name in rest configuration
+                    context.getCamelContextExtension().setBasePackageScan("org.apache.camel.component.platform.http.vertx.model");
 
                     restConfiguration().bindingMode(RestBindingMode.json);
 

@@ -27,8 +27,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "basepath":
         case "basePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "bindingpackagename":
-        case "bindingPackageName": target.setBindingPackageName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bindingpackagescan":
+        case "bindingPackageScan": target.setBindingPackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientrequestvalidation":
@@ -69,8 +69,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "autowiredEnabled": return boolean.class;
         case "basepath":
         case "basePath": return java.lang.String.class;
-        case "bindingpackagename":
-        case "bindingPackageName": return java.lang.String.class;
+        case "bindingpackagescan":
+        case "bindingPackageScan": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientrequestvalidation":
@@ -112,8 +112,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "basepath":
         case "basePath": return target.getBasePath();
-        case "bindingpackagename":
-        case "bindingPackageName": return target.getBindingPackageName();
+        case "bindingpackagescan":
+        case "bindingPackageScan": return target.getBindingPackageScan();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientrequestvalidation":
