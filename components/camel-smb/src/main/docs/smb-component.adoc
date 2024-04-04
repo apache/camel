@@ -7,6 +7,8 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: smb
 
 *Since Camel {since}*
 
@@ -73,3 +75,6 @@ public void configure() {
 ====
 Beware that the File object provided is not a `java.io.File` instance, but, instead a `com.hierynomus.smbj.share.File` instance.
 ====
+
+
+include::spring-boot:partial$starter.adoc[]
