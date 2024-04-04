@@ -36,6 +36,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.platform.http.PlatformHttpConsumer;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Resource;
@@ -66,7 +67,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private final List<String> uris = new ArrayList<>();
 
     @Override
-    public void validateOpenApi(OpenAPI openAPI) throws Exception {
+    public void validateOpenApi(OpenAPI openAPI, PlatformHttpConsumer platformHttpConsumer) throws Exception {
         List<String> ids = new ArrayList<>();
         for (var e : openAPI.getPaths().entrySet()) {
             for (var o : e.getValue().readOperations()) {
@@ -96,9 +97,9 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             if ("fail".equalsIgnoreCase(missingOperation)) {
                 throw new IllegalArgumentException(msg);
             } else if ("ignore".equalsIgnoreCase(missingOperation)) {
-                LOG.warn(msg + ". This validation error is ignored.");
+                LOG.warn(msg + "\nThis validation error is ignored.");
             } else if ("mock".equalsIgnoreCase(missingOperation)) {
-                LOG.debug(msg + ". This validation error is ignored (Will return a mocked/empty response).");
+                LOG.debug(msg + "\nThis validation error is ignored (Will return a mocked/empty response).");
             }
         }
 
@@ -133,7 +134,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                         }
                     }
                 }
-                phc.addHttpEndpoint(uri, verbs, consumes, produces, null);
+                phc.addHttpEndpoint(uri, verbs, consumes, produces, platformHttpConsumer.getDelegtePlatformHttpConsumer());
                 uris.add(uri);
             }
         }
@@ -167,17 +168,20 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             RestBindingAdvice binding,
             Exchange exchange, AsyncCallback callback) {
 
-        if ("mock".equalsIgnoreCase(missingOperation)) {
+        if ("mock".equalsIgnoreCase(missingOperation) || "ignore".equalsIgnoreCase(missingOperation)) {
             // check if there is a route
             Endpoint e = camelContext.hasEndpoint(component + ":" + operation.getOperationId());
             if (e == null) {
-                // no route then try to load mock data as the answer
-                loadMockData(operation, path, exchange);
+                if ("mock".equalsIgnoreCase(missingOperation)) {
+                    // no route then try to load mock data as the answer
+                    loadMockData(operation, path, exchange);
+                }
                 callback.done(true);
                 return true;
             }
         }
 
+        // there is a route so process
         Map<String, Object> state;
         try {
             state = binding.before(exchange);

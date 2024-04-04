@@ -26,7 +26,7 @@ import org.apache.camel.support.service.ServiceHelper;
 
 public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
 
-    private Consumer delegatedConsumer;
+    private Consumer platformHttpConsumer;
     private boolean register = true;
 
     public PlatformHttpConsumer(Endpoint endpoint, Processor processor) {
@@ -50,19 +50,29 @@ public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable
         this.register = register;
     }
 
+    public Consumer getDelegtePlatformHttpConsumer() {
+        return platformHttpConsumer;
+    }
+
     @Override
     protected void doInit() throws Exception {
+        platformHttpConsumer = getEndpoint().createPlatformHttpConsumer(getProcessor());
+        configurePlatformHttpConsumer(platformHttpConsumer);
         super.doInit();
-        delegatedConsumer = getEndpoint().createDelegateConsumer(getProcessor());
+        ServiceHelper.initService(platformHttpConsumer);
+    }
+
+    protected void configurePlatformHttpConsumer(Consumer platformHttpConsumer) {
+        // noop
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ServiceHelper.startService(delegatedConsumer);
+        ServiceHelper.startService(platformHttpConsumer);
         if (register) {
             getComponent().addHttpEndpoint(getEndpoint().getPath(), getEndpoint().getHttpMethodRestrict(),
-                    getEndpoint().getConsumes(), getEndpoint().getProduces(), delegatedConsumer);
+                    getEndpoint().getConsumes(), getEndpoint().getProduces(), platformHttpConsumer);
         }
     }
 
@@ -72,18 +82,18 @@ public class PlatformHttpConsumer extends DefaultConsumer implements Suspendable
         if (register) {
             getComponent().removeHttpEndpoint(getEndpoint().getPath());
         }
-        ServiceHelper.stopAndShutdownServices(delegatedConsumer);
+        ServiceHelper.stopAndShutdownServices(platformHttpConsumer);
     }
 
     @Override
     protected void doResume() throws Exception {
-        ServiceHelper.resumeService(delegatedConsumer);
+        ServiceHelper.resumeService(platformHttpConsumer);
         super.doResume();
     }
 
     @Override
     protected void doSuspend() throws Exception {
-        ServiceHelper.suspendService(delegatedConsumer);
+        ServiceHelper.suspendService(platformHttpConsumer);
         super.doSuspend();
     }
 

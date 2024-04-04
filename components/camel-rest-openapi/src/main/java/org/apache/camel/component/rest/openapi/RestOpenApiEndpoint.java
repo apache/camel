@@ -57,6 +57,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.platform.http.PlatformHttpConsumer;
 import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
@@ -208,12 +209,13 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(final Processor processor) throws Exception {
         OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri);
         String path = determineBasePath(doc);
-        Processor target = new RestOpenApiProcessor(this, doc, path, apiContextPath, processor, restOpenapiProcessorStrategy);
+        RestOpenApiProcessor target
+                = new RestOpenApiProcessor(this, doc, path, apiContextPath, processor, restOpenapiProcessorStrategy);
         CamelContextAware.trySetCamelContext(target, getCamelContext());
         return createConsumerFor(path, target);
     }
 
-    protected Consumer createConsumerFor(String basePath, Processor processor) throws Exception {
+    protected Consumer createConsumerFor(String basePath, RestOpenApiProcessor processor) throws Exception {
         RestOpenApiConsumerFactory factory = null;
         String cname = null;
         if (getConsumerComponentName() != null) {
@@ -294,7 +296,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (factory != null) {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
             Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
+            PlatformHttpConsumer consumer
+                    = (PlatformHttpConsumer) factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
+            processor.setPlatformHttpConsumer(consumer);
             configureConsumer(consumer);
             return consumer;
         } else {
