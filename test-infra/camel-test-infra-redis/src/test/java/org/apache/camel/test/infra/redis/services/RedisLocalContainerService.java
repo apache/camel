@@ -16,39 +16,22 @@
  */
 package org.apache.camel.test.infra.redis.services;
 
-import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.redis.common.RedisProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.utility.DockerImageName;
 
-public class RedisLocalContainerService implements RedisService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_NAME = "redis";
-
+public class RedisLocalContainerService implements RedisService, ContainerService<RedisContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RedisLocalContainerService.class);
 
-    private final GenericContainer container;
+    private final RedisContainer container;
 
     public RedisLocalContainerService() {
-        this(LocalPropertyResolver.getProperty(RedisLocalContainerService.class, RedisProperties.REDIS_CONTAINER));
+        container = new RedisContainer();
     }
 
     public RedisLocalContainerService(String imageName) {
-        container = initContainer(imageName, CONTAINER_NAME);
-    }
-
-    public RedisLocalContainerService(GenericContainer container) {
-        this.container = container;
-    }
-
-    public GenericContainer initContainer(String imageName, String networkAlias) {
-        return new GenericContainer<>(DockerImageName.parse(imageName))
-                .withNetworkAliases(networkAlias)
-                .withExposedPorts(RedisProperties.DEFAULT_PORT)
-                .waitingFor(Wait.forListeningPort());
+        container = RedisContainer.initContainer(imageName, RedisContainer.CONTAINER_NAME);
     }
 
     @Override
@@ -74,7 +57,7 @@ public class RedisLocalContainerService implements RedisService, ContainerServic
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public RedisContainer getContainer() {
         return container;
     }
 
