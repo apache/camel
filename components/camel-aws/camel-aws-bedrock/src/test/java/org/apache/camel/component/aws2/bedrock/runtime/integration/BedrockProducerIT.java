@@ -374,6 +374,29 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testInvokeMistral7BInstructModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_mistral_7b_instruct_model", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt",
+                    new TextNode("\"<s>[INST] Can you tell the history of Mayflower? [/INST]\\\""));
+
+            rootNode.putIfAbsent("max_tokens", new IntNode(300));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.5));
+            rootNode.putIfAbsent("top_p", new DoubleNode(0.9));
+            rootNode.putIfAbsent("top_k", new IntNode(50));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -445,6 +468,12 @@ class BedrockProducerIT extends CamelTestSupport {
                 from("direct:send_anthropic_v3_haiku_model")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
                             + BedrockModels.ANTROPHIC_CLAUDE_HAIKU_V3.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_mistral_7b_instruct_model")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.MISTRAL_7B_INSTRUCT.model)
                         .log("Completions: ${body}")
                         .to(result);
             }
