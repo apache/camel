@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import javax.annotation.processing.Generated;
+
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -498,6 +500,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                 String[] pcks = base.split(",");
                 PackageScanClassResolver resolver = PluginHelper.getPackageScanClassResolver(camelContext);
                 // discover POJO generated classes for JSon/XML
+                scannedClasses.addAll(resolver.findAnnotated(Generated.class, pcks));
                 scannedClasses.addAll(resolver.findAnnotated(JsonTypeName.class, pcks));
                 scannedClasses.addAll(resolver.findAnnotated(XmlRootElement.class, pcks));
                 if (!scannedClasses.isEmpty()) {
