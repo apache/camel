@@ -117,8 +117,16 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
             RetrieveAndGenerateInput input = RetrieveAndGenerateInput.builder()
                     .text(inputText).build();
 
-            RetrieveAndGenerateResponse retrieveAndGenerateResponse = bedrockAgentRuntimeClient.retrieveAndGenerate(
-                    RetrieveAndGenerateRequest.builder().retrieveAndGenerateConfiguration(build).input(input).build());
+            RetrieveAndGenerateRequest.Builder request = RetrieveAndGenerateRequest.builder();
+
+            request.retrieveAndGenerateConfiguration(build).input(input);
+
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID))) {
+                request.sessionId(exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID, String.class));
+            }
+
+            RetrieveAndGenerateResponse retrieveAndGenerateResponse
+                    = bedrockAgentRuntimeClient.retrieveAndGenerate(request.build());
 
             Message message = getMessageForResponse(exchange);
             prepareResponse(retrieveAndGenerateResponse, message);
