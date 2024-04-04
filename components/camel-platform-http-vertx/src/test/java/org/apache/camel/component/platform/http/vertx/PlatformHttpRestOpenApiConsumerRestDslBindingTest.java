@@ -19,7 +19,6 @@ package org.apache.camel.component.platform.http.vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.vertx.model.Pet;
-import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
@@ -75,7 +74,8 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
                 @Override
                 public void configure() {
                     // TODO: make it easy to set binding package name in rest configuration
-                    context.getCamelContextExtension().setBasePackageScan("org.apache.camel.component.platform.http.vertx.model");
+                    context.getCamelContextExtension()
+                            .setBasePackageScan("org.apache.camel.component.platform.http.vertx.model");
 
                     restConfiguration().bindingMode(RestBindingMode.json);
 
