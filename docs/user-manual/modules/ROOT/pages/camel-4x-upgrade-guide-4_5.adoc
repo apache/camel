@@ -96,7 +96,7 @@ Routes startup (total:2)
 Started demo (rest://post:%7B%7Bapp.mypath%7D%7D)
 ----
 
-The placeholder is now resolved eagerly and you will see _nicer_ startup logs such as:
+The placeholder is now resolved eagerly, and you will see _nicer_ startup logs such as:
 
 [source,text]
 ----
@@ -139,7 +139,7 @@ Camel release versions to ensure the BOM is always correct.
 
 === camel-main
 
-The options `camel.main.backlogTracing`, `"camel.main.backlogTracingStandby`, and `camel.main.backlogTracingTemplates` has been
+The options `camel.main.backlogTracing`, `camel.main.backlogTracingStandby`, and `camel.main.backlogTracingTemplates` has been
 moved into a new group `camel.debug` with more options to configure the backlog tracer.
 
 To enable backlog tracing you should now set `camel.trace.enabled=true` instead of `camel.main.backlogTracing=true`.
