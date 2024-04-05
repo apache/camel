@@ -256,7 +256,7 @@ public class BedrockProducer extends DefaultProducer {
                     throw new RuntimeException(e);
                 }
             }
-            case "mistral.mistral-7b-instruct-v0:2" -> {
+            case "mistral.mistral-7b-instruct-v0:2", "mistral.mixtral-8x7b-instruct-v0:1" -> {
                 try {
                     setMistralText(result, message);
                 } catch (JsonProcessingException e) {
