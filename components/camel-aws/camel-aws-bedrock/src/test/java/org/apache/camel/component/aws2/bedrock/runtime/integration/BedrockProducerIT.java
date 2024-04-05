@@ -502,7 +502,7 @@ class BedrockProducerIT extends CamelTestSupport {
 
                 from("direct:send_mistral_8x7b_instruct_model")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
-                                + BedrockModels.MISTRAL_8x7B_INSTRUCT.model)
+                            + BedrockModels.MISTRAL_8x7B_INSTRUCT.model)
                         .log("Completions: ${body}")
                         .to(result);
             }
