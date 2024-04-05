@@ -41,8 +41,8 @@ import org.apache.hc.core5.http.message.BasicHeader;
 
 public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
-    private static final String ADDRESS_TYPE_PREFIX = "rfc822;";
-    private static final String MTA_NAME_TYPE_PREFIX = "dns;";
+    private static final String ADDRESS_TYPE_PREFIX = "rfc822; ";
+    private static final String MTA_NAME_TYPE_PREFIX = "dns; ";
     private static final String REPORTING_UA = "Reporting-UA";
     private static final String MDN_GATEWAY = "MDN-Gateway";
     private static final String FINAL_RECIPIENT = "Final-Recipient";
@@ -215,11 +215,11 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
             }
 
             if (mtnName != null) {
-                Header mdnGatewayField = new BasicHeader(MDN_GATEWAY, MTA_NAME_TYPE_PREFIX + ' ' + mtnName);
+                Header mdnGatewayField = new BasicHeader(MDN_GATEWAY, MTA_NAME_TYPE_PREFIX + mtnName);
                 canonicalOutstream.writeln(mdnGatewayField.toString());
             }
 
-            Header finalRecipientField = new BasicHeader(FINAL_RECIPIENT, ADDRESS_TYPE_PREFIX + ' ' + finalRecipient);
+            Header finalRecipientField = new BasicHeader(FINAL_RECIPIENT, ADDRESS_TYPE_PREFIX + finalRecipient);
             canonicalOutstream.writeln(finalRecipientField.toString());
 
             if (originalMessageId != null) {
