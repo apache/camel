@@ -66,6 +66,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     private String[] warningFields;
     private Map<String, String> extensionFields = new HashMap<>();
     private ReceivedContentMic receivedContentMic;
+    private String receivedHeaders;
 
     public AS2MessageDispositionNotificationEntity(ClassicHttpRequest request,
                                                    HttpResponse response,
@@ -119,7 +120,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    String[] errorFields,
                                                    String[] warningFields,
                                                    Map<String, String> extensionFields,
-                                                   ReceivedContentMic receivedContentMic) {
+                                                   ReceivedContentMic receivedContentMic,
+                                                   String receivedHeaders) {
         super(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION), null);
         this.reportingUA = reportingUA;
         this.mtnName = mtnName;
@@ -133,6 +135,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         this.warningFields = warningFields;
         this.extensionFields = extensionFields;
         this.receivedContentMic = receivedContentMic;
+        this.receivedHeaders = receivedHeaders;
     }
 
     public String getReportingUA() {
@@ -199,17 +202,24 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                              // 5.1.1
             }
 
+            if (receivedHeaders != null) {
+                // return headers as received to maintain specific order and formatting, particularly
+                // if the entity has been signed
+                canonicalOutstream.writeln(receivedHeaders);
+                return;
+            }
+
             if (reportingUA != null) {
                 Header reportingUAField = new BasicHeader(REPORTING_UA, reportingUA);
                 canonicalOutstream.writeln(reportingUAField.toString());
             }
 
             if (mtnName != null) {
-                Header mdnGatewayField = new BasicHeader(MDN_GATEWAY, MTA_NAME_TYPE_PREFIX + mtnName);
+                Header mdnGatewayField = new BasicHeader(MDN_GATEWAY, MTA_NAME_TYPE_PREFIX + ' ' + mtnName);
                 canonicalOutstream.writeln(mdnGatewayField.toString());
             }
 
-            Header finalRecipientField = new BasicHeader(FINAL_RECIPIENT, ADDRESS_TYPE_PREFIX + finalRecipient);
+            Header finalRecipientField = new BasicHeader(FINAL_RECIPIENT, ADDRESS_TYPE_PREFIX + ' ' + finalRecipient);
             canonicalOutstream.writeln(finalRecipientField.toString());
 
             if (originalMessageId != null) {
@@ -217,7 +227,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                 canonicalOutstream.writeln(originalMessageIdField.toString());
             }
 
-            String as2Disposition = dispositionMode.toString() + ";" + dispositionType.toString();
+            String as2Disposition = dispositionMode.toString() + "; " + dispositionType.toString();
             if (dispositionModifier != null) {
                 as2Disposition = as2Disposition + "/" + dispositionModifier.toString();
             }
@@ -238,17 +248,17 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                 }
             }
 
-            if (failureFields != null) {
-                for (String field : failureFields) {
-                    Header failureField = new BasicHeader(WARNING, field);
-                    canonicalOutstream.writeln(failureField.toString());
+            if (warningFields != null) {
+                for (String field : warningFields) {
+                    Header warningField = new BasicHeader(WARNING, field);
+                    canonicalOutstream.writeln(warningField.toString());
                 }
             }
 
             if (extensionFields != null) {
                 for (Entry<String, String> entry : extensionFields.entrySet()) {
-                    Header failureField = new BasicHeader(entry.getKey(), entry.getValue());
-                    canonicalOutstream.writeln(failureField.toString());
+                    Header extensionField = new BasicHeader(entry.getKey(), entry.getValue());
+                    canonicalOutstream.writeln(extensionField.toString());
                 }
             }
 

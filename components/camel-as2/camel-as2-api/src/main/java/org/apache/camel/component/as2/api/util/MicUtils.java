@@ -65,7 +65,7 @@ public final class MicUtils {
 
         @Override
         public String toString() {
-            return encodedMessageDigest + "," + digestAlgorithmId;
+            return encodedMessageDigest + ", " + digestAlgorithmId;
         }
     }
 
