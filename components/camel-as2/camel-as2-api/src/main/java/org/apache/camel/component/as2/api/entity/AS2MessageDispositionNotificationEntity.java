@@ -67,6 +67,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     private String[] warningFields;
     private Map<String, String> extensionFields = new HashMap<>();
     private ReceivedContentMic receivedContentMic;
+    private String parsedBodyPartFields;
 
     public AS2MessageDispositionNotificationEntity(HttpEntityEnclosingRequest request,
                                                    HttpResponse response,
@@ -120,7 +121,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    String[] errorFields,
                                                    String[] warningFields,
                                                    Map<String, String> extensionFields,
-                                                   ReceivedContentMic receivedContentMic) {
+                                                   ReceivedContentMic receivedContentMic,
+                                                   String parsedBodyPartFields) {
         this.reportingUA = reportingUA;
         this.mtnName = mtnName;
         this.finalRecipient = finalRecipient;
@@ -133,6 +135,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         this.warningFields = warningFields;
         this.extensionFields = extensionFields;
         this.receivedContentMic = receivedContentMic;
+        this.parsedBodyPartFields = parsedBodyPartFields;
     }
 
     public String getReportingUA() {
@@ -199,6 +202,16 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                 canonicalOutstream.writeln(); // ensure empty line between
                                              // headers and body; RFC2046 -
                                              // 5.1.1
+            }
+
+            if (parsedBodyPartFields != null) {
+                // The 'writeTo' method is used when verifying the signature of the received MDN, and any alteration
+                // to the body part fields would mean that the signature would fail verification. Therefor return
+                // the fields parsed from the MDN entity if available so that the specific field
+                // ordering/formatting is maintained otherwise fall back to recreating each header, e.g. 'Reporting-UA',
+                // in the order prescribed in this method.
+                canonicalOutstream.writeln(parsedBodyPartFields);
+                return;
             }
 
             if (reportingUA != null) {
