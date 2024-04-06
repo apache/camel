@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -45,6 +46,7 @@ import org.apache.hc.core5.http.impl.BasicHttpTransportMetrics;
 import org.apache.hc.core5.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.Extension;
@@ -108,6 +110,38 @@ public class EntityParserTest {
                                                                          + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
                                                                          + "\r\n"
                                                                          + "------=_Part_56_1672293592.1028122454656--\r\n";
+
+    // version of MDN without report any folded body parts, which are unfolded when the entity is parsed
+    public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED = "\r\n"
+                                                                                  + "------=_Part_56_1672293592.1028122454656\r\n"
+                                                                                  + "Content-Type: text/plain\r\n"
+                                                                                  + "Content-Transfer-Encoding: 7bit\r\n"
+                                                                                  + "\r\n"
+                                                                                  + "MDN for -\r\n"
+                                                                                  + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
+                                                                                  + "  From: \"\\\"  as2Name  \\\"\"\r\n"
+                                                                                  + "  To: \"0123456780000\""
+                                                                                  + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
+                                                                                  + " Status: processed\r\n"
+                                                                                  + " Comment: This is not a guarantee that the message has\r\n"
+                                                                                  + "  been completely processed or &understood by the receiving\r\n"
+                                                                                  + "  translator\r\n" + "\r\n"
+                                                                                  + "------=_Part_56_1672293592.1028122454656\r\n"
+                                                                                  + "Content-Type: message/disposition-notification\r\n"
+                                                                                  + "Content-Transfer-Encoding: 7bit\r\n"
+                                                                                  + "\r\n"
+                                                                                  + "Reporting-UA: AS2 Server\r\n"
+                                                                                  + "MDN-Gateway: dns; example.com\r\n"
+                                                                                  + "Original-Recipient: rfc822; 0123456780000\r\n"
+                                                                                  + "Final-Recipient: rfc822; 0123456780000\r\n"
+                                                                                  + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
+                                                                                  + "Disposition: automatic-action/MDN-sent-automatically; rocessed/warning: you're awesome\r\n"
+                                                                                  + "Failure: oops-a-failure\r\n"
+                                                                                  + "Error: oops-an-error\r\n"
+                                                                                  + "Warning: oops-a-warning\r\n"
+                                                                                  + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
+                                                                                  + "\r\n"
+                                                                                  + "------=_Part_56_1672293592.1028122454656--\r\n";
 
     public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY = "----=_Part_56_1672293592.1028122454656";
 
@@ -214,15 +248,8 @@ public class EntityParserTest {
     @Test
     public void parseMessageDispositionNotificationReportBodyTest() throws Exception {
 
-        InputStream is = new ByteArrayInputStream(
-                DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
-        AS2SessionInputBuffer inbuffer
-                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
-
-        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = EntityParser
-                .parseMultipartReportEntityBody(inbuffer, is, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY,
-                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME,
-                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
+                = createMdnEntity(DISPOSITION_NOTIFICATION_REPORT_CONTENT, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
 
         assertNotNull(dispositionNotificationMultipartReportEntity,
                 "Unexpected Null disposition notification multipart entity");
@@ -232,6 +259,22 @@ public class EntityParserTest {
                 "Unexpected type for first body part");
         assertTrue(dispositionNotificationMultipartReportEntity.getPart(1) instanceof AS2MessageDispositionNotificationEntity,
                 "Unexpected type for second body part");
+    }
+
+    // verify that parsing the MDN has made no alteration to the entity's body part fields
+    @Test
+    public void messageDispositionNotificationReportBodyContentTest() throws Exception {
+
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
+                = createMdnEntity(DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED,
+                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        dispositionNotificationMultipartReportEntity.writeTo(out);
+        assertEquals(out.toString(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME),
+                new BasicHeader(AS2Header.CONTENT_TYPE, ContentType.parse(REPORT_CONTENT_TYPE_VALUE))
+                                                                                  + "\r\n"
+                                                                                  + DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED);
     }
 
     @Test
@@ -375,6 +418,24 @@ public class EntityParserTest {
 
         BcX509ExtensionUtils utils = new BcX509ExtensionUtils();
         return utils.createAuthorityKeyIdentifier(info);
+    }
+
+    private DispositionNotificationMultipartReportEntity createMdnEntity(String reportContent, String boundary)
+            throws Exception {
+        InputStream is = new ByteArrayInputStream(
+                reportContent.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
+        AS2SessionInputBuffer inbuffer
+                = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
+
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = EntityParser
+                .parseMultipartReportEntityBody(inbuffer, is, boundary,
+                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME,
+                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
+
+        assertNotNull(dispositionNotificationMultipartReportEntity,
+                "Unexpected Null disposition notification multipart entity");
+
+        return dispositionNotificationMultipartReportEntity;
     }
 
     static SubjectKeyIdentifier createSubjectKeyId(PublicKey pub) throws IOException {
