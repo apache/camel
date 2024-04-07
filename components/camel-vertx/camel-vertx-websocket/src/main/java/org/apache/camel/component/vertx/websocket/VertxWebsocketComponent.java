@@ -76,6 +76,13 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
             }
         }
 
+        VertxWebsocketConfiguration configuration = new VertxWebsocketConfiguration();
+        configuration.setAllowOriginHeader(isAllowOriginHeader());
+        configuration.setOriginHeaderUrl(getOriginHeaderUrl());
+
+        VertxWebsocketEndpoint endpoint = createEndpointInstance(uri, configuration);
+        setProperties(endpoint, parameters);
+
         URI endpointUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(wsUri));
         URI websocketURI = URISupport.createRemainingURI(endpointUri, parameters);
 
@@ -102,13 +109,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
                     websocketURI.getFragment());
         }
 
-        VertxWebsocketConfiguration configuration = new VertxWebsocketConfiguration();
         configuration.setWebsocketURI(websocketURI);
-        configuration.setAllowOriginHeader(isAllowOriginHeader());
-        configuration.setOriginHeaderUrl(getOriginHeaderUrl());
-
-        VertxWebsocketEndpoint endpoint = createEndpointInstance(uri, configuration);
-        setProperties(endpoint, parameters);
 
         if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
