@@ -111,7 +111,8 @@ public class EntityParserTest {
                                                                          + "\r\n"
                                                                          + "------=_Part_56_1672293592.1028122454656--\r\n";
 
-    // version of MDN without report any folded body parts, which are unfolded when the entity is parsed
+    // version of the MDN report without any folded body parts that would be unfolded when the entity is parsed
+    // modifying the report
     public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED = "\r\n"
                                                                                   + "------=_Part_56_1672293592.1028122454656\r\n"
                                                                                   + "Content-Type: text/plain\r\n"
