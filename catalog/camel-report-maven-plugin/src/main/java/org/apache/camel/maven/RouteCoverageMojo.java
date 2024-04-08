@@ -86,7 +86,7 @@ public class RouteCoverageMojo extends AbstractMojo {
     /**
      * Skip route coverage execution.
      */
-    @Parameter(property = "camel.skipValidation", defaultValue = "false")
+    @Parameter(property = "camel.skipRouteCoverage", defaultValue = "false")
     private boolean skip;
 
     /**
