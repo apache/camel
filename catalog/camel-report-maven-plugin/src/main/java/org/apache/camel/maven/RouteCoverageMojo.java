@@ -159,7 +159,7 @@ public class RouteCoverageMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         if (skip) {
-            getLog().info("skipping execute as per configuration");
+            getLog().info("skipping route coverage as per configuration");
             return;
         }
 
