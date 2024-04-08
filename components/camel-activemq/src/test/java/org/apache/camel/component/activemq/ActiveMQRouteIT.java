@@ -45,7 +45,7 @@ public class ActiveMQRouteIT extends ActiveMQITSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
-        template.sendBodyAndHeader("activemq:queue:ping", expectedBody, "cheese", 123);
+        template.sendBodyAndHeader("activemq:queue:jmsQueue", expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -59,28 +59,27 @@ public class ActiveMQRouteIT extends ActiveMQITSupport {
     public void testJmsTopic() throws Exception {
         resultEndpoint.expectedMessageCount(2);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
-        template.sendBodyAndHeader("activemq:topic:ping", expectedBody, "cheese", 123);
+        template.sendBodyAndHeader("activemq:topic:jmsTopic", expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
 
     @Test
     public void testPrefixWildcard() throws Exception {
         resultEndpoint.expectedMessageCount(1);
-        template.sendBody("activemq:wildcard.foo.bar", expectedBody);
+        template.sendBody("activemq:queue:wildcard.foo.bar", expectedBody);
         resultEndpoint.assertIsSatisfied();
     }
 
     @Test
     public void testIncludeDestination() throws Exception {
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).header("JMSDestination").isEqualTo("queue://ping");
-        template.sendBody("activemq:queue:ping", expectedBody);
+        resultEndpoint.message(0).header("JMSDestination").isEqualTo("queue://jmsQueue");
+        template.sendBody("activemq:queue:jmsQueue", expectedBody);
         resultEndpoint.assertIsSatisfied();
     }
 
     @ContextFixture
     public void configureContext(CamelContext context) {
-
         context.addComponent("activemq", activeMQComponent(service.defaultEndpoint()));
     }
 
@@ -92,7 +91,7 @@ public class ActiveMQRouteIT extends ActiveMQITSupport {
     private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:ping")
+                from("activemq:queue:jmsQueue")
                         .to("log:routing")
                         .to("mock:result");
 
@@ -100,11 +99,11 @@ public class ActiveMQRouteIT extends ActiveMQITSupport {
                         .setBody()
                         .constant("response");
 
-                from("activemq:topic:ping")
+                from("activemq:topic:jmsTopic")
                         .to("log:routing")
                         .to("mock:result");
 
-                from("activemq:topic:ping")
+                from("activemq:topic:jmsTopic")
                         .to("log:routing")
                         .to("mock:result");
 
