@@ -32,6 +32,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testInOnly() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
 
@@ -51,6 +52,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
         assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
     }
 
+    @Test
     public void testInOut() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
 
