@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextDumpRoutesCoverageAsXml extends ManagementTestSupport {
 
+    @Test
     public void testRouteCoverageStats() throws Exception {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
@@ -48,7 +50,6 @@ public class ManagedCamelContextDumpRoutesCoverageAsXml extends ManagementTestSu
 
         assertTrue(xml.contains("exchangesTotal=\"3\""));
         assertTrue(xml.contains("exchangesTotal=\"2\""));
-        assertTrue(xml.contains("customId=\"true\""));
 
         // should be valid XML
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);

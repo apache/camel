@@ -36,6 +36,7 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
     protected MockEndpoint y;
     protected MockEndpoint z;
 
+    @Test
     public void testSendingAMessageUsingWiretapConvertsToReReadable() throws Exception {
         x.expectedBodiesReceived("<input/>+output");
         y.expectedBodiesReceived("<input/>+output");
