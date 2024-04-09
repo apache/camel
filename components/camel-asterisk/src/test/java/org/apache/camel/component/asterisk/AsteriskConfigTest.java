@@ -16,19 +16,36 @@
  */
 package org.apache.camel.component.asterisk;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableContext;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AsteriskConfigTest extends CamelTestSupport {
+public class AsteriskConfigTest implements ConfigurableRoute, CamelTestSupportHelper, ConfigurableContext {
+
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
 
     private String hostname = "192.168.0.254";
     private String username = "username";
     private String password = "password";
     private String action = "QUEUE_STATUS";
+
+    protected CamelContext context;
+
+    @BeforeEach
+    void setupContext() {
+        context = camelContextExtension.getContext();
+    }
 
     @Test
     void asteriskEndpointData() {
@@ -41,5 +58,20 @@ public class AsteriskConfigTest extends CamelTestSupport {
         assertEquals(username, asteriskEndpoint.getUsername());
         assertEquals(password, asteriskEndpoint.getPassword());
         assertEquals(action, asteriskEndpoint.getAction().name());
+    }
+
+    @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+
+    }
+
+    @Override
+    public void configureContext(CamelContext context) throws Exception {
+
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }

@@ -18,19 +18,40 @@ package org.apache.camel.component.asterisk;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableContext;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @Disabled("CAMEL-10321: Set host, username and password test asterisk producer.")
-public class AsteriskProducerTest extends CamelTestSupport {
+public class AsteriskProducerTest implements ConfigurableRoute, CamelTestSupportHelper, ConfigurableContext {
+
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
 
     private String hostname = "192.168.0.254";
     private String username = "username";
     private String password = "password";
     private String action = AsteriskAction.EXTENSION_STATE.name();
+
+    protected CamelContext context;
+    protected ProducerTemplate template;
+
+    @BeforeEach
+    void setupContext() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+    }
 
     @Test
     void testSnmpProducer() throws Exception {
@@ -42,7 +63,6 @@ public class AsteriskProducerTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -53,5 +73,25 @@ public class AsteriskProducerTest extends CamelTestSupport {
                         .to("mock:result");
             }
         };
+    }
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
+    @Override
+    public void configureContext(CamelContext context) throws Exception {
+
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }
