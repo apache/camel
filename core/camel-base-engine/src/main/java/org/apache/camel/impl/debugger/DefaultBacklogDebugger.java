@@ -1012,7 +1012,6 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
             if (event instanceof ExchangeCompletedEvent || event instanceof CamelEvent.ExchangeFailedEvent) {
                 Throwable cause = null;
@@ -1033,6 +1032,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             }
         }
 
+        @SuppressWarnings("unchecked")
         private NamedRoute getOriginalRoute(Exchange exchange) {
             List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
             if (list != null) {

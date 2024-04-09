@@ -223,7 +223,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForComponent(CamelContext context, Component component, String name) {
         ManagedComponent mc = new ManagedComponent(name, component);
         mc.init(context.getManagementStrategy());
@@ -231,7 +230,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat) {
         ManagedDataFormat md = new ManagedDataFormat(context, dataFormat);
         md.init(context.getManagementStrategy());
@@ -239,7 +237,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint) {
         // we only want to manage singleton endpoints
         if (!endpoint.isSingleton()) {
@@ -331,7 +328,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForProcessor(
             CamelContext context, Processor processor,
             NamedNode node, Route route) {

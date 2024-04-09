@@ -49,7 +49,7 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
  * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
  */
-@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public final class RouteDefinitionHelper {
 
     private RouteDefinitionHelper() {

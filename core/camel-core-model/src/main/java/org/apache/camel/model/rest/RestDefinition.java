@@ -967,7 +967,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return answer;
     }
 
-    @SuppressWarnings("rawtypes")
     private void addRouteDefinition(
             CamelContext camelContext, OpenApiDefinition openApi, List<RouteDefinition> answer,
             String component, String producerComponent, String apiContextPath,

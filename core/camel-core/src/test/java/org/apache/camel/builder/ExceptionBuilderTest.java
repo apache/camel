@@ -149,7 +149,6 @@ public class ExceptionBuilderTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 

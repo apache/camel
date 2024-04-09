@@ -794,7 +794,6 @@ public final class ObjectHelper {
      * @return                  the iterable
      * @see                     Iterable
      */
-    @SuppressWarnings("unchecked")
     public static Iterable<?> createIterable(
             Object value, String delimiter,
             final boolean allowEmptyValues, final boolean pattern) {
@@ -821,6 +820,7 @@ public final class ObjectHelper {
         return trySlowIterables(value);
     }
 
+    @SuppressWarnings("unchecked")
     private static Iterable<?> trySlowIterables(Object value) {
         if (value instanceof Iterator) {
             final Iterator<Object> iterator = (Iterator<Object>) value;
