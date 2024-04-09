@@ -2114,8 +2114,8 @@ public class SimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody("{\"firstName\": \"foo\", \"lastName\": \"bar\"}");
         assertExpression("${prettyBody}", expectedJson.toString());
-        assertExpression("Hi ${prettyBody}", "Hi " + expectedJson.toString());
-        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedJson.toString() + " Again");
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedJson);
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedJson + " Again");
 
         expectedJson = new StringBuilder();
         expectedJson.append("[");
@@ -2142,8 +2142,8 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getIn()
                 .setBody("[{\"firstName\": \"foo\", \"lastName\": \"bar\"},{\"firstName\": \"foo\", \"lastName\": \"bar\"}]");
         assertExpression("${prettyBody}", expectedJson.toString());
-        assertExpression("Hi ${prettyBody}", "Hi " + expectedJson.toString());
-        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedJson.toString() + " Again");
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedJson);
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedJson + " Again");
 
     }
 
@@ -2169,8 +2169,8 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody("<person><firstName>foo</firstName><lastName>bar</lastName></person>");
 
         assertExpression("${prettyBody}", expectedXml.toString());
-        assertExpression("Hi ${prettyBody}", "Hi " + expectedXml.toString());
-        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedXml.toString() + " Again");
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedXml);
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedXml + " Again");
     }
 
     @Test
