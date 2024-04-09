@@ -44,7 +44,6 @@ public class BeanConstructorsAdapter extends XmlAdapter<BeanConstructorsDefiniti
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public BeanConstructorsDefinition marshal(Map<Integer, Object> v) {
         if (v == null) {
             return null;

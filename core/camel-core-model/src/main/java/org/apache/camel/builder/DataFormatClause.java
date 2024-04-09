@@ -1453,7 +1453,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {
             case Unmarshal:
