@@ -55,7 +55,7 @@
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-drill-version>1.21.1</apache-drill-version>
         <apicurio-version>2.0.4</apicurio-version>
-        <arangodb-java-version>7.5.1</arangodb-java-version>
+        <arangodb-java-version>7.6.0</arangodb-java-version>
         <as2-lib-version>5.1.2</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>9.7</asm-version>
@@ -63,17 +63,17 @@
         <assertj-version>3.25.3</assertj-version>
         <asterisk-java-version>3.39.0</asterisk-java-version>
         <atlassian-fugue-version>5.0.0</atlassian-fugue-version>
-        <atmosphere-version>3.0.4</atmosphere-version>
+        <atmosphere-version>3.0.5</atmosphere-version>
         <avro-version>1.11.3</avro-version>
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.25.24</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.25.26</aws-java-sdk2-version>
         <aws-xray-version>2.15.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.21</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
         <beanio-version>3.0.0</beanio-version>
-        <bouncycastle-version>1.77</bouncycastle-version>
+        <bouncycastle-version>1.78</bouncycastle-version>
         <box-java-sdk-version>4.8.0</box-java-sdk-version>
         <braintree-gateway-version>3.34.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.5.0</build-helper-maven-plugin-version>
@@ -186,11 +186,11 @@
         <google-cloud-http-client-version>1.44.1</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.36.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.0.0</graaljs-version>
-        <graphql-java-version>21.4</graphql-java-version>
+        <graphql-java-version>21.5</graphql-java-version>
         <greenmail-version>2.0.1</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.20</groovy-version>
-        <grpc-version>1.62.2</grpc-version>
+        <grpc-version>1.63.0</grpc-version>
         <!-- keep grpc-google-auth-library-version in sync with that used by grpc-auth -->
         <grpc-google-auth-library-version>1.23.0</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.4.0</grpc-java-jwt-version>

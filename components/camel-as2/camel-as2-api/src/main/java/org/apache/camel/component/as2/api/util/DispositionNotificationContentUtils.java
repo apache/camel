@@ -131,6 +131,7 @@ public final class DispositionNotificationContentUtils {
 
     private static final char PARAM_DELIMITER = ',';
     private static final char ELEM_DELIMITER = ';';
+    private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
 
     private static final BitSet TOKEN_DELIMS = TokenParser.INIT_BITSET(PARAM_DELIMITER, ELEM_DELIMITER);
 
@@ -152,9 +153,15 @@ public final class DispositionNotificationContentUtils {
         List<String> warnings = new ArrayList<>();
         Map<String, String> extensionFields = new HashMap<>();
         ReceivedContentMic receivedContentMic = null;
+        CharArrayBuffer bodyPartFields = new CharArrayBuffer(DEFAULT_BUFFER_SIZE);
 
         for (int i = 0; i < dispositionNotificationFields.size(); i++) {
             final CharArrayBuffer fieldLine = dispositionNotificationFields.get(i);
+            bodyPartFields.append(fieldLine);
+            if (i < dispositionNotificationFields.size() - 1) {
+                bodyPartFields.append('\r');
+                bodyPartFields.append('\n');
+            }
             final Field field = parseDispositionField(fieldLine);
             switch (field.getName().toLowerCase()) {
                 case REPORTING_UA: {
@@ -250,7 +257,8 @@ public final class DispositionNotificationContentUtils {
                 errors.toArray(new String[0]),
                 warnings.toArray(new String[0]),
                 extensionFields,
-                receivedContentMic);
+                receivedContentMic,
+                bodyPartFields.toString());
     }
 
     public static Field parseDispositionField(CharArrayBuffer fieldLine) throws ParseException {
