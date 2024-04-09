@@ -268,6 +268,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         ALWAYS_RETURN_LIST,
         AS_PATH_LIST,
         SUPPRESS_EXCEPTIONS,
-        REQUIRE_PROPERTIES;
+        REQUIRE_PROPERTIES
     }
 }

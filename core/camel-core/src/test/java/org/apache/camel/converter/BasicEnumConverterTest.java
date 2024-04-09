@@ -51,6 +51,6 @@ public class BasicEnumConverterTest {
 
     private enum StatusCodeEnum {
         OK,
-        NOT_FOUND;
+        NOT_FOUND
     }
 }

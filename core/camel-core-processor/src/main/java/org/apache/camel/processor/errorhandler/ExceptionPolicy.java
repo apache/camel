@@ -177,7 +177,7 @@ public class ExceptionPolicy {
         disableRedelivery,
         delayPattern,
         allowRedeliveryWhileStopping,
-        exchangeFormatterRef;
+        exchangeFormatterRef
     }
 
     private static RedeliveryPolicy createRedeliveryPolicy(
