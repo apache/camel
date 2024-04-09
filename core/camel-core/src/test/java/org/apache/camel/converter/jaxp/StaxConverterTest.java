@@ -110,7 +110,7 @@ public class StaxConverterTest extends ContextTestSupport {
         }
         assertNotNull(output);
 
-        String result = new String(output.toByteArray(), UTF_8.name());
+        String result = new String(output.toByteArray(), UTF_8);
         // normalize the auotation mark
         if (result.indexOf('\'') > 0) {
             result = result.replace('\'', '"');
@@ -169,7 +169,7 @@ public class StaxConverterTest extends ContextTestSupport {
         }
         assertNotNull(output);
 
-        String result = new String(output.toByteArray(), UTF_8.name());
+        String result = new String(output.toByteArray(), UTF_8);
 
         assertEquals(TEST_XML, result);
     }
@@ -222,7 +222,7 @@ public class StaxConverterTest extends ContextTestSupport {
             in = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xreader);
 
             // verify
-            InputStream expected = new ByteArrayInputStream(TEST_XML_7000.getBytes("utf-8"));
+            InputStream expected = new ByteArrayInputStream(TEST_XML_7000.getBytes(StandardCharsets.UTF_8));
             byte[] tmp1 = new byte[512];
             byte[] tmp2 = new byte[512];
             for (;;) {

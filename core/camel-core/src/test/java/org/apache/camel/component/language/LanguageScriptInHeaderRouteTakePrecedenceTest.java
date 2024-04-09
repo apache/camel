@@ -17,6 +17,7 @@
 package org.apache.camel.component.language;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -48,7 +49,7 @@ public class LanguageScriptInHeaderRouteTakePrecedenceTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String script = URLEncoder.encode("Bye ${body}", "UTF-8");
+                String script = URLEncoder.encode("Bye ${body}", StandardCharsets.UTF_8);
                 from("direct:start").to("language:simple:" + script).to("mock:result");
             }
         };

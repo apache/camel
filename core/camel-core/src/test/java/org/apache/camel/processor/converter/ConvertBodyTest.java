@@ -17,6 +17,7 @@
 package org.apache.camel.processor.converter;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Date;
 
@@ -149,7 +150,7 @@ public class ConvertBodyTest extends ContextTestSupport {
 
     @Test
     public void testConvertToBytesCharset() throws Exception {
-        byte[] body = "Hello World".getBytes("iso-8859-1");
+        byte[] body = "Hello World".getBytes(StandardCharsets.ISO_8859_1);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(body);
@@ -167,14 +168,14 @@ public class ConvertBodyTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(body);
 
-        template.sendBody("direct:charset3", new ByteArrayInputStream(body.getBytes("utf-16")));
+        template.sendBody("direct:charset3", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_16)));
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testConvertToBytesCharsetFail() throws Exception {
-        byte[] body = "Hello World".getBytes("utf-8");
+        byte[] body = "Hello World".getBytes(StandardCharsets.UTF_8);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(body);
@@ -194,7 +195,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(body);
 
-        template.sendBody("direct:charset3", new ByteArrayInputStream(body.getBytes("utf-8")));
+        template.sendBody("direct:charset3", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)));
 
         // should NOT be okay as we expected utf-8 but got it in utf-16
         result.assertIsNotSatisfied();
