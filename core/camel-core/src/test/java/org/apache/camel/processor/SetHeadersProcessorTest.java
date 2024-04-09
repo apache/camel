@@ -82,7 +82,6 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
                 from("direct:startMap").setHeaders(headerMap).to("mock:result");
             }
         });
-        ;
         expected.message(0).header("foo").isEqualTo("ABC");
         expected.message(0).header("bar").isEqualTo("XYZ");
         template.sendBody("direct:startMap", body);
@@ -96,7 +95,6 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
                 from("direct:startMap").setHeaders(Map.of("foo", "ABC", "bar", "XYZ")).to("mock:result");
             }
         });
-        ;
         expected.message(0).header("foo").isEqualTo("ABC");
         expected.message(0).header("bar").isEqualTo("XYZ");
         template.sendBody("direct:startMap", body);
