@@ -24,6 +24,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
@@ -34,6 +37,7 @@ import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -793,5 +797,40 @@ public final class RouteDefinitionHelper {
         // ensure to sanitize uri's in the route, so we do not show sensitive information such as passwords
         route = URISupport.sanitizeUri(route);
         return route;
+    }
+
+    public static Predicate<RouteConfigurationDefinition> routesByIdOrPattern(
+            RouteDefinition route, String id) {
+        return g -> {
+            if (route.getRouteConfigurationId() != null) {
+                // if the route has a route configuration assigned then use pattern matching
+                return PatternHelper.matchPattern(g.getId(), id);
+            } else {
+                // global configurations have no id assigned or is a wildcard
+                return g.getId() == null || g.getId().equals(id);
+            }
+        };
+    }
+
+    public static Consumer<RouteConfigurationDefinition> getRouteConfigurationDefinitionConsumer(
+            RouteDefinition route, AtomicReference<ErrorHandlerDefinition> gcErrorHandler, List<OnExceptionDefinition> oe,
+            List<InterceptDefinition> icp, List<InterceptFromDefinition> ifrom, List<InterceptSendToEndpointDefinition> ito,
+            List<OnCompletionDefinition> oc) {
+        return g -> {
+            // there can only be one global error handler, so override previous, meaning
+            // that we will pick the last in the sort (take precedence)
+            if (g.getErrorHandler() != null) {
+                gcErrorHandler.set(g.getErrorHandler());
+            }
+
+            String aid = g.getId() == null ? "<default>" : g.getId();
+            // remember the id that was used on the route
+            route.addAppliedRouteConfigurationId(aid);
+            oe.addAll(g.getOnExceptions());
+            icp.addAll(g.getIntercepts());
+            ifrom.addAll(g.getInterceptFroms());
+            ito.addAll(g.getInterceptSendTos());
+            oc.addAll(g.getOnCompletions());
+        };
     }
 }
