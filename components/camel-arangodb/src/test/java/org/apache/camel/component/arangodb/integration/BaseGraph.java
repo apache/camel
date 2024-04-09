@@ -112,9 +112,9 @@ public abstract class BaseGraph extends BaseArangoDb {
     }
 
     protected void dropData() {
+        graph.drop();
         edgesCollection.drop();
         verticesCollection.drop();
-        graph.drop();
     }
 
     @BeforeEach

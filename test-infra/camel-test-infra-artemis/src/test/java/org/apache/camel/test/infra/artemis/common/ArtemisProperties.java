@@ -22,6 +22,7 @@ public final class ArtemisProperties {
     public static final String ARTEMIS_EXTERNAL = "artemis.external";
     public static final String ARTEMIS_USERNAME = "artemis.username";
     public static final String ARTEMIS_PASSWORD = "artemis.password";
+    public static final String ARTEMIS_CONTAINER = "artemis.container";
 
     private ArtemisProperties() {
 
