@@ -120,7 +120,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
                 String merged = oldBody + newBody;
                 // also do stream caching in the aggregation strategy
                 CachedOutputStream cos = new CachedOutputStream(newExchange);
-                cos.write(merged.getBytes("UTF-8"));
+                cos.write(merged.getBytes(StandardCharsets.UTF_8));
                 cos.close();
                 oldExchange.getIn().setBody(cos.newStreamCache());
                 return oldExchange;

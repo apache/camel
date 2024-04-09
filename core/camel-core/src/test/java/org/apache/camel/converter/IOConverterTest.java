@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -239,7 +240,7 @@ public class IOConverterTest extends ContextTestSupport {
     @Test
     public void testInputStreamToString() throws Exception {
         String data = "46\u00B037'00\"N\"";
-        ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes("UTF-8"));
+        ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
         String result = IOConverter.toString(is, exchange);

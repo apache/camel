@@ -17,6 +17,7 @@
 package org.apache.camel.processor.converter;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Date;
 
@@ -160,7 +161,7 @@ public class ConvertHeaderTest extends ContextTestSupport {
 
     @Test
     public void testConvertToBytesCharset() throws Exception {
-        byte[] body = "Hello World".getBytes("iso-8859-1");
+        byte[] body = "Hello World".getBytes(StandardCharsets.ISO_8859_1);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedHeaderReceived("foo", body);
@@ -177,14 +178,16 @@ public class ConvertHeaderTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedHeaderReceived("foo", body);
 
-        template.sendBodyAndHeader("direct:charset3", null, "foo", new ByteArrayInputStream(body.getBytes("utf-16")));
+        template.sendBodyAndHeader("direct:charset3", null, "foo", new ByteArrayInputStream(
+                body.getBytes(
+                        StandardCharsets.UTF_16)));
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testConvertToBytesCharsetFail() throws Exception {
-        byte[] body = "Hello World".getBytes("utf-8");
+        byte[] body = "Hello World".getBytes(StandardCharsets.UTF_8);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedHeaderReceived("foo", body);
@@ -206,7 +209,9 @@ public class ConvertHeaderTest extends ContextTestSupport {
         result.expectedHeaderReceived("foo", body);
         result.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:charset3", null, "foo", new ByteArrayInputStream(body.getBytes("utf-8")));
+        template.sendBodyAndHeader("direct:charset3", null, "foo", new ByteArrayInputStream(
+                body.getBytes(
+                        StandardCharsets.UTF_8)));
 
         // should NOT be okay as we expected utf-8 but got it in utf-16
         result.assertIsNotSatisfied();

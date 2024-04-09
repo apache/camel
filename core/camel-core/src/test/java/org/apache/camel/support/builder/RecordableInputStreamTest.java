@@ -17,6 +17,7 @@
 package org.apache.camel.support.builder;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
@@ -49,12 +50,12 @@ public class RecordableInputStreamTest {
             int offset = i * 64;
             // consume the first 32 bytes
             String text = ris.getText(32);
-            assertEquals(new String(DATA, offset, 32, "utf-8"), text);
+            assertEquals(new String(DATA, offset, 32, StandardCharsets.UTF_8), text);
             assertEquals(32, ris.size());
 
             // consume the other 32 bytes
             text = ris.getText(32);
-            assertEquals(new String(DATA, offset + 32, 32, "utf-8"), text);
+            assertEquals(new String(DATA, offset + 32, 32, StandardCharsets.UTF_8), text);
             assertEquals(0, ris.size());
 
             ris.record();
@@ -77,7 +78,7 @@ public class RecordableInputStreamTest {
         // consume the 64 bytes
         String text = ris.getText(64);
 
-        assertEquals(new String(DATA, 0, 64, "utf-8"), text);
+        assertEquals(new String(DATA, 0, 64, StandardCharsets.UTF_8), text);
         assertEquals(0, ris.size());
 
         // read the next 64 bytes
@@ -95,7 +96,7 @@ public class RecordableInputStreamTest {
         text = ris.getText(64);
 
         // 64 * 2 = 128
-        assertEquals(new String(DATA, 128, 64, "utf-8"), text);
+        assertEquals(new String(DATA, 128, 64, StandardCharsets.UTF_8), text);
         assertEquals(0, ris.size());
 
         ris.close();

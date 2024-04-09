@@ -17,6 +17,7 @@
 package org.apache.camel.component.language;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
@@ -52,7 +53,7 @@ public class LanguageNoCacheScriptTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String script = URLEncoder.encode("Hello ${body}", "UTF-8");
+                String script = URLEncoder.encode("Hello ${body}", StandardCharsets.UTF_8);
                 endpoint = context.getEndpoint("language:simple:" + script + "?transform=false&cacheScript=false",
                         LanguageEndpoint.class);
 

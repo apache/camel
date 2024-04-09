@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +28,7 @@ public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSu
 
     @Test
     public void testConvertToBytesCharset() throws Exception {
-        byte[] body = "Hello World".getBytes("iso-8859-1");
+        byte[] body = "Hello World".getBytes(StandardCharsets.ISO_8859_1);
 
         getMockEndpoint("mock:null").expectedMessageCount(0);
         MockEndpoint result = getMockEndpoint("mock:result");
