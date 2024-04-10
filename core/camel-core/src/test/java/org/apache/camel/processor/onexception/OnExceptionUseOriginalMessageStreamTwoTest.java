@@ -85,7 +85,7 @@ public class OnExceptionUseOriginalMessageStreamTwoTest extends ContextTestSuppo
         }
     }
 
-    public class MyDataFormat extends ServiceSupport implements DataFormat {
+    public static class MyDataFormat extends ServiceSupport implements DataFormat {
 
         @Override
         public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {

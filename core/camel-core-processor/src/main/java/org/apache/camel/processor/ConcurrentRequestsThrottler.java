@@ -331,7 +331,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
     }
 
     // extend Semaphore so we can reduce permits if required
-    private class WrappedSemaphore extends Semaphore {
+    private static class WrappedSemaphore extends Semaphore {
         public WrappedSemaphore() {
             super(0, true);
         }
