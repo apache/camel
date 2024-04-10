@@ -52,7 +52,7 @@ public class XsltTemplateFromHeaderOverrideEndpointUriTest extends ContextTestSu
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
 
-        assertNotNull("The transformed XML should not be null", xml);
+        assertNotNull(xml, "The transformed XML should not be null");
         assertTrue(xml.contains("transformed"));
         // the foo tag is in the transform_to_foo.xsl which is what we want. If this didn't
         // work then transform.xsl would be used and we'd have a cheese element
