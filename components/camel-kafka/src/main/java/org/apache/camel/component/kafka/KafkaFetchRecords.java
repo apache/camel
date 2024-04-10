@@ -17,7 +17,6 @@
 package org.apache.camel.component.kafka;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -29,10 +28,14 @@ import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListe
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaErrorStrategies;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
+import org.apache.camel.component.kafka.consumer.support.TopicHelper;
 import org.apache.camel.component.kafka.consumer.support.batching.KafkaRecordBatchingProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.classic.ClassicRebalanceListener;
 import org.apache.camel.component.kafka.consumer.support.resume.ResumeRebalanceListener;
 import org.apache.camel.component.kafka.consumer.support.streaming.KafkaRecordStreamingProcessorFacade;
+import org.apache.camel.component.kafka.consumer.support.subcription.DefaultSubscribeAdapter;
+import org.apache.camel.component.kafka.consumer.support.subcription.SubscribeAdapter;
+import org.apache.camel.component.kafka.consumer.support.subcription.TopicInfo;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.ForegroundTask;
 import org.apache.camel.support.task.Tasks;
@@ -300,15 +303,20 @@ public class KafkaFetchRecords implements Runnable {
                     commitManager, consumer, kafkaConsumer.getResumeStrategy());
         }
 
+        TopicInfo topicInfo = new TopicInfo(topicPattern, topicName);
+
+        SubscribeAdapter adapter = new DefaultSubscribeAdapter();
+        adapter.subscribe(consumer, listener, topicInfo);
+
         if (LOG.isInfoEnabled()) {
             LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
         }
-
-        if (topicPattern != null) {
-            consumer.subscribe(topicPattern, listener);
-        } else {
-            consumer.subscribe(Arrays.asList(topicName.split(",")), listener);
-        }
+        //
+        //        if (topicPattern != null) {
+        //            consumer.subscribe(topicPattern, listener);
+        //        } else {
+        //            consumer.subscribe(Arrays.asList(topicName.split(",")), listener);
+        //        }
     }
 
     protected void startPolling() {
@@ -469,11 +477,7 @@ public class KafkaFetchRecords implements Runnable {
      * or a topic pattern.
      */
     private String getPrintableTopic() {
-        if (topicPattern != null) {
-            return "topic pattern " + topicPattern;
-        } else {
-            return "topic " + topicName;
-        }
+        return TopicHelper.getPrintableTopic(topicPattern, topicName);
     }
 
     private boolean isKafkaConsumerRunnable() {
