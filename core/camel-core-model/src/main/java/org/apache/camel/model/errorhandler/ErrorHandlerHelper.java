@@ -87,7 +87,7 @@ public final class ErrorHandlerHelper {
         return answer;
     }
 
-    protected static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
+    private static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
         ErrorHandlerFactory answer = camelContext.getCamelContextExtension().getErrorHandlerFactory();
         if (answer instanceof RefErrorHandlerDefinition) {
             RefErrorHandlerDefinition other = (RefErrorHandlerDefinition) answer;

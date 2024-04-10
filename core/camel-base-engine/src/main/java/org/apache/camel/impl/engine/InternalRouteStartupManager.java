@@ -108,7 +108,7 @@ final class InternalRouteStartupManager {
      * @param  addingRoutes   whether we are adding new routes
      * @throws Exception      is thrown if error starting routes
      */
-    protected void doStartOrResumeRoutes(
+    public void doStartOrResumeRoutes(
             AbstractCamelContext camelContext,
             Map<String, RouteService> routeServices, boolean checkClash, boolean startConsumer, boolean resumeConsumer,
             boolean addingRoutes)
@@ -163,7 +163,7 @@ final class InternalRouteStartupManager {
      * @param  routeServices  the routes
      * @throws Exception      is thrown if error starting the routes
      */
-    protected synchronized void safelyStartRouteServices(
+    private synchronized void safelyStartRouteServices(
             AbstractCamelContext camelContext,
             boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
             Collection<RouteService> routeServices)

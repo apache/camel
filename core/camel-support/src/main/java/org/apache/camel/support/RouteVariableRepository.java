@@ -175,7 +175,7 @@ public final class RouteVariableRepository extends ServiceSupport implements Bro
         }
     }
 
-    protected StreamCache convertToStreamCache(Object body) {
+    private StreamCache convertToStreamCache(Object body) {
         // check if body is already cached
         if (body == null) {
             return null;
@@ -188,7 +188,7 @@ public final class RouteVariableRepository extends ServiceSupport implements Bro
         return tryStreamCache(body);
     }
 
-    protected StreamCache tryStreamCache(Object body) {
+    private StreamCache tryStreamCache(Object body) {
         try {
             // cache the body and if we could do that replace it as the new body
             return strategy.cache(body);
