@@ -54,11 +54,6 @@ public class BeanExcludedMethodTest extends ContextTestSupport {
             return true;
         }
 
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
-
     }
 
     public static class MyOtherDummyBean {
@@ -67,11 +62,6 @@ public class BeanExcludedMethodTest extends ContextTestSupport {
         public boolean equals(Object obj) {
             fail("Should not call equals");
             return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return super.hashCode();
         }
 
         @Override

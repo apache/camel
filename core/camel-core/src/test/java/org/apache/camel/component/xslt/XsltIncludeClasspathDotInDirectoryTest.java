@@ -22,7 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -31,12 +30,6 @@ import org.junit.jupiter.api.Test;
  */
 @Disabled
 public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     @Test
     public void testXsltIncludeClasspath() throws Exception {
