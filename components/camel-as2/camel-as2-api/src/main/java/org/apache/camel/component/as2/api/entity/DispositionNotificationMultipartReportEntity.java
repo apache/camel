@@ -31,10 +31,11 @@ import org.apache.hc.core5.http.HttpResponse;
 
 public class DispositionNotificationMultipartReportEntity extends MultipartReportEntity {
 
-    protected DispositionNotificationMultipartReportEntity(String boundary, boolean isMainBody) {
+    protected DispositionNotificationMultipartReportEntity(String boundary, String contentTransferEncoding,
+                                                           boolean isMainBody) {
         super(ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
                                 + "report-type=disposition-notification; boundary=\"" + boundary + "\""),
-              null, isMainBody, boundary);
+              contentTransferEncoding, isMainBody, boundary);
     }
 
     public DispositionNotificationMultipartReportEntity(ClassicHttpRequest request,

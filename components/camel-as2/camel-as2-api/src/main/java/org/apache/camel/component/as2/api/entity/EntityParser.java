@@ -642,7 +642,7 @@ public final class EntityParser {
             inbuffer.setCharsetDecoder(charsetDecoder);
 
             DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
-                    = new DispositionNotificationMultipartReportEntity(boundary, false);
+                    = new DispositionNotificationMultipartReportEntity(boundary, contentTransferEncoding, false);
 
             // Skip Preamble and Start Boundary line
             skipPreambleAndStartBoundary(inbuffer, is, boundary);

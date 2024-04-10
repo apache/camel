@@ -111,7 +111,7 @@ public class EntityParserTest {
                                                                          + "\r\n"
                                                                          + "------=_Part_56_1672293592.1028122454656--\r\n";
 
-    // version of the MDN report without any folded body parts that would be unfolded when the entity is parsed
+    // version of the Disposition Notification Report without any folded body parts that would be unfolded when the entity is parsed
     // modifying the report
     public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED = "\r\n"
                                                                                   + "------=_Part_56_1672293592.1028122454656\r\n"
@@ -262,7 +262,7 @@ public class EntityParserTest {
                 "Unexpected type for second body part");
     }
 
-    // verify that parsing the MDN has made no alteration to the entity's body part fields
+    // verify that parsing the Disposition Notification Report has made no alteration to the entity's body part fields
     @Test
     public void messageDispositionNotificationReportBodyContentTest() throws Exception {
 
@@ -270,12 +270,15 @@ public class EntityParserTest {
                 = createMdnEntity(DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED,
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
 
+        String expectedContent = String.format("%s\r\n%s\r\n%s",
+                new BasicHeader(AS2Header.CONTENT_TYPE, REPORT_CONTENT_TYPE_VALUE),
+                new BasicHeader(AS2Header.CONTENT_TRANSFER_ENCODING, DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING),
+                DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED);
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         dispositionNotificationMultipartReportEntity.writeTo(out);
-        assertEquals(out.toString(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME),
-                new BasicHeader(AS2Header.CONTENT_TYPE, ContentType.parse(REPORT_CONTENT_TYPE_VALUE))
-                                                                                  + "\r\n"
-                                                                                  + DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED);
+
+        assertEquals(expectedContent, out.toString(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME));
     }
 
     @Test
