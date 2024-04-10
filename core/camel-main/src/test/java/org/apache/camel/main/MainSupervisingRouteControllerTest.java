@@ -142,7 +142,7 @@ public class MainSupervisingRouteControllerTest {
         }
     }
 
-    private class MyJmsEndpoint extends SedaEndpoint {
+    private static class MyJmsEndpoint extends SedaEndpoint {
 
         private String name;
 

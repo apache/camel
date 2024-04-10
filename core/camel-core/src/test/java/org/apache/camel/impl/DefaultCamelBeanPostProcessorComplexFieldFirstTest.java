@@ -86,7 +86,7 @@ public class DefaultCamelBeanPostProcessorComplexFieldFirstTest extends ContextT
 
     }
 
-    private class DummyDataSource implements DataSource {
+    private static class DummyDataSource implements DataSource {
 
         @Override
         public Connection getConnection() throws SQLException {

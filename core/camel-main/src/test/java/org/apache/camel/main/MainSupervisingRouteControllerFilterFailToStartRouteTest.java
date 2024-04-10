@@ -78,7 +78,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
         }
     }
 
-    private class MyJmsEndpoint extends SedaEndpoint {
+    private static class MyJmsEndpoint extends SedaEndpoint {
 
         public MyJmsEndpoint() {
         }
