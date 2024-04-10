@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -125,7 +126,7 @@ public class DefaultHealthCheckRegistryTest {
         assertNotNull(hc);
         assertEquals("camel", hc.getGroup());
         assertEquals("context", hc.getId());
-        assertTrue(hc instanceof ContextHealthCheck);
+        assertInstanceOf(ContextHealthCheck.class, hc);
 
         registry.register(hc);
         registry.register(new MyHealthCheck("G1", "1"));
@@ -157,7 +158,7 @@ public class DefaultHealthCheckRegistryTest {
         HealthCheckRepository hc = (HealthCheckRepository) registry.resolveById("routes");
         assertNotNull(hc);
         assertEquals("routes", hc.getId());
-        assertTrue(hc instanceof RoutesHealthCheckRepository);
+        assertInstanceOf(RoutesHealthCheckRepository.class, hc);
         registry.register(hc);
 
         context.addRoutes(new RouteBuilder() {

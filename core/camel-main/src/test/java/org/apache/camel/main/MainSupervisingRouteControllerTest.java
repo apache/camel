@@ -31,8 +31,8 @@ import org.apache.camel.spi.SupervisingRouteController;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MainSupervisingRouteControllerTest {
 
@@ -74,7 +74,7 @@ public class MainSupervisingRouteControllerTest {
         Throwable e = src.getRestartException("cake");
         assertNotNull(e);
         assertEquals("Cannot start", e.getMessage());
-        assertTrue(e instanceof IllegalArgumentException);
+        assertInstanceOf(IllegalArgumentException.class, e);
 
         // bar is no auto startup
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());

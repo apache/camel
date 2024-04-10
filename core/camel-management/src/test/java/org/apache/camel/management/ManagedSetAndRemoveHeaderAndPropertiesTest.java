@@ -54,7 +54,7 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals(true, registered, "Should be registered");
+            assertTrue(registered, "Should be registered");
 
             // should be one with name setFoo
             String id = (String) mbeanServer.getAttribute(on, "ProcessorId");

@@ -22,8 +22,8 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MainSedaWildcardTest {
 
@@ -43,13 +43,13 @@ public class MainSedaWildcardTest {
 
         SedaComponent seda = camelContext.getComponent("seda", SedaComponent.class);
         assertNotNull(seda);
-        assertTrue(seda.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);
+        assertInstanceOf(MySedaBlockingQueueFactory.class, seda.getDefaultQueueFactory());
         MySedaBlockingQueueFactory myBQF = (MySedaBlockingQueueFactory) seda.getDefaultQueueFactory();
         assertEquals(123, myBQF.getCounter());
 
         SedaComponent seda2 = camelContext.getComponent("seda", SedaComponent.class);
         assertNotNull(seda2);
-        assertTrue(seda2.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);
+        assertInstanceOf(MySedaBlockingQueueFactory.class, seda2.getDefaultQueueFactory());
         myBQF = (MySedaBlockingQueueFactory) seda2.getDefaultQueueFactory();
         assertEquals(123, myBQF.getCounter());
 

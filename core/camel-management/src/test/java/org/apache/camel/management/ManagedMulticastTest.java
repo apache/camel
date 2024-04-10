@@ -27,6 +27,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedMulticastTest extends ManagementTestSupport {
@@ -59,7 +60,7 @@ public class ManagedMulticastTest extends ManagementTestSupport {
         assertEquals(3, total.intValue());
 
         Boolean parallel = (Boolean) mbeanServer.getAttribute(name, "ParallelProcessing");
-        assertEquals(false, parallel.booleanValue());
+        assertFalse(parallel.booleanValue());
     }
 
     @Override
