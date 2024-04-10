@@ -74,7 +74,7 @@ class SimpleSoftCacheTest {
         cache.put(2, "bar");
 
         Map<Integer, Object> tmp = new HashMap<>();
-        cache.forEach(tmp::put);
+        tmp.putAll(cache);
 
         assertEquals("foo", tmp.get(1));
         assertEquals("bar", tmp.get(2));
@@ -85,7 +85,7 @@ class SimpleSoftCacheTest {
         cache.getInnerCache().get(1).clear();
 
         tmp = new HashMap<>();
-        cache.forEach(tmp::put);
+        tmp.putAll(cache);
 
         assertNull(tmp.get(1));
         assertEquals("bar", tmp.get(2));
