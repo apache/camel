@@ -55,7 +55,7 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
         MBeanServer server = getMBeanServer();
         try {
             Set<ObjectName> onames = server.queryNames(new ObjectName("org.apache.camel:*"), null);
-            assertTrue(onames.size() > 0);
+            assertTrue(!onames.isEmpty());
 
             ProducerTemplate producer = context.createProducerTemplate();
             String result = producer.requestBody("direct:start", "Kermit", String.class);
