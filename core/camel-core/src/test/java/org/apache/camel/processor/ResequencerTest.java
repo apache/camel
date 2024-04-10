@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultChannel;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,12 +66,6 @@ public class ResequencerTest extends ContextTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Override
