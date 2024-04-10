@@ -107,7 +107,7 @@ public class ActiveMQRouteIT extends ActiveMQITSupport {
                         .to("log:routing")
                         .to("mock:result");
 
-                from("activemq:queue:wildcard.#")
+                from("activemq:queue:wildcard.>")
                         .to("log:routing")
                         .to("mock:result");
 
