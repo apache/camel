@@ -60,8 +60,8 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
         // it would poll and route (there is a little slack (up till 1 sec)
         // before suspension is empowered)
         await().atMost(1, TimeUnit.SECONDS)
-                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0
-                        && context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().size() == 0);
+                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().isEmpty()
+                        && context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().isEmpty());
 
         // even though we wait for the queues to empty, there is a race condition where the consumer
         // may still process messages while it's being suspended due to asynchronous message handling.

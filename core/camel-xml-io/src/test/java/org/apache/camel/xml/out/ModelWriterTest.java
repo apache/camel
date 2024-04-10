@@ -216,7 +216,7 @@ public class ModelWriterTest {
                     field.setAccessible(true);
                     Object fe = field.get(expected);
                     Object fa = field.get(actual);
-                    deepEquals(fe, fa, (path.length() > 0 ? path + "." : path) + field.getName());
+                    deepEquals(fe, fa, (!path.isEmpty() ? path + "." : path) + field.getName());
                 }
             }
         }

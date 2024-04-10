@@ -163,7 +163,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
         java.io.FileInputStream tmpin = new java.io.FileInputStream(new File(file, files[0]));
         String temp = toString(tmpin);
-        assertTrue(temp.length() > 0 && !temp.contains("aaa"), "The content is not encrypted");
+        assertTrue(!temp.isEmpty() && !temp.contains("aaa"), "The content is not encrypted");
         tmpin.close();
 
         StreamCache cache = cos.newStreamCache();
