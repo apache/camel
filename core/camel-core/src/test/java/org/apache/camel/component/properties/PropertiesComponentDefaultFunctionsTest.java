@@ -34,7 +34,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
 
     private static Map.Entry<String, String> anyNonEmptyEnvironmentVariable() {
         for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-            if (entry.getValue() != null && !"".equals(entry.getValue())) {
+            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
                 return entry;
             }
         }
