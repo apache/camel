@@ -56,7 +56,7 @@ public class BeanConcurrentTest extends ContextTestSupport {
         assertEquals(1000, list.size());
         for (int i = 1; i < 1000; i++) {
             int num = 1000 + i;
-            String s = "" + num + " " + num;
+            String s = num + " " + num;
             assertEquals(s, list.get(i));
         }
     }
