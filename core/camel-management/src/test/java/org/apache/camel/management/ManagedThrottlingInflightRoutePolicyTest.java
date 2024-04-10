@@ -45,7 +45,7 @@ public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupp
         ObjectName on = set.iterator().next();
 
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals(true, registered, "Should be registered");
+        assertTrue(registered, "Should be registered");
 
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         // the route has this starting endpoint uri

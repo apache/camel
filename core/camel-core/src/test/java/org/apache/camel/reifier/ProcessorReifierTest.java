@@ -28,7 +28,7 @@ public class ProcessorReifierTest {
         Route ctx = new DefaultRoute(null, null, null, null, null, null);
         ProcessorReifier.registerReifier(MyProcessorDefinition.class, ProcessReifier::new);
         ProcessReifier ref = (ProcessReifier) ProcessorReifier.reifier(ctx, new MyProcessorDefinition());
-        Assertions.assertTrue(ref.definition instanceof MyProcessorDefinition);
+        Assertions.assertInstanceOf(MyProcessorDefinition.class, ref.definition);
     }
 
     public static class MyProcessorDefinition extends ProcessDefinition {

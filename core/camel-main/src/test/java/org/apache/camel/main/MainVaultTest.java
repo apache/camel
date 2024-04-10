@@ -201,7 +201,7 @@ public class MainVaultTest {
         Assertions.assertEquals("id1", cfg.getClientId());
         Assertions.assertEquals("secret1", cfg.getClientSecret());
         Assertions.assertEquals("tenant1", cfg.getTenantId());
-        Assertions.assertEquals(false, cfg.isAzureIdentityEnabled());
+        Assertions.assertFalse(cfg.isAzureIdentityEnabled());
         main.stop();
     }
 
@@ -227,7 +227,7 @@ public class MainVaultTest {
         Assertions.assertEquals("id1", cfg.getClientId());
         Assertions.assertEquals("secret1", cfg.getClientSecret());
         Assertions.assertEquals("tenant1", cfg.getTenantId());
-        Assertions.assertEquals(false, cfg.isAzureIdentityEnabled());
+        Assertions.assertFalse(cfg.isAzureIdentityEnabled());
         main.stop();
     }
 

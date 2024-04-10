@@ -27,6 +27,7 @@ import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
                           disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
@@ -40,7 +41,7 @@ public class ManagedThreadPoolWithIdTest extends ManagementTestSupport {
         ObjectName on = getCamelObjectName(TYPE_THREAD_POOL, "myThreads(threads)");
 
         Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");
-        assertEquals(false, shutdown.booleanValue());
+        assertFalse(shutdown.booleanValue());
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(15, corePoolSize.intValue());

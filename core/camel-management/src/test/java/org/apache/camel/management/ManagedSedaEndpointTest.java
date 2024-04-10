@@ -55,7 +55,7 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
         assertEquals(0, size.intValue());
 
         Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
-        assertEquals(true, singleton.booleanValue());
+        assertTrue(singleton.booleanValue());
 
         // stop route
         context.getRouteController().stopRoute("foo");

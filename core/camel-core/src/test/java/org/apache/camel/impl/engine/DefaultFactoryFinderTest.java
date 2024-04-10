@@ -88,7 +88,7 @@ public class DefaultFactoryFinderTest {
             factoryFinder.newInstance("TestImplA", TestImplB.class);
             fail("Exception should have been thrown");
         } catch (Exception e) {
-            assertTrue(e instanceof ClassCastException);
+            assertInstanceOf(ClassCastException.class, e);
         }
     }
 

@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CombinedServiceFilterTest extends ContextTestSupport {
@@ -39,8 +40,8 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
 
         CombinedServiceFilter filter = (CombinedServiceFilter) conf.newInstance(context);
         assertEquals(2, filter.getDelegates().size());
-        assertTrue(filter.getDelegates().get(0) instanceof HealthyServiceFilter);
-        assertTrue(filter.getDelegates().get(1) instanceof PassThroughServiceFilter);
+        assertInstanceOf(HealthyServiceFilter.class, filter.getDelegates().get(0));
+        assertInstanceOf(PassThroughServiceFilter.class, filter.getDelegates().get(1));
     }
 
     @Test

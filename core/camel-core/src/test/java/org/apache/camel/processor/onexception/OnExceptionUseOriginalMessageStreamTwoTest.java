@@ -57,7 +57,7 @@ public class OnExceptionUseOriginalMessageStreamTwoTest extends ContextTestSuppo
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                Assertions.assertTrue(exchange.getMessage().getBody() instanceof StreamCache);
+                                Assertions.assertInstanceOf(StreamCache.class, exchange.getMessage().getBody());
                                 String s = exchange.getMessage().getBody(String.class);
                                 list1.add(s);
                             }
@@ -65,7 +65,7 @@ public class OnExceptionUseOriginalMessageStreamTwoTest extends ContextTestSuppo
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                Assertions.assertTrue(exchange.getMessage().getBody() instanceof StreamCache);
+                                Assertions.assertInstanceOf(StreamCache.class, exchange.getMessage().getBody());
                                 String s = exchange.getMessage().getBody(String.class);
                                 list2.add(s);
                             }

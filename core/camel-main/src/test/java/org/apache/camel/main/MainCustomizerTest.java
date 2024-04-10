@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class MainCustomizerTest {
     @Test
@@ -40,7 +40,7 @@ public class MainCustomizerTest {
             main.start();
 
             LogComponent component = main.getCamelContext().getComponent("log", LogComponent.class);
-            assertTrue(component.getExchangeFormatter() instanceof MyFormatter);
+            assertInstanceOf(MyFormatter.class, component.getExchangeFormatter());
         } finally {
             main.stop();
         }

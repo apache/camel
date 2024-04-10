@@ -58,7 +58,7 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals(true, registered, "Should be registered");
+            assertTrue(registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
             assertTrue(uri.equals("mock://foo") || uri.equals("mock://result"), uri);
@@ -73,7 +73,7 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals(true, registered, "Should be registered");
+            assertTrue(registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
             assertTrue(uri.equals("direct://start") || uri.equals("ref://foo") || uri.equals("mock://foo")

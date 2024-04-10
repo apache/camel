@@ -51,7 +51,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         assertEquals(1, set.size());
         ObjectName on = set.iterator().next();
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals(true, registered, "Should be registered");
+        assertTrue(registered, "Should be registered");
 
         // check the starting endpoint uri
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");

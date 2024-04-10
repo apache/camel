@@ -84,7 +84,7 @@ public class MainIoCTest {
         // and seda should be created and use the custom queue factory
         Object qf = seda.getDefaultQueueFactory();
         assertNotNull(qf);
-        assertTrue(qf instanceof PriorityBlockingQueueFactory);
+        assertInstanceOf(PriorityBlockingQueueFactory.class, qf);
         assertSame(camelContext, seda.getCamelContext());
 
         MyConfiguration.MyCoolBean mcb = (MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");

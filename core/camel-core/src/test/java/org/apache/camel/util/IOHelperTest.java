@@ -41,14 +41,14 @@ public class IOHelperTest {
     public void testIOException() {
         IOException io = new IOException("Damn", new IllegalArgumentException("Damn"));
         assertEquals("Damn", io.getMessage());
-        assertTrue(io.getCause() instanceof IllegalArgumentException);
+        assertInstanceOf(IllegalArgumentException.class, io.getCause());
     }
 
     @Test
     public void testIOExceptionWithMessage() {
         IOException io = new IOException("Not again", new IllegalArgumentException("Damn"));
         assertEquals("Not again", io.getMessage());
-        assertTrue(io.getCause() instanceof IllegalArgumentException);
+        assertInstanceOf(IllegalArgumentException.class, io.getCause());
     }
 
     @Test
