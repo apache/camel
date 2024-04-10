@@ -32,7 +32,7 @@ public class FileAsyncStressFileDropperManualTest extends ContextTestSupport {
     private static int counter;
 
     public static String getFilename() {
-        return "" + counter++ + ".txt";
+        return counter++ + ".txt";
     }
 
     @Test

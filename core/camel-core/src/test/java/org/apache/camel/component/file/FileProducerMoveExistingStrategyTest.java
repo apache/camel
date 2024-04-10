@@ -85,7 +85,7 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
             String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
             counter++;
-            String fileNameWithoutExtension = to.substring(0, to.lastIndexOf('.')) + "" + counter;
+            String fileNameWithoutExtension = to.substring(0, to.lastIndexOf('.')) + counter;
             to = fileNameWithoutExtension + to.substring(to.lastIndexOf('.'), to.length());
             // we must normalize it (to avoid having both \ and / in the name
             // which confuses java.io.File)
