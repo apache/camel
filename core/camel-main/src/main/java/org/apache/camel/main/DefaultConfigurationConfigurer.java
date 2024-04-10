@@ -620,7 +620,7 @@ public final class DefaultConfigurationConfigurer {
     /**
      * Configures security vaults such as AWS, Azure, Google and Hashicorp.
      */
-    protected static void configureVault(CamelContext camelContext) throws Exception {
+    static void configureVault(CamelContext camelContext) throws Exception {
         VaultConfiguration vc = camelContext.getVaultConfiguration();
         if (vc == null) {
             return;

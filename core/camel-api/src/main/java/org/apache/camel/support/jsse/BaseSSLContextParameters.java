@@ -886,7 +886,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             this.context.init(km, tm, random);
         }
 
-        protected SSLContext getDelegate() {
+        private SSLContext getDelegate() {
             return this.context;
         }
 
@@ -898,7 +898,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * @param  engine the engine to configure
          * @return        {@code engine} or a decorated instance there of
          */
-        protected SSLEngine configureSSLEngine(SSLEngine engine) {
+        private SSLEngine configureSSLEngine(SSLEngine engine) {
             SSLEngine workingEngine = engine;
 
             for (Configurer<SSLEngine> configurer : this.sslEngineConfigurers) {
@@ -916,7 +916,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * @param  factory the factory to configure
          * @return         {@code factory} or a decorated instance there of
          */
-        protected SSLSocketFactory configureSSLSocketFactory(SSLSocketFactory factory) {
+        private SSLSocketFactory configureSSLSocketFactory(SSLSocketFactory factory) {
             SSLSocketFactory workingFactory = factory;
 
             for (Configurer<SSLSocketFactory> configurer : this.sslSocketFactoryConfigurers) {
@@ -934,7 +934,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * @param  factory the factory to configure
          * @return         {@code factory} or a decorated instance there of
          */
-        protected SSLServerSocketFactory configureSSLServerSocketFactory(
+        private SSLServerSocketFactory configureSSLServerSocketFactory(
                 SSLServerSocketFactory factory) {
             SSLServerSocketFactory workingFactory = factory;
 
