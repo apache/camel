@@ -43,6 +43,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forwardOnError": target.getConfiguration().setForwardOnError(property(camelContext, boolean.class, value)); return true;
         case "inheritexchangepropertiesforreplies":
         case "inheritExchangePropertiesForReplies": target.getConfiguration().setInheritExchangePropertiesForReplies(property(camelContext, boolean.class, value)); return true;
+        case "initialflowcontrolwindow":
+        case "initialFlowControlWindow": target.getConfiguration().setInitialFlowControlWindow(property(camelContext, int.class, value)); return true;
         case "jwtalgorithm":
         case "jwtAlgorithm": target.getConfiguration().setJwtAlgorithm(property(camelContext, org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class, value)); return true;
         case "jwtissuer":
@@ -51,6 +53,10 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jwtSecret": target.getConfiguration().setJwtSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtsubject":
         case "jwtSubject": target.getConfiguration().setJwtSubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "keepalivetime":
+        case "keepAliveTime": target.getConfiguration().setKeepAliveTime(property(camelContext, long.class, value)); return true;
+        case "keepalivetimeout":
+        case "keepAliveTimeout": target.getConfiguration().setKeepAliveTimeout(property(camelContext, long.class, value)); return true;
         case "keycertchainresource":
         case "keyCertChainResource": target.getConfiguration().setKeyCertChainResource(property(camelContext, java.lang.String.class, value)); return true;
         case "keypassword":
@@ -61,11 +67,27 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxconcurrentcallsperconnection":
         case "maxConcurrentCallsPerConnection": target.getConfiguration().setMaxConcurrentCallsPerConnection(property(camelContext, int.class, value)); return true;
+        case "maxconnectionage":
+        case "maxConnectionAge": target.getConfiguration().setMaxConnectionAge(property(camelContext, long.class, value)); return true;
+        case "maxconnectionagegrace":
+        case "maxConnectionAgeGrace": target.getConfiguration().setMaxConnectionAgeGrace(property(camelContext, long.class, value)); return true;
+        case "maxconnectionidle":
+        case "maxConnectionIdle": target.getConfiguration().setMaxConnectionIdle(property(camelContext, long.class, value)); return true;
+        case "maxinboundmetadatasize":
+        case "maxInboundMetadataSize": target.getConfiguration().setMaxInboundMetadataSize(property(camelContext, int.class, value)); return true;
         case "maxmessagesize":
         case "maxMessageSize": target.getConfiguration().setMaxMessageSize(property(camelContext, int.class, value)); return true;
+        case "maxrstframesperwindow":
+        case "maxRstFramesPerWindow": target.getConfiguration().setMaxRstFramesPerWindow(property(camelContext, int.class, value)); return true;
+        case "maxrstperiodseconds":
+        case "maxRstPeriodSeconds": target.getConfiguration().setMaxRstPeriodSeconds(property(camelContext, int.class, value)); return true;
         case "method": target.getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "negotiationtype":
         case "negotiationType": target.getConfiguration().setNegotiationType(property(camelContext, io.grpc.netty.NegotiationType.class, value)); return true;
+        case "permitkeepalivetime":
+        case "permitKeepAliveTime": target.getConfiguration().setPermitKeepAliveTime(property(camelContext, long.class, value)); return true;
+        case "permitkeepalivewithoutcalls":
+        case "permitKeepAliveWithoutCalls": target.getConfiguration().setPermitKeepAliveWithoutCalls(property(camelContext, boolean.class, value)); return true;
         case "producerstrategy":
         case "producerStrategy": target.getConfiguration().setProducerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcProducerStrategy.class, value)); return true;
         case "routecontrolledstreamobserver":
@@ -110,6 +132,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forwardOnError": return boolean.class;
         case "inheritexchangepropertiesforreplies":
         case "inheritExchangePropertiesForReplies": return boolean.class;
+        case "initialflowcontrolwindow":
+        case "initialFlowControlWindow": return int.class;
         case "jwtalgorithm":
         case "jwtAlgorithm": return org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class;
         case "jwtissuer":
@@ -118,6 +142,10 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jwtSecret": return java.lang.String.class;
         case "jwtsubject":
         case "jwtSubject": return java.lang.String.class;
+        case "keepalivetime":
+        case "keepAliveTime": return long.class;
+        case "keepalivetimeout":
+        case "keepAliveTimeout": return long.class;
         case "keycertchainresource":
         case "keyCertChainResource": return java.lang.String.class;
         case "keypassword":
@@ -128,11 +156,27 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "maxconcurrentcallsperconnection":
         case "maxConcurrentCallsPerConnection": return int.class;
+        case "maxconnectionage":
+        case "maxConnectionAge": return long.class;
+        case "maxconnectionagegrace":
+        case "maxConnectionAgeGrace": return long.class;
+        case "maxconnectionidle":
+        case "maxConnectionIdle": return long.class;
+        case "maxinboundmetadatasize":
+        case "maxInboundMetadataSize": return int.class;
         case "maxmessagesize":
         case "maxMessageSize": return int.class;
+        case "maxrstframesperwindow":
+        case "maxRstFramesPerWindow": return int.class;
+        case "maxrstperiodseconds":
+        case "maxRstPeriodSeconds": return int.class;
         case "method": return java.lang.String.class;
         case "negotiationtype":
         case "negotiationType": return io.grpc.netty.NegotiationType.class;
+        case "permitkeepalivetime":
+        case "permitKeepAliveTime": return long.class;
+        case "permitkeepalivewithoutcalls":
+        case "permitKeepAliveWithoutCalls": return boolean.class;
         case "producerstrategy":
         case "producerStrategy": return org.apache.camel.component.grpc.GrpcProducerStrategy.class;
         case "routecontrolledstreamobserver":
@@ -178,6 +222,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forwardOnError": return target.getConfiguration().isForwardOnError();
         case "inheritexchangepropertiesforreplies":
         case "inheritExchangePropertiesForReplies": return target.getConfiguration().isInheritExchangePropertiesForReplies();
+        case "initialflowcontrolwindow":
+        case "initialFlowControlWindow": return target.getConfiguration().getInitialFlowControlWindow();
         case "jwtalgorithm":
         case "jwtAlgorithm": return target.getConfiguration().getJwtAlgorithm();
         case "jwtissuer":
@@ -186,6 +232,10 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jwtSecret": return target.getConfiguration().getJwtSecret();
         case "jwtsubject":
         case "jwtSubject": return target.getConfiguration().getJwtSubject();
+        case "keepalivetime":
+        case "keepAliveTime": return target.getConfiguration().getKeepAliveTime();
+        case "keepalivetimeout":
+        case "keepAliveTimeout": return target.getConfiguration().getKeepAliveTimeout();
         case "keycertchainresource":
         case "keyCertChainResource": return target.getConfiguration().getKeyCertChainResource();
         case "keypassword":
@@ -196,11 +246,27 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxconcurrentcallsperconnection":
         case "maxConcurrentCallsPerConnection": return target.getConfiguration().getMaxConcurrentCallsPerConnection();
+        case "maxconnectionage":
+        case "maxConnectionAge": return target.getConfiguration().getMaxConnectionAge();
+        case "maxconnectionagegrace":
+        case "maxConnectionAgeGrace": return target.getConfiguration().getMaxConnectionAgeGrace();
+        case "maxconnectionidle":
+        case "maxConnectionIdle": return target.getConfiguration().getMaxConnectionIdle();
+        case "maxinboundmetadatasize":
+        case "maxInboundMetadataSize": return target.getConfiguration().getMaxInboundMetadataSize();
         case "maxmessagesize":
         case "maxMessageSize": return target.getConfiguration().getMaxMessageSize();
+        case "maxrstframesperwindow":
+        case "maxRstFramesPerWindow": return target.getConfiguration().getMaxRstFramesPerWindow();
+        case "maxrstperiodseconds":
+        case "maxRstPeriodSeconds": return target.getConfiguration().getMaxRstPeriodSeconds();
         case "method": return target.getConfiguration().getMethod();
         case "negotiationtype":
         case "negotiationType": return target.getConfiguration().getNegotiationType();
+        case "permitkeepalivetime":
+        case "permitKeepAliveTime": return target.getConfiguration().getPermitKeepAliveTime();
+        case "permitkeepalivewithoutcalls":
+        case "permitKeepAliveWithoutCalls": return target.getConfiguration().isPermitKeepAliveWithoutCalls();
         case "producerstrategy":
         case "producerStrategy": return target.getConfiguration().getProducerStrategy();
         case "routecontrolledstreamobserver":

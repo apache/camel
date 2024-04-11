@@ -21,7 +21,7 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(45);
         props.add("authenticationType");
         props.add("autoDiscoverClientInterceptors");
         props.add("autoDiscoverServerInterceptors");
@@ -34,18 +34,29 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("forwardOnError");
         props.add("host");
         props.add("inheritExchangePropertiesForReplies");
+        props.add("initialFlowControlWindow");
         props.add("jwtAlgorithm");
         props.add("jwtIssuer");
         props.add("jwtSecret");
         props.add("jwtSubject");
+        props.add("keepAliveTime");
+        props.add("keepAliveTimeout");
         props.add("keyCertChainResource");
         props.add("keyPassword");
         props.add("keyResource");
         props.add("lazyStartProducer");
         props.add("maxConcurrentCallsPerConnection");
+        props.add("maxConnectionAge");
+        props.add("maxConnectionAgeGrace");
+        props.add("maxConnectionIdle");
+        props.add("maxInboundMetadataSize");
         props.add("maxMessageSize");
+        props.add("maxRstFramesPerWindow");
+        props.add("maxRstPeriodSeconds");
         props.add("method");
         props.add("negotiationType");
+        props.add("permitKeepAliveTime");
+        props.add("permitKeepAliveWithoutCalls");
         props.add("port");
         props.add("producerStrategy");
         props.add("routeControlledStreamObserver");
