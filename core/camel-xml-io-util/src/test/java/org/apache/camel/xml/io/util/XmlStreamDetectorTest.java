@@ -18,6 +18,8 @@ package org.apache.camel.xml.io.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlStreamDetectorTest {
+
+    private String readAllFromFile(String filename) throws IOException {
+        final URL resource = getClass().getResource(filename);
+        assert resource != null : "Cannot open a null resource: " + filename;
+
+        try (final InputStream inputStream = resource.openStream()) {
+            final byte[] bytes = inputStream.readAllBytes();
+            return new String(bytes);
+        }
+    }
 
     @Test
     public void nonExistingDocument() throws IOException {
@@ -54,15 +66,8 @@ public class XmlStreamDetectorTest {
 
     @Test
     public void documentFullOfNamespaces() throws IOException {
-        String xml = """
-                <root xmlns="urn:camel"
-                      xmlns:c="urn:camel:ns1"
-                      xmlns:d="urn:camel:ns2"
-                      xmlnS="typo"
-                      a1="v1"
-                      c:a1="v2"
-                      d:a1="v3" />
-                """;
+        String xml = readAllFromFile("documentFullOfNamespaces.xml");
+
         XmlStreamDetector detector
                 = new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         XmlStreamInfo info = detector.information();
@@ -86,19 +91,8 @@ public class XmlStreamDetectorTest {
 
     @Test
     public void documentWithModeline() throws IOException {
-        String xml = """
-                <?xml version="1.0" encoding="utf-8"?>
-                <!--
-                    This is my Camel application and I'm proud of it
-                    camel-k: dependency=mvn:com.i-heart-camel:best-routes-ever:1.0.0
-                    camel-k: env=HELLO=world
-                -->
-                <!--
-                    camel-k: name=MyApplication
-                -->
-                <routes xmlns="http://camel.apache.org/schema/spring">
-                </routes>
-                """;
+        String xml = readAllFromFile("documentWithModeline.xml");
+
         XmlStreamDetector detector
                 = new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         XmlStreamInfo info = detector.information();
@@ -119,27 +113,8 @@ public class XmlStreamDetectorTest {
 
     @Test
     public void simpleRoute() throws IOException {
-        String xml = """
-                <?xml version="1.0" encoding="UTF-8"?>
-                    <!-- camel-k: language=xml -->
+        String xml = readAllFromFile("simpleRoute.xml");
 
-                    <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                            xmlns="http://camel.apache.org/schema/spring"
-                            xsi:schemaLocation="
-                                http://camel.apache.org/schema/spring
-                                https://camel.apache.org/schema/spring/camel-spring.xsd">
-
-                        <!-- Write your routes here, for example: -->
-                        <route id="xml1">
-                            <from uri="timer:xml1?period={{time:1000}}"/>
-                            <setBody>
-                                <simple>Hello Camel (1) from ${routeId}</simple>
-                            </setBody>
-                            <log message="${body}"/>
-                        </route>
-
-                    </routes>
-                """;
         XmlStreamDetector detector
                 = new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         XmlStreamInfo info = detector.information();
