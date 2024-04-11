@@ -206,6 +206,30 @@ public class DebeziumOracleUriDsl(
   }
 
   /**
+   * Sets the specific archive log destination as the source for reading archive logs.When not set,
+   * the connector will automatically select the first LOCAL and VALID destination.
+   */
+  public fun archiveDestinationName(archiveDestinationName: String) {
+    it.property("archiveDestinationName", archiveDestinationName)
+  }
+
+  /**
+   * The number of hours in the past from SYSDATE to mine archive logs. Using 0 mines all available
+   * archive logs
+   */
+  public fun archiveLogHours(archiveLogHours: String) {
+    it.property("archiveLogHours", archiveLogHours)
+  }
+
+  /**
+   * The number of hours in the past from SYSDATE to mine archive logs. Using 0 mines all available
+   * archive logs
+   */
+  public fun archiveLogHours(archiveLogHours: Int) {
+    it.property("archiveLogHours", archiveLogHours.toString())
+  }
+
+  /**
    * Specify how binary (blob, binary, etc.) columns should be represented in change events,
    * including: 'bytes' represents binary data as byte array (default); 'base64' represents binary data
    * as base64-encoded string; 'base64-url-safe' represents binary data as base64-url-safe-encoded
@@ -480,30 +504,6 @@ public class DebeziumOracleUriDsl(
   }
 
   /**
-   * Sets the specific archive log destination as the source for reading archive logs.When not set,
-   * the connector will automatically select the first LOCAL and VALID destination.
-   */
-  public fun logMiningArchiveDestinationName(logMiningArchiveDestinationName: String) {
-    it.property("logMiningArchiveDestinationName", logMiningArchiveDestinationName)
-  }
-
-  /**
-   * The number of hours in the past from SYSDATE to mine archive logs. Using 0 mines all available
-   * archive logs
-   */
-  public fun logMiningArchiveLogHours(logMiningArchiveLogHours: String) {
-    it.property("logMiningArchiveLogHours", logMiningArchiveLogHours)
-  }
-
-  /**
-   * The number of hours in the past from SYSDATE to mine archive logs. Using 0 mines all available
-   * archive logs
-   */
-  public fun logMiningArchiveLogHours(logMiningArchiveLogHours: Int) {
-    it.property("logMiningArchiveLogHours", logMiningArchiveLogHours.toString())
-  }
-
-  /**
    * When set to 'false', the default, the connector will mine both archive log and redo logs to
    * emit change events. When set to 'true', the connector will only mine archive logs. There are
    * circumstances where its advantageous to only mine archive logs and accept latency in event
@@ -675,6 +675,20 @@ public class DebeziumOracleUriDsl(
    */
   public fun logMiningFlushTableName(logMiningFlushTableName: String) {
     it.property("logMiningFlushTableName", logMiningFlushTableName)
+  }
+
+  /**
+   * When enabled, the transaction log REDO SQL will be included in the source information block.
+   */
+  public fun logMiningIncludeRedoSql(logMiningIncludeRedoSql: String) {
+    it.property("logMiningIncludeRedoSql", logMiningIncludeRedoSql)
+  }
+
+  /**
+   * When enabled, the transaction log REDO SQL will be included in the source information block.
+   */
+  public fun logMiningIncludeRedoSql(logMiningIncludeRedoSql: Boolean) {
+    it.property("logMiningIncludeRedoSql", logMiningIncludeRedoSql.toString())
   }
 
   /**
@@ -1094,6 +1108,20 @@ public class DebeziumOracleUriDsl(
   }
 
   /**
+   * The number of attempts to retry database errors during snapshots before failing.
+   */
+  public fun snapshotDatabaseErrorsMaxRetries(snapshotDatabaseErrorsMaxRetries: String) {
+    it.property("snapshotDatabaseErrorsMaxRetries", snapshotDatabaseErrorsMaxRetries)
+  }
+
+  /**
+   * The number of attempts to retry database errors during snapshots before failing.
+   */
+  public fun snapshotDatabaseErrorsMaxRetries(snapshotDatabaseErrorsMaxRetries: Int) {
+    it.property("snapshotDatabaseErrorsMaxRetries", snapshotDatabaseErrorsMaxRetries.toString())
+  }
+
+  /**
    * A delay period before a snapshot will begin, given in milliseconds. Defaults to 0 ms.
    */
   public fun snapshotDelayMs(snapshotDelayMs: String) {
@@ -1182,6 +1210,115 @@ public class DebeziumOracleUriDsl(
    */
   public fun snapshotMode(snapshotMode: String) {
     it.property("snapshotMode", snapshotMode)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the data should be snapshotted or not.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotData(snapshotModeConfigurationBasedSnapshotData: String) {
+    it.property("snapshotModeConfigurationBasedSnapshotData",
+        snapshotModeConfigurationBasedSnapshotData)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the data should be snapshotted or not.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotData(snapshotModeConfigurationBasedSnapshotData: Boolean) {
+    it.property("snapshotModeConfigurationBasedSnapshotData",
+        snapshotModeConfigurationBasedSnapshotData.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the data should be snapshotted or not in case of error.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotOnDataError(snapshotModeConfigurationBasedSnapshotOnDataError: String) {
+    it.property("snapshotModeConfigurationBasedSnapshotOnDataError",
+        snapshotModeConfigurationBasedSnapshotOnDataError)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the data should be snapshotted or not in case of error.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotOnDataError(snapshotModeConfigurationBasedSnapshotOnDataError: Boolean) {
+    it.property("snapshotModeConfigurationBasedSnapshotOnDataError",
+        snapshotModeConfigurationBasedSnapshotOnDataError.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the schema should be snapshotted or not in case of error.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotOnSchemaError(snapshotModeConfigurationBasedSnapshotOnSchemaError: String) {
+    it.property("snapshotModeConfigurationBasedSnapshotOnSchemaError",
+        snapshotModeConfigurationBasedSnapshotOnSchemaError)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the schema should be snapshotted or not in case of error.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotOnSchemaError(snapshotModeConfigurationBasedSnapshotOnSchemaError: Boolean) {
+    it.property("snapshotModeConfigurationBasedSnapshotOnSchemaError",
+        snapshotModeConfigurationBasedSnapshotOnSchemaError.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the schema should be snapshotted or not.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotSchema(snapshotModeConfigurationBasedSnapshotSchema: String) {
+    it.property("snapshotModeConfigurationBasedSnapshotSchema",
+        snapshotModeConfigurationBasedSnapshotSchema)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the schema should be snapshotted or not.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotSchema(snapshotModeConfigurationBasedSnapshotSchema: Boolean) {
+    it.property("snapshotModeConfigurationBasedSnapshotSchema",
+        snapshotModeConfigurationBasedSnapshotSchema.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the stream should start or not after snapshot.
+   */
+  public
+      fun snapshotModeConfigurationBasedStartStream(snapshotModeConfigurationBasedStartStream: String) {
+    it.property("snapshotModeConfigurationBasedStartStream",
+        snapshotModeConfigurationBasedStartStream)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the stream should start or not after snapshot.
+   */
+  public
+      fun snapshotModeConfigurationBasedStartStream(snapshotModeConfigurationBasedStartStream: Boolean) {
+    it.property("snapshotModeConfigurationBasedStartStream",
+        snapshotModeConfigurationBasedStartStream.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as custom, this setting must be set to specify a the name of the
+   * custom implementation provided in the 'name()' method. The implementations must implement the
+   * 'Snapshotter' interface and is called on each app boot to determine whether to do a snapshot.
+   */
+  public fun snapshotModeCustomName(snapshotModeCustomName: String) {
+    it.property("snapshotModeCustomName", snapshotModeCustomName)
   }
 
   /**

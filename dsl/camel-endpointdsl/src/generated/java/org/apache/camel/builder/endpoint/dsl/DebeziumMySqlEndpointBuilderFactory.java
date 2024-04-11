@@ -2300,6 +2300,210 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedSnapshotData(
+                boolean snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedSnapshotData(
+                String snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                boolean snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                String snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                String snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                boolean snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                String snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedStartStream(
+                boolean snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeConfigurationBasedStartStream(
+                String snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as custom, this setting must be set to
+         * specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the 'Snapshotter'
+         * interface and is called on each app boot to determine whether to do a
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param snapshotModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotModeCustomName(
+                String snapshotModeCustomName) {
+            doSetProperty("snapshotModeCustomName", snapshotModeCustomName);
+            return this;
+        }
+        /**
          * BETA FEATURE: On connector restart, the connector will check if there
          * have been any new tables added to the configuration, and snapshot
          * them. There is presently only two options: 'off': Default behavior.
@@ -2324,6 +2528,41 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         default DebeziumMySqlEndpointBuilder snapshotNewTables(
                 String snapshotNewTables) {
             doSetProperty("snapshotNewTables", snapshotNewTables);
+            return this;
+        }
+        /**
+         * Controls query used during the snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: select_all
+         * Group: mysql
+         * 
+         * @param snapshotQueryMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotQueryMode(
+                String snapshotQueryMode) {
+            doSetProperty("snapshotQueryMode", snapshotQueryMode);
+            return this;
+        }
+        /**
+         * When 'snapshot.query.mode' is set as custom, this setting must be set
+         * to specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the
+         * 'SnapshotterQuery' interface and is called to determine how to build
+         * queries during snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param snapshotQueryModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotQueryModeCustomName(
+                String snapshotQueryModeCustomName) {
+            doSetProperty("snapshotQueryModeCustomName", snapshotQueryModeCustomName);
             return this;
         }
         /**

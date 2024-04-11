@@ -543,6 +543,25 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * Controls how the connector queries CDC data. The default is
+         * 'function', which means the data is queried by means of calling
+         * cdc.fn_cdc_get_all_changes_# function. The value of 'direct' makes
+         * the connector to query the change tables directly.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: function
+         * Group: sqlserver
+         * 
+         * @param dataQueryMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder dataQueryMode(
+                String dataQueryMode) {
+            doSetProperty("dataQueryMode", dataQueryMode);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions matching the
          * database-specific data type names that adds the data type's original
          * type and original length as parameters to the corresponding field
@@ -1592,17 +1611,18 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Controls which transaction isolation level is used and how long the
          * connector locks the captured tables. The default is
          * 'repeatable_read', which means that repeatable read isolation level
-         * is used. In addition, exclusive locks are taken only during schema
-         * snapshot. Using a value of 'exclusive' ensures that the connector
-         * holds the exclusive lock (and thus prevents any reads and updates)
-         * for all captured tables during the entire snapshot duration. When
-         * 'snapshot' is specified, connector runs the initial snapshot in
-         * SNAPSHOT isolation level, which guarantees snapshot consistency. In
-         * addition, neither table nor row-level locks are held. When
-         * 'read_committed' is specified, connector runs the initial snapshot in
-         * READ COMMITTED isolation level. No long-running locks are taken, so
-         * that initial snapshot does not prevent other transactions from
-         * updating table rows. Snapshot consistency is not guaranteed.In
+         * is used. In addition, type of acquired lock during schema snapshot
+         * depends on snapshot.locking.mode property. Using a value of
+         * 'exclusive' ensures that the connector holds the type of lock
+         * specified with snapshot.locking.mode property (and thus prevents any
+         * reads and updates) for all captured tables during the entire snapshot
+         * duration. When 'snapshot' is specified, connector runs the initial
+         * snapshot in SNAPSHOT isolation level, which guarantees snapshot
+         * consistency. In addition, neither table nor row-level locks are held.
+         * When 'read_committed' is specified, connector runs the initial
+         * snapshot in READ COMMITTED isolation level. No long-running locks are
+         * taken, so that initial snapshot does not prevent other transactions
+         * from updating table rows. Snapshot consistency is not guaranteed.In
          * 'read_uncommitted' mode neither table nor row-level locks are
          * acquired, but connector does not guarantee snapshot consistency.
          * 
@@ -1715,6 +1735,210 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder snapshotMode(
                 String snapshotMode) {
             doSetProperty("snapshotMode", snapshotMode);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedSnapshotData(
+                boolean snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedSnapshotData(
+                String snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                boolean snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                String snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                String snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                boolean snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                String snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedStartStream(
+                boolean snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeConfigurationBasedStartStream(
+                String snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as custom, this setting must be set to
+         * specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the 'Snapshotter'
+         * interface and is called on each app boot to determine whether to do a
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param snapshotModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotModeCustomName(
+                String snapshotModeCustomName) {
+            doSetProperty("snapshotModeCustomName", snapshotModeCustomName);
             return this;
         }
         /**

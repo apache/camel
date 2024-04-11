@@ -305,6 +305,40 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the specific archive log destination as the source for reading
+         * archive logs.When not set, the connector will automatically select
+         * the first LOCAL and VALID destination.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param archiveDestinationName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder archiveDestinationName(
+                java.lang.String archiveDestinationName) {
+            doSetProperty("archiveDestinationName", archiveDestinationName);
+            return this;
+        }
+        /**
+         * The number of hours in the past from SYSDATE to mine archive logs.
+         * Using 0 mines all available archive logs.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param archiveLogHours the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder archiveLogHours(
+                long archiveLogHours) {
+            doSetProperty("archiveLogHours", archiveLogHours);
+            return this;
+        }
+        /**
          * Specify how binary (blob, binary, etc.) columns should be represented
          * in change events, including: 'bytes' represents binary data as byte
          * array (default); 'base64' represents binary data as base64-encoded
@@ -781,40 +815,6 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the specific archive log destination as the source for reading
-         * archive logs.When not set, the connector will automatically select
-         * the first LOCAL and VALID destination.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param logMiningArchiveDestinationName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder logMiningArchiveDestinationName(
-                java.lang.String logMiningArchiveDestinationName) {
-            doSetProperty("logMiningArchiveDestinationName", logMiningArchiveDestinationName);
-            return this;
-        }
-        /**
-         * The number of hours in the past from SYSDATE to mine archive logs.
-         * Using 0 mines all available archive logs.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 0
-         * Group: oracle
-         * 
-         * @param logMiningArchiveLogHours the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder logMiningArchiveLogHours(
-                long logMiningArchiveLogHours) {
-            doSetProperty("logMiningArchiveLogHours", logMiningArchiveLogHours);
-            return this;
-        }
-        /**
          * When set to 'false', the default, the connector will mine both
          * archive log and redo logs to emit change events. When set to 'true',
          * the connector will only mine archive logs. There are circumstances
@@ -1058,6 +1058,23 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder logMiningFlushTableName(
                 java.lang.String logMiningFlushTableName) {
             doSetProperty("logMiningFlushTableName", logMiningFlushTableName);
+            return this;
+        }
+        /**
+         * When enabled, the transaction log REDO SQL will be included in the
+         * source information block.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param logMiningIncludeRedoSql the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningIncludeRedoSql(
+                boolean logMiningIncludeRedoSql) {
+            doSetProperty("logMiningIncludeRedoSql", logMiningIncludeRedoSql);
             return this;
         }
         /**
@@ -1732,6 +1749,23 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * The number of attempts to retry database errors during snapshots
+         * before failing.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param snapshotDatabaseErrorsMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder snapshotDatabaseErrorsMaxRetries(
+                int snapshotDatabaseErrorsMaxRetries) {
+            doSetProperty("snapshotDatabaseErrorsMaxRetries", snapshotDatabaseErrorsMaxRetries);
+            return this;
+        }
+        /**
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
@@ -1888,6 +1922,115 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder snapshotMode(
                 java.lang.String snapshotMode) {
             doSetProperty("snapshotMode", snapshotMode);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder snapshotModeConfigurationBasedSnapshotData(
+                boolean snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                boolean snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                boolean snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder snapshotModeConfigurationBasedStartStream(
+                boolean snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as custom, this setting must be set to
+         * specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the 'Snapshotter'
+         * interface and is called on each app boot to determine whether to do a
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param snapshotModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder snapshotModeCustomName(
+                java.lang.String snapshotModeCustomName) {
+            doSetProperty("snapshotModeCustomName", snapshotModeCustomName);
             return this;
         }
         /**
@@ -2121,6 +2264,8 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "offsetStorageReplicationFactor": getOrCreateConfiguration((DebeziumOracleComponent) component).setOffsetStorageReplicationFactor((int) value); return true;
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumOracleComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumOracleComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "archiveDestinationName": getOrCreateConfiguration((DebeziumOracleComponent) component).setArchiveDestinationName((java.lang.String) value); return true;
+            case "archiveLogHours": getOrCreateConfiguration((DebeziumOracleComponent) component).setArchiveLogHours((long) value); return true;
             case "binaryHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "columnExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnIncludeList((java.lang.String) value); return true;
@@ -2148,8 +2293,6 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
             case "lobEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setLobEnabled((boolean) value); return true;
-            case "logMiningArchiveDestinationName": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveDestinationName((java.lang.String) value); return true;
-            case "logMiningArchiveLogHours": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogHours((long) value); return true;
             case "logMiningArchiveLogOnlyMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogOnlyMode((boolean) value); return true;
             case "logMiningArchiveLogOnlyScnPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogOnlyScnPollIntervalMs((long) value); return true;
             case "logMiningBatchSizeDefault": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBatchSizeDefault((long) value); return true;
@@ -2164,6 +2307,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningBufferTransactionEventsThreshold": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferTransactionEventsThreshold((long) value); return true;
             case "logMiningBufferType": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferType((java.lang.String) value); return true;
             case "logMiningFlushTableName": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningFlushTableName((java.lang.String) value); return true;
+            case "logMiningIncludeRedoSql": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningIncludeRedoSql((boolean) value); return true;
             case "logMiningQueryFilterMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningQueryFilterMode((java.lang.String) value); return true;
             case "logMiningRestartConnection": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningRestartConnection((boolean) value); return true;
             case "logMiningScnGapDetectionGapSizeMin": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionGapSizeMin((long) value); return true;
@@ -2202,6 +2346,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "signalEnabledChannels": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalEnabledChannels((java.lang.String) value); return true;
             case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalPollIntervalMs((long) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumOracleComponent) component).setSkippedOperations((java.lang.String) value); return true;
+            case "snapshotDatabaseErrorsMaxRetries": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotDatabaseErrorsMaxRetries((int) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotEnhancePredicateScn": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotEnhancePredicateScn((java.lang.String) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotFetchSize((int) value); return true;
@@ -2210,6 +2355,12 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotLockTimeoutMs((long) value); return true;
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotMaxThreads((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotMode((java.lang.String) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotModeConfigurationBasedSnapshotData((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotModeConfigurationBasedSnapshotOnDataError((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotOnSchemaError": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotModeConfigurationBasedSnapshotOnSchemaError((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotModeConfigurationBasedSnapshotSchema((boolean) value); return true;
+            case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotModeConfigurationBasedStartStream((boolean) value); return true;
+            case "snapshotModeCustomName": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotModeCustomName((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumOracleComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;

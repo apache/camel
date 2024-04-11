@@ -329,6 +329,57 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the specific archive log destination as the source for reading
+         * archive logs.When not set, the connector will automatically select
+         * the first LOCAL and VALID destination.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param archiveDestinationName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder archiveDestinationName(
+                String archiveDestinationName) {
+            doSetProperty("archiveDestinationName", archiveDestinationName);
+            return this;
+        }
+        /**
+         * The number of hours in the past from SYSDATE to mine archive logs.
+         * Using 0 mines all available archive logs.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param archiveLogHours the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder archiveLogHours(
+                long archiveLogHours) {
+            doSetProperty("archiveLogHours", archiveLogHours);
+            return this;
+        }
+        /**
+         * The number of hours in the past from SYSDATE to mine archive logs.
+         * Using 0 mines all available archive logs.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param archiveLogHours the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder archiveLogHours(
+                String archiveLogHours) {
+            doSetProperty("archiveLogHours", archiveLogHours);
+            return this;
+        }
+        /**
          * Specify how binary (blob, binary, etc.) columns should be represented
          * in change events, including: 'bytes' represents binary data as byte
          * array (default); 'base64' represents binary data as base64-encoded
@@ -916,57 +967,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the specific archive log destination as the source for reading
-         * archive logs.When not set, the connector will automatically select
-         * the first LOCAL and VALID destination.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param logMiningArchiveDestinationName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningArchiveDestinationName(
-                String logMiningArchiveDestinationName) {
-            doSetProperty("logMiningArchiveDestinationName", logMiningArchiveDestinationName);
-            return this;
-        }
-        /**
-         * The number of hours in the past from SYSDATE to mine archive logs.
-         * Using 0 mines all available archive logs.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 0
-         * Group: oracle
-         * 
-         * @param logMiningArchiveLogHours the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningArchiveLogHours(
-                long logMiningArchiveLogHours) {
-            doSetProperty("logMiningArchiveLogHours", logMiningArchiveLogHours);
-            return this;
-        }
-        /**
-         * The number of hours in the past from SYSDATE to mine archive logs.
-         * Using 0 mines all available archive logs.
-         * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 0
-         * Group: oracle
-         * 
-         * @param logMiningArchiveLogHours the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningArchiveLogHours(
-                String logMiningArchiveLogHours) {
-            doSetProperty("logMiningArchiveLogHours", logMiningArchiveLogHours);
-            return this;
-        }
-        /**
          * When set to 'false', the default, the connector will mine both
          * archive log and redo logs to emit change events. When set to 'true',
          * the connector will only mine archive logs. There are circumstances
@@ -1340,6 +1340,41 @@ public interface DebeziumOracleEndpointBuilderFactory {
         default DebeziumOracleEndpointBuilder logMiningFlushTableName(
                 String logMiningFlushTableName) {
             doSetProperty("logMiningFlushTableName", logMiningFlushTableName);
+            return this;
+        }
+        /**
+         * When enabled, the transaction log REDO SQL will be included in the
+         * source information block.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param logMiningIncludeRedoSql the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningIncludeRedoSql(
+                boolean logMiningIncludeRedoSql) {
+            doSetProperty("logMiningIncludeRedoSql", logMiningIncludeRedoSql);
+            return this;
+        }
+        /**
+         * When enabled, the transaction log REDO SQL will be included in the
+         * source information block.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param logMiningIncludeRedoSql the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningIncludeRedoSql(
+                String logMiningIncludeRedoSql) {
+            doSetProperty("logMiningIncludeRedoSql", logMiningIncludeRedoSql);
             return this;
         }
         /**
@@ -2396,6 +2431,40 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * The number of attempts to retry database errors during snapshots
+         * before failing.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param snapshotDatabaseErrorsMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotDatabaseErrorsMaxRetries(
+                int snapshotDatabaseErrorsMaxRetries) {
+            doSetProperty("snapshotDatabaseErrorsMaxRetries", snapshotDatabaseErrorsMaxRetries);
+            return this;
+        }
+        /**
+         * The number of attempts to retry database errors during snapshots
+         * before failing.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param snapshotDatabaseErrorsMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotDatabaseErrorsMaxRetries(
+                String snapshotDatabaseErrorsMaxRetries) {
+            doSetProperty("snapshotDatabaseErrorsMaxRetries", snapshotDatabaseErrorsMaxRetries);
+            return this;
+        }
+        /**
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
@@ -2619,6 +2688,210 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder snapshotMode(String snapshotMode) {
             doSetProperty("snapshotMode", snapshotMode);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedSnapshotData(
+                boolean snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedSnapshotData(
+                String snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                boolean snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                String snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                String snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                boolean snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                String snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedStartStream(
+                boolean snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeConfigurationBasedStartStream(
+                String snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as custom, this setting must be set to
+         * specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the 'Snapshotter'
+         * interface and is called on each app boot to determine whether to do a
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param snapshotModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotModeCustomName(
+                String snapshotModeCustomName) {
+            doSetProperty("snapshotModeCustomName", snapshotModeCustomName);
             return this;
         }
         /**

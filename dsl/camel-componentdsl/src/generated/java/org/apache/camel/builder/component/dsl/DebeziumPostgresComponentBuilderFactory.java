@@ -1457,25 +1457,6 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * When 'snapshot.mode' is set as custom, this setting must be set to
-         * specify a fully qualified class name to load (via the default class
-         * loader). This class must implement the 'Snapshotter' interface and is
-         * called on each app boot to determine whether to do a snapshot and how
-         * to build queries.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: postgres
-         * 
-         * @param snapshotCustomClass the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresComponentBuilder snapshotCustomClass(
-                java.lang.String snapshotCustomClass) {
-            doSetProperty("snapshotCustomClass", snapshotCustomClass);
-            return this;
-        }
-        /**
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
@@ -1522,6 +1503,50 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder snapshotIncludeCollectionList(
                 java.lang.String snapshotIncludeCollectionList) {
             doSetProperty("snapshotIncludeCollectionList", snapshotIncludeCollectionList);
+            return this;
+        }
+        /**
+         * Controls how the connector holds locks on tables while performing the
+         * schema snapshot. The 'shared' which means the connector will hold a
+         * table lock that prevents exclusive table access for just the initial
+         * portion of the snapshot while the database schemas and other metadata
+         * are being read. The remaining work in a snapshot involves selecting
+         * all rows from each table, and this is done using a flashback query
+         * that requires no locks. However, in some cases it may be desirable to
+         * avoid locks entirely which can be done by specifying 'none'. This
+         * mode is only safe to use if no schema changes are happening while the
+         * snapshot is taken.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: postgres
+         * 
+         * @param snapshotLockingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotLockingMode(
+                java.lang.String snapshotLockingMode) {
+            doSetProperty("snapshotLockingMode", snapshotLockingMode);
+            return this;
+        }
+        /**
+         * When 'snapshot.locking.mode' is set as custom, this setting must be
+         * set to specify a the name of the custom implementation provided in
+         * the 'name()' method. The implementations must implement the
+         * 'SnapshotterLocking' interface and is called to determine how to lock
+         * tables during schema snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param snapshotLockingModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotLockingModeCustomName(
+                java.lang.String snapshotLockingModeCustomName) {
+            doSetProperty("snapshotLockingModeCustomName", snapshotLockingModeCustomName);
             return this;
         }
         /**
@@ -1590,6 +1615,150 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder snapshotMode(
                 java.lang.String snapshotMode) {
             doSetProperty("snapshotMode", snapshotMode);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotModeConfigurationBasedSnapshotData(
+                boolean snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                boolean snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                boolean snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotModeConfigurationBasedStartStream(
+                boolean snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as custom, this setting must be set to
+         * specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the 'Snapshotter'
+         * interface and is called on each app boot to determine whether to do a
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param snapshotModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotModeCustomName(
+                java.lang.String snapshotModeCustomName) {
+            doSetProperty("snapshotModeCustomName", snapshotModeCustomName);
+            return this;
+        }
+        /**
+         * Controls query used during the snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: select_all
+         * Group: postgres
+         * 
+         * @param snapshotQueryMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotQueryMode(
+                java.lang.String snapshotQueryMode) {
+            doSetProperty("snapshotQueryMode", snapshotQueryMode);
+            return this;
+        }
+        /**
+         * When 'snapshot.query.mode' is set as custom, this setting must be set
+         * to specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the
+         * 'SnapshotterQuery' interface and is called to determine how to build
+         * queries during snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param snapshotQueryModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotQueryModeCustomName(
+                java.lang.String snapshotQueryModeCustomName) {
+            doSetProperty("snapshotQueryModeCustomName", snapshotQueryModeCustomName);
             return this;
         }
         /**
@@ -1945,13 +2114,22 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "slotName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotName((java.lang.String) value); return true;
             case "slotRetryDelayMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotRetryDelayMs((long) value); return true;
             case "slotStreamParams": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotStreamParams((java.lang.String) value); return true;
-            case "snapshotCustomClass": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotCustomClass((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotFetchSize((int) value); return true;
             case "snapshotIncludeCollectionList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotIncludeCollectionList((java.lang.String) value); return true;
+            case "snapshotLockingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotLockingMode((java.lang.String) value); return true;
+            case "snapshotLockingModeCustomName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotLockingModeCustomName((java.lang.String) value); return true;
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotLockTimeoutMs((long) value); return true;
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotMaxThreads((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotMode((java.lang.String) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotModeConfigurationBasedSnapshotData((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotModeConfigurationBasedSnapshotOnDataError((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotOnSchemaError": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotModeConfigurationBasedSnapshotOnSchemaError((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotModeConfigurationBasedSnapshotSchema((boolean) value); return true;
+            case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotModeConfigurationBasedStartStream((boolean) value); return true;
+            case "snapshotModeCustomName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotModeCustomName((java.lang.String) value); return true;
+            case "snapshotQueryMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotQueryMode((java.lang.String) value); return true;
+            case "snapshotQueryModeCustomName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotQueryModeCustomName((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
