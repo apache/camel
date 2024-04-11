@@ -183,16 +183,7 @@ public class TopDevConsole extends AbstractDevConsole {
                     }
                     jo.put("state", mrb.getState());
                     jo.put("uptime", mrb.getUptime());
-                    JsonObject stats = new JsonObject();
-                    stats.put("exchangesTotal", mrb.getExchangesTotal());
-                    stats.put("exchangesFailed", mrb.getExchangesFailed());
-                    stats.put("exchangesInflight", mrb.getExchangesInflight());
-                    stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
-                    stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
-                    stats.put("minProcessingTime", mrb.getMinProcessingTime());
-                    stats.put("lastProcessingTime", mrb.getLastProcessingTime());
-                    stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
-                    stats.put("totalProcessingTime", mrb.getTotalProcessingTime());
+                    final JsonObject stats = getStatsObject(mrb);
                     jo.put("statistics", stats);
                     return null;
                 };
@@ -244,16 +235,7 @@ public class TopDevConsole extends AbstractDevConsole {
                         }
                     }
 
-                    JsonObject stats = new JsonObject();
-                    stats.put("exchangesTotal", mpb.getExchangesTotal());
-                    stats.put("exchangesFailed", mpb.getExchangesFailed());
-                    stats.put("exchangesInflight", mpb.getExchangesInflight());
-                    stats.put("meanProcessingTime", mpb.getMeanProcessingTime());
-                    stats.put("maxProcessingTime", mpb.getMaxProcessingTime());
-                    stats.put("minProcessingTime", mpb.getMinProcessingTime());
-                    stats.put("lastProcessingTime", mpb.getLastProcessingTime());
-                    stats.put("deltaProcessingTime", mpb.getDeltaProcessingTime());
-                    stats.put("totalProcessingTime", mpb.getTotalProcessingTime());
+                    final JsonObject stats = getStatsObject(mpb);
                     jo.put("statistics", stats);
                     return null;
                 };
@@ -263,6 +245,34 @@ public class TopDevConsole extends AbstractDevConsole {
         }
 
         return root;
+    }
+
+    private static JsonObject getStatsObject(ManagedProcessorMBean mpb) {
+        JsonObject stats = new JsonObject();
+        stats.put("exchangesTotal", mpb.getExchangesTotal());
+        stats.put("exchangesFailed", mpb.getExchangesFailed());
+        stats.put("exchangesInflight", mpb.getExchangesInflight());
+        stats.put("meanProcessingTime", mpb.getMeanProcessingTime());
+        stats.put("maxProcessingTime", mpb.getMaxProcessingTime());
+        stats.put("minProcessingTime", mpb.getMinProcessingTime());
+        stats.put("lastProcessingTime", mpb.getLastProcessingTime());
+        stats.put("deltaProcessingTime", mpb.getDeltaProcessingTime());
+        stats.put("totalProcessingTime", mpb.getTotalProcessingTime());
+        return stats;
+    }
+
+    private static JsonObject getStatsObject(ManagedRouteMBean mrb) {
+        JsonObject stats = new JsonObject();
+        stats.put("exchangesTotal", mrb.getExchangesTotal());
+        stats.put("exchangesFailed", mrb.getExchangesFailed());
+        stats.put("exchangesInflight", mrb.getExchangesInflight());
+        stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
+        stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
+        stats.put("minProcessingTime", mrb.getMinProcessingTime());
+        stats.put("lastProcessingTime", mrb.getLastProcessingTime());
+        stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
+        stats.put("totalProcessingTime", mrb.getTotalProcessingTime());
+        return stats;
     }
 
     private void topRoutes(

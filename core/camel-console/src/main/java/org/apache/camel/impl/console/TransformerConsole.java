@@ -64,6 +64,14 @@ public class TransformerConsole extends AbstractDevConsole {
         root.put("dynamicSize", reg.dynamicSize());
         root.put("staticSize", reg.staticSize());
         root.put("maximumCacheSize", reg.getMaximumCacheSize());
+        final JsonArray arr = toJsonArray(reg);
+        if (!arr.isEmpty()) {
+            root.put("transformers", arr);
+        }
+        return root;
+    }
+
+    private static JsonArray toJsonArray(TransformerRegistry<?> reg) {
         JsonArray arr = new JsonArray();
         for (Map.Entry<?, Transformer> entry : reg.entrySet()) {
             Transformer t = entry.getValue();
@@ -79,9 +87,6 @@ public class TransformerConsole extends AbstractDevConsole {
             }
             arr.add(jo);
         }
-        if (!arr.isEmpty()) {
-            root.put("transformers", arr);
-        }
-        return root;
+        return arr;
     }
 }
