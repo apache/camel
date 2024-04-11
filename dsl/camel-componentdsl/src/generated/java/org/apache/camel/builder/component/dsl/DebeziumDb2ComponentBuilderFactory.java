@@ -1097,6 +1097,115 @@ public interface DebeziumDb2ComponentBuilderFactory {
             return this;
         }
         /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder snapshotModeConfigurationBasedSnapshotData(
+                boolean snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                boolean snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                boolean snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder snapshotModeConfigurationBasedStartStream(
+                boolean snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as custom, this setting must be set to
+         * specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the 'Snapshotter'
+         * interface and is called on each app boot to determine whether to do a
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: db2
+         * 
+         * @param snapshotModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder snapshotModeCustomName(
+                java.lang.String snapshotModeCustomName) {
+            doSetProperty("snapshotModeCustomName", snapshotModeCustomName);
+            return this;
+        }
+        /**
          * This property contains a comma-separated list of fully-qualified
          * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
          * the specific connectors. Select statements for the individual tables
@@ -1370,6 +1479,12 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "snapshotIncludeCollectionList": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotIncludeCollectionList((java.lang.String) value); return true;
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotLockTimeoutMs((long) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotMode((java.lang.String) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotModeConfigurationBasedSnapshotData((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotModeConfigurationBasedSnapshotOnDataError((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotOnSchemaError": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotModeConfigurationBasedSnapshotOnSchemaError((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotModeConfigurationBasedSnapshotSchema((boolean) value); return true;
+            case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotModeConfigurationBasedStartStream((boolean) value); return true;
+            case "snapshotModeCustomName": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotModeCustomName((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumDb2Component) component).setSourceinfoStructMaker((java.lang.String) value); return true;

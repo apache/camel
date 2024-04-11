@@ -1091,6 +1091,115 @@ public class DebeziumMysqlUriDsl(
   }
 
   /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the data should be snapshotted or not.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotData(snapshotModeConfigurationBasedSnapshotData: String) {
+    it.property("snapshotModeConfigurationBasedSnapshotData",
+        snapshotModeConfigurationBasedSnapshotData)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the data should be snapshotted or not.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotData(snapshotModeConfigurationBasedSnapshotData: Boolean) {
+    it.property("snapshotModeConfigurationBasedSnapshotData",
+        snapshotModeConfigurationBasedSnapshotData.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the data should be snapshotted or not in case of error.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotOnDataError(snapshotModeConfigurationBasedSnapshotOnDataError: String) {
+    it.property("snapshotModeConfigurationBasedSnapshotOnDataError",
+        snapshotModeConfigurationBasedSnapshotOnDataError)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the data should be snapshotted or not in case of error.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotOnDataError(snapshotModeConfigurationBasedSnapshotOnDataError: Boolean) {
+    it.property("snapshotModeConfigurationBasedSnapshotOnDataError",
+        snapshotModeConfigurationBasedSnapshotOnDataError.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the schema should be snapshotted or not in case of error.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotOnSchemaError(snapshotModeConfigurationBasedSnapshotOnSchemaError: String) {
+    it.property("snapshotModeConfigurationBasedSnapshotOnSchemaError",
+        snapshotModeConfigurationBasedSnapshotOnSchemaError)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the schema should be snapshotted or not in case of error.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotOnSchemaError(snapshotModeConfigurationBasedSnapshotOnSchemaError: Boolean) {
+    it.property("snapshotModeConfigurationBasedSnapshotOnSchemaError",
+        snapshotModeConfigurationBasedSnapshotOnSchemaError.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the schema should be snapshotted or not.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotSchema(snapshotModeConfigurationBasedSnapshotSchema: String) {
+    it.property("snapshotModeConfigurationBasedSnapshotSchema",
+        snapshotModeConfigurationBasedSnapshotSchema)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the schema should be snapshotted or not.
+   */
+  public
+      fun snapshotModeConfigurationBasedSnapshotSchema(snapshotModeConfigurationBasedSnapshotSchema: Boolean) {
+    it.property("snapshotModeConfigurationBasedSnapshotSchema",
+        snapshotModeConfigurationBasedSnapshotSchema.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the stream should start or not after snapshot.
+   */
+  public
+      fun snapshotModeConfigurationBasedStartStream(snapshotModeConfigurationBasedStartStream: String) {
+    it.property("snapshotModeConfigurationBasedStartStream",
+        snapshotModeConfigurationBasedStartStream)
+  }
+
+  /**
+   * When 'snapshot.mode' is set as configuration_based, this setting permits to specify whenever
+   * the stream should start or not after snapshot.
+   */
+  public
+      fun snapshotModeConfigurationBasedStartStream(snapshotModeConfigurationBasedStartStream: Boolean) {
+    it.property("snapshotModeConfigurationBasedStartStream",
+        snapshotModeConfigurationBasedStartStream.toString())
+  }
+
+  /**
+   * When 'snapshot.mode' is set as custom, this setting must be set to specify a the name of the
+   * custom implementation provided in the 'name()' method. The implementations must implement the
+   * 'Snapshotter' interface and is called on each app boot to determine whether to do a snapshot.
+   */
+  public fun snapshotModeCustomName(snapshotModeCustomName: String) {
+    it.property("snapshotModeCustomName", snapshotModeCustomName)
+  }
+
+  /**
    * BETA FEATURE: On connector restart, the connector will check if there have been any new tables
    * added to the configuration, and snapshot them. There is presently only two options: 'off': Default
    * behavior. Do not snapshot new tables. 'parallel': The snapshot of the new tables will occur in
@@ -1102,6 +1211,22 @@ public class DebeziumMysqlUriDsl(
    */
   public fun snapshotNewTables(snapshotNewTables: String) {
     it.property("snapshotNewTables", snapshotNewTables)
+  }
+
+  /**
+   * Controls query used during the snapshot
+   */
+  public fun snapshotQueryMode(snapshotQueryMode: String) {
+    it.property("snapshotQueryMode", snapshotQueryMode)
+  }
+
+  /**
+   * When 'snapshot.query.mode' is set as custom, this setting must be set to specify a the name of
+   * the custom implementation provided in the 'name()' method. The implementations must implement the
+   * 'SnapshotterQuery' interface and is called to determine how to build queries during snapshot.
+   */
+  public fun snapshotQueryModeCustomName(snapshotQueryModeCustomName: String) {
+    it.property("snapshotQueryModeCustomName", snapshotQueryModeCustomName)
   }
 
   /**

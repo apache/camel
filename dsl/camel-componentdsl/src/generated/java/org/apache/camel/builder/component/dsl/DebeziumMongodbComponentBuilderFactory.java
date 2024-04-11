@@ -634,25 +634,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The method used to connect to MongoDB cluster. Options include:
-         * 'replica_set' to individually connect to each replica set / shard
-         * 'sharded' (the default) to connect via single connection obtained
-         * from connection string.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: sharded
-         * Group: mongodb
-         * 
-         * @param mongodbConnectionMode the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder mongodbConnectionMode(
-                java.lang.String mongodbConnectionMode) {
-            doSetProperty("mongodbConnectionMode", mongodbConnectionMode);
-            return this;
-        }
-        /**
          * Database connection string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1143,6 +1124,115 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotData the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotModeConfigurationBasedSnapshotData(
+                boolean snapshotModeConfigurationBasedSnapshotData) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotData", snapshotModeConfigurationBasedSnapshotData);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the data should be snapshotted or not in
+         * case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnDataError the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotModeConfigurationBasedSnapshotOnDataError(
+                boolean snapshotModeConfigurationBasedSnapshotOnDataError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnDataError", snapshotModeConfigurationBasedSnapshotOnDataError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not
+         * in case of error.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotOnSchemaError the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotModeConfigurationBasedSnapshotOnSchemaError(
+                boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotOnSchemaError", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the schema should be snapshotted or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param snapshotModeConfigurationBasedSnapshotSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotModeConfigurationBasedSnapshotSchema(
+                boolean snapshotModeConfigurationBasedSnapshotSchema) {
+            doSetProperty("snapshotModeConfigurationBasedSnapshotSchema", snapshotModeConfigurationBasedSnapshotSchema);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as configuration_based, this setting
+         * permits to specify whenever the stream should start or not after
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param snapshotModeConfigurationBasedStartStream the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotModeConfigurationBasedStartStream(
+                boolean snapshotModeConfigurationBasedStartStream) {
+            doSetProperty("snapshotModeConfigurationBasedStartStream", snapshotModeConfigurationBasedStartStream);
+            return this;
+        }
+        /**
+         * When 'snapshot.mode' is set as custom, this setting must be set to
+         * specify a the name of the custom implementation provided in the
+         * 'name()' method. The implementations must implement the 'Snapshotter'
+         * interface and is called on each app boot to determine whether to do a
+         * snapshot.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param snapshotModeCustomName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotModeCustomName(
+                java.lang.String snapshotModeCustomName) {
+            doSetProperty("snapshotModeCustomName", snapshotModeCustomName);
+            return this;
+        }
+        /**
          * The name of the SourceInfoStructMaker class that returns SourceInfo
          * schema and struct.
          * 
@@ -1274,7 +1364,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "mongodbAuthsource": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbAuthsource((java.lang.String) value); return true;
-            case "mongodbConnectionMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectionMode((java.lang.String) value); return true;
             case "mongodbConnectionString": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectionString((java.lang.String) value); return true;
             case "mongodbConnectTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectTimeoutMs((int) value); return true;
             case "mongodbHeartbeatFrequencyMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbHeartbeatFrequencyMs((int) value); return true;
@@ -1304,6 +1393,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "snapshotIncludeCollectionList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotIncludeCollectionList((java.lang.String) value); return true;
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotMaxThreads((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotMode((java.lang.String) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeConfigurationBasedSnapshotData((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeConfigurationBasedSnapshotOnDataError((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotOnSchemaError": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeConfigurationBasedSnapshotOnSchemaError((boolean) value); return true;
+            case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeConfigurationBasedSnapshotSchema((boolean) value); return true;
+            case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeConfigurationBasedStartStream((boolean) value); return true;
+            case "snapshotModeCustomName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeCustomName((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTombstonesOnDelete((boolean) value); return true;
             case "topicNamingStrategy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
