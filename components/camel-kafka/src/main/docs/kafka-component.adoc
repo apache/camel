@@ -494,7 +494,7 @@ static {
 }
 ----
 
-=== Batching Consumer
+== Batching Consumer
 
 To use a Kafka batching consumer with Camel, an application has to set the configuration `batching` to `true`.
 
@@ -632,6 +632,35 @@ public void configure() {
 
     // route setup ...
 }
+----
+
+== Custom Subscription Adapters
+
+Applications with complex subscription logic may provide a custom bean to handle the subscription process. To so, it is
+necessary to implement the interface `SubscribeAdapter`.
+
+[source,java]
+.Example subscriber adapter that subscribes to a set of Kafka topics or patterns
+----
+public class CustomSubscribeAdapter implements SubscribeAdapter {
+    @Override
+    public void subscribe(Consumer<?, ?> consumer, ConsumerRebalanceListener reBalanceListener, TopicInfo topicInfo) {
+        if (topicInfo.isPattern()) {
+            consumer.subscribe(topicInfo.getPattern(), reBalanceListener);
+        } else {
+            consumer.subscribe(topicInfo.getTopics(), reBalanceListener);
+        }
+    }
+}
+----
+
+Then, it is necessary to add it as named bean instance to the registry:
+
+
+[source,java]
+.Add to registry example
+----
+context.getRegistry().bind(KafkaConstants.KAFKA_SUBSCRIBE_ADAPTER, new CustomSubscribeAdapter());
 ----
 
 include::spring-boot:partial$starter.adoc[]

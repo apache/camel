@@ -62,3 +62,7 @@ If you are migrating from Camel 4.5, please ensure the following
 
 The `PlatformHttpEngine` class has changed the `createConsumer` method to return a `org.apache.camel.component.platform.http.spi.PlatformHttpConsumer` type,
 instead of `org.apache.camel.Consumer`.
+
+=== camel-kafka
+
+The Kafka component now supports custom subscription adapters for applications with very complex subscription logic.
