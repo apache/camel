@@ -744,14 +744,7 @@ public class DefaultModel implements Model {
             throws Exception {
         ObjectHelper.notNull(templatedRouteDefinition, "templatedRouteDefinition");
 
-        final RouteTemplateContext routeTemplateContext = new DefaultRouteTemplateContext(camelContext);
-        // Load the parameters into the context
-        final List<TemplatedRouteParameterDefinition> parameters = templatedRouteDefinition.getParameters();
-        if (parameters != null) {
-            for (TemplatedRouteParameterDefinition parameterDefinition : parameters) {
-                routeTemplateContext.setParameter(parameterDefinition.getName(), parameterDefinition.getValue());
-            }
-        }
+        final RouteTemplateContext routeTemplateContext = toRouteTemplateContext(templatedRouteDefinition);
         // Bind the beans into the context
         final List<TemplatedRouteBeanDefinition> beans = templatedRouteDefinition.getBeans();
         if (beans != null) {
@@ -762,6 +755,18 @@ public class DefaultModel implements Model {
         // Add the route
         addRouteFromTemplate(templatedRouteDefinition.getRouteId(), templatedRouteDefinition.getRouteTemplateRef(),
                 templatedRouteDefinition.getPrefixId(), routeTemplateContext);
+    }
+
+    private RouteTemplateContext toRouteTemplateContext(TemplatedRouteDefinition templatedRouteDefinition) {
+        final RouteTemplateContext routeTemplateContext = new DefaultRouteTemplateContext(camelContext);
+        // Load the parameters into the context
+        final List<TemplatedRouteParameterDefinition> parameters = templatedRouteDefinition.getParameters();
+        if (parameters != null) {
+            for (TemplatedRouteParameterDefinition parameterDefinition : parameters) {
+                routeTemplateContext.setParameter(parameterDefinition.getName(), parameterDefinition.getValue());
+            }
+        }
+        return routeTemplateContext;
     }
 
     @Override
