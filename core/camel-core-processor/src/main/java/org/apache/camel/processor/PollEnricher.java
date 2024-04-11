@@ -263,19 +263,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         }
 
         // grab the real delegate consumer that performs the actual polling
-        Consumer delegate = consumer;
-        if (consumer instanceof EventDrivenPollingConsumer) {
-            delegate = ((EventDrivenPollingConsumer) consumer).getDelegateConsumer();
-        }
-
-        // is the consumer bridging the error handler?
-        boolean bridgeErrorHandler = false;
-        if (delegate instanceof DefaultConsumer) {
-            ExceptionHandler handler = ((DefaultConsumer) delegate).getExceptionHandler();
-            if (handler instanceof BridgeExceptionHandlerToErrorHandler) {
-                bridgeErrorHandler = true;
-            }
-        }
+        final boolean bridgeErrorHandler = isBridgeErrorHandler(consumer);
 
         Exchange resourceExchange;
         try {
@@ -396,6 +384,23 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
         callback.done(true);
         return true;
+    }
+
+    private static boolean isBridgeErrorHandler(PollingConsumer consumer) {
+        Consumer delegate = consumer;
+        if (consumer instanceof EventDrivenPollingConsumer) {
+            delegate = ((EventDrivenPollingConsumer) consumer).getDelegateConsumer();
+        }
+
+        // is the consumer bridging the error handler?
+        boolean bridgeErrorHandler = false;
+        if (delegate instanceof DefaultConsumer) {
+            ExceptionHandler handler = ((DefaultConsumer) delegate).getExceptionHandler();
+            if (handler instanceof BridgeExceptionHandlerToErrorHandler) {
+                bridgeErrorHandler = true;
+            }
+        }
+        return bridgeErrorHandler;
     }
 
     protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {

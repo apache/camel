@@ -498,14 +498,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                             }
 
                             // prepare and process the routing slip
-                            final boolean prototypeEndpoint = prototype;
-                            AsyncCallback cbNext = doneNext -> {
-                                // and stop prototype endpoints
-                                if (prototypeEndpoint) {
-                                    ServiceHelper.stopAndShutdownService(nextEndpoint);
-                                }
-                                cb.done(doneNext);
-                            };
+                            final AsyncCallback cbNext = getNextCallback(prototype, nextEndpoint, cb);
                             boolean sync = processExchange(nextEndpoint, current, original, cbNext, iter, prototype);
                             current = prepareExchangeForRoutingSlip(current, nextEndpoint);
 
@@ -537,6 +530,18 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                 }
             });
         });
+    }
+
+    private static AsyncCallback getNextCallback(boolean prototype, Endpoint nextEndpoint, AsyncCallback cb) {
+        final boolean prototypeEndpoint = prototype;
+        AsyncCallback cbNext = doneNext -> {
+            // and stop prototype endpoints
+            if (prototypeEndpoint) {
+                ServiceHelper.stopAndShutdownService(nextEndpoint);
+            }
+            cb.done(doneNext);
+        };
+        return cbNext;
     }
 
     @Override
