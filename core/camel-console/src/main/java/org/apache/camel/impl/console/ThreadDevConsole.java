@@ -88,30 +88,35 @@ public class ThreadDevConsole extends AbstractDevConsole {
             for (long id : ids) {
                 ThreadInfo ti = st ? tb.getThreadInfo(id, Integer.MAX_VALUE) : tb.getThreadInfo(id);
                 if (ti != null) {
-                    JsonObject jo = new JsonObject();
-                    jo.put("id", ti.getThreadId());
-                    jo.put("name", ti.getThreadName());
-                    jo.put("state", ti.getThreadState().name());
-                    jo.put("blockedCount", ti.getBlockedCount());
-                    jo.put("blockedTime", ti.getBlockedTime());
-                    jo.put("waitedCount", ti.getWaitedCount());
-                    jo.put("waitedTime", ti.getWaitedTime());
-                    if (ti.getLockName() != null) {
-                        jo.put("lockName", ti.getLockName());
-                    }
-                    if (st) {
-                        JsonArray arr2 = new JsonArray();
-                        jo.put("stackTrace", arr2);
-                        for (StackTraceElement e : ti.getStackTrace()) {
-                            arr2.add(e.toString());
-                        }
-                    }
+                    final JsonObject jo = toJsonObject(ti, st);
                     arr.add(jo);
                 }
             }
         }
 
         return root;
+    }
+
+    private static JsonObject toJsonObject(ThreadInfo ti, boolean st) {
+        JsonObject jo = new JsonObject();
+        jo.put("id", ti.getThreadId());
+        jo.put("name", ti.getThreadName());
+        jo.put("state", ti.getThreadState().name());
+        jo.put("blockedCount", ti.getBlockedCount());
+        jo.put("blockedTime", ti.getBlockedTime());
+        jo.put("waitedCount", ti.getWaitedCount());
+        jo.put("waitedTime", ti.getWaitedTime());
+        if (ti.getLockName() != null) {
+            jo.put("lockName", ti.getLockName());
+        }
+        if (st) {
+            JsonArray arr2 = new JsonArray();
+            jo.put("stackTrace", arr2);
+            for (StackTraceElement e : ti.getStackTrace()) {
+                arr2.add(e.toString());
+            }
+        }
+        return jo;
     }
 
 }

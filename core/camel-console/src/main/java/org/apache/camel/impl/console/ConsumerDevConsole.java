@@ -212,30 +212,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     }
 
                     if (mr != null) {
-                        JsonObject stats = new JsonObject();
-                        stats.put("idleSince", mr.getIdleSince());
-                        stats.put("exchangesTotal", mr.getExchangesTotal());
-                        stats.put("exchangesFailed", mr.getExchangesFailed());
-                        stats.put("exchangesInflight", mr.getExchangesInflight());
-                        stats.put("meanProcessingTime", mr.getMeanProcessingTime());
-                        stats.put("maxProcessingTime", mr.getMaxProcessingTime());
-                        stats.put("minProcessingTime", mr.getMinProcessingTime());
-                        if (mr.getExchangesTotal() > 0) {
-                            stats.put("lastProcessingTime", mr.getLastProcessingTime());
-                            stats.put("deltaProcessingTime", mr.getDeltaProcessingTime());
-                        }
-                        Date last = mr.getLastExchangeCreatedTimestamp();
-                        if (last != null) {
-                            stats.put("lastCreatedExchangeTimestamp", last.getTime());
-                        }
-                        last = mr.getLastExchangeCompletedTimestamp();
-                        if (last != null) {
-                            stats.put("lastCompletedExchangeTimestamp", last.getTime());
-                        }
-                        last = mr.getLastExchangeFailureTimestamp();
-                        if (last != null) {
-                            stats.put("lastFailedExchangeTimestamp", last.getTime());
-                        }
+                        final JsonObject stats = toJsonObject(mr);
                         jo.put("statistics", stats);
                     }
 
@@ -245,6 +222,34 @@ public class ConsumerDevConsole extends AbstractDevConsole {
         }
 
         return root;
+    }
+
+    private static JsonObject toJsonObject(ManagedRouteMBean mr) {
+        JsonObject stats = new JsonObject();
+        stats.put("idleSince", mr.getIdleSince());
+        stats.put("exchangesTotal", mr.getExchangesTotal());
+        stats.put("exchangesFailed", mr.getExchangesFailed());
+        stats.put("exchangesInflight", mr.getExchangesInflight());
+        stats.put("meanProcessingTime", mr.getMeanProcessingTime());
+        stats.put("maxProcessingTime", mr.getMaxProcessingTime());
+        stats.put("minProcessingTime", mr.getMinProcessingTime());
+        if (mr.getExchangesTotal() > 0) {
+            stats.put("lastProcessingTime", mr.getLastProcessingTime());
+            stats.put("deltaProcessingTime", mr.getDeltaProcessingTime());
+        }
+        Date last = mr.getLastExchangeCreatedTimestamp();
+        if (last != null) {
+            stats.put("lastCreatedExchangeTimestamp", last.getTime());
+        }
+        last = mr.getLastExchangeCompletedTimestamp();
+        if (last != null) {
+            stats.put("lastCompletedExchangeTimestamp", last.getTime());
+        }
+        last = mr.getLastExchangeFailureTimestamp();
+        if (last != null) {
+            stats.put("lastFailedExchangeTimestamp", last.getTime());
+        }
+        return stats;
     }
 
 }

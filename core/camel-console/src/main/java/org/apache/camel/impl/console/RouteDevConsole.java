@@ -339,32 +339,37 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             jo.put("processor", mp.getProcessorName());
             jo.put("level", mp.getLevel());
-            JsonObject stats = new JsonObject();
-            stats.put("idleSince", mp.getIdleSince());
-            stats.put("exchangesTotal", mp.getExchangesTotal());
-            stats.put("exchangesFailed", mp.getExchangesFailed());
-            stats.put("exchangesInflight", mp.getExchangesInflight());
-            stats.put("meanProcessingTime", mp.getMeanProcessingTime());
-            stats.put("maxProcessingTime", mp.getMaxProcessingTime());
-            stats.put("minProcessingTime", mp.getMinProcessingTime());
-            if (mp.getExchangesTotal() > 0) {
-                stats.put("lastProcessingTime", mp.getLastProcessingTime());
-                stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
-            }
-            Date last = mp.getLastExchangeCreatedTimestamp();
-            if (last != null) {
-                stats.put("lastCreatedExchangeTimestamp", last.getTime());
-            }
-            last = mp.getLastExchangeCompletedTimestamp();
-            if (last != null) {
-                stats.put("lastCompletedExchangeTimestamp", last.getTime());
-            }
-            last = mp.getLastExchangeFailureTimestamp();
-            if (last != null) {
-                stats.put("lastFailedExchangeTimestamp", last.getTime());
-            }
+            final JsonObject stats = getStatsObject(mp);
             jo.put("statistics", stats);
         }
+    }
+
+    private static JsonObject getStatsObject(ManagedProcessorMBean mp) {
+        JsonObject stats = new JsonObject();
+        stats.put("idleSince", mp.getIdleSince());
+        stats.put("exchangesTotal", mp.getExchangesTotal());
+        stats.put("exchangesFailed", mp.getExchangesFailed());
+        stats.put("exchangesInflight", mp.getExchangesInflight());
+        stats.put("meanProcessingTime", mp.getMeanProcessingTime());
+        stats.put("maxProcessingTime", mp.getMaxProcessingTime());
+        stats.put("minProcessingTime", mp.getMinProcessingTime());
+        if (mp.getExchangesTotal() > 0) {
+            stats.put("lastProcessingTime", mp.getLastProcessingTime());
+            stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
+        }
+        Date last = mp.getLastExchangeCreatedTimestamp();
+        if (last != null) {
+            stats.put("lastCreatedExchangeTimestamp", last.getTime());
+        }
+        last = mp.getLastExchangeCompletedTimestamp();
+        if (last != null) {
+            stats.put("lastCompletedExchangeTimestamp", last.getTime());
+        }
+        last = mp.getLastExchangeFailureTimestamp();
+        if (last != null) {
+            stats.put("lastFailedExchangeTimestamp", last.getTime());
+        }
+        return stats;
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
