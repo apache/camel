@@ -311,12 +311,6 @@ public class KafkaFetchRecords implements Runnable {
         if (LOG.isInfoEnabled()) {
             LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
         }
-        //
-        //        if (topicPattern != null) {
-        //            consumer.subscribe(topicPattern, listener);
-        //        } else {
-        //            consumer.subscribe(Arrays.asList(topicName.split(",")), listener);
-        //        }
     }
 
     protected void startPolling() {
