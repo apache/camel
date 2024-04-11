@@ -118,29 +118,7 @@ public final class EndpointHelper {
         // the query parameters needs to be rebuild by removing the unresolved key=value pairs
         if (query != null && query.contains(prefix)) {
             Map<String, Object> params = URISupport.parseQuery(query);
-            Map<String, Object> keep = new LinkedHashMap<>();
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                String key = entry.getKey();
-                if (key.startsWith(prefix)) {
-                    continue;
-                }
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    String s = value.toString();
-                    if (s.startsWith(prefix)) {
-                        continue;
-                    }
-                    // okay the value may use a resource loader with a scheme prefix
-                    int dot = s.indexOf(':');
-                    if (dot > 0 && dot < s.length() - 1) {
-                        s = s.substring(dot + 1);
-                        if (s.startsWith(prefix)) {
-                            continue;
-                        }
-                    }
-                }
-                keep.put(key, value);
-            }
+            final Map<String, Object> keep = extractParamsToKeep(params, prefix);
             // rebuild query
             query = URISupport.createQueryString(keep);
         }
@@ -148,6 +126,33 @@ public final class EndpointHelper {
         // assemble uri as answer
         uri = query != null && !query.isEmpty() ? base + "?" + query : base;
         return uri;
+    }
+
+    private static Map<String, Object> extractParamsToKeep(Map<String, Object> params, String prefix) {
+        Map<String, Object> keep = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith(prefix)) {
+                continue;
+            }
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                String s = value.toString();
+                if (s.startsWith(prefix)) {
+                    continue;
+                }
+                // okay the value may use a resource loader with a scheme prefix
+                int dot = s.indexOf(':');
+                if (dot > 0 && dot < s.length() - 1) {
+                    s = s.substring(dot + 1);
+                    if (s.startsWith(prefix)) {
+                        continue;
+                    }
+                }
+            }
+            keep.put(key, value);
+        }
+        return keep;
     }
 
     /**
