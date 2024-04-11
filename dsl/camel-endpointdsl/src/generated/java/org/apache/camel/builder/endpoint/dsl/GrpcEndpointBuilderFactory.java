@@ -264,8 +264,110 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the initial flow control window in bytes.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1048576
+         * Group: consumer
+         * 
+         * @param initialFlowControlWindow the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder initialFlowControlWindow(
+                int initialFlowControlWindow) {
+            doSetProperty("initialFlowControlWindow", initialFlowControlWindow);
+            return this;
+        }
+        /**
+         * Sets the initial flow control window in bytes.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1048576
+         * Group: consumer
+         * 
+         * @param initialFlowControlWindow the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder initialFlowControlWindow(
+                String initialFlowControlWindow) {
+            doSetProperty("initialFlowControlWindow", initialFlowControlWindow);
+            return this;
+        }
+        /**
+         * Sets a custom keepalive time in milliseconds, the delay time for
+         * sending next keepalive ping. A value of Long.MAX_VALUE or a value
+         * greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will
+         * disable keepalive.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 7200000
+         * Group: consumer
+         * 
+         * @param keepAliveTime the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder keepAliveTime(long keepAliveTime) {
+            doSetProperty("keepAliveTime", keepAliveTime);
+            return this;
+        }
+        /**
+         * Sets a custom keepalive time in milliseconds, the delay time for
+         * sending next keepalive ping. A value of Long.MAX_VALUE or a value
+         * greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will
+         * disable keepalive.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 7200000
+         * Group: consumer
+         * 
+         * @param keepAliveTime the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder keepAliveTime(String keepAliveTime) {
+            doSetProperty("keepAliveTime", keepAliveTime);
+            return this;
+        }
+        /**
+         * Sets a custom keepalive timeout in milliseconds, the timeout for
+         * keepalive ping requests.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 20000
+         * Group: consumer
+         * 
+         * @param keepAliveTimeout the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder keepAliveTimeout(
+                long keepAliveTimeout) {
+            doSetProperty("keepAliveTimeout", keepAliveTimeout);
+            return this;
+        }
+        /**
+         * Sets a custom keepalive timeout in milliseconds, the timeout for
+         * keepalive ping requests.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 20000
+         * Group: consumer
+         * 
+         * @param keepAliveTimeout the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder keepAliveTimeout(
+                String keepAliveTimeout) {
+            doSetProperty("keepAliveTimeout", keepAliveTimeout);
+            return this;
+        }
+        /**
          * The maximum number of concurrent calls permitted for each incoming
-         * server connection.
+         * server connection. Defaults to no limit.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -282,7 +384,7 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The maximum number of concurrent calls permitted for each incoming
-         * server connection.
+         * server connection. Defaults to no limit.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -295,6 +397,303 @@ public interface GrpcEndpointBuilderFactory {
         default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 String maxConcurrentCallsPerConnection) {
             doSetProperty("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection);
+            return this;
+        }
+        /**
+         * Sets a custom max connection age in milliseconds. Connections lasting
+         * longer than which will be gracefully terminated. A random jitter of
+         * /-10% will be added to the value. A value of Long.MAX_VALUE (the
+         * default) or a value greater or equal to
+         * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
+         * age.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 9223372036854775807
+         * Group: consumer
+         * 
+         * @param maxConnectionAge the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxConnectionAge(
+                long maxConnectionAge) {
+            doSetProperty("maxConnectionAge", maxConnectionAge);
+            return this;
+        }
+        /**
+         * Sets a custom max connection age in milliseconds. Connections lasting
+         * longer than which will be gracefully terminated. A random jitter of
+         * /-10% will be added to the value. A value of Long.MAX_VALUE (the
+         * default) or a value greater or equal to
+         * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
+         * age.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 9223372036854775807
+         * Group: consumer
+         * 
+         * @param maxConnectionAge the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxConnectionAge(
+                String maxConnectionAge) {
+            doSetProperty("maxConnectionAge", maxConnectionAge);
+            return this;
+        }
+        /**
+         * Sets a custom grace time in milliseconds for the graceful connection
+         * termination. A value of Long.MAX_VALUE (the default) or a value
+         * greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE is
+         * considered infinite.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 9223372036854775807
+         * Group: consumer
+         * 
+         * @param maxConnectionAgeGrace the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxConnectionAgeGrace(
+                long maxConnectionAgeGrace) {
+            doSetProperty("maxConnectionAgeGrace", maxConnectionAgeGrace);
+            return this;
+        }
+        /**
+         * Sets a custom grace time in milliseconds for the graceful connection
+         * termination. A value of Long.MAX_VALUE (the default) or a value
+         * greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE is
+         * considered infinite.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 9223372036854775807
+         * Group: consumer
+         * 
+         * @param maxConnectionAgeGrace the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxConnectionAgeGrace(
+                String maxConnectionAgeGrace) {
+            doSetProperty("maxConnectionAgeGrace", maxConnectionAgeGrace);
+            return this;
+        }
+        /**
+         * Sets a custom max connection idle time in milliseconds. Connection
+         * being idle for longer than which will be gracefully terminated. A
+         * value of Long.MAX_VALUE (the default) or a value greater or equal to
+         * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
+         * idle.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 9223372036854775807
+         * Group: consumer
+         * 
+         * @param maxConnectionIdle the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxConnectionIdle(
+                long maxConnectionIdle) {
+            doSetProperty("maxConnectionIdle", maxConnectionIdle);
+            return this;
+        }
+        /**
+         * Sets a custom max connection idle time in milliseconds. Connection
+         * being idle for longer than which will be gracefully terminated. A
+         * value of Long.MAX_VALUE (the default) or a value greater or equal to
+         * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
+         * idle.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 9223372036854775807
+         * Group: consumer
+         * 
+         * @param maxConnectionIdle the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxConnectionIdle(
+                String maxConnectionIdle) {
+            doSetProperty("maxConnectionIdle", maxConnectionIdle);
+            return this;
+        }
+        /**
+         * Sets the maximum size of metadata allowed to be received. The default
+         * is 8 KiB.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 8192
+         * Group: consumer
+         * 
+         * @param maxInboundMetadataSize the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxInboundMetadataSize(
+                int maxInboundMetadataSize) {
+            doSetProperty("maxInboundMetadataSize", maxInboundMetadataSize);
+            return this;
+        }
+        /**
+         * Sets the maximum size of metadata allowed to be received. The default
+         * is 8 KiB.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 8192
+         * Group: consumer
+         * 
+         * @param maxInboundMetadataSize the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxInboundMetadataSize(
+                String maxInboundMetadataSize) {
+            doSetProperty("maxInboundMetadataSize", maxInboundMetadataSize);
+            return this;
+        }
+        /**
+         * Limits the rate of incoming RST_STREAM frames per connection to
+         * maxRstFramesPerWindow per maxRstPeriodSeconds. This option MUST be
+         * used in conjunction with maxRstPeriodSeconds for it to be effective.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param maxRstFramesPerWindow the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxRstFramesPerWindow(
+                int maxRstFramesPerWindow) {
+            doSetProperty("maxRstFramesPerWindow", maxRstFramesPerWindow);
+            return this;
+        }
+        /**
+         * Limits the rate of incoming RST_STREAM frames per connection to
+         * maxRstFramesPerWindow per maxRstPeriodSeconds. This option MUST be
+         * used in conjunction with maxRstPeriodSeconds for it to be effective.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param maxRstFramesPerWindow the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxRstFramesPerWindow(
+                String maxRstFramesPerWindow) {
+            doSetProperty("maxRstFramesPerWindow", maxRstFramesPerWindow);
+            return this;
+        }
+        /**
+         * Limits the rate of incoming RST_STREAM frames per
+         * maxRstPeriodSeconds. This option MUST be used in conjunction with
+         * maxRstFramesPerWindow for it to be effective.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param maxRstPeriodSeconds the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxRstPeriodSeconds(
+                int maxRstPeriodSeconds) {
+            doSetProperty("maxRstPeriodSeconds", maxRstPeriodSeconds);
+            return this;
+        }
+        /**
+         * Limits the rate of incoming RST_STREAM frames per
+         * maxRstPeriodSeconds. This option MUST be used in conjunction with
+         * maxRstFramesPerWindow for it to be effective.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param maxRstPeriodSeconds the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder maxRstPeriodSeconds(
+                String maxRstPeriodSeconds) {
+            doSetProperty("maxRstPeriodSeconds", maxRstPeriodSeconds);
+            return this;
+        }
+        /**
+         * Sets the most aggressive keep-alive time in milliseconds that clients
+         * are permitted to configure. The server will try to detect clients
+         * exceeding this rate and will forcefully close the connection.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: consumer
+         * 
+         * @param permitKeepAliveTime the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder permitKeepAliveTime(
+                long permitKeepAliveTime) {
+            doSetProperty("permitKeepAliveTime", permitKeepAliveTime);
+            return this;
+        }
+        /**
+         * Sets the most aggressive keep-alive time in milliseconds that clients
+         * are permitted to configure. The server will try to detect clients
+         * exceeding this rate and will forcefully close the connection.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: consumer
+         * 
+         * @param permitKeepAliveTime the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder permitKeepAliveTime(
+                String permitKeepAliveTime) {
+            doSetProperty("permitKeepAliveTime", permitKeepAliveTime);
+            return this;
+        }
+        /**
+         * Sets whether to allow clients to send keep-alive HTTP/ 2 PINGs even
+         * if there are no outstanding RPCs on the connection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param permitKeepAliveWithoutCalls the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder permitKeepAliveWithoutCalls(
+                boolean permitKeepAliveWithoutCalls) {
+            doSetProperty("permitKeepAliveWithoutCalls", permitKeepAliveWithoutCalls);
+            return this;
+        }
+        /**
+         * Sets whether to allow clients to send keep-alive HTTP/ 2 PINGs even
+         * if there are no outstanding RPCs on the connection.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param permitKeepAliveWithoutCalls the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder permitKeepAliveWithoutCalls(
+                String permitKeepAliveWithoutCalls) {
+            doSetProperty("permitKeepAliveWithoutCalls", permitKeepAliveWithoutCalls);
             return this;
         }
         /**

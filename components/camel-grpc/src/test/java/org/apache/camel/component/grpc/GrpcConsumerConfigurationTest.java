@@ -44,4 +44,36 @@ class GrpcConsumerConfigurationTest extends CamelTestSupport {
                 () -> consumer.receive("grpc:localhost:0/org.apache.camel.component.grpc.PingPong"));
         assertInstanceOf(IllegalArgumentException.class, exception.getCause());
     }
+
+    @Test
+    void invalidMaxRstFramesPerWindowWithValidMaxRstPeriodSeconds() {
+        FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
+                () -> consumer.receive(
+                        "grpc:localhost:8080/org.apache.camel.component.grpc.PingPong?maxRstFramesPerWindow=-1&maxRstPeriodSeconds=5"));
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+    }
+
+    @Test
+    void missingMaxRstFramesPerWindowWithValidMaxRstPeriodSeconds() {
+        FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
+                () -> consumer.receive(
+                        "grpc:localhost:8080/org.apache.camel.component.grpc.PingPong?maxRstPeriodSeconds=5"));
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+    }
+
+    @Test
+    void invalidMaxRstPeriodSecondsWithValidMaxRstFramesPerWindow() {
+        FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
+                () -> consumer.receive(
+                        "grpc:localhost:8080/org.apache.camel.component.grpc.PingPong?maxRstFramesPerWindow=100&maxRstPeriodSeconds=-1"));
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+    }
+
+    @Test
+    void missingMaxRstPeriodSecondsWithValidMaxRstFramesPerWindow() {
+        FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
+                () -> consumer.receive(
+                        "grpc:localhost:8080/org.apache.camel.component.grpc.PingPong?maxRstFramesPerWindow=100"));
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+    }
 }

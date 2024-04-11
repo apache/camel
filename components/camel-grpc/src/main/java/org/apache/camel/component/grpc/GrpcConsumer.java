@@ -17,6 +17,7 @@
 package org.apache.camel.component.grpc;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 import io.grpc.BindableService;
 import io.grpc.Server;
@@ -138,6 +139,16 @@ public class GrpcConsumer extends DefaultConsumer {
                     configuration.getJwtIssuer(), configuration.getJwtSubject()));
         }
 
+        // To configure RST_STREAM settings we need valid configuration for both maxRstFramesPerWindow & maxRstPeriodSeconds
+        if (configuration.getMaxRstFramesPerWindow() > 0 && configuration.getMaxRstPeriodSeconds() <= 0) {
+            throw new IllegalArgumentException("maxRstPeriodSeconds must be a positive value");
+        } else if (configuration.getMaxRstFramesPerWindow() <= 0 && configuration.getMaxRstPeriodSeconds() > 0) {
+            throw new IllegalArgumentException("maxRstFramesPerWindow must be a positive value");
+        } else if (configuration.getMaxRstFramesPerWindow() > 0 && configuration.getMaxRstPeriodSeconds() > 0) {
+            serverBuilder.maxRstFramesPerWindow(configuration.getMaxRstFramesPerWindow(),
+                    configuration.getMaxRstPeriodSeconds());
+        }
+
         for (ServerInterceptor si : configuration.getServerInterceptors()) {
             serverBuilder.intercept(si);
         }
@@ -146,6 +157,15 @@ public class GrpcConsumer extends DefaultConsumer {
                 .maxInboundMessageSize(configuration.getMaxMessageSize())
                 .flowControlWindow(configuration.getFlowControlWindow())
                 .maxConcurrentCallsPerConnection(configuration.getMaxConcurrentCallsPerConnection())
+                .initialFlowControlWindow(configuration.getInitialFlowControlWindow())
+                .keepAliveTime(configuration.getKeepAliveTime(), TimeUnit.MILLISECONDS)
+                .keepAliveTimeout(configuration.getKeepAliveTimeout(), TimeUnit.MILLISECONDS)
+                .maxConnectionAge(configuration.getMaxConnectionAge(), TimeUnit.MILLISECONDS)
+                .maxConnectionIdle(configuration.getMaxConnectionIdle(), TimeUnit.MILLISECONDS)
+                .maxConnectionAgeGrace(configuration.getMaxConnectionAgeGrace(), TimeUnit.MILLISECONDS)
+                .maxInboundMetadataSize(configuration.getMaxInboundMetadataSize())
+                .permitKeepAliveTime(configuration.getPermitKeepAliveTime(), TimeUnit.MILLISECONDS)
+                .permitKeepAliveWithoutCalls(configuration.isPermitKeepAliveWithoutCalls())
                 .build();
     }
 

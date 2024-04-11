@@ -170,17 +170,203 @@ public class GrpcUriDsl(
   }
 
   /**
-   * The maximum number of concurrent calls permitted for each incoming server connection
+   * Sets the initial flow control window in bytes.
+   */
+  public fun initialFlowControlWindow(initialFlowControlWindow: String) {
+    it.property("initialFlowControlWindow", initialFlowControlWindow)
+  }
+
+  /**
+   * Sets the initial flow control window in bytes.
+   */
+  public fun initialFlowControlWindow(initialFlowControlWindow: Int) {
+    it.property("initialFlowControlWindow", initialFlowControlWindow.toString())
+  }
+
+  /**
+   * Sets a custom keepalive time in milliseconds, the delay time for sending next keepalive ping. A
+   * value of Long.MAX_VALUE or a value greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE
+   * will disable keepalive.
+   */
+  public fun keepAliveTime(keepAliveTime: String) {
+    it.property("keepAliveTime", keepAliveTime)
+  }
+
+  /**
+   * Sets a custom keepalive time in milliseconds, the delay time for sending next keepalive ping. A
+   * value of Long.MAX_VALUE or a value greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE
+   * will disable keepalive.
+   */
+  public fun keepAliveTime(keepAliveTime: Int) {
+    it.property("keepAliveTime", keepAliveTime.toString())
+  }
+
+  /**
+   * Sets a custom keepalive timeout in milliseconds, the timeout for keepalive ping requests.
+   */
+  public fun keepAliveTimeout(keepAliveTimeout: String) {
+    it.property("keepAliveTimeout", keepAliveTimeout)
+  }
+
+  /**
+   * Sets a custom keepalive timeout in milliseconds, the timeout for keepalive ping requests.
+   */
+  public fun keepAliveTimeout(keepAliveTimeout: Int) {
+    it.property("keepAliveTimeout", keepAliveTimeout.toString())
+  }
+
+  /**
+   * The maximum number of concurrent calls permitted for each incoming server connection. Defaults
+   * to no limit.
    */
   public fun maxConcurrentCallsPerConnection(maxConcurrentCallsPerConnection: String) {
     it.property("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection)
   }
 
   /**
-   * The maximum number of concurrent calls permitted for each incoming server connection
+   * The maximum number of concurrent calls permitted for each incoming server connection. Defaults
+   * to no limit.
    */
   public fun maxConcurrentCallsPerConnection(maxConcurrentCallsPerConnection: Int) {
     it.property("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection.toString())
+  }
+
+  /**
+   * Sets a custom max connection age in milliseconds. Connections lasting longer than which will be
+   * gracefully terminated. A random jitter of /-10% will be added to the value. A value of
+   * Long.MAX_VALUE (the default) or a value greater or equal to
+   * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection age.
+   */
+  public fun maxConnectionAge(maxConnectionAge: String) {
+    it.property("maxConnectionAge", maxConnectionAge)
+  }
+
+  /**
+   * Sets a custom max connection age in milliseconds. Connections lasting longer than which will be
+   * gracefully terminated. A random jitter of /-10% will be added to the value. A value of
+   * Long.MAX_VALUE (the default) or a value greater or equal to
+   * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection age.
+   */
+  public fun maxConnectionAge(maxConnectionAge: Int) {
+    it.property("maxConnectionAge", maxConnectionAge.toString())
+  }
+
+  /**
+   * Sets a custom grace time in milliseconds for the graceful connection termination. A value of
+   * Long.MAX_VALUE (the default) or a value greater or equal to
+   * NettyServerBuilder.AS_LARGE_AS_INFINITE is considered infinite.
+   */
+  public fun maxConnectionAgeGrace(maxConnectionAgeGrace: String) {
+    it.property("maxConnectionAgeGrace", maxConnectionAgeGrace)
+  }
+
+  /**
+   * Sets a custom grace time in milliseconds for the graceful connection termination. A value of
+   * Long.MAX_VALUE (the default) or a value greater or equal to
+   * NettyServerBuilder.AS_LARGE_AS_INFINITE is considered infinite.
+   */
+  public fun maxConnectionAgeGrace(maxConnectionAgeGrace: Int) {
+    it.property("maxConnectionAgeGrace", maxConnectionAgeGrace.toString())
+  }
+
+  /**
+   * Sets a custom max connection idle time in milliseconds. Connection being idle for longer than
+   * which will be gracefully terminated. A value of Long.MAX_VALUE (the default) or a value greater or
+   * equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection idle
+   */
+  public fun maxConnectionIdle(maxConnectionIdle: String) {
+    it.property("maxConnectionIdle", maxConnectionIdle)
+  }
+
+  /**
+   * Sets a custom max connection idle time in milliseconds. Connection being idle for longer than
+   * which will be gracefully terminated. A value of Long.MAX_VALUE (the default) or a value greater or
+   * equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection idle
+   */
+  public fun maxConnectionIdle(maxConnectionIdle: Int) {
+    it.property("maxConnectionIdle", maxConnectionIdle.toString())
+  }
+
+  /**
+   * Sets the maximum size of metadata allowed to be received. The default is 8 KiB.
+   */
+  public fun maxInboundMetadataSize(maxInboundMetadataSize: String) {
+    it.property("maxInboundMetadataSize", maxInboundMetadataSize)
+  }
+
+  /**
+   * Sets the maximum size of metadata allowed to be received. The default is 8 KiB.
+   */
+  public fun maxInboundMetadataSize(maxInboundMetadataSize: Int) {
+    it.property("maxInboundMetadataSize", maxInboundMetadataSize.toString())
+  }
+
+  /**
+   * Limits the rate of incoming RST_STREAM frames per connection to maxRstFramesPerWindow per
+   * maxRstPeriodSeconds. This option MUST be used in conjunction with maxRstPeriodSeconds for it to be
+   * effective.
+   */
+  public fun maxRstFramesPerWindow(maxRstFramesPerWindow: String) {
+    it.property("maxRstFramesPerWindow", maxRstFramesPerWindow)
+  }
+
+  /**
+   * Limits the rate of incoming RST_STREAM frames per connection to maxRstFramesPerWindow per
+   * maxRstPeriodSeconds. This option MUST be used in conjunction with maxRstPeriodSeconds for it to be
+   * effective.
+   */
+  public fun maxRstFramesPerWindow(maxRstFramesPerWindow: Int) {
+    it.property("maxRstFramesPerWindow", maxRstFramesPerWindow.toString())
+  }
+
+  /**
+   * Limits the rate of incoming RST_STREAM frames per maxRstPeriodSeconds. This option MUST be used
+   * in conjunction with maxRstFramesPerWindow for it to be effective.
+   */
+  public fun maxRstPeriodSeconds(maxRstPeriodSeconds: String) {
+    it.property("maxRstPeriodSeconds", maxRstPeriodSeconds)
+  }
+
+  /**
+   * Limits the rate of incoming RST_STREAM frames per maxRstPeriodSeconds. This option MUST be used
+   * in conjunction with maxRstFramesPerWindow for it to be effective.
+   */
+  public fun maxRstPeriodSeconds(maxRstPeriodSeconds: Int) {
+    it.property("maxRstPeriodSeconds", maxRstPeriodSeconds.toString())
+  }
+
+  /**
+   * Sets the most aggressive keep-alive time in milliseconds that clients are permitted to
+   * configure. The server will try to detect clients exceeding this rate and will forcefully close the
+   * connection.
+   */
+  public fun permitKeepAliveTime(permitKeepAliveTime: String) {
+    it.property("permitKeepAliveTime", permitKeepAliveTime)
+  }
+
+  /**
+   * Sets the most aggressive keep-alive time in milliseconds that clients are permitted to
+   * configure. The server will try to detect clients exceeding this rate and will forcefully close the
+   * connection.
+   */
+  public fun permitKeepAliveTime(permitKeepAliveTime: Int) {
+    it.property("permitKeepAliveTime", permitKeepAliveTime.toString())
+  }
+
+  /**
+   * Sets whether to allow clients to send keep-alive HTTP/ 2 PINGs even if there are no outstanding
+   * RPCs on the connection.
+   */
+  public fun permitKeepAliveWithoutCalls(permitKeepAliveWithoutCalls: String) {
+    it.property("permitKeepAliveWithoutCalls", permitKeepAliveWithoutCalls)
+  }
+
+  /**
+   * Sets whether to allow clients to send keep-alive HTTP/ 2 PINGs even if there are no outstanding
+   * RPCs on the connection.
+   */
+  public fun permitKeepAliveWithoutCalls(permitKeepAliveWithoutCalls: Boolean) {
+    it.property("permitKeepAliveWithoutCalls", permitKeepAliveWithoutCalls.toString())
   }
 
   /**
