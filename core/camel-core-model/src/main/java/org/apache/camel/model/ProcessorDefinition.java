@@ -782,17 +782,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             // set it on last output as this is what the user means to do
             // for Block(s) with non empty getOutputs() the id probably refers
             // to the last definition in the current Block
-            List<ProcessorDefinition<?>> outputs = getOutputs();
-            if (!blocks.isEmpty()) {
-                if (blocks.getLast() instanceof ProcessorDefinition) {
-                    ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
-                    if (!block.getOutputs().isEmpty()) {
-                        outputs = block.getOutputs();
-                    }
-                }
-            }
+            final List<ProcessorDefinition<?>> definitions = getProcessorDefinitions();
             if (!getOutputs().isEmpty()) {
-                outputs.get(outputs.size() - 1).setDisabled(disabled);
+                definitions.get(definitions.size() - 1).setDisabled(disabled);
             } else {
                 // the output could be empty
                 setDisabled(disabled);
@@ -800,6 +792,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
 
         return asType();
+    }
+
+    private List<ProcessorDefinition<?>> getProcessorDefinitions() {
+        List<ProcessorDefinition<?>> outputs = getOutputs();
+        if (!blocks.isEmpty()) {
+            if (blocks.getLast() instanceof ProcessorDefinition) {
+                ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
+                if (!block.getOutputs().isEmpty()) {
+                    outputs = block.getOutputs();
+                }
+            }
+        }
+        return outputs;
     }
 
     /**
