@@ -979,28 +979,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // add dummy empty stop
         route.getOutputs().add(new StopDefinition());
 
-        String mode = getBindingMode();
-        if (mode == null) {
-            mode = camelContext.getRestConfiguration().getBindingMode().name();
-        }
-
-        RestBindingDefinition binding = new RestBindingDefinition();
-        binding.setComponent(component);
-        if ("json".equals(mode)) {
-            binding.setConsumes("application/json");
-            binding.setProduces("application/json");
-        } else if ("xml".equals(mode)) {
-            binding.setConsumes("application/xml");
-            binding.setProduces("application/xml");
-        } else if ("json_xml".equals(mode)) {
-            binding.setConsumes("application/json;application/xml");
-            binding.setProduces("application/json;application/xml");
-        }
-        binding.setBindingMode(mode);
-        binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
-        binding.setClientRequestValidation(getClientRequestValidation());
-        binding.setEnableCORS(getEnableCORS());
-        binding.setEnableNoContentResponse(getEnableNoContentResponse());
+        final RestBindingDefinition binding = getRestBindingDefinition(camelContext, component);
         route.setRestBindingDefinition(binding);
 
         // append options
@@ -1051,6 +1030,32 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         route.fromRest(from);
         route.setRestDefinition(this);
         answer.add(route);
+    }
+
+    private RestBindingDefinition getRestBindingDefinition(CamelContext camelContext, String component) {
+        String mode = getBindingMode();
+        if (mode == null) {
+            mode = camelContext.getRestConfiguration().getBindingMode().name();
+        }
+
+        RestBindingDefinition binding = new RestBindingDefinition();
+        binding.setComponent(component);
+        if ("json".equals(mode)) {
+            binding.setConsumes("application/json");
+            binding.setProduces("application/json");
+        } else if ("xml".equals(mode)) {
+            binding.setConsumes("application/xml");
+            binding.setProduces("application/xml");
+        } else if ("json_xml".equals(mode)) {
+            binding.setConsumes("application/json;application/xml");
+            binding.setProduces("application/json;application/xml");
+        }
+        binding.setBindingMode(mode);
+        binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
+        binding.setClientRequestValidation(getClientRequestValidation());
+        binding.setEnableCORS(getEnableCORS());
+        binding.setEnableNoContentResponse(getEnableNoContentResponse());
+        return binding;
     }
 
     private void addRouteDefinition(
@@ -1186,13 +1191,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             // description 2) verb description 3) rest description
             // this allows end users to define general descriptions and override
             // then per to/route or verb
-            String description = verb.getTo() != null ? verb.getTo().getDescriptionText() : route.getDescriptionText();
-            if (description == null) {
-                description = verb.getDescriptionText();
-            }
-            if (description == null) {
-                description = getDescriptionText();
-            }
+            final String description = getDescription(verb, route);
             if (description != null) {
                 options.put("description", parseText(camelContext, description));
             }
@@ -1273,6 +1272,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             route.setRestDefinition(this);
             answer.add(route);
         }
+    }
+
+    private String getDescription(VerbDefinition verb, RouteDefinition route) {
+        String description = verb.getTo() != null ? verb.getTo().getDescriptionText() : route.getDescriptionText();
+        if (description == null) {
+            description = verb.getDescriptionText();
+        }
+        if (description == null) {
+            description = getDescriptionText();
+        }
+        return description;
     }
 
     private Set<String> uriTemplating(
