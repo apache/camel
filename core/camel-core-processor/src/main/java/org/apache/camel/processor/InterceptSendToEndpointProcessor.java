@@ -147,20 +147,24 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
                 }
             };
             // only execute the after if the intercept when predicate matches
-            Predicate predicate = exchange -> {
-                Boolean whenMatches
-                        = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
-                return whenMatches == null || whenMatches;
-            };
-            AsyncProcessor after = null;
-            if (endpoint.getAfter() != null) {
-                after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
-            }
-            FilterProcessor filter = new FilterProcessor(getEndpoint().getCamelContext(), predicate, after);
+            final FilterProcessor filter = createFilterProcessor();
             pipeline = new Pipeline(getEndpoint().getCamelContext(), Arrays.asList(before, ascb, filter));
         }
 
         ServiceHelper.buildService(producer, pipeline);
+    }
+
+    private FilterProcessor createFilterProcessor() {
+        Predicate predicate = exchange -> {
+            Boolean whenMatches
+                    = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+            return whenMatches == null || whenMatches;
+        };
+        AsyncProcessor after = null;
+        if (endpoint.getAfter() != null) {
+            after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
+        }
+        return new FilterProcessor(getEndpoint().getCamelContext(), predicate, after);
     }
 
     @Override

@@ -35,25 +35,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
     public void testBackoffIdle() throws Exception {
 
         final Endpoint endpoint = getMockEndpoint("mock:foo");
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, null);
-        consumer.setBackoffMultiplier(4);
-        consumer.setBackoffIdleThreshold(2);
-
-        consumer.setPollStrategy(new PollingConsumerPollStrategy() {
-            public boolean begin(Consumer consumer, Endpoint endpoint) {
-                return true;
-            }
-
-            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
-                commits++;
-            }
-
-            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
-                return false;
-            }
-        });
-
-        consumer.start();
+        final MockScheduledPollConsumer consumer = createMockScheduledPollConsumer(endpoint);
 
         consumer.run();
         consumer.run();
@@ -85,26 +67,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
 
         final Endpoint endpoint = getMockEndpoint("mock:foo");
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
-        consumer.setBackoffMultiplier(4);
-        consumer.setBackoffErrorThreshold(3);
-
-        consumer.setPollStrategy(new PollingConsumerPollStrategy() {
-            public boolean begin(Consumer consumer, Endpoint endpoint) {
-                return true;
-            }
-
-            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
-                commits++;
-            }
-
-            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
-                errors++;
-                return false;
-            }
-        });
-
-        consumer.start();
+        final MockScheduledPollConsumer consumer = createMockScheduledPollConsumer(endpoint, expectedException);
 
         consumer.run();
         consumer.run();
@@ -129,5 +92,52 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
         assertEquals(6, errors);
 
         consumer.stop();
+    }
+
+    private static MockScheduledPollConsumer createMockScheduledPollConsumer(Endpoint endpoint, Exception expectedException) {
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
+        consumer.setBackoffMultiplier(4);
+        consumer.setBackoffErrorThreshold(3);
+
+        consumer.setPollStrategy(new PollingConsumerPollStrategy() {
+            public boolean begin(Consumer consumer, Endpoint endpoint) {
+                return true;
+            }
+
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+                commits++;
+            }
+
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+                errors++;
+                return false;
+            }
+        });
+
+        consumer.start();
+        return consumer;
+    }
+
+    private static MockScheduledPollConsumer createMockScheduledPollConsumer(Endpoint endpoint) {
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, null);
+        consumer.setBackoffMultiplier(4);
+        consumer.setBackoffIdleThreshold(2);
+
+        consumer.setPollStrategy(new PollingConsumerPollStrategy() {
+            public boolean begin(Consumer consumer, Endpoint endpoint) {
+                return true;
+            }
+
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+                commits++;
+            }
+
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+                return false;
+            }
+        });
+
+        consumer.start();
+        return consumer;
     }
 }
