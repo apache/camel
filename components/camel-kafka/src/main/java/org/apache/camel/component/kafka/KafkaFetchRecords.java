@@ -307,10 +307,6 @@ public class KafkaFetchRecords implements Runnable {
 
         SubscribeAdapter adapter = new DefaultSubscribeAdapter();
         adapter.subscribe(consumer, listener, topicInfo);
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
-        }
     }
 
     protected void startPolling() {
