@@ -234,18 +234,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         for (int i = 0; i < 500; i++) {
             int index = i % 3;
-            callables.add(() -> {
-                Producer producer = cache.acquireProducer(endpoints.get(index));
-                boolean isEqual
-                        = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
-
-                if (!isEqual) {
-                    log.info("Endpoint uri to acquire: {}, returned producer (uri): {}", endpoints.get(index).getEndpointUri(),
-                            producer.getEndpoint().getEndpointUri());
-                }
-
-                return isEqual;
-            });
+            callables.add(() -> isEqualTask(cache, endpoints, index));
         }
 
         for (int i = 1; i <= 100; i++) {
@@ -255,6 +244,19 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
                 assertEquals(true, future.get());
             }
         }
+    }
+
+    private boolean isEqualTask(DefaultProducerCache cache, List<Endpoint> endpoints, int index) {
+        Producer producer = cache.acquireProducer(endpoints.get(index));
+        boolean isEqual
+                = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
+
+        if (!isEqual) {
+            log.info("Endpoint uri to acquire: {}, returned producer (uri): {}", endpoints.get(index).getEndpointUri(),
+                    producer.getEndpoint().getEndpointUri());
+        }
+
+        return isEqual;
     }
 
     private static class MyProducerCache extends DefaultProducerCache {

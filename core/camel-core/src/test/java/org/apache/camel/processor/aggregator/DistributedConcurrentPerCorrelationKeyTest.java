@@ -41,22 +41,7 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
     @Test
     public void testAggregateConcurrentPerCorrelationKey() throws Exception {
         ExecutorService service = Executors.newFixedThreadPool(50);
-        List<Callable<Object>> tasks = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            final int id = i % 25;
-            final int choice = i % 2;
-            final int count = i;
-            tasks.add(new Callable<Object>() {
-                public Object call() throws Exception {
-                    if (choice == 0) {
-                        template.sendBodyAndHeader(uri, "" + count, "id", id);
-                    } else {
-                        template2.sendBodyAndHeader(uri, "" + count, "id", id);
-                    }
-                    return null;
-                }
-            });
-        }
+        final List<Callable<Object>> tasks = createTasks();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         MockEndpoint mock2 = getMockEndpoint2("mock:result");
@@ -70,6 +55,26 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
         int context2Count = mock2.getReceivedCounter();
 
         assertEquals(25, contextCount + context2Count);
+    }
+
+    private List<Callable<Object>> createTasks() {
+        List<Callable<Object>> tasks = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            final int id = i % 25;
+            final int choice = i % 2;
+            final int count = i;
+            tasks.add(() -> sendTask(choice, count, id));
+        }
+        return tasks;
+    }
+
+    private Object sendTask(int choice, int count, int id) {
+        if (choice == 0) {
+            template.sendBodyAndHeader(uri, "" + count, "id", id);
+        } else {
+            template2.sendBodyAndHeader(uri, "" + count, "id", id);
+        }
+        return null;
     }
 
     @Override
