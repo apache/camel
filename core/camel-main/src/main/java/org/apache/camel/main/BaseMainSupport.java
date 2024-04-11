@@ -1604,6 +1604,13 @@ public abstract class BaseMainSupport extends BaseService {
         kmp.setKeyPassword(password);
         kmp.setKeyStore(ksp);
 
+        final SSLContextParameters sslContextParameters = createSSLContextParameters(sslConfig, kmp);
+
+        camelContext.setSSLContextParameters(sslContextParameters);
+    }
+
+    private static SSLContextParameters createSSLContextParameters(
+            SSLConfigurationProperties sslConfig, KeyManagersParameters kmp) {
         TrustManagersParameters tmp = null;
         if (sslConfig.getTrustStore() != null) {
             KeyStoreParameters tsp = new KeyStoreParameters();
@@ -1621,8 +1628,7 @@ public abstract class BaseMainSupport extends BaseService {
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
-
-        camelContext.setSSLContextParameters(sslContextParameters);
+        return sslContextParameters;
     }
 
     private void setDebuggerProperties(
