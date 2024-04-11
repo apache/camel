@@ -46,6 +46,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "custommetrictags":
         case "customMetricTags": getOrCreateConfiguration(target).setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "dataquerymode":
+        case "dataQueryMode": getOrCreateConfiguration(target).setDataQueryMode(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseinstance":
@@ -160,6 +162,18 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotData(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotOnDataError(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotOnSchemaError(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotSchema(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedStartStream(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": getOrCreateConfiguration(target).setSnapshotModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshottablesorderbyrowcount":
@@ -205,6 +219,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "converters": return java.lang.String.class;
         case "custommetrictags":
         case "customMetricTags": return java.lang.String.class;
+        case "dataquerymode":
+        case "dataQueryMode": return java.lang.String.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
         case "databaseinstance":
@@ -319,6 +335,18 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotMaxThreads": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": return boolean.class;
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": return boolean.class;
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": return java.lang.String.class;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
         case "snapshottablesorderbyrowcount":
@@ -365,6 +393,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "converters": return getOrCreateConfiguration(target).getConverters();
         case "custommetrictags":
         case "customMetricTags": return getOrCreateConfiguration(target).getCustomMetricTags();
+        case "dataquerymode":
+        case "dataQueryMode": return getOrCreateConfiguration(target).getDataQueryMode();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
         case "databaseinstance":
@@ -479,6 +509,18 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotData();
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotOnDataError();
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotOnSchemaError();
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotSchema();
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedStartStream();
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": return getOrCreateConfiguration(target).getSnapshotModeCustomName();
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides();
         case "snapshottablesorderbyrowcount":

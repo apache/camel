@@ -21,8 +21,10 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(114);
+        Set<String> props = new HashSet<>(122);
         props.add("additionalProperties");
+        props.add("archiveDestinationName");
+        props.add("archiveLogHours");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
@@ -55,8 +57,6 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("internalValueConverter");
         props.add("intervalHandlingMode");
         props.add("lobEnabled");
-        props.add("logMiningArchiveDestinationName");
-        props.add("logMiningArchiveLogHours");
         props.add("logMiningArchiveLogOnlyMode");
         props.add("logMiningArchiveLogOnlyScnPollIntervalMs");
         props.add("logMiningBatchSizeDefault");
@@ -71,6 +71,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("logMiningBufferTransactionEventsThreshold");
         props.add("logMiningBufferType");
         props.add("logMiningFlushTableName");
+        props.add("logMiningIncludeRedoSql");
         props.add("logMiningQueryFilterMode");
         props.add("logMiningRestartConnection");
         props.add("logMiningScnGapDetectionGapSizeMin");
@@ -118,6 +119,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("signalEnabledChannels");
         props.add("signalPollIntervalMs");
         props.add("skippedOperations");
+        props.add("snapshotDatabaseErrorsMaxRetries");
         props.add("snapshotDelayMs");
         props.add("snapshotEnhancePredicateScn");
         props.add("snapshotFetchSize");
@@ -126,6 +128,12 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("snapshotLockingMode");
         props.add("snapshotMaxThreads");
         props.add("snapshotMode");
+        props.add("snapshotModeConfigurationBasedSnapshotData");
+        props.add("snapshotModeConfigurationBasedSnapshotOnDataError");
+        props.add("snapshotModeConfigurationBasedSnapshotOnSchemaError");
+        props.add("snapshotModeConfigurationBasedSnapshotSchema");
+        props.add("snapshotModeConfigurationBasedStartStream");
+        props.add("snapshotModeCustomName");
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");

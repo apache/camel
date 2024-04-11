@@ -78,8 +78,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbAuthsource": getOrCreateConfiguration(target).setMongodbAuthsource(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbconnecttimeoutms":
         case "mongodbConnectTimeoutMs": getOrCreateConfiguration(target).setMongodbConnectTimeoutMs(property(camelContext, int.class, value)); return true;
-        case "mongodbconnectionmode":
-        case "mongodbConnectionMode": getOrCreateConfiguration(target).setMongodbConnectionMode(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbconnectionstring":
         case "mongodbConnectionString": getOrCreateConfiguration(target).setMongodbConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbheartbeatfrequencyms":
@@ -152,6 +150,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotData(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotOnDataError(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotOnSchemaError(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotSchema(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedStartStream(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": getOrCreateConfiguration(target).setSnapshotModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": getOrCreateConfiguration(target).setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
@@ -217,8 +227,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbAuthsource": return java.lang.String.class;
         case "mongodbconnecttimeoutms":
         case "mongodbConnectTimeoutMs": return int.class;
-        case "mongodbconnectionmode":
-        case "mongodbConnectionMode": return java.lang.String.class;
         case "mongodbconnectionstring":
         case "mongodbConnectionString": return java.lang.String.class;
         case "mongodbheartbeatfrequencyms":
@@ -291,6 +299,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "snapshotMaxThreads": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": return boolean.class;
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": return boolean.class;
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
         case "tombstonesondelete":
@@ -357,8 +377,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbAuthsource": return getOrCreateConfiguration(target).getMongodbAuthsource();
         case "mongodbconnecttimeoutms":
         case "mongodbConnectTimeoutMs": return getOrCreateConfiguration(target).getMongodbConnectTimeoutMs();
-        case "mongodbconnectionmode":
-        case "mongodbConnectionMode": return getOrCreateConfiguration(target).getMongodbConnectionMode();
         case "mongodbconnectionstring":
         case "mongodbConnectionString": return getOrCreateConfiguration(target).getMongodbConnectionString();
         case "mongodbheartbeatfrequencyms":
@@ -431,6 +449,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotData();
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotOnDataError();
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotOnSchemaError();
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotSchema();
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedStartStream();
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": return getOrCreateConfiguration(target).getSnapshotModeCustomName();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return getOrCreateConfiguration(target).getSourceinfoStructMaker();
         case "tombstonesondelete":

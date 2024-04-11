@@ -21,7 +21,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(68);
+        Set<String> props = new HashSet<>(73);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("captureMode");
@@ -48,7 +48,6 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("maxQueueSizeInBytes");
         props.add("mongodbAuthsource");
         props.add("mongodbConnectTimeoutMs");
-        props.add("mongodbConnectionMode");
         props.add("mongodbConnectionString");
         props.add("mongodbHeartbeatFrequencyMs");
         props.add("mongodbPassword");
@@ -86,6 +85,12 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("snapshotIncludeCollectionList");
         props.add("snapshotMaxThreads");
         props.add("snapshotMode");
+        props.add("snapshotModeConfigurationBasedSnapshotData");
+        props.add("snapshotModeConfigurationBasedSnapshotOnDataError");
+        props.add("snapshotModeConfigurationBasedSnapshotOnSchemaError");
+        props.add("snapshotModeConfigurationBasedSnapshotSchema");
+        props.add("snapshotModeConfigurationBasedStartStream");
+        props.add("snapshotModeCustomName");
         props.add("sourceinfoStructMaker");
         props.add("tombstonesOnDelete");
         props.add("topicNamingStrategy");

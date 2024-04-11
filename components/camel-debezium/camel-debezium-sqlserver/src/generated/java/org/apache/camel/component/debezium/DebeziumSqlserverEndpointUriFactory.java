@@ -21,7 +21,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(78);
+        Set<String> props = new HashSet<>(85);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -30,6 +30,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("columnPropagateSourceType");
         props.add("converters");
         props.add("customMetricTags");
+        props.add("dataQueryMode");
         props.add("databaseHostname");
         props.add("databaseInstance");
         props.add("databaseNames");
@@ -90,6 +91,12 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("snapshotLockTimeoutMs");
         props.add("snapshotMaxThreads");
         props.add("snapshotMode");
+        props.add("snapshotModeConfigurationBasedSnapshotData");
+        props.add("snapshotModeConfigurationBasedSnapshotOnDataError");
+        props.add("snapshotModeConfigurationBasedSnapshotOnSchemaError");
+        props.add("snapshotModeConfigurationBasedSnapshotSchema");
+        props.add("snapshotModeConfigurationBasedStartStream");
+        props.add("snapshotModeCustomName");
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");

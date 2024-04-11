@@ -182,8 +182,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "slotRetryDelayMs": getOrCreateConfiguration(target).setSlotRetryDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "slotstreamparams":
         case "slotStreamParams": getOrCreateConfiguration(target).setSlotStreamParams(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotcustomclass":
-        case "snapshotCustomClass": getOrCreateConfiguration(target).setSnapshotCustomClass(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
@@ -192,10 +190,30 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotIncludeCollectionList": getOrCreateConfiguration(target).setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": getOrCreateConfiguration(target).setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "snapshotlockingmode":
+        case "snapshotLockingMode": getOrCreateConfiguration(target).setSnapshotLockingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotlockingmodecustomname":
+        case "snapshotLockingModeCustomName": getOrCreateConfiguration(target).setSnapshotLockingModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotData(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotOnDataError(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotOnSchemaError(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotSchema(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedStartStream(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": getOrCreateConfiguration(target).setSnapshotModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotquerymode":
+        case "snapshotQueryMode": getOrCreateConfiguration(target).setSnapshotQueryMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotquerymodecustomname":
+        case "snapshotQueryModeCustomName": getOrCreateConfiguration(target).setSnapshotQueryModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshottablesorderbyrowcount":
@@ -383,8 +401,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "slotRetryDelayMs": return long.class;
         case "slotstreamparams":
         case "slotStreamParams": return java.lang.String.class;
-        case "snapshotcustomclass":
-        case "snapshotCustomClass": return java.lang.String.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
         case "snapshotfetchsize":
@@ -393,10 +409,30 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotIncludeCollectionList": return java.lang.String.class;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return long.class;
+        case "snapshotlockingmode":
+        case "snapshotLockingMode": return java.lang.String.class;
+        case "snapshotlockingmodecustomname":
+        case "snapshotLockingModeCustomName": return java.lang.String.class;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": return boolean.class;
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": return boolean.class;
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": return java.lang.String.class;
+        case "snapshotquerymode":
+        case "snapshotQueryMode": return java.lang.String.class;
+        case "snapshotquerymodecustomname":
+        case "snapshotQueryModeCustomName": return java.lang.String.class;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
         case "snapshottablesorderbyrowcount":
@@ -585,8 +621,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "slotRetryDelayMs": return getOrCreateConfiguration(target).getSlotRetryDelayMs();
         case "slotstreamparams":
         case "slotStreamParams": return getOrCreateConfiguration(target).getSlotStreamParams();
-        case "snapshotcustomclass":
-        case "snapshotCustomClass": return getOrCreateConfiguration(target).getSnapshotCustomClass();
         case "snapshotdelayms":
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
         case "snapshotfetchsize":
@@ -595,10 +629,30 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotIncludeCollectionList": return getOrCreateConfiguration(target).getSnapshotIncludeCollectionList();
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return getOrCreateConfiguration(target).getSnapshotLockTimeoutMs();
+        case "snapshotlockingmode":
+        case "snapshotLockingMode": return getOrCreateConfiguration(target).getSnapshotLockingMode();
+        case "snapshotlockingmodecustomname":
+        case "snapshotLockingModeCustomName": return getOrCreateConfiguration(target).getSnapshotLockingModeCustomName();
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotData();
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotOnDataError();
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotOnSchemaError();
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotSchema();
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedStartStream();
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": return getOrCreateConfiguration(target).getSnapshotModeCustomName();
+        case "snapshotquerymode":
+        case "snapshotQueryMode": return getOrCreateConfiguration(target).getSnapshotQueryMode();
+        case "snapshotquerymodecustomname":
+        case "snapshotQueryModeCustomName": return getOrCreateConfiguration(target).getSnapshotQueryModeCustomName();
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides();
         case "snapshottablesorderbyrowcount":

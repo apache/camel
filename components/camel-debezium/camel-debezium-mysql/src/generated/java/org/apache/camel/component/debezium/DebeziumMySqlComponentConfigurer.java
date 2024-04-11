@@ -204,8 +204,24 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotData(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotOnDataError(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotOnSchemaError(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedSnapshotSchema(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration(target).setSnapshotModeConfigurationBasedStartStream(property(camelContext, boolean.class, value)); return true;
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": getOrCreateConfiguration(target).setSnapshotModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotnewtables":
         case "snapshotNewTables": getOrCreateConfiguration(target).setSnapshotNewTables(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotquerymode":
+        case "snapshotQueryMode": getOrCreateConfiguration(target).setSnapshotQueryMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotquerymodecustomname":
+        case "snapshotQueryModeCustomName": getOrCreateConfiguration(target).setSnapshotQueryModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshottablesorderbyrowcount":
@@ -409,8 +425,24 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "snapshotMaxThreads": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": return boolean.class;
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": return boolean.class;
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": return boolean.class;
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": return java.lang.String.class;
         case "snapshotnewtables":
         case "snapshotNewTables": return java.lang.String.class;
+        case "snapshotquerymode":
+        case "snapshotQueryMode": return java.lang.String.class;
+        case "snapshotquerymodecustomname":
+        case "snapshotQueryModeCustomName": return java.lang.String.class;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
         case "snapshottablesorderbyrowcount":
@@ -615,8 +647,24 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
+        case "snapshotmodeconfigurationbasedsnapshotdata":
+        case "snapshotModeConfigurationBasedSnapshotData": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotData();
+        case "snapshotmodeconfigurationbasedsnapshotondataerror":
+        case "snapshotModeConfigurationBasedSnapshotOnDataError": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotOnDataError();
+        case "snapshotmodeconfigurationbasedsnapshotonschemaerror":
+        case "snapshotModeConfigurationBasedSnapshotOnSchemaError": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotOnSchemaError();
+        case "snapshotmodeconfigurationbasedsnapshotschema":
+        case "snapshotModeConfigurationBasedSnapshotSchema": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedSnapshotSchema();
+        case "snapshotmodeconfigurationbasedstartstream":
+        case "snapshotModeConfigurationBasedStartStream": return getOrCreateConfiguration(target).isSnapshotModeConfigurationBasedStartStream();
+        case "snapshotmodecustomname":
+        case "snapshotModeCustomName": return getOrCreateConfiguration(target).getSnapshotModeCustomName();
         case "snapshotnewtables":
         case "snapshotNewTables": return getOrCreateConfiguration(target).getSnapshotNewTables();
+        case "snapshotquerymode":
+        case "snapshotQueryMode": return getOrCreateConfiguration(target).getSnapshotQueryMode();
+        case "snapshotquerymodecustomname":
+        case "snapshotQueryModeCustomName": return getOrCreateConfiguration(target).getSnapshotQueryModeCustomName();
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides();
         case "snapshottablesorderbyrowcount":
