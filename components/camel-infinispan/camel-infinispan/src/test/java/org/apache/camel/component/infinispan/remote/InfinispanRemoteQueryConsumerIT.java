@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.time.Duration;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.marshall.MarshallerUtil;
 import org.infinispan.commons.api.BasicCache;
@@ -131,6 +134,8 @@ public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSu
     protected void beforeEach() {
         // cleanup the default test cache before each run
         getCache().clear();
+
+        Awaitility.await().atMost(Duration.ofSeconds(1)).until(() -> cacheContainer.isStarted());
     }
 
     @Override
