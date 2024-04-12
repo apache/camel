@@ -128,7 +128,7 @@ public class ValidatorUriDsl(
 
   /**
    * To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The
-   * default resource resolver factory resturns a resource resolver which can read files from the class
+   * default resource resolver factory returns a resource resolver which can read files from the class
    * path and file system. Do not use together with resourceResolver.
    */
   public fun resourceResolverFactory(resourceResolverFactory: String) {
