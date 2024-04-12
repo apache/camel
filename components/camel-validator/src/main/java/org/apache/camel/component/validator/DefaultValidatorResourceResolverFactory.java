@@ -21,7 +21,8 @@ import org.w3c.dom.ls.LSResourceResolver;
 import org.apache.camel.CamelContext;
 
 /**
- * Default resource resolver factory which instantiates the default resource resolver ({@link DefaultLSResourceResolver}).
+ * Default resource resolver factory which instantiates the default resource resolver
+ * ({@link DefaultLSResourceResolver}).
  */
 public class DefaultValidatorResourceResolverFactory implements ValidatorResourceResolverFactory {
 
