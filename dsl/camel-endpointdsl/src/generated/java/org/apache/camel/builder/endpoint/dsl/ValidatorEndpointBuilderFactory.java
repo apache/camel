@@ -251,7 +251,7 @@ public interface ValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom LSResourceResolver which depends on a dynamic
-         * endpoint resource URI. The default resource resolver factory resturns
+         * endpoint resource URI. The default resource resolver factory returns
          * a resource resolver which can read files from the class path and file
          * system. Do not use together with resourceResolver.
          * 
@@ -270,7 +270,7 @@ public interface ValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom LSResourceResolver which depends on a dynamic
-         * endpoint resource URI. The default resource resolver factory resturns
+         * endpoint resource URI. The default resource resolver factory returns
          * a resource resolver which can read files from the class path and file
          * system. Do not use together with resourceResolver.
          * 
