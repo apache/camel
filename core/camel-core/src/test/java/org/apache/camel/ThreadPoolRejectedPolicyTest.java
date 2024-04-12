@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.util.concurrent.Rejectable;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ThreadPoolRejectedPolicyTest extends TestSupport {
 
     @Test
-    public void testAbortAsRejectedExecutionHandler() throws InterruptedException {
+    public void testAbortAsRejectedExecutionHandler() {
 
         final ExecutorService executorService
                 = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
@@ -45,11 +46,9 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         final MockRunnable task2 = new MockRunnable();
         final Future<?> result2 = executorService.submit(task2);
         final MockCallable<String> task3 = new MockCallable<>();
-        try {
-            executorService.submit(task3);
-            fail("Third task should have been rejected by a threadpool is full with 1 task and queue is full with 1 task.");
-        } catch (RejectedExecutionException e) {
-        }
+
+        Assertions.assertThrows(RejectedExecutionException.class, () -> executorService.submit(task3),
+                "Third task should have been rejected by a threadpool is full with 1 task and queue is full with 1 task.");
 
         shutdownAndAwait(executorService);
 
