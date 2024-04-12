@@ -22,12 +22,14 @@ import java.util.Random;
 
 import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.DataType;
+import io.milvus.grpc.QueryResults;
 import io.milvus.param.IndexType;
 import io.milvus.param.MetricType;
 import io.milvus.param.collection.CreateCollectionParam;
 import io.milvus.param.collection.FieldType;
 import io.milvus.param.dml.DeleteParam;
 import io.milvus.param.dml.InsertParam;
+import io.milvus.param.dml.QueryParam;
 import io.milvus.param.dml.UpsertParam;
 import io.milvus.param.highlevel.dml.SearchSimpleParam;
 import io.milvus.param.highlevel.dml.response.SearchResponse;
@@ -206,6 +208,27 @@ public class MilvusComponentIT extends MilvusTestSupport {
 
     @Test
     @Order(6)
+    public void query() {
+        QueryParam searchSimpleParam = QueryParam.newBuilder()
+                .withCollectionName("test")
+                .withExpr("userAge>0")
+                .withOutFields(Lists.newArrayList("userAge"))
+                .withConsistencyLevel(ConsistencyLevelEnum.STRONG)
+                .build();
+
+        Exchange result = fluentTemplate.to("milvus:test")
+                .withHeader(Milvus.Headers.ACTION, MilvusAction.QUERY)
+                .withBody(
+                        searchSimpleParam)
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(QueryResults.class).getFieldsDataCount() == 2);
+    }
+
+    @Test
+    @Order(7)
     public void delete() {
         DeleteParam delete = DeleteParam.newBuilder()
                 .withCollectionName("test")

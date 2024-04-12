@@ -22,5 +22,6 @@ public enum MilvusAction {
     UPSERT,
     INSERT,
     SEARCH,
+    QUERY,
     DELETE
 }

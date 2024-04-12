@@ -20,12 +20,14 @@ import java.util.concurrent.ExecutorService;
 
 import io.milvus.client.MilvusClient;
 import io.milvus.grpc.MutationResult;
+import io.milvus.grpc.QueryResults;
 import io.milvus.param.R;
 import io.milvus.param.RpcStatus;
 import io.milvus.param.collection.CreateCollectionParam;
 import io.milvus.param.collection.LoadCollectionParam;
 import io.milvus.param.dml.DeleteParam;
 import io.milvus.param.dml.InsertParam;
+import io.milvus.param.dml.QueryParam;
 import io.milvus.param.dml.UpsertParam;
 import io.milvus.param.highlevel.dml.SearchSimpleParam;
 import io.milvus.param.highlevel.dml.response.SearchResponse;
@@ -81,6 +83,9 @@ public class MilvusProducer extends DefaultProducer {
                     break;
                 case SEARCH:
                     search(exchange);
+                    break;
+                case QUERY:
+                    query(exchange);
                     break;
                 case DELETE:
                     delete(exchange);
@@ -150,6 +155,19 @@ public class MilvusProducer extends DefaultProducer {
         this.client.loadCollection(
                 LoadCollectionParam.newBuilder().withCollectionName(getEndpoint().getCollection()).withSyncLoad(true).build());
         R<SearchResponse> result = this.client.search(body);
+
+        handleResponseStatus(result);
+        populateResponse(result, exchange);
+
+    }
+
+    private void query(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        final QueryParam body = in.getMandatoryBody(QueryParam.class);
+
+        this.client.loadCollection(
+                LoadCollectionParam.newBuilder().withCollectionName(getEndpoint().getCollection()).withSyncLoad(true).build());
+        R<QueryResults> result = this.client.query(body);
 
         handleResponseStatus(result);
         populateResponse(result, exchange);
