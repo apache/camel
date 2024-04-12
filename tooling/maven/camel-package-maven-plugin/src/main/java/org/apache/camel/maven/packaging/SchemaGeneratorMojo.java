@@ -918,7 +918,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // description
         docComment = findJavaDoc(null, "description", null, classElement, true);
-        ep = createOption("description", "Description", "element", "java.lang.String", false, "",
+        ep = createOption("description", "Description", "attribute", "java.lang.String", false, "",
                 "",
                 docComment, false, null, false, null, null,
                 false, false);
