@@ -431,7 +431,7 @@
         <saxon-version>12.4</saxon-version>
         <scala-datasonnet-version>2.13.13</scala-datasonnet-version>
         <shiro-version>2.0.0</shiro-version>
-        <slack-api-model-version>1.38.3</slack-api-model-version>
+        <slack-api-model-version>1.39.0</slack-api-model-version>
         <slf4j-api-version>2.0.12</slf4j-api-version>
         <slf4j-version>2.0.12</slf4j-version>
         <smack-version>4.3.5</smack-version>
