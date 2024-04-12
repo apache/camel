@@ -43,10 +43,14 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
         error.assertIsSatisfied();
     }
 
+    protected Object getBean() {
+        return new MyBean();
+    }
+
     @Override
     protected Registry createCamelRegistry() throws Exception {
         Registry answer = super.createCamelRegistry();
-        answer.bind("myBean", new MyBean());
+        answer.bind("myBean", getBean());
         return answer;
     }
 
@@ -65,14 +69,15 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
     }
 
     public static class MyBean {
+        private static final String MESSAGE = "I'm being thrown from " + BeanWithExchangeExceptionAnnotationTest.class;
 
         public void throwException() throws MyCustomException {
-            throw new MyCustomException("I'm being thrown!!");
+            throw new MyCustomException(MESSAGE);
         }
 
         public void handleException(@ExchangeException Exception exception) {
             assertNotNull(exception);
-            assertEquals("I'm being thrown!!", exception.getMessage());
+            assertEquals(MESSAGE, exception.getMessage());
         }
     }
 }

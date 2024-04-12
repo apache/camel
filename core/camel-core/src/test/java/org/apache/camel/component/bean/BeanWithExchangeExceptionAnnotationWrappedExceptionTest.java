@@ -25,13 +25,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithExchangeExceptionAnnotationWrappedExceptionTest extends BeanWithExchangeExceptionAnnotationTest {
 
+    @Override
+    protected Object getBean() {
+        return new MyBean();
+    }
+
     public static class MyBean {
+        private static final String MESSAGE
+                = "I'm being thrown from " + BeanWithExchangeExceptionAnnotationWrappedExceptionTest.class;
 
         public void throwException() throws Exception {
             // wrap the problem in an IO exception
-            IOException io = new IOException("Forced");
-            io.initCause(new MyCustomException("I'm being thrown!!"));
-            throw io;
+            throw new IOException("Forced", new MyCustomException(MESSAGE));
         }
 
         // to unit test that we can set a type to the @ExchangeException that we
@@ -39,7 +44,7 @@ public class BeanWithExchangeExceptionAnnotationWrappedExceptionTest extends Bea
         // in the exception hieracy
         public void handleException(@ExchangeException MyCustomException custom) {
             assertNotNull(custom);
-            assertEquals("I'm being thrown!!", custom.getMessage());
+            assertEquals(MESSAGE, custom.getMessage());
         }
     }
 }
