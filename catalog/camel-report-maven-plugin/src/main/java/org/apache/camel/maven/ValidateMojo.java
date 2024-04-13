@@ -45,12 +45,12 @@ import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -67,7 +67,7 @@ import static org.apache.camel.maven.ReportPluginCommon.stripRootPath;
  * configuration files such as application.properties.
  */
 @Mojo(name = "validate", threadSafe = true)
-public class ValidateMojo extends AbstractExecMojo {
+public class ValidateMojo extends AbstractMojo {
 
     /**
      * The maven project.
@@ -76,7 +76,13 @@ public class ValidateMojo extends AbstractExecMojo {
     protected MavenProject project;
 
     /**
-     * Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level
+     * Skip the validation execution.
+     */
+    @Parameter(property = "camel.skipValidation", defaultValue = "false")
+    private boolean skip;
+
+    /**
+     * Whether to fail if invalid Camel endpoints was found. By default, the plugin logs the errors at WARN level
      */
     @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
@@ -166,7 +172,7 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean duplicateRouteId;
 
     /**
-     * Whether to validate direct/seda endpoints sending to non existing consumers.
+     * Whether to validate direct/seda endpoints sending to non-existing consumers.
      */
     @Parameter(property = "camel.directOrSedaPairCheck", defaultValue = "true")
     private boolean directOrSedaPairCheck;
@@ -175,11 +181,16 @@ public class ValidateMojo extends AbstractExecMojo {
      * Location of configuration files to validate. The default is application.properties Multiple values can be
      * separated by comma and use wildcard pattern matching.
      */
-    @Parameter(property = "camel.configurationFiles")
+    @Parameter(property = "camel.configurationFiles", defaultValue = "application.properties")
     private String configurationFiles = "application.properties";
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            getLog().info("skipping route validation as per configuration");
+            return;
+        }
+
         CamelCatalog catalog = new DefaultCamelCatalog();
         // add activemq as known component
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
