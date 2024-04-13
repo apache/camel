@@ -28,14 +28,16 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
     private static final int DEFAULT_AMQP_PORT = 5672;
     private static final int DEFAULT_ADMIN_PORT = 8161;
     private static final int DEFAULT_ACCEPTOR_PORT = 61616;
+    private static final String DEFAULT_USERNAME = "admin";
+    private static final String DEFAULT_PASSWORD = "admin";
 
     public ArtemisContainer() {
         super(DockerImageName
                 .parse(LocalPropertyResolver.getProperty(ArtemisContainer.class, ArtemisProperties.ARTEMIS_CONTAINER)));
 
         this.withEnv("AMQ_EXTRA_ARGS", "--relax-jolokia")
-                .withEnv("AMQ_USER", "admin")
-                .withEnv("AMQ_PASSWORD", "admin")
+                .withEnv("AMQ_USER", DEFAULT_USERNAME)
+                .withEnv("AMQ_PASSWORD", DEFAULT_PASSWORD)
                 .withExposedPorts(DEFAULT_MQTT_PORT, DEFAULT_AMQP_PORT,
                         DEFAULT_ADMIN_PORT, DEFAULT_ACCEPTOR_PORT)
                 .waitingFor(Wait.forListeningPort());
@@ -129,5 +131,13 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
      */
     public String getOpenwireEndpoint() {
         return String.format("tcp://%s:%d", getHost(), openwirePort());
+    }
+
+    public String username() {
+        return DEFAULT_USERNAME;
+    }
+
+    public String password() {
+        return DEFAULT_PASSWORD;
     }
 }
