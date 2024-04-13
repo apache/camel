@@ -348,9 +348,9 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Enable stream caching for this route.
      *
-     * @param  streamCache whether to use stream caching (true or false), the value can be a property placeholder
-     * @return             the builder
-     * @deprecated use {@link #streamCache(String)}
+     * @param      streamCache whether to use stream caching (true or false), the value can be a property placeholder
+     * @return                 the builder
+     * @deprecated             use {@link #streamCache(String)}
      */
     @Deprecated
     public RouteDefinition streamCaching(String streamCache) {
@@ -406,8 +406,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Enables or disables tracing for this route.
      *
-     * @param  trace   whether to use tracing (true or false)
-     * @return         the builder
+     * @param  trace whether to use tracing (true or false)
+     * @return       the builder
      */
     public RouteDefinition trace(boolean trace) {
         setTrace(Boolean.toString(trace));
@@ -417,8 +417,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Enables or disables tracing for this route.
      *
-     * @param  trace   whether to use tracing (true or false), the value can be a property placeholder
-     * @return         the builder
+     * @param  trace whether to use tracing (true or false), the value can be a property placeholder
+     * @return       the builder
      */
     public RouteDefinition trace(String trace) {
         setTrace(trace);
