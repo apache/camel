@@ -857,6 +857,14 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 null, false, null, null, false, false);
         eipOptions.add(ep);
 
+        // error handler
+        docComment = findJavaDoc(null, "errorHandler", null, classElement, true);
+        ep = createOption("errorHandler", "Error Handler", "element", "org.apache.camel.model.ErrorHandlerDefinition", false,
+                "",
+                "error", docComment, false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
+
         // input type
         docComment = findJavaDoc(null, "inputType", null, classElement, true);
         ep = createOption("inputType", "Input Type", "element", "org.apache.camel.model.InputTypeDefinition", false, "",

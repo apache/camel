@@ -56,7 +56,7 @@ import org.apache.camel.spi.RoutePolicy;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")
-@XmlType(propOrder = { "routeProperties", "input", "inputType", "outputType", "outputs" })
+@XmlType(propOrder = { "routeProperties", "errorHandler", "input", "inputType", "outputType", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends OutputDefinition<RouteDefinition>
@@ -80,6 +80,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private String shutdownRunningTask;
     private String errorHandlerRef;
     private ErrorHandlerFactory errorHandlerFactory;
+    private ErrorHandlerDefinition errorHandler;
     // keep state whether the error handler is context scoped or not
     // (will by default be context scoped of no explicit error handler
     // configured)
@@ -1065,6 +1066,21 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     public String getErrorHandlerRef() {
         return errorHandlerRef;
+    }
+
+    public ErrorHandlerDefinition getErrorHandler() {
+        return errorHandler;
+    }
+
+    /**
+     * Sets the error handler to use for this route
+     */
+    @XmlElement
+    public void setErrorHandler(ErrorHandlerDefinition errorHandler) {
+        this.errorHandler = errorHandler;
+        if (errorHandler != null) {
+            this.errorHandlerFactory = errorHandler.getErrorHandlerType();
+        }
     }
 
     /**

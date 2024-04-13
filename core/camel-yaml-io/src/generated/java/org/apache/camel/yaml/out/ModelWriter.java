@@ -2115,6 +2115,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("group", def.getGroup());
         doWriteAttribute("errorHandlerRef", def.getErrorHandlerRef());
         doWriteList(null, "routeProperty", def.getRouteProperties(), this::doWritePropertyDefinition);
+        doWriteElement("errorHandler", def.getErrorHandler(), this::doWriteErrorHandlerDefinition);
         doWriteElement(null, def.getInput(), this::doWriteFromDefinitionRef);
         doWriteElement(null, def.getInputType(), this::doWriteInputTypeDefinitionRef);
         doWriteElement(null, def.getOutputType(), this::doWriteOutputTypeDefinitionRef);

@@ -12176,6 +12176,7 @@ Reference to the routes in the xml dsl.
       <xs:extension base="tns:output">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="routeProperty" type="tns:propertyDefinition"/>
+          <xs:element minOccurs="0" ref="tns:errorHandler"/>
           <xs:element minOccurs="0" ref="tns:from"/>
           <xs:element minOccurs="0" ref="tns:inputType"/>
           <xs:element minOccurs="0" ref="tns:outputType"/>
