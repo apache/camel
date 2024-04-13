@@ -107,6 +107,7 @@ import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
 import static org.apache.camel.main.MainHelper.validateOptionAndValue;
 import static org.apache.camel.util.LocationHelper.locationSummary;
 import static org.apache.camel.util.StringHelper.matches;
+import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
 
 /**
  * Base class for main implementations to allow bootstrapping Camel in standalone mode.
@@ -994,115 +995,115 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties routeControllerProperties = new OrderedLocationProperties();
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
-            if (key.startsWith("camel.context.")) {
+            if (startsWithIgnoreCase(key, "camel.context.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
                 validateOptionAndValue(key, option, value);
                 contextProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.resilience4j.")) {
+            } else if (startsWithIgnoreCase(key, "camel.resilience4j.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(19);
                 validateOptionAndValue(key, option, value);
                 resilience4jProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.faulttolerance.")) {
+            } else if (startsWithIgnoreCase(key, "camel.faulttolerance.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(21);
                 validateOptionAndValue(key, option, value);
                 faultToleranceProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.rest.")) {
+            } else if (startsWithIgnoreCase(key, "camel.rest.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
                 validateOptionAndValue(key, option, value);
                 restProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.vault.")) {
+            } else if (startsWithIgnoreCase(key, "camel.vault.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(12);
                 validateOptionAndValue(key, option, value);
                 vaultProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.threadpool.")) {
+            } else if (startsWithIgnoreCase(key, "camel.threadpool.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(17);
                 validateOptionAndValue(key, option, value);
                 threadPoolProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.health.")) {
+            } else if (startsWithIgnoreCase(key, "camel.health.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 healthProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.lra.")) {
+            } else if (startsWithIgnoreCase(key, "camel.lra.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
                 lraProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.opentelemetry.")) {
+            } else if (startsWithIgnoreCase(key, "camel.opentelemetry.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 otelProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.metrics.")) {
+            } else if (startsWithIgnoreCase(key, "camel.metrics.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
                 validateOptionAndValue(key, option, value);
                 metricsProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.routeTemplate")) {
+            } else if (startsWithIgnoreCase(key, "camel.routeTemplate")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(19);
                 validateOptionAndValue(key, option, value);
                 routeTemplateProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.devConsole.")) {
+            } else if (startsWithIgnoreCase(key, "camel.devConsole.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(17);
                 validateOptionAndValue(key, option, value);
                 devConsoleProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.variable.")) {
+            } else if (startsWithIgnoreCase(key, "camel.variable.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(15);
                 validateOptionAndValue(key, option, value);
                 variableProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.beans.")) {
+            } else if (startsWithIgnoreCase(key, "camel.beans.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(12);
                 validateOptionAndValue(key, option, value);
                 beansProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.globalOptions.")) {
+            } else if (startsWithIgnoreCase(key, "camel.globalOptions.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 globalOptions.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.server.")) {
+            } else if (startsWithIgnoreCase(key, "camel.server.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 httpServerProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.ssl.")) {
+            } else if (startsWithIgnoreCase(key, "camel.ssl.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
                 sslProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.debug.")) {
+            } else if (startsWithIgnoreCase(key, "camel.debug.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(12);
                 validateOptionAndValue(key, option, value);
                 debuggerProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.routeController.")) {
+            } else if (startsWithIgnoreCase(key, "camel.routeController.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(22);
