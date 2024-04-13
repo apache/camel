@@ -45,14 +45,15 @@ import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.jboss.forge.roaster.Roaster;
@@ -71,7 +72,7 @@ import static org.apache.camel.catalog.common.FileUtil.findJavaFiles;
  * configuration files such as application.properties.
  */
 @Mojo(name = "validate", threadSafe = true)
-public class ValidateMojo extends AbstractExecMojo {
+public class ValidateMojo extends AbstractMojo {
 
     /**
      * The maven project.
@@ -79,8 +80,17 @@ public class ValidateMojo extends AbstractExecMojo {
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    private MavenSession session;
+
     /**
-     * Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level
+     * Skip the validation execution.
+     */
+    @Parameter(property = "camel.skipValidation", defaultValue = "false")
+    private boolean skip;
+
+    /**
+     * Whether to fail if invalid Camel endpoints was found. By default, the plugin logs the errors at WARN level
      */
     @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
@@ -185,7 +195,7 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean duplicateRouteId;
 
     /**
-     * Whether to validate direct/seda endpoints sending to non existing consumers.
+     * Whether to validate direct/seda endpoints sending to non-existing consumers.
      */
     @Parameter(property = "camel.directOrSedaPairCheck", defaultValue = "true")
     private boolean directOrSedaPairCheck;
@@ -201,8 +211,8 @@ public class ValidateMojo extends AbstractExecMojo {
      * Location of configuration files to validate. The default is application.properties Multiple values can be
      * separated by comma and use wildcard pattern matching.
      */
-    @Parameter(property = "camel.configurationFiles")
-    private String configurationFiles = "application.properties";
+    @Parameter(property = "camel.configurationFiles", defaultValue = "application.properties")
+    private String configurationFiles;
 
     @Component
     private RepositorySystem repositorySystem;
@@ -213,16 +223,21 @@ public class ValidateMojo extends AbstractExecMojo {
     /**
      * javaFiles in memory cache, useful for multi modules maven project
      */
-    private static Set<File> javaFiles = new LinkedHashSet<>();
+    private static final Set<File> javaFiles = new LinkedHashSet<>();
     /**
      * xmlFiles in memory cache, useful for multi modules maven project
      */
-    private static Set<File> xmlFiles = new LinkedHashSet<>();
+    private static final Set<File> xmlFiles = new LinkedHashSet<>();
 
-    private static Set<String> downloadedArtifacts = new LinkedHashSet<>();
+    private static final Set<String> downloadedArtifacts = new LinkedHashSet<>();
 
     @Override
     public void execute() throws MojoExecutionException {
+        if (skip) {
+            getLog().info("skipping route validation as per configuration");
+            return;
+        }
+
         // Download extra sources only if artifacts sources are defined and the current project is not a parent project
         if (!"pom".equals(project.getPackaging()) && sourcesArtifacts != null && sourcesArtifacts.length > 0) {
             // setup MavenDownloader, it will be used to download and locate artifacts declared via sourcesArtifacts
@@ -239,7 +254,7 @@ public class ValidateMojo extends AbstractExecMojo {
                     });
 
             try (MavenDownloaderImpl downloader
-                    = new MavenDownloaderImpl(repositorySystem, repositorySystemSession, getSession().getSettings())) {
+                    = new MavenDownloaderImpl(repositorySystem, repositorySystemSession, session.getSettings())) {
                 downloader.init();
                 Set<String> repositorySet = Arrays.stream(extraMavenRepositories)
                         .collect(Collectors.toSet());
@@ -298,7 +313,7 @@ public class ValidateMojo extends AbstractExecMojo {
         catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
         // enable loading other catalog versions dynamically
         catalog.setVersionManager(
-                new MavenVersionManager(repositorySystem, repositorySystemSession, getSession().getSettings()));
+                new MavenVersionManager(repositorySystem, repositorySystemSession, session.getSettings()));
         // use custom class loading
         catalog.getJSonSchemaResolver().setClassLoader(ValidateMojo.class.getClassLoader());
         // enable caching
