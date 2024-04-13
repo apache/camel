@@ -5243,7 +5243,7 @@
           "startupOrder" : {
             "type" : "number"
           },
-          "streamCaching" : {
+          "streamCache" : {
             "type" : "boolean"
           },
           "trace" : {

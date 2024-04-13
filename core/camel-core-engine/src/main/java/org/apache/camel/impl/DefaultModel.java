@@ -255,7 +255,7 @@ public class DefaultModel implements Model {
                                 r.setErrorHandlerRef(toBeInlined.getErrorHandlerRef());
                                 r.setPrecondition(toBeInlined.getPrecondition());
                                 if (toBeInlined.isErrorHandlerFactorySet()) {
-                                    r.setErrorHandlerFactory(toBeInlined.getErrorHandlerFactory());
+                                    r.setErrorHandler(toBeInlined.getErrorHandler());
                                 }
                             }
                         }

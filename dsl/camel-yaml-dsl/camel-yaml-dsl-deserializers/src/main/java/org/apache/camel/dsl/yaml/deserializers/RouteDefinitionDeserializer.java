@@ -28,6 +28,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
@@ -47,7 +49,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "autoStartup", type = "boolean"),
                   @YamlProperty(name = "routePolicy", type = "string"),
                   @YamlProperty(name = "startupOrder", type = "number"),
-                  @YamlProperty(name = "streamCaching", type = "boolean"),
+                  @YamlProperty(name = "streamCache", type = "boolean"),
                   @YamlProperty(name = "messageHistory", type = "boolean"),
                   @YamlProperty(name = "logMask", type = "boolean"),
                   @YamlProperty(name = "trace", type = "boolean"),
@@ -64,6 +66,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
           })
 public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefinition> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RouteDefinitionDeserializer.class);
 
     public RouteDefinitionDeserializer() {
         super(RouteDefinition.class);
@@ -114,6 +118,11 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     target.setStartupOrder(asInt(val));
                     break;
                 case "streamCaching":
+                    // backwards compatible
+                    LOG.warn("Old option name detected! Option streamCaching should be renamed to streamCache");
+                    target.setStreamCache(asText(val));
+                    break;
+                case "streamCache":
                     target.setStreamCache(asText(val));
                     break;
                 case "logMask":

@@ -416,7 +416,7 @@ class RouteTemplateTest extends YamlTestSupport {
                       - name: "foo"
                       - name: "bar"
                     route:
-                      streamCaching: false
+                      streamCache: false
                       messageHistory: true
                       logMask: true
                       from:
