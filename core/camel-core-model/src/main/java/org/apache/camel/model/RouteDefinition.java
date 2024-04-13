@@ -328,6 +328,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @return the builder
      */
+    @Deprecated
     public RouteDefinition noStreamCaching() {
         setStreamCache("false");
         return this;
@@ -338,6 +339,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @return the builder
      */
+    @Deprecated
     public RouteDefinition streamCaching() {
         setStreamCache("true");
         return this;
@@ -348,8 +350,21 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @param  streamCache whether to use stream caching (true or false), the value can be a property placeholder
      * @return             the builder
+     * @deprecated use {@link #streamCache(String)}
      */
+    @Deprecated
     public RouteDefinition streamCaching(String streamCache) {
+        setStreamCache(streamCache);
+        return this;
+    }
+
+    /**
+     * Enable or disables stream caching for this route.
+     *
+     * @param  streamCache whether to use stream caching (true or false), the value can be a property placeholder
+     * @return             the builder
+     */
+    public RouteDefinition streamCache(String streamCache) {
         setStreamCache(streamCache);
         return this;
     }
@@ -359,6 +374,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @return the builder
      */
+    @Deprecated
     public RouteDefinition noTracing() {
         setTrace("false");
         return this;
@@ -369,6 +385,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @return the builder
      */
+    @Deprecated
     public RouteDefinition tracing() {
         setTrace("true");
         return this;
@@ -380,8 +397,31 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * @param  tracing whether to use tracing (true or false), the value can be a property placeholder
      * @return         the builder
      */
+    @Deprecated
     public RouteDefinition tracing(String tracing) {
         setTrace(tracing);
+        return this;
+    }
+
+    /**
+     * Enables or disables tracing for this route.
+     *
+     * @param  trace   whether to use tracing (true or false)
+     * @return         the builder
+     */
+    public RouteDefinition trace(boolean trace) {
+        setTrace(Boolean.toString(trace));
+        return this;
+    }
+
+    /**
+     * Enables or disables tracing for this route.
+     *
+     * @param  trace   whether to use tracing (true or false), the value can be a property placeholder
+     * @return         the builder
+     */
+    public RouteDefinition trace(String trace) {
+        setTrace(trace);
         return this;
     }
 
@@ -392,6 +432,17 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     public RouteDefinition messageHistory() {
         setMessageHistory("true");
+        return this;
+    }
+
+    /**
+     * Enable message history for this route.
+     *
+     * @param  messageHistory whether to use message history (true or false)
+     * @return                the builder
+     */
+    public RouteDefinition messageHistory(boolean messageHistory) {
+        setMessageHistory(Boolean.toString(messageHistory));
         return this;
     }
 
@@ -433,6 +484,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @return the builder
      */
+    @Deprecated
     public RouteDefinition noMessageHistory() {
         setMessageHistory("false");
         return this;
@@ -443,6 +495,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @return the builder
      */
+    @Deprecated
     public RouteDefinition noDelayer() {
         setDelayer("0");
         return this;
@@ -490,6 +543,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @return the builder
      */
+    @Deprecated
     public RouteDefinition noAutoStartup() {
         setAutoStartup("false");
         return this;

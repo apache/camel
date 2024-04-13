@@ -283,7 +283,7 @@ class RoutesTest extends YamlTestSupport {
         loadRoutes '''
                 - route:
                     id: demo-route
-                    streamCaching: true
+                    streamCache: true
                     autoStartup: false
                     startupOrder: 123
                     routePolicy: "myPolicy"
@@ -427,12 +427,12 @@ class RoutesTest extends YamlTestSupport {
         Assertions.assertEquals(2, context.getRoute("bar").filter("bbb*").size());
     }
 
-    def "Error: kebab-case: stream-cacing"() {
+    def "Error: kebab-case: stream-cache"() {
         when:
         var route = '''
                 - route:
                     id: demo-route
-                    stream-caching: true
+                    stream-cache: true
                     auto-startup: false
                     startup-order: 123
                     route-policy: "myPolicy"

@@ -66,3 +66,31 @@ instead of `org.apache.camel.Consumer`.
 === camel-kafka
 
 The Kafka component now supports custom subscription adapters for applications with very complex subscription logic.
+
+=== camel-yaml-dsl
+
+Renamed `streamCaching` to `streamCache` on the `route`
+
+Before:
+
+[source,yaml]
+----
+route:
+  streamCaching: false
+  from:
+    uri: "direct:foo"
+    steps:
+      - to: "mock:bar"
+----
+
+After:
+
+[source,yaml]
+----
+route:
+  streamCache: false
+  from:
+    uri: "direct:foo"
+    steps:
+      - to: "mock:bar"
+----
