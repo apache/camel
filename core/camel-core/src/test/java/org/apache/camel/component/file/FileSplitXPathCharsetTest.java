@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +56,9 @@ public class FileSplitXPathCharsetTest extends ContextTestSupport {
         out.expectedMessageCount(3);
         out.expectedBodiesReceived("abc", "xyz", "åäö");
 
-        Files.copy(getClass().getResourceAsStream("FileSplitXPathCharsetTest-input.xml"), inputXml);
+        final InputStream resourceAsStream = getClass().getResourceAsStream("FileSplitXPathCharsetTest-input.xml");
+        Assertions.assertNotNull(resourceAsStream, "FileSplitXPathCharsetTest-input.xml not found");
+        Files.copy(resourceAsStream, inputXml);
 
         out.assertIsSatisfied();
     }

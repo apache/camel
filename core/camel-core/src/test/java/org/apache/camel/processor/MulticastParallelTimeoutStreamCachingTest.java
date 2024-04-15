@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -54,6 +55,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         assertTrue(f.isDirectory());
         Thread.sleep(500L); // deletion happens asynchron
         File[] files = f.listFiles();
+        assertNotNull(files, "There should be a list of files");
         assertEquals(0, files.length);
     }
 

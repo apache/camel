@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -31,6 +32,7 @@ import org.apache.camel.spi.StreamCachingStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
 
@@ -88,7 +90,8 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                final Path path = testDirectory();
+                context.getStreamCachingStrategy().setSpoolDirectory(path.toFile());
                 context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().addSpoolRule(spoolRule);
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
@@ -101,7 +104,8 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 // check if spool file exists
                                 if (spoolRule.isSpool()) {
-                                    String[] names = testDirectory().toFile().list();
+                                    String[] names = path.toFile().list();
+                                    assertNotNull(names, "Should be able to list files in " + path);
                                     assertEquals(1, names.length, "There should be a cached spool file");
                                 }
                             }

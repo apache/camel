@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
@@ -87,6 +88,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             Processor processor = consumerRoute.getProcessor();
 
             Channel channel = unwrapChannel(processor);
+            assertNotNull(channel, "The channel should not be null");
             assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
             log.debug("Found sendProcessor: {}", sendProcessor);
@@ -111,6 +113,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             Processor processor = consumerRoute.getProcessor();
 
             Channel channel = unwrapChannel(processor);
+            assertNotNull(channel, "The channel should not be null");
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
 
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();

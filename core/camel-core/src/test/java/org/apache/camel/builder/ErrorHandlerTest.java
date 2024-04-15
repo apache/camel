@@ -31,6 +31,7 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ErrorHandlerTest extends TestSupport {
@@ -57,6 +58,7 @@ public class ErrorHandlerTest extends TestSupport {
 
             DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
+            assertNotNull(channel, "The channel should not be null");
 
             assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
 
@@ -112,6 +114,7 @@ public class ErrorHandlerTest extends TestSupport {
             DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
+            assertNotNull(channel, "The channel should not be null");
             assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
         }
     }
@@ -142,6 +145,7 @@ public class ErrorHandlerTest extends TestSupport {
             Processor processor = consumerRoute.getProcessor();
             Channel channel = unwrapChannel(processor);
 
+            assertNotNull(channel, "The channel should not be null");
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
@@ -170,6 +174,7 @@ public class ErrorHandlerTest extends TestSupport {
             DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
+            assertNotNull(channel, "The channel should not be null");
             assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
         }
