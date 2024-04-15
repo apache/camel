@@ -68,7 +68,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpCommunity = DEFAULT_COMMUNITY;
     @UriParam
     private SnmpActionType type;
-    @UriParam(label = "consumer", defaultValue = "60000", javaType = "java.time.Duration")
+    @UriParam(label = "consumer", defaultValue = "60000", javaType = "java.time.Duration",
+              description = "Milliseconds before the next poll.")
     private long delay = 60000;
     @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3", label = "security")
     private int securityLevel = SecurityLevel.AUTH_PRIV;
@@ -99,6 +100,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public SnmpEndpoint(String uri, SnmpComponent component) {
         super(uri, component);
+        super.setDelay(60000);
     }
 
     @Override
@@ -146,21 +148,6 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     @Deprecated
     public void initiate() throws Exception {
         // noop
-    }
-
-    @Override
-    public long getDelay() {
-        return delay;
-    }
-
-    /**
-     * Sets update rate in seconds
-     *
-     * @param updateEvery the update rate in seconds
-     */
-    @Override
-    public void setDelay(long updateEvery) {
-        this.delay = updateEvery;
     }
 
     public SnmpActionType getType() {
