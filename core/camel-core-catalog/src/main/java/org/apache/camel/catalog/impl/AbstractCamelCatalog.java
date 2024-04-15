@@ -61,6 +61,8 @@ import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
+import static org.apache.camel.util.StringHelper.isDashed;
+
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
  */
@@ -1124,18 +1126,7 @@ public abstract class AbstractCamelCatalog {
                 String suffix = null;
                 int posDot = nOption.indexOf('.');
                 int posBracket = nOption.indexOf('[');
-                if (posDot > 0 && posBracket > 0) {
-                    int first = Math.min(posDot, posBracket);
-                    suffix = nOption.substring(first);
-                    nOption = nOption.substring(0, first);
-                } else if (posDot > 0) {
-                    suffix = nOption.substring(posDot);
-                    nOption = nOption.substring(0, posDot);
-                } else if (posBracket > 0) {
-                    suffix = nOption.substring(posBracket);
-                    nOption = nOption.substring(0, posBracket);
-                }
-                doValidateConfigurationProperty(result, rows, name, value, longKey, nOption, suffix);
+                validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
             }
         } else if (key.startsWith("main.")
                 || key.startsWith("resilience4j.")
@@ -1163,23 +1154,29 @@ public abstract class AbstractCamelCatalog {
                 String suffix = null;
                 int posDot = nOption.indexOf('.', secondDot);
                 int posBracket = nOption.indexOf('[', secondDot);
-                if (posDot > 0 && posBracket > 0) {
-                    int first = Math.min(posDot, posBracket);
-                    suffix = nOption.substring(first);
-                    nOption = nOption.substring(0, first);
-                } else if (posDot > 0) {
-                    suffix = nOption.substring(posDot);
-                    nOption = nOption.substring(0, posDot);
-                } else if (posBracket > 0) {
-                    suffix = nOption.substring(posBracket);
-                    nOption = nOption.substring(0, posBracket);
-                }
-
-                doValidateConfigurationProperty(result, rows, name, value, longKey, nOption, suffix);
+                validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
             }
         }
 
         return result;
+    }
+
+    private void validateConfigurationProperty(
+            int posDot, int posBracket, String suffix, String nOption, ConfigurationPropertiesValidationResult result,
+            Map<String, BaseOptionModel> rows, String name, String value, String longKey) {
+        if (posDot > 0 && posBracket > 0) {
+            int first = Math.min(posDot, posBracket);
+            suffix = nOption.substring(first);
+            nOption = nOption.substring(0, first);
+        } else if (posDot > 0) {
+            suffix = nOption.substring(posDot);
+            nOption = nOption.substring(0, posDot);
+        } else if (posBracket > 0) {
+            suffix = nOption.substring(posBracket);
+            nOption = nOption.substring(0, posBracket);
+        }
+
+        doValidateConfigurationProperty(result, rows, name, value, longKey, nOption, suffix);
     }
 
     private void doValidateConfigurationProperty(
@@ -1606,14 +1603,9 @@ public abstract class AbstractCamelCatalog {
         if (text == null) {
             return null;
         }
-        int length = text.length();
-        if (length == 0) {
+        if (!isDashed(text)) {
             return text;
         }
-        if (text.indexOf('-') == -1) {
-            return text;
-        }
-
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < text.length(); i++) {

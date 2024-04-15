@@ -345,13 +345,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     public String dumpTracedMessagesAsXml(String nodeId) {
         List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("<").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
-        for (BacklogTracerEventMessage event : events) {
-            sb.append("\n").append(event.toXml(2));
-        }
-        sb.append("\n</").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
-        return sb.toString();
+        return wrapAroundRootTag(events);
     }
 
     @Override
@@ -380,6 +374,10 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     public String dumpAllTracedMessagesAsXml() {
         List<BacklogTracerEventMessage> events = dumpAllTracedMessages();
 
+        return wrapAroundRootTag(events);
+    }
+
+    private static String wrapAroundRootTag(List<BacklogTracerEventMessage> events) {
         StringBuilder sb = new StringBuilder();
         sb.append("<").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         for (BacklogTracerEventMessage event : events) {

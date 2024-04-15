@@ -1400,16 +1400,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         PackageScanDefinition packageScanDef = getPackageScan();
         if (packageScanDef != null && !packageScanDef.getPackages().isEmpty()) {
             // use package scan filter
-            PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
-            // support property placeholders in include and exclude
-            for (String include : packageScanDef.getIncludes()) {
-                include = getContext().resolvePropertyPlaceholders(include);
-                filter.addIncludePattern(include);
-            }
-            for (String exclude : packageScanDef.getExcludes()) {
-                exclude = getContext().resolvePropertyPlaceholders(exclude);
-                filter.addExcludePattern(exclude);
-            }
+            final PatternBasedPackageScanFilter filter
+                    = addPatterns(packageScanDef.getIncludes(), packageScanDef.getExcludes());
 
             String[] normalized = normalizePackages(getContext(), packageScanDef.getPackages());
             findRouteBuildersByPackageScan(normalized, filter, builders);
@@ -1419,21 +1411,27 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ContextScanDefinition contextScanDef = getContextScan();
         if (contextScanDef != null) {
             // use package scan filter
-            PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
-            // support property placeholders in include and exclude
-            for (String include : contextScanDef.getIncludes()) {
-                include = getContext().resolvePropertyPlaceholders(include);
-                filter.addIncludePattern(include);
-            }
-            for (String exclude : contextScanDef.getExcludes()) {
-                exclude = getContext().resolvePropertyPlaceholders(exclude);
-                filter.addExcludePattern(exclude);
-            }
+            final PatternBasedPackageScanFilter filter
+                    = addPatterns(contextScanDef.getIncludes(), contextScanDef.getExcludes());
             // lets be false by default, to skip prototype beans
             boolean includeNonSingletons = contextScanDef.getIncludeNonSingletons() != null
                     && Boolean.parseBoolean(contextScanDef.getIncludeNonSingletons());
             findRouteBuildersByContextScan(filter, includeNonSingletons, builders);
         }
+    }
+
+    private PatternBasedPackageScanFilter addPatterns(List<String> contextScanDef, List<String> contextScanDef1) {
+        PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
+        // support property placeholders in include and exclude
+        for (String include : contextScanDef) {
+            include = getContext().resolvePropertyPlaceholders(include);
+            filter.addIncludePattern(include);
+        }
+        for (String exclude : contextScanDef1) {
+            exclude = getContext().resolvePropertyPlaceholders(exclude);
+            filter.addExcludePattern(exclude);
+        }
+        return filter;
     }
 
     protected abstract void findRouteBuildersByPackageScan(

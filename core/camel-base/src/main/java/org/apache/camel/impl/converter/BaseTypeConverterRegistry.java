@@ -199,13 +199,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
 
     protected Collection<URL> getLoaderUrls(String basePath) throws IOException {
         List<URL> loaderResources = new ArrayList<>();
-        for (ClassLoader classLoader : resolver.getClassLoaders()) {
-            Enumeration<URL> resources = classLoader.getResources(basePath);
-            while (resources.hasMoreElements()) {
-                URL url = resources.nextElement();
-                loaderResources.add(url);
-            }
-        }
+        addResources(basePath, loaderResources);
         return loaderResources;
     }
 
@@ -252,14 +246,18 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
 
     protected Collection<URL> getFallbackUrls() throws IOException {
         List<URL> loaderResources = new ArrayList<>();
+        addResources(META_INF_SERVICES_FALLBACK_TYPE_CONVERTER, loaderResources);
+        return loaderResources;
+    }
+
+    private void addResources(String metaInfServicesFallbackTypeConverter, List<URL> loaderResources) throws IOException {
         for (ClassLoader classLoader : resolver.getClassLoaders()) {
-            Enumeration<URL> resources = classLoader.getResources(META_INF_SERVICES_FALLBACK_TYPE_CONVERTER);
+            Enumeration<URL> resources = classLoader.getResources(metaInfServicesFallbackTypeConverter);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 loaderResources.add(url);
             }
         }
-        return loaderResources;
     }
 
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
