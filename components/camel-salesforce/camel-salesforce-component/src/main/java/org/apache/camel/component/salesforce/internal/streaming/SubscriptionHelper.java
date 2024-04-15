@@ -165,6 +165,7 @@ public class SubscriptionHelper extends ServiceSupport {
                             LOG.warn("Connect failure: {}", message);
                             connectError = (String) message.get(ERROR_FIELD);
                             connectException = getFailure(message);
+                            client.disconnect();
 
                             if (connectError != null && connectError.equals(AUTHENTICATION_INVALID)) {
                                 LOG.debug("connectError: {}", connectError);
