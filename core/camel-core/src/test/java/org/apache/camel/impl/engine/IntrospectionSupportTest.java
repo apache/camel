@@ -416,10 +416,6 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testGetPropertyGetter() throws Exception {
-        ExampleBean bean = new ExampleBean();
-        bean.setName("Claus");
-        bean.setPrice(10.0);
-
         Method name = getPropertyGetter(ExampleBean.class, "name");
         assertEquals("getName", name.getName());
 
@@ -432,10 +428,6 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testGetPropertySetter() throws Exception {
-        ExampleBean bean = new ExampleBean();
-        bean.setName("Claus");
-        bean.setPrice(10.0);
-
         Method name = getPropertySetter(ExampleBean.class, "name");
         assertEquals("setName", name.getName());
 
