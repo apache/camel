@@ -32,6 +32,7 @@ import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
@@ -83,6 +84,7 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
         // dump should pre-exist
         File dir = testDirectory().toFile();
         String[] files = dir.list();
+        assertNotNull(files, "There are no files in " + dir);
         assertEquals(1, files.length);
         assertEquals("dump1.xml", files[0]);
     }

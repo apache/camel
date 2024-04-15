@@ -49,6 +49,7 @@ import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
@@ -89,6 +90,7 @@ public class RouteBuilderTest extends TestSupport {
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
+            assertNotNull(channel, "Should have a channel");
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
             assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
@@ -121,6 +123,7 @@ public class RouteBuilderTest extends TestSupport {
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
+            assertNotNull(channel, "Should have a channel");
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
             SendProcessor sendProcessor
                     = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
@@ -156,6 +159,7 @@ public class RouteBuilderTest extends TestSupport {
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
+            assertNotNull(channel, "Should have a channel");
             ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, channel.getNextProcessor());
             List<FilterProcessor> filters = choiceProcessor.getFilters();
             assertEquals(2, filters.size(), "Should be two when clauses");
@@ -253,6 +257,7 @@ public class RouteBuilderTest extends TestSupport {
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
+            assertNotNull(channel, "Should have a channel");
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, channel.getNextProcessor());
             List<Processor> endpoints = new ArrayList<>(multicastProcessor.getProcessors());
             assertEquals(2, endpoints.size(), "Should have 2 endpoints");
@@ -365,6 +370,7 @@ public class RouteBuilderTest extends TestSupport {
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
+            assertNotNull(channel, "Should have a channel");
             Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
             Iterator<?> it = line.next().iterator();
 
@@ -406,6 +412,8 @@ public class RouteBuilderTest extends TestSupport {
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
+
+            assertNotNull(channel, "Should have a channel");
             assertIsInstanceOf(Splitter.class, channel.getNextProcessor());
         }
     }
@@ -440,6 +448,7 @@ public class RouteBuilderTest extends TestSupport {
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
+            assertNotNull(channel, "Should have a channel");
             IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, channel.getNextProcessor());
             assertEquals("header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString(), "messageIdExpression");
 

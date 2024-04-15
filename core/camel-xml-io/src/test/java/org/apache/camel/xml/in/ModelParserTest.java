@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -162,7 +163,11 @@ public class ModelParserTest {
                                  + "   </route>\n"
                                  + "</routes>";
         final RoutesDefinition routes = new ModelParser(new StringReader(routesXml)).parseRoutesDefinition().orElse(null);
-        final RouteDefinition route0 = routes.getRoutes().get(0);
+
+        assertNotNull(routes, "There should be routes");
+        final List<RouteDefinition> routeDefinitions = routes.getRoutes();
+        assertNotNull(routeDefinitions, "There should be a list of route definitions");
+        final RouteDefinition route0 = routeDefinitions.get(0);
         final SetBodyDefinition setBody = (SetBodyDefinition) route0.getOutputs().get(0);
         final XPathExpression xPath = (XPathExpression) setBody.getExpression();
         final Map<String, String> namespaces = xPath.getNamespaces();
@@ -441,7 +446,9 @@ public class ModelParserTest {
     }
 
     private Path getResourceFolder() {
-        String childFileString = getClass().getClassLoader().getResource("barInterceptorRoute.xml").getFile();
+        final URL resource = getClass().getClassLoader().getResource("barInterceptorRoute.xml");
+        assert resource != null : "Cannot find barInterceptorRoute.xml";
+        String childFileString = resource.getFile();
         File parentFile = new File(childFileString).getParentFile();
         return parentFile.toPath();
     }
