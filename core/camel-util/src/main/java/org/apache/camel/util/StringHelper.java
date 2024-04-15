@@ -536,6 +536,17 @@ public final class StringHelper {
     }
 
     /**
+     * Whether the string contains dashes or not
+     *
+     * @param  text the string to check
+     * @return      true if it contains dashes or false otherwise
+     */
+    public static boolean isDashed(String text) {
+        int length = text.length();
+        return length != 0 && text.indexOf('-') != -1;
+    }
+
+    /**
      * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
      *
      * @param  text              the string
@@ -546,15 +557,12 @@ public final class StringHelper {
         if (text == null) {
             return null;
         }
-        int length = text.length();
-        if (length == 0) {
-            return text;
-        }
-        if (text.indexOf('-') == -1) {
+        if (!isDashed(text)) {
             return text;
         }
 
         // there is at least 1 dash so the capacity can be shorter
+        int length = text.length();
         StringBuilder sb = new StringBuilder(length - 1);
         boolean upper = false;
         int singleQuotes = 0;
