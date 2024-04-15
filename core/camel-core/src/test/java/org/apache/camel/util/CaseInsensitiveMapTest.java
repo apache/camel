@@ -205,8 +205,7 @@ public class CaseInsensitiveMapTest {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("foo", "cheese");
 
-        Map<String, Object> other = new HashMap<>();
-        map.putAll(other);
+        map.putAll(new HashMap<>());
 
         assertEquals("cheese", map.get("FOO"));
         assertEquals("cheese", map.get("foo"));
