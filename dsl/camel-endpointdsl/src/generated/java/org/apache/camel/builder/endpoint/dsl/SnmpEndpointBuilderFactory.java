@@ -269,7 +269,7 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets update rate in seconds.
+         * Milliseconds before the next poll.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -284,7 +284,7 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets update rate in seconds.
+         * Milliseconds before the next poll.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
