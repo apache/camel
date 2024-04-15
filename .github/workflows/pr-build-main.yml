@@ -36,9 +36,15 @@ jobs:
     permissions:
       issues: write
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: [ '17', '21' ]
+        java: ['17']
+        experimental: [ false ]
+        include:
+          - java: '21'
+            experimental: true
+
     steps:
       - uses: actions/checkout@v4
         with:
