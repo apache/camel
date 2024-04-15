@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -84,16 +84,6 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
     @Override
     public Injector getInjector() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
         throw new UnsupportedOperationException();
     }
 
@@ -614,6 +604,12 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
     public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
         this.typeConverterExists = typeConverterExists;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        CamelContextAware.trySetCamelContext(enumTypeConverter, getCamelContext());
     }
 
     @Override

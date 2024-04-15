@@ -17,7 +17,9 @@
 package org.apache.camel.converter;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Converter;
 
@@ -46,5 +48,19 @@ public final class DateTimeConverter {
     @Converter(order = 3)
     public static Long toLong(Date date) {
         return date.getTime();
+    }
+
+    @Converter(order = 4)
+    public static TimeUnit toTimeUnit(String unit) {
+        String match = unit.toUpperCase(Locale.ROOT).trim();
+        return switch (match) {
+            case "DAYS" -> TimeUnit.DAYS;
+            case "HOURS" -> TimeUnit.HOURS;
+            case "MINUTES" -> TimeUnit.MINUTES;
+            case "SECONDS" -> TimeUnit.SECONDS;
+            case "MILLISECONDS" -> TimeUnit.MILLISECONDS;
+            case "NANOSECONDS" -> TimeUnit.NANOSECONDS;
+            default -> throw new IllegalStateException("Unexpected value: " + unit);
+        };
     }
 }

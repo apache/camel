@@ -43,7 +43,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 121;
+        return 122;
     }
 
     @Override
@@ -490,6 +490,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.DateTimeConverter.toTimeZone((java.lang.String) value);
             }
+        } else if (to == java.util.concurrent.TimeUnit.class) {
+            if (value instanceof java.lang.String) {
+                return org.apache.camel.converter.DateTimeConverter.toTimeUnit((java.lang.String) value);
+            }
         } else if (to == org.apache.camel.Processor.class) {
             if (value instanceof org.apache.camel.Expression) {
                 return org.apache.camel.converter.CamelConverter.toProcessor((org.apache.camel.Expression) value);
@@ -624,6 +628,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(java.util.Collection.class, java.util.Set.class), this);
         registry.addConverter(new TypeConvertible<>(java.util.Map.class, java.util.Set.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.util.TimeZone.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.util.concurrent.TimeUnit.class), this);
         registry.addConverter(new TypeConvertible<>(org.apache.camel.Expression.class, org.apache.camel.Processor.class), this);
         registry.addConverter(new TypeConvertible<>(org.apache.camel.Predicate.class, org.apache.camel.Processor.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, org.apache.camel.spi.Resource.class), this);
@@ -1025,6 +1030,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
         } else if (to == java.util.TimeZone.class) {
+            if (from == java.lang.String.class) {
+                return this;
+            }
+        } else if (to == java.util.concurrent.TimeUnit.class) {
             if (from == java.lang.String.class) {
                 return this;
             }
