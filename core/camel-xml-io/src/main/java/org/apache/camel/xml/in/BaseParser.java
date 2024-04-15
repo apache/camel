@@ -538,4 +538,8 @@ public class BaseParser {
         return false;
     }
 
+    protected static String sanitizeUri(String uri) {
+        return uri;
+    }
+
 }

@@ -299,7 +299,12 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                         an = member instanceof Method ? propname(mn) : mn;
                     }
                     String sn = member instanceof Method ? mn : "set" + uppercase(mn);
-                    cases.put(an, "def." + sn + "(" + conversion(parser, type, "val", clazz.getName()) + ");");
+                    String val = "val";
+                    // special for uri
+                    if ("uri".equals(an)) {
+                        val = "sanitizeUri(val)";
+                    }
+                    cases.put(an, "def." + sn + "(" + conversion(parser, type, val, clazz.getName()) + ");");
                 }
                 String defaultCase = baseAttributeHandler != null ? baseAttributeHandler + ".accept(def, key, val)" : "false";
                 if (attributeMembers.size() == 1) {

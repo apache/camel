@@ -479,7 +479,7 @@ public class ModelParser extends BaseParser {
     protected FromDefinition doParseFromDefinition() throws IOException, XmlPullParserException {
         return doParse(new FromDefinition(), (def, key, val) -> {
             switch (key) {
-                case "uri": def.setUri(val); break;
+                case "uri": def.setUri(sanitizeUri(val)); break;
                 case "variableReceive": def.setVariableReceive(val); break;
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }
@@ -536,7 +536,7 @@ public class ModelParser extends BaseParser {
     protected InterceptFromDefinition doParseInterceptFromDefinition() throws IOException, XmlPullParserException {
         return doParse(new InterceptFromDefinition(), (def, key, val) -> {
             if ("uri".equals(key)) {
-                def.setUri(val);
+                def.setUri(sanitizeUri(val));
                 return true;
             }
             return processorDefinitionAttributeHandler().accept(def, key, val);
@@ -547,7 +547,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "afterUri": def.setAfterUri(val); break;
                 case "skipSendToOriginalEndpoint": def.setSkipSendToOriginalEndpoint(val); break;
-                case "uri": def.setUri(val); break;
+                case "uri": def.setUri(sanitizeUri(val)); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1564,7 +1564,7 @@ public class ModelParser extends BaseParser {
     protected <T extends SendDefinition> AttributeHandler<T> sendDefinitionAttributeHandler() {
         return (def, key, val) -> {
             if ("uri".equals(key)) {
-                def.setUri(val);
+                def.setUri(sanitizeUri(val));
                 return true;
             }
             return processorDefinitionAttributeHandler().accept(def, key, val);
@@ -1578,7 +1578,7 @@ public class ModelParser extends BaseParser {
                 case "cacheSize": def.setCacheSize(val); break;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); break;
                 case "pattern": def.setPattern(val); break;
-                case "uri": def.setUri(val); break;
+                case "uri": def.setUri(sanitizeUri(val)); break;
                 case "variableReceive": def.setVariableReceive(val); break;
                 case "variableSend": def.setVariableSend(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
@@ -1985,7 +1985,7 @@ public class ModelParser extends BaseParser {
                 case "serviceChooserRef": def.setServiceChooserRef(val); break;
                 case "serviceDiscoveryRef": def.setServiceDiscoveryRef(val); break;
                 case "serviceFilterRef": def.setServiceFilterRef(val); break;
-                case "uri": def.setUri(val); break;
+                case "uri": def.setUri(sanitizeUri(val)); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2039,7 +2039,7 @@ public class ModelParser extends BaseParser {
                 case "serviceChooserRef": def.setServiceChooserRef(val); break;
                 case "serviceDiscoveryRef": def.setServiceDiscoveryRef(val); break;
                 case "serviceFilterRef": def.setServiceFilterRef(val); break;
-                case "uri": def.setUri(val); break;
+                case "uri": def.setUri(sanitizeUri(val)); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -3447,7 +3447,7 @@ public class ModelParser extends BaseParser {
         return doParse(new EndpointTransformerDefinition(), (def, key, val) -> {
             switch (key) {
                 case "ref": def.setRef(val); break;
-                case "uri": def.setUri(val); break;
+                case "uri": def.setUri(sanitizeUri(val)); break;
                 default: return transformerDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -3499,7 +3499,7 @@ public class ModelParser extends BaseParser {
         return doParse(new EndpointValidatorDefinition(), (def, key, val) -> {
             switch (key) {
                 case "ref": def.setRef(val); break;
-                case "uri": def.setUri(val); break;
+                case "uri": def.setUri(sanitizeUri(val)); break;
                 default: return validatorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
