@@ -340,7 +340,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             if (accepted) {
                 final File localFile = new File(upload.uploadedFileName());
                 final AttachmentMessage attachmentMessage = message.getExchange().getMessage(AttachmentMessage.class);
-                attachmentMessage.addAttachment(fileName, new DataHandler(new CamelFileDataSource(localFile, fileName)));
+                attachmentMessage.addAttachment(name, new DataHandler(new CamelFileDataSource(localFile, fileName)));
             } else {
                 LOGGER.debug(
                         "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
