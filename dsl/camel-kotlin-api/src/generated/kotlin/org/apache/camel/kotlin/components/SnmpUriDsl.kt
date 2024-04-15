@@ -158,7 +158,7 @@ public class SnmpUriDsl(
   }
 
   /**
-   * Sets update rate in seconds
+   * Milliseconds before the next poll.
    */
   public fun delay(delay: String) {
     it.property("delay", delay)
