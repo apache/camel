@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +40,6 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.support.ObjectHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.invocation.Invocation;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -52,7 +50,6 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 public class AbstractCamelContextFactoryBeanTest {
 
@@ -110,10 +107,7 @@ public class AbstractCamelContextFactoryBeanTest {
 
     @Test
     public void shouldSupportPropertyPlaceholdersOnAllProperties() throws Exception {
-        final Set<Invocation> invocations = new LinkedHashSet<>();
-
-        final DefaultCamelContext context = mock(DefaultCamelContext.class,
-                withSettings().invocationListeners(i -> invocations.add((Invocation) i.getInvocation())));
+        final DefaultCamelContext context = mock(DefaultCamelContext.class);
 
         final ExtendedCamelContext extendedCamelContext = mock(ExtendedCamelContext.class);
 
