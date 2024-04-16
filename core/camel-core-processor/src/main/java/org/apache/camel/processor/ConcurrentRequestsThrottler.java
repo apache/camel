@@ -218,7 +218,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
         private final String key;
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();
         private volatile int throttleRate;
-        private WrappedSemaphore semaphore;
+        private final WrappedSemaphore semaphore;
 
         ThrottlingState(String key) {
             this.key = key;

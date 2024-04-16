@@ -81,7 +81,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     private RestsDefinition restCollection = new RestsDefinition();
     private RestConfigurationDefinition restConfiguration;
-    private RoutesDefinition routeCollection = new RoutesDefinition();
+    private final RoutesDefinition routeCollection = new RoutesDefinition();
     private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
     private TemplatedRoutesDefinition templatedRouteCollection = new TemplatedRoutesDefinition();
 

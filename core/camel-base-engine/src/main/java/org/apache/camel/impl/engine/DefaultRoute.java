@@ -107,7 +107,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
     private final List<Service> services = new ArrayList<>();
-    private StopWatch stopWatch = new StopWatch(false);
+    private final StopWatch stopWatch = new StopWatch(false);
     private RouteError routeError;
     private Integer startupOrder;
     private RouteController routeController;

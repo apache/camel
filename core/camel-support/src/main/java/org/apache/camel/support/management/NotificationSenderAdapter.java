@@ -25,7 +25,7 @@ import org.apache.camel.api.management.NotificationSender;
  * Can be used to broadcast JMX notifications.
  */
 public final class NotificationSenderAdapter implements NotificationSender {
-    ModelMBeanNotificationBroadcaster broadcaster;
+    final ModelMBeanNotificationBroadcaster broadcaster;
 
     public NotificationSenderAdapter(ModelMBeanNotificationBroadcaster broadcaster) {
         this.broadcaster = broadcaster;
