@@ -212,7 +212,7 @@ public abstract class AbstractCamelContext extends BaseService
     int defaultRouteStartupOrder = 1000;
 
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
-    private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
+    private final Set<EndpointStrategy> endpointStrategies = ConcurrentHashMap.newKeySet();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
@@ -1048,10 +1048,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void registerEndpointCallback(EndpointStrategy strategy) {
-        if (!endpointStrategies.contains(strategy)) {
+        if (endpointStrategies.add(strategy)) {
             // let it be invoked for already registered endpoints so it can
             // catch-up.
-            endpointStrategies.add(strategy);
             for (Endpoint endpoint : getEndpoints()) {
                 Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
                 if (newEndpoint != null) {
