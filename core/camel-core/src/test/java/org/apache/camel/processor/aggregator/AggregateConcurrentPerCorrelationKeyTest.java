@@ -27,7 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("Creates lots of threads")
 public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport {
 
     private final int size = 200;
