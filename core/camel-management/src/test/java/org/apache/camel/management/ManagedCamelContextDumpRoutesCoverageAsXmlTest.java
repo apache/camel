@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
-public class ManagedCamelContextDumpRoutesCoverageAsXml extends ManagementTestSupport {
+public class ManagedCamelContextDumpRoutesCoverageAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testRouteCoverageStats() throws Exception {
