@@ -27,7 +27,6 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
 
     private String url = "seda:foo?concurrentConsumers=20";
     private MockEndpoint result;
-    private int size = 5;
 
     private ThrottlingExceptionRoutePolicy policy;
 
@@ -55,6 +54,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
 
         // send first set of messages
         // should go through b/c circuit is closed
+        int size = 5;
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "MessageRound1 " + i);
             Thread.sleep(3);

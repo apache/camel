@@ -43,7 +43,6 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
     private static final AtomicInteger COUNTER = new AtomicInteger();
     private static final AtomicInteger SUM = new AtomicInteger();
 
-    private final int size = 100;
     private final String uri = "direct:start";
 
     @Test
@@ -51,6 +50,7 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
         int total = 0;
         ExecutorService service = Executors.newFixedThreadPool(20);
         List<Callable<Object>> tasks = new ArrayList<>();
+        int size = 100;
         for (int i = 0; i < size; i++) {
             final int count = i;
             total += i;

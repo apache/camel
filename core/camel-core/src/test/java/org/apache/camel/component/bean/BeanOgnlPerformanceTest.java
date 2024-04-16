@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Test;
  */
 public class BeanOgnlPerformanceTest extends ContextTestSupport {
 
-    private int size = 1000;
-
     private String scope = "Singleton";
 
     @Override
@@ -42,6 +40,7 @@ public class BeanOgnlPerformanceTest extends ContextTestSupport {
     public void testBeanOgnlPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 
+        int size = 1000;
         getMockEndpoint("mock:result").expectedMessageCount(size);
 
         for (int i = 0; i < size; i++) {

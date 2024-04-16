@@ -35,9 +35,6 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
 
     private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
 
-    private int size = 200;
-    private final String uri = "direct:start";
-
     @Test
     public void testAggregateConcurrentPerCorrelationKey() throws Exception {
         ExecutorService service = Executors.newFixedThreadPool(50);
@@ -59,6 +56,7 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
 
     private List<Callable<Object>> createTasks() {
         List<Callable<Object>> tasks = new ArrayList<>();
+        int size = 200;
         for (int i = 0; i < size; i++) {
             final int id = i % 25;
             final int choice = i % 2;
@@ -69,6 +67,7 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
     }
 
     private Object sendTask(int choice, int count, int id) {
+        String uri = "direct:start";
         if (choice == 0) {
             template.sendBodyAndHeader(uri, "" + count, "id", id);
         } else {

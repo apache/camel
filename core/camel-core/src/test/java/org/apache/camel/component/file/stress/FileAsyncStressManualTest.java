@@ -33,12 +33,11 @@ import org.junit.jupiter.api.condition.OS;
 @DisabledOnOs(OS.WINDOWS)
 public class FileAsyncStressManualTest extends ContextTestSupport {
 
-    private int files = 150;
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
+        int files = 150;
         for (int i = 0; i < files; i++) {
             template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, i + ".txt");
         }

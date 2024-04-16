@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
 
-    private ClusteredRoutePolicyFactory factory;
     private TestClusterService cs;
 
     @Override
@@ -44,7 +43,7 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
         cs = new TestClusterService("my-cluster-service");
         context.addService(cs);
 
-        factory = ClusteredRoutePolicyFactory.forNamespace("my-ns");
+        ClusteredRoutePolicyFactory factory = ClusteredRoutePolicyFactory.forNamespace("my-ns");
         context.addRoutePolicyFactory(factory);
 
         return context;

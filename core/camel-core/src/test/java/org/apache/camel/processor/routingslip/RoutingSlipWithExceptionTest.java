@@ -36,7 +36,6 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
     private MockEndpoint endEndpoint;
     private MockEndpoint exceptionEndpoint;
-    private MockEndpoint exceptionSettingEndpoint;
     private MockEndpoint aEndpoint;
 
     @Test
@@ -125,7 +124,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
         endEndpoint = resolveMandatoryEndpoint("mock:noexception", MockEndpoint.class);
         exceptionEndpoint = resolveMandatoryEndpoint("mock:exception", MockEndpoint.class);
-        exceptionSettingEndpoint = resolveMandatoryEndpoint("mock:exceptionSetting", MockEndpoint.class);
+        MockEndpoint exceptionSettingEndpoint = resolveMandatoryEndpoint("mock:exceptionSetting", MockEndpoint.class);
         aEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
 
         exceptionSettingEndpoint.whenAnyExchangeReceived(new Processor() {

@@ -40,7 +40,6 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
     private volatile CompletableFuture<Object> callFuture;
     private volatile String receivedBody;
     private volatile CountDownLatch methodInvoked;
-    private Future<Object> sendFuture;
 
     @Test
     public void testDoSomething() throws Exception {
@@ -91,7 +90,7 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
 
         callFuture = new CompletableFuture<>();
         methodInvoked = new CountDownLatch(1);
-        sendFuture = template.asyncSendBody("direct:entry", sentBody);
+        Future<Object> sendFuture = template.asyncSendBody("direct:entry", sentBody);
 
         assertTrue(methodInvoked.await(5, TimeUnit.SECONDS));
         assertEquals(0, mock.getReceivedCounter());

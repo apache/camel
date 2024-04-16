@@ -35,8 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
 
-    private int size = 100 * 1000;
-
     @Test
     public void testTypeConverter() throws Exception {
         // add as type converter
@@ -46,6 +44,7 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
                 new StaticMethodTypeConverter(method, false));
 
         ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "test", 50, 50);
+        int size = 100 * 1000;
         final CountDownLatch latch = new CountDownLatch(size);
 
         StopWatch watch = new StopWatch();

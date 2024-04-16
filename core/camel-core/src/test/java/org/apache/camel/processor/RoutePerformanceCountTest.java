@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RoutePerformanceCountTest extends ContextTestSupport {
 
     private CountProcessor processor = new CountProcessor();
-    private int size = 500;
-    private String url = "direct:start";
 
     @Test
     public void testSendMessages() throws Exception {
         StopWatch watch = new StopWatch();
 
+        int size = 500;
         for (int i = 0; i < size; i++) {
+            String url = "direct:start";
             template.sendBody(url, "Message " + i);
         }
         assertEquals(size, processor.getCounter());

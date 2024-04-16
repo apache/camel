@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanPerformanceTest extends ContextTestSupport {
 
     private static final AtomicLong INVOKED = new AtomicLong();
-    private final int times = 100000;
 
     public static void doSomething(String payload) {
         assertEquals("Hello World", payload);
@@ -43,6 +42,7 @@ public class BeanPerformanceTest extends ContextTestSupport {
     public void testBeanPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 
+        int times = 100000;
         log.info("Invoking a bean in a route {} times", times);
         for (int i = 0; i < times; i++) {
             template.sendBody("direct:start", "Hello World");

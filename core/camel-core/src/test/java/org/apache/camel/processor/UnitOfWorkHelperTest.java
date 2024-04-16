@@ -36,17 +36,15 @@ public class UnitOfWorkHelperTest extends ContextTestSupport {
 
     private static final String FILE_CONTENT = "Lorem ipsum dolor sit amet";
 
-    private MockEndpoint resultEndpoint;
     private SedaEndpoint fromEndpoint;
-    private CustomEventNotifier eventNotifier;
     private int numberOfExchangeCreatedEvents;
 
     @Test
     void testUoWShouldBeClearedOnJobDone() throws Exception {
-        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         fromEndpoint = context.getEndpoint("seda:from", SedaEndpoint.class);
 
-        eventNotifier = new CustomEventNotifier();
+        CustomEventNotifier eventNotifier = new CustomEventNotifier();
         context.getManagementStrategy().addEventNotifier(eventNotifier);
         Exchange testExchange = createExchange("testFile");
 

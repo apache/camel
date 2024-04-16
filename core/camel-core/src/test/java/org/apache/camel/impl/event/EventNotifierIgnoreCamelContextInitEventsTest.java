@@ -37,13 +37,12 @@ public class EventNotifierIgnoreCamelContextInitEventsTest {
     private final List<CamelEvent> events = new ArrayList<>();
 
     private CamelContext context;
-    private ProducerTemplate template;
 
     @BeforeEach
     public void setUp() throws Exception {
         context = createCamelContext();
         context.addRoutes(createRouteBuilder());
-        template = context.createProducerTemplate();
+        ProducerTemplate template = context.createProducerTemplate();
         context.start();
     }
 

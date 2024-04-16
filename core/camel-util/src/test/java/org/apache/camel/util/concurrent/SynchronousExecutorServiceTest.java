@@ -26,12 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SynchronousExecutorServiceTest {
 
     private static boolean invoked;
-    private static String name1;
     private static String name2;
 
     @Test
     public void testSynchronousExecutorService() throws Exception {
-        name1 = Thread.currentThread().getName();
+        String name1 = Thread.currentThread().getName();
 
         ExecutorService service = new SynchronousExecutorService();
         service.execute(new Runnable() {
