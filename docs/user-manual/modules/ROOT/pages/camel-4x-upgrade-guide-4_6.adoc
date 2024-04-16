@@ -67,6 +67,11 @@ instead of `org.apache.camel.Consumer`.
 
 The id used for multipart file upload attachments on `AttachmentMessage` has changed from being the name of the uploaded file, to the value specifed on the `name` field of the `Content-Disposition` header sent in the request body.
 
+=== camel-google-sheets
+
+The option `scopes` is changed from a `Collection` to be a `String` type to make it easy to configure in endpoint URI from all DSLs and tooling.
+Multiple scopes can be separated by comma.
+
 === camel-kafka
 
 The Kafka component now supports custom subscription adapters for applications with very complex subscription logic.
