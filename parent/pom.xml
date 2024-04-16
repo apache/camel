@@ -56,7 +56,7 @@
         <sourcecheckExcludesComma />
 
         <!-- dependency versions -->
-        <activemq-version>5.18.3</activemq-version>
+        <activemq-version>5.18.4</activemq-version>
         <activemq-artemis-version>2.33.0</activemq-artemis-version>
         <angus-mail-version>2.0.3</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
