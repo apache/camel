@@ -127,6 +127,10 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                             transactionCtx.rollbackTransaction();
                         }
                     }
+                } else {
+                    if (transactionCtx != null) {
+                        transactionCtx.commitTransaction();
+                    }
                 }
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {
