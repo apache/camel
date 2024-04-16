@@ -91,7 +91,8 @@ public class GoogleSheetsUriDsl(
 
   /**
    * Specifies the level of permissions you want a sheets application to have to a user account. See
-   * https://developers.google.com/identity/protocols/googlescopes for more info.
+   * https://developers.google.com/identity/protocols/googlescopes for more info. Multiple scopes can
+   * be separated by comma.
    */
   public fun scopes(scopes: String) {
     it.property("scopes", scopes)

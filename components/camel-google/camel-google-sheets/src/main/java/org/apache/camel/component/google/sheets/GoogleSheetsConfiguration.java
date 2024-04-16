@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.sheets;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.spi.Configurer;
@@ -50,7 +51,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
     @UriParam
     private String applicationName;
     @UriParam
-    private Collection<String> scopes;
+    private String scopes;
     /* Service account */
     @UriParam(label = "security")
     private String serviceAccountKey;
@@ -135,17 +136,26 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
         this.applicationName = applicationName;
     }
 
-    public Collection<String> getScopes() {
+    public String getScopes() {
         return scopes;
+    }
+
+    public Collection<String> getScopesAsList() {
+        if (scopes != null) {
+            return List.of(scopes.split(","));
+        } else {
+            return null;
+        }
     }
 
     /**
      * Specifies the level of permissions you want a sheets application to have to a user account. See
-     * https://developers.google.com/identity/protocols/googlescopes for more info.
+     * https://developers.google.com/identity/protocols/googlescopes for more info. Multiple scopes can be separated by
+     * comma.
      *
      * @see com.google.api.services.sheets.v4.SheetsScopes
      */
-    public void setScopes(Collection<String> scopes) {
+    public void setScopes(String scopes) {
         this.scopes = scopes;
     }
 

@@ -28,7 +28,7 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
         map.put("Delegate", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
-        map.put("Scopes", java.util.Collection.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("SplitResult", boolean.class);
         ALL_OPTIONS = map;
@@ -53,7 +53,7 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresult":
@@ -85,7 +85,7 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
         case "methodName": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.Collection.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "splitresult":
@@ -118,14 +118,6 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
         case "serviceAccountKey": return target.getServiceAccountKey();
         case "splitresult":
         case "splitResult": return target.isSplitResult();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

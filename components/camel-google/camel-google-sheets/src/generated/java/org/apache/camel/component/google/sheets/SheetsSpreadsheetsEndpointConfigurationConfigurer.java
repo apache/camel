@@ -31,7 +31,7 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         map.put("GetSpreadsheetByDataFilterRequest", com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
-        map.put("Scopes", java.util.Collection.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("SplitResult", boolean.class);
         map.put("SpreadsheetId", java.lang.String.class);
@@ -62,7 +62,7 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresult":
@@ -101,7 +101,7 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "methodName": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.Collection.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "splitresult":
@@ -143,14 +143,6 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "splitResult": return target.isSplitResult();
         case "spreadsheetid":
         case "spreadsheetId": return target.getSpreadsheetId();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

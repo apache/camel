@@ -24,7 +24,7 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         map.put("clientId", java.lang.String.class);
         map.put("configuration", org.apache.camel.component.google.sheets.GoogleSheetsConfiguration.class);
         map.put("delegate", java.lang.String.class);
-        map.put("scopes", java.util.Collection.class);
+        map.put("scopes", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("splitResult", boolean.class);
         map.put("lazyStartProducer", boolean.class);
@@ -68,7 +68,7 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresult":
@@ -105,7 +105,7 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return boolean.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.Collection.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "splitresult":
@@ -143,14 +143,6 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
         case "splitresult":
         case "splitResult": return getOrCreateConfiguration(target).isSplitResult();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

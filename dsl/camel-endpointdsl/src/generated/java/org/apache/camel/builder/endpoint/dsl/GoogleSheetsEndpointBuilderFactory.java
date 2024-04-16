@@ -106,29 +106,9 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * Specifies the level of permissions you want a sheets application to
          * have to a user account. See
          * https://developers.google.com/identity/protocols/googlescopes for
-         * more info.
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param scopes the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsEndpointConsumerBuilder scopes(
-                Collection<java.lang.String> scopes) {
-            doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * Specifies the level of permissions you want a sheets application to
-         * have to a user account. See
-         * https://developers.google.com/identity/protocols/googlescopes for
-         * more info.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1004,29 +984,9 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * Specifies the level of permissions you want a sheets application to
          * have to a user account. See
          * https://developers.google.com/identity/protocols/googlescopes for
-         * more info.
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param scopes the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsEndpointProducerBuilder scopes(
-                Collection<java.lang.String> scopes) {
-            doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * Specifies the level of permissions you want a sheets application to
-         * have to a user account. See
-         * https://developers.google.com/identity/protocols/googlescopes for
-         * more info.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1234,29 +1194,9 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * Specifies the level of permissions you want a sheets application to
          * have to a user account. See
          * https://developers.google.com/identity/protocols/googlescopes for
-         * more info.
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param scopes the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsEndpointBuilder scopes(
-                Collection<java.lang.String> scopes) {
-            doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * Specifies the level of permissions you want a sheets application to
-         * have to a user account. See
-         * https://developers.google.com/identity/protocols/googlescopes for
-         * more info.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 

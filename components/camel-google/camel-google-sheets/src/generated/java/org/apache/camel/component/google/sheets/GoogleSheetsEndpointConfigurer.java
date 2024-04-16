@@ -26,7 +26,7 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("clientId", java.lang.String.class);
         map.put("delegate", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
-        map.put("scopes", java.util.Collection.class);
+        map.put("scopes", java.lang.String.class);
         map.put("sendEmptyMessageWhenIdle", boolean.class);
         map.put("splitResult", boolean.class);
         map.put("bridgeErrorHandler", boolean.class);
@@ -101,7 +101,7 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "scopes": target.getConfiguration().setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "scopes": target.getConfiguration().setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serviceaccountkey":
@@ -168,7 +168,7 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "scheduler": return java.lang.Object.class;
         case "schedulerproperties":
         case "schedulerProperties": return java.util.Map.class;
-        case "scopes": return java.util.Collection.class;
+        case "scopes": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "serviceaccountkey":
@@ -253,7 +253,6 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }
