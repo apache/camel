@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
 
-    private MyProcessor processor = new MyProcessor();
+    private final MyProcessor processor = new MyProcessor();
 
     @Test
     public void testSynchronizeComplete() throws Exception {

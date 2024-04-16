@@ -30,8 +30,8 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
     public static final class MyValueClass {
 
-        private String value1;
-        private String value2;
+        private final String value1;
+        private final String value2;
 
         public MyValueClass(String v1, String v2) {
             value1 = v1;

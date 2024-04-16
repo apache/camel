@@ -48,8 +48,8 @@ public class LanguageRouteConvertBodyTest extends ContextTestSupport {
     }
 
     private static final class MyOrder {
-        private int id;
-        private String name;
+        private final int id;
+        private final String name;
 
         private MyOrder(int id, String name) {
             this.id = id;

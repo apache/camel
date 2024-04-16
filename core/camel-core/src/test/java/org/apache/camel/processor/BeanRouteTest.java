@@ -84,9 +84,9 @@ public class BeanRouteTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        private static AtomicInteger counter = new AtomicInteger();
+        private static final AtomicInteger counter = new AtomicInteger();
         public String body;
-        private int id;
+        private final int id;
 
         public MyBean() {
             id = counter.incrementAndGet();

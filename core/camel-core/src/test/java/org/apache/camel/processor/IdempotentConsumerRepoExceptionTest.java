@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 public class IdempotentConsumerRepoExceptionTest extends ContextTestSupport {
 
-    private IdempotentRepository myRepo = new MyRepo();
+    private final IdempotentRepository myRepo = new MyRepo();
 
     @Test
     public void testRepoException() throws Exception {

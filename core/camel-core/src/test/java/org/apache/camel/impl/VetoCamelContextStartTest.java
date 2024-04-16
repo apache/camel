@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class VetoCamelContextStartTest extends ContextTestSupport {
 
-    private LifecycleStrategy veto = new MyVeto();
+    private final LifecycleStrategy veto = new MyVeto();
 
     @Test
     public void testVetoCamelContextStart() throws Exception {

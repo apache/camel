@@ -45,8 +45,8 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
 
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategyTest.class);
     private static final int NUMBER_OF_THREADS = 5;
-    private AtomicInteger numberOfFilesProcessed = new AtomicInteger();
-    private CountDownLatch latch = new CountDownLatch(2);
+    private final AtomicInteger numberOfFilesProcessed = new AtomicInteger();
+    private final CountDownLatch latch = new CountDownLatch(2);
 
     @Test
     public void testMultithreadedLocking() throws Exception {

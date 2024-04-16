@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  */
 public class SplitterParallelIssueTest extends ContextTestSupport {
 
-    private int delay = 100;
+    private final int delay = 100;
 
     @Test
     public void testSplitParallel() throws Exception {

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnricherSendEventTest extends ContextTestSupport {
-    private MyEventNotifier en = new MyEventNotifier();
+    private final MyEventNotifier en = new MyEventNotifier();
 
     @Test
     public void testAsyncEnricher() throws Exception {

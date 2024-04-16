@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FilerProducerDoneFileNameTest extends ContextTestSupport {
 
-    private Properties myProp = new Properties();
+    private final Properties myProp = new Properties();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

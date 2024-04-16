@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DisabledOnOs(OS.AIX)
 public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
-    private AggregateController controller = new DefaultAggregateController();
+    private final AggregateController controller = new DefaultAggregateController();
     private MBeanServer mbeanServer;
     private ObjectName on;
 

@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("dummy")
 public class MyDummyComponent extends DefaultComponent {
     private MyDummyConfiguration configuration;
-    private boolean configurer;
+    private final boolean configurer;
     private String componentValue;
 
     public MyDummyComponent(boolean configurer) {

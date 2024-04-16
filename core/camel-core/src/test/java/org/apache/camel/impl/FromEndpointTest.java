@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromEndpointTest extends ContextTestSupport {
-    private Object expectedBody = "<hello>world!</hello>";
+    private final Object expectedBody = "<hello>world!</hello>";
 
     @Test
     public void testReceivedMessageHasFromEndpointSet() throws Exception {

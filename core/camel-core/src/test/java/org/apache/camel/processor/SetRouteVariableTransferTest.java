@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 
 public class SetRouteVariableTransferTest extends ContextTestSupport {
     private MockEndpoint end;
-    private String variableName = "foo";
-    private String expectedVariableValue = "bar";
+    private final String variableName = "foo";
+    private final String expectedVariableValue = "bar";
 
     @Test
     public void testSetExchangeVariableMidRoute() throws Exception {

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupport {
 
-    private MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
+    private final MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
 
     @Test
     public void testCustomExceptionHandler() throws Exception {

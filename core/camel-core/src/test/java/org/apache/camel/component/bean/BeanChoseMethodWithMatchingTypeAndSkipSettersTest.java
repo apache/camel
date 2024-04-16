@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTestSupport {
 
-    private OrderServiceBean service = new OrderServiceBean();
+    private final OrderServiceBean service = new OrderServiceBean();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

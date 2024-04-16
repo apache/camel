@@ -26,7 +26,7 @@ public class MainSupportCommandLineTest {
 
     private static class MyMainSupport extends MainCommandLineSupport {
 
-        private CamelContext context = new DefaultCamelContext();
+        private final CamelContext context = new DefaultCamelContext();
 
         @Override
         protected ProducerTemplate findOrCreateCamelTemplate() {

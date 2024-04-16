@@ -47,8 +47,8 @@ public class DefaultCamelContextStopFailureTest extends ContextTestSupport {
 
     private static final class MyService implements Service {
 
-        private String name;
-        private boolean fail;
+        private final String name;
+        private final boolean fail;
 
         private MyService(String name, boolean fail) {
             this.name = name;

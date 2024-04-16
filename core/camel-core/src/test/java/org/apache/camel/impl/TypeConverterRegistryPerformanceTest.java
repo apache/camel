@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
 
-    private int inner = 10;
+    private final int inner = 10;
 
     private CountDownLatch latch;
 

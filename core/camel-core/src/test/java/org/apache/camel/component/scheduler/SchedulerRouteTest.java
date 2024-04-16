@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SchedulerRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SchedulerRouteTest.class);
-    private MyBean bean = new MyBean();
+    private final MyBean bean = new MyBean();
 
     @Test
     public void testSchedulerInvokesBeanMethod() throws Exception {

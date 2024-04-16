@@ -74,7 +74,7 @@ public class SimulatorTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        private String value;
+        private final String value;
 
         public MyBean(String value) {
             this.value = value;

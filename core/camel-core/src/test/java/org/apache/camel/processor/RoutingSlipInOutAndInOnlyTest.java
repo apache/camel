@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoutingSlipInOutAndInOnlyTest extends ContextTestSupport {
 
-    private String slip = "direct:a,direct:b,direct:c";
+    private final String slip = "direct:a,direct:b,direct:c";
 
     @Test
     public void testRoutingSlipInOut() throws Exception {

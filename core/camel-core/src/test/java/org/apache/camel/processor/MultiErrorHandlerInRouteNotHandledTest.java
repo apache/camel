@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Test;
  * Unit test with multi route specific error handlers
  */
 public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
-    private MyProcessor outer = new MyProcessor();
-    private MyProcessor inner = new MyProcessor();
+    private final MyProcessor outer = new MyProcessor();
+    private final MyProcessor inner = new MyProcessor();
 
     @Test
     public void testNoErrors() throws Exception {

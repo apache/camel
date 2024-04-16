@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
 
-    private MyCustomSpoolRule spoolRule = new MyCustomSpoolRule();
+    private final MyCustomSpoolRule spoolRule = new MyCustomSpoolRule();
 
     private static class MyCamelContext extends DefaultCamelContext {
 

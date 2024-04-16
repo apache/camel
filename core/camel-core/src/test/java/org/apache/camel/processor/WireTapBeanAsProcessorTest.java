@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * Wire tap unit test
  */
 public class WireTapBeanAsProcessorTest extends ContextTestSupport {
-    private MyBean myBean = new MyBean();
+    private final MyBean myBean = new MyBean();
     private MockEndpoint result;
 
     @Override

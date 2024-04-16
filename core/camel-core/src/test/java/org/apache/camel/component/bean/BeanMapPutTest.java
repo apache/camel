@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanMapPutTest extends ContextTestSupport {
 
-    private Map<String, String> myMap = new HashMap<>();
+    private final Map<String, String> myMap = new HashMap<>();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

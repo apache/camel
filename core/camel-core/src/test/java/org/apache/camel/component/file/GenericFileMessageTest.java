@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GenericFileMessageTest extends ContextTestSupport {
 
-    private CamelContext camelContext = new DefaultCamelContext();
+    private final CamelContext camelContext = new DefaultCamelContext();
 
     @Test
     public void testGenericMessageToStringConversion() throws Exception {

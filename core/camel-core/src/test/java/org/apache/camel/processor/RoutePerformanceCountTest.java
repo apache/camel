@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoutePerformanceCountTest extends ContextTestSupport {
 
-    private CountProcessor processor = new CountProcessor();
+    private final CountProcessor processor = new CountProcessor();
 
     @Test
     public void testSendMessages() throws Exception {
@@ -67,7 +67,7 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
     }
 
     private static class CountProcessor implements Processor {
-        private AtomicInteger counter = new AtomicInteger();
+        private final AtomicInteger counter = new AtomicInteger();
 
         @Override
         public void process(Exchange exchange) throws Exception {

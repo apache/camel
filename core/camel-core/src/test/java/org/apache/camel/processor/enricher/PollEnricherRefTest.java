@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PollEnricherRefTest extends ContextTestSupport {
 
-    private SedaEndpoint cool = new SedaEndpoint();
+    private final SedaEndpoint cool = new SedaEndpoint();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

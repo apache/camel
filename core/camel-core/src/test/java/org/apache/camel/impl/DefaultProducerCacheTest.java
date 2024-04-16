@@ -342,7 +342,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private final class MyProducer extends DefaultProducer {
 
-        private int id;
+        private final int id;
 
         MyProducer(Endpoint endpoint) {
             super(endpoint);

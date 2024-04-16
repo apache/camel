@@ -34,7 +34,7 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
 
     private static class MyCustomRoutePolicy extends RoutePolicySupport {
 
-        private volatile AtomicBoolean stopped = new AtomicBoolean();
+        private final AtomicBoolean stopped = new AtomicBoolean();
 
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {

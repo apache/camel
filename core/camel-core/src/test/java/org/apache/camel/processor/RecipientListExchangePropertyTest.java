@@ -57,7 +57,7 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
 
     private static final class MyStuff {
 
-        private String name;
+        private final String name;
 
         private MyStuff(String name) {
             this.name = name;

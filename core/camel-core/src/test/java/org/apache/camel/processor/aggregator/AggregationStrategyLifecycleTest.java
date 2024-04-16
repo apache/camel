@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 
-    private MyCompletionStrategy strategy = new MyCompletionStrategy();
+    private final MyCompletionStrategy strategy = new MyCompletionStrategy();
 
     @Test
     public void testAggregateLifecycle() throws Exception {

@@ -76,7 +76,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         return new RouteBuilder() {
-            AggregationStrategy surnameAggregator = new AggregationStrategy() {
+            final AggregationStrategy surnameAggregator = new AggregationStrategy() {
                 @SuppressWarnings("unchecked")
                 public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                     debugIn("Surname Aggregator", oldExchange, newExchange);
@@ -100,7 +100,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
             };
 
             @SuppressWarnings("unchecked")
-            AggregationStrategy brothersAggregator = new AggregationStrategy() {
+            final AggregationStrategy brothersAggregator = new AggregationStrategy() {
                 public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                     debugIn("Brothers Aggregator", oldExchange, newExchange);
 

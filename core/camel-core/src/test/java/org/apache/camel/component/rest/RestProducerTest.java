@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RestProducerTest {
 
-    private CamelContext camelContext = new DefaultCamelContext();
+    private final CamelContext camelContext = new DefaultCamelContext();
 
     @Test
     public void shouldCreateMultipleQueryParameters() throws UnsupportedEncodingException, URISyntaxException {

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
 
-    private MyCustomStrategy strategy = new MyCustomStrategy();
+    private final MyCustomStrategy strategy = new MyCustomStrategy();
 
     @Test
     public void testCustomAggregationStrategy() throws Exception {

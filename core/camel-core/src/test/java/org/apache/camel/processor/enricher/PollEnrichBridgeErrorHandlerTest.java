@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
 
-    private MyPollingStrategy myPoll = new MyPollingStrategy();
+    private final MyPollingStrategy myPoll = new MyPollingStrategy();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

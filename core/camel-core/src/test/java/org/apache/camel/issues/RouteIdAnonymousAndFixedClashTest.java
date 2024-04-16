@@ -44,7 +44,7 @@ public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext(true);
         ctx.getCamelContextExtension().addContextPlugin(NodeIdFactory.class, new NodeIdFactory() {
-            AtomicInteger counter = new AtomicInteger();
+            final AtomicInteger counter = new AtomicInteger();
 
             @Override
             public String createId(NamedNode definition) {

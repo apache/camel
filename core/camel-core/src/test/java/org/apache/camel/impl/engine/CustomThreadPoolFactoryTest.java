@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class CustomThreadPoolFactoryTest extends ContextTestSupport {
 
-    private MyCustomThreadPoolFactory factory = new MyCustomThreadPoolFactory();
+    private final MyCustomThreadPoolFactory factory = new MyCustomThreadPoolFactory();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

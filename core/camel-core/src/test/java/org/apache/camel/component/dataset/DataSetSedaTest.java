@@ -27,9 +27,9 @@ import org.junit.jupiter.api.Test;
  */
 public class DataSetSedaTest extends ContextTestSupport {
 
-    private SimpleDataSet dataSet = new SimpleDataSet(200);
+    private final SimpleDataSet dataSet = new SimpleDataSet(200);
 
-    private String uri = "dataset:foo?initialDelay=0&produceDelay=1";
+    private final String uri = "dataset:foo?initialDelay=0&produceDelay=1";
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

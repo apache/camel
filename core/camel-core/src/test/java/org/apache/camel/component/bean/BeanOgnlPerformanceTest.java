@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  */
 public class BeanOgnlPerformanceTest extends ContextTestSupport {
 
-    private String scope = "Singleton";
+    private final String scope = "Singleton";
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

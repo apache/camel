@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultTimeoutMapTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTimeoutMapTest.class);
-    private ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
+    private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
 
     @Test
     public void testDefaultTimeoutMap() throws Exception {

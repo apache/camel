@@ -131,7 +131,7 @@ public class SagaTest extends ContextTestSupport {
 
     public static class OrderManagerService {
 
-        private Set<String> orders = new HashSet<>();
+        private final Set<String> orders = new HashSet<>();
 
         public synchronized void newOrder(String id) {
             orders.add(id);
@@ -148,9 +148,9 @@ public class SagaTest extends ContextTestSupport {
 
     public static class CreditService {
 
-        private int totalCredit;
+        private final int totalCredit;
 
-        private Map<String, Integer> reservations = new HashMap<>();
+        private final Map<String, Integer> reservations = new HashMap<>();
 
         public CreditService(int totalCredit) {
             this.totalCredit = totalCredit;

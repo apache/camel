@@ -38,7 +38,7 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
-    private MyIdempotentRepo repo = new MyIdempotentRepo();
+    private final MyIdempotentRepo repo = new MyIdempotentRepo();
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -99,8 +99,8 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
 
     private static final class MyIdempotentRepo implements IdempotentRepository {
 
-        private IdempotentRepository delegate;
-        private Set<String> exchanges = new LinkedHashSet<>();
+        private final IdempotentRepository delegate;
+        private final Set<String> exchanges = new LinkedHashSet<>();
 
         private MyIdempotentRepo() {
             delegate = MemoryIdempotentRepository.memoryIdempotentRepository(200);

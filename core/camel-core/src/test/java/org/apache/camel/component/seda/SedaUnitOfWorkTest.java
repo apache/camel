@@ -99,8 +99,8 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
     private static final class MyUOWProcessor implements Processor {
 
-        private SedaUnitOfWorkTest test;
-        private String id;
+        private final SedaUnitOfWorkTest test;
+        private final String id;
 
         private MyUOWProcessor(SedaUnitOfWorkTest test, String id) {
             this.test = test;

@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
 
-    private String body
+    private final String body
             = "Hello World 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
 
     @Test

@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport {
 
-    private String uri = "my:foo?pollingConsumerQueueSize=10&pollingConsumerBlockWhenFull=false";
+    private final String uri = "my:foo?pollingConsumerQueueSize=10&pollingConsumerBlockWhenFull=false";
 
     @Override
     @BeforeEach

@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
 
-    private static List<String> bodies = new ArrayList<>();
-    private static List<String> previouses = new ArrayList<>();
+    private static final List<String> bodies = new ArrayList<>();
+    private static final List<String> previouses = new ArrayList<>();
 
     @Test
     public void testDynamicRouter() throws Exception {

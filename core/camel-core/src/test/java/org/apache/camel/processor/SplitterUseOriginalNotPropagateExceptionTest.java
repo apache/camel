@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSupport {
 
-    private MyEventNotifier notifier = new MyEventNotifier();
+    private final MyEventNotifier notifier = new MyEventNotifier();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

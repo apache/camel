@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
 
     private static int invoked;
-    private static List<String> bodies = new ArrayList<>();
+    private static final List<String> bodies = new ArrayList<>();
 
     @Test
     public void testAsyncEndpoint() throws Exception {

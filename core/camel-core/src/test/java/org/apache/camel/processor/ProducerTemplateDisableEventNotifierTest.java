@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProducerTemplateDisableEventNotifierTest extends ContextTestSupport {
 
-    private MySentEventNotifier notifier = new MySentEventNotifier();
+    private final MySentEventNotifier notifier = new MySentEventNotifier();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

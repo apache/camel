@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class RemoveGlobalVariableTest extends ContextTestSupport {
     private MockEndpoint end;
     private MockEndpoint mid;
-    private String variableName = "foo";
-    private String expectedVariableValue = "bar";
+    private final String variableName = "foo";
+    private final String expectedVariableValue = "bar";
 
     @Test
     public void testSetHeaderMidRouteThenRemove() throws Exception {

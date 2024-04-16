@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class AggregationStrategyBeanAdapterWithHeadersTest extends ContextTestSupport {
 
-    private MyBodyAppender appender = new MyBodyAppender();
+    private final MyBodyAppender appender = new MyBodyAppender();
 
     @Test
     public void testAggregate() throws Exception {

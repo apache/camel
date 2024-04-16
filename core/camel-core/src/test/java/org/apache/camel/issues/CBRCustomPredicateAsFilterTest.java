@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
 
-    private MyFiler filter = new MyFiler();
+    private final MyFiler filter = new MyFiler();
 
     private static class MyFiler implements Predicate {
 
-        private List<String> bodies = new ArrayList<>();
+        private final List<String> bodies = new ArrayList<>();
 
         @Override
         public boolean matches(Exchange exchange) {

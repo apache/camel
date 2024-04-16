@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class DebugExceptionBreakpointTest extends ContextTestSupport {
 
-    private List<String> logs = new ArrayList<>();
+    private final List<String> logs = new ArrayList<>();
     private Condition exceptionCondition;
     private Breakpoint breakpoint;
 

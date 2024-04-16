@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleRegistryWrapTest {
 
-    private SimpleRegistry registry = new SimpleRegistry() {
+    private final SimpleRegistry registry = new SimpleRegistry() {
 
         @Override
         public Object wrap(Object value) {

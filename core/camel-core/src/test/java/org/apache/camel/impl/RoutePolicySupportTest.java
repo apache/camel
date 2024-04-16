@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoutePolicySupportTest extends ContextTestSupport {
 
-    private MyRoutePolicy policy = new MyRoutePolicy();
+    private final MyRoutePolicy policy = new MyRoutePolicy();
 
     public static class MyRoutePolicy extends RoutePolicySupport {
     }

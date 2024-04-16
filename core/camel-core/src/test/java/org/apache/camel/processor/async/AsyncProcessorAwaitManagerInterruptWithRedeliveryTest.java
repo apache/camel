@@ -129,7 +129,7 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
     }
 
     public static class MyBean {
-        private CountDownLatch latch;
+        private final CountDownLatch latch;
 
         public MyBean(CountDownLatch latch) {
             this.latch = latch;

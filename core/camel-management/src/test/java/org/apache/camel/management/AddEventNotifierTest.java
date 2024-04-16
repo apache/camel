@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisabledOnOs(OS.AIX)
 public class AddEventNotifierTest extends ContextTestSupport {
 
-    private static List<CamelEvent> events = new ArrayList<>();
+    private static final List<CamelEvent> events = new ArrayList<>();
 
     @Override
     @BeforeEach

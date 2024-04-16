@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class XsltCustomErrorListenerTest extends TestSupport {
 
-    private MyErrorListener listener = new MyErrorListener();
+    private final MyErrorListener listener = new MyErrorListener();
 
     private static class MyErrorListener implements ErrorListener {
 

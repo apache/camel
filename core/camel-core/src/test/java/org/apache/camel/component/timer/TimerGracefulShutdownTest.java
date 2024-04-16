@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TimerGracefulShutdownTest extends ContextTestSupport {
 
-    private MyExceptionHandler eh = new MyExceptionHandler();
+    private final MyExceptionHandler eh = new MyExceptionHandler();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

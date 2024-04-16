@@ -18,7 +18,7 @@ package org.apache.camel.processor.resequencer;
 
 public class TestObject {
 
-    private int value;
+    private final int value;
 
     public TestObject(int value) {
         this.value = value;

@@ -102,7 +102,7 @@ public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSuppor
     }
 
     static class Student {
-        private int grade;
+        private final int grade;
 
         Student(int grade) {
             this.grade = grade;

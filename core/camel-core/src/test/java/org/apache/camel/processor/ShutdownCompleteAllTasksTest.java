@@ -35,8 +35,8 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
     public static final String FILE_URI_QUERY = "?initialDelay=0&delay=10&synchronous=true";
 
-    private AtomicInteger counter = new AtomicInteger();
-    private CountDownLatch latch = new CountDownLatch(2);
+    private final AtomicInteger counter = new AtomicInteger();
+    private final CountDownLatch latch = new CountDownLatch(2);
 
     @Override
     @BeforeEach

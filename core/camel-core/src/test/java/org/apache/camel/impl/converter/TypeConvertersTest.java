@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TypeConvertersTest extends ContextTestSupport {
 
-    private MyConverters converters = new MyConverters();
+    private final MyConverters converters = new MyConverters();
 
     @Test
     public void testAdd() throws Exception {

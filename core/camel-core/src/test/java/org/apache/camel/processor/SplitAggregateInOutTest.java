@@ -32,7 +32,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitAggregateInOutTest.class);
 
-    private String expectedBody = "Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]";
+    private final String expectedBody = "Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]";
 
     @Test
     public void testSplitAndAggregateInOut() throws Exception {

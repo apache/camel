@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RedeliveryPolicyDelayPatternTest {
 
-    private RedeliveryPolicy policy = new RedeliveryPolicy();
+    private final RedeliveryPolicy policy = new RedeliveryPolicy();
 
     @Test
     public void testDelayPattern() throws Exception {

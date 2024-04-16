@@ -65,7 +65,7 @@ public class DefaultInjectorTest {
 
     public static class MyOtherBean {
 
-        private static MyOtherBean me = new MyOtherBean();
+        private static final MyOtherBean me = new MyOtherBean();
 
         public static MyOtherBean getInstance() {
             return me;

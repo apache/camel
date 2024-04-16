@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
 
-    private MyPolicy myPolicy = new MyPolicy();
+    private final MyPolicy myPolicy = new MyPolicy();
 
     @Test
     public void testConsumeSuspendAndResumeFile() throws Exception {
