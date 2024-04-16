@@ -39,6 +39,37 @@ public class ArgumentSubstitutionParserTest {
         adapters[2] = new Substitution(".+", "(.+)", "java.util.List", "$1List");
         adapters[3] = new Substitution(".+", "(.+)", ".*?(\\w++)\\[\\]", "$1Array", true);
 
+        final ApiMethodParser<TestProxy> parser =
+                getTestProxyApiMethodParser(adapters);
+
+        final List<ApiMethodParser.ApiMethodModel> methodModels = parser.parse();
+        assertEquals(9, methodModels.size());
+
+        final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(8);
+        assertEquals(PERSON, sayHi1.getArguments().get(0).getName());
+        assertEquals("SAY_HI_1", sayHi1.getUniqueName());
+
+        final ApiMethodParser.ApiMethodModel greetMe = methodModels.get(4);
+        assertEquals(PERSON, greetMe.getArguments().get(0).getName());
+
+        final ApiMethodParser.ApiMethodModel greetUs = methodModels.get(6);
+        assertEquals("astronaut1", greetUs.getArguments().get(0).getName());
+        assertEquals("astronaut2", greetUs.getArguments().get(1).getName());
+
+        final ApiMethodParser.ApiMethodModel greetAll = methodModels.get(0);
+        assertEquals("personList", greetAll.getArguments().get(0).getName());
+
+        final ApiMethodParser.ApiMethodModel greetAll1 = methodModels.get(1);
+        assertEquals("personMap", greetAll1.getArguments().get(0).getName());
+
+        final ApiMethodParser.ApiMethodModel greetAll2 = methodModels.get(2);
+        assertEquals("stringArray", greetAll2.getArguments().get(0).getName());
+
+        final ApiMethodParser.ApiMethodModel greetInnerChild = methodModels.get(3);
+        assertEquals("child", greetInnerChild.getArguments().get(0).getName());
+    }
+
+    private static ApiMethodParser<TestProxy> getTestProxyApiMethodParser(Substitution[] adapters) {
         final ApiMethodParser<TestProxy> parser = new ArgumentSubstitutionParser<>(TestProxy.class, adapters);
 
         final ArrayList<String> signatures = new ArrayList<>();
@@ -88,32 +119,7 @@ public class ArgumentSubstitutionParserTest {
                 args);
 
         parser.setSignatures(signatures);
-
-        final List<ApiMethodParser.ApiMethodModel> methodModels = parser.parse();
-        assertEquals(9, methodModels.size());
-
-        final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(8);
-        assertEquals(PERSON, sayHi1.getArguments().get(0).getName());
-        assertEquals("SAY_HI_1", sayHi1.getUniqueName());
-
-        final ApiMethodParser.ApiMethodModel greetMe = methodModels.get(4);
-        assertEquals(PERSON, greetMe.getArguments().get(0).getName());
-
-        final ApiMethodParser.ApiMethodModel greetUs = methodModels.get(6);
-        assertEquals("astronaut1", greetUs.getArguments().get(0).getName());
-        assertEquals("astronaut2", greetUs.getArguments().get(1).getName());
-
-        final ApiMethodParser.ApiMethodModel greetAll = methodModels.get(0);
-        assertEquals("personList", greetAll.getArguments().get(0).getName());
-
-        final ApiMethodParser.ApiMethodModel greetAll1 = methodModels.get(1);
-        assertEquals("personMap", greetAll1.getArguments().get(0).getName());
-
-        final ApiMethodParser.ApiMethodModel greetAll2 = methodModels.get(2);
-        assertEquals("stringArray", greetAll2.getArguments().get(0).getName());
-
-        final ApiMethodParser.ApiMethodModel greetInnerChild = methodModels.get(3);
-        assertEquals("child", greetInnerChild.getArguments().get(0).getName());
+        return parser;
     }
 
 }

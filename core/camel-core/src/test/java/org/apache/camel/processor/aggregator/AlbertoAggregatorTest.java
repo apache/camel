@@ -43,6 +43,18 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
         String allNames
                 = "Harpo Marx,Fiodor Karamazov,Chico Marx,Ivan Karamazov,Groucho Marx,Alexei Karamazov,Dimitri Karamazov";
 
+        final Map<String, List<String>> allBrothers = getAllBrothers();
+
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedBodiesReceived(allBrothers);
+
+        template.sendBody("direct:start", allNames);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    private static Map<String, List<String>> getAllBrothers() {
         List<String> marxBrothers = new ArrayList<>();
         marxBrothers.add("Harpo");
         marxBrothers.add("Chico");
@@ -57,14 +69,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
         Map<String, List<String>> allBrothers = new HashMap<>();
         allBrothers.put("Marx", marxBrothers);
         allBrothers.put("Karamazov", karamazovBrothers);
-
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.expectedBodiesReceived(allBrothers);
-
-        template.sendBody("direct:start", allNames);
-
-        assertMockEndpointsSatisfied();
+        return allBrothers;
     }
 
     @Override
