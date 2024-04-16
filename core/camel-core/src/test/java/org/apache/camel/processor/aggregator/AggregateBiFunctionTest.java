@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class AggregateBiFunctionTest extends ContextTestSupport {
 
-    private BiFunction<Exchange, Exchange, Object> myAgg
+    private final BiFunction<Exchange, Exchange, Object> myAgg
             = (Exchange e1, Exchange e2) -> e1.getMessage().getBody(String.class) + "+" + e2.getMessage().getBody(String.class);
 
     @Test

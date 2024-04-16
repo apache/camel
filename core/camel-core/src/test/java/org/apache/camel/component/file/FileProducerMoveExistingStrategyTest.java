@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
-    private MyStrategy myStrategy = new MyStrategy();
+    private final MyStrategy myStrategy = new MyStrategy();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitIteratorNullTest extends ContextTestSupport {
 
-    private MyIterator myIterator = new MyIterator();
+    private final MyIterator myIterator = new MyIterator();
 
     @Test
     public void testSplitIteratorNull() throws Exception {

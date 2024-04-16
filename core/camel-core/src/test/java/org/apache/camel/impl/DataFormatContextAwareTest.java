@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class DataFormatContextAwareTest extends ContextTestSupport {
 
-    private MyDataFormat my = new MyDataFormat();
+    private final MyDataFormat my = new MyDataFormat();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

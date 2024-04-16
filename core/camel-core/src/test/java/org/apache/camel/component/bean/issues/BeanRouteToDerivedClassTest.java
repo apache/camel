@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
-    private DerivedClass derived = new DerivedClass();
+    private final DerivedClass derived = new DerivedClass();
 
     @Override
     public boolean isUseRouteBuilder() {

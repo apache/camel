@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GZIPHelperTest {
 
-    private static byte[] sampleBytes = new byte[] { 1, 2, 3, 1, 2, 3 };
+    private static final byte[] sampleBytes = new byte[] { 1, 2, 3, 1, 2, 3 };
 
     @Test
     public void toGZIPInputStreamShouldReturnTheSameInputStream() throws IOException {

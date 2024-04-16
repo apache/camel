@@ -189,7 +189,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
     }
 
     private static final class MyFoo {
-        private String foo;
+        private final String foo;
 
         private MyFoo(String foo) {
             this.foo = foo;

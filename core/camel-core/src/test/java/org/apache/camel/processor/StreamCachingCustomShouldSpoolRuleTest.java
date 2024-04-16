@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
 
-    private MyCustomSpoolRule spoolRule = new MyCustomSpoolRule();
+    private final MyCustomSpoolRule spoolRule = new MyCustomSpoolRule();
 
     @Test
     public void testByteArrayInputStream() throws Exception {

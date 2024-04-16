@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class TransactedSetHeaderIssueTest extends ContextTestSupport {
 
-    private Policy policy = new Policy() {
+    private final Policy policy = new Policy() {
         @Override
         public void beforeWrap(Route route, NamedNode definition) {
             // noop

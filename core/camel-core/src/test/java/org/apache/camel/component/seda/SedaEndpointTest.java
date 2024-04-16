@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SedaEndpointTest extends ContextTestSupport {
 
-    private BlockingQueue<Exchange> queue = new ArrayBlockingQueue<>(1000);
+    private final BlockingQueue<Exchange> queue = new ArrayBlockingQueue<>(1000);
 
     @Test
     public void testSedaEndpointUnboundedQueue() throws Exception {

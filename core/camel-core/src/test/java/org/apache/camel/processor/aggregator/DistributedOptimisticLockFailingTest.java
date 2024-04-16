@@ -49,7 +49,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
     }
 
     private static final class EverySecondOneFailsRepository extends MemoryAggregationRepository {
-        private AtomicInteger counter = new AtomicInteger();
+        private final AtomicInteger counter = new AtomicInteger();
 
         private EverySecondOneFailsRepository() {
             super(true);
@@ -66,7 +66,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         }
     }
 
-    private EverySecondOneFailsRepository sharedRepository = new EverySecondOneFailsRepository();
+    private final EverySecondOneFailsRepository sharedRepository = new EverySecondOneFailsRepository();
 
     @Test
     public void testAlwaysFails() throws Exception {

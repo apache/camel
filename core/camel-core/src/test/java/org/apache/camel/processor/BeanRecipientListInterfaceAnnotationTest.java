@@ -39,8 +39,8 @@ public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListT
     }
 
     public static class MyBean implements Route {
-        private static AtomicInteger counter = new AtomicInteger();
-        private int id;
+        private static final AtomicInteger counter = new AtomicInteger();
+        private final int id;
 
         public MyBean() {
             id = counter.incrementAndGet();

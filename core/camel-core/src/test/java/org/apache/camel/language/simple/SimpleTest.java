@@ -2360,8 +2360,8 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public static final class Animal {
-        private String name;
-        private int age;
+        private final String name;
+        private final int age;
         private Animal friend;
 
         private Animal(String name, int age) {
@@ -2412,8 +2412,8 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public static final class OrderLine {
-        private int id;
-        private String name;
+        private final int id;
+        private final String name;
 
         public OrderLine(int id, String name) {
             this.id = id;

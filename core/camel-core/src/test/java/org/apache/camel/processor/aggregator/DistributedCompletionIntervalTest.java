@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  */
 public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
 
-    private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
+    private final MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
 
     @Test
     public void testCamelContext1Wins() throws Exception {

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SentExchangeEventNotifierTwoIssueTest extends ContextTestSupport {
 
-    private MyNotifier notifier = new MyNotifier();
+    private final MyNotifier notifier = new MyNotifier();
 
     private static class MyNotifier extends EventNotifierSupport {
 

@@ -69,7 +69,7 @@ public class NewInstanceTest extends ContextTestSupport {
 
     public static class MyBean {
         private static int counter;
-        private int id;
+        private final int id;
 
         public MyBean() {
             id = generateId();

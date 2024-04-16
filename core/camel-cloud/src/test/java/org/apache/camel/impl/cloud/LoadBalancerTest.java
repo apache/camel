@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LoadBalancerTest {
 
-    private static StaticServiceDiscovery serviceDiscovery = new StaticServiceDiscovery();
+    private static final StaticServiceDiscovery serviceDiscovery = new StaticServiceDiscovery();
 
     @BeforeAll
     public static void setUp() {

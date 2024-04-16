@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DefaultCamelContextWithLifecycleStrategyRestartTest extends ContextTestSupport {
 
-    private MyStrategy strategy = new MyStrategy();
+    private final MyStrategy strategy = new MyStrategy();
 
     @Test
     public void testRestart() throws Exception {
@@ -100,8 +100,8 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
 
     private static class MyStrategy extends LifecycleStrategySupport {
 
-        private AtomicInteger contextStartCounter = new AtomicInteger();
-        private AtomicInteger removeCounter = new AtomicInteger();
+        private final AtomicInteger contextStartCounter = new AtomicInteger();
+        private final AtomicInteger removeCounter = new AtomicInteger();
 
         @Override
         public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {

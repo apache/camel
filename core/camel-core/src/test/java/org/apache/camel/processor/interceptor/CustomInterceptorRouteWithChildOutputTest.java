@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSupport {
 
-    private MyInterceptor myInterceptor = new MyInterceptor();
+    private final MyInterceptor myInterceptor = new MyInterceptor();
 
     @Test
     public void testCustomInterceptor() throws Exception {

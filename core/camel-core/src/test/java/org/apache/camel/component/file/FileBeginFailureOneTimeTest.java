@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
-    private MyStrategy myStrategy = new MyStrategy();
+    private final MyStrategy myStrategy = new MyStrategy();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

@@ -93,7 +93,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
     }
 
     private class SampleProcessor implements Processor {
-        private Map<String, Integer> duplicate;
+        private final Map<String, Integer> duplicate;
 
         public SampleProcessor(Map<String, Integer> duplicate) {
             this.duplicate = duplicate;

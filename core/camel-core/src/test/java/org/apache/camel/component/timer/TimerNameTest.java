@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TimerNameTest extends ContextTestSupport {
 
-    private String uri = "timer://foo?delay=0&period=10&timerName=bar";
+    private final String uri = "timer://foo?delay=0&period=10&timerName=bar";
 
     @Test
     public void testTimerName() throws Exception {

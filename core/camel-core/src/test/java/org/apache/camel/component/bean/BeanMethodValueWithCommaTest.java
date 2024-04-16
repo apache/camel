@@ -94,8 +94,8 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
 
     public static class MyCronBody {
 
-        private String id;
-        private String cron;
+        private final String id;
+        private final String cron;
 
         public MyCronBody(String id, String cron) {
             this.id = id;

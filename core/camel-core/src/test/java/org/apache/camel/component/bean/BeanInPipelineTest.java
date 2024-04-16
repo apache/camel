@@ -54,7 +54,7 @@ public class BeanInPipelineTest extends ContextTestSupport {
 
     public static class MyBean {
 
-        private String postfix;
+        private final String postfix;
 
         public MyBean(String postfix) {
             this.postfix = postfix;

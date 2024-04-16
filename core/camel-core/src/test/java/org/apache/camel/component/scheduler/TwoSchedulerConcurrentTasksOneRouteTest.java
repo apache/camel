@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class TwoSchedulerConcurrentTasksOneRouteTest extends ContextTestSupport {
 
-    private AtomicBoolean sleep = new AtomicBoolean(true);
+    private final AtomicBoolean sleep = new AtomicBoolean(true);
 
     @Test
     public void testTwoScheduler() throws Exception {

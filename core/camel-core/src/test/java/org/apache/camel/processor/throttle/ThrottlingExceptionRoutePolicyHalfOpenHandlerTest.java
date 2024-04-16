@@ -38,9 +38,9 @@ import static org.awaitility.Awaitility.await;
 
 @Isolated("Does not play well with parallel execution")
 public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTestSupport {
-    private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerTest.class);
+    private static final Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerTest.class);
 
-    private String url = "direct:start?block=false";
+    private final String url = "direct:start?block=false";
     private MockEndpoint result;
 
     @Override

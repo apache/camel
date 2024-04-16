@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
 
-    private static AtomicBoolean failed = new AtomicBoolean();
+    private static final AtomicBoolean failed = new AtomicBoolean();
 
     @Override
     public boolean isUseRouteBuilder() {

@@ -31,11 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class RemovePropertiesWithoutExclusionTest extends ContextTestSupport {
     private MockEndpoint end;
     private MockEndpoint mid;
-    private String propertyName = "foo";
-    private String expectedPropertyValue = "bar";
-    private String propertyName1 = "fee";
-    private String expectedPropertyValue1 = "bar1";
-    private String pattern = "f*";
+    private final String propertyName = "foo";
+    private final String expectedPropertyValue = "bar";
+    private final String propertyName1 = "fee";
+    private final String expectedPropertyValue1 = "bar1";
+    private final String pattern = "f*";
 
     @Test
     public void testSetExchangePropertiesMidRouteThenRemoveWithPattern() throws Exception {

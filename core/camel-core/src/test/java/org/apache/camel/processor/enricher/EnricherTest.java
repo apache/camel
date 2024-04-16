@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EnricherTest extends ContextTestSupport {
 
-    private static SampleAggregator aggregationStrategy = new SampleAggregator();
+    private static final SampleAggregator aggregationStrategy = new SampleAggregator();
 
     protected MockEndpoint mock;
 

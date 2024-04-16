@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Disabled("Test manually")
 public class TokenPairIteratorSplitChoicePerformanceManualTest extends ContextTestSupport {
 
-    private int size = 20 * 1000;
+    private final int size = 20 * 1000;
     private final AtomicInteger tiny = new AtomicInteger();
     private final AtomicInteger small = new AtomicInteger();
     private final AtomicInteger med = new AtomicInteger();

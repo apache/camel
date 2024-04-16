@@ -18,7 +18,7 @@ package org.apache.camel.component.bean;
 
 public final class MyCurrency {
 
-    private String symbol;
+    private final String symbol;
 
     public MyCurrency(String symbol) {
         this.symbol = symbol;

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistributedTest {
 
-    private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
+    private final MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
 
     @Test
     public void testAggregateConcurrentPerCorrelationKey() throws Exception {

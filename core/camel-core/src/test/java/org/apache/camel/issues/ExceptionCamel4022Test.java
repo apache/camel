@@ -47,7 +47,7 @@ public class ExceptionCamel4022Test extends ContextTestSupport {
 
     public static class MyExceptionThrower implements Processor {
 
-        private String msg;
+        private final String msg;
 
         public MyExceptionThrower(String msg) {
             this.msg = msg;

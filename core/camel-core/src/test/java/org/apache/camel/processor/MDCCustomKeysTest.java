@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MDCCustomKeysTest extends ContextTestSupport {
 
-    private MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");
-    private MdcCheckerProcessor checker2 = new MdcCheckerProcessor("World");
+    private final MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");
+    private final MdcCheckerProcessor checker2 = new MdcCheckerProcessor("World");
 
     @Test
     public void testMdcPreserved() throws Exception {

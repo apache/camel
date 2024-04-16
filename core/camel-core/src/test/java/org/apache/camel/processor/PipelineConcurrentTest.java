@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  */
 public class PipelineConcurrentTest extends ContextTestSupport {
 
-    private String uri = "seda:in?size=2000&concurrentConsumers=10";
+    private final String uri = "seda:in?size=2000&concurrentConsumers=10";
 
     @Test
     public void testConcurrentPipeline() throws Exception {

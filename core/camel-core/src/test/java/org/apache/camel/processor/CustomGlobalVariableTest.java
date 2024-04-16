@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CustomGlobalVariableTest extends ContextTestSupport {
     private MockEndpoint end;
-    private String variableName = "foo";
-    private String expectedVariableValue = "bar";
+    private final String variableName = "foo";
+    private final String expectedVariableValue = "bar";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

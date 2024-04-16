@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LanguageServiceTest extends ContextTestSupport {
 
-    private MyLanguage my = new MyLanguage();
+    private final MyLanguage my = new MyLanguage();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

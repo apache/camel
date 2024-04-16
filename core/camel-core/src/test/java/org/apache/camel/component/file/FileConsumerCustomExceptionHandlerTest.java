@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
 
-    private MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
-    private MyExceptionHandler myExceptionHandler = new MyExceptionHandler();
+    private final MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
+    private final MyExceptionHandler myExceptionHandler = new MyExceptionHandler();
 
     @Test
     public void testCustomExceptionHandler() throws Exception {

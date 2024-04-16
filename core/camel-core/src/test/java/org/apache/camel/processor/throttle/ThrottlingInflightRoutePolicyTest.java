@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
 
-    private String url = "seda:foo?concurrentConsumers=20";
+    private final String url = "seda:foo?concurrentConsumers=20";
 
     @Test
     public void testThrottlingRoutePolicy() throws Exception {

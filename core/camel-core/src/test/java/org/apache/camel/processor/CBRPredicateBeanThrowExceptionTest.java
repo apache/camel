@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
 
-    private static AtomicBoolean check = new AtomicBoolean();
-    private static AtomicBoolean check2 = new AtomicBoolean();
+    private static final AtomicBoolean check = new AtomicBoolean();
+    private static final AtomicBoolean check2 = new AtomicBoolean();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

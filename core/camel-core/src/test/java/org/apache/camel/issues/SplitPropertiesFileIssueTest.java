@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 public class SplitPropertiesFileIssueTest extends ContextTestSupport {
 
-    private String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";
+    private final String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";
 
     @Test
     public void testSplitPropertiesFileAndRoute() throws Exception {

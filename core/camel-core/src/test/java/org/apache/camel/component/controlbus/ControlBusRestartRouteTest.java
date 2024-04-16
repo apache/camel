@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ControlBusRestartRouteTest extends ContextTestSupport {
 
-    private MyRoutePolicy myRoutePolicy = new MyRoutePolicy();
+    private final MyRoutePolicy myRoutePolicy = new MyRoutePolicy();
 
     @Test
     public void testControlBusRestart() throws Exception {

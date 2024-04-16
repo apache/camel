@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupport {
 
-    private AtomicInteger invoked = new AtomicInteger();
+    private final AtomicInteger invoked = new AtomicInteger();
 
     @BeforeEach
     public void resetInvoked() {

@@ -91,8 +91,8 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
     static class CustomIterator implements Iterator<String>, Closeable {
 
         private int index;
-        private InputStream request;
-        private boolean errorInHasNext;
+        private final InputStream request;
+        private final boolean errorInHasNext;
 
         CustomIterator(Exchange exchange, InputStream request, boolean errorInHasNext) {
             this.request = request;

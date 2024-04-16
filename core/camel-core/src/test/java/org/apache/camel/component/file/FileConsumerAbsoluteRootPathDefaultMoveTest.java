@@ -30,7 +30,7 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
 
     // run this test manually
 
-    private String base = "/tmp/mytemp";
+    private final String base = "/tmp/mytemp";
 
     @Test
     @Disabled

@@ -41,7 +41,7 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private MyInterceptor interceptor = new MyInterceptor();
+    private final MyInterceptor interceptor = new MyInterceptor();
 
     @Test
     public void testAsyncEndpoint() throws Exception {
@@ -82,7 +82,7 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     private static class MyInterceptor implements InterceptStrategy {
-        private AtomicInteger counter = new AtomicInteger();
+        private final AtomicInteger counter = new AtomicInteger();
 
         @Override
         public Processor wrapProcessorInInterceptors(

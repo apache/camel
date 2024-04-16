@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnricherRefBeanClassTest extends ContextTestSupport {
 
-    private MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
+    private final MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

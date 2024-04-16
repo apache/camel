@@ -34,10 +34,10 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
 
     private static String startOrder = "";
 
-    private MyServiceBean service1 = new MyServiceBean("1");
-    private MyServiceBean service2 = new MyServiceBean("2");
-    private MyServiceBean service3 = new MyServiceBean("3");
-    private MyServiceBean service4 = new MyServiceBean("4");
+    private final MyServiceBean service1 = new MyServiceBean("1");
+    private final MyServiceBean service2 = new MyServiceBean("2");
+    private final MyServiceBean service3 = new MyServiceBean("3");
+    private final MyServiceBean service4 = new MyServiceBean("4");
 
     @Test
     public void testRouteServiceStartupOrder() throws Exception {
@@ -80,7 +80,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
 
     public static class MyServiceBean extends ServiceSupport implements Processor {
 
-        private String name;
+        private final String name;
         private boolean started;
 
         public MyServiceBean(String name) {

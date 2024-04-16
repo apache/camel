@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 public class XPathSplitStreamTest extends ContextTestSupport {
 
-    private static int size = 100;
+    private static final int size = 100;
 
     @Override
     @BeforeEach

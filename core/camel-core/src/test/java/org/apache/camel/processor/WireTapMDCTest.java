@@ -89,9 +89,9 @@ public class WireTapMDCTest extends ContextTestSupport {
         private Long threadId;
         private String foo;
 
-        private String expected1;
-        private String expected2;
-        private String expected3;
+        private final String expected1;
+        private final String expected2;
+        private final String expected3;
 
         public MdcCheckerProcessor(String expected1, String expected2, String expected3) {
             this.expected1 = expected1;

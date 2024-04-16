@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
 
-    private MyAggRepo myRepo = new MyAggRepo();
+    private final MyAggRepo myRepo = new MyAggRepo();
 
     @Test
     public void testBeanBeforeAggregation() throws Exception {

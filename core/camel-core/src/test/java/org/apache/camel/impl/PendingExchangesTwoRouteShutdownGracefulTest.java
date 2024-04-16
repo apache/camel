@@ -32,7 +32,7 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
 
     private static String foo = "";
     private static String bar = "";
-    private static CountDownLatch latch = new CountDownLatch(2);
+    private static final CountDownLatch latch = new CountDownLatch(2);
 
     @Test
     public void testShutdownGraceful() throws Exception {

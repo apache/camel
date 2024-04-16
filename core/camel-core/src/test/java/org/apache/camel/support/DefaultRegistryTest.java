@@ -293,7 +293,7 @@ public class DefaultRegistryTest {
 
         private CamelContext camelContext;
 
-        private String name;
+        private final String name;
 
         public MyBean(String name) {
             this.name = name;

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DebugTest extends ContextTestSupport {
 
-    private List<String> logs = new ArrayList<>();
+    private final List<String> logs = new ArrayList<>();
     private Condition camelCondition;
     private Condition mockCondition;
     private Condition doneCondition;

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
 
-    private MyRepo repo = new MyRepo();
+    private final MyRepo repo = new MyRepo();
 
     @Test
     public void testAggregateNewExchangeAndConfirm() throws Exception {

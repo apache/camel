@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class MainHelperTest {
 
-    private MainHelper helper = new MainHelper();
+    private final MainHelper helper = new MainHelper();
 
     @Test
     public void testAddComponentEnvVariables() {

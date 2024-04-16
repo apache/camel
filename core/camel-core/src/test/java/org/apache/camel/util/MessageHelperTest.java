@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MessageHelperTest {
 
     private Message message;
-    private CamelContext camelContext = new DefaultCamelContext();
+    private final CamelContext camelContext = new DefaultCamelContext();
 
     @BeforeEach
     public void setUp() throws Exception {

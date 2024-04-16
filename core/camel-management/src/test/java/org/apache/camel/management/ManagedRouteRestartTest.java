@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteRestartTest extends ManagementTestSupport {
 
-    private MyRoutePolicy myRoutePolicy = new MyRoutePolicy();
+    private final MyRoutePolicy myRoutePolicy = new MyRoutePolicy();
 
     @Test
     public void testRestartRoute() throws Exception {

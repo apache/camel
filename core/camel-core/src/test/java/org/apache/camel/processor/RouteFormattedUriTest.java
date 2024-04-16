@@ -23,9 +23,9 @@ import org.junit.jupiter.api.Test;
 
 public class RouteFormattedUriTest extends ContextTestSupport {
 
-    private String name = "hello.txt";
-    private String pattern = ".*txt$";
-    private String result = "result";
+    private final String name = "hello.txt";
+    private final String pattern = ".*txt$";
+    private final String result = "result";
 
     @Test
     public void testFormattedUri() throws Exception {

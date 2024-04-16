@@ -63,9 +63,9 @@ public class MainBeansClassFactoryMethodTest {
 
     public static class MyDriver {
 
-        private String url;
-        private String username;
-        private String password;
+        private final String url;
+        private final String username;
+        private final String password;
 
         public MyDriver(String url, String username, String password) {
             this.url = url;

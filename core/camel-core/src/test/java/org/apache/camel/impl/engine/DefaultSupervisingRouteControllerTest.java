@@ -145,7 +145,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
     private static class MyJmsEndpoint extends SedaEndpoint {
 
-        private String name;
+        private final String name;
 
         public MyJmsEndpoint(String name) {
             this.name = name;

@@ -44,7 +44,7 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
         }
     }
 
-    private Map<String, Expression> headerMap = new java.util.LinkedHashMap<>();
+    private final Map<String, Expression> headerMap = new java.util.LinkedHashMap<>();
     protected String body = "<person name='Jane' age='10'/>";
     protected MockEndpoint expected;
 

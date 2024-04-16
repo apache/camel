@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanWithHeadersAndBodyInject2Test.class);
-    private MyBean myBean = new MyBean();
-    private Map<String, User> users = new HashMap<>();
+    private final MyBean myBean = new MyBean();
+    private final Map<String, User> users = new HashMap<>();
 
     @Test
     public void testCannotBindToParameter() throws Exception {

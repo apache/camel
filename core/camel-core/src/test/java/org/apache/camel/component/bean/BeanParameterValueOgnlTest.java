@@ -103,8 +103,8 @@ public class BeanParameterValueOgnlTest extends ContextTestSupport {
     }
 
     public static final class Animal {
-        private String name;
-        private int age;
+        private final String name;
+        private final int age;
         private Animal friend;
 
         private Animal(String name, int age) {

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
 
-    private MyService service = new MyService();
+    private final MyService service = new MyService();
 
     @Test
     public void testRouteSuspendResumeWarmUpTest() throws Exception {

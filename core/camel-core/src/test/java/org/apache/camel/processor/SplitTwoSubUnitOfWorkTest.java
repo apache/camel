@@ -99,8 +99,8 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
     }
 
     public static final class MyBody {
-        private String foo;
-        private String bar;
+        private final String foo;
+        private final String bar;
 
         private MyBody(String foo, String bar) {
             this.foo = foo;

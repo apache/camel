@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 public class CamelContextReloadStrategyPropertiesFunctionTest extends ContextTestSupport {
 
-    private MyFunction my = new MyFunction();
+    private final MyFunction my = new MyFunction();
 
     @Test
     public void testContextReload() throws Exception {

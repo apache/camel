@@ -57,8 +57,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
-    private MySynchronization mySynchronization = new MySynchronization();
-    private Properties myProp = new Properties();
+    private final MySynchronization mySynchronization = new MySynchronization();
+    private final Properties myProp = new Properties();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

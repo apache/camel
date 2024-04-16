@@ -42,7 +42,7 @@ public class BeanLanguageOGNLTest extends ContextTestSupport {
 
     public static class MyReallyCoolBean {
 
-        private MyOtherReallyCoolBean other = new MyOtherReallyCoolBean();
+        private final MyOtherReallyCoolBean other = new MyOtherReallyCoolBean();
 
         public MyOtherReallyCoolBean getOther() {
             return other;

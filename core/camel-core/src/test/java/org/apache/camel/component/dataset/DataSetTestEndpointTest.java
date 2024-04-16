@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 
 public class DataSetTestEndpointTest extends ContextTestSupport {
 
-    private String expectedBody = "Hello World";
+    private final String expectedBody = "Hello World";
 
     @Test
     public void testMocksAreValid() throws Exception {

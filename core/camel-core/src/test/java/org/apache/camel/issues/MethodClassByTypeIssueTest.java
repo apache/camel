@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
  */
 public class MethodClassByTypeIssueTest extends ContextTestSupport {
 
-    private Object methodClass = MyTransformBean.class;
+    private final Object methodClass = MyTransformBean.class;
 
     @Test
     public void testMethodClassByTypeAIssue() throws Exception {

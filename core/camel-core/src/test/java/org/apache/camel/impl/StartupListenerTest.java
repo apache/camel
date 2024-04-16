@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StartupListenerTest extends ContextTestSupport {
 
-    private MyStartupListener my = new MyStartupListener();
+    private final MyStartupListener my = new MyStartupListener();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
 
-    private HeadersMapFactory custom = new CustomHeadersMapFactory();
+    private final HeadersMapFactory custom = new CustomHeadersMapFactory();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
-    private MyScheduler scheduler = new MyScheduler();
+    private final MyScheduler scheduler = new MyScheduler();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

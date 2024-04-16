@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SedaFileIdempotentIssueTest extends ContextTestSupport {
 
     private final CountDownLatch latch = new CountDownLatch(1);
-    private FileIdempotentRepository repository = new FileIdempotentRepository();
+    private final FileIdempotentRepository repository = new FileIdempotentRepository();
 
     @Override
     @BeforeEach

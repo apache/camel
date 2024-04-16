@@ -67,7 +67,7 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
 
     private static class MyListener implements PropertiesLookupListener {
 
-        private Map<String, String[]> map = new HashMap<>();
+        private final Map<String, String[]> map = new HashMap<>();
 
         @Override
         public void onLookup(String name, String value, String defaultValue, String source) {

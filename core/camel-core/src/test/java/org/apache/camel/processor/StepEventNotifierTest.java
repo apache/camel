@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepEventNotifierTest extends ContextTestSupport {
 
-    private MyEventNotifier notifier = new MyEventNotifier();
+    private final MyEventNotifier notifier = new MyEventNotifier();
 
     @Test
     public void testStepEventNotifier() throws Exception {

@@ -39,8 +39,7 @@ public class ArgumentSubstitutionParserTest {
         adapters[2] = new Substitution(".+", "(.+)", "java.util.List", "$1List");
         adapters[3] = new Substitution(".+", "(.+)", ".*?(\\w++)\\[\\]", "$1Array", true);
 
-        final ApiMethodParser<TestProxy> parser =
-                getTestProxyApiMethodParser(adapters);
+        final ApiMethodParser<TestProxy> parser = getTestProxyApiMethodParser(adapters);
 
         final List<ApiMethodParser.ApiMethodModel> methodModels = parser.parse();
         assertEquals(9, methodModels.size());

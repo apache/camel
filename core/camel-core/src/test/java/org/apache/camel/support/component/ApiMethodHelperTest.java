@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ApiMethodHelperTest {
 
-    private static TestMethod[] sayHis = new TestMethod[] { TestMethod.SAYHI, TestMethod.SAYHI_1 };
-    private static ApiMethodHelper<TestMethod> apiMethodHelper;
+    private static final TestMethod[] sayHis = new TestMethod[] { TestMethod.SAYHI, TestMethod.SAYHI_1 };
+    private static final ApiMethodHelper<TestMethod> apiMethodHelper;
 
     static {
         final HashMap<String, String> aliases = new HashMap<>();

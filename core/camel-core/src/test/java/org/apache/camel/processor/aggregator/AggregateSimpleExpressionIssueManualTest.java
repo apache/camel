@@ -39,8 +39,8 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
     private static final Logger LOG = LoggerFactory.getLogger(AggregateSimpleExpressionIssueManualTest.class);
     private static final String DATA = "100,200,1,123456,2010-03-01T12:13:14,100,USD,Best Buy,5045,Santa Monica,CA,Type\n";
 
-    private MyBean myBean = new MyBean();
-    private AggStrategy aggStrategy = new AggStrategy();
+    private final MyBean myBean = new MyBean();
+    private final AggStrategy aggStrategy = new AggStrategy();
 
     @Test
     public void testAggregateSimpleExpression() throws Exception {

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DistributedTimeoutTest extends AbstractDistributedTest {
 
-    private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
+    private final MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
 
     private final AtomicInteger invoked = new AtomicInteger();
     private volatile Exchange receivedExchange;

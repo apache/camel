@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class MockAsBeanTest extends ContextTestSupport {
 
     // create foo bean as a mock endpoint
-    private MockEndpoint foo = new MockEndpoint("mock:foo", new MockComponent());
+    private final MockEndpoint foo = new MockEndpoint("mock:foo", new MockComponent());
 
     // START SNIPPET: e1
     @Test

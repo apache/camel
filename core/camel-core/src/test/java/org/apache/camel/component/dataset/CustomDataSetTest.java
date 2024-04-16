@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 public class CustomDataSetTest extends ContextTestSupport {
 
     protected DataSet dataSet = new DataSetSupport() {
-        Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
+        final Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
 
         @Override
         public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index)

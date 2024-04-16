@@ -33,7 +33,7 @@ public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private MySynchronization sync = new MySynchronization();
+    private final MySynchronization sync = new MySynchronization();
 
     @Test
     public void testAsyncEndpoint() throws Exception {
@@ -75,8 +75,8 @@ public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
 
     private static class MySynchronization extends SynchronizationAdapter {
 
-        private AtomicInteger onComplete = new AtomicInteger();
-        private AtomicInteger onFailure = new AtomicInteger();
+        private final AtomicInteger onComplete = new AtomicInteger();
+        private final AtomicInteger onFailure = new AtomicInteger();
 
         @Override
         public void onComplete(Exchange exchange) {
