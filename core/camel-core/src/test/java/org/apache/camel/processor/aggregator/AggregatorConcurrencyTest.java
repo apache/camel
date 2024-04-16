@@ -29,11 +29,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated("Creates lots of threads")
 public class AggregatorConcurrencyTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregatorConcurrencyTest.class);
