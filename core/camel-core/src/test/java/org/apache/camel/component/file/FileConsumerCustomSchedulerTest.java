@@ -70,7 +70,6 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
     private static final class MyScheduler implements ScheduledPollConsumerScheduler {
 
         private CamelContext camelContext;
-        private Timer timer;
         private TimerTask timerTask;
         private volatile int counter;
         private String foo;
@@ -110,7 +109,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         @Override
         public void startScheduler() {
-            timer = new Timer();
+            Timer timer = new Timer();
             timer.schedule(timerTask, 10);
         }
 

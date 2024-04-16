@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class NoErrorHandlerTest extends ContextTestSupport {
 
     private static int counter;
-    private static boolean jmx = true;
 
     @Override
     @BeforeEach
@@ -38,7 +37,7 @@ public class NoErrorHandlerTest extends ContextTestSupport {
 
     @Override
     protected boolean useJmx() {
-        return jmx;
+        return true;
     }
 
     @Test

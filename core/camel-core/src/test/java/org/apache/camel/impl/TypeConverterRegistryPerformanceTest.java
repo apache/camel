@@ -32,11 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
 
-    private int pool = 100;
     private int inner = 10;
-    private int size = 20000;
 
-    private ExecutorService executorService;
     private CountDownLatch latch;
 
     @Test
@@ -51,8 +48,10 @@ public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
 
         StopWatch watch = new StopWatch();
 
+        int size = 20000;
         latch = new CountDownLatch(size);
-        executorService = Executors.newFixedThreadPool(pool);
+        int pool = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(pool);
 
         for (int i = 0; i < size; i++) {
             executorService.submit(new Runnable() {

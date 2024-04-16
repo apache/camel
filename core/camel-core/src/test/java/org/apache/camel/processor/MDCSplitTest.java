@@ -76,7 +76,6 @@ public class MDCSplitTest extends ContextTestSupport {
      */
     private static class MdcCheckerProcessor implements Processor {
 
-        private String routeId = "route-async";
         private String exchangeId;
         private String messageId;
         private String breadcrumbId;
@@ -104,6 +103,7 @@ public class MDCSplitTest extends ContextTestSupport {
                 threadId = Thread.currentThread().getId();
             }
 
+            String routeId = "route-async";
             if (routeId != null) {
                 assertEquals(routeId, MDC.get("camel.routeId"));
             }

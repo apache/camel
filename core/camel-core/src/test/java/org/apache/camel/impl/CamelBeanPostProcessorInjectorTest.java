@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Test;
 public class CamelBeanPostProcessorInjectorTest extends ContextTestSupport {
 
     private CamelBeanPostProcessor postProcessor;
-    private CamelPostProcessorHelper helper;
 
     @Override
     @BeforeEach
@@ -43,7 +42,7 @@ public class CamelBeanPostProcessorInjectorTest extends ContextTestSupport {
         super.setUp();
         postProcessor = PluginHelper.getBeanPostProcessor(context);
         postProcessor.addCamelBeanPostProjectInjector(new MyInjector());
-        helper = new CamelPostProcessorHelper(context);
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
     }
 
     private class MyInjector implements CamelBeanPostProcessorInjector {

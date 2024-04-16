@@ -96,14 +96,13 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
 
     public static final class AggStrategy implements AggregationStrategy {
 
-        private final int batchSize = 1000;
-
         @Override
         @SuppressWarnings("unchecked")
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             String str = newExchange.getIn().getBody(String.class);
 
             if (oldExchange == null) {
+                int batchSize = 1000;
                 List<String> list = new ArrayList<>(batchSize);
                 list.add(str);
                 newExchange.getIn().setBody(list);

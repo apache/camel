@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
 
     private static int counter;
-    private String body = "Hello World this file will be deleted";
 
     @Test
     public void testPollFileAndShouldBeDeletedAtThirdPoll() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
+        String body = "Hello World this file will be deleted";
         template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
         context.getRouteController().startRoute("FromFilePollThirdTimeOkTest");
 

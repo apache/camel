@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
  */
 public class FileLanguageExtSingleTest extends LanguageTestSupport {
 
-    private File file;
-
     @Override
     protected String getLanguageName() {
         return "file";
@@ -57,7 +55,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
         template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "test/bye.def.txt");
 
         // get the file handle
-        file = testFile("test/bye.def.txt").toFile();
+        File file = testFile("test/bye.def.txt").toFile();
         GenericFile<File> gf = FileConsumer.asGenericFile(testDirectory().toString(), file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);

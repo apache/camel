@@ -33,12 +33,11 @@ import org.junit.jupiter.api.Test;
 @Disabled("Manual test")
 public class SplitterParallelBigFileManualTest extends ContextTestSupport {
 
-    private int lines = 20000;
-
     @Test
     public void testSplitParallelBigFile() throws Exception {
         Path dir = testDirectory();
         Files.createDirectories(dir);
+        int lines = 20000;
         try (OutputStream fos = Files.newOutputStream(testFile("bigfile.txt"))) {
             for (int i = 0; i < lines; i++) {
                 String line = "line-" + i + LS;

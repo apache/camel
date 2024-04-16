@@ -23,8 +23,6 @@ import org.junit.jupiter.api.Test;
 
 public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSupport {
 
-    private int size = 1000;
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -40,6 +38,7 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
         long hit = context.getTypeConverterRegistry().getStatistics().getHitCounter();
         long miss = context.getTypeConverterRegistry().getStatistics().getMissCounter();
 
+        int size = 1000;
         getMockEndpoint("mock:result").expectedMessageCount(size);
 
         for (int i = 0; i < size; i++) {

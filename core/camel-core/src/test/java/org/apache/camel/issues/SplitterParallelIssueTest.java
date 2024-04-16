@@ -29,12 +29,12 @@ import org.junit.jupiter.api.Test;
  */
 public class SplitterParallelIssueTest extends ContextTestSupport {
 
-    private int size = 20;
     private int delay = 100;
 
     @Test
     public void testSplitParallel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
+        int size = 20;
         mock.expectedMessageCount(size);
         int time = Math.max(10000, size * 2 * delay);
         mock.setResultWaitTime(time);

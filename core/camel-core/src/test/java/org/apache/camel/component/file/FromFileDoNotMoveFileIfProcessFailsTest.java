@@ -25,10 +25,9 @@ import org.junit.jupiter.api.Test;
 
 public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport {
 
-    private String body = "Hello World this file will NOT be moved";
-
     @Test
     public void testPollFileAndShouldNotBeMoved() throws Exception {
+        String body = "Hello World this file will NOT be moved";
         template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");

@@ -318,12 +318,10 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     private final class MyEndpoint extends DefaultEndpoint {
 
         private final boolean isSingleton;
-        private final int number;
 
         private MyEndpoint(MyComponent component, boolean isSingleton, int number) {
             super("my://" + number, component);
             this.isSingleton = isSingleton;
-            this.number = number;
         }
 
         @Override

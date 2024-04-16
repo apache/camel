@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends ContextTestSupport {
 
-    private Properties myProp;
-
     @Test
     public void testDot() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -43,7 +41,7 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
         Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyDestinationBean());
 
-        myProp = new Properties();
+        Properties myProp = new Properties();
         myProp.put("myApp", "MyAppV1.2.3");
         jndi.bind("myprop", myProp);
 

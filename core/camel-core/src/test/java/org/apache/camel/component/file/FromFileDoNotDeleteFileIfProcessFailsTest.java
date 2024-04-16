@@ -25,10 +25,9 @@ import org.junit.jupiter.api.Test;
 
 public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSupport {
 
-    private String body = "Hello World this file will NOT be deleted";
-
     @Test
     public void testPollFileAndShouldNotBeDeleted() throws Exception {
+        String body = "Hello World this file will NOT be deleted";
         template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");

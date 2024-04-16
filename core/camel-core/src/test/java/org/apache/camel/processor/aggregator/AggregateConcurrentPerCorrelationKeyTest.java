@@ -32,13 +32,13 @@ import org.junit.jupiter.api.parallel.Isolated;
 @Isolated("Creates lots of threads")
 public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport {
 
-    private final int size = 200;
     private final String uri = "direct:start";
 
     @Test
     public void testAggregateConcurrentPerCorrelationKey() throws Exception {
         ExecutorService service = Executors.newFixedThreadPool(20);
         List<Callable<Object>> tasks = new ArrayList<>();
+        int size = 200;
         for (int i = 0; i < size; i++) {
             final int id = i % 5;
             final int count = i;

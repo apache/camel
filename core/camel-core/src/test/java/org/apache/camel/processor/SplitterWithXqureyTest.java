@@ -26,11 +26,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterWithXqureyTest extends ContextTestSupport {
-    private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
-                                    + "xmlns:two=\"http://camel.apache.org/schema/two\">"
-                                    + "<person><name>Willem</name></person> " + "<other><two:test>One</two:test></other>"
-                                    + "<other><two:test>Two</two:test></other>"
-                                    + "<other><test>Three</test></other>" + "<other><test>Foure</test></other></workflow>";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -48,6 +43,11 @@ public class SplitterWithXqureyTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.reset();
         result.expectedMessageCount(4);
+        String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
+                         + "xmlns:two=\"http://camel.apache.org/schema/two\">"
+                         + "<person><name>Willem</name></person> " + "<other><two:test>One</two:test></other>"
+                         + "<other><two:test>Two</two:test></other>"
+                         + "<other><test>Three</test></other>" + "<other><test>Foure</test></other></workflow>";
         template.sendBody("direct:endpoint", xmlData);
         assertMockEndpointsSatisfied();
         for (Exchange exchange : result.getExchanges()) {

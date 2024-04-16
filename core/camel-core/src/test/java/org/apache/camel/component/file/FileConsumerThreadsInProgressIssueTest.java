@@ -36,8 +36,6 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
     private final Map<String, Integer> duplicate = new HashMap<>();
     private final SampleProcessor processor = new SampleProcessor(duplicate);
 
-    private int number = 2000;
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -56,6 +54,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         context.getShutdownStrategy().setTimeout(180);
 
         MockEndpoint mock = getMockEndpoint("mock:done");
+        int number = 2000;
         mock.expectedMessageCount(number);
         mock.expectsNoDuplicates(body());
 
