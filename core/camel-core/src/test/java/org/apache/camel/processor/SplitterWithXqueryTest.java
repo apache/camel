@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SplitterWithXqureyTest extends ContextTestSupport {
+public class SplitterWithXqueryTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
