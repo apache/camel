@@ -258,15 +258,17 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void registerEndpointCallback(EndpointStrategy strategy) {
-        if (!camelContext.getEndpointStrategies().contains(strategy)) {
-            // let it be invoked for already registered endpoints so it can
-            // catch-up.
-            camelContext.getEndpointStrategies().add(strategy);
+        // let it be invoked for already registered endpoints so it can
+        // catch-up.
+        if (camelContext.getEndpointStrategies().add(strategy)) {
             for (Endpoint endpoint : camelContext.getEndpoints()) {
-                Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
+                Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(),
+                        endpoint);
                 if (newEndpoint != null) {
                     // put will replace existing endpoint with the new endpoint
-                    camelContext.getEndpointRegistry().put(camelContext.getEndpointKey(endpoint.getEndpointUri()), newEndpoint);
+                    camelContext.getEndpointRegistry()
+                            .put(camelContext.getEndpointKey(endpoint.getEndpointUri()),
+                                    newEndpoint);
                 }
             }
         }
