@@ -439,7 +439,7 @@
         <smbj-version>0.13.0</smbj-version>
         <snakeyaml-version>2.2</snakeyaml-version>
         <snakeyaml-engine-version>2.7</snakeyaml-engine-version>
-        <snmp4j-version>3.7.8</snmp4j-version>
+        <snmp4j-version>3.8.0</snmp4j-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.1.1</spring-batch-version>
