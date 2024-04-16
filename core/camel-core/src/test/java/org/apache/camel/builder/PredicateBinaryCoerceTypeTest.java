@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class PredicateBinaryCoerceTypeTest extends TestSupport {
-    protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+    protected final Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
     @Test
     public void testIsNull() throws Exception {

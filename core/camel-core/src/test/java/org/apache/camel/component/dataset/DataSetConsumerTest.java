@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataSetConsumerTest extends ContextTestSupport {
 
-    protected SimpleDataSet dataSet = new SimpleDataSet(5);
+    protected final SimpleDataSet dataSet = new SimpleDataSet(5);
 
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName + "?initialDelay=0";

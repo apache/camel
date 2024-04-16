@@ -65,7 +65,7 @@ public class LoadTimerTest extends ContextTestSupport {
     private static class TestLoadAware implements TimerListener {
 
         volatile int counter;
-        LoadTriplet load = new LoadTriplet();
+        final LoadTriplet load = new LoadTriplet();
 
         @Override
         public void onTimer() {

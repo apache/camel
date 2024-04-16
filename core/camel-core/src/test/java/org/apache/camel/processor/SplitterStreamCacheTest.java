@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SplitterStreamCacheTest extends ContextTestSupport {
 
     private static final String TEST_FILE = "org/apache/camel/converter/stream/test.xml";
-    protected int numMessages = 200;
+    protected final int numMessages = 200;
 
     @Test
     public void testSendStreamSource() throws Exception {

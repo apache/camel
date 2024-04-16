@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class BeanRecipientListTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRecipientListTest.class);
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
 
     @Test
     public void testSendMessage() throws Exception {

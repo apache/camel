@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Issue3Test extends ContextTestSupport {
-    protected String fromQueue = "direct:A";
+    protected final String fromQueue = "direct:A";
 
     @Test
     public void testIssue() throws Exception {

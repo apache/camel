@@ -34,7 +34,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
     protected Endpoint endpointA;
     protected Endpoint endpointB;
     protected Endpoint endpointC;
-    protected Object expectedBody = "<hello>world!</hello>";
+    protected final Object expectedBody = "<hello>world!</hello>";
 
     @Test
     public void testStartRouteThenStopMutateAndStartRouteAgain() throws Exception {

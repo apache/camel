@@ -123,8 +123,8 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     }
 
     public static class User {
-        public String name;
-        public String age;
+        public final String name;
+        public final String age;
 
         public User(String name, String age) {
             this.name = name;

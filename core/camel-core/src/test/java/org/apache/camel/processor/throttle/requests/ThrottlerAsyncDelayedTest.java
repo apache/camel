@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
-    protected int messageCount = 9;
+    protected final int messageCount = 9;
 
     @Test
     public void testSendLotsOfMessages() throws Exception {

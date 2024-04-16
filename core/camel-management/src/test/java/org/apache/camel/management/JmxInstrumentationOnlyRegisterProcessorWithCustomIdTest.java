@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisabledOnOs(OS.AIX)
 public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ManagementTestSupport {
 
-    protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
+    protected final String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
     protected MBeanServer server;
 
     @Test

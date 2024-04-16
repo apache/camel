@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ComponentUseRawUriTest extends ContextTestSupport {
 
     public static class MyEndpoint extends DefaultEndpoint {
-        String remaining;
+        final String remaining;
         String foo;
         String bar;
 

@@ -59,7 +59,7 @@ public class BeanInfoWithBridgedMethodTest extends ContextTestSupport {
     }
 
     public static class Request {
-        int x;
+        final int x;
 
         public Request(int x) {
             this.x = x;

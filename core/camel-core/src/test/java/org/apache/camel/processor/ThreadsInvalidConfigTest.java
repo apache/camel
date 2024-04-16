@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThreadsInvalidConfigTest extends ContextTestSupport {
 
-    ThreadPoolProfile threadPoolProfile = new ThreadPoolProfile("poll");
+    final ThreadPoolProfile threadPoolProfile = new ThreadPoolProfile("poll");
 
     @Test
     public void testCreateRouteIfNoInvalidOptions() throws Exception {

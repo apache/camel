@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BrowseTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BrowseTest.class);
 
-    protected Object body1 = "one";
-    protected Object body2 = "two";
+    protected final Object body1 = "one";
+    protected final Object body2 = "two";
 
     @Test
     public void testListEndpoints() throws Exception {

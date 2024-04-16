@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSupport {
     protected static final RuntimeException RUNTIME_EXCEPTION = new RuntimeException("Expected exception.");
-    protected String body = "<hello>world!</hello>";
+    protected final String body = "<hello>world!</hello>";
 
     @Test
     public void testFirstFewAttemptsFail() throws Exception {

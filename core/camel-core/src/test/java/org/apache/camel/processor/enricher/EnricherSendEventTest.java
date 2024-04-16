@@ -87,8 +87,8 @@ public class EnricherSendEventTest extends ContextTestSupport {
 
     static class MyEventNotifier extends EventNotifierSupport {
 
-        AtomicInteger exchangeSendingEvent = new AtomicInteger();
-        AtomicInteger exchangeSentEvent = new AtomicInteger();
+        final AtomicInteger exchangeSendingEvent = new AtomicInteger();
+        final AtomicInteger exchangeSentEvent = new AtomicInteger();
 
         @Override
         public void notify(CamelEvent event) throws Exception {

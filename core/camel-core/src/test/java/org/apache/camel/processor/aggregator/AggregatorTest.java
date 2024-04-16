@@ -26,7 +26,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Test;
 
 public class AggregatorTest extends ContextTestSupport {
-    protected int messageCount = 100;
+    protected final int messageCount = 100;
 
     @Test
     public void testSendingLotsOfMessagesGetAggregatedToTheLatestMessage() throws Exception {

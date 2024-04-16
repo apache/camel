@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class DavidSiefertTest extends ContextTestSupport {
-    protected static Object expectedBody = "Some Output";
+    protected static final Object expectedBody = "Some Output";
 
     @Test
     public void testWorks() throws Exception {

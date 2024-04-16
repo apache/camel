@@ -41,7 +41,7 @@ public class Camel715ThreadProcessorTest {
     private static final int ITERS = 50000;
 
     static class SendingProcessor implements Processor {
-        int iterationNumber;
+        final int iterationNumber;
 
         public SendingProcessor(int iter) {
             iterationNumber = iter;

@@ -56,9 +56,9 @@ public class AbstractCamelContextFactoryBeanTest {
     // any properties (abstract methods in AbstractCamelContextFactoryBean that
     // return String and receive no arguments) that do not support property
     // placeholders
-    Set<String> propertiesThatAreNotPlaceholdered = Collections.singleton("{{getErrorHandlerRef}}");
+    final Set<String> propertiesThatAreNotPlaceholdered = Collections.singleton("{{getErrorHandlerRef}}");
 
-    TypeConverter typeConverter = new DefaultTypeConverter(
+    final TypeConverter typeConverter = new DefaultTypeConverter(
             new DefaultPackageScanClassResolver(),
             new Injector() {
                 @Override
@@ -88,7 +88,7 @@ public class AbstractCamelContextFactoryBeanTest {
             }, false);
 
     // properties that should return value that can be converted to boolean
-    Set<String> valuesThatReturnBoolean = new HashSet<>(
+    final Set<String> valuesThatReturnBoolean = new HashSet<>(
             asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
                     "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}",
                     "{{getCaseInsensitiveHeaders}}",
@@ -99,7 +99,7 @@ public class AbstractCamelContextFactoryBeanTest {
                     "{{getInflightRepositoryBrowseEnabled}}"));
 
     // properties that should return value that can be converted to long
-    Set<String> valuesThatReturnLong = new HashSet<>(List.of("{{getDelayer}}"));
+    final Set<String> valuesThatReturnLong = new HashSet<>(List.of("{{getDelayer}}"));
 
     public AbstractCamelContextFactoryBeanTest() throws Exception {
         ((Service) typeConverter).start();

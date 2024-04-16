@@ -34,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StringSourceTest {
-    protected TypeConverter converter = new DefaultTypeConverter(
+    protected final TypeConverter converter = new DefaultTypeConverter(
             new DefaultPackageScanClassResolver(), new ReflectionInjector(), false);
-    protected String expectedBody = "<hello>world!</hello>";
+    protected final String expectedBody = "<hello>world!</hello>";
 
     @BeforeEach
     public void setUp() throws Exception {

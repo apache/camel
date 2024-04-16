@@ -102,8 +102,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
 
     // START SNIPPET: e3
     public static final class OrderItem {
-        String type; // type of the item
-        int quantity; // how many we want
+        final String type; // type of the item
+        final int quantity; // how many we want
         boolean valid; // whether that many items can be ordered
 
         public OrderItem(String type, int quantity) {

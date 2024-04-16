@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class RoutingSlipDataModificationTest extends ContextTestSupport {
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
 
     @Test
     public void testModificationOfDataAlongRoute() throws Exception {
