@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PredicateAsBeanTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
-    protected MyPredicate myPredicate = new MyPredicate();
+    protected final MyPredicate myPredicate = new MyPredicate();
 
     @Test
     public void testSendMessage() throws Exception {

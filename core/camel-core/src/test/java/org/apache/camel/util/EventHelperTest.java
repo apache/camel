@@ -120,9 +120,9 @@ public class EventHelperTest {
 
     static class MyEventNotifier extends EventNotifierSupport {
 
-        AtomicInteger routeStartedEvent = new AtomicInteger();
-        AtomicInteger routeStoppedEvent = new AtomicInteger();
-        AtomicInteger camelContextStoppingEvent = new AtomicInteger();
+        final AtomicInteger routeStartedEvent = new AtomicInteger();
+        final AtomicInteger routeStoppedEvent = new AtomicInteger();
+        final AtomicInteger camelContextStoppingEvent = new AtomicInteger();
 
         @Override
         public void notify(CamelEvent event) throws Exception {

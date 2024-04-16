@@ -22,8 +22,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class RegExRouteTest extends ContextTestSupport {
-    String orignalBody = "Foo and another Foo";
-    String expectedBody = "Bar and another Bar";
+    final String orignalBody = "Foo and another Foo";
+    final String expectedBody = "Bar and another Bar";
 
     @Test
     public void testSendingMessage() throws Exception {

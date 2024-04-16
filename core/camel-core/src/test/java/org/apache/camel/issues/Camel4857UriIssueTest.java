@@ -42,8 +42,8 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
      * contain URI special characters like ? or +
      */
     static class MyEndpoint extends DefaultEndpoint {
-        String uri;
-        String remaining;
+        final String uri;
+        final String remaining;
 
         MyEndpoint(final String uri, final String remaining) {
             this.uri = uri;

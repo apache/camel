@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
-    protected MyBean myBean = new MyBean();
-    protected MyOtherBean myOtherBean = new MyOtherBean(myBean);
+    protected final MyBean myBean = new MyBean();
+    protected final MyOtherBean myOtherBean = new MyOtherBean(myBean);
 
     @Test
     public void testSendMessage() throws Exception {

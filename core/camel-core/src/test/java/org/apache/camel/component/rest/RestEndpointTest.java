@@ -50,9 +50,9 @@ public class RestEndpointTest {
         }
     }
 
-    RestComponent restComponent;
+    final RestComponent restComponent;
 
-    CamelContext context;
+    final CamelContext context;
 
     public RestEndpointTest() {
         context = new DefaultCamelContext();

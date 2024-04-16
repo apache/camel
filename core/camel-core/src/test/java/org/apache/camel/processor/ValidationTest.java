@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ValidationTest extends ContextTestSupport {
-    protected Processor validator = new MyValidator();
+    protected final Processor validator = new MyValidator();
     protected MockEndpoint validEndpoint;
     protected MockEndpoint invalidEndpoint;
 

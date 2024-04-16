@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 public class XPathFilterTest extends ContextTestSupport {
     protected String matchingBody = "<person name='James' city='London'/>";
-    protected String notMatchingBody = "<person name='Hiram' city='Tampa'/>";
+    protected final String notMatchingBody = "<person name='Hiram' city='Tampa'/>";
 
     @Test
     public void testSendMatchingMessage() throws Exception {

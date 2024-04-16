@@ -306,7 +306,7 @@ class SimpleSoftCacheTest {
 
     public static class LargeObject {
 
-        byte[] data;
+        final byte[] data;
 
         public LargeObject() {
             this.data = new byte[100 * 1024 * 1024]; // 100 MB

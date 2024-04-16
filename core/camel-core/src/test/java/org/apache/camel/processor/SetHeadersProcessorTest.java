@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class SetHeadersProcessorTest extends ContextTestSupport {
 
     public static class HeaderBean {
-        Map<String, String> map = new java.util.LinkedHashMap<>();
+        final Map<String, String> map = new java.util.LinkedHashMap<>();
 
         public HeaderBean() {
         }
@@ -45,7 +45,7 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     }
 
     private final Map<String, Expression> headerMap = new java.util.LinkedHashMap<>();
-    protected String body = "<person name='Jane' age='10'/>";
+    protected final String body = "<person name='Jane' age='10'/>";
     protected MockEndpoint expected;
 
     @Test

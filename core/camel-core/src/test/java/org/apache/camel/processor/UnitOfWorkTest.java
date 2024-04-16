@@ -34,7 +34,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
     protected Exchange completed;
     protected Exchange failed;
     protected String uri = "direct:foo";
-    protected CountDownLatch doneLatch = new CountDownLatch(1);
+    protected final CountDownLatch doneLatch = new CountDownLatch(1);
     protected Object foo;
     protected Object baz;
 

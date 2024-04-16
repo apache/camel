@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTestSupport {
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
 
     @Test
     public void testSendMessage() throws Exception {

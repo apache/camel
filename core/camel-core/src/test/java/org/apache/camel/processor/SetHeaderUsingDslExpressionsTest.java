@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
-    protected String body = "<person name='James' city='London'/>";
+    protected final String body = "<person name='James' city='London'/>";
     protected MockEndpoint expected;
 
     public static final class MyValueClass {

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentReadLockTest extends ContextTestSupport {
 
-    MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
+    final MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
