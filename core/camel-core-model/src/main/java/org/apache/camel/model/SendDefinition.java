@@ -51,7 +51,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         this.uri = uri;
     }
 
-    SendDefinition(SendDefinition source) {
+    protected SendDefinition(SendDefinition source) {
         super(source);
         this.endpointUriToString = source.endpointUriToString;
         this.endpoint = source.endpoint;
