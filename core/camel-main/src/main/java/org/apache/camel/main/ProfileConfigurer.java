@@ -35,20 +35,12 @@ public class ProfileConfigurer {
 
         camelContext.getCamelContextExtension().setProfile(profile);
 
-        if (profile == null) {
+        if (profile == null || profile.isBlank()) {
             // no profile is active
             return;
         }
-        if ("prod".equals(profile)) {
-            LOG.info("The application is starting with profile: production");
-            return; // no need to do special configuration
-        }
-        if ("test".equals(profile)) {
-            LOG.info("The application is starting with profile: test");
-            return; // current no special configuration
-        }
+
         if ("dev".equals(profile)) {
-            LOG.info("The application is starting with profile: dev");
             // always enable developer console as it is needed by camel-cli-connector
             config.setDevConsoleEnabled(true);
             // and enable a bunch of other stuff that gives more details for developers
@@ -68,6 +60,14 @@ public class ProfileConfigurer {
             // enable backlog tracing
             config.tracerConfig().withEnabled(true);
         }
+
+        if ("prod".equals(profile)) {
+            profile = "production"; // use nicer name
+        }
+
+        // no special configuration for other kind of profiles
+
+        LOG.info("The application is starting with profile: {}", profile);
     }
 
 }

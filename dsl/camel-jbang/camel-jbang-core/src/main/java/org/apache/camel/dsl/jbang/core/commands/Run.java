@@ -410,25 +410,36 @@ public class Run extends CamelCommand {
         }
 
         // if no specific file to run then try to auto-detect
-        if (!empty && files.isEmpty() && sourceDir == null) {
-            String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
-            if (routes == null) {
-                if (!silentRun) {
-                    String run = "run";
-                    if (transformRun) {
-                        run = "transform";
-                    } else if (debugRun) {
-                        run = "debug";
+        if (!empty && files.isEmpty()) {
+            if (sourceDir != null) {
+                // silent-run then auto-detect all initial files for source-dir
+                String[] allFiles = new File(sourceDir).list();
+                if (allFiles != null) {
+                    for (String f : allFiles) {
+                        files.add(sourceDir + File.separator + f);
                     }
-                    System.err
-                            .println("Cannot " + run
-                                     + " because application.properties file does not exist or camel.main.routesIncludePattern is not configured");
-                    return 1;
-                } else {
-                    // silent-run then auto-detect all files (except properties as they are loaded explicit)
-                    String[] allFiles = new File(".").list((dir, name) -> !name.endsWith(".properties"));
-                    if (allFiles != null) {
-                        files.addAll(Arrays.asList(allFiles));
+                }
+            } else {
+                String routes
+                        = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
+                if (routes == null) {
+                    if (!silentRun) {
+                        String run = "run";
+                        if (transformRun) {
+                            run = "transform";
+                        } else if (debugRun) {
+                            run = "debug";
+                        }
+                        System.err
+                                .println("Cannot " + run
+                                         + " because application.properties file does not exist or camel.main.routesIncludePattern is not configured");
+                        return 1;
+                    } else {
+                        // silent-run then auto-detect all files (except properties as they are loaded explicit)
+                        String[] allFiles = new File(".").list((dir, name) -> !name.endsWith(".properties"));
+                        if (allFiles != null) {
+                            files.addAll(Arrays.asList(allFiles));
+                        }
                     }
                 }
             }
@@ -683,10 +694,10 @@ public class Run extends CamelCommand {
             }
             // make it a pattern as we load all files from this directory
             // (optional=true as there may be non Camel routes files as well)
-            js.add("file:" + sourceDir + "/**?optional=true");
-        }
-
-        if (js.length() > 0) {
+            String sdir = "file:" + sourceDir + "/**?optional=true";
+            main.addInitialProperty("camel.main.routesIncludePattern", sdir);
+            writeSettings("camel.main.routesIncludePattern", sdir);
+        } else if (js.length() > 0) {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
             writeSettings("camel.main.routesIncludePattern", js.toString());
         } else {
