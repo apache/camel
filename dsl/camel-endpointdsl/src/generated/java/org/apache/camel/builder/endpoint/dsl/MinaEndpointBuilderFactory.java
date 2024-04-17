@@ -47,7 +47,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to disconnect(close) from Mina session right after use. Can
          * be used for both consumer and producer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -63,8 +63,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to disconnect(close) from Mina session right after use. Can
          * be used for both consumer and producer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -80,7 +79,7 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -96,8 +95,7 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -112,7 +110,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -127,8 +125,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -145,7 +142,7 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -162,7 +159,7 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -178,7 +175,7 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: common
@@ -194,7 +191,7 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: common
@@ -210,7 +207,7 @@ public interface MinaEndpointBuilderFactory {
          * If the clientMode is true, mina consumer will connect the address as
          * a TCP client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -226,8 +223,7 @@ public interface MinaEndpointBuilderFactory {
          * If the clientMode is true, mina consumer will connect the address as
          * a TCP client.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -247,7 +243,7 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: codec
@@ -267,8 +263,7 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: codec
@@ -284,7 +279,7 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
+         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
          * Group: codec
          * 
@@ -299,7 +294,7 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
+         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
          * Group: codec
          * 
@@ -314,7 +309,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1024
          * Group: codec
@@ -330,7 +325,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1024
          * Group: codec
@@ -346,7 +341,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: codec
@@ -362,7 +357,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: codec
@@ -379,7 +374,7 @@ public interface MinaEndpointBuilderFactory {
          * textline codec and the UDP protocol. If not provided, Camel will use
          * the JVM default Charset.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: codec
          * 
@@ -394,7 +389,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
          * Group: codec
          * 
@@ -409,7 +404,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
          * Group: codec
          * 
@@ -425,7 +420,7 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: codec
@@ -442,8 +437,7 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: codec
@@ -461,7 +455,8 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
+         * type.
          * 
          * Group: codec
          * 
@@ -478,7 +473,8 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
+         * type.
          * 
          * Group: codec
          * 
@@ -493,7 +489,7 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -508,7 +504,7 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -544,7 +540,7 @@ public interface MinaEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -570,8 +566,7 @@ public interface MinaEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -589,8 +584,8 @@ public interface MinaEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -608,7 +603,7 @@ public interface MinaEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -622,8 +617,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -638,7 +632,7 @@ public interface MinaEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -653,8 +647,7 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled this option dictates MinaConsumer which logging
          * level to use when logging a there is no reply to send back.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
@@ -671,7 +664,7 @@ public interface MinaEndpointBuilderFactory {
          * level to use when logging a there is no reply to send back.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
@@ -687,7 +680,7 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -703,8 +696,7 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -719,7 +711,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 16
          * Group: advanced
@@ -734,7 +726,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 16
          * Group: advanced
@@ -750,7 +742,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -766,8 +758,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -787,7 +778,7 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -807,8 +798,7 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -836,7 +826,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to disconnect(close) from Mina session right after use. Can
          * be used for both consumer and producer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -852,8 +842,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to disconnect(close) from Mina session right after use. Can
          * be used for both consumer and producer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -869,7 +858,7 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -885,8 +874,7 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -901,7 +889,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -916,8 +904,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -934,7 +921,7 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -951,7 +938,7 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -967,7 +954,7 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: common
@@ -983,7 +970,7 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: common
@@ -1003,7 +990,7 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: codec
@@ -1023,8 +1010,7 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: codec
@@ -1040,7 +1026,7 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
+         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
          * Group: codec
          * 
@@ -1055,7 +1041,7 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
+         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
          * Group: codec
          * 
@@ -1070,7 +1056,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1024
          * Group: codec
@@ -1086,7 +1072,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1024
          * Group: codec
@@ -1102,7 +1088,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: codec
@@ -1118,7 +1104,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: codec
@@ -1135,7 +1121,7 @@ public interface MinaEndpointBuilderFactory {
          * textline codec and the UDP protocol. If not provided, Camel will use
          * the JVM default Charset.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: codec
          * 
@@ -1150,7 +1136,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
          * Group: codec
          * 
@@ -1165,7 +1151,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
          * Group: codec
          * 
@@ -1181,7 +1167,7 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: codec
@@ -1198,8 +1184,7 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: codec
@@ -1217,7 +1202,8 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
+         * type.
          * 
          * Group: codec
          * 
@@ -1234,7 +1220,8 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
+         * type.
          * 
          * Group: codec
          * 
@@ -1249,7 +1236,7 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1264,7 +1251,7 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1289,7 +1276,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to create the InetAddress once and reuse. Setting this to
          * false allows to pickup DNS changes in the network.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -1305,8 +1292,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to create the InetAddress once and reuse. Setting this to
          * false allows to pickup DNS changes in the network.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -1322,7 +1308,7 @@ public interface MinaEndpointBuilderFactory {
          * Sessions can be lazily created to avoid exceptions, if the remote
          * server is not up and running when the Camel producer is started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -1338,8 +1324,7 @@ public interface MinaEndpointBuilderFactory {
          * Sessions can be lazily created to avoid exceptions, if the remote
          * server is not up and running when the Camel producer is started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -1362,7 +1347,7 @@ public interface MinaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1385,8 +1370,7 @@ public interface MinaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1402,7 +1386,7 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1418,8 +1402,7 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1434,7 +1417,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 16
          * Group: advanced
@@ -1449,7 +1432,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 16
          * Group: advanced
@@ -1465,7 +1448,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1481,8 +1464,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1502,7 +1484,7 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1522,8 +1504,7 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1552,7 +1533,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to disconnect(close) from Mina session right after use. Can
          * be used for both consumer and producer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1568,8 +1549,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to disconnect(close) from Mina session right after use. Can
          * be used for both consumer and producer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1585,7 +1565,7 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1601,8 +1581,7 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1617,7 +1596,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1632,8 +1611,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1650,7 +1628,7 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1667,7 +1645,7 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1683,7 +1661,7 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: common
@@ -1699,7 +1677,7 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: common
@@ -1719,7 +1697,7 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: codec
@@ -1739,8 +1717,7 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: codec
@@ -1756,7 +1733,7 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
+         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
          * Group: codec
          * 
@@ -1771,7 +1748,7 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
+         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
          * Group: codec
          * 
@@ -1786,7 +1763,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1024
          * Group: codec
@@ -1802,7 +1779,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1024
          * Group: codec
@@ -1818,7 +1795,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: codec
@@ -1834,7 +1811,7 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: codec
@@ -1851,7 +1828,7 @@ public interface MinaEndpointBuilderFactory {
          * textline codec and the UDP protocol. If not provided, Camel will use
          * the JVM default Charset.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: codec
          * 
@@ -1866,7 +1843,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
          * Group: codec
          * 
@@ -1881,7 +1858,7 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
          * Group: codec
          * 
@@ -1897,7 +1874,7 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: codec
@@ -1914,8 +1891,7 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: codec
@@ -1933,7 +1909,8 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
+         * type.
          * 
          * Group: codec
          * 
@@ -1950,7 +1927,8 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
+         * type.
          * 
          * Group: codec
          * 
@@ -1965,7 +1943,7 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1980,7 +1958,7 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2008,7 +1986,7 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2024,8 +2002,7 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2040,7 +2017,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 16
          * Group: advanced
@@ -2055,7 +2032,7 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 16
          * Group: advanced
@@ -2071,7 +2048,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2087,8 +2064,7 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2108,7 +2084,7 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2128,8 +2104,7 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

@@ -48,7 +48,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -62,7 +62,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -77,7 +77,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
+         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
          * Group: producer
          * 
@@ -92,7 +92,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
+         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
          * Group: producer
          * 
@@ -106,7 +106,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The namespace.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -120,7 +120,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Producer operation to do on Kubernetes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -134,7 +134,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -148,7 +148,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: tcp
          * Group: producer
@@ -163,7 +163,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -177,7 +177,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -191,7 +191,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -205,7 +205,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -219,7 +219,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -233,7 +233,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -247,7 +247,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -261,7 +261,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -275,7 +275,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -289,7 +289,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -303,7 +303,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: security
          * 
@@ -317,8 +317,8 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: security
          * 
@@ -332,7 +332,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -366,7 +366,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -389,8 +389,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -406,7 +405,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -421,8 +420,8 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 

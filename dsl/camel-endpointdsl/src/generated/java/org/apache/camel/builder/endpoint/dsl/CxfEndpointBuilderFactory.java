@@ -48,7 +48,7 @@ public interface CxfEndpointBuilderFactory {
          * The data type messages supported by the CXF endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.common.DataFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
          * 
          * Default: POJO
          * Group: common
@@ -64,7 +64,7 @@ public interface CxfEndpointBuilderFactory {
          * The data type messages supported by the CXF endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.common.DataFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
          * 
          * Default: POJO
          * Group: common
@@ -82,7 +82,7 @@ public interface CxfEndpointBuilderFactory {
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -99,8 +99,8 @@ public interface CxfEndpointBuilderFactory {
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -115,7 +115,7 @@ public interface CxfEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -131,8 +131,7 @@ public interface CxfEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -148,7 +147,7 @@ public interface CxfEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 49152
          * Group: logging
@@ -164,7 +163,7 @@ public interface CxfEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 49152
          * Group: logging
@@ -180,7 +179,7 @@ public interface CxfEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -196,8 +195,7 @@ public interface CxfEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -213,7 +211,7 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the basic authentication information of
          * password for the CXF client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -228,7 +226,7 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the basic authentication information of
          * username for the CXF client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -242,7 +240,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The bindingId for the service model to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -258,7 +256,7 @@ public interface CxfEndpointBuilderFactory {
          * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
          * prefix valid at this scope.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -273,7 +271,7 @@ public interface CxfEndpointBuilderFactory {
          * This option can override the endpointUrl that published from the WSDL
          * which can be accessed with service address url plus wsd.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -288,8 +286,8 @@ public interface CxfEndpointBuilderFactory {
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: service
          * 
@@ -305,7 +303,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: service
          * 
@@ -320,7 +318,7 @@ public interface CxfEndpointBuilderFactory {
          * The service name this service is implementing, it maps to the
          * wsdl:servicename.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -335,7 +333,7 @@ public interface CxfEndpointBuilderFactory {
          * The location of the WSDL. Can be on the classpath, file system, or be
          * hosted remotely.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -371,7 +369,7 @@ public interface CxfEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -397,8 +395,7 @@ public interface CxfEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -416,8 +413,8 @@ public interface CxfEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -435,7 +432,7 @@ public interface CxfEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -449,8 +446,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -465,7 +461,7 @@ public interface CxfEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -482,7 +478,7 @@ public interface CxfEndpointBuilderFactory {
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: advanced
          * 
@@ -499,8 +495,8 @@ public interface CxfEndpointBuilderFactory {
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -514,7 +510,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option is a: &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
+         * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
          * Group: advanced
          * 
@@ -528,8 +524,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
+         * The option will be converted to a <code>org.apache.cxf.Bus</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -545,7 +541,7 @@ public interface CxfEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -562,7 +558,7 @@ public interface CxfEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -579,7 +575,7 @@ public interface CxfEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.common.CxfBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.CxfBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -595,7 +591,7 @@ public interface CxfEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.common.CxfBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.CxfBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -614,7 +610,7 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.jaxws.CxfConfigurer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
          * 
          * Group: advanced
          * 
@@ -633,7 +629,7 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.jaxws.CxfConfigurer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
          * 
          * Group: advanced
          * 
@@ -647,7 +643,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -662,8 +658,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -680,8 +675,7 @@ public interface CxfEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -697,8 +691,7 @@ public interface CxfEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -714,7 +707,7 @@ public interface CxfEndpointBuilderFactory {
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -731,8 +724,7 @@ public interface CxfEndpointBuilderFactory {
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -748,7 +740,7 @@ public interface CxfEndpointBuilderFactory {
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -764,8 +756,7 @@ public interface CxfEndpointBuilderFactory {
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -782,8 +773,8 @@ public interface CxfEndpointBuilderFactory {
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -803,8 +794,8 @@ public interface CxfEndpointBuilderFactory {
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -822,7 +813,7 @@ public interface CxfEndpointBuilderFactory {
          * Enable schema validation for request and response. Disabled by
          * default for performance reason.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -838,8 +829,8 @@ public interface CxfEndpointBuilderFactory {
          * Enable schema validation for request and response. Disabled by
          * default for performance reason.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: advanced
@@ -854,7 +845,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether SOAP message validation should be disabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -869,8 +860,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether SOAP message validation should be disabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -898,7 +888,7 @@ public interface CxfEndpointBuilderFactory {
          * The data type messages supported by the CXF endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.common.DataFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
          * 
          * Default: POJO
          * Group: common
@@ -914,7 +904,7 @@ public interface CxfEndpointBuilderFactory {
          * The data type messages supported by the CXF endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.common.DataFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
          * 
          * Default: POJO
          * Group: common
@@ -932,7 +922,7 @@ public interface CxfEndpointBuilderFactory {
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -949,8 +939,8 @@ public interface CxfEndpointBuilderFactory {
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -965,7 +955,7 @@ public interface CxfEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer
          * 
@@ -980,7 +970,7 @@ public interface CxfEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer
          * 
@@ -995,7 +985,7 @@ public interface CxfEndpointBuilderFactory {
          * This option will set the default operationName that will be used by
          * the CxfProducer which invokes the remote service.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1010,7 +1000,7 @@ public interface CxfEndpointBuilderFactory {
          * This option will set the default operationNamespace that will be used
          * by the CxfProducer which invokes the remote service.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1025,8 +1015,7 @@ public interface CxfEndpointBuilderFactory {
          * The hostname verifier to be used. Use the # notation to reference a
          * HostnameVerifier from the registry.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: producer
          * 
@@ -1042,7 +1031,7 @@ public interface CxfEndpointBuilderFactory {
          * HostnameVerifier from the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: producer
          * 
@@ -1058,7 +1047,7 @@ public interface CxfEndpointBuilderFactory {
          * SSL Context.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: producer
          * 
@@ -1074,7 +1063,7 @@ public interface CxfEndpointBuilderFactory {
          * SSL Context.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: producer
          * 
@@ -1088,7 +1077,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Which kind of operation that CXF endpoint producer will invoke.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1103,8 +1092,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Which kind of operation that CXF endpoint producer will invoke.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1120,7 +1108,7 @@ public interface CxfEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -1136,8 +1124,7 @@ public interface CxfEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -1153,7 +1140,7 @@ public interface CxfEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 49152
          * Group: logging
@@ -1169,7 +1156,7 @@ public interface CxfEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 49152
          * Group: logging
@@ -1185,7 +1172,7 @@ public interface CxfEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -1201,8 +1188,7 @@ public interface CxfEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -1218,7 +1204,7 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the basic authentication information of
          * password for the CXF client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1233,7 +1219,7 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the basic authentication information of
          * username for the CXF client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1247,7 +1233,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The bindingId for the service model to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -1263,7 +1249,7 @@ public interface CxfEndpointBuilderFactory {
          * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
          * prefix valid at this scope.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -1278,7 +1264,7 @@ public interface CxfEndpointBuilderFactory {
          * This option can override the endpointUrl that published from the WSDL
          * which can be accessed with service address url plus wsd.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -1293,8 +1279,8 @@ public interface CxfEndpointBuilderFactory {
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: service
          * 
@@ -1310,7 +1296,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: service
          * 
@@ -1325,7 +1311,7 @@ public interface CxfEndpointBuilderFactory {
          * The service name this service is implementing, it maps to the
          * wsdl:servicename.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -1340,7 +1326,7 @@ public interface CxfEndpointBuilderFactory {
          * The location of the WSDL. Can be on the classpath, file system, or be
          * hosted remotely.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -1372,7 +1358,7 @@ public interface CxfEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1395,8 +1381,7 @@ public interface CxfEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1411,7 +1396,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1426,8 +1411,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1445,7 +1429,7 @@ public interface CxfEndpointBuilderFactory {
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: advanced
          * 
@@ -1462,8 +1446,8 @@ public interface CxfEndpointBuilderFactory {
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1477,7 +1461,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option is a: &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
+         * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
          * Group: advanced
          * 
@@ -1491,8 +1475,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
+         * The option will be converted to a <code>org.apache.cxf.Bus</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1508,7 +1492,7 @@ public interface CxfEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -1525,7 +1509,7 @@ public interface CxfEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -1542,7 +1526,7 @@ public interface CxfEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.common.CxfBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.CxfBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -1558,7 +1542,7 @@ public interface CxfEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.common.CxfBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.CxfBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -1577,7 +1561,7 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.jaxws.CxfConfigurer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
          * 
          * Group: advanced
          * 
@@ -1596,7 +1580,7 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.jaxws.CxfConfigurer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
          * 
          * Group: advanced
          * 
@@ -1610,7 +1594,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1625,8 +1609,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1643,8 +1626,7 @@ public interface CxfEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1660,8 +1642,7 @@ public interface CxfEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1677,7 +1658,7 @@ public interface CxfEndpointBuilderFactory {
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1694,8 +1675,7 @@ public interface CxfEndpointBuilderFactory {
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1711,7 +1691,7 @@ public interface CxfEndpointBuilderFactory {
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1727,8 +1707,7 @@ public interface CxfEndpointBuilderFactory {
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1745,8 +1724,8 @@ public interface CxfEndpointBuilderFactory {
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1766,8 +1745,8 @@ public interface CxfEndpointBuilderFactory {
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1785,7 +1764,7 @@ public interface CxfEndpointBuilderFactory {
          * Enable schema validation for request and response. Disabled by
          * default for performance reason.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1801,8 +1780,8 @@ public interface CxfEndpointBuilderFactory {
          * Enable schema validation for request and response. Disabled by
          * default for performance reason.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: advanced
@@ -1817,7 +1796,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether SOAP message validation should be disabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1832,8 +1811,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether SOAP message validation should be disabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1862,7 +1840,7 @@ public interface CxfEndpointBuilderFactory {
          * The data type messages supported by the CXF endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.common.DataFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
          * 
          * Default: POJO
          * Group: common
@@ -1878,7 +1856,7 @@ public interface CxfEndpointBuilderFactory {
          * The data type messages supported by the CXF endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.common.DataFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
          * 
          * Default: POJO
          * Group: common
@@ -1896,7 +1874,7 @@ public interface CxfEndpointBuilderFactory {
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -1913,8 +1891,8 @@ public interface CxfEndpointBuilderFactory {
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1929,7 +1907,7 @@ public interface CxfEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -1945,8 +1923,7 @@ public interface CxfEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -1962,7 +1939,7 @@ public interface CxfEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 49152
          * Group: logging
@@ -1978,7 +1955,7 @@ public interface CxfEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 49152
          * Group: logging
@@ -1994,7 +1971,7 @@ public interface CxfEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -2010,8 +1987,7 @@ public interface CxfEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: logging
@@ -2027,7 +2003,7 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the basic authentication information of
          * password for the CXF client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2042,7 +2018,7 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the basic authentication information of
          * username for the CXF client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2056,7 +2032,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The bindingId for the service model to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -2072,7 +2048,7 @@ public interface CxfEndpointBuilderFactory {
          * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
          * prefix valid at this scope.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -2087,7 +2063,7 @@ public interface CxfEndpointBuilderFactory {
          * This option can override the endpointUrl that published from the WSDL
          * which can be accessed with service address url plus wsd.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -2102,8 +2078,8 @@ public interface CxfEndpointBuilderFactory {
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: service
          * 
@@ -2119,7 +2095,7 @@ public interface CxfEndpointBuilderFactory {
          * could have JSR181 annotation or not.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: service
          * 
@@ -2134,7 +2110,7 @@ public interface CxfEndpointBuilderFactory {
          * The service name this service is implementing, it maps to the
          * wsdl:servicename.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -2149,7 +2125,7 @@ public interface CxfEndpointBuilderFactory {
          * The location of the WSDL. Can be on the classpath, file system, or be
          * hosted remotely.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: service
          * 
@@ -2179,7 +2155,7 @@ public interface CxfEndpointBuilderFactory {
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: advanced
          * 
@@ -2196,8 +2172,8 @@ public interface CxfEndpointBuilderFactory {
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2211,7 +2187,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option is a: &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
+         * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
          * Group: advanced
          * 
@@ -2225,8 +2201,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
+         * The option will be converted to a <code>org.apache.cxf.Bus</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2242,7 +2218,7 @@ public interface CxfEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -2259,7 +2235,7 @@ public interface CxfEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -2276,7 +2252,7 @@ public interface CxfEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.common.CxfBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.CxfBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -2292,7 +2268,7 @@ public interface CxfEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.common.CxfBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.common.CxfBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -2311,7 +2287,7 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.cxf.jaxws.CxfConfigurer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
          * 
          * Group: advanced
          * 
@@ -2330,7 +2306,7 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.cxf.jaxws.CxfConfigurer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
          * 
          * Group: advanced
          * 
@@ -2344,7 +2320,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2359,8 +2335,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2377,8 +2352,7 @@ public interface CxfEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -2394,8 +2368,7 @@ public interface CxfEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -2411,7 +2384,7 @@ public interface CxfEndpointBuilderFactory {
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2428,8 +2401,7 @@ public interface CxfEndpointBuilderFactory {
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2445,7 +2417,7 @@ public interface CxfEndpointBuilderFactory {
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2461,8 +2433,7 @@ public interface CxfEndpointBuilderFactory {
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2479,8 +2450,8 @@ public interface CxfEndpointBuilderFactory {
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -2500,8 +2471,8 @@ public interface CxfEndpointBuilderFactory {
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the properties(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -2519,7 +2490,7 @@ public interface CxfEndpointBuilderFactory {
          * Enable schema validation for request and response. Disabled by
          * default for performance reason.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2535,8 +2506,8 @@ public interface CxfEndpointBuilderFactory {
          * Enable schema validation for request and response. Disabled by
          * default for performance reason.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: advanced
@@ -2551,7 +2522,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether SOAP message validation should be disabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2566,8 +2537,7 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether SOAP message validation should be disabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

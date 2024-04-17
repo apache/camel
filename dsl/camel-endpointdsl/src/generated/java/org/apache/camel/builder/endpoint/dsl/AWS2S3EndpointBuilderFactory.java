@@ -48,7 +48,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * also in case of moveAfterRead option enabled, and it will create the
          * destinationBucket if it doesn't exist already.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -65,8 +65,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * also in case of moveAfterRead option enabled, and it will create the
          * destinationBucket if it doesn't exist already.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -83,7 +82,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -98,7 +97,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should use path-style URL instead of
          * virtual-hosted-style.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -114,8 +113,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should use path-style URL instead of
          * virtual-hosted-style.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -131,7 +129,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -147,8 +145,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -163,7 +160,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -178,8 +175,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -195,7 +191,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -211,7 +207,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -228,7 +224,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -243,7 +239,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -264,7 +260,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * AWS2S3Constants#BUCKET_NAME and AWS2S3Constants#KEY headers, or only
          * the AWS2S3Constants#KEY header.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -286,8 +282,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * AWS2S3Constants#BUCKET_NAME and AWS2S3Constants#KEY headers, or only
          * the AWS2S3Constants#KEY header.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -303,7 +298,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Define the destination bucket where an object must be moved when
          * moveAfterRead is set to true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -318,7 +313,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Define the destination bucket prefix to use when an object must be
          * moved, and moveAfterRead is set to true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -333,7 +328,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Define the destination bucket suffix to use when an object must be
          * moved, and moveAfterRead is set to true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -347,7 +342,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If provided, Camel will only consume files if a done file exists.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -361,7 +356,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * To get the object from the bucket with the given file name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -377,7 +372,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * set to false, the S3 Object will be put in the body. Setting this to
          * true will override any behavior defined by includeBody option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -394,8 +389,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * set to false, the S3 Object will be put in the body. Setting this to
          * true will override any behavior defined by includeBody option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -419,7 +413,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * includeBody is false it will schedule to close the S3Object stream
          * automatically on exchange completion.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -443,8 +437,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * includeBody is false it will schedule to close the S3Object stream
          * automatically on exchange completion.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -461,7 +454,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * false, they will be ignored, and Exchanges will not be created for
          * those.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -478,8 +471,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * false, they will be ignored, and Exchanges will not be created for
          * those.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -494,7 +486,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Set the maxConnections parameter in the S3 client configuration.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60
          * Group: consumer
@@ -509,7 +501,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Set the maxConnections parameter in the S3 client configuration.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60
          * Group: consumer
@@ -527,7 +519,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * each polling. The default value is 10. Use 0 or a negative number to
          * set it as unlimited.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -545,7 +537,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * each polling. The default value is 10. Use 0 or a negative number to
          * set it as unlimited.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -564,7 +556,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * the Exchange is committed. If a rollback occurs, the object is not
          * moved.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -583,8 +575,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * the Exchange is committed. If a rollback occurs, the object is not
          * moved.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -600,7 +591,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -616,8 +607,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -632,7 +622,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -646,7 +636,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Specify a proxy port to be used inside the client definition.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -660,8 +650,8 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Specify a proxy port to be used inside the client definition.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -675,8 +665,8 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the S3 client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -692,7 +682,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -708,7 +698,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -723,7 +713,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -738,7 +728,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -753,7 +743,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -772,7 +762,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -791,7 +781,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -805,7 +795,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -820,7 +810,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -836,7 +826,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -852,8 +842,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -868,7 +857,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -883,7 +872,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -900,7 +889,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -917,7 +906,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -933,8 +922,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -951,7 +939,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -969,7 +957,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -986,7 +974,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1001,7 +989,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1017,8 +1005,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1034,8 +1021,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1054,8 +1041,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1072,7 +1059,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1087,8 +1074,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1103,8 +1089,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1120,7 +1105,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1136,7 +1121,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1152,8 +1137,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1168,7 +1152,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1183,7 +1167,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1197,7 +1181,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1212,7 +1196,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1227,7 +1211,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1243,8 +1227,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1260,7 +1243,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1276,8 +1259,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1293,7 +1275,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1309,8 +1291,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1327,7 +1308,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in S3.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1344,8 +1325,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in S3.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1371,7 +1351,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define the customer algorithm to use in case CustomerKey is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -1386,7 +1366,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Define the id of the Customer key to use in case CustomerKey is
          * enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -1400,7 +1380,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define the MD5 of Customer key to use in case CustomerKey is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -1419,7 +1399,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * caller to close the S3Object stream. Setting autocloseBody to true,
          * will close the S3Object stream automatically.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1439,8 +1419,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * caller to close the S3Object stream. Setting autocloseBody to true,
          * will close the S3Object stream automatically.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1466,7 +1445,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1492,8 +1471,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1511,8 +1489,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1530,7 +1508,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1544,8 +1522,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1560,7 +1537,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1578,7 +1555,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1596,7 +1573,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1611,8 +1588,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
-         * type.
+         * <code>software.amazon.awssdk.services.s3.S3Client</code> type.
          * 
          * Group: advanced
          * 
@@ -1627,8 +1603,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
-         * type.
+         * <code>software.amazon.awssdk.services.s3.S3Client</code> type.
          * 
          * Group: advanced
          * 
@@ -1644,7 +1619,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * operation.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1660,7 +1636,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1688,7 +1665,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * also in case of moveAfterRead option enabled, and it will create the
          * destinationBucket if it doesn't exist already.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1705,8 +1682,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * also in case of moveAfterRead option enabled, and it will create the
          * destinationBucket if it doesn't exist already.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1723,7 +1699,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1738,7 +1714,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should use path-style URL instead of
          * virtual-hosted-style.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1754,8 +1730,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should use path-style URL instead of
          * virtual-hosted-style.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1771,7 +1746,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1787,8 +1762,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1803,7 +1777,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1818,8 +1792,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1835,7 +1808,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1851,7 +1824,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1868,7 +1841,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1883,7 +1856,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1897,7 +1870,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * The number of messages composing a batch in streaming upload mode.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: producer
@@ -1912,7 +1885,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * The number of messages composing a batch in streaming upload mode.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: producer
@@ -1927,7 +1900,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * The batch size (in bytes) in streaming upload mode.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000000
          * Group: producer
@@ -1942,7 +1915,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * The batch size (in bytes) in streaming upload mode.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000000
          * Group: producer
@@ -1957,7 +1930,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * The buffer size (in bytes) in streaming upload mode.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000000
          * Group: producer
@@ -1972,7 +1945,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * The buffer size (in bytes) in streaming upload mode.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000000
          * Group: producer
@@ -1987,7 +1960,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Delete file object after the S3 file has been uploaded.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2002,8 +1975,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Delete file object after the S3 file has been uploaded.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2019,7 +1991,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Setting the key name for an element in the bucket through endpoint
          * parameter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2037,7 +2009,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * thresholds. Files that are smaller will be uploaded in a single
          * operation.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2056,8 +2028,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * thresholds. Files that are smaller will be uploaded in a single
          * operation.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2073,7 +2044,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The naming strategy to use in streaming upload mode.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum</code> type.
          * 
          * Default: progressive
          * Group: producer
@@ -2089,7 +2060,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The naming strategy to use in streaming upload mode.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum</code> type.
          * 
          * Default: progressive
          * Group: producer
@@ -2105,7 +2076,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.s3.AWS2S3Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.s3.AWS2S3Operations</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -2120,7 +2092,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.s3.AWS2S3Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.s3.AWS2S3Operations</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -2137,7 +2110,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * larger than the part-size thresholds. Files that are smaller will be
          * uploaded in a single operation.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 26214400
          * Group: producer
@@ -2155,7 +2128,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * larger than the part-size thresholds. Files that are smaller will be
          * uploaded in a single operation.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 26214400
          * Group: producer
@@ -2171,7 +2144,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The restarting policy to use in streaming upload mode.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum</code> type.
          * 
          * Default: override
          * Group: producer
@@ -2187,7 +2160,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The restarting policy to use in streaming upload mode.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum</code> type.
          * 
          * Default: override
          * Group: producer
@@ -2203,7 +2176,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The storage class to set in the
          * com.amazonaws.services.s3.model.PutObjectRequest request.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2218,7 +2191,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * When stream mode is true, the upload to bucket will be done in
          * streaming.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2234,8 +2207,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * When stream mode is true, the upload to bucket will be done in
          * streaming.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2251,7 +2223,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * While streaming upload mode is true, this option set the timeout to
          * complete upload.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -2266,7 +2238,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * While streaming upload mode is true, this option set the timeout to
          * complete upload.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -2280,7 +2252,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -2294,7 +2266,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Specify a proxy port to be used inside the client definition.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -2308,8 +2280,8 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Specify a proxy port to be used inside the client definition.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -2323,8 +2295,8 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the S3 client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -2340,7 +2312,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -2355,7 +2327,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2370,7 +2342,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2384,7 +2356,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2399,7 +2371,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2414,7 +2386,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2430,8 +2402,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2447,7 +2418,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2463,8 +2434,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2480,7 +2450,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2496,8 +2466,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2514,7 +2483,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in S3.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2531,8 +2500,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in S3.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2557,7 +2525,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define the customer algorithm to use in case CustomerKey is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -2572,7 +2540,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Define the id of the Customer key to use in case CustomerKey is
          * enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -2586,7 +2554,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define the MD5 of Customer key to use in case CustomerKey is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -2600,7 +2568,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define the id of KMS key to use in case KMS is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -2622,7 +2590,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2645,8 +2613,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2661,7 +2628,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define if KMS must be used or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2676,8 +2643,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define if KMS must be used or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2692,7 +2658,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define if Customer Key must be used or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2707,8 +2673,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define if Customer Key must be used or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2723,7 +2688,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define if SSE S3 must be used or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2738,8 +2703,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define if SSE S3 must be used or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2755,8 +2719,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
-         * type.
+         * <code>software.amazon.awssdk.services.s3.S3Client</code> type.
          * 
          * Group: advanced
          * 
@@ -2771,8 +2734,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
-         * type.
+         * <code>software.amazon.awssdk.services.s3.S3Client</code> type.
          * 
          * Group: advanced
          * 
@@ -2788,7 +2750,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * operation.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2804,7 +2767,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2833,7 +2797,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * also in case of moveAfterRead option enabled, and it will create the
          * destinationBucket if it doesn't exist already.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2850,8 +2814,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * also in case of moveAfterRead option enabled, and it will create the
          * destinationBucket if it doesn't exist already.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2868,7 +2831,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2883,7 +2846,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should use path-style URL instead of
          * virtual-hosted-style.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2899,8 +2862,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should use path-style URL instead of
          * virtual-hosted-style.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2916,7 +2878,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2932,8 +2894,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2948,7 +2909,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2963,8 +2924,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2980,7 +2940,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2996,7 +2956,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3013,7 +2973,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3028,7 +2988,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3042,7 +3002,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -3056,7 +3016,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Specify a proxy port to be used inside the client definition.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -3070,8 +3030,8 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Specify a proxy port to be used inside the client definition.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -3085,8 +3045,8 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the S3 client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -3102,7 +3062,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -3117,7 +3077,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3132,7 +3092,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3146,7 +3106,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3161,7 +3121,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3176,7 +3136,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3192,8 +3152,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3209,7 +3168,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3225,8 +3184,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3242,7 +3200,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3258,8 +3216,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Set whether the S3 client should expect to load credentials through a
          * profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3276,7 +3233,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in S3.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3293,8 +3250,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in S3.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3322,7 +3278,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define the customer algorithm to use in case CustomerKey is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -3337,7 +3293,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Define the id of the Customer key to use in case CustomerKey is
          * enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -3351,7 +3307,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * Define the MD5 of Customer key to use in case CustomerKey is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -3366,8 +3322,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
-         * type.
+         * <code>software.amazon.awssdk.services.s3.S3Client</code> type.
          * 
          * Group: advanced
          * 
@@ -3382,8 +3337,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
-         * type.
+         * <code>software.amazon.awssdk.services.s3.S3Client</code> type.
          * 
          * Group: advanced
          * 
@@ -3399,7 +3353,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * operation.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3415,7 +3370,8 @@ public interface AWS2S3EndpointBuilderFactory {
          * operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
          * 
          * Group: advanced
          * 

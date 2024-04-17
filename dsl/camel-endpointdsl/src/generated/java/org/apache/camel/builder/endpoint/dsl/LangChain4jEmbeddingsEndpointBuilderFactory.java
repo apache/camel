@@ -48,7 +48,7 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
          * The EmbeddingModel engine to use.
          * 
          * The option is a:
-         * &lt;code&gt;dev.langchain4j.model.embedding.EmbeddingModel&lt;/code&gt; type.
+         * <code>dev.langchain4j.model.embedding.EmbeddingModel</code> type.
          * 
          * Required: true
          * Group: producer
@@ -64,7 +64,7 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
          * The EmbeddingModel engine to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;dev.langchain4j.model.embedding.EmbeddingModel&lt;/code&gt; type.
+         * <code>dev.langchain4j.model.embedding.EmbeddingModel</code> type.
          * 
          * Required: true
          * Group: producer
@@ -99,7 +99,7 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -122,8 +122,7 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

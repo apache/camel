@@ -47,8 +47,8 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the retry policy for EventHubAsyncClient. If not specified, the
          * default retry options are used.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -64,7 +64,7 @@ public interface EventHubsEndpointBuilderFactory {
          * default retry options are used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
          * 
          * Group: common
          * 
@@ -79,8 +79,8 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the transport type by which all the communication with Azure
          * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
          * 
          * Default: AMQP
          * Group: common
@@ -97,7 +97,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
          * Default: AMQP
          * Group: common
@@ -114,7 +114,7 @@ public interface EventHubsEndpointBuilderFactory {
          * key for the associated azure account name to be used for
          * authentication with azure blob services.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -129,7 +129,7 @@ public interface EventHubsEndpointBuilderFactory {
          * In case you chose the default BlobCheckpointStore, this sets Azure
          * account name to be used for authentication with azure blob services.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -145,7 +145,7 @@ public interface EventHubsEndpointBuilderFactory {
          * container that shall be used by the BlobCheckpointStore to store the
          * checkpoint offsets.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -162,7 +162,8 @@ public interface EventHubsEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -179,7 +180,8 @@ public interface EventHubsEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -194,7 +196,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the batch size between each checkpoint updates. Works jointly
          * with checkpointBatchTimeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 500
          * Group: consumer
@@ -210,7 +212,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the batch size between each checkpoint updates. Works jointly
          * with checkpointBatchTimeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 500
          * Group: consumer
@@ -226,7 +228,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the batch timeout between each checkpoint updates. Works jointly
          * with checkpointBatchSize.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -242,7 +244,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the batch timeout between each checkpoint updates. Works jointly
          * with checkpointBatchSize.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -263,7 +265,7 @@ public interface EventHubsEndpointBuilderFactory {
          * com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore which stores all checkpoint offsets into Azure Blob Storage.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.eventhubs.CheckpointStore&lt;/code&gt; type.
+         * <code>com.azure.messaging.eventhubs.CheckpointStore</code> type.
          * 
          * Default: BlobCheckpointStore
          * Group: consumer
@@ -284,7 +286,7 @@ public interface EventHubsEndpointBuilderFactory {
          * com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore which stores all checkpoint offsets into Azure Blob Storage.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.messaging.eventhubs.CheckpointStore&lt;/code&gt; type.
+         * <code>com.azure.messaging.eventhubs.CheckpointStore</code> type.
          * 
          * Default: BlobCheckpointStore
          * Group: consumer
@@ -301,7 +303,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Events are read in the context of this group. The name of the
          * consumer group that is created by default is {code $Default}.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: $Default
          * Group: consumer
@@ -321,8 +323,8 @@ public interface EventHubsEndpointBuilderFactory {
          * of the partition will start from {link EventPosition#latest() latest}
          * position.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * com.azure.messaging.eventhubs.models.EventPosition&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -342,8 +344,8 @@ public interface EventHubsEndpointBuilderFactory {
          * position.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * com.azure.messaging.eventhubs.models.EventPosition&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -359,7 +361,7 @@ public interface EventHubsEndpointBuilderFactory {
          * the Event Hub consumer will actively receive and queue locally
          * without regard to whether a receive operation is currently active.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 500
          * Group: consumer
@@ -376,7 +378,7 @@ public interface EventHubsEndpointBuilderFactory {
          * the Event Hub consumer will actively receive and queue locally
          * without regard to whether a receive operation is currently active.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 500
          * Group: consumer
@@ -396,7 +398,7 @@ public interface EventHubsEndpointBuilderFactory {
          * generate the connection string, take a look at this documentation:
          * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -411,7 +413,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -427,7 +429,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -442,7 +444,7 @@ public interface EventHubsEndpointBuilderFactory {
         /**
          * The generated value for the SharedAccessName.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -456,7 +458,7 @@ public interface EventHubsEndpointBuilderFactory {
         /**
          * The name you chose for your EventHubs SAS keys.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -474,8 +476,7 @@ public interface EventHubsEndpointBuilderFactory {
          * TokenCredential.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -493,8 +494,7 @@ public interface EventHubsEndpointBuilderFactory {
          * TokenCredential.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -530,7 +530,7 @@ public interface EventHubsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -556,8 +556,7 @@ public interface EventHubsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -575,8 +574,8 @@ public interface EventHubsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -594,7 +593,7 @@ public interface EventHubsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -608,8 +607,7 @@ public interface EventHubsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -624,7 +622,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -651,8 +649,8 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the retry policy for EventHubAsyncClient. If not specified, the
          * default retry options are used.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -668,7 +666,7 @@ public interface EventHubsEndpointBuilderFactory {
          * default retry options are used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
          * 
          * Group: common
          * 
@@ -683,8 +681,8 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the transport type by which all the communication with Azure
          * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
          * 
          * Default: AMQP
          * Group: common
@@ -701,7 +699,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
          * Default: AMQP
          * Group: common
@@ -719,7 +717,7 @@ public interface EventHubsEndpointBuilderFactory {
          * service will be responsible for routing events that are sent to an
          * available partition.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -743,7 +741,7 @@ public interface EventHubsEndpointBuilderFactory {
          * recommended that the {link #setPartitionId(String) identifier of the
          * position be specified directly} when sending the batch.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -763,7 +761,7 @@ public interface EventHubsEndpointBuilderFactory {
          * this component to produce the data in camel producer.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.eventhubs.EventHubProducerAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.
          * 
          * Group: producer
          * 
@@ -783,7 +781,7 @@ public interface EventHubsEndpointBuilderFactory {
          * this component to produce the data in camel producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.messaging.eventhubs.EventHubProducerAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.
          * 
          * Group: producer
          * 
@@ -802,7 +800,7 @@ public interface EventHubsEndpointBuilderFactory {
          * generate the connection string, take a look at this documentation:
          * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -817,7 +815,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -833,7 +831,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -848,7 +846,7 @@ public interface EventHubsEndpointBuilderFactory {
         /**
          * The generated value for the SharedAccessName.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -862,7 +860,7 @@ public interface EventHubsEndpointBuilderFactory {
         /**
          * The name you chose for your EventHubs SAS keys.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -880,8 +878,7 @@ public interface EventHubsEndpointBuilderFactory {
          * TokenCredential.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -899,8 +896,7 @@ public interface EventHubsEndpointBuilderFactory {
          * TokenCredential.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -932,7 +928,7 @@ public interface EventHubsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -955,8 +951,7 @@ public interface EventHubsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -985,8 +980,8 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the retry policy for EventHubAsyncClient. If not specified, the
          * default retry options are used.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1002,7 +997,7 @@ public interface EventHubsEndpointBuilderFactory {
          * default retry options are used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
          * 
          * Group: common
          * 
@@ -1017,8 +1012,8 @@ public interface EventHubsEndpointBuilderFactory {
          * Sets the transport type by which all the communication with Azure
          * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
          * 
          * Default: AMQP
          * Group: common
@@ -1035,7 +1030,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
          * Default: AMQP
          * Group: common
@@ -1055,7 +1050,7 @@ public interface EventHubsEndpointBuilderFactory {
          * generate the connection string, take a look at this documentation:
          * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1070,7 +1065,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1086,7 +1081,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1101,7 +1096,7 @@ public interface EventHubsEndpointBuilderFactory {
         /**
          * The generated value for the SharedAccessName.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1115,7 +1110,7 @@ public interface EventHubsEndpointBuilderFactory {
         /**
          * The name you chose for your EventHubs SAS keys.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1133,8 +1128,7 @@ public interface EventHubsEndpointBuilderFactory {
          * TokenCredential.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -1152,8 +1146,7 @@ public interface EventHubsEndpointBuilderFactory {
          * TokenCredential.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 

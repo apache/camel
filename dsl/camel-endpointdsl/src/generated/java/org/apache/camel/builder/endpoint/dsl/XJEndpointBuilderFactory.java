@@ -50,7 +50,7 @@ public interface XJEndpointBuilderFactory {
          * library (camel-saxon). The Xalan library (default in JVM) does not
          * support StAXSource.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -68,8 +68,7 @@ public interface XJEndpointBuilderFactory {
          * library (camel-saxon). The Xalan library (default in JVM) does not
          * support StAXSource.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -88,7 +87,7 @@ public interface XJEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -107,8 +106,7 @@ public interface XJEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -127,7 +125,7 @@ public interface XJEndpointBuilderFactory {
          * cached stylesheet can be forced to reload at runtime via JMX using
          * the clearCachedStylesheet operation.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -146,8 +144,7 @@ public interface XJEndpointBuilderFactory {
          * cached stylesheet can be forced to reload at runtime via JMX using
          * the clearCachedStylesheet operation.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -165,7 +162,7 @@ public interface XJEndpointBuilderFactory {
          * For example suppose the output file is a temporary file, then it can
          * be a good idea to delete it after use.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -183,8 +180,7 @@ public interface XJEndpointBuilderFactory {
          * For example suppose the output file is a temporary file, then it can
          * be a good idea to delete it after use.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -199,7 +195,7 @@ public interface XJEndpointBuilderFactory {
         /**
          * Whether or not to throw an exception if the input body is null.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -214,8 +210,7 @@ public interface XJEndpointBuilderFactory {
         /**
          * Whether or not to throw an exception if the input body is null.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -237,8 +232,7 @@ public interface XJEndpointBuilderFactory {
          * otherwise an exception is thrown at runtime.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xslt.XsltOutput&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * 
          * Default: string
          * Group: producer
@@ -260,8 +254,7 @@ public interface XJEndpointBuilderFactory {
          * otherwise an exception is thrown at runtime.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xslt.XsltOutput&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * 
          * Default: string
          * Group: producer
@@ -277,7 +270,7 @@ public interface XJEndpointBuilderFactory {
          * Transform direction. Either XML2JSON or JSON2XML.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xj.TransformDirection&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xj.TransformDirection</code> type.
          * 
          * Required: true
          * Group: producer
@@ -293,7 +286,7 @@ public interface XJEndpointBuilderFactory {
          * Transform direction. Either XML2JSON or JSON2XML.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xj.TransformDirection&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xj.TransformDirection</code> type.
          * 
          * Required: true
          * Group: producer
@@ -309,7 +302,7 @@ public interface XJEndpointBuilderFactory {
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: producer
@@ -325,7 +318,7 @@ public interface XJEndpointBuilderFactory {
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: producer
@@ -360,7 +353,7 @@ public interface XJEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -383,8 +376,7 @@ public interface XJEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -400,8 +392,7 @@ public interface XJEndpointBuilderFactory {
          * To use a custom org.xml.sax.EntityResolver with
          * javax.xml.transform.sax.SAXSource.
          * 
-         * The option is a: &lt;code&gt;org.xml.sax.EntityResolver&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.xml.sax.EntityResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -417,7 +408,7 @@ public interface XJEndpointBuilderFactory {
          * javax.xml.transform.sax.SAXSource.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.xml.sax.EntityResolver&lt;/code&gt; type.
+         * <code>org.xml.sax.EntityResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -435,8 +426,7 @@ public interface XJEndpointBuilderFactory {
          * store information on the Exchange as properties is not in use. So
          * only use this option for special use-cases.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.xml.transform.ErrorListener&lt;/code&gt; type.
+         * The option is a: <code>javax.xml.transform.ErrorListener</code> type.
          * 
          * Group: advanced
          * 
@@ -455,7 +445,7 @@ public interface XJEndpointBuilderFactory {
          * only use this option for special use-cases.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.xml.transform.ErrorListener&lt;/code&gt; type.
+         * <code>javax.xml.transform.ErrorListener</code> type.
          * 
          * Group: advanced
          * 
@@ -472,7 +462,8 @@ public interface XJEndpointBuilderFactory {
          * using custom org.apache.camel.builder.xml.ResultHandler types.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xslt.ResultHandlerFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -489,7 +480,8 @@ public interface XJEndpointBuilderFactory {
          * using custom org.apache.camel.builder.xml.ResultHandler types.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xslt.ResultHandlerFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -503,8 +495,7 @@ public interface XJEndpointBuilderFactory {
         /**
          * To use a custom Saxon configuration.
          * 
-         * The option is a: &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt;
-         * type.
+         * The option is a: <code>net.sf.saxon.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -519,7 +510,7 @@ public interface XJEndpointBuilderFactory {
          * To use a custom Saxon configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt; type.
+         * <code>net.sf.saxon.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -536,7 +527,7 @@ public interface XJEndpointBuilderFactory {
          * camel-saxon to the classpath. The function is looked up in the
          * registry, where you can comma to separate multiple values to lookup.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -553,7 +544,7 @@ public interface XJEndpointBuilderFactory {
          * need to turn this off to allow Saxon to be able to use Java extension
          * functions.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -571,8 +562,7 @@ public interface XJEndpointBuilderFactory {
          * need to turn this off to allow Saxon to be able to use Java extension
          * functions.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -587,8 +577,8 @@ public interface XJEndpointBuilderFactory {
         /**
          * To use a custom XSLT transformer factory.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.xml.transform.TransformerFactory&lt;/code&gt; type.
+         * The option is a: <code>javax.xml.transform.TransformerFactory</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -603,7 +593,7 @@ public interface XJEndpointBuilderFactory {
          * To use a custom XSLT transformer factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.xml.transform.TransformerFactory&lt;/code&gt; type.
+         * <code>javax.xml.transform.TransformerFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -618,7 +608,7 @@ public interface XJEndpointBuilderFactory {
          * To use a custom XSLT transformer factory, specified as a FQN class
          * name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -634,7 +624,7 @@ public interface XJEndpointBuilderFactory {
          * TransformerFactory.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -650,7 +640,7 @@ public interface XJEndpointBuilderFactory {
          * TransformerFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -664,8 +654,7 @@ public interface XJEndpointBuilderFactory {
         /**
          * To use a custom javax.xml.transform.URIResolver.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
+         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -680,7 +669,7 @@ public interface XJEndpointBuilderFactory {
          * To use a custom javax.xml.transform.URIResolver.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
+         * <code>javax.xml.transform.URIResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -695,7 +684,7 @@ public interface XJEndpointBuilderFactory {
          * A consumer to messages generated during XSLT transformations.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xslt.XsltMessageLogger&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xslt.XsltMessageLogger</code> type.
          * 
          * Group: advanced
          * 
@@ -710,7 +699,7 @@ public interface XJEndpointBuilderFactory {
          * A consumer to messages generated during XSLT transformations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xslt.XsltMessageLogger&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xslt.XsltMessageLogger</code> type.
          * 
          * Group: advanced
          * 

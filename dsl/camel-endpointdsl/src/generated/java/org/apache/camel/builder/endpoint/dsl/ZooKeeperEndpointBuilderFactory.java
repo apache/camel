@@ -46,7 +46,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the children of the node should be listed.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -61,8 +61,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the children of the node should be listed.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -77,7 +76,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The time interval to wait on connection before timing out.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -92,7 +91,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The time interval to wait on connection before timing out.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -107,7 +106,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The time interval to backoff for after an error before retrying.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -122,7 +121,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The time interval to backoff for after an error before retrying.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -137,7 +136,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -152,8 +151,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -169,7 +167,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Upon the delete of a znode, should an empty message be send to the
          * consumer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -185,8 +183,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Upon the delete of a znode, should an empty message be send to the
          * consumer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -223,7 +220,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -249,8 +246,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -268,8 +264,8 @@ public interface ZooKeeperEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -287,7 +283,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -301,8 +297,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -317,7 +312,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -343,7 +338,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the children of the node should be listed.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -358,8 +353,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the children of the node should be listed.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -374,7 +368,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The time interval to wait on connection before timing out.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -389,7 +383,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The time interval to wait on connection before timing out.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -404,7 +398,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Should the endpoint create the node if it does not currently exist.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -419,8 +413,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Should the endpoint create the node if it does not currently exist.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -435,7 +428,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The create mode that should be used for the newly created node.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: EPHEMERAL
          * Group: producer
@@ -468,7 +461,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -491,8 +484,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -520,7 +512,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the children of the node should be listed.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -535,8 +527,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the children of the node should be listed.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -551,7 +542,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The time interval to wait on connection before timing out.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -566,7 +557,7 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The time interval to wait on connection before timing out.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: common

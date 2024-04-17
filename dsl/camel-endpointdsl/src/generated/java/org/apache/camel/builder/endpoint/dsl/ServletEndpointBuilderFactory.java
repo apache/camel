@@ -62,7 +62,7 @@ public interface ServletEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -92,8 +92,7 @@ public interface ServletEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -109,7 +108,7 @@ public interface ServletEndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -125,8 +124,7 @@ public interface ServletEndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -149,7 +147,7 @@ public interface ServletEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -172,8 +170,7 @@ public interface ServletEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -188,7 +185,7 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Configure the consumer to work in async mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -203,8 +200,7 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Configure the consumer to work in async mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -221,7 +217,7 @@ public interface ServletEndpointBuilderFactory {
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -237,7 +233,7 @@ public interface ServletEndpointBuilderFactory {
          * exception's stack trace will be logged when the exception stack trace
          * is not sent in the response's body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -254,8 +250,7 @@ public interface ServletEndpointBuilderFactory {
          * exception's stack trace will be logged when the exception stack trace
          * is not sent in the response's body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -271,7 +266,7 @@ public interface ServletEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -287,8 +282,7 @@ public interface ServletEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -304,7 +298,7 @@ public interface ServletEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -320,8 +314,7 @@ public interface ServletEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -336,7 +329,7 @@ public interface ServletEndpointBuilderFactory {
         /**
          * To use a custom buffer size on the jakarta.servlet.ServletResponse.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer
          * 
@@ -350,8 +343,8 @@ public interface ServletEndpointBuilderFactory {
         /**
          * To use a custom buffer size on the jakarta.servlet.ServletResponse.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -365,7 +358,7 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Name of the servlet to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: CamelServlet
          * Group: consumer
@@ -394,8 +387,7 @@ public interface ServletEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -411,8 +403,7 @@ public interface ServletEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -428,8 +419,7 @@ public interface ServletEndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -445,8 +435,7 @@ public interface ServletEndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -465,7 +454,7 @@ public interface ServletEndpointBuilderFactory {
          * off by default as this may require servlet specific configuration to
          * enable this when using Servlet's.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -485,8 +474,7 @@ public interface ServletEndpointBuilderFactory {
          * off by default as this may require servlet specific configuration to
          * enable this when using Servlet's.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -512,7 +500,7 @@ public interface ServletEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -538,8 +526,7 @@ public interface ServletEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -556,7 +543,7 @@ public interface ServletEndpointBuilderFactory {
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -573,8 +560,7 @@ public interface ServletEndpointBuilderFactory {
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -592,8 +578,8 @@ public interface ServletEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -611,7 +597,7 @@ public interface ServletEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -625,8 +611,7 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -641,7 +626,7 @@ public interface ServletEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -657,7 +642,7 @@ public interface ServletEndpointBuilderFactory {
          * files. Multiple extensions can be separated by comma, such as
          * txt,xml.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -673,7 +658,7 @@ public interface ServletEndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -690,8 +675,7 @@ public interface ServletEndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -708,7 +692,7 @@ public interface ServletEndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -725,8 +709,7 @@ public interface ServletEndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -743,7 +726,7 @@ public interface ServletEndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -760,8 +743,7 @@ public interface ServletEndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -777,7 +759,7 @@ public interface ServletEndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -793,8 +775,7 @@ public interface ServletEndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -810,7 +791,7 @@ public interface ServletEndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
          * default TRACE is turned off.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -826,8 +807,7 @@ public interface ServletEndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
          * default TRACE is turned off.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)

@@ -48,7 +48,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -62,7 +62,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Client ID of the sheets application.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -76,7 +76,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Delegate for wide-domain service account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -90,7 +90,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * True if grid data should be returned.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -105,8 +105,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * True if grid data should be returned.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -121,7 +120,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Specifies the major dimension that results should use..
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ROWS
          * Group: consumer
@@ -138,7 +137,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -154,7 +153,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -168,7 +167,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Specifies the range of rows and columns in a sheet to get data from.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -186,7 +185,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * more info.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Collection&lt;java.lang.String&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -204,7 +203,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * more info.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Collection&lt;java.lang.String&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -219,7 +218,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -235,8 +234,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -254,7 +252,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * represented with a separate exchange in batch processing. Otherwise
          * value range object is used as exchange junk size.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -272,8 +270,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * represented with a separate exchange in batch processing. Otherwise
          * value range object is used as exchange junk size.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -288,7 +285,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Determines how values should be rendered in the output.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: FORMATTED_VALUE
          * Group: consumer
@@ -304,7 +301,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -319,7 +316,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -334,7 +331,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -349,7 +346,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -368,7 +365,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -387,7 +384,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -401,7 +398,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -416,7 +413,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -432,7 +429,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -448,8 +445,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -464,7 +460,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -479,7 +475,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -496,7 +492,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -513,7 +509,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -529,8 +525,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -547,7 +542,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -565,7 +560,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -582,7 +577,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -597,7 +592,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -613,8 +608,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -630,8 +624,8 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -650,8 +644,8 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -668,7 +662,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -683,8 +677,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -699,8 +692,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -716,7 +708,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -732,7 +724,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -748,8 +740,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -765,7 +756,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -779,7 +770,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Client secret of the sheets application.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -795,7 +786,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -809,7 +800,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Sets .json file with credentials for Service account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -846,7 +837,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -872,8 +863,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -891,8 +881,8 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -910,7 +900,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -924,8 +914,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -940,7 +929,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -958,7 +947,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -976,7 +965,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 

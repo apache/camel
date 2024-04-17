@@ -47,7 +47,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -63,8 +63,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -87,7 +86,7 @@ public interface FtpsEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -104,7 +103,7 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -122,8 +121,7 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -148,7 +146,7 @@ public interface FtpsEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -177,7 +175,7 @@ public interface FtpsEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -191,7 +189,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -206,8 +204,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -225,7 +222,7 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -243,7 +240,7 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -260,7 +257,7 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5
          * Group: common
@@ -277,7 +274,7 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5
          * Group: common
@@ -293,8 +290,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configure the logging level to use when logging the progress of
          * upload and download operations.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: common
@@ -311,7 +307,7 @@ public interface FtpsEndpointBuilderFactory {
          * upload and download operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: common
@@ -327,7 +323,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -343,8 +339,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -359,7 +354,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * If true, the file will be deleted after it is processed successfully.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -374,8 +369,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * If true, the file will be deleted after it is processed successfully.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -393,7 +387,7 @@ public interface FtpsEndpointBuilderFactory {
          * When moving the files to the fail location Camel will handle the
          * error and will not pick up the file again.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -410,7 +404,7 @@ public interface FtpsEndpointBuilderFactory {
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -428,8 +422,7 @@ public interface FtpsEndpointBuilderFactory {
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -446,7 +439,7 @@ public interface FtpsEndpointBuilderFactory {
          * filename when moving it before processing. For example to move
          * in-progress files into the order directory set this value to order.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -465,7 +458,7 @@ public interface FtpsEndpointBuilderFactory {
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -485,8 +478,7 @@ public interface FtpsEndpointBuilderFactory {
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -502,7 +494,7 @@ public interface FtpsEndpointBuilderFactory {
          * If a directory, will look for files in all the sub-directories as
          * well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -518,8 +510,7 @@ public interface FtpsEndpointBuilderFactory {
          * If a directory, will look for files in all the sub-directories as
          * well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -538,7 +529,7 @@ public interface FtpsEndpointBuilderFactory {
          * are stored in a local directory, and the option binary must be
          * enabled, which is required to support resuming of downloads.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -557,8 +548,7 @@ public interface FtpsEndpointBuilderFactory {
          * are stored in a local directory, and the option binary must be
          * enabled, which is required to support resuming of downloads.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -574,7 +564,7 @@ public interface FtpsEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -590,8 +580,7 @@ public interface FtpsEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -611,7 +600,7 @@ public interface FtpsEndpointBuilderFactory {
          * you must set stepwise=false as both cannot be enabled at the same
          * time.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -631,8 +620,7 @@ public interface FtpsEndpointBuilderFactory {
          * you must set stepwise=false as both cannot be enabled at the same
          * time.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -649,7 +637,7 @@ public interface FtpsEndpointBuilderFactory {
          * used, antExclude takes precedence over antInclude. Multiple
          * exclusions may be specified in comma-delimited format.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -663,7 +651,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets case sensitive flag on ant filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -678,8 +666,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets case sensitive flag on ant filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -695,7 +682,7 @@ public interface FtpsEndpointBuilderFactory {
          * Ant style filter inclusion. Multiple inclusions may be specified in
          * comma-delimited format.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -714,7 +701,7 @@ public interface FtpsEndpointBuilderFactory {
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -734,8 +721,7 @@ public interface FtpsEndpointBuilderFactory {
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -754,7 +740,7 @@ public interface FtpsEndpointBuilderFactory {
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -774,7 +760,7 @@ public interface FtpsEndpointBuilderFactory {
          * named mydata.tar.gz will have extension as tar.gz. For more
          * flexibility then use the include/exclude options.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -791,7 +777,7 @@ public interface FtpsEndpointBuilderFactory {
          * files if filter returns false in its accept() method.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileFilter&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
          * Group: filter
          * 
@@ -808,7 +794,7 @@ public interface FtpsEndpointBuilderFactory {
          * files if filter returns false in its accept() method.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileFilter&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
          * Group: filter
          * 
@@ -824,7 +810,7 @@ public interface FtpsEndpointBuilderFactory {
          * on current date, you can use a simple date pattern such as
          * ${date:now:yyyMMdd}.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -839,7 +825,7 @@ public interface FtpsEndpointBuilderFactory {
          * Filters the file based on Simple language. For example to filter on
          * file size, you can use ${file:size} 5000.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -856,7 +842,7 @@ public interface FtpsEndpointBuilderFactory {
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: filter
@@ -874,8 +860,8 @@ public interface FtpsEndpointBuilderFactory {
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: filter
@@ -893,7 +879,7 @@ public interface FtpsEndpointBuilderFactory {
          * file name and file size, you can do:
          * idempotentKey=${file:name}-${file:size}.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -910,8 +896,7 @@ public interface FtpsEndpointBuilderFactory {
          * and idempotent is true.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: filter
          * 
@@ -928,8 +913,7 @@ public interface FtpsEndpointBuilderFactory {
          * and idempotent is true.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: filter
          * 
@@ -947,7 +931,7 @@ public interface FtpsEndpointBuilderFactory {
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -967,7 +951,7 @@ public interface FtpsEndpointBuilderFactory {
          * named mydata.tar.gz will have extension as tar.gz. For more
          * flexibility then use the include/exclude options.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -982,7 +966,7 @@ public interface FtpsEndpointBuilderFactory {
          * The maximum depth to traverse when recursively processing a
          * directory.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: filter
@@ -998,7 +982,7 @@ public interface FtpsEndpointBuilderFactory {
          * The maximum depth to traverse when recursively processing a
          * directory.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: filter
@@ -1021,7 +1005,7 @@ public interface FtpsEndpointBuilderFactory {
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: filter
          * 
@@ -1043,7 +1027,7 @@ public interface FtpsEndpointBuilderFactory {
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: filter
          * 
@@ -1059,7 +1043,7 @@ public interface FtpsEndpointBuilderFactory {
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: filter
          * 
@@ -1075,7 +1059,7 @@ public interface FtpsEndpointBuilderFactory {
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: filter
          * 
@@ -1091,7 +1075,7 @@ public interface FtpsEndpointBuilderFactory {
          * filename when moving it after processing. To move files into a .done
          * subdirectory just enter .done.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1108,7 +1092,7 @@ public interface FtpsEndpointBuilderFactory {
          * implementation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
          * Group: lock
          * 
@@ -1125,7 +1109,7 @@ public interface FtpsEndpointBuilderFactory {
          * implementation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
          * Group: lock
          * 
@@ -1176,7 +1160,7 @@ public interface FtpsEndpointBuilderFactory {
          * repository supports clustering, such as Hazelcast Component or
          * Infinispan.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: none
          * Group: lock
@@ -1201,7 +1185,7 @@ public interface FtpsEndpointBuilderFactory {
          * ample time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: lock
@@ -1226,7 +1210,7 @@ public interface FtpsEndpointBuilderFactory {
          * ample time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: lock
@@ -1247,7 +1231,7 @@ public interface FtpsEndpointBuilderFactory {
          * another node is concurrently reading files from the same shared
          * directory.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1268,8 +1252,7 @@ public interface FtpsEndpointBuilderFactory {
          * another node is concurrently reading files from the same shared
          * directory.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1288,8 +1271,7 @@ public interface FtpsEndpointBuilderFactory {
          * types: changed, fileLock, idempotent, idempotent-changed,
          * idempotent-rename, rename.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: lock
@@ -1309,7 +1291,7 @@ public interface FtpsEndpointBuilderFactory {
          * idempotent-rename, rename.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: lock
@@ -1329,7 +1311,7 @@ public interface FtpsEndpointBuilderFactory {
          * not want to write marker files to the file systems by the Camel
          * application.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1349,8 +1331,7 @@ public interface FtpsEndpointBuilderFactory {
          * not want to write marker files to the file systems by the Camel
          * application.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1370,7 +1351,7 @@ public interface FtpsEndpointBuilderFactory {
          * as it will only attempt to acquire files which are at least that
          * given age.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: lock
@@ -1390,7 +1371,7 @@ public interface FtpsEndpointBuilderFactory {
          * as it will only attempt to acquire files which are at least that
          * given age.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: lock
@@ -1408,7 +1389,7 @@ public interface FtpsEndpointBuilderFactory {
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1
          * Group: lock
@@ -1426,7 +1407,7 @@ public interface FtpsEndpointBuilderFactory {
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1
          * Group: lock
@@ -1449,7 +1430,7 @@ public interface FtpsEndpointBuilderFactory {
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: lock
@@ -1472,8 +1453,7 @@ public interface FtpsEndpointBuilderFactory {
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: lock
@@ -1492,7 +1472,7 @@ public interface FtpsEndpointBuilderFactory {
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1511,8 +1491,7 @@ public interface FtpsEndpointBuilderFactory {
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1538,7 +1517,7 @@ public interface FtpsEndpointBuilderFactory {
          * ample time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: lock
@@ -1564,7 +1543,7 @@ public interface FtpsEndpointBuilderFactory {
          * ample time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: lock
@@ -1580,7 +1559,7 @@ public interface FtpsEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1595,7 +1574,7 @@ public interface FtpsEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1610,7 +1589,7 @@ public interface FtpsEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1625,7 +1604,7 @@ public interface FtpsEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1644,7 +1623,7 @@ public interface FtpsEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1663,7 +1642,7 @@ public interface FtpsEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1677,7 +1656,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -1692,7 +1671,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -1708,7 +1687,7 @@ public interface FtpsEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -1724,8 +1703,7 @@ public interface FtpsEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -1740,7 +1718,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -1755,7 +1733,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -1772,7 +1750,7 @@ public interface FtpsEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -1789,7 +1767,7 @@ public interface FtpsEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -1805,8 +1783,7 @@ public interface FtpsEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -1823,7 +1800,7 @@ public interface FtpsEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -1841,7 +1818,7 @@ public interface FtpsEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1858,7 +1835,7 @@ public interface FtpsEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1873,7 +1850,7 @@ public interface FtpsEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1889,8 +1866,7 @@ public interface FtpsEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1906,8 +1882,8 @@ public interface FtpsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1926,8 +1902,8 @@ public interface FtpsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1944,7 +1920,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1959,8 +1935,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1975,8 +1950,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1992,7 +1966,7 @@ public interface FtpsEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -2008,7 +1982,7 @@ public interface FtpsEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -2024,8 +1998,7 @@ public interface FtpsEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -2040,7 +2013,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Account to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2056,7 +2029,7 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2073,8 +2046,7 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2090,7 +2062,7 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: security
          * 
@@ -2105,8 +2077,7 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: security
          * 
@@ -2121,7 +2092,7 @@ public interface FtpsEndpointBuilderFactory {
          * The exec protection level PROT command. C - Clear S - Safe(SSL
          * protocol only) E - Confidential(SSL protocol only) P - Private.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2135,8 +2106,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -2154,8 +2125,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -2172,8 +2143,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -2191,8 +2162,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -2210,7 +2181,7 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2226,8 +2197,7 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2242,7 +2212,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2256,7 +2226,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the underlying security protocol.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: TLSv1.3
          * Group: security
@@ -2275,7 +2245,7 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2293,7 +2263,7 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2307,7 +2277,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2321,7 +2291,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To shuffle the list of files (sort in random order).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: sort
@@ -2336,8 +2306,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To shuffle the list of files (sort in random order).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: sort
@@ -2354,7 +2323,7 @@ public interface FtpsEndpointBuilderFactory {
          * you can have a sort by file name and as a 2nd group sort by modified
          * date.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: sort
          * 
@@ -2369,7 +2338,7 @@ public interface FtpsEndpointBuilderFactory {
          * Pluggable sorter as a java.util.Comparator class.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.component.file.GenericFile&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
          * 
          * Group: sort
          * 
@@ -2384,7 +2353,7 @@ public interface FtpsEndpointBuilderFactory {
          * Pluggable sorter as a java.util.Comparator class.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.component.file.GenericFile&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
          * 
          * Group: sort
          * 
@@ -2416,7 +2385,7 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -2438,8 +2407,7 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -2465,7 +2433,7 @@ public interface FtpsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2491,8 +2459,7 @@ public interface FtpsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2511,7 +2478,7 @@ public interface FtpsEndpointBuilderFactory {
          * such as file name, file size, etc. It's just that the file will not
          * be downloaded.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2530,8 +2497,7 @@ public interface FtpsEndpointBuilderFactory {
          * such as file name, file size, etc. It's just that the file will not
          * be downloaded.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2549,8 +2515,8 @@ public interface FtpsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2568,7 +2534,7 @@ public interface FtpsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2582,8 +2548,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2598,7 +2563,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2616,7 +2581,7 @@ public interface FtpsEndpointBuilderFactory {
          * with absolute paths, and if so then the FTP component needs to handle
          * this by converting the returned path into a relative path.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2635,8 +2600,7 @@ public interface FtpsEndpointBuilderFactory {
          * with absolute paths, and if so then the FTP component needs to handle
          * this by converting the returned path into a relative path.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2655,7 +2619,7 @@ public interface FtpsEndpointBuilderFactory {
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2674,8 +2638,7 @@ public interface FtpsEndpointBuilderFactory {
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2694,8 +2657,7 @@ public interface FtpsEndpointBuilderFactory {
          * default a memory based repository is used.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2713,8 +2675,7 @@ public interface FtpsEndpointBuilderFactory {
          * default a memory based repository is used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2731,7 +2692,7 @@ public interface FtpsEndpointBuilderFactory {
          * content into memory. This is beneficial, if you consume a very big
          * remote file and thus can conserve memory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2748,8 +2709,8 @@ public interface FtpsEndpointBuilderFactory {
          * where the consumer does either a commit or rollback. The default
          * implementation will log any exception at WARN level and ignore.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2767,7 +2728,7 @@ public interface FtpsEndpointBuilderFactory {
          * implementation will log any exception at WARN level and ignore.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2785,7 +2746,7 @@ public interface FtpsEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2803,7 +2764,7 @@ public interface FtpsEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2823,7 +2784,7 @@ public interface FtpsEndpointBuilderFactory {
          * then the readLock option does not apply.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileProcessStrategy&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2843,7 +2804,7 @@ public interface FtpsEndpointBuilderFactory {
          * then the readLock option does not apply.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileProcessStrategy&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2863,7 +2824,7 @@ public interface FtpsEndpointBuilderFactory {
          * as file size, timestamp, permissions etc, because those information
          * is only possible to retrieve when LIST command is in use.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -2884,8 +2845,7 @@ public interface FtpsEndpointBuilderFactory {
          * as file size, timestamp, permissions etc, because those information
          * is only possible to retrieve when LIST command is in use.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -2902,7 +2862,7 @@ public interface FtpsEndpointBuilderFactory {
          * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
          * include all 1xxxx ports.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -2919,7 +2879,7 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2937,8 +2897,7 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2954,7 +2913,7 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 131072
          * Group: advanced
@@ -2970,7 +2929,7 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 131072
          * Group: advanced
@@ -2986,7 +2945,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -3002,7 +2961,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -3017,8 +2976,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To use a custom instance of FTPClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
+         * The option is a: <code>org.apache.commons.net.ftp.FTPClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3033,7 +2992,7 @@ public interface FtpsEndpointBuilderFactory {
          * To use a custom instance of FTPClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
+         * <code>org.apache.commons.net.ftp.FTPClient</code> type.
          * 
          * Group: advanced
          * 
@@ -3049,8 +3008,7 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
-         * type.
+         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
          * 
          * Group: advanced
          * 
@@ -3066,8 +3024,7 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
-         * type.
+         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
          * 
          * Group: advanced
          * 
@@ -3082,8 +3039,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -3102,8 +3059,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -3121,8 +3078,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -3141,8 +3098,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -3160,7 +3117,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -3175,7 +3132,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -3190,7 +3147,7 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -3206,7 +3163,7 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -3222,7 +3179,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets optional site command(s) to be executed after successful login.
          * Multiple site commands can be separated using a new line character.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -3239,7 +3196,7 @@ public interface FtpsEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -3257,7 +3214,7 @@ public interface FtpsEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -3277,7 +3234,7 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3297,8 +3254,7 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3317,7 +3273,7 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3336,8 +3292,7 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3352,7 +3307,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -3367,7 +3322,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -3395,7 +3350,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3411,8 +3366,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3435,7 +3389,7 @@ public interface FtpsEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3452,7 +3406,7 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3470,8 +3424,7 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3496,7 +3449,7 @@ public interface FtpsEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3525,7 +3478,7 @@ public interface FtpsEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3539,7 +3492,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3554,8 +3507,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3573,7 +3525,7 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -3591,7 +3543,7 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -3608,7 +3560,7 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5
          * Group: common
@@ -3625,7 +3577,7 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5
          * Group: common
@@ -3641,8 +3593,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configure the logging level to use when logging the progress of
          * upload and download operations.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: common
@@ -3659,7 +3610,7 @@ public interface FtpsEndpointBuilderFactory {
          * upload and download operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: common
@@ -3675,7 +3626,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3691,8 +3642,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3711,7 +3661,7 @@ public interface FtpsEndpointBuilderFactory {
          * checksum file will always be written in the same folder as the
          * original file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -3740,7 +3690,7 @@ public interface FtpsEndpointBuilderFactory {
          * systems and especially FTP servers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileExist&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
          * Default: Override
          * Group: producer
@@ -3770,7 +3720,7 @@ public interface FtpsEndpointBuilderFactory {
          * systems and especially FTP servers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileExist&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
          * Default: Override
          * Group: producer
@@ -3790,7 +3740,7 @@ public interface FtpsEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -3810,8 +3760,7 @@ public interface FtpsEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -3831,7 +3780,7 @@ public interface FtpsEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -3851,8 +3800,7 @@ public interface FtpsEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -3874,7 +3822,7 @@ public interface FtpsEndpointBuilderFactory {
          * component, as the FTP component can only move any existing files to a
          * relative directory based on current dir as base.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -3894,7 +3842,7 @@ public interface FtpsEndpointBuilderFactory {
          * dir/finalFilename then tempFileName is relative to that subdirectory
          * dir.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -3912,7 +3860,7 @@ public interface FtpsEndpointBuilderFactory {
          * using exclusive read locks) reading in progress files. Is often used
          * by FTP when uploading big files.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -3926,7 +3874,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Account to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3942,7 +3890,7 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3959,8 +3907,7 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3976,7 +3923,7 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: security
          * 
@@ -3991,8 +3938,7 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: security
          * 
@@ -4007,7 +3953,7 @@ public interface FtpsEndpointBuilderFactory {
          * The exec protection level PROT command. C - Clear S - Safe(SSL
          * protocol only) E - Confidential(SSL protocol only) P - Private.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4021,8 +3967,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -4040,8 +3986,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -4058,8 +4004,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -4077,8 +4023,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -4096,7 +4042,7 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -4112,8 +4058,7 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -4128,7 +4073,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4142,7 +4087,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the underlying security protocol.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: TLSv1.3
          * Group: security
@@ -4161,7 +4106,7 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -4179,7 +4124,7 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -4193,7 +4138,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4224,7 +4169,7 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -4246,8 +4191,7 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -4268,7 +4212,7 @@ public interface FtpsEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4289,8 +4233,7 @@ public interface FtpsEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4305,7 +4248,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Allows you to set chmod on the stored file. For example chmod=640.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -4321,7 +4264,7 @@ public interface FtpsEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4338,8 +4281,7 @@ public interface FtpsEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4366,7 +4308,7 @@ public interface FtpsEndpointBuilderFactory {
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -4393,8 +4335,7 @@ public interface FtpsEndpointBuilderFactory {
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -4415,7 +4356,7 @@ public interface FtpsEndpointBuilderFactory {
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4436,8 +4377,7 @@ public interface FtpsEndpointBuilderFactory {
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4460,7 +4400,7 @@ public interface FtpsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4483,8 +4423,7 @@ public interface FtpsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4502,7 +4441,7 @@ public interface FtpsEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -4519,7 +4458,7 @@ public interface FtpsEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -4537,7 +4476,7 @@ public interface FtpsEndpointBuilderFactory {
          * to be able to upload the file. However if this causes problems, you
          * can turn this option off.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -4556,8 +4495,7 @@ public interface FtpsEndpointBuilderFactory {
          * to be able to upload the file. However if this causes problems, you
          * can turn this option off.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -4574,7 +4512,7 @@ public interface FtpsEndpointBuilderFactory {
          * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
          * include all 1xxxx ports.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -4591,7 +4529,7 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4609,8 +4547,7 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4626,7 +4563,7 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 131072
          * Group: advanced
@@ -4642,7 +4579,7 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 131072
          * Group: advanced
@@ -4658,7 +4595,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -4674,7 +4611,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -4689,8 +4626,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To use a custom instance of FTPClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
+         * The option is a: <code>org.apache.commons.net.ftp.FTPClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -4705,7 +4642,7 @@ public interface FtpsEndpointBuilderFactory {
          * To use a custom instance of FTPClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
+         * <code>org.apache.commons.net.ftp.FTPClient</code> type.
          * 
          * Group: advanced
          * 
@@ -4721,8 +4658,7 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
-         * type.
+         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
          * 
          * Group: advanced
          * 
@@ -4738,8 +4674,7 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
-         * type.
+         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
          * 
          * Group: advanced
          * 
@@ -4754,8 +4689,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -4774,8 +4709,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -4793,8 +4728,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -4813,8 +4748,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -4832,7 +4767,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -4847,7 +4782,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -4862,7 +4797,7 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -4878,7 +4813,7 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -4894,7 +4829,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets optional site command(s) to be executed after successful login.
          * Multiple site commands can be separated using a new line character.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -4911,7 +4846,7 @@ public interface FtpsEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -4929,7 +4864,7 @@ public interface FtpsEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -4949,7 +4884,7 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4969,8 +4904,7 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4989,7 +4923,7 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5008,8 +4942,7 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5024,7 +4957,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -5039,7 +4972,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -5068,7 +5001,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5084,8 +5017,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5108,7 +5040,7 @@ public interface FtpsEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5125,7 +5057,7 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5143,8 +5075,7 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5169,7 +5100,7 @@ public interface FtpsEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5198,7 +5129,7 @@ public interface FtpsEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5212,7 +5143,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5227,8 +5158,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5246,7 +5176,7 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -5264,7 +5194,7 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -5281,7 +5211,7 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5
          * Group: common
@@ -5298,7 +5228,7 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5
          * Group: common
@@ -5314,8 +5244,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configure the logging level to use when logging the progress of
          * upload and download operations.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: common
@@ -5332,7 +5261,7 @@ public interface FtpsEndpointBuilderFactory {
          * upload and download operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: common
@@ -5348,7 +5277,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5364,8 +5293,7 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5380,7 +5308,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Account to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5396,7 +5324,7 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -5413,8 +5341,7 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -5430,7 +5357,7 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: security
          * 
@@ -5445,8 +5372,7 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: security
          * 
@@ -5461,7 +5387,7 @@ public interface FtpsEndpointBuilderFactory {
          * The exec protection level PROT command. C - Clear S - Safe(SSL
          * protocol only) E - Confidential(SSL protocol only) P - Private.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5475,8 +5401,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -5494,8 +5420,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -5512,8 +5438,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -5531,8 +5457,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -5550,7 +5476,7 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -5566,8 +5492,7 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -5582,7 +5507,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5596,7 +5521,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the underlying security protocol.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: TLSv1.3
          * Group: security
@@ -5615,7 +5540,7 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -5633,7 +5558,7 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -5647,7 +5572,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5681,7 +5606,7 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -5703,8 +5628,7 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -5721,7 +5645,7 @@ public interface FtpsEndpointBuilderFactory {
          * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
          * include all 1xxxx ports.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -5738,7 +5662,7 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -5756,8 +5680,7 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -5773,7 +5696,7 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 131072
          * Group: advanced
@@ -5789,7 +5712,7 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 131072
          * Group: advanced
@@ -5805,7 +5728,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -5821,7 +5744,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -5836,8 +5759,8 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To use a custom instance of FTPClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
+         * The option is a: <code>org.apache.commons.net.ftp.FTPClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -5852,7 +5775,7 @@ public interface FtpsEndpointBuilderFactory {
          * To use a custom instance of FTPClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
+         * <code>org.apache.commons.net.ftp.FTPClient</code> type.
          * 
          * Group: advanced
          * 
@@ -5868,8 +5791,7 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
-         * type.
+         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
          * 
          * Group: advanced
          * 
@@ -5885,8 +5807,7 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
-         * type.
+         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
          * 
          * Group: advanced
          * 
@@ -5901,8 +5822,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -5921,8 +5842,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -5940,8 +5861,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -5960,8 +5881,8 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -5979,7 +5900,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -5994,7 +5915,7 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -6009,7 +5930,7 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -6025,7 +5946,7 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -6041,7 +5962,7 @@ public interface FtpsEndpointBuilderFactory {
          * Sets optional site command(s) to be executed after successful login.
          * Multiple site commands can be separated using a new line character.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -6058,7 +5979,7 @@ public interface FtpsEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -6076,7 +5997,7 @@ public interface FtpsEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -6096,7 +6017,7 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6116,8 +6037,7 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6136,7 +6056,7 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6155,8 +6075,7 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6171,7 +6090,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -6186,7 +6105,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced

@@ -48,7 +48,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -64,8 +64,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -95,7 +94,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -125,8 +124,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -149,7 +147,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -172,8 +170,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -188,7 +185,7 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * Configure the consumer to work in async mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -203,8 +200,7 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * Configure the consumer to work in async mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -224,7 +220,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: 30000
          * Group: consumer
@@ -244,8 +240,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: 30000
          * Group: consumer
@@ -261,7 +256,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * If the option is true, Jetty server will setup the CrossOriginFilter
          * which supports the CORS out of box.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -277,8 +272,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * If the option is true, Jetty server will setup the CrossOriginFilter
          * which supports the CORS out of box.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -294,7 +288,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * If this option is true, Jetty JMX support will be enabled for this
          * endpoint. See Jetty JMX support for more details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -310,8 +304,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * If this option is true, Jetty JMX support will be enabled for this
          * endpoint. See Jetty JMX support for more details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -328,7 +321,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * or not. You should set this value to false when bridging endpoints,
          * to ensure multipart requests is proxied/bridged as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -345,8 +338,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * or not. You should set this value to false when bridging endpoints,
          * to ensure multipart requests is proxied/bridged as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -363,7 +355,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -379,7 +371,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * exception's stack trace will be logged when the exception stack trace
          * is not sent in the response's body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -396,8 +388,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * exception's stack trace will be logged when the exception stack trace
          * is not sent in the response's body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -413,7 +404,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -429,8 +420,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -446,7 +436,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -462,8 +452,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -478,7 +467,7 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * To use a custom buffer size on the jakarta.servlet.ServletResponse.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer
          * 
@@ -492,8 +481,8 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * To use a custom buffer size on the jakarta.servlet.ServletResponse.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -510,7 +499,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * other camel-jetty endpoint is share the same port, otherwise this
          * option may not work as expected.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -528,8 +517,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * other camel-jetty endpoint is share the same port, otherwise this
          * option may not work as expected.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -547,7 +535,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * please make sure there is no any other camel-jetty endpoint is share
          * the same port, otherwise this option may not work as expected.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -565,8 +553,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * please make sure there is no any other camel-jetty endpoint is share
          * the same port, otherwise this option may not work as expected.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -582,7 +569,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Specifies whether to enable the session manager on the server side of
          * Jetty.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -598,8 +585,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Specifies whether to enable the session manager on the server side of
          * Jetty.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -614,7 +600,7 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * Whether or not to use Jetty continuations for the Jetty Server.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: consumer
          * 
@@ -628,8 +614,8 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * Whether or not to use Jetty continuations for the Jetty Server.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -644,7 +630,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -659,7 +645,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -687,8 +673,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -704,8 +689,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -721,8 +705,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -738,8 +721,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -764,7 +746,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -790,8 +772,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -808,7 +789,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -825,8 +806,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -844,8 +824,8 @@ public interface JettyHttp12EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -863,7 +843,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -877,8 +857,7 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -893,7 +872,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -909,7 +888,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * multipart/form-data requests. By default the files are not written to
          * disk.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -925,8 +904,8 @@ public interface JettyHttp12EndpointBuilderFactory {
          * multipart/form-data requests. By default the files are not written to
          * disk.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -942,7 +921,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * multipart/form-data requests. By default the files are written in the
          * system temporary folder.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -957,8 +936,8 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the
          * filterInitParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -977,8 +956,8 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the
          * filterInitParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -997,7 +976,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * find in the Registry. Multiple values can be separated by comma.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;jakarta.servlet.Filter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;jakarta.servlet.Filter&gt;</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1013,7 +992,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * find in the Registry. Multiple values can be separated by comma.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;jakarta.servlet.Filter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;jakarta.servlet.Filter&gt;</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1033,7 +1012,8 @@ public interface JettyHttp12EndpointBuilderFactory {
          * handlers, then use different port numbers.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;org.eclipse.jetty.server.Handler&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;org.eclipse.jetty.server.Handler&gt;</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1053,7 +1033,8 @@ public interface JettyHttp12EndpointBuilderFactory {
          * handlers, then use different port numbers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;org.eclipse.jetty.server.Handler&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;org.eclipse.jetty.server.Handler&gt;</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1070,7 +1051,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * infinite timeout, -1 (default) implies no HTTP channel timeout and
          * the connection timeout is used instead.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: consumer (advanced)
@@ -1088,7 +1069,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * infinite timeout, -1 (default) implies no HTTP channel timeout and
          * the connection timeout is used instead.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: consumer (advanced)
@@ -1105,7 +1086,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1122,8 +1103,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1140,7 +1120,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1157,8 +1137,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1175,7 +1154,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1192,8 +1171,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1208,7 +1186,7 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * The maximum size allowed for uploaded files. -1 means no limit.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1222,8 +1200,7 @@ public interface JettyHttp12EndpointBuilderFactory {
         /**
          * The maximum size allowed for uploaded files. -1 means no limit.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1238,7 +1215,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * The maximum size allowed for multipart/form-data requests. -1 means
          * no limit.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1253,8 +1230,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * The maximum size allowed for multipart/form-data requests. -1 means
          * no limit.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1269,8 +1245,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Allows using a custom multipart filter. Note: setting
          * multipartFilterRef forces the value of enableMultipartFilter to true.
          * 
-         * The option is a: &lt;code&gt;jakarta.servlet.Filter&lt;/code&gt;
-         * type.
+         * The option is a: <code>jakarta.servlet.Filter</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1285,8 +1260,8 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Allows using a custom multipart filter. Note: setting
          * multipartFilterRef forces the value of enableMultipartFilter to true.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;jakarta.servlet.Filter&lt;/code&gt; type.
+         * The option will be converted to a <code>jakarta.servlet.Filter</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1301,7 +1276,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1317,8 +1292,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1334,7 +1308,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
          * default TRACE is turned off.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1350,8 +1324,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
          * default TRACE is turned off.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)

@@ -47,7 +47,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * The Athena database to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -63,7 +63,7 @@ public interface Athena2EndpointBuilderFactory {
          * section Waiting for Query Completion and Retrying Failed Queries to
          * learn more.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 2000
          * Group: producer
@@ -80,7 +80,7 @@ public interface Athena2EndpointBuilderFactory {
          * section Waiting for Query Completion and Retrying Failed Queries to
          * learn more.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2000
          * Group: producer
@@ -97,7 +97,7 @@ public interface Athena2EndpointBuilderFactory {
          * the section Waiting for Query Completion and Retrying Failed Queries
          * to learn more.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -114,7 +114,7 @@ public interface Athena2EndpointBuilderFactory {
          * the section Waiting for Query Completion and Retrying Failed Queries
          * to learn more.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -131,7 +131,7 @@ public interface Athena2EndpointBuilderFactory {
          * retries. See the section Waiting for Query Completion and Retrying
          * Failed Queries to learn more.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -148,7 +148,7 @@ public interface Athena2EndpointBuilderFactory {
          * retries. See the section Waiting for Query Completion and Retrying
          * Failed Queries to learn more.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -165,7 +165,7 @@ public interface Athena2EndpointBuilderFactory {
          * by the Athena API endpoint). If not set, will use the Athena API
          * default for the given operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -181,8 +181,8 @@ public interface Athena2EndpointBuilderFactory {
          * by the Athena API endpoint). If not set, will use the Athena API
          * default for the given operation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -197,7 +197,7 @@ public interface Athena2EndpointBuilderFactory {
          * Pagination token to use in the case where the response from the
          * previous request was truncated.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -212,7 +212,8 @@ public interface Athena2EndpointBuilderFactory {
          * The Athena API function to call.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.athena.Athena2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.athena.Athena2Operations</code>
+         * type.
          * 
          * Default: startQueryExecution
          * Group: producer
@@ -228,7 +229,8 @@ public interface Athena2EndpointBuilderFactory {
          * The Athena API function to call.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.athena.Athena2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.athena.Athena2Operations</code>
+         * type.
          * 
          * Default: startQueryExecution
          * Group: producer
@@ -245,7 +247,7 @@ public interface Athena2EndpointBuilderFactory {
          * s3://path/to/query/bucket/. Ensure this value ends with a forward
          * slash.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -264,7 +266,8 @@ public interface Athena2EndpointBuilderFactory {
          * S3Pointer (return an S3 path pointing to the results).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.athena.Athena2OutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.athena.Athena2OutputType</code>
+         * type.
          * 
          * Default: StreamList
          * Group: producer
@@ -284,7 +287,8 @@ public interface Athena2EndpointBuilderFactory {
          * S3Pointer (return an S3 path pointing to the results).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.athena.Athena2OutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.athena.Athena2OutputType</code>
+         * type.
          * 
          * Default: StreamList
          * Group: producer
@@ -299,7 +303,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * The unique ID identifying the query execution.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -316,7 +320,7 @@ public interface Athena2EndpointBuilderFactory {
          * Athena2Constants.QUERY_STRING to avoid having to deal with URL
          * encoding issues.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -332,7 +336,7 @@ public interface Athena2EndpointBuilderFactory {
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -349,7 +353,7 @@ public interface Athena2EndpointBuilderFactory {
          * waitTimeout x maxAttempts. See the section Waiting for Query
          * Completion and Retrying Failed Queries to learn more.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -367,8 +371,7 @@ public interface Athena2EndpointBuilderFactory {
          * waitTimeout x maxAttempts. See the section Waiting for Query
          * Completion and Retrying Failed Queries to learn more.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -390,7 +393,7 @@ public interface Athena2EndpointBuilderFactory {
          * See the section Waiting for Query Completion and Retrying Failed
          * Queries to learn more.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: never
          * Group: producer
@@ -407,7 +410,7 @@ public interface Athena2EndpointBuilderFactory {
          * completion. See the section Waiting for Query Completion and Retrying
          * Failed Queries to learn more.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: producer
@@ -424,7 +427,7 @@ public interface Athena2EndpointBuilderFactory {
          * completion. See the section Waiting for Query Completion and Retrying
          * Failed Queries to learn more.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: producer
@@ -439,7 +442,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * The workgroup to use for running the query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -453,7 +456,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the Athena client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -467,7 +470,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Athena client.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -481,8 +484,8 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Athena client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -496,8 +499,8 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Athena client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -513,7 +516,7 @@ public interface Athena2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the Athena client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -528,7 +531,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -544,7 +547,7 @@ public interface Athena2EndpointBuilderFactory {
          * SSE_S3, SSE_KMS, or CSE_KMS.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.athena.model.EncryptionOption</code> type.
          * 
          * Group: security
          * 
@@ -560,7 +563,7 @@ public interface Athena2EndpointBuilderFactory {
          * SSE_S3, SSE_KMS, or CSE_KMS.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.athena.model.EncryptionOption</code> type.
          * 
          * Group: security
          * 
@@ -574,7 +577,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -589,7 +592,7 @@ public interface Athena2EndpointBuilderFactory {
          * If using a profile credentials provider this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -603,7 +606,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -618,7 +621,7 @@ public interface Athena2EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -634,7 +637,7 @@ public interface Athena2EndpointBuilderFactory {
          * through a default credentials provider or to expect static
          * credentials to be passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -651,8 +654,7 @@ public interface Athena2EndpointBuilderFactory {
          * through a default credentials provider or to expect static
          * credentials to be passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -668,7 +670,7 @@ public interface Athena2EndpointBuilderFactory {
          * Set whether the Athena client should expect to load credentials
          * through a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -684,8 +686,7 @@ public interface Athena2EndpointBuilderFactory {
          * Set whether the Athena client should expect to load credentials
          * through a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -702,7 +703,7 @@ public interface Athena2EndpointBuilderFactory {
          * Credentials. This is useful in a situation in which the user needs to
          * assume a IAM role for doing operations in Athena.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -719,8 +720,7 @@ public interface Athena2EndpointBuilderFactory {
          * Credentials. This is useful in a situation in which the user needs to
          * assume a IAM role for doing operations in Athena.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -755,7 +755,7 @@ public interface Athena2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -778,8 +778,7 @@ public interface Athena2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -795,7 +794,8 @@ public interface Athena2EndpointBuilderFactory {
          * The AmazonAthena instance to use as the client.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.athena.AthenaClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -810,7 +810,8 @@ public interface Athena2EndpointBuilderFactory {
          * The AmazonAthena instance to use as the client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.athena.AthenaClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -825,7 +826,7 @@ public interface Athena2EndpointBuilderFactory {
          * A unique string to ensure issues queries are idempotent. It is
          * unlikely you will need to set this.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -840,7 +841,7 @@ public interface Athena2EndpointBuilderFactory {
          * Include useful trace information at the beginning of queries as an
          * SQL comment (prefixed with --).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -856,8 +857,7 @@ public interface Athena2EndpointBuilderFactory {
          * Include useful trace information at the beginning of queries as an
          * SQL comment (prefixed with --).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

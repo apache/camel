@@ -49,7 +49,8 @@ public interface MetricsEndpointBuilderFactory {
          * Action when using timer type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.metrics.MetricsTimerAction&lt;/code&gt; type.
+         * <code>org.apache.camel.component.metrics.MetricsTimerAction</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -64,7 +65,8 @@ public interface MetricsEndpointBuilderFactory {
          * Action when using timer type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.metrics.MetricsTimerAction&lt;/code&gt; type.
+         * <code>org.apache.camel.component.metrics.MetricsTimerAction</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -78,7 +80,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Decrement value when using counter type.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -92,8 +94,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Decrement value when using counter type.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -107,7 +108,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Increment value when using counter type.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -121,8 +122,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Increment value when using counter type.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -136,7 +136,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Mark when using meter type.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -150,8 +150,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Mark when using meter type.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -165,7 +164,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Subject value when using gauge type.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -179,8 +178,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Subject value when using gauge type.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -194,7 +192,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Value value when using histogram type.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -208,8 +206,7 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Value value when using histogram type.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -243,7 +240,7 @@ public interface MetricsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -266,8 +263,7 @@ public interface MetricsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

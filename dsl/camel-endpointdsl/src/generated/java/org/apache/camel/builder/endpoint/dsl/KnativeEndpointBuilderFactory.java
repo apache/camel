@@ -46,8 +46,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * CloudEvent headers to override.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -62,8 +62,8 @@ public interface KnativeEndpointBuilderFactory {
          * CloudEvent headers to override.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -77,7 +77,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the version of the cloudevents spec.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 1.0
          * Group: common
@@ -92,7 +92,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the event-type information of the produced events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.camel.event
          * Group: common
@@ -108,7 +108,7 @@ public interface KnativeEndpointBuilderFactory {
          * The environment.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeEnvironment&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeEnvironment</code> type.
          * 
          * Group: common
          * 
@@ -123,7 +123,7 @@ public interface KnativeEndpointBuilderFactory {
          * The environment.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeEnvironment&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeEnvironment</code> type.
          * 
          * Group: common
          * 
@@ -137,8 +137,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the filters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -153,8 +153,8 @@ public interface KnativeEndpointBuilderFactory {
          * Set the filters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -169,7 +169,7 @@ public interface KnativeEndpointBuilderFactory {
          * The SinkBinding configuration.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeSinkBinding</code> type.
          * 
          * Group: common
          * 
@@ -184,7 +184,7 @@ public interface KnativeEndpointBuilderFactory {
          * The SinkBinding configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeSinkBinding</code> type.
          * 
          * Group: common
          * 
@@ -198,8 +198,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the transport options.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -214,8 +214,8 @@ public interface KnativeEndpointBuilderFactory {
          * Set the transport options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -235,7 +235,7 @@ public interface KnativeEndpointBuilderFactory {
          * When this flag is disabled, CloudEvent headers are removed from the
          * reply.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -256,8 +256,7 @@ public interface KnativeEndpointBuilderFactory {
          * When this flag is disabled, CloudEvent headers are removed from the
          * reply.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -294,7 +293,7 @@ public interface KnativeEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -320,8 +319,7 @@ public interface KnativeEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -339,8 +337,8 @@ public interface KnativeEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -358,7 +356,7 @@ public interface KnativeEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -372,8 +370,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -388,7 +385,7 @@ public interface KnativeEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -402,7 +399,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * If the consumer should construct a full reply to knative request.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -417,8 +414,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * If the consumer should construct a full reply to knative request.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -433,7 +430,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The version of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -447,7 +444,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The type of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -461,7 +458,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The name of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -487,8 +484,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * CloudEvent headers to override.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -503,8 +500,8 @@ public interface KnativeEndpointBuilderFactory {
          * CloudEvent headers to override.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -518,7 +515,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the version of the cloudevents spec.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 1.0
          * Group: common
@@ -533,7 +530,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the event-type information of the produced events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.camel.event
          * Group: common
@@ -549,7 +546,7 @@ public interface KnativeEndpointBuilderFactory {
          * The environment.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeEnvironment&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeEnvironment</code> type.
          * 
          * Group: common
          * 
@@ -564,7 +561,7 @@ public interface KnativeEndpointBuilderFactory {
          * The environment.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeEnvironment&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeEnvironment</code> type.
          * 
          * Group: common
          * 
@@ -578,8 +575,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the filters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -594,8 +591,8 @@ public interface KnativeEndpointBuilderFactory {
          * Set the filters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -610,7 +607,7 @@ public interface KnativeEndpointBuilderFactory {
          * The SinkBinding configuration.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeSinkBinding</code> type.
          * 
          * Group: common
          * 
@@ -625,7 +622,7 @@ public interface KnativeEndpointBuilderFactory {
          * The SinkBinding configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeSinkBinding</code> type.
          * 
          * Group: common
          * 
@@ -639,8 +636,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the transport options.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -655,8 +652,8 @@ public interface KnativeEndpointBuilderFactory {
          * Set the transport options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -688,7 +685,7 @@ public interface KnativeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -711,8 +708,7 @@ public interface KnativeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -727,7 +723,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The version of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -741,7 +737,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The type of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -755,7 +751,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The name of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -782,8 +778,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * CloudEvent headers to override.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -798,8 +794,8 @@ public interface KnativeEndpointBuilderFactory {
          * CloudEvent headers to override.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -813,7 +809,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the version of the cloudevents spec.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 1.0
          * Group: common
@@ -828,7 +824,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the event-type information of the produced events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.camel.event
          * Group: common
@@ -844,7 +840,7 @@ public interface KnativeEndpointBuilderFactory {
          * The environment.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeEnvironment&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeEnvironment</code> type.
          * 
          * Group: common
          * 
@@ -859,7 +855,7 @@ public interface KnativeEndpointBuilderFactory {
          * The environment.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeEnvironment&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeEnvironment</code> type.
          * 
          * Group: common
          * 
@@ -873,8 +869,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the filters.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -889,8 +885,8 @@ public interface KnativeEndpointBuilderFactory {
          * Set the filters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -905,7 +901,7 @@ public interface KnativeEndpointBuilderFactory {
          * The SinkBinding configuration.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeSinkBinding</code> type.
          * 
          * Group: common
          * 
@@ -920,7 +916,7 @@ public interface KnativeEndpointBuilderFactory {
          * The SinkBinding configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.knative.spi.KnativeSinkBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.knative.spi.KnativeSinkBinding</code> type.
          * 
          * Group: common
          * 
@@ -934,8 +930,8 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * Set the transport options.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -950,8 +946,8 @@ public interface KnativeEndpointBuilderFactory {
          * Set the transport options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -978,7 +974,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The version of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -992,7 +988,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The type of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1006,7 +1002,7 @@ public interface KnativeEndpointBuilderFactory {
         /**
          * The name of the k8s resource referenced by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 

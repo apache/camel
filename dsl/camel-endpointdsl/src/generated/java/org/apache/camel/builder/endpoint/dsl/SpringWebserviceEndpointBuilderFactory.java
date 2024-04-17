@@ -48,7 +48,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * to process your headers or attachments by your own.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.spring.ws.filter.MessageFilter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
          * Group: common
          * 
@@ -64,7 +64,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * to process your headers or attachments by your own.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.spring.ws.filter.MessageFilter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
          * Group: common
          * 
@@ -80,7 +80,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * WS-Addressing unique message ids.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.ws.soap.addressing.messageid.MessageIdStrategy&lt;/code&gt; type.
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * 
          * Group: common
          * 
@@ -96,7 +96,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * WS-Addressing unique message ids.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.ws.soap.addressing.messageid.MessageIdStrategy&lt;/code&gt; type.
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * 
          * Group: common
          * 
@@ -114,7 +114,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher</code> type.
          * 
          * Group: consumer
          * 
@@ -132,7 +132,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher</code> type.
          * 
          * Group: consumer
          * 
@@ -153,7 +153,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * (like root QName, SOAP action, etc).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping</code> type.
          * 
          * Group: consumer
          * 
@@ -174,7 +174,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * (like root QName, SOAP action, etc).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping</code> type.
          * 
          * Group: consumer
          * 
@@ -189,7 +189,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The XPath expression to use when option type=xpathresult. Then this
          * option is required to be configured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -204,7 +204,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -219,7 +219,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -255,7 +255,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -281,8 +281,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -300,8 +299,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -319,7 +318,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -333,8 +332,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -349,7 +347,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -377,7 +375,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * to process your headers or attachments by your own.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.spring.ws.filter.MessageFilter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
          * Group: common
          * 
@@ -393,7 +391,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * to process your headers or attachments by your own.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.spring.ws.filter.MessageFilter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
          * Group: common
          * 
@@ -409,7 +407,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * WS-Addressing unique message ids.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.ws.soap.addressing.messageid.MessageIdStrategy&lt;/code&gt; type.
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * 
          * Group: common
          * 
@@ -425,7 +423,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * WS-Addressing unique message ids.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.ws.soap.addressing.messageid.MessageIdStrategy&lt;/code&gt; type.
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * 
          * Group: common
          * 
@@ -443,7 +441,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * true, allows the modified soap attachments to be overwritten in
          * in/out message attachments.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -462,8 +460,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * true, allows the modified soap attachments to be overwritten in
          * in/out message attachments.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -482,7 +479,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * allows the modified soap header to be overwritten in in/out message
          * headers.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -501,8 +498,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * allows the modified soap header to be overwritten in in/out message
          * headers.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -520,7 +516,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
-         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option is a: <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -537,8 +533,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option will be converted to a <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -555,7 +550,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
-         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option is a: <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -572,8 +567,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option will be converted to a <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -588,7 +582,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Option to provide a custom WebServiceMessageFactory.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.ws.WebServiceMessageFactory&lt;/code&gt; type.
+         * <code>org.springframework.ws.WebServiceMessageFactory</code> type.
          * 
          * Group: producer
          * 
@@ -603,7 +597,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Option to provide a custom WebServiceMessageFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.ws.WebServiceMessageFactory&lt;/code&gt; type.
+         * <code>org.springframework.ws.WebServiceMessageFactory</code> type.
          * 
          * Group: producer
          * 
@@ -619,7 +613,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * perform authentication or use alternative transports.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.ws.transport.WebServiceMessageSender&lt;/code&gt; type.
+         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -635,7 +630,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * perform authentication or use alternative transports.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.ws.transport.WebServiceMessageSender&lt;/code&gt; type.
+         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -652,7 +648,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
-         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option is a: <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -669,8 +665,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option will be converted to a <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -687,7 +682,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
-         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option is a: <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -704,8 +699,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.springframework.ws.soap.addressing.server.annotation.Action
          * annotation for more details.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option will be converted to a <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -720,7 +714,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * SOAP action to include inside a SOAP request when accessing remote
          * web services.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -745,7 +739,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * CommonsHttpMessageSender which has been deprecated, see
          * HttpComponentsMessageSender.setReadTimeout().
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -770,7 +764,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * CommonsHttpMessageSender which has been deprecated, see
          * HttpComponentsMessageSender.setReadTimeout().
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -788,7 +782,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * factory.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.ws.client.core.WebServiceTemplate&lt;/code&gt; type.
+         * <code>org.springframework.ws.client.core.WebServiceTemplate</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -806,7 +801,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.ws.client.core.WebServiceTemplate&lt;/code&gt; type.
+         * <code>org.springframework.ws.client.core.WebServiceTemplate</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -822,7 +818,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * services. The To header is set to the address of the web service as
          * specified in the endpoint URI (default Spring-WS behavior).
          * 
-         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option is a: <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -838,8 +834,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * services. The To header is set to the address of the web service as
          * specified in the endpoint URI (default Spring-WS behavior).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.net.URI&lt;/code&gt; type.
+         * The option will be converted to a <code>java.net.URI</code> type.
          * 
          * Group: producer
          * 
@@ -854,7 +849,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -869,7 +864,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -901,7 +896,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -924,8 +919,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -955,7 +949,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * to process your headers or attachments by your own.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.spring.ws.filter.MessageFilter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
          * Group: common
          * 
@@ -971,7 +965,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * to process your headers or attachments by your own.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.spring.ws.filter.MessageFilter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
          * Group: common
          * 
@@ -987,7 +981,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * WS-Addressing unique message ids.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.ws.soap.addressing.messageid.MessageIdStrategy&lt;/code&gt; type.
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * 
          * Group: common
          * 
@@ -1003,7 +997,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * WS-Addressing unique message ids.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.ws.soap.addressing.messageid.MessageIdStrategy&lt;/code&gt; type.
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * 
          * Group: common
          * 
@@ -1018,7 +1012,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1033,7 +1027,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 

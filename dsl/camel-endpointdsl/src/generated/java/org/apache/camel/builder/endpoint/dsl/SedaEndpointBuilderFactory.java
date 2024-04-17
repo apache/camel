@@ -48,7 +48,7 @@ public interface SedaEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -65,7 +65,7 @@ public interface SedaEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -80,7 +80,7 @@ public interface SedaEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -95,7 +95,7 @@ public interface SedaEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -132,7 +132,7 @@ public interface SedaEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -158,8 +158,7 @@ public interface SedaEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -177,8 +176,8 @@ public interface SedaEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -196,7 +195,7 @@ public interface SedaEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -210,8 +209,7 @@ public interface SedaEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -226,7 +224,7 @@ public interface SedaEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -243,7 +241,7 @@ public interface SedaEndpointBuilderFactory {
          * configured with a greater number. You can disable that check by
          * turning this option off.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -261,8 +259,7 @@ public interface SedaEndpointBuilderFactory {
          * configured with a greater number. You can disable that check by
          * turning this option off.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -281,7 +278,7 @@ public interface SedaEndpointBuilderFactory {
          * the message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -300,8 +297,7 @@ public interface SedaEndpointBuilderFactory {
          * the message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -319,7 +315,7 @@ public interface SedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: consumer (advanced)
@@ -337,7 +333,7 @@ public interface SedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: consumer (advanced)
@@ -354,7 +350,7 @@ public interface SedaEndpointBuilderFactory {
          * This allows to stop faster, as any pending messages on the queue is
          * discarded.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -371,8 +367,7 @@ public interface SedaEndpointBuilderFactory {
          * This allows to stop faster, as any pending messages on the queue is
          * discarded.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -388,7 +383,7 @@ public interface SedaEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.concurrent.BlockingQueue&lt;org.apache.camel.Exchange&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -403,7 +398,7 @@ public interface SedaEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.concurrent.BlockingQueue&lt;org.apache.camel.Exchange&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -431,7 +426,7 @@ public interface SedaEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -448,7 +443,7 @@ public interface SedaEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -467,7 +462,7 @@ public interface SedaEndpointBuilderFactory {
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -486,8 +481,7 @@ public interface SedaEndpointBuilderFactory {
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -505,7 +499,7 @@ public interface SedaEndpointBuilderFactory {
          * consumers. Only one of the options discardIfNoConsumers and
          * failIfNoConsumers can be enabled at the same time.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -523,8 +517,7 @@ public interface SedaEndpointBuilderFactory {
          * consumers. Only one of the options discardIfNoConsumers and
          * failIfNoConsumers can be enabled at the same time.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -543,7 +536,7 @@ public interface SedaEndpointBuilderFactory {
          * up sending and continue, meaning that the message was not sent to the
          * SEDA queue.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -562,8 +555,7 @@ public interface SedaEndpointBuilderFactory {
          * up sending and continue, meaning that the message was not sent to the
          * SEDA queue.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -581,7 +573,7 @@ public interface SedaEndpointBuilderFactory {
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
          * time.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -599,8 +591,7 @@ public interface SedaEndpointBuilderFactory {
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
          * time.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -617,7 +608,7 @@ public interface SedaEndpointBuilderFactory {
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -633,7 +624,7 @@ public interface SedaEndpointBuilderFactory {
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -649,7 +640,7 @@ public interface SedaEndpointBuilderFactory {
          * for an asynchronous task to complete. You can disable timeout by
          * using 0 or a negative value.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -666,7 +657,7 @@ public interface SedaEndpointBuilderFactory {
          * for an asynchronous task to complete. You can disable timeout by
          * using 0 or a negative value.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -686,8 +677,8 @@ public interface SedaEndpointBuilderFactory {
          * the message is Request Reply based. The default option is
          * IfReplyExpected.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
+         * type.
          * 
          * Default: IfReplyExpected
          * Group: producer
@@ -708,7 +699,7 @@ public interface SedaEndpointBuilderFactory {
          * IfReplyExpected.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
+         * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * 
          * Default: IfReplyExpected
          * Group: producer
@@ -741,7 +732,7 @@ public interface SedaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -764,8 +755,7 @@ public interface SedaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -781,7 +771,7 @@ public interface SedaEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.concurrent.BlockingQueue&lt;org.apache.camel.Exchange&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -796,7 +786,7 @@ public interface SedaEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.concurrent.BlockingQueue&lt;org.apache.camel.Exchange&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -825,7 +815,7 @@ public interface SedaEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -842,7 +832,7 @@ public interface SedaEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -871,7 +861,7 @@ public interface SedaEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.concurrent.BlockingQueue&lt;org.apache.camel.Exchange&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -886,7 +876,7 @@ public interface SedaEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.concurrent.BlockingQueue&lt;org.apache.camel.Exchange&gt;</code> type.
          * 
          * Group: advanced
          * 

@@ -50,7 +50,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * return scorecards with any Display field value. This parameter is
          * true by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: true
          * Group: producer
@@ -66,7 +66,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Return the display value (true), actual value (false), or both (all)
          * for reference fields (default: false).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: false
          * Group: producer
@@ -82,7 +82,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * True to exclude Table API links for reference fields (default:
          * false).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -97,8 +97,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * True to exclude Table API links for reference fields (default:
          * false).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -113,7 +113,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return only scorecards that are
          * favorites of the querying user.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -128,8 +128,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return only scorecards that are
          * favorites of the querying user.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -146,7 +146,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * applied. If a value is not specified, this parameter defaults to
          * false and returns no aggregates.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -163,8 +163,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * applied. If a value is not specified, this parameter defaults to
          * false and returns no aggregates.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -181,7 +181,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * specified, this parameter defaults to false and returns no
          * aggregates.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -198,8 +198,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * specified, this parameter defaults to false and returns no
          * aggregates.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -215,7 +215,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * indicator. If a value is not specified, this parameter defaults to
          * false and returns no breakdowns.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -231,8 +231,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * indicator. If a value is not specified, this parameter defaults to
          * false and returns no breakdowns.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -248,7 +248,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * score. The note element contains the note text as well as the author
          * and timestamp when the note was added.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -264,8 +264,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * score. The note element contains the note text as well as the author
          * and timestamp when the note was added.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -281,7 +281,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * value is not specified, this parameter defaults to false and returns
          * only the most recent score value.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -297,8 +297,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * value is not specified, this parameter defaults to false and returns
          * only the most recent score value.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -312,7 +312,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * True to set raw value of input fields (default: false).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -326,8 +326,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * True to set raw value of input fields (default: false).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -342,7 +342,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return only scorecards for key
          * indicators.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -357,8 +357,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return only scorecards for key
          * indicators.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -372,9 +372,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines both request and response models.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * The option is multivalued, and you can use the models(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -392,9 +391,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines both request and response models.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * The option is multivalued, and you can use the models(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -412,7 +410,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Enter the maximum number of scorecards each query can return. By
          * default this value is 10, and the maximum is 100.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 10
          * Group: producer
@@ -428,8 +426,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * Enter the maximum number of scorecards each query can return. By
          * default this value is 10, and the maximum is 100.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 10
          * Group: producer
@@ -446,7 +444,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * https://docs.servicenow.com.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.servicenow.ServiceNowRelease&lt;/code&gt; type.
+         * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
+         * type.
          * 
          * Default: HELSINKI
          * Group: producer
@@ -463,7 +462,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * https://docs.servicenow.com.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.servicenow.ServiceNowRelease&lt;/code&gt; type.
+         * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
+         * type.
          * 
          * Default: HELSINKI
          * Group: producer
@@ -478,9 +478,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines the request model.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * The option is multivalued, and you can use the requestModels(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -498,9 +497,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines the request model.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * The option is multivalued, and you can use the requestModels(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -518,7 +516,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The default resource, can be overridden by header
          * CamelServiceNowResource.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -532,9 +530,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines the response model.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * The option is multivalued, and you can use the responseModels(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -552,9 +549,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines the response model.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * The option is multivalued, and you can use the responseModels(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -572,7 +568,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Specify the value to use when sorting results. By default, queries
          * sort records by value.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -588,7 +584,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * queries sort records in descending order. Use sysparm_sortdir=asc to
          * sort in ascending order.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -602,7 +598,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * True to suppress auto generation of system fields (default: false).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -616,8 +612,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * True to suppress auto generation of system fields (default: false).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -633,7 +629,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The Link header allows you to request additional pages of data when
          * the number of records matching your query exceeds the query limit.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -649,8 +645,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * The Link header allows you to request additional pages of data when
          * the number of records matching your query exceeds the query limit.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -664,7 +660,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The default table, can be overridden by header CamelServiceNowTable.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -679,7 +675,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return only scorecards that have a
          * target.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -694,8 +690,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return only scorecards that have a
          * target.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -709,7 +705,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Gets only those categories whose parent is a catalog.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -723,8 +719,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Gets only those categories whose parent is a catalog.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -738,7 +734,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The proxy host name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -752,7 +748,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The proxy port number.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -766,8 +762,8 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The proxy port number.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -781,7 +777,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The ServiceNow REST API url.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -795,7 +791,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * OAuth2 ClientID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -809,7 +805,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * OAuth2 ClientSecret.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -823,7 +819,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * OAuth token Url.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -837,7 +833,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * ServiceNow account password, MUST be provided.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -852,7 +848,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Password for proxy authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -866,7 +862,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Username for proxy authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -882,7 +878,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * http://camel.apache.org/camel-configuration-utilities.html.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -898,7 +894,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * http://camel.apache.org/camel-configuration-utilities.html.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -912,7 +908,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * ServiceNow user account name, MUST be provided.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -947,7 +943,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -970,8 +966,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -986,7 +981,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The ServiceNow REST API version, default latest.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1000,7 +995,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The date format used for Json serialization/deserialization.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: yyyy-MM-dd
          * Group: advanced
@@ -1015,7 +1010,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The date-time format used for Json serialization/deserialization.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: yyyy-MM-dd HH:mm:ss
          * Group: advanced
@@ -1031,7 +1026,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * To configure http-client.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.cxf.transports.http.configuration.HTTPClientPolicy&lt;/code&gt; type.
+         * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
          * 
          * Group: advanced
          * 
@@ -1046,7 +1041,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * To configure http-client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.cxf.transports.http.configuration.HTTPClientPolicy&lt;/code&gt; type.
+         * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
          * 
          * Group: advanced
          * 
@@ -1061,8 +1056,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Sets Jackson's ObjectMapper to use for request/reply.
          * 
          * The option is a:
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: advanced
          * 
@@ -1077,8 +1071,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Sets Jackson's ObjectMapper to use for request/reply.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: advanced
          * 
@@ -1093,7 +1086,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * To configure proxy authentication.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.cxf.configuration.security.ProxyAuthorizationPolicy&lt;/code&gt; type.
+         * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
          * 
          * Group: advanced
          * 
@@ -1108,7 +1101,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * To configure proxy authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.cxf.configuration.security.ProxyAuthorizationPolicy&lt;/code&gt; type.
+         * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
          * 
          * Group: advanced
          * 
@@ -1124,7 +1117,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * import set api. The import set result is then replaced by the target
          * record.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1141,8 +1134,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * import set api. The import set result is then replaced by the target
          * record.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: advanced
@@ -1157,7 +1150,7 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The time format used for Json serialization/deserialization.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: HH:mm:ss
          * Group: advanced

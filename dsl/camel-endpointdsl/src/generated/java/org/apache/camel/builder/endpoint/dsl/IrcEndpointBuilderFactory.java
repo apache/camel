@@ -46,7 +46,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether to auto re-join when being kicked.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -61,8 +61,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether to auto re-join when being kicked.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -77,7 +76,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Comma separated list of IRC channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -92,7 +91,7 @@ public interface IrcEndpointBuilderFactory {
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -108,7 +107,7 @@ public interface IrcEndpointBuilderFactory {
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -123,7 +122,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Comma separated list of keys for channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -139,7 +138,7 @@ public interface IrcEndpointBuilderFactory {
          * true in order to process the result which will have the header value
          * irc.num = '353'.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -156,8 +155,7 @@ public interface IrcEndpointBuilderFactory {
          * true in order to process the result which will have the header value
          * irc.num = '353'.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -172,7 +170,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The nickname used in chat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -186,7 +184,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Use persistent messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -202,8 +200,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Use persistent messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -219,7 +216,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC user's actual name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -233,7 +230,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user join events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -248,8 +245,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user join events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -264,7 +260,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle kick events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -279,8 +275,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle kick events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -295,7 +290,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle mode change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -310,8 +305,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle mode change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -326,7 +320,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle nickname change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -341,8 +335,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle nickname change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -357,7 +350,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user part events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -372,8 +365,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user part events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -388,7 +380,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle private message events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -403,8 +395,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle private message events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -419,7 +410,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user quit events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -434,8 +425,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user quit events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -451,7 +441,7 @@ public interface IrcEndpointBuilderFactory {
          * Whether or not to handle general responses to commands or
          * informational messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: filter
@@ -467,8 +457,7 @@ public interface IrcEndpointBuilderFactory {
          * Whether or not to handle general responses to commands or
          * informational messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: filter
@@ -483,7 +472,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle topic change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -498,8 +487,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle topic change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -514,7 +502,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Your IRC server nickname password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -528,7 +516,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC server password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -547,7 +535,7 @@ public interface IrcEndpointBuilderFactory {
          * option.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -566,7 +554,7 @@ public interface IrcEndpointBuilderFactory {
          * option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -581,8 +569,7 @@ public interface IrcEndpointBuilderFactory {
          * The trust manager used to verify the SSL server's certificate.
          * 
          * The option is a:
-         * &lt;code&gt;org.schwering.irc.lib.ssl.SSLTrustManager&lt;/code&gt;
-         * type.
+         * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
          * Group: security
          * 
@@ -597,8 +584,7 @@ public interface IrcEndpointBuilderFactory {
          * The trust manager used to verify the SSL server's certificate.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.schwering.irc.lib.ssl.SSLTrustManager&lt;/code&gt;
-         * type.
+         * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
          * Group: security
          * 
@@ -612,7 +598,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC server user name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -648,7 +634,7 @@ public interface IrcEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -674,8 +660,7 @@ public interface IrcEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -693,8 +678,8 @@ public interface IrcEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -712,7 +697,7 @@ public interface IrcEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -726,8 +711,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -742,7 +726,7 @@ public interface IrcEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -756,7 +740,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not the server supports color codes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -771,8 +755,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not the server supports color codes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -799,7 +782,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether to auto re-join when being kicked.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -814,8 +797,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether to auto re-join when being kicked.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -830,7 +812,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Comma separated list of IRC channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -845,7 +827,7 @@ public interface IrcEndpointBuilderFactory {
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -861,7 +843,7 @@ public interface IrcEndpointBuilderFactory {
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -876,7 +858,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Comma separated list of keys for channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -892,7 +874,7 @@ public interface IrcEndpointBuilderFactory {
          * true in order to process the result which will have the header value
          * irc.num = '353'.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -909,8 +891,7 @@ public interface IrcEndpointBuilderFactory {
          * true in order to process the result which will have the header value
          * irc.num = '353'.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -925,7 +906,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The nickname used in chat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -939,7 +920,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Use persistent messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -955,8 +936,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Use persistent messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -972,7 +952,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC user's actual name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -986,7 +966,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user join events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1001,8 +981,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user join events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1017,7 +996,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle kick events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1032,8 +1011,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle kick events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1048,7 +1026,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle mode change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1063,8 +1041,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle mode change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1079,7 +1056,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle nickname change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1094,8 +1071,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle nickname change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1110,7 +1086,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user part events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1125,8 +1101,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user part events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1141,7 +1116,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle private message events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1156,8 +1131,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle private message events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1172,7 +1146,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user quit events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1187,8 +1161,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user quit events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1204,7 +1177,7 @@ public interface IrcEndpointBuilderFactory {
          * Whether or not to handle general responses to commands or
          * informational messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: filter
@@ -1220,8 +1193,7 @@ public interface IrcEndpointBuilderFactory {
          * Whether or not to handle general responses to commands or
          * informational messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: filter
@@ -1236,7 +1208,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle topic change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1251,8 +1223,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle topic change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1267,7 +1238,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Your IRC server nickname password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1281,7 +1252,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC server password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1300,7 +1271,7 @@ public interface IrcEndpointBuilderFactory {
          * option.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1319,7 +1290,7 @@ public interface IrcEndpointBuilderFactory {
          * option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1334,8 +1305,7 @@ public interface IrcEndpointBuilderFactory {
          * The trust manager used to verify the SSL server's certificate.
          * 
          * The option is a:
-         * &lt;code&gt;org.schwering.irc.lib.ssl.SSLTrustManager&lt;/code&gt;
-         * type.
+         * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
          * Group: security
          * 
@@ -1350,8 +1320,7 @@ public interface IrcEndpointBuilderFactory {
          * The trust manager used to verify the SSL server's certificate.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.schwering.irc.lib.ssl.SSLTrustManager&lt;/code&gt;
-         * type.
+         * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
          * Group: security
          * 
@@ -1365,7 +1334,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC server user name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1397,7 +1366,7 @@ public interface IrcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1420,8 +1389,7 @@ public interface IrcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1436,7 +1404,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not the server supports color codes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1451,8 +1419,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not the server supports color codes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1480,7 +1447,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether to auto re-join when being kicked.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1495,8 +1462,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether to auto re-join when being kicked.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1511,7 +1477,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Comma separated list of IRC channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1526,7 +1492,7 @@ public interface IrcEndpointBuilderFactory {
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -1542,7 +1508,7 @@ public interface IrcEndpointBuilderFactory {
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -1557,7 +1523,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Comma separated list of keys for channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1573,7 +1539,7 @@ public interface IrcEndpointBuilderFactory {
          * true in order to process the result which will have the header value
          * irc.num = '353'.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1590,8 +1556,7 @@ public interface IrcEndpointBuilderFactory {
          * true in order to process the result which will have the header value
          * irc.num = '353'.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1606,7 +1571,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The nickname used in chat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1620,7 +1585,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Use persistent messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1636,8 +1601,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Use persistent messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1653,7 +1617,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC user's actual name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1667,7 +1631,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user join events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1682,8 +1646,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user join events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1698,7 +1661,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle kick events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1713,8 +1676,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle kick events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1729,7 +1691,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle mode change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1744,8 +1706,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle mode change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1760,7 +1721,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle nickname change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1775,8 +1736,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle nickname change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1791,7 +1751,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user part events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1806,8 +1766,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user part events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1822,7 +1781,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle private message events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1837,8 +1796,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle private message events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1853,7 +1811,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user quit events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1868,8 +1826,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle user quit events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1885,7 +1842,7 @@ public interface IrcEndpointBuilderFactory {
          * Whether or not to handle general responses to commands or
          * informational messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: filter
@@ -1901,8 +1858,7 @@ public interface IrcEndpointBuilderFactory {
          * Whether or not to handle general responses to commands or
          * informational messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: filter
@@ -1917,7 +1873,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle topic change events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1932,8 +1888,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Handle topic change events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -1948,7 +1903,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Your IRC server nickname password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1962,7 +1917,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC server password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1981,7 +1936,7 @@ public interface IrcEndpointBuilderFactory {
          * option.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2000,7 +1955,7 @@ public interface IrcEndpointBuilderFactory {
          * option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2015,8 +1970,7 @@ public interface IrcEndpointBuilderFactory {
          * The trust manager used to verify the SSL server's certificate.
          * 
          * The option is a:
-         * &lt;code&gt;org.schwering.irc.lib.ssl.SSLTrustManager&lt;/code&gt;
-         * type.
+         * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
          * Group: security
          * 
@@ -2031,8 +1985,7 @@ public interface IrcEndpointBuilderFactory {
          * The trust manager used to verify the SSL server's certificate.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.schwering.irc.lib.ssl.SSLTrustManager&lt;/code&gt;
-         * type.
+         * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
          * Group: security
          * 
@@ -2046,7 +1999,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * The IRC server user name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2073,7 +2026,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not the server supports color codes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2088,8 +2041,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not the server supports color codes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced

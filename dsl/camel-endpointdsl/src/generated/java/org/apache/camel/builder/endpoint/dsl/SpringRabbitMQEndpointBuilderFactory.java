@@ -48,7 +48,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.amqp.rabbit.connection.ConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.amqp.rabbit.connection.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -64,7 +64,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.amqp.rabbit.connection.ConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.amqp.rabbit.connection.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -78,7 +78,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -92,7 +92,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The type of the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: direct
          * Group: common
@@ -107,7 +107,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -121,7 +121,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The routing key for the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -142,7 +142,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel as a proxy between different message brokers and you want to
          * route message from one system to another.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -164,8 +164,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel as a proxy between different message brokers and you want to
          * route message from one system to another.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -182,7 +181,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * queue names can be separated by comma. If none has been configured
          * then Camel will generate an unique id as the queue name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -198,7 +197,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * helpful when using the default (or any direct) exchange, but fine if
          * the exchange is a headers exchange for instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -216,7 +215,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -235,8 +234,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -266,7 +264,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * is accidentally set).
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.amqp.core.AcknowledgeMode&lt;/code&gt; type.
+         * <code>org.springframework.amqp.core.AcknowledgeMode</code> type.
          * 
          * Group: consumer
          * 
@@ -295,7 +293,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * is accidentally set).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.amqp.core.AcknowledgeMode&lt;/code&gt; type.
+         * <code>org.springframework.amqp.core.AcknowledgeMode</code> type.
          * 
          * Group: consumer
          * 
@@ -315,7 +313,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * the Exchange is fully processed before the consumer will pickup the
          * next message from the queue.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -336,8 +334,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * the Exchange is fully processed before the consumer will pickup the
          * next message from the queue.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -353,7 +350,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Specifies whether the consumer should auto declare binding between
          * exchange, queue and routing key when starting.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -369,8 +366,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Specifies whether the consumer should auto declare binding between
          * exchange, queue and routing key when starting.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -385,7 +381,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Specifies whether the consumer container should auto-startup.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -400,8 +396,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Specifies whether the consumer container should auto-startup.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -416,7 +411,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The type of the exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: direct
          * Group: consumer
@@ -431,7 +426,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Set to true for an exclusive consumer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -446,8 +441,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Set to true for an exclusive consumer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -463,7 +457,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * How many times a Rabbitmq consumer will retry the same message if
          * Camel failed to process the message.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5
          * Group: consumer
@@ -479,7 +473,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * How many times a Rabbitmq consumer will retry the same message if
          * Camel failed to process the message.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5
          * Group: consumer
@@ -494,7 +488,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Set to true for an no-local consumer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -509,8 +503,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Set to true for an no-local consumer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -527,7 +520,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * requeuing. This enables failed messages to be sent to a Dead Letter
          * Exchange/Queue, if the broker is so configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -544,8 +537,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * requeuing. This enables failed messages to be sent to a Dead Letter
          * Exchange/Queue, if the broker is so configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -561,7 +553,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Delay in millis a Rabbitmq consumer will wait before redelivering a
          * message that Camel failed to process.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -577,7 +569,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Delay in millis a Rabbitmq consumer will wait before redelivering a
          * message that Camel failed to process.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -614,7 +606,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -640,8 +632,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -656,7 +647,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The number of consumers.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -670,8 +661,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The number of consumers.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -688,8 +679,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -707,7 +698,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -721,8 +712,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -737,7 +727,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -751,7 +741,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The maximum number of consumers (available only with SMLC).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -765,8 +755,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The maximum number of consumers (available only with SMLC).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -780,7 +770,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The type of the MessageListenerContainer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: DMLC
          * Group: consumer (advanced)
@@ -796,7 +786,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Tell the broker how many messages to send in a single request. Often
          * this can be set quite high to improve throughput.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -811,8 +801,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Tell the broker how many messages to send in a single request. Often
          * this can be set quite high to improve throughput.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -828,7 +818,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * other settings such as maximumRetryAttempts for retry are not in use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.retry.interceptor.RetryOperationsInterceptor&lt;/code&gt; type.
+         * <code>org.springframework.retry.interceptor.RetryOperationsInterceptor</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -844,7 +834,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * other settings such as maximumRetryAttempts for retry are not in use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.retry.interceptor.RetryOperationsInterceptor&lt;/code&gt; type.
+         * <code>org.springframework.retry.interceptor.RetryOperationsInterceptor</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -862,8 +852,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -885,8 +875,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -905,7 +895,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * to/from a org.springframework.amqp.core.Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.amqp.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.amqp.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -921,7 +911,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * to/from a org.springframework.amqp.core.Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.amqp.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.amqp.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -937,7 +927,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * how to map to/from a org.springframework.amqp.core.MessageProperties.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.springrabbit.MessagePropertiesConverter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.springrabbit.MessagePropertiesConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -953,7 +943,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * how to map to/from a org.springframework.amqp.core.MessageProperties.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.springrabbit.MessagePropertiesConverter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.springrabbit.MessagePropertiesConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -967,7 +957,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -982,8 +972,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1012,7 +1001,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.amqp.rabbit.connection.ConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.amqp.rabbit.connection.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -1028,7 +1017,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.amqp.rabbit.connection.ConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.amqp.rabbit.connection.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -1042,7 +1031,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1056,7 +1045,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The type of the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: direct
          * Group: common
@@ -1071,7 +1060,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1085,7 +1074,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The routing key for the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1106,7 +1095,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel as a proxy between different message brokers and you want to
          * route message from one system to another.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1128,8 +1117,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel as a proxy between different message brokers and you want to
          * route message from one system to another.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1146,7 +1134,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * queue names can be separated by comma. If none has been configured
          * then Camel will generate an unique id as the queue name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1162,7 +1150,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * helpful when using the default (or any direct) exchange, but fine if
          * the exchange is a headers exchange for instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1180,7 +1168,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1199,8 +1187,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1217,7 +1204,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * false and the message body is null, then an
          * MessageConversionException is thrown.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1234,8 +1221,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * false and the message body is null, then an
          * MessageConversionException is thrown.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1251,7 +1237,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Specifies whether the producer should auto declare binding between
          * exchange, queue and routing key when starting.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1267,8 +1253,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Specifies whether the producer should auto declare binding between
          * exchange, queue and routing key when starting.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1286,7 +1271,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * detects if the connection factory uses confirms or not. disabled =
          * Confirms is disabled. enabled = Confirms is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: auto
          * Group: producer
@@ -1304,7 +1289,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * messaging (InOnly). The default value is 5 seconds. A negative value
          * indicates an indefinite timeout.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: producer
@@ -1322,7 +1307,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * messaging (InOnly). The default value is 5 seconds. A negative value
          * indicates an indefinite timeout.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: producer
@@ -1341,7 +1326,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * (Beware that this will cause a memory leak if a reply is not
          * received).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -1360,7 +1345,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * (Beware that this will cause a memory leak if a reply is not
          * received).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -1375,7 +1360,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Use a separate connection for publishers and consumers.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1390,8 +1375,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Use a separate connection for publishers and consumers.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1424,7 +1408,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1447,8 +1431,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1467,8 +1450,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -1490,8 +1473,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -1510,7 +1493,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * to/from a org.springframework.amqp.core.Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.amqp.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.amqp.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1526,7 +1509,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * to/from a org.springframework.amqp.core.Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.amqp.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.amqp.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1542,7 +1525,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * how to map to/from a org.springframework.amqp.core.MessageProperties.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.springrabbit.MessagePropertiesConverter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.springrabbit.MessagePropertiesConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1558,7 +1541,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * how to map to/from a org.springframework.amqp.core.MessageProperties.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.springrabbit.MessagePropertiesConverter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.springrabbit.MessagePropertiesConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1572,7 +1555,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1587,8 +1570,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1618,7 +1600,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.amqp.rabbit.connection.ConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.amqp.rabbit.connection.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -1634,7 +1616,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.amqp.rabbit.connection.ConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.amqp.rabbit.connection.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -1648,7 +1630,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1662,7 +1644,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The type of the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: direct
          * Group: common
@@ -1677,7 +1659,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1691,7 +1673,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The routing key for the dead letter exchange.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1712,7 +1694,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel as a proxy between different message brokers and you want to
          * route message from one system to another.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1734,8 +1716,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel as a proxy between different message brokers and you want to
          * route message from one system to another.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1752,7 +1733,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * queue names can be separated by comma. If none has been configured
          * then Camel will generate an unique id as the queue name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1768,7 +1749,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * helpful when using the default (or any direct) exchange, but fine if
          * the exchange is a headers exchange for instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1786,7 +1767,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1805,8 +1786,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1838,8 +1818,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -1861,8 +1841,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
          * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
@@ -1881,7 +1861,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * to/from a org.springframework.amqp.core.Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.amqp.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.amqp.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1897,7 +1877,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * to/from a org.springframework.amqp.core.Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.amqp.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.amqp.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1913,7 +1893,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * how to map to/from a org.springframework.amqp.core.MessageProperties.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.springrabbit.MessagePropertiesConverter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.springrabbit.MessagePropertiesConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1929,7 +1909,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * how to map to/from a org.springframework.amqp.core.MessageProperties.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.springrabbit.MessagePropertiesConverter&lt;/code&gt; type.
+         * <code>org.apache.camel.component.springrabbit.MessagePropertiesConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1943,7 +1923,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1958,8 +1938,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

@@ -47,7 +47,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -63,7 +63,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -79,7 +79,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: common
@@ -95,7 +95,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: common
@@ -112,7 +112,7 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -129,7 +129,7 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -152,7 +152,8 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
+         * type.
          * 
          * Default: ALLOW
          * Group: common
@@ -175,7 +176,8 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
+         * type.
          * 
          * Default: ALLOW
          * Group: common
@@ -191,7 +193,7 @@ public interface SmppEndpointBuilderFactory {
          * This parameter is used to categorize the type of ESME (External Short
          * Message Entity) that is binding to the SMSC (max. 13 characters).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -208,7 +210,7 @@ public interface SmppEndpointBuilderFactory {
          * receive messages only from SMSC's which target an address (MSISDN or
          * IP address) within this range.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -224,7 +226,7 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -240,7 +242,7 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -257,7 +259,7 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -274,7 +276,7 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -289,7 +291,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the encoding scheme of the short message user data. Only for
          * SubmitSm, ReplaceSm and SubmitMulti.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ISO-8859-1
          * Group: codec
@@ -305,7 +307,7 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the hostname or ip address of your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -320,7 +322,7 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the password required for your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -335,7 +337,7 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 3128
          * Group: proxy
@@ -351,8 +353,8 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 3128
          * Group: proxy
@@ -368,7 +370,7 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the username required for your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -383,8 +385,8 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: proxy
          * 
@@ -400,8 +402,8 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -415,7 +417,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The password for connecting to SMSC server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -429,7 +431,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The system id (username) for connecting to SMSC server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: smppclient
          * Group: security
@@ -444,7 +446,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -459,8 +461,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -497,7 +498,7 @@ public interface SmppEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -523,8 +524,7 @@ public interface SmppEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -542,8 +542,8 @@ public interface SmppEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -561,7 +561,7 @@ public interface SmppEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -575,8 +575,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -591,7 +590,7 @@ public interface SmppEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -607,7 +606,7 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 60000
          * Group: advanced
@@ -624,8 +623,8 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 60000
          * Group: advanced
@@ -644,7 +643,7 @@ public interface SmppEndpointBuilderFactory {
          * respectively): legacy (0x00), 3.3 (0x33), 3.4 (0x34), and 5.0 (0x50).
          * The default (fallback) value is version 3.4.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 3.4
          * Group: advanced
@@ -660,7 +659,7 @@ public interface SmppEndpointBuilderFactory {
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 3
          * Group: advanced
@@ -676,8 +675,8 @@ public interface SmppEndpointBuilderFactory {
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 3
          * Group: advanced
@@ -692,7 +691,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Sets the capacity of the working queue for PDU processing.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -707,8 +706,8 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Sets the capacity of the working queue for PDU processing.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -724,8 +723,8 @@ public interface SmppEndpointBuilderFactory {
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
-         * The option is a:
-         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
+         * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -741,7 +740,7 @@ public interface SmppEndpointBuilderFactory {
          * Registry to receive callbacks when the session state changed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
+         * <code>org.jsmpp.session.SessionStateListener</code> type.
          * 
          * Group: advanced
          * 
@@ -757,7 +756,7 @@ public interface SmppEndpointBuilderFactory {
          * last segment of a multi-segment (long) message. For short messages,
          * with only 1 segment the behaviour is unchanged.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -774,8 +773,7 @@ public interface SmppEndpointBuilderFactory {
          * last segment of a multi-segment (long) message. For short messages,
          * with only 1 segment the behaviour is unchanged.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -793,7 +791,7 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -811,8 +809,8 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 10000
          * Group: advanced
@@ -840,7 +838,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -856,7 +854,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -872,7 +870,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: common
@@ -888,7 +886,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: common
@@ -905,7 +903,7 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -922,7 +920,7 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -945,7 +943,8 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
+         * type.
          * 
          * Default: ALLOW
          * Group: common
@@ -968,7 +967,8 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
+         * type.
          * 
          * Default: ALLOW
          * Group: common
@@ -984,7 +984,7 @@ public interface SmppEndpointBuilderFactory {
          * This parameter is used to categorize the type of ESME (External Short
          * Message Entity) that is binding to the SMSC (max. 13 characters).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1000,7 +1000,7 @@ public interface SmppEndpointBuilderFactory {
          * this is the directory number of the recipient MS. Only for SubmitSm,
          * SubmitMulti, CancelSm and DataSm.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 1717
          * Group: producer
@@ -1020,7 +1020,7 @@ public interface SmppEndpointBuilderFactory {
          * National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to
          * be defined by WAP Forum).
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1039,7 +1039,7 @@ public interface SmppEndpointBuilderFactory {
          * National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to
          * be defined by WAP Forum).
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1057,7 +1057,7 @@ public interface SmppEndpointBuilderFactory {
          * International 2: National 3: Network Specific 4: Subscriber Number 5:
          * Alphanumeric 6: Abbreviated.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1075,7 +1075,7 @@ public interface SmppEndpointBuilderFactory {
          * International 2: National 3: Network Specific 4: Subscriber Number 5:
          * Alphanumeric 6: Abbreviated.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1093,7 +1093,7 @@ public interface SmppEndpointBuilderFactory {
          * the first exchange. If they are present, Camel will use these data to
          * connect to the SMSC.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1112,8 +1112,7 @@ public interface SmppEndpointBuilderFactory {
          * the first exchange. If they are present, Camel will use these data to
          * connect to the SMSC.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1133,7 +1132,7 @@ public interface SmppEndpointBuilderFactory {
          * 'Direct consumer' endpoint. The behavior with any other consumer type
          * is unknown and not tested.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1151,7 +1150,7 @@ public interface SmppEndpointBuilderFactory {
          * Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined
          * by WAP Forum).
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1169,7 +1168,7 @@ public interface SmppEndpointBuilderFactory {
          * Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined
          * by WAP Forum).
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1186,7 +1185,7 @@ public interface SmppEndpointBuilderFactory {
          * supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level
          * 2 priority 3: Level 3 (highest) priority.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1203,7 +1202,7 @@ public interface SmppEndpointBuilderFactory {
          * supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level
          * 2 priority 3: Level 3 (highest) priority.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1217,7 +1216,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The protocol id.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1231,7 +1230,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The protocol id.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1250,7 +1249,7 @@ public interface SmppEndpointBuilderFactory {
          * receipt requested where the final delivery outcome is delivery
          * failure.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1269,7 +1268,7 @@ public interface SmppEndpointBuilderFactory {
          * receipt requested where the final delivery outcome is delivery
          * failure.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1288,7 +1287,7 @@ public interface SmppEndpointBuilderFactory {
          * replace if present flag values are defined: 0: Don't replace 1:
          * Replace.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1307,7 +1306,7 @@ public interface SmppEndpointBuilderFactory {
          * replace if present flag values are defined: 0: Don't replace 1:
          * Replace.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1326,7 +1325,7 @@ public interface SmppEndpointBuilderFactory {
          * WAP: Wireless Application Protocol USSD: Unstructured Supplementary
          * Services Data.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1341,7 +1340,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the address of SME (Short Message Entity) which originated
          * this message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 1616
          * Group: producer
@@ -1360,7 +1359,7 @@ public interface SmppEndpointBuilderFactory {
          * Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet
          * (IP) 18: WAP Client Id (to be defined by WAP Forum).
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1378,7 +1377,7 @@ public interface SmppEndpointBuilderFactory {
          * Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet
          * (IP) 18: WAP Client Id (to be defined by WAP Forum).
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1395,7 +1394,7 @@ public interface SmppEndpointBuilderFactory {
          * 1: International 2: National 3: Network Specific 4: Subscriber Number
          * 5: Alphanumeric 6: Abbreviated.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1412,7 +1411,7 @@ public interface SmppEndpointBuilderFactory {
          * 1: International 2: National 3: Network Specific 4: Subscriber Number
          * 5: Alphanumeric 6: Abbreviated.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1428,7 +1427,7 @@ public interface SmppEndpointBuilderFactory {
          * TON values are defined: 0: Unknown 1: International 2: National 3:
          * Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1444,7 +1443,7 @@ public interface SmppEndpointBuilderFactory {
          * TON values are defined: 0: Unknown 1: International 2: National 3:
          * Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: producer
          * 
@@ -1460,7 +1459,7 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -1476,7 +1475,7 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -1493,7 +1492,7 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -1510,7 +1509,7 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -1525,7 +1524,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the encoding scheme of the short message user data. Only for
          * SubmitSm, ReplaceSm and SubmitMulti.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ISO-8859-1
          * Group: codec
@@ -1541,7 +1540,7 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the hostname or ip address of your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -1556,7 +1555,7 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the password required for your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -1571,7 +1570,7 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 3128
          * Group: proxy
@@ -1587,8 +1586,8 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 3128
          * Group: proxy
@@ -1604,7 +1603,7 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the username required for your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -1619,8 +1618,8 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: proxy
          * 
@@ -1636,8 +1635,8 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -1651,7 +1650,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The password for connecting to SMSC server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1665,7 +1664,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The system id (username) for connecting to SMSC server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: smppclient
          * Group: security
@@ -1680,7 +1679,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1695,8 +1694,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1729,7 +1727,7 @@ public interface SmppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1752,8 +1750,7 @@ public interface SmppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1770,7 +1767,7 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 60000
          * Group: advanced
@@ -1787,8 +1784,8 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 60000
          * Group: advanced
@@ -1807,7 +1804,7 @@ public interface SmppEndpointBuilderFactory {
          * respectively): legacy (0x00), 3.3 (0x33), 3.4 (0x34), and 5.0 (0x50).
          * The default (fallback) value is version 3.4.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 3.4
          * Group: advanced
@@ -1823,7 +1820,7 @@ public interface SmppEndpointBuilderFactory {
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 3
          * Group: advanced
@@ -1839,8 +1836,8 @@ public interface SmppEndpointBuilderFactory {
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 3
          * Group: advanced
@@ -1855,7 +1852,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Sets the capacity of the working queue for PDU processing.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1870,8 +1867,8 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Sets the capacity of the working queue for PDU processing.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -1887,8 +1884,8 @@ public interface SmppEndpointBuilderFactory {
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
-         * The option is a:
-         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
+         * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1904,7 +1901,7 @@ public interface SmppEndpointBuilderFactory {
          * Registry to receive callbacks when the session state changed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
+         * <code>org.jsmpp.session.SessionStateListener</code> type.
          * 
          * Group: advanced
          * 
@@ -1920,7 +1917,7 @@ public interface SmppEndpointBuilderFactory {
          * last segment of a multi-segment (long) message. For short messages,
          * with only 1 segment the behaviour is unchanged.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1937,8 +1934,7 @@ public interface SmppEndpointBuilderFactory {
          * last segment of a multi-segment (long) message. For short messages,
          * with only 1 segment the behaviour is unchanged.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1956,7 +1952,7 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -1974,8 +1970,8 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 10000
          * Group: advanced
@@ -2004,7 +2000,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -2020,7 +2016,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -2036,7 +2032,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: common
@@ -2052,7 +2048,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: common
@@ -2069,7 +2065,7 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -2086,7 +2082,7 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -2109,7 +2105,8 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
+         * type.
          * 
          * Default: ALLOW
          * Group: common
@@ -2132,7 +2129,8 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
+         * type.
          * 
          * Default: ALLOW
          * Group: common
@@ -2148,7 +2146,7 @@ public interface SmppEndpointBuilderFactory {
          * This parameter is used to categorize the type of ESME (External Short
          * Message Entity) that is binding to the SMSC (max. 13 characters).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2164,7 +2162,7 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -2180,7 +2178,7 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -2197,7 +2195,7 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -2214,7 +2212,7 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: codec
          * 
@@ -2229,7 +2227,7 @@ public interface SmppEndpointBuilderFactory {
          * Defines the encoding scheme of the short message user data. Only for
          * SubmitSm, ReplaceSm and SubmitMulti.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ISO-8859-1
          * Group: codec
@@ -2245,7 +2243,7 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the hostname or ip address of your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -2260,7 +2258,7 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the password required for your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -2275,7 +2273,7 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 3128
          * Group: proxy
@@ -2291,8 +2289,8 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 3128
          * Group: proxy
@@ -2308,7 +2306,7 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the username required for your HTTP proxy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -2323,8 +2321,8 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: proxy
          * 
@@ -2340,8 +2338,8 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -2355,7 +2353,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The password for connecting to SMSC server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2369,7 +2367,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The system id (username) for connecting to SMSC server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: smppclient
          * Group: security
@@ -2384,7 +2382,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2399,8 +2397,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2430,7 +2427,7 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 60000
          * Group: advanced
@@ -2447,8 +2444,8 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 60000
          * Group: advanced
@@ -2467,7 +2464,7 @@ public interface SmppEndpointBuilderFactory {
          * respectively): legacy (0x00), 3.3 (0x33), 3.4 (0x34), and 5.0 (0x50).
          * The default (fallback) value is version 3.4.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 3.4
          * Group: advanced
@@ -2483,7 +2480,7 @@ public interface SmppEndpointBuilderFactory {
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 3
          * Group: advanced
@@ -2499,8 +2496,8 @@ public interface SmppEndpointBuilderFactory {
          * Sets the number of threads which can read PDU and process them in
          * parallel.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 3
          * Group: advanced
@@ -2515,7 +2512,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Sets the capacity of the working queue for PDU processing.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -2530,8 +2527,8 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Sets the capacity of the working queue for PDU processing.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -2547,8 +2544,8 @@ public interface SmppEndpointBuilderFactory {
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
-         * The option is a:
-         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
+         * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2564,7 +2561,7 @@ public interface SmppEndpointBuilderFactory {
          * Registry to receive callbacks when the session state changed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
+         * <code>org.jsmpp.session.SessionStateListener</code> type.
          * 
          * Group: advanced
          * 
@@ -2580,7 +2577,7 @@ public interface SmppEndpointBuilderFactory {
          * last segment of a multi-segment (long) message. For short messages,
          * with only 1 segment the behaviour is unchanged.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2597,8 +2594,7 @@ public interface SmppEndpointBuilderFactory {
          * last segment of a multi-segment (long) message. For short messages,
          * with only 1 segment the behaviour is unchanged.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2616,7 +2612,7 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -2634,8 +2630,8 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 10000
          * Group: advanced

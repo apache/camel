@@ -48,7 +48,7 @@ public interface ClientEndpointBuilderFactory {
          * Data module options.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
          * Group: common
          * 
@@ -63,7 +63,7 @@ public interface ClientEndpointBuilderFactory {
          * Data module options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
          * Group: common
          * 
@@ -78,7 +78,8 @@ public interface ClientEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -93,7 +94,8 @@ public interface ClientEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -107,7 +109,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
+         * The option is a: <code>short</code> type.
          * 
          * Default: 10
          * Group: connection
@@ -122,8 +124,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>short</code> type.
          * 
          * Default: 10
          * Group: connection
@@ -139,7 +140,8 @@ public interface ClientEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
+         * type.
          * 
          * Group: connection
          * 
@@ -154,7 +156,8 @@ public interface ClientEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
+         * type.
          * 
          * Group: connection
          * 
@@ -169,7 +172,7 @@ public interface ClientEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
          * Group: connection
          * 
@@ -184,7 +187,7 @@ public interface ClientEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
          * Group: connection
          * 
@@ -199,7 +202,7 @@ public interface ClientEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
          * Group: connection
          * 
@@ -214,7 +217,7 @@ public interface ClientEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
          * Group: connection
          * 
@@ -228,7 +231,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
+         * The option is a: <code>short</code> type.
          * 
          * Default: 15
          * Group: connection
@@ -243,8 +246,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>short</code> type.
          * 
          * Default: 15
          * Group: connection
@@ -259,7 +261,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 15000
          * Group: connection
@@ -274,7 +276,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 15000
          * Group: connection
@@ -289,7 +291,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: connection
@@ -304,7 +306,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: connection
@@ -319,7 +321,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 20000
          * Group: connection
@@ -334,7 +336,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 20000
          * Group: connection
@@ -349,7 +351,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: data
          * 
@@ -363,7 +365,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: data
          * 
@@ -378,7 +380,7 @@ public interface ClientEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: data
@@ -394,7 +396,7 @@ public interface ClientEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: data
@@ -409,7 +411,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: data
@@ -424,8 +426,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: data
@@ -440,7 +441,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: data
@@ -455,8 +456,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: data
@@ -471,7 +471,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
+         * The option is a: <code>java.util.TimeZone</code> type.
          * 
          * Default: UTC
          * Group: data
@@ -486,8 +486,8 @@ public interface ClientEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.TimeZone</code>
+         * type.
          * 
          * Default: UTC
          * Group: data
@@ -502,7 +502,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * An identifier grouping connection instances.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: id
          * 
@@ -538,7 +538,7 @@ public interface ClientEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -564,8 +564,7 @@ public interface ClientEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -583,8 +582,8 @@ public interface ClientEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -602,7 +601,7 @@ public interface ClientEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -616,8 +615,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -632,7 +630,7 @@ public interface ClientEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -659,7 +657,7 @@ public interface ClientEndpointBuilderFactory {
          * Data module options.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
          * Group: common
          * 
@@ -674,7 +672,7 @@ public interface ClientEndpointBuilderFactory {
          * Data module options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
          * Group: common
          * 
@@ -689,7 +687,8 @@ public interface ClientEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -704,7 +703,8 @@ public interface ClientEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -718,7 +718,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
+         * The option is a: <code>short</code> type.
          * 
          * Default: 10
          * Group: connection
@@ -733,8 +733,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>short</code> type.
          * 
          * Default: 10
          * Group: connection
@@ -750,7 +749,8 @@ public interface ClientEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
+         * type.
          * 
          * Group: connection
          * 
@@ -765,7 +765,8 @@ public interface ClientEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
+         * type.
          * 
          * Group: connection
          * 
@@ -780,7 +781,7 @@ public interface ClientEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
          * Group: connection
          * 
@@ -795,7 +796,7 @@ public interface ClientEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
          * Group: connection
          * 
@@ -810,7 +811,7 @@ public interface ClientEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
          * Group: connection
          * 
@@ -825,7 +826,7 @@ public interface ClientEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
          * Group: connection
          * 
@@ -839,7 +840,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
+         * The option is a: <code>short</code> type.
          * 
          * Default: 15
          * Group: connection
@@ -854,8 +855,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>short</code> type.
          * 
          * Default: 15
          * Group: connection
@@ -870,7 +870,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 15000
          * Group: connection
@@ -885,7 +885,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 15000
          * Group: connection
@@ -900,7 +900,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: connection
@@ -915,7 +915,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: connection
@@ -930,7 +930,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 20000
          * Group: connection
@@ -945,7 +945,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 20000
          * Group: connection
@@ -960,7 +960,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: data
          * 
@@ -974,7 +974,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: data
          * 
@@ -989,7 +989,7 @@ public interface ClientEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: data
@@ -1005,7 +1005,7 @@ public interface ClientEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: data
@@ -1020,7 +1020,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: data
@@ -1035,8 +1035,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: data
@@ -1051,7 +1050,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: data
@@ -1066,8 +1065,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: data
@@ -1082,7 +1080,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
+         * The option is a: <code>java.util.TimeZone</code> type.
          * 
          * Default: UTC
          * Group: data
@@ -1097,8 +1095,8 @@ public interface ClientEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.TimeZone</code>
+         * type.
          * 
          * Default: UTC
          * Group: data
@@ -1113,7 +1111,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * An identifier grouping connection instances.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: id
          * 
@@ -1145,7 +1143,7 @@ public interface ClientEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1168,8 +1166,7 @@ public interface ClientEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1198,7 +1195,7 @@ public interface ClientEndpointBuilderFactory {
          * Data module options.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
          * Group: common
          * 
@@ -1213,7 +1210,7 @@ public interface ClientEndpointBuilderFactory {
          * Data module options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
          * Group: common
          * 
@@ -1228,7 +1225,8 @@ public interface ClientEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1243,7 +1241,8 @@ public interface ClientEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1257,7 +1256,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
+         * The option is a: <code>short</code> type.
          * 
          * Default: 10
          * Group: connection
@@ -1272,8 +1271,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>short</code> type.
          * 
          * Default: 10
          * Group: connection
@@ -1289,7 +1287,8 @@ public interface ClientEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
+         * type.
          * 
          * Group: connection
          * 
@@ -1304,7 +1303,8 @@ public interface ClientEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
+         * type.
          * 
          * Group: connection
          * 
@@ -1319,7 +1319,7 @@ public interface ClientEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
          * Group: connection
          * 
@@ -1334,7 +1334,7 @@ public interface ClientEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
          * Group: connection
          * 
@@ -1349,7 +1349,7 @@ public interface ClientEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
          * Group: connection
          * 
@@ -1364,7 +1364,7 @@ public interface ClientEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
+         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
          * Group: connection
          * 
@@ -1378,7 +1378,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
+         * The option is a: <code>short</code> type.
          * 
          * Default: 15
          * Group: connection
@@ -1393,8 +1393,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>short</code> type.
          * 
          * Default: 15
          * Group: connection
@@ -1409,7 +1408,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 15000
          * Group: connection
@@ -1424,7 +1423,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 15000
          * Group: connection
@@ -1439,7 +1438,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: connection
@@ -1454,7 +1453,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: connection
@@ -1469,7 +1468,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 20000
          * Group: connection
@@ -1484,7 +1483,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 20000
          * Group: connection
@@ -1499,7 +1498,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
+         * The option is a: <code>byte</code> type.
          * 
          * Group: data
          * 
@@ -1513,7 +1512,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
+         * The option will be converted to a <code>byte</code> type.
          * 
          * Group: data
          * 
@@ -1528,7 +1527,7 @@ public interface ClientEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: data
@@ -1544,7 +1543,7 @@ public interface ClientEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: data
@@ -1559,7 +1558,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: data
@@ -1574,8 +1573,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: data
@@ -1590,7 +1588,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: data
@@ -1605,8 +1603,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: data
@@ -1621,7 +1618,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
+         * The option is a: <code>java.util.TimeZone</code> type.
          * 
          * Default: UTC
          * Group: data
@@ -1636,8 +1633,8 @@ public interface ClientEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.TimeZone</code>
+         * type.
          * 
          * Default: UTC
          * Group: data
@@ -1652,7 +1649,7 @@ public interface ClientEndpointBuilderFactory {
         /**
          * An identifier grouping connection instances.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: id
          * 

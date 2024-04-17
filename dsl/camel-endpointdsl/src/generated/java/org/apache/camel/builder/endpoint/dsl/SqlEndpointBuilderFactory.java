@@ -46,7 +46,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -61,8 +61,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -78,7 +77,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
-         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
+         * The option is a: <code>javax.sql.DataSource</code> type.
          * 
          * Group: common
          * 
@@ -93,8 +92,8 @@ public interface SqlEndpointBuilderFactory {
          * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
+         * The option will be converted to a <code>javax.sql.DataSource</code>
+         * type.
          * 
          * Group: common
          * 
@@ -109,7 +108,7 @@ public interface SqlEndpointBuilderFactory {
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -127,7 +126,7 @@ public interface SqlEndpointBuilderFactory {
          * If outputHeader is set, the value is used as the name of the header
          * to store the query result and the original message body is preserved.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -154,8 +153,7 @@ public interface SqlEndpointBuilderFactory {
          * ResultSet in streaming fashion.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.SqlOutputType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
          * Default: SelectList
          * Group: common
@@ -183,8 +181,7 @@ public interface SqlEndpointBuilderFactory {
          * ResultSet in streaming fashion.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.SqlOutputType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
          * Default: SelectList
          * Group: common
@@ -202,7 +199,7 @@ public interface SqlEndpointBuilderFactory {
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
          * 
-         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
+         * The option is a: <code>char</code> type.
          * 
          * Default: ,
          * Group: common
@@ -220,7 +217,7 @@ public interface SqlEndpointBuilderFactory {
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
          * 
-         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
+         * The option will be converted to a <code>char</code> type.
          * 
          * Default: ,
          * Group: common
@@ -235,7 +232,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether to break batch if onConsume failed.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -250,8 +247,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether to break batch if onConsume failed.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -266,7 +262,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets an expected update count to validate when using onConsume.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: consumer
@@ -281,7 +277,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets an expected update count to validate when using onConsume.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: consumer
@@ -296,7 +292,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the maximum number of messages to poll.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -310,7 +306,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the maximum number of messages to poll.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -326,7 +322,7 @@ public interface SqlEndpointBuilderFactory {
          * Exchange was processed successfully, for example to mark the row as
          * processed. The query can have parameter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -341,7 +337,7 @@ public interface SqlEndpointBuilderFactory {
          * After processing the entire batch, this query can be executed to bulk
          * update rows etc. The query cannot have parameters.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -357,7 +353,7 @@ public interface SqlEndpointBuilderFactory {
          * Exchange failed, for example to mark the row as failed. The query can
          * have parameter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -372,7 +368,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets whether empty resultset should be allowed to be sent to the next
          * hop. Defaults to false. So the empty resultset will be filtered out.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -388,8 +384,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets whether empty resultset should be allowed to be sent to the next
          * hop. Defaults to false. So the empty resultset will be filtered out.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -405,7 +400,7 @@ public interface SqlEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -421,8 +416,7 @@ public interface SqlEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -439,7 +433,7 @@ public interface SqlEndpointBuilderFactory {
          * exchange failed then the consumer breaks out processing any further
          * exchanges to cause a rollback eager.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -456,8 +450,7 @@ public interface SqlEndpointBuilderFactory {
          * exchange failed then the consumer breaks out processing any further
          * exchanges to cause a rollback eager.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -473,7 +466,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets how resultset should be delivered to route. Indicates delivery
          * as either a list or individual object. defaults to true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -489,8 +482,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets how resultset should be delivered to route. Indicates delivery
          * as either a list or individual object. defaults to true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -506,7 +498,7 @@ public interface SqlEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -521,7 +513,7 @@ public interface SqlEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -536,7 +528,7 @@ public interface SqlEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -551,7 +543,7 @@ public interface SqlEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -570,7 +562,7 @@ public interface SqlEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -589,7 +581,7 @@ public interface SqlEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -603,7 +595,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -618,7 +610,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -634,7 +626,7 @@ public interface SqlEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -650,8 +642,7 @@ public interface SqlEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -666,7 +657,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -681,7 +672,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -698,7 +689,7 @@ public interface SqlEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -715,7 +706,7 @@ public interface SqlEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -731,8 +722,7 @@ public interface SqlEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -749,7 +739,7 @@ public interface SqlEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -767,7 +757,7 @@ public interface SqlEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -784,7 +774,7 @@ public interface SqlEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -799,7 +789,7 @@ public interface SqlEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -815,8 +805,7 @@ public interface SqlEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -832,8 +821,8 @@ public interface SqlEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -852,8 +841,8 @@ public interface SqlEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -870,7 +859,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -885,8 +874,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -901,8 +889,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -918,7 +905,7 @@ public interface SqlEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -934,7 +921,7 @@ public interface SqlEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -950,8 +937,7 @@ public interface SqlEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -988,7 +974,7 @@ public interface SqlEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1014,8 +1000,7 @@ public interface SqlEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1033,8 +1018,8 @@ public interface SqlEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1052,7 +1037,7 @@ public interface SqlEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1066,8 +1051,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1082,7 +1066,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1100,7 +1084,7 @@ public interface SqlEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1118,7 +1102,7 @@ public interface SqlEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1135,7 +1119,8 @@ public interface SqlEndpointBuilderFactory {
          * queries when the consumer has processed the rows/batch.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.SqlProcessingStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.SqlProcessingStrategy</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1152,7 +1137,8 @@ public interface SqlEndpointBuilderFactory {
          * queries when the consumer has processed the rows/batch.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.SqlProcessingStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.SqlProcessingStrategy</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1171,7 +1157,7 @@ public interface SqlEndpointBuilderFactory {
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1191,8 +1177,7 @@ public interface SqlEndpointBuilderFactory {
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1210,7 +1195,7 @@ public interface SqlEndpointBuilderFactory {
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -1227,7 +1212,7 @@ public interface SqlEndpointBuilderFactory {
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -1243,7 +1228,7 @@ public interface SqlEndpointBuilderFactory {
          * that it is simple String.replaceAll() operation and no SQL parsing is
          * involved (quoted strings will also change).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: #
          * Group: advanced
@@ -1261,7 +1246,7 @@ public interface SqlEndpointBuilderFactory {
          * preparation of the query and prepared statement.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.SqlPrepareStatementStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1278,7 +1263,7 @@ public interface SqlEndpointBuilderFactory {
          * preparation of the query and prepared statement.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.SqlPrepareStatementStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1293,7 +1278,7 @@ public interface SqlEndpointBuilderFactory {
          * Factory for creating RowMapper.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.RowMapperFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -1308,7 +1293,7 @@ public interface SqlEndpointBuilderFactory {
          * Factory for creating RowMapper.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.RowMapperFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -1322,8 +1307,8 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1341,8 +1326,8 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1360,7 +1345,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1376,8 +1361,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1404,7 +1388,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1419,8 +1403,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1436,7 +1419,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
-         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
+         * The option is a: <code>javax.sql.DataSource</code> type.
          * 
          * Group: common
          * 
@@ -1451,8 +1434,8 @@ public interface SqlEndpointBuilderFactory {
          * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
+         * The option will be converted to a <code>javax.sql.DataSource</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1467,7 +1450,7 @@ public interface SqlEndpointBuilderFactory {
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1485,7 +1468,7 @@ public interface SqlEndpointBuilderFactory {
          * If outputHeader is set, the value is used as the name of the header
          * to store the query result and the original message body is preserved.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1512,8 +1495,7 @@ public interface SqlEndpointBuilderFactory {
          * ResultSet in streaming fashion.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.SqlOutputType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
          * Default: SelectList
          * Group: common
@@ -1541,8 +1523,7 @@ public interface SqlEndpointBuilderFactory {
          * ResultSet in streaming fashion.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.SqlOutputType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
          * Default: SelectList
          * Group: common
@@ -1560,7 +1541,7 @@ public interface SqlEndpointBuilderFactory {
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
          * 
-         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
+         * The option is a: <code>char</code> type.
          * 
          * Default: ,
          * Group: common
@@ -1578,7 +1559,7 @@ public interface SqlEndpointBuilderFactory {
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
          * 
-         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
+         * The option will be converted to a <code>char</code> type.
          * 
          * Default: ,
          * Group: common
@@ -1593,7 +1574,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Enables or disables batch mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1608,8 +1589,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Enables or disables batch mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1625,7 +1605,7 @@ public interface SqlEndpointBuilderFactory {
          * If set, will ignore the results of the SQL query and use the existing
          * IN message as the OUT message for the continuation of processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1641,8 +1621,7 @@ public interface SqlEndpointBuilderFactory {
          * If set, will ignore the results of the SQL query and use the existing
          * IN message as the OUT message for the continuation of processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1660,7 +1639,7 @@ public interface SqlEndpointBuilderFactory {
          * used. Note that query parameters in the message body are represented
          * by a question mark instead of a # symbol.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1678,8 +1657,7 @@ public interface SqlEndpointBuilderFactory {
          * used. Note that query parameters in the message body are represented
          * by a question mark instead of a # symbol.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1712,7 +1690,7 @@ public interface SqlEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1735,8 +1713,7 @@ public interface SqlEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1756,7 +1733,7 @@ public interface SqlEndpointBuilderFactory {
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1776,8 +1753,7 @@ public interface SqlEndpointBuilderFactory {
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1795,7 +1771,7 @@ public interface SqlEndpointBuilderFactory {
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -1812,7 +1788,7 @@ public interface SqlEndpointBuilderFactory {
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -1828,7 +1804,7 @@ public interface SqlEndpointBuilderFactory {
          * that it is simple String.replaceAll() operation and no SQL parsing is
          * involved (quoted strings will also change).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: #
          * Group: advanced
@@ -1846,7 +1822,7 @@ public interface SqlEndpointBuilderFactory {
          * preparation of the query and prepared statement.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.SqlPrepareStatementStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1863,7 +1839,7 @@ public interface SqlEndpointBuilderFactory {
          * preparation of the query and prepared statement.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.SqlPrepareStatementStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1878,7 +1854,7 @@ public interface SqlEndpointBuilderFactory {
          * Factory for creating RowMapper.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.RowMapperFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -1893,7 +1869,7 @@ public interface SqlEndpointBuilderFactory {
          * Factory for creating RowMapper.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.RowMapperFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -1907,8 +1883,8 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1926,8 +1902,8 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1945,7 +1921,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1961,8 +1937,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1990,7 +1965,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2005,8 +1980,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2022,7 +1996,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
-         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
+         * The option is a: <code>javax.sql.DataSource</code> type.
          * 
          * Group: common
          * 
@@ -2037,8 +2011,8 @@ public interface SqlEndpointBuilderFactory {
          * Sets the DataSource to use to communicate with the database at
          * endpoint level.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
+         * The option will be converted to a <code>javax.sql.DataSource</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2053,7 +2027,7 @@ public interface SqlEndpointBuilderFactory {
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2071,7 +2045,7 @@ public interface SqlEndpointBuilderFactory {
          * If outputHeader is set, the value is used as the name of the header
          * to store the query result and the original message body is preserved.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2098,8 +2072,7 @@ public interface SqlEndpointBuilderFactory {
          * ResultSet in streaming fashion.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.SqlOutputType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
          * Default: SelectList
          * Group: common
@@ -2127,8 +2100,7 @@ public interface SqlEndpointBuilderFactory {
          * ResultSet in streaming fashion.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.SqlOutputType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
          * Default: SelectList
          * Group: common
@@ -2146,7 +2118,7 @@ public interface SqlEndpointBuilderFactory {
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
          * 
-         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
+         * The option is a: <code>char</code> type.
          * 
          * Default: ,
          * Group: common
@@ -2164,7 +2136,7 @@ public interface SqlEndpointBuilderFactory {
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
          * 
-         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
+         * The option will be converted to a <code>char</code> type.
          * 
          * Default: ,
          * Group: common
@@ -2197,7 +2169,7 @@ public interface SqlEndpointBuilderFactory {
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2217,8 +2189,7 @@ public interface SqlEndpointBuilderFactory {
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2236,7 +2207,7 @@ public interface SqlEndpointBuilderFactory {
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -2253,7 +2224,7 @@ public interface SqlEndpointBuilderFactory {
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -2269,7 +2240,7 @@ public interface SqlEndpointBuilderFactory {
          * that it is simple String.replaceAll() operation and no SQL parsing is
          * involved (quoted strings will also change).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: #
          * Group: advanced
@@ -2287,7 +2258,7 @@ public interface SqlEndpointBuilderFactory {
          * preparation of the query and prepared statement.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.SqlPrepareStatementStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -2304,7 +2275,7 @@ public interface SqlEndpointBuilderFactory {
          * preparation of the query and prepared statement.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.SqlPrepareStatementStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -2319,7 +2290,7 @@ public interface SqlEndpointBuilderFactory {
          * Factory for creating RowMapper.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.RowMapperFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -2334,7 +2305,7 @@ public interface SqlEndpointBuilderFactory {
          * Factory for creating RowMapper.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.sql.RowMapperFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -2348,8 +2319,8 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -2367,8 +2338,8 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -2386,7 +2357,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2402,8 +2373,7 @@ public interface SqlEndpointBuilderFactory {
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced

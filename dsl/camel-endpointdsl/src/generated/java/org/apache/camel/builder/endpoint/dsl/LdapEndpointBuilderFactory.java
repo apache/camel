@@ -47,7 +47,7 @@ public interface LdapEndpointBuilderFactory {
         /**
          * The base DN for searches.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ou=system
          * Group: producer
@@ -66,7 +66,7 @@ public interface LdapEndpointBuilderFactory {
          * (subclass of DirContext) has to be passed in as ldapServerBean
          * (otherwise an exception is thrown).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -84,8 +84,8 @@ public interface LdapEndpointBuilderFactory {
          * (subclass of DirContext) has to be passed in as ldapServerBean
          * (otherwise an exception is thrown).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -100,7 +100,7 @@ public interface LdapEndpointBuilderFactory {
          * Comma-separated list of attributes that should be set in each entry
          * of the result.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -115,7 +115,7 @@ public interface LdapEndpointBuilderFactory {
          * Specifies how deeply to search the tree of entries, starting at the
          * base DN.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: subtree
          * Group: producer
@@ -150,7 +150,7 @@ public interface LdapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -173,8 +173,7 @@ public interface LdapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

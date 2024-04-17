@@ -51,7 +51,7 @@ public interface StitchEndpointBuilderFactory {
          * data during loading If not provided, the table will be loaded in an
          * append-only manner.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -66,7 +66,8 @@ public interface StitchEndpointBuilderFactory {
          * Stitch account region, e.g: europe.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchRegion&lt;/code&gt; type.
+         * <code>org.apache.camel.component.stitch.client.StitchRegion</code>
+         * type.
          * 
          * Default: EUROPE
          * Group: producer
@@ -82,7 +83,8 @@ public interface StitchEndpointBuilderFactory {
          * Stitch account region, e.g: europe.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchRegion&lt;/code&gt; type.
+         * <code>org.apache.camel.component.stitch.client.StitchRegion</code>
+         * type.
          * 
          * Default: EUROPE
          * Group: producer
@@ -98,7 +100,7 @@ public interface StitchEndpointBuilderFactory {
          * A schema that describes the record(s).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.stitch.client.models.StitchSchema&lt;/code&gt; type.
+         * <code>org.apache.camel.component.stitch.client.models.StitchSchema</code> type.
          * 
          * Group: producer
          * 
@@ -113,7 +115,7 @@ public interface StitchEndpointBuilderFactory {
          * A schema that describes the record(s).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.stitch.client.models.StitchSchema&lt;/code&gt; type.
+         * <code>org.apache.camel.component.stitch.client.models.StitchSchema</code> type.
          * 
          * Group: producer
          * 
@@ -127,7 +129,7 @@ public interface StitchEndpointBuilderFactory {
         /**
          * Stitch access token for the Stitch Import API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -158,8 +160,7 @@ public interface StitchEndpointBuilderFactory {
          * with this ConnectionProvider.
          * 
          * The option is a:
-         * &lt;code&gt;reactor.netty.resources.ConnectionProvider&lt;/code&gt;
-         * type.
+         * <code>reactor.netty.resources.ConnectionProvider</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -177,8 +178,7 @@ public interface StitchEndpointBuilderFactory {
          * with this ConnectionProvider.
          * 
          * The option will be converted to a
-         * &lt;code&gt;reactor.netty.resources.ConnectionProvider&lt;/code&gt;
-         * type.
+         * <code>reactor.netty.resources.ConnectionProvider</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -193,8 +193,8 @@ public interface StitchEndpointBuilderFactory {
          * Reactor Netty HttpClient, you can injected it if you want to have
          * custom HttpClient.
          * 
-         * The option is a:
-         * &lt;code&gt;reactor.netty.http.client.HttpClient&lt;/code&gt; type.
+         * The option is a: <code>reactor.netty.http.client.HttpClient</code>
+         * type.
          * 
          * Group: producer (advanced)
          * 
@@ -210,7 +210,7 @@ public interface StitchEndpointBuilderFactory {
          * custom HttpClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;reactor.netty.http.client.HttpClient&lt;/code&gt; type.
+         * <code>reactor.netty.http.client.HttpClient</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -232,7 +232,7 @@ public interface StitchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -255,8 +255,7 @@ public interface StitchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -273,7 +272,8 @@ public interface StitchEndpointBuilderFactory {
          * org.apache.camel.component.stitch.client.StitchClient interface.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchClient&lt;/code&gt; type.
+         * <code>org.apache.camel.component.stitch.client.StitchClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -289,7 +289,8 @@ public interface StitchEndpointBuilderFactory {
          * org.apache.camel.component.stitch.client.StitchClient interface.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchClient&lt;/code&gt; type.
+         * <code>org.apache.camel.component.stitch.client.StitchClient</code>
+         * type.
          * 
          * Group: advanced
          * 

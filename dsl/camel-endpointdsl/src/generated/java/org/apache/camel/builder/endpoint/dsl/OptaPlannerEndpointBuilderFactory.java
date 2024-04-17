@@ -46,7 +46,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: 1L
          * Group: common
@@ -61,8 +61,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: 1L
          * Group: common
@@ -77,7 +76,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Specifies the solverId to user for the solver instance key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: DEFAULT_SOLVER
          * Group: common
@@ -94,7 +93,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * {OptaPlannerConstants.SOLVER_MANAGER} : A SolverManager will be
          * created using this Optaplanner config file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: configFile
          * 
@@ -109,7 +108,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * SolverManager.
          * 
          * The option is a:
-         * &lt;code&gt;org.optaplanner.core.api.solver.SolverManager&lt;/code&gt; type.
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
          * 
          * Group: solverManager
          * 
@@ -124,7 +123,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * SolverManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.optaplanner.core.api.solver.SolverManager&lt;/code&gt; type.
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
          * 
          * Group: solverManager
          * 
@@ -160,7 +159,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -186,8 +185,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -205,8 +203,8 @@ public interface OptaPlannerEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -224,7 +222,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -238,8 +236,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -254,7 +251,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -280,7 +277,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: 1L
          * Group: common
@@ -295,8 +292,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: 1L
          * Group: common
@@ -311,7 +307,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Specifies the solverId to user for the solver instance key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: DEFAULT_SOLVER
          * Group: common
@@ -326,7 +322,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Specifies to perform operations in async mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -341,8 +337,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Specifies to perform operations in async mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -357,7 +352,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Specifies the thread pool size to use when async is true.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: producer
@@ -372,7 +367,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Specifies the thread pool size to use when async is true.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: producer
@@ -389,7 +384,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * {OptaPlannerConstants.SOLVER_MANAGER} : A SolverManager will be
          * created using this Optaplanner config file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: configFile
          * 
@@ -404,7 +399,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * SolverManager.
          * 
          * The option is a:
-         * &lt;code&gt;org.optaplanner.core.api.solver.SolverManager&lt;/code&gt; type.
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
          * 
          * Group: solverManager
          * 
@@ -419,7 +414,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * SolverManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.optaplanner.core.api.solver.SolverManager&lt;/code&gt; type.
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
          * 
          * Group: solverManager
          * 
@@ -451,7 +446,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -474,8 +469,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -503,7 +497,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: 1L
          * Group: common
@@ -518,8 +512,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: 1L
          * Group: common
@@ -534,7 +527,7 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Specifies the solverId to user for the solver instance key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: DEFAULT_SOLVER
          * Group: common
@@ -551,7 +544,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * {OptaPlannerConstants.SOLVER_MANAGER} : A SolverManager will be
          * created using this Optaplanner config file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: configFile
          * 
@@ -566,7 +559,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * SolverManager.
          * 
          * The option is a:
-         * &lt;code&gt;org.optaplanner.core.api.solver.SolverManager&lt;/code&gt; type.
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
          * 
          * Group: solverManager
          * 
@@ -581,7 +574,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * SolverManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.optaplanner.core.api.solver.SolverManager&lt;/code&gt; type.
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
          * 
          * Group: solverManager
          * 

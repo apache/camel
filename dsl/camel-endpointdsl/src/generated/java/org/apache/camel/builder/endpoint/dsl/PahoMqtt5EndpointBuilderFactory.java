@@ -54,7 +54,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -77,8 +77,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -93,7 +92,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * The URL of the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: tcp://localhost:1883
          * Group: common
@@ -118,7 +117,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -143,8 +142,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -159,7 +157,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * MQTT client identifier. The identifier must be unique.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -178,7 +176,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30
          * Group: common
@@ -198,7 +196,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30
          * Group: common
@@ -214,7 +212,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Base directory used by file persistence. Will by default use user
          * directory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -236,7 +234,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -259,7 +257,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -274,7 +272,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 128000
          * Group: common
@@ -289,7 +287,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 128000
          * Group: common
@@ -305,7 +303,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence&lt;/code&gt; type.
+         * <code>org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence</code> type.
          * 
          * Default: MEMORY
          * Group: common
@@ -321,7 +319,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence&lt;/code&gt; type.
+         * <code>org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence</code> type.
          * 
          * Default: MEMORY
          * Group: common
@@ -336,7 +334,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -351,7 +349,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -370,7 +368,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * publications that the Server might try to send. The default value is
          * 65535.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 65535
          * Group: common
@@ -389,7 +387,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * publications that the Server might try to send. The default value is
          * 65535.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 65535
          * Group: common
@@ -404,7 +402,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -419,8 +417,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -459,7 +456,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * subscriptions are not valid. The cleansession flag must be set to
          * true if the hunt list mode is used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -482,7 +479,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * for the session, it should disconnect with a Session Expiry Interval
          * set to 0.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -506,7 +503,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * for the session, it should disconnect with a Session Expiry Interval
          * set to 0.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -525,7 +522,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The MQTT properties set for the message.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.paho.mqttv5.common.packet.MqttProperties&lt;/code&gt; type.
+         * <code>org.eclipse.paho.mqttv5.common.packet.MqttProperties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -543,7 +541,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The MQTT properties set for the message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.paho.mqttv5.common.packet.MqttProperties&lt;/code&gt; type.
+         * <code>org.eclipse.paho.mqttv5.common.packet.MqttProperties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -560,7 +559,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. The byte payload for the message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -578,7 +577,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The quality of service to publish the message at
          * (0, 1 or 2).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -597,7 +596,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The quality of service to publish the message at
          * (0, 1 or 2).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -615,7 +614,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. Whether or not the message should be retained.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -633,8 +632,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. Whether or not the message should be retained.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -652,7 +650,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. The topic to publish to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -667,7 +665,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -683,8 +681,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -699,7 +696,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Password to be used for authentication against the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -716,8 +713,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * SSL connection, an SSLSocketFactory can be used to supply
          * application-specific security settings.
          * 
-         * The option is a: &lt;code&gt;javax.net.SocketFactory&lt;/code&gt;
-         * type.
+         * The option is a: <code>javax.net.SocketFactory</code> type.
          * 
          * Group: security
          * 
@@ -735,7 +731,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * application-specific security settings.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.SocketFactory&lt;/code&gt; type.
+         * <code>javax.net.SocketFactory</code> type.
          * 
          * Group: security
          * 
@@ -787,7 +783,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: security
          * 
@@ -839,8 +835,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: security
          * 
@@ -857,8 +853,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * yourself when hostname is verified error. There is no default
          * HostnameVerifier.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
@@ -876,7 +871,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * HostnameVerifier.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
@@ -890,7 +885,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Username to be used for authentication against the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -926,7 +921,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -952,8 +947,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -971,8 +965,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -990,7 +984,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1004,8 +998,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1020,7 +1013,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1035,8 +1028,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.paho.mqttv5.client.MqttClient&lt;/code&gt;
-         * type.
+         * <code>org.eclipse.paho.mqttv5.client.MqttClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1051,8 +1043,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.paho.mqttv5.client.MqttClient&lt;/code&gt;
-         * type.
+         * <code>org.eclipse.paho.mqttv5.client.MqttClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1066,8 +1057,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1082,8 +1073,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1099,7 +1090,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -1116,7 +1107,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -1151,7 +1142,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1174,8 +1165,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1190,7 +1180,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * The URL of the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: tcp://localhost:1883
          * Group: common
@@ -1215,7 +1205,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1240,8 +1230,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1256,7 +1245,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * MQTT client identifier. The identifier must be unique.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1275,7 +1264,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30
          * Group: common
@@ -1295,7 +1284,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30
          * Group: common
@@ -1311,7 +1300,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Base directory used by file persistence. Will by default use user
          * directory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1333,7 +1322,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -1356,7 +1345,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -1371,7 +1360,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 128000
          * Group: common
@@ -1386,7 +1375,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 128000
          * Group: common
@@ -1402,7 +1391,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence&lt;/code&gt; type.
+         * <code>org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence</code> type.
          * 
          * Default: MEMORY
          * Group: common
@@ -1418,7 +1407,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence&lt;/code&gt; type.
+         * <code>org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence</code> type.
          * 
          * Default: MEMORY
          * Group: common
@@ -1433,7 +1422,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -1448,7 +1437,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -1467,7 +1456,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * publications that the Server might try to send. The default value is
          * 65535.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 65535
          * Group: common
@@ -1486,7 +1475,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * publications that the Server might try to send. The default value is
          * 65535.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 65535
          * Group: common
@@ -1501,7 +1490,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1516,8 +1505,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1556,7 +1544,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * subscriptions are not valid. The cleansession flag must be set to
          * true if the hunt list mode is used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1579,7 +1567,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * for the session, it should disconnect with a Session Expiry Interval
          * set to 0.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1603,7 +1591,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * for the session, it should disconnect with a Session Expiry Interval
          * set to 0.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1622,7 +1610,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The MQTT properties set for the message.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.paho.mqttv5.common.packet.MqttProperties&lt;/code&gt; type.
+         * <code>org.eclipse.paho.mqttv5.common.packet.MqttProperties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1640,7 +1629,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The MQTT properties set for the message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.paho.mqttv5.common.packet.MqttProperties&lt;/code&gt; type.
+         * <code>org.eclipse.paho.mqttv5.common.packet.MqttProperties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1657,7 +1647,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. The byte payload for the message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1675,7 +1665,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The quality of service to publish the message at
          * (0, 1 or 2).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -1694,7 +1684,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The quality of service to publish the message at
          * (0, 1 or 2).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -1712,7 +1702,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. Whether or not the message should be retained.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1730,8 +1720,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. Whether or not the message should be retained.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1749,7 +1738,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. The topic to publish to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1764,7 +1753,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -1780,8 +1769,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -1796,7 +1784,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Password to be used for authentication against the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1813,8 +1801,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * SSL connection, an SSLSocketFactory can be used to supply
          * application-specific security settings.
          * 
-         * The option is a: &lt;code&gt;javax.net.SocketFactory&lt;/code&gt;
-         * type.
+         * The option is a: <code>javax.net.SocketFactory</code> type.
          * 
          * Group: security
          * 
@@ -1832,7 +1819,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * application-specific security settings.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.SocketFactory&lt;/code&gt; type.
+         * <code>javax.net.SocketFactory</code> type.
          * 
          * Group: security
          * 
@@ -1884,7 +1871,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: security
          * 
@@ -1936,8 +1923,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: security
          * 
@@ -1954,8 +1941,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * yourself when hostname is verified error. There is no default
          * HostnameVerifier.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
@@ -1973,7 +1959,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * HostnameVerifier.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
@@ -1987,7 +1973,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Username to be used for authentication against the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2019,7 +2005,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2042,8 +2028,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2059,8 +2044,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.paho.mqttv5.client.MqttClient&lt;/code&gt;
-         * type.
+         * <code>org.eclipse.paho.mqttv5.client.MqttClient</code> type.
          * 
          * Group: advanced
          * 
@@ -2075,8 +2059,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.paho.mqttv5.client.MqttClient&lt;/code&gt;
-         * type.
+         * <code>org.eclipse.paho.mqttv5.client.MqttClient</code> type.
          * 
          * Group: advanced
          * 
@@ -2090,8 +2073,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -2106,8 +2089,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2123,7 +2106,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -2140,7 +2123,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -2176,7 +2159,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2199,8 +2182,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2215,7 +2197,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * The URL of the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: tcp://localhost:1883
          * Group: common
@@ -2240,7 +2222,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2265,8 +2247,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2281,7 +2262,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * MQTT client identifier. The identifier must be unique.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2300,7 +2281,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30
          * Group: common
@@ -2320,7 +2301,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30
          * Group: common
@@ -2336,7 +2317,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Base directory used by file persistence. Will by default use user
          * directory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2358,7 +2339,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -2381,7 +2362,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -2396,7 +2377,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 128000
          * Group: common
@@ -2411,7 +2392,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 128000
          * Group: common
@@ -2427,7 +2408,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence&lt;/code&gt; type.
+         * <code>org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence</code> type.
          * 
          * Default: MEMORY
          * Group: common
@@ -2443,7 +2424,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence&lt;/code&gt; type.
+         * <code>org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence</code> type.
          * 
          * Default: MEMORY
          * Group: common
@@ -2458,7 +2439,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -2473,7 +2454,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -2492,7 +2473,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * publications that the Server might try to send. The default value is
          * 65535.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 65535
          * Group: common
@@ -2511,7 +2492,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * publications that the Server might try to send. The default value is
          * 65535.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 65535
          * Group: common
@@ -2526,7 +2507,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2541,8 +2522,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2581,7 +2561,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * subscriptions are not valid. The cleansession flag must be set to
          * true if the hunt list mode is used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2604,7 +2584,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * for the session, it should disconnect with a Session Expiry Interval
          * set to 0.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -2628,7 +2608,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * for the session, it should disconnect with a Session Expiry Interval
          * set to 0.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -2647,7 +2627,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The MQTT properties set for the message.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.paho.mqttv5.common.packet.MqttProperties&lt;/code&gt; type.
+         * <code>org.eclipse.paho.mqttv5.common.packet.MqttProperties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2665,7 +2646,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The MQTT properties set for the message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.paho.mqttv5.common.packet.MqttProperties&lt;/code&gt; type.
+         * <code>org.eclipse.paho.mqttv5.common.packet.MqttProperties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2682,7 +2664,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. The byte payload for the message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2700,7 +2682,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The quality of service to publish the message at
          * (0, 1 or 2).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -2719,7 +2701,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * supplied details. The quality of service to publish the message at
          * (0, 1 or 2).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -2737,7 +2719,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. Whether or not the message should be retained.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2755,8 +2737,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. Whether or not the message should be retained.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2774,7 +2755,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * server, the server will publish a message to itself using the
          * supplied details. The topic to publish to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2789,7 +2770,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -2805,8 +2786,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -2821,7 +2801,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Password to be used for authentication against the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2838,8 +2818,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * SSL connection, an SSLSocketFactory can be used to supply
          * application-specific security settings.
          * 
-         * The option is a: &lt;code&gt;javax.net.SocketFactory&lt;/code&gt;
-         * type.
+         * The option is a: <code>javax.net.SocketFactory</code> type.
          * 
          * Group: security
          * 
@@ -2857,7 +2836,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * application-specific security settings.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.SocketFactory&lt;/code&gt; type.
+         * <code>javax.net.SocketFactory</code> type.
          * 
          * Group: security
          * 
@@ -2909,7 +2888,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: security
          * 
@@ -2961,8 +2940,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: security
          * 
@@ -2979,8 +2958,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * yourself when hostname is verified error. There is no default
          * HostnameVerifier.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
@@ -2998,7 +2976,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * HostnameVerifier.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
@@ -3012,7 +2990,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Username to be used for authentication against the MQTT broker.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3040,8 +3018,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.paho.mqttv5.client.MqttClient&lt;/code&gt;
-         * type.
+         * <code>org.eclipse.paho.mqttv5.client.MqttClient</code> type.
          * 
          * Group: advanced
          * 
@@ -3056,8 +3033,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.paho.mqttv5.client.MqttClient&lt;/code&gt;
-         * type.
+         * <code>org.eclipse.paho.mqttv5.client.MqttClient</code> type.
          * 
          * Group: advanced
          * 
@@ -3071,8 +3047,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -3087,8 +3063,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3104,7 +3080,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -3121,7 +3097,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced

@@ -47,7 +47,7 @@ public interface BlobEndpointBuilderFactory {
          * The blob name, to consume specific blob from a container. However, on
          * producer it is only required for the operations on the blob level.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -62,7 +62,7 @@ public interface BlobEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: common
@@ -78,7 +78,7 @@ public interface BlobEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: common
@@ -102,8 +102,7 @@ public interface BlobEndpointBuilderFactory {
          * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -126,8 +125,7 @@ public interface BlobEndpointBuilderFactory {
          * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -143,7 +141,8 @@ public interface BlobEndpointBuilderFactory {
          * blob type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
          * 
          * Default: blockblob
          * Group: common
@@ -160,7 +159,8 @@ public interface BlobEndpointBuilderFactory {
          * blob type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
          * 
          * Default: blockblob
          * Group: common
@@ -175,7 +175,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -190,8 +190,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -208,7 +207,8 @@ public interface BlobEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -224,7 +224,8 @@ public interface BlobEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -239,7 +240,7 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.CredentialType</code> type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -255,7 +256,7 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.CredentialType</code> type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -271,7 +272,7 @@ public interface BlobEndpointBuilderFactory {
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -286,8 +287,7 @@ public interface BlobEndpointBuilderFactory {
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -302,7 +302,7 @@ public interface BlobEndpointBuilderFactory {
          * The file directory where the downloaded blobs will be saved to, this
          * can be used in both, producer and consumer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -319,7 +319,7 @@ public interface BlobEndpointBuilderFactory {
          * maxResultsPerPage or specifies a value greater than 5,000, the server
          * will return up to 5,000 items.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -336,8 +336,8 @@ public interface BlobEndpointBuilderFactory {
          * maxResultsPerPage or specifies a value greater than 5,000, the server
          * will return up to 5,000 items.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -352,7 +352,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -368,7 +368,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -384,7 +384,7 @@ public interface BlobEndpointBuilderFactory {
          * Filters the results to return only blobs whose names begin with the
          * specified prefix. May be null to return all blobs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -401,7 +401,7 @@ public interface BlobEndpointBuilderFactory {
          * prefix and regex are set, regex takes the priority and prefix is
          * ignored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -416,7 +416,7 @@ public interface BlobEndpointBuilderFactory {
          * In case of usage of Shared Access Signature we'll need to set a SAS
          * Token.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -439,8 +439,7 @@ public interface BlobEndpointBuilderFactory {
          * BlobContainerClient#getBlobClient(String).
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -463,8 +462,7 @@ public interface BlobEndpointBuilderFactory {
          * BlobContainerClient#getBlobClient(String).
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -479,7 +477,7 @@ public interface BlobEndpointBuilderFactory {
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -494,8 +492,8 @@ public interface BlobEndpointBuilderFactory {
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -510,7 +508,7 @@ public interface BlobEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -526,8 +524,7 @@ public interface BlobEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -543,7 +540,7 @@ public interface BlobEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -558,7 +555,7 @@ public interface BlobEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -573,7 +570,7 @@ public interface BlobEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -588,7 +585,7 @@ public interface BlobEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -607,7 +604,7 @@ public interface BlobEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -626,7 +623,7 @@ public interface BlobEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -640,7 +637,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -655,7 +652,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -671,7 +668,7 @@ public interface BlobEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -687,8 +684,7 @@ public interface BlobEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -703,7 +699,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -718,7 +714,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -735,7 +731,7 @@ public interface BlobEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -752,7 +748,7 @@ public interface BlobEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -768,8 +764,7 @@ public interface BlobEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -786,7 +781,7 @@ public interface BlobEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -804,7 +799,7 @@ public interface BlobEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -821,7 +816,7 @@ public interface BlobEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -836,7 +831,7 @@ public interface BlobEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -852,8 +847,7 @@ public interface BlobEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -869,8 +863,8 @@ public interface BlobEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -889,8 +883,8 @@ public interface BlobEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -907,7 +901,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -922,8 +916,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -938,8 +931,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -955,7 +947,7 @@ public interface BlobEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -971,7 +963,7 @@ public interface BlobEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -987,8 +979,7 @@ public interface BlobEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1004,7 +995,7 @@ public interface BlobEndpointBuilderFactory {
          * Access key for the associated azure account name to be used for
          * authentication with azure blob services.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1020,7 +1011,7 @@ public interface BlobEndpointBuilderFactory {
          * have an accessKey for the source blob we want to copy Passing an
          * accessKey as header, it's unsafe so we could set as key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1056,7 +1047,7 @@ public interface BlobEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1082,8 +1073,7 @@ public interface BlobEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1101,8 +1091,8 @@ public interface BlobEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1120,7 +1110,7 @@ public interface BlobEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1134,8 +1124,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1150,7 +1139,7 @@ public interface BlobEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1168,7 +1157,7 @@ public interface BlobEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1186,7 +1175,7 @@ public interface BlobEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1213,7 +1202,7 @@ public interface BlobEndpointBuilderFactory {
          * The blob name, to consume specific blob from a container. However, on
          * producer it is only required for the operations on the blob level.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1228,7 +1217,7 @@ public interface BlobEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1244,7 +1233,7 @@ public interface BlobEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1268,8 +1257,7 @@ public interface BlobEndpointBuilderFactory {
          * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -1292,8 +1280,7 @@ public interface BlobEndpointBuilderFactory {
          * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -1309,7 +1296,8 @@ public interface BlobEndpointBuilderFactory {
          * blob type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
          * 
          * Default: blockblob
          * Group: common
@@ -1326,7 +1314,8 @@ public interface BlobEndpointBuilderFactory {
          * blob type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
          * 
          * Default: blockblob
          * Group: common
@@ -1341,7 +1330,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1356,8 +1345,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1374,7 +1362,8 @@ public interface BlobEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1390,7 +1379,8 @@ public interface BlobEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1405,7 +1395,7 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.CredentialType</code> type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -1421,7 +1411,7 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.CredentialType</code> type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -1437,7 +1427,7 @@ public interface BlobEndpointBuilderFactory {
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1452,8 +1442,7 @@ public interface BlobEndpointBuilderFactory {
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1468,7 +1457,7 @@ public interface BlobEndpointBuilderFactory {
          * The file directory where the downloaded blobs will be saved to, this
          * can be used in both, producer and consumer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1485,7 +1474,7 @@ public interface BlobEndpointBuilderFactory {
          * maxResultsPerPage or specifies a value greater than 5,000, the server
          * will return up to 5,000 items.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -1502,8 +1491,8 @@ public interface BlobEndpointBuilderFactory {
          * maxResultsPerPage or specifies a value greater than 5,000, the server
          * will return up to 5,000 items.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1518,7 +1507,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1534,7 +1523,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1550,7 +1539,7 @@ public interface BlobEndpointBuilderFactory {
          * Filters the results to return only blobs whose names begin with the
          * specified prefix. May be null to return all blobs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1567,7 +1556,7 @@ public interface BlobEndpointBuilderFactory {
          * prefix and regex are set, regex takes the priority and prefix is
          * ignored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1582,7 +1571,7 @@ public interface BlobEndpointBuilderFactory {
          * In case of usage of Shared Access Signature we'll need to set a SAS
          * Token.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1605,8 +1594,7 @@ public interface BlobEndpointBuilderFactory {
          * BlobContainerClient#getBlobClient(String).
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -1629,8 +1617,7 @@ public interface BlobEndpointBuilderFactory {
          * BlobContainerClient#getBlobClient(String).
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -1645,7 +1632,7 @@ public interface BlobEndpointBuilderFactory {
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -1660,8 +1647,8 @@ public interface BlobEndpointBuilderFactory {
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1677,7 +1664,7 @@ public interface BlobEndpointBuilderFactory {
          * of the sequence number must be between 0 and 263 - 1.The default
          * value is 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: 0
          * Group: producer
@@ -1694,8 +1681,7 @@ public interface BlobEndpointBuilderFactory {
          * of the sequence number must be between 0 and 263 - 1.The default
          * value is 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: 0
          * Group: producer
@@ -1711,8 +1697,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies which type of blocks to return.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.blob.models.BlockListType&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.models.BlockListType</code> type.
          * 
          * Default: COMMITTED
          * Group: producer
@@ -1728,8 +1713,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies which type of blocks to return.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.blob.models.BlockListType&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.models.BlockListType</code> type.
          * 
          * Default: COMMITTED
          * Group: producer
@@ -1746,8 +1730,7 @@ public interface BlobEndpointBuilderFactory {
          * context that is passed through the Http pipeline during the service
          * call.
          * 
-         * The option is a: &lt;code&gt;com.azure.core.util.Context&lt;/code&gt;
-         * type.
+         * The option is a: <code>com.azure.core.util.Context</code> type.
          * 
          * Group: producer
          * 
@@ -1764,7 +1747,7 @@ public interface BlobEndpointBuilderFactory {
          * call.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.util.Context&lt;/code&gt; type.
+         * <code>com.azure.core.util.Context</code> type.
          * 
          * Group: producer
          * 
@@ -1782,8 +1765,7 @@ public interface BlobEndpointBuilderFactory {
          * belonging to this hour can be missing; to ensure all events from the
          * hour are returned, round the end time up by an hour.
          * 
-         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.time.OffsetDateTime</code> type.
          * 
          * Group: producer
          * 
@@ -1802,7 +1784,7 @@ public interface BlobEndpointBuilderFactory {
          * hour are returned, round the end time up by an hour.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt; type.
+         * <code>java.time.OffsetDateTime</code> type.
          * 
          * Group: producer
          * 
@@ -1820,8 +1802,7 @@ public interface BlobEndpointBuilderFactory {
          * events belonging to this hour can be missing; to ensure all events
          * from the hour are returned, round the start time down by an hour.
          * 
-         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.time.OffsetDateTime</code> type.
          * 
          * Group: producer
          * 
@@ -1840,7 +1821,7 @@ public interface BlobEndpointBuilderFactory {
          * from the hour are returned, round the start time down by an hour.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt; type.
+         * <code>java.time.OffsetDateTime</code> type.
          * 
          * Group: producer
          * 
@@ -1854,7 +1835,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Close the stream after write or keep it open, default is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1869,8 +1850,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Close the stream after write or keep it open, default is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1886,7 +1866,7 @@ public interface BlobEndpointBuilderFactory {
          * When is set to true, the staged blocks will not be committed
          * directly.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1902,8 +1882,7 @@ public interface BlobEndpointBuilderFactory {
          * When is set to true, the staged blocks will not be committed
          * directly.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1919,7 +1898,7 @@ public interface BlobEndpointBuilderFactory {
          * When is set to true, the append blocks will be created when
          * committing append blocks.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1935,8 +1914,7 @@ public interface BlobEndpointBuilderFactory {
          * When is set to true, the append blocks will be created when
          * committing append blocks.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1952,7 +1930,7 @@ public interface BlobEndpointBuilderFactory {
          * When is set to true, the page blob will be created when uploading
          * page blob.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1968,8 +1946,7 @@ public interface BlobEndpointBuilderFactory {
          * When is set to true, the page blob will be created when uploading
          * page blob.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1984,7 +1961,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Override the default expiration (millis) of URL download link.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -1998,8 +1975,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Override the default expiration (millis) of URL download link.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -2015,7 +1991,7 @@ public interface BlobEndpointBuilderFactory {
          * producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
          * 
          * Default: listBlobContainers
          * Group: producer
@@ -2032,7 +2008,7 @@ public interface BlobEndpointBuilderFactory {
          * producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
          * 
          * Default: listBlobContainers
          * Group: producer
@@ -2048,7 +2024,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies the maximum size for the page blob, up to 8 TB. The page
          * blob size must be aligned to a 512-byte boundary.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: 512
          * Group: producer
@@ -2064,8 +2040,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies the maximum size for the page blob, up to 8 TB. The page
          * blob size must be aligned to a 512-byte boundary.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: 512
          * Group: producer
@@ -2081,7 +2056,7 @@ public interface BlobEndpointBuilderFactory {
          * Access key for the associated azure account name to be used for
          * authentication with azure blob services.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2097,7 +2072,7 @@ public interface BlobEndpointBuilderFactory {
          * have an accessKey for the source blob we want to copy Passing an
          * accessKey as header, it's unsafe so we could set as key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2129,7 +2104,7 @@ public interface BlobEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2152,8 +2127,7 @@ public interface BlobEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2182,7 +2156,7 @@ public interface BlobEndpointBuilderFactory {
          * The blob name, to consume specific blob from a container. However, on
          * producer it is only required for the operations on the blob level.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2197,7 +2171,7 @@ public interface BlobEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: common
@@ -2213,7 +2187,7 @@ public interface BlobEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: common
@@ -2237,8 +2211,7 @@ public interface BlobEndpointBuilderFactory {
          * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -2261,8 +2234,7 @@ public interface BlobEndpointBuilderFactory {
          * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -2278,7 +2250,8 @@ public interface BlobEndpointBuilderFactory {
          * blob type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
          * 
          * Default: blockblob
          * Group: common
@@ -2295,7 +2268,8 @@ public interface BlobEndpointBuilderFactory {
          * blob type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
          * 
          * Default: blockblob
          * Group: common
@@ -2310,7 +2284,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2325,8 +2299,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2343,7 +2316,8 @@ public interface BlobEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2359,7 +2333,8 @@ public interface BlobEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2374,7 +2349,7 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.CredentialType</code> type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -2390,7 +2365,7 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.blob.CredentialType</code> type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -2406,7 +2381,7 @@ public interface BlobEndpointBuilderFactory {
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2421,8 +2396,7 @@ public interface BlobEndpointBuilderFactory {
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2437,7 +2411,7 @@ public interface BlobEndpointBuilderFactory {
          * The file directory where the downloaded blobs will be saved to, this
          * can be used in both, producer and consumer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2454,7 +2428,7 @@ public interface BlobEndpointBuilderFactory {
          * maxResultsPerPage or specifies a value greater than 5,000, the server
          * will return up to 5,000 items.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -2471,8 +2445,8 @@ public interface BlobEndpointBuilderFactory {
          * maxResultsPerPage or specifies a value greater than 5,000, the server
          * will return up to 5,000 items.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2487,7 +2461,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -2503,7 +2477,7 @@ public interface BlobEndpointBuilderFactory {
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -2519,7 +2493,7 @@ public interface BlobEndpointBuilderFactory {
          * Filters the results to return only blobs whose names begin with the
          * specified prefix. May be null to return all blobs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2536,7 +2510,7 @@ public interface BlobEndpointBuilderFactory {
          * prefix and regex are set, regex takes the priority and prefix is
          * ignored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2551,7 +2525,7 @@ public interface BlobEndpointBuilderFactory {
          * In case of usage of Shared Access Signature we'll need to set a SAS
          * Token.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2574,8 +2548,7 @@ public interface BlobEndpointBuilderFactory {
          * BlobContainerClient#getBlobClient(String).
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -2598,8 +2571,7 @@ public interface BlobEndpointBuilderFactory {
          * BlobContainerClient#getBlobClient(String).
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
-         * type.
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
          * 
          * Group: common
          * 
@@ -2614,7 +2586,7 @@ public interface BlobEndpointBuilderFactory {
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -2629,8 +2601,8 @@ public interface BlobEndpointBuilderFactory {
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2645,7 +2617,7 @@ public interface BlobEndpointBuilderFactory {
          * Access key for the associated azure account name to be used for
          * authentication with azure blob services.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2661,7 +2633,7 @@ public interface BlobEndpointBuilderFactory {
          * have an accessKey for the source blob we want to copy Passing an
          * accessKey as header, it's unsafe so we could set as key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 

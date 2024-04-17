@@ -47,7 +47,7 @@ public interface PulsarEndpointBuilderFactory {
          * The Authentication FQCN to be used while creating the client from
          * URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -62,7 +62,7 @@ public interface PulsarEndpointBuilderFactory {
          * The Authentication Parameters to be used while creating the client
          * from URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -76,7 +76,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * The Pulsar Service URL to point while creating the client from URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -91,7 +91,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group the consumer acknowledgments for the specified time in
          * milliseconds - defaults to 100.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 100
          * Group: consumer
@@ -107,7 +107,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group the consumer acknowledgments for the specified time in
          * milliseconds - defaults to 100.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 100
          * Group: consumer
@@ -123,7 +123,7 @@ public interface PulsarEndpointBuilderFactory {
          * Timeout for unacknowledged messages in milliseconds - defaults to
          * 10000.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: consumer
@@ -139,7 +139,7 @@ public interface PulsarEndpointBuilderFactory {
          * Timeout for unacknowledged messages in milliseconds - defaults to
          * 10000.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: consumer
@@ -155,7 +155,7 @@ public interface PulsarEndpointBuilderFactory {
          * RedeliveryBackoff to use for ack timeout redelivery backoff.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.pulsar.client.api.RedeliveryBackoff&lt;/code&gt; type.
+         * <code>org.apache.pulsar.client.api.RedeliveryBackoff</code> type.
          * 
          * Group: consumer
          * 
@@ -170,7 +170,7 @@ public interface PulsarEndpointBuilderFactory {
          * RedeliveryBackoff to use for ack timeout redelivery backoff.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.pulsar.client.api.RedeliveryBackoff&lt;/code&gt; type.
+         * <code>org.apache.pulsar.client.api.RedeliveryBackoff</code> type.
          * 
          * Group: consumer
          * 
@@ -189,7 +189,7 @@ public interface PulsarEndpointBuilderFactory {
          * org.apache.camel.Exchange. Messages can then be acknowledged using
          * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -209,8 +209,7 @@ public interface PulsarEndpointBuilderFactory {
          * org.apache.camel.Exchange. Messages can then be acknowledged using
          * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -225,7 +224,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Name of the consumer when subscription is EXCLUSIVE.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: sole-consumer
          * Group: consumer
@@ -241,7 +240,7 @@ public interface PulsarEndpointBuilderFactory {
          * Prefix to add to consumer names when a SHARED or FAILOVER
          * subscription is used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: cons
          * Group: consumer
@@ -256,7 +255,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Size of the consumer queue - defaults to 10.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -271,7 +270,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Size of the consumer queue - defaults to 10.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -288,7 +287,7 @@ public interface PulsarEndpointBuilderFactory {
          * times will be sent. Note: if not set, default topic name will be
          * topicName-subscriptionName-DLQ.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -303,7 +302,7 @@ public interface PulsarEndpointBuilderFactory {
          * To enable retry letter topic mode. The default retry letter topic
          * uses this format: topicname-subscriptionname-RETRY.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -319,8 +318,7 @@ public interface PulsarEndpointBuilderFactory {
          * To enable retry letter topic mode. The default retry letter topic
          * uses this format: topicname-subscriptionname-RETRY.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -335,7 +333,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Policy to use by consumer when using key-shared subscription type.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -351,7 +349,7 @@ public interface PulsarEndpointBuilderFactory {
          * being sent to the dead letter queue. If this value is not set, no
          * Dead Letter Policy will be created.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer
          * 
@@ -367,8 +365,8 @@ public interface PulsarEndpointBuilderFactory {
          * being sent to the dead letter queue. If this value is not set, no
          * Dead Letter Policy will be created.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -383,7 +381,7 @@ public interface PulsarEndpointBuilderFactory {
          * Whether to use the messageListener interface, or to receive messages
          * using a separate thread pool.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -399,8 +397,7 @@ public interface PulsarEndpointBuilderFactory {
          * Whether to use the messageListener interface, or to receive messages
          * using a separate thread pool.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -416,7 +413,7 @@ public interface PulsarEndpointBuilderFactory {
          * RedeliveryBackoff to use for negative ack redelivery backoff.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.pulsar.client.api.RedeliveryBackoff&lt;/code&gt; type.
+         * <code>org.apache.pulsar.client.api.RedeliveryBackoff</code> type.
          * 
          * Group: consumer
          * 
@@ -431,7 +428,7 @@ public interface PulsarEndpointBuilderFactory {
          * RedeliveryBackoff to use for negative ack redelivery backoff.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.pulsar.client.api.RedeliveryBackoff&lt;/code&gt; type.
+         * <code>org.apache.pulsar.client.api.RedeliveryBackoff</code> type.
          * 
          * Group: consumer
          * 
@@ -445,7 +442,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Set the negative acknowledgement delay.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000000
          * Group: consumer
@@ -460,7 +457,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Set the negative acknowledgement delay.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000000
          * Group: consumer
@@ -475,7 +472,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Number of consumers - defaults to 1.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -490,7 +487,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Number of consumers - defaults to 1.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -506,7 +503,7 @@ public interface PulsarEndpointBuilderFactory {
          * Number of threads to receive and handle messages when using a
          * separate thread pool.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -522,7 +519,7 @@ public interface PulsarEndpointBuilderFactory {
          * Number of threads to receive and handle messages when using a
          * separate thread pool.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -537,7 +534,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Enable compacted topic reading.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -552,8 +549,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Enable compacted topic reading.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -569,7 +565,7 @@ public interface PulsarEndpointBuilderFactory {
          * Name of the topic to use in retry mode. Note: if not set, default
          * topic name will be topicName-subscriptionName-RETRY.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -585,7 +581,7 @@ public interface PulsarEndpointBuilderFactory {
          * subscription. Default is latest message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
          * 
          * Default: LATEST
          * Group: consumer
@@ -602,7 +598,7 @@ public interface PulsarEndpointBuilderFactory {
          * subscription. Default is latest message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
          * 
          * Default: LATEST
          * Group: consumer
@@ -617,7 +613,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Name of the subscription to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: subs
          * Group: consumer
@@ -635,7 +631,7 @@ public interface PulsarEndpointBuilderFactory {
          * subscriptions.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.pulsar.client.api.RegexSubscriptionMode&lt;/code&gt; type.
+         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
          * 
          * Default: PersistentOnly
          * Group: consumer
@@ -653,7 +649,7 @@ public interface PulsarEndpointBuilderFactory {
          * subscriptions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.pulsar.client.api.RegexSubscriptionMode&lt;/code&gt; type.
+         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
          * 
          * Default: PersistentOnly
          * Group: consumer
@@ -670,7 +666,7 @@ public interface PulsarEndpointBuilderFactory {
          * to EXCLUSIVE.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
          * 
          * Default: EXCLUSIVE
          * Group: consumer
@@ -687,7 +683,7 @@ public interface PulsarEndpointBuilderFactory {
          * to EXCLUSIVE.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
          * 
          * Default: EXCLUSIVE
          * Group: consumer
@@ -703,7 +699,7 @@ public interface PulsarEndpointBuilderFactory {
          * Whether the topic is a pattern (regular expression) that allows the
          * consumer to subscribe to all matching topics in the namespace.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -719,8 +715,7 @@ public interface PulsarEndpointBuilderFactory {
          * Whether the topic is a pattern (regular expression) that allows the
          * consumer to subscribe to all matching topics in the namespace.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -757,7 +752,7 @@ public interface PulsarEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -783,8 +778,7 @@ public interface PulsarEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -802,8 +796,8 @@ public interface PulsarEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -821,7 +815,7 @@ public interface PulsarEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -835,8 +829,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -851,7 +844,7 @@ public interface PulsarEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -878,7 +871,7 @@ public interface PulsarEndpointBuilderFactory {
          * The Authentication FQCN to be used while creating the client from
          * URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -893,7 +886,7 @@ public interface PulsarEndpointBuilderFactory {
          * The Authentication Parameters to be used while creating the client
          * from URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -907,7 +900,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * The Pulsar Service URL to point while creating the client from URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -922,8 +915,7 @@ public interface PulsarEndpointBuilderFactory {
          * Control batching method used by the producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.pulsar.client.api.BatcherBuilder&lt;/code&gt;
-         * type.
+         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
          * 
          * Default: DEFAULT
          * Group: producer
@@ -939,8 +931,7 @@ public interface PulsarEndpointBuilderFactory {
          * Control batching method used by the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.pulsar.client.api.BatcherBuilder&lt;/code&gt;
-         * type.
+         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
          * 
          * Default: DEFAULT
          * Group: producer
@@ -956,7 +947,7 @@ public interface PulsarEndpointBuilderFactory {
          * Control whether automatic batching of messages is enabled for the
          * producer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -972,8 +963,7 @@ public interface PulsarEndpointBuilderFactory {
          * Control whether automatic batching of messages is enabled for the
          * producer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -988,7 +978,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * The maximum size to batch messages.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -1003,7 +993,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * The maximum size to batch messages.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -1019,7 +1009,7 @@ public interface PulsarEndpointBuilderFactory {
          * The maximum time period within which the messages sent will be
          * batched if batchingEnabled is true.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -1035,7 +1025,7 @@ public interface PulsarEndpointBuilderFactory {
          * The maximum time period within which the messages sent will be
          * batched if batchingEnabled is true.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -1051,7 +1041,7 @@ public interface PulsarEndpointBuilderFactory {
          * Whether to block the producing thread if pending messages queue is
          * full or to throw a ProducerQueueIsFullError.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1067,8 +1057,7 @@ public interface PulsarEndpointBuilderFactory {
          * Whether to block the producing thread if pending messages queue is
          * full or to throw a ProducerQueueIsFullError.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1083,7 +1072,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Control whether chunking of messages is enabled for the producer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1098,8 +1087,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Control whether chunking of messages is enabled for the producer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1115,8 +1103,7 @@ public interface PulsarEndpointBuilderFactory {
          * Compression type to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.pulsar.client.api.CompressionType&lt;/code&gt;
-         * type.
+         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
          * 
          * Default: NONE
          * Group: producer
@@ -1132,8 +1119,7 @@ public interface PulsarEndpointBuilderFactory {
          * Compression type to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.pulsar.client.api.CompressionType&lt;/code&gt;
-         * type.
+         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
          * 
          * Default: NONE
          * Group: producer
@@ -1149,7 +1135,7 @@ public interface PulsarEndpointBuilderFactory {
          * Hashing function to use when choosing the partition to use for a
          * particular message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: JavaStringHash
          * Group: producer
@@ -1165,7 +1151,7 @@ public interface PulsarEndpointBuilderFactory {
          * The first message published will have a sequence Id of
          * initialSequenceId 1.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -1181,7 +1167,7 @@ public interface PulsarEndpointBuilderFactory {
          * The first message published will have a sequence Id of
          * initialSequenceId 1.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -1197,7 +1183,7 @@ public interface PulsarEndpointBuilderFactory {
          * Size of the pending massages queue. When the queue is full, by
          * default, any further sends will fail unless blockIfQueueFull=true.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -1213,7 +1199,7 @@ public interface PulsarEndpointBuilderFactory {
          * Size of the pending massages queue. When the queue is full, by
          * default, any further sends will fail unless blockIfQueueFull=true.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -1231,7 +1217,7 @@ public interface PulsarEndpointBuilderFactory {
          * maxPendingMessages) exceeds this value. Partitioned topics have a
          * pending message queue for each partition.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 50000
          * Group: producer
@@ -1250,7 +1236,7 @@ public interface PulsarEndpointBuilderFactory {
          * maxPendingMessages) exceeds this value. Partitioned topics have a
          * pending message queue for each partition.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 50000
          * Group: producer
@@ -1267,8 +1253,7 @@ public interface PulsarEndpointBuilderFactory {
          * Custom Message Router to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.pulsar.client.api.MessageRouter&lt;/code&gt;
-         * type.
+         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
          * 
          * Group: producer
          * 
@@ -1283,8 +1268,7 @@ public interface PulsarEndpointBuilderFactory {
          * Custom Message Router to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.pulsar.client.api.MessageRouter&lt;/code&gt;
-         * type.
+         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
          * 
          * Group: producer
          * 
@@ -1299,7 +1283,7 @@ public interface PulsarEndpointBuilderFactory {
          * Message Routing Mode to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.pulsar.client.api.MessageRoutingMode&lt;/code&gt; type.
+         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
          * 
          * Default: RoundRobinPartition
          * Group: producer
@@ -1315,7 +1299,7 @@ public interface PulsarEndpointBuilderFactory {
          * Message Routing Mode to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.pulsar.client.api.MessageRoutingMode&lt;/code&gt; type.
+         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
          * 
          * Default: RoundRobinPartition
          * Group: producer
@@ -1331,7 +1315,7 @@ public interface PulsarEndpointBuilderFactory {
          * Name of the producer. If unset, lets Pulsar select a unique
          * identifier.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1345,7 +1329,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Send timeout in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -1360,7 +1344,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Send timeout in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -1393,7 +1377,7 @@ public interface PulsarEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1416,8 +1400,7 @@ public interface PulsarEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1446,7 +1429,7 @@ public interface PulsarEndpointBuilderFactory {
          * The Authentication FQCN to be used while creating the client from
          * URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1461,7 +1444,7 @@ public interface PulsarEndpointBuilderFactory {
          * The Authentication Parameters to be used while creating the client
          * from URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1475,7 +1458,7 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * The Pulsar Service URL to point while creating the client from URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 

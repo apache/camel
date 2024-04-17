@@ -47,7 +47,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * Hashicorp Vault instance host to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -62,7 +62,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * Operation to be performed.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation</code> type.
          * 
          * Group: producer
          * 
@@ -77,7 +77,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * Operation to be performed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation</code> type.
          * 
          * Group: producer
          * 
@@ -91,7 +91,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * Hashicorp Vault instance port to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 8200
          * Group: producer
@@ -106,7 +106,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * Hashicorp Vault instance scheme to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https
          * Group: producer
@@ -121,7 +121,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * Hashicorp Vault instance secret Path to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -136,8 +136,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * Instance of Vault template.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.vault.core.VaultTemplate&lt;/code&gt;
-         * type.
+         * <code>org.springframework.vault.core.VaultTemplate</code> type.
          * 
          * Group: producer
          * 
@@ -152,8 +151,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * Instance of Vault template.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.vault.core.VaultTemplate&lt;/code&gt;
-         * type.
+         * <code>org.springframework.vault.core.VaultTemplate</code> type.
          * 
          * Group: producer
          * 
@@ -167,7 +165,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * Token to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -201,7 +199,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -224,8 +222,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

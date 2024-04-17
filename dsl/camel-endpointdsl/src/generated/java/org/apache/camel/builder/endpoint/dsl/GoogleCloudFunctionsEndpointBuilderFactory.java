@@ -48,7 +48,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * Service account key to authenticate an application as a service
          * account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -62,7 +62,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
         /**
          * The Google Cloud Location (Region) where the Function is located.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -77,7 +77,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * The operation to perform on the producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations</code> type.
          * 
          * Group: producer
          * 
@@ -92,7 +92,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * The operation to perform on the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations</code> type.
          * 
          * Group: producer
          * 
@@ -106,7 +106,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
         /**
          * Specifies if the request is a pojo request.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -121,8 +121,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
         /**
          * Specifies if the request is a pojo request.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -137,7 +136,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
         /**
          * The Google Cloud Project name where the Function is located.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -171,7 +170,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -194,8 +193,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -211,7 +209,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * The client to use during service invocation.
          * 
          * The option is a:
-         * &lt;code&gt;com.google.cloud.functions.v1.CloudFunctionsServiceClient&lt;/code&gt; type.
+         * <code>com.google.cloud.functions.v1.CloudFunctionsServiceClient</code> type.
          * 
          * Group: advanced
          * 
@@ -226,7 +224,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * The client to use during service invocation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.google.cloud.functions.v1.CloudFunctionsServiceClient&lt;/code&gt; type.
+         * <code>com.google.cloud.functions.v1.CloudFunctionsServiceClient</code> type.
          * 
          * Group: advanced
          * 

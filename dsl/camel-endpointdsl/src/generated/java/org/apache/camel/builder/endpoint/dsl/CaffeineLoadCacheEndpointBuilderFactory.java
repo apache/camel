@@ -48,7 +48,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * To configure the default cache action. If an action is set in the
          * message header, then the operation from the header takes precedence.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -63,7 +63,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Automatic create the Caffeine cache if none has been configured or
          * exists in the registry.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -79,8 +79,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Automatic create the Caffeine cache if none has been configured or
          * exists in the registry.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -96,7 +95,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set the eviction Type for this cache.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.caffeine.EvictionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
          * 
          * Default: SIZE_BASED
          * Group: producer
@@ -112,7 +111,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set the eviction Type for this cache.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.caffeine.EvictionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
          * 
          * Default: SIZE_BASED
          * Group: producer
@@ -131,7 +130,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * time is reset by all cache read and write operations. The unit is in
          * seconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300
          * Group: producer
@@ -150,7 +149,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * time is reset by all cache read and write operations. The unit is in
          * seconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300
          * Group: producer
@@ -167,7 +166,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * cache once a fixed duration has elapsed after the entry's creation,
          * or the most recent replacement of its value. The unit is in seconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300
          * Group: producer
@@ -184,7 +183,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * cache once a fixed duration has elapsed after the entry's creation,
          * or the most recent replacement of its value. The unit is in seconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300
          * Group: producer
@@ -202,7 +201,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * need for expensive resizing operations later, but setting this value
          * unnecessarily high wastes memory.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -219,8 +218,8 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * need for expensive resizing operations later, but setting this value
          * unnecessarily high wastes memory.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -235,7 +234,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -259,7 +258,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * configured executor, tests may instead prefer to configure the cache
          * to execute tasks directly on the same thread.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -283,8 +282,8 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * configured executor, tests may instead prefer to configure the cache
          * to execute tasks directly on the same thread.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -318,7 +317,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -341,8 +340,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -358,7 +356,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * To configure a CacheLoader in case of a LoadCache use.
          * 
          * The option is a:
-         * &lt;code&gt;com.github.benmanes.caffeine.cache.CacheLoader&lt;/code&gt; type.
+         * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
          * 
          * Group: advanced
          * 
@@ -373,7 +371,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * To configure a CacheLoader in case of a LoadCache use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.github.benmanes.caffeine.cache.CacheLoader&lt;/code&gt; type.
+         * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
          * 
          * Group: advanced
          * 
@@ -388,7 +386,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set a specific removal Listener for the cache.
          * 
          * The option is a:
-         * &lt;code&gt;com.github.benmanes.caffeine.cache.RemovalListener&lt;/code&gt; type.
+         * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
          * 
          * Group: advanced
          * 
@@ -403,7 +401,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set a specific removal Listener for the cache.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.github.benmanes.caffeine.cache.RemovalListener&lt;/code&gt; type.
+         * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
          * 
          * Group: advanced
          * 
@@ -418,7 +416,8 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set a specific Stats Counter for the cache stats.
          * 
          * The option is a:
-         * &lt;code&gt;com.github.benmanes.caffeine.cache.stats.StatsCounter&lt;/code&gt; type.
+         * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -433,7 +432,8 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set a specific Stats Counter for the cache stats.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.github.benmanes.caffeine.cache.stats.StatsCounter&lt;/code&gt; type.
+         * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -447,7 +447,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * To enable stats on the cache.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -462,8 +462,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * To enable stats on the cache.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -478,7 +477,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 

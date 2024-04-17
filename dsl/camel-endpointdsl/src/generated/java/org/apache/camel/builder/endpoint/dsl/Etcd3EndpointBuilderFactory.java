@@ -46,7 +46,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd server endpoints using the IPNameResolver.
          * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String[]</code> type.
          * 
          * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
          * Group: common
@@ -61,8 +61,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd server endpoints using the IPNameResolver.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.String[]</code>
+         * type.
          * 
          * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
          * Group: common
@@ -77,7 +77,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the charset to use for the keys.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: UTF-8
          * Group: common
@@ -93,7 +93,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the namespace of keys used. / will be treated as no
          * namespace.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -108,7 +108,7 @@ public interface Etcd3EndpointBuilderFactory {
          * To apply an action on all the key-value pairs whose key that starts
          * with the target path.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -124,8 +124,7 @@ public interface Etcd3EndpointBuilderFactory {
          * To apply an action on all the key-value pairs whose key that starts
          * with the target path.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -140,7 +139,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * The path to look for service discovery.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: /services/
          * Group: cloud
@@ -155,7 +154,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd auth password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -169,7 +168,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd auth user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -205,7 +204,7 @@ public interface Etcd3EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -231,8 +230,7 @@ public interface Etcd3EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -250,8 +248,8 @@ public interface Etcd3EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -269,7 +267,7 @@ public interface Etcd3EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -283,8 +281,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -299,7 +296,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -313,7 +310,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * The index to watch from.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: consumer (advanced)
@@ -328,7 +325,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * The index to watch from.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: consumer (advanced)
@@ -343,8 +340,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to auth request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the authHeaders(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -362,8 +359,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to auth request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the authHeaders(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -380,7 +377,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the authority used to authenticate connections to servers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -394,7 +391,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the connection timeout.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: advanced
          * 
@@ -408,8 +405,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the connection timeout.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -423,8 +420,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to http request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the headers(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -442,8 +439,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to http request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the headers(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -461,7 +458,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the interval for gRPC keepalives. The current minimum
          * allowed by gRPC is 10 seconds.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 30 seconds
          * Group: advanced
@@ -477,8 +474,8 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the interval for gRPC keepalives. The current minimum
          * allowed by gRPC is 10 seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 30 seconds
          * Group: advanced
@@ -493,7 +490,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the timeout for gRPC keepalives.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 10 seconds
          * Group: advanced
@@ -508,8 +505,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the timeout for gRPC keepalives.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 10 seconds
          * Group: advanced
@@ -524,7 +521,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd load balancer policy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -538,7 +535,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the maximum message size allowed for a single gRPC frame.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -552,8 +549,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the maximum message size allowed for a single gRPC frame.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -567,7 +564,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the delay between retries in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: advanced
@@ -582,7 +579,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the delay between retries in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: advanced
@@ -597,7 +594,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the max backing off delay between retries in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
@@ -612,7 +609,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the max backing off delay between retries in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
@@ -627,7 +624,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the retries max duration.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: advanced
          * 
@@ -641,8 +638,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the retries max duration.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -656,8 +653,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure SSL/TLS context to use instead of the system default.
          * 
-         * The option is a:
-         * &lt;code&gt;io.netty.handler.ssl.SslContext&lt;/code&gt; type.
+         * The option is a: <code>io.netty.handler.ssl.SslContext</code> type.
          * 
          * Group: security
          * 
@@ -672,7 +668,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure SSL/TLS context to use instead of the system default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.netty.handler.ssl.SslContext&lt;/code&gt; type.
+         * <code>io.netty.handler.ssl.SslContext</code> type.
          * 
          * Group: security
          * 
@@ -698,7 +694,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd server endpoints using the IPNameResolver.
          * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String[]</code> type.
          * 
          * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
          * Group: common
@@ -713,8 +709,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd server endpoints using the IPNameResolver.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.String[]</code>
+         * type.
          * 
          * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
          * Group: common
@@ -729,7 +725,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the charset to use for the keys.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: UTF-8
          * Group: common
@@ -745,7 +741,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the namespace of keys used. / will be treated as no
          * namespace.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -760,7 +756,7 @@ public interface Etcd3EndpointBuilderFactory {
          * To apply an action on all the key-value pairs whose key that starts
          * with the target path.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -776,8 +772,7 @@ public interface Etcd3EndpointBuilderFactory {
          * To apply an action on all the key-value pairs whose key that starts
          * with the target path.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -792,7 +787,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the charset to use for the values.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: UTF-8
          * Group: producer
@@ -807,7 +802,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * The path to look for service discovery.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: /services/
          * Group: cloud
@@ -822,7 +817,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd auth password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -836,7 +831,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd auth user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -868,7 +863,7 @@ public interface Etcd3EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -891,8 +886,7 @@ public interface Etcd3EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -907,8 +901,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to auth request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the authHeaders(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -926,8 +920,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to auth request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the authHeaders(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -944,7 +938,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the authority used to authenticate connections to servers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -958,7 +952,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the connection timeout.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: advanced
          * 
@@ -972,8 +966,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the connection timeout.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -987,8 +981,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to http request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the headers(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1006,8 +1000,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to http request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the headers(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1025,7 +1019,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the interval for gRPC keepalives. The current minimum
          * allowed by gRPC is 10 seconds.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 30 seconds
          * Group: advanced
@@ -1041,8 +1035,8 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the interval for gRPC keepalives. The current minimum
          * allowed by gRPC is 10 seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 30 seconds
          * Group: advanced
@@ -1057,7 +1051,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the timeout for gRPC keepalives.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 10 seconds
          * Group: advanced
@@ -1072,8 +1066,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the timeout for gRPC keepalives.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 10 seconds
          * Group: advanced
@@ -1088,7 +1082,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd load balancer policy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1102,7 +1096,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the maximum message size allowed for a single gRPC frame.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -1116,8 +1110,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the maximum message size allowed for a single gRPC frame.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1131,7 +1125,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the delay between retries in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: advanced
@@ -1146,7 +1140,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the delay between retries in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: advanced
@@ -1161,7 +1155,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the max backing off delay between retries in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
@@ -1176,7 +1170,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the max backing off delay between retries in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
@@ -1191,7 +1185,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the retries max duration.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: advanced
          * 
@@ -1205,8 +1199,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the retries max duration.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1220,8 +1214,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure SSL/TLS context to use instead of the system default.
          * 
-         * The option is a:
-         * &lt;code&gt;io.netty.handler.ssl.SslContext&lt;/code&gt; type.
+         * The option is a: <code>io.netty.handler.ssl.SslContext</code> type.
          * 
          * Group: security
          * 
@@ -1236,7 +1229,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure SSL/TLS context to use instead of the system default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.netty.handler.ssl.SslContext&lt;/code&gt; type.
+         * <code>io.netty.handler.ssl.SslContext</code> type.
          * 
          * Group: security
          * 
@@ -1263,7 +1256,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd server endpoints using the IPNameResolver.
          * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String[]</code> type.
          * 
          * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
          * Group: common
@@ -1278,8 +1271,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd server endpoints using the IPNameResolver.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.String[]</code>
+         * type.
          * 
          * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
          * Group: common
@@ -1294,7 +1287,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the charset to use for the keys.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: UTF-8
          * Group: common
@@ -1310,7 +1303,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the namespace of keys used. / will be treated as no
          * namespace.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1325,7 +1318,7 @@ public interface Etcd3EndpointBuilderFactory {
          * To apply an action on all the key-value pairs whose key that starts
          * with the target path.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1341,8 +1334,7 @@ public interface Etcd3EndpointBuilderFactory {
          * To apply an action on all the key-value pairs whose key that starts
          * with the target path.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1357,7 +1349,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * The path to look for service discovery.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: /services/
          * Group: cloud
@@ -1372,7 +1364,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd auth password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1386,7 +1378,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd auth user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1413,8 +1405,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to auth request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the authHeaders(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1432,8 +1424,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to auth request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the authHeaders(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1450,7 +1442,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the authority used to authenticate connections to servers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1464,7 +1456,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the connection timeout.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: advanced
          * 
@@ -1478,8 +1470,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the connection timeout.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1493,8 +1485,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to http request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the headers(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1512,8 +1504,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the headers to be added to http request headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the headers(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1531,7 +1523,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the interval for gRPC keepalives. The current minimum
          * allowed by gRPC is 10 seconds.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 30 seconds
          * Group: advanced
@@ -1547,8 +1539,8 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure the interval for gRPC keepalives. The current minimum
          * allowed by gRPC is 10 seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 30 seconds
          * Group: advanced
@@ -1563,7 +1555,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the timeout for gRPC keepalives.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 10 seconds
          * Group: advanced
@@ -1578,8 +1570,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the timeout for gRPC keepalives.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 10 seconds
          * Group: advanced
@@ -1594,7 +1586,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure etcd load balancer policy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1608,7 +1600,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the maximum message size allowed for a single gRPC frame.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -1622,8 +1614,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the maximum message size allowed for a single gRPC frame.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1637,7 +1629,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the delay between retries in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: advanced
@@ -1652,7 +1644,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the delay between retries in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: advanced
@@ -1667,7 +1659,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the max backing off delay between retries in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
@@ -1682,7 +1674,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the max backing off delay between retries in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
@@ -1697,7 +1689,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the retries max duration.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: advanced
          * 
@@ -1711,8 +1703,8 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure the retries max duration.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1726,8 +1718,7 @@ public interface Etcd3EndpointBuilderFactory {
         /**
          * Configure SSL/TLS context to use instead of the system default.
          * 
-         * The option is a:
-         * &lt;code&gt;io.netty.handler.ssl.SslContext&lt;/code&gt; type.
+         * The option is a: <code>io.netty.handler.ssl.SslContext</code> type.
          * 
          * Group: security
          * 
@@ -1742,7 +1733,7 @@ public interface Etcd3EndpointBuilderFactory {
          * Configure SSL/TLS context to use instead of the system default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.netty.handler.ssl.SslContext&lt;/code&gt; type.
+         * <code>io.netty.handler.ssl.SslContext</code> type.
          * 
          * Group: security
          * 

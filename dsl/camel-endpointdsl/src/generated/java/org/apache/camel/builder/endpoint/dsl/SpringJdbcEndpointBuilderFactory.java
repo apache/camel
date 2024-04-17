@@ -47,7 +47,7 @@ public interface SpringJdbcEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -62,8 +62,7 @@ public interface SpringJdbcEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -79,7 +78,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne or SelectList.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -94,7 +93,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * Determines the output the producer should use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jdbc.JdbcOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
          * 
          * Default: SelectList
          * Group: producer
@@ -110,7 +109,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * Determines the output the producer should use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jdbc.JdbcOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
          * 
          * Default: SelectList
          * Group: producer
@@ -126,8 +125,8 @@ public interface SpringJdbcEndpointBuilderFactory {
          * Optional parameters to the java.sql.Statement. For example to set
          * maxRows, fetchSize etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -146,8 +145,8 @@ public interface SpringJdbcEndpointBuilderFactory {
          * Optional parameters to the java.sql.Statement. For example to set
          * maxRows, fetchSize etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -165,7 +164,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * The default maximum number of rows that can be read by a polling
          * query. The default value is 0.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -180,7 +179,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * The default maximum number of rows that can be read by a polling
          * query. The default value is 0.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -201,7 +200,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * XA transactions you most likely need to set it to false so that the
          * transaction manager is in charge of committing this tx.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -223,8 +222,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * XA transactions you most likely need to set it to false so that the
          * transaction manager is in charge of committing this tx.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -239,7 +237,7 @@ public interface SpringJdbcEndpointBuilderFactory {
         /**
          * Whether transactions are in use.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -254,8 +252,7 @@ public interface SpringJdbcEndpointBuilderFactory {
         /**
          * Whether transactions are in use.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -272,7 +269,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * needed for certain databases such as Oracle where you must read BLOB
          * columns as bytes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -289,8 +286,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * needed for certain databases such as Oracle where you must read BLOB
          * columns as bytes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -308,7 +304,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * placeholders, and use headers with the dynamic values for the query
          * placeholders.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -326,8 +322,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * placeholders, and use headers with the dynamic values for the query
          * placeholders.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -347,7 +342,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * option to work out issues around your JDBC driver if you get problem
          * using this component This option is default true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -367,8 +362,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * option to work out issues around your JDBC driver if you get problem
          * using this component This option is default true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -403,7 +397,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -426,8 +420,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -446,7 +439,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * as custId.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jdbc.BeanRowMapper&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jdbc.BeanRowMapper</code> type.
          * 
          * Group: advanced
          * 
@@ -464,7 +457,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * as custId.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jdbc.BeanRowMapper&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jdbc.BeanRowMapper</code> type.
          * 
          * Group: advanced
          * 
@@ -482,7 +475,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * Spring Transactions.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jdbc.ConnectionStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jdbc.ConnectionStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -500,7 +493,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * Spring Transactions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jdbc.ConnectionStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jdbc.ConnectionStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -517,7 +510,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * control preparation of the query and prepared statement.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -534,7 +527,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * control preparation of the query and prepared statement.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy</code> type.
          * 
          * Group: advanced
          * 

@@ -47,7 +47,7 @@ public interface ClassEndpointBuilderFactory {
         /**
          * Sets the name of the method to invoke on the bean.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -74,8 +74,7 @@ public interface ClassEndpointBuilderFactory {
          * configuration can act as either singleton or prototype scope. so when
          * using prototype then this depends on the delegated registry.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.BeanScope&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.camel.BeanScope</code> type.
          * 
          * Default: Singleton
          * Group: common
@@ -104,7 +103,7 @@ public interface ClassEndpointBuilderFactory {
          * using prototype then this depends on the delegated registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.BeanScope&lt;/code&gt; type.
+         * <code>org.apache.camel.BeanScope</code> type.
          * 
          * Default: Singleton
          * Group: common
@@ -139,7 +138,7 @@ public interface ClassEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -162,8 +161,7 @@ public interface ClassEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -178,8 +176,8 @@ public interface ClassEndpointBuilderFactory {
         /**
          * Used for configuring additional properties on the bean.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -197,8 +195,8 @@ public interface ClassEndpointBuilderFactory {
         /**
          * Used for configuring additional properties on the bean.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).

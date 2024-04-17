@@ -48,7 +48,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Connection timeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -63,7 +63,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Connection timeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -78,7 +78,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * List of host Addresses, multiple hosts can be separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -92,7 +92,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Index Name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -107,7 +107,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * Operation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation</code> type.
          * 
          * Required: true
          * Group: producer
@@ -123,7 +123,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * Operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation</code> type.
          * 
          * Required: true
          * Group: producer
@@ -138,7 +138,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Socket timeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -153,7 +153,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Socket timeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -171,7 +171,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -185,7 +185,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -199,7 +199,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Username.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -233,7 +233,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -256,8 +256,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -272,7 +271,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Enabling Sniffer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -287,8 +286,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Enabling Sniffer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -304,8 +302,8 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * Rest Client of type org.elasticsearch.client.RestClient. This is only
          * for advanced usage.
          * 
-         * The option is a:
-         * &lt;code&gt;org.elasticsearch.client.RestClient&lt;/code&gt; type.
+         * The option is a: <code>org.elasticsearch.client.RestClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -321,7 +319,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * for advanced usage.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.elasticsearch.client.RestClient&lt;/code&gt; type.
+         * <code>org.elasticsearch.client.RestClient</code> type.
          * 
          * Group: advanced
          * 
@@ -335,7 +333,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Sniffer after failure delay (in millis).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60000
          * Group: advanced
@@ -350,7 +348,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Sniffer after failure delay (in millis).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60000
          * Group: advanced
@@ -365,7 +363,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Sniffer interval (in millis).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60000
          * Group: advanced
@@ -380,7 +378,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
         /**
          * Sniffer interval (in millis).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60000
          * Group: advanced

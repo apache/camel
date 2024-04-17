@@ -51,7 +51,7 @@ public interface JpaEndpointBuilderFactory {
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -70,8 +70,7 @@ public interface JpaEndpointBuilderFactory {
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -86,7 +85,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Set the maximum number of results to retrieve on the Query.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: common
@@ -101,7 +100,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Set the maximum number of results to retrieve on the Query.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: common
@@ -116,7 +115,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a named query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -131,7 +130,7 @@ public interface JpaEndpointBuilderFactory {
          * To use a custom native query. You may want to use the option
          * resultClass also when using native queries.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -145,7 +144,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The JPA persistence unit used by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: camel
@@ -161,7 +160,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -179,8 +178,8 @@ public interface JpaEndpointBuilderFactory {
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -199,7 +198,7 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -214,7 +213,7 @@ public interface JpaEndpointBuilderFactory {
          * If true, the entity is deleted after it is consumed; if false, the
          * entity is not deleted.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -230,8 +229,7 @@ public interface JpaEndpointBuilderFactory {
          * If true, the entity is deleted after it is consumed; if false, the
          * entity is not deleted.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -247,7 +245,7 @@ public interface JpaEndpointBuilderFactory {
          * Specifies whether or not to set an exclusive lock on each entity bean
          * while processing the results from polling.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -263,8 +261,7 @@ public interface JpaEndpointBuilderFactory {
          * Specifies whether or not to set an exclusive lock on each entity bean
          * while processing the results from polling.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -281,7 +278,7 @@ public interface JpaEndpointBuilderFactory {
          * done processing the exchange.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -297,7 +294,7 @@ public interface JpaEndpointBuilderFactory {
          * done processing the exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -311,8 +308,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To configure the lock mode on the consumer.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.persistence.LockModeType&lt;/code&gt; type.
+         * The option is a: <code>jakarta.persistence.LockModeType</code> type.
          * 
          * Default: PESSIMISTIC_WRITE
          * Group: consumer
@@ -328,7 +324,7 @@ public interface JpaEndpointBuilderFactory {
          * To configure the lock mode on the consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.persistence.LockModeType&lt;/code&gt; type.
+         * <code>jakarta.persistence.LockModeType</code> type.
          * 
          * Default: PESSIMISTIC_WRITE
          * Group: consumer
@@ -346,7 +342,7 @@ public interface JpaEndpointBuilderFactory {
          * many thousands of messages when starting up the server. Set a value
          * of 0 or negative to disable.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -363,7 +359,7 @@ public interface JpaEndpointBuilderFactory {
          * many thousands of messages when starting up the server. Set a value
          * of 0 or negative to disable.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -379,7 +375,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer has read the entity.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -395,7 +391,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer has read the entity.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jpa.DeleteHandler&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -410,7 +406,7 @@ public interface JpaEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -426,8 +422,7 @@ public interface JpaEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -443,7 +438,7 @@ public interface JpaEndpointBuilderFactory {
          * To configure whether to use NOWAIT on lock and silently skip the
          * entity.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -459,8 +454,7 @@ public interface JpaEndpointBuilderFactory {
          * To configure whether to use NOWAIT on lock and silently skip the
          * entity.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -479,7 +473,7 @@ public interface JpaEndpointBuilderFactory {
          * previously successfully processed messages, and only rollback the
          * last failed message.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -498,8 +492,7 @@ public interface JpaEndpointBuilderFactory {
          * previously successfully processed messages, and only rollback the
          * last failed message.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -515,7 +508,7 @@ public interface JpaEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -530,7 +523,7 @@ public interface JpaEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -545,7 +538,7 @@ public interface JpaEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -560,7 +553,7 @@ public interface JpaEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -579,7 +572,7 @@ public interface JpaEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -598,7 +591,7 @@ public interface JpaEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -612,7 +605,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -627,7 +620,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -643,7 +636,7 @@ public interface JpaEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -659,8 +652,7 @@ public interface JpaEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -675,7 +667,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -690,7 +682,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -707,7 +699,7 @@ public interface JpaEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -724,7 +716,7 @@ public interface JpaEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -740,8 +732,7 @@ public interface JpaEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -758,7 +749,7 @@ public interface JpaEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -776,7 +767,7 @@ public interface JpaEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -793,7 +784,7 @@ public interface JpaEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -808,7 +799,7 @@ public interface JpaEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -824,8 +815,7 @@ public interface JpaEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -841,8 +831,8 @@ public interface JpaEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -861,8 +851,8 @@ public interface JpaEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -879,7 +869,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -894,8 +884,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -910,8 +899,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -927,7 +915,7 @@ public interface JpaEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -943,7 +931,7 @@ public interface JpaEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -959,8 +947,7 @@ public interface JpaEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -997,7 +984,7 @@ public interface JpaEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1023,8 +1010,7 @@ public interface JpaEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1042,8 +1028,8 @@ public interface JpaEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1061,7 +1047,7 @@ public interface JpaEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1075,8 +1061,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1091,7 +1076,7 @@ public interface JpaEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1111,8 +1096,8 @@ public interface JpaEndpointBuilderFactory {
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1136,8 +1121,8 @@ public interface JpaEndpointBuilderFactory {
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1158,7 +1143,7 @@ public interface JpaEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1176,7 +1161,7 @@ public interface JpaEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1190,8 +1175,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -1209,8 +1194,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -1229,7 +1214,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1246,8 +1231,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1278,7 +1262,7 @@ public interface JpaEndpointBuilderFactory {
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1297,8 +1281,7 @@ public interface JpaEndpointBuilderFactory {
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1313,7 +1296,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Set the maximum number of results to retrieve on the Query.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1328,7 +1311,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Set the maximum number of results to retrieve on the Query.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1343,7 +1326,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a named query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1358,7 +1341,7 @@ public interface JpaEndpointBuilderFactory {
          * To use a custom native query. You may want to use the option
          * resultClass also when using native queries.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1372,7 +1355,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The JPA persistence unit used by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: camel
@@ -1388,7 +1371,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1406,8 +1389,8 @@ public interface JpaEndpointBuilderFactory {
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1426,7 +1409,7 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1442,7 +1425,7 @@ public interface JpaEndpointBuilderFactory {
          * message body as key and entityType as the class type. This can be
          * used instead of a query to find a single entity.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1459,8 +1442,7 @@ public interface JpaEndpointBuilderFactory {
          * message body as key and entityType as the class type. This can be
          * used instead of a query to find a single entity.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1475,7 +1457,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Set the position of the first result to retrieve.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -1490,7 +1472,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Set the position of the first result to retrieve.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -1505,7 +1487,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Flushes the EntityManager after the entity bean has been persisted.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1520,8 +1502,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Flushes the EntityManager after the entity bean has been persisted.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1538,7 +1519,7 @@ public interface JpaEndpointBuilderFactory {
          * the body. If the value starts with the prefix property:, put the
          * result into the so named property, otherwise into the header.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1552,7 +1533,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Indicates to use entityManager.remove(entity).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1567,8 +1548,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Indicates to use entityManager.remove(entity).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1584,7 +1564,7 @@ public interface JpaEndpointBuilderFactory {
          * If enabled, a query or a find which would return no results or more
          * than one result, will throw an exception instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1600,8 +1580,7 @@ public interface JpaEndpointBuilderFactory {
          * If enabled, a query or a find which would return no results or more
          * than one result, will throw an exception instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1618,7 +1597,7 @@ public interface JpaEndpointBuilderFactory {
          * query. When you use INSERT, UPDATE or DELETE statement as a named
          * query, you need to specify this option to 'true'.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -1634,8 +1613,8 @@ public interface JpaEndpointBuilderFactory {
          * query. When you use INSERT, UPDATE or DELETE statement as a named
          * query, you need to specify this option to 'true'.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -1652,7 +1631,7 @@ public interface JpaEndpointBuilderFactory {
          * doesn't work for detached entities (where the EntityManager has to
          * execute an UPDATE instead of an INSERT query)!.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1670,8 +1649,7 @@ public interface JpaEndpointBuilderFactory {
          * doesn't work for detached entities (where the EntityManager has to
          * execute an UPDATE instead of an INSERT query)!.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1704,7 +1682,7 @@ public interface JpaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1727,8 +1705,7 @@ public interface JpaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1746,7 +1723,7 @@ public interface JpaEndpointBuilderFactory {
          * on the component/endpoint. This allows end users to control which
          * entity manager will be in use.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1764,8 +1741,7 @@ public interface JpaEndpointBuilderFactory {
          * on the component/endpoint. This allows end users to control which
          * entity manager will be in use.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1780,8 +1756,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -1799,8 +1775,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -1819,7 +1795,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1836,8 +1812,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1869,7 +1844,7 @@ public interface JpaEndpointBuilderFactory {
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1888,8 +1863,7 @@ public interface JpaEndpointBuilderFactory {
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1904,7 +1878,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Set the maximum number of results to retrieve on the Query.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1919,7 +1893,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Set the maximum number of results to retrieve on the Query.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1934,7 +1908,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a named query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1949,7 +1923,7 @@ public interface JpaEndpointBuilderFactory {
          * To use a custom native query. You may want to use the option
          * resultClass also when using native queries.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1963,7 +1937,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The JPA persistence unit used by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: camel
@@ -1979,7 +1953,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1997,8 +1971,8 @@ public interface JpaEndpointBuilderFactory {
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2017,7 +1991,7 @@ public interface JpaEndpointBuilderFactory {
          * conjunction with native query when consuming data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -2044,8 +2018,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -2063,8 +2037,8 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Additional properties for the entity manager to use.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * entityManagerProperties(String, Object) method to add a value (call
          * the method multiple times to set more values).
@@ -2083,7 +2057,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2100,8 +2074,7 @@ public interface JpaEndpointBuilderFactory {
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

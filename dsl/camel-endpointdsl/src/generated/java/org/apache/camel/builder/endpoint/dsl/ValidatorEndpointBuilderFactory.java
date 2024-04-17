@@ -47,7 +47,7 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -62,8 +62,7 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -78,7 +77,7 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -93,8 +92,7 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -109,7 +107,7 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * To validate against a header instead of the message body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -143,7 +141,7 @@ public interface ValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -166,8 +164,7 @@ public interface ValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -185,7 +182,7 @@ public interface ValidatorEndpointBuilderFactory {
          * default error handler captures the errors and throws an exception.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.processor.validation.ValidatorErrorHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * 
          * Group: advanced
          * 
@@ -202,7 +199,7 @@ public interface ValidatorEndpointBuilderFactory {
          * default error handler captures the errors and throws an exception.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.processor.validation.ValidatorErrorHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * 
          * Group: advanced
          * 
@@ -217,8 +214,7 @@ public interface ValidatorEndpointBuilderFactory {
          * To use a custom LSResourceResolver. Do not use together with
          * resourceResolverFactory.
          * 
-         * The option is a:
-         * &lt;code&gt;org.w3c.dom.ls.LSResourceResolver&lt;/code&gt; type.
+         * The option is a: <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -234,7 +230,7 @@ public interface ValidatorEndpointBuilderFactory {
          * resourceResolverFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.w3c.dom.ls.LSResourceResolver&lt;/code&gt; type.
+         * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -252,7 +248,7 @@ public interface ValidatorEndpointBuilderFactory {
          * system. Do not use together with resourceResolver.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -270,7 +266,7 @@ public interface ValidatorEndpointBuilderFactory {
          * system. Do not use together with resourceResolver.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -284,8 +280,8 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * To use a custom javax.xml.validation.SchemaFactory.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.xml.validation.SchemaFactory&lt;/code&gt; type.
+         * The option is a: <code>javax.xml.validation.SchemaFactory</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -300,7 +296,7 @@ public interface ValidatorEndpointBuilderFactory {
          * To use a custom javax.xml.validation.SchemaFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.xml.validation.SchemaFactory&lt;/code&gt; type.
+         * <code>javax.xml.validation.SchemaFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -314,7 +310,7 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Configures the W3C XML Schema Namespace URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: http://www.w3.org/2001/XMLSchema
          * Group: advanced
@@ -331,7 +327,7 @@ public interface ValidatorEndpointBuilderFactory {
          * introduced to work around a JDK 1.6.x bug. Xerces should not have
          * this issue.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -348,8 +344,7 @@ public interface ValidatorEndpointBuilderFactory {
          * introduced to work around a JDK 1.6.x bug. Xerces should not have
          * this issue.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced

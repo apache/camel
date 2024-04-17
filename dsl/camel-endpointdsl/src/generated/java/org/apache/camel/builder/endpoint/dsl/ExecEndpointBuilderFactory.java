@@ -47,7 +47,7 @@ public interface ExecEndpointBuilderFactory {
         /**
          * The arguments may be one or many whitespace-separated tokens.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -62,8 +62,7 @@ public interface ExecEndpointBuilderFactory {
          * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.exec.ExecBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.exec.ExecBinding</code> type.
          * 
          * Group: producer
          * 
@@ -78,8 +77,7 @@ public interface ExecEndpointBuilderFactory {
          * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.exec.ExecBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.exec.ExecBinding</code> type.
          * 
          * Group: producer
          * 
@@ -97,7 +95,8 @@ public interface ExecEndpointBuilderFactory {
          * hook for every executed command.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.exec.ExecCommandExecutor&lt;/code&gt; type.
+         * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -115,7 +114,8 @@ public interface ExecEndpointBuilderFactory {
          * hook for every executed command.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.exec.ExecCommandExecutor&lt;/code&gt; type.
+         * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -131,8 +131,7 @@ public interface ExecEndpointBuilderFactory {
          * value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR
          * or OFF. (Values of ExecCommandLogLevelType enum).
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: producer
@@ -150,7 +149,7 @@ public interface ExecEndpointBuilderFactory {
          * or OFF. (Values of ExecCommandLogLevelType enum).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: producer
@@ -168,7 +167,7 @@ public interface ExecEndpointBuilderFactory {
          * values. And empty list (the default) sets no expected exit values and
          * disables the check.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -184,7 +183,7 @@ public interface ExecEndpointBuilderFactory {
          * considered as its output. If no outFile is set, the standard output
          * (stdout) of the executable will be used instead.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -200,7 +199,7 @@ public interface ExecEndpointBuilderFactory {
          * terminated. If execution has not completed within the timeout, the
          * component will send a termination request.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -216,7 +215,7 @@ public interface ExecEndpointBuilderFactory {
          * terminated. If execution has not completed within the timeout, the
          * component will send a termination request.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -232,7 +231,7 @@ public interface ExecEndpointBuilderFactory {
          * populate the Camel Message Body with stderr. This behavior is
          * disabled (false) by default.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -249,8 +248,7 @@ public interface ExecEndpointBuilderFactory {
          * populate the Camel Message Body with stderr. This behavior is
          * disabled (false) by default.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -266,7 +264,7 @@ public interface ExecEndpointBuilderFactory {
          * The directory in which the command should be executed. If null, the
          * working directory of the current process will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -300,7 +298,7 @@ public interface ExecEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -323,8 +321,7 @@ public interface ExecEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

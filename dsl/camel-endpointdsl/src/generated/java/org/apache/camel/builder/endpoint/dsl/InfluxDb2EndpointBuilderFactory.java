@@ -47,7 +47,7 @@ public interface InfluxDb2EndpointBuilderFactory {
         /**
          * Define if we want to auto create the bucket if it's not present.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -62,8 +62,7 @@ public interface InfluxDb2EndpointBuilderFactory {
         /**
          * Define if we want to auto create the bucket if it's not present.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -79,7 +78,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * Define if we want to auto create the organization if it's not
          * present.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -95,8 +94,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * Define if we want to auto create the organization if it's not
          * present.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -111,7 +109,7 @@ public interface InfluxDb2EndpointBuilderFactory {
         /**
          * The name of the bucket where the time series will be stored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -127,7 +125,8 @@ public interface InfluxDb2EndpointBuilderFactory {
          * Define if this operation is an insert of ping.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.influxdb2.enums.Operation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.influxdb2.enums.Operation</code>
+         * type.
          * 
          * Default: INSERT
          * Group: producer
@@ -143,7 +142,8 @@ public interface InfluxDb2EndpointBuilderFactory {
          * Define if this operation is an insert of ping.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.influxdb2.enums.Operation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.influxdb2.enums.Operation</code>
+         * type.
          * 
          * Default: INSERT
          * Group: producer
@@ -158,7 +158,7 @@ public interface InfluxDb2EndpointBuilderFactory {
         /**
          * The name of the organization where the time series will be stored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -173,7 +173,7 @@ public interface InfluxDb2EndpointBuilderFactory {
         /**
          * Define the retention policy to the data created by the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: default
          * Group: producer
@@ -189,8 +189,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * The format or precision of time series timestamps.
          * 
          * The option is a:
-         * &lt;code&gt;com.influxdb.client.domain.WritePrecision&lt;/code&gt;
-         * type.
+         * <code>com.influxdb.client.domain.WritePrecision</code> type.
          * 
          * Default: ms
          * Group: producer
@@ -206,8 +205,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * The format or precision of time series timestamps.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.influxdb.client.domain.WritePrecision&lt;/code&gt;
-         * type.
+         * <code>com.influxdb.client.domain.WritePrecision</code> type.
          * 
          * Default: ms
          * Group: producer
@@ -242,7 +240,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -265,8 +263,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

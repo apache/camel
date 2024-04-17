@@ -48,7 +48,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws.config.AWSConfigOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws.config.AWSConfigOperations</code> type.
          * 
          * Required: true
          * Group: producer
@@ -64,7 +64,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws.config.AWSConfigOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws.config.AWSConfigOperations</code> type.
          * 
          * Required: true
          * Group: producer
@@ -80,7 +80,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -96,8 +96,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -112,7 +111,7 @@ public interface AWSConfigEndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -127,8 +126,7 @@ public interface AWSConfigEndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -146,7 +144,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -161,7 +159,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -175,7 +173,7 @@ public interface AWSConfigEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the Config client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -189,7 +187,7 @@ public interface AWSConfigEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Config client.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -203,8 +201,8 @@ public interface AWSConfigEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Config client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -218,8 +216,8 @@ public interface AWSConfigEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Config client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -235,7 +233,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * To define a proxy protocol when instantiating the Config client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -250,7 +248,7 @@ public interface AWSConfigEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -265,7 +263,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -279,7 +277,7 @@ public interface AWSConfigEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -294,7 +292,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -309,7 +307,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -325,8 +323,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -343,7 +340,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * through a default credentials provider or to expect static
          * credentials to be passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -360,8 +357,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * through a default credentials provider or to expect static
          * credentials to be passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -377,7 +373,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * Set whether the Config client should expect to load credentials
          * through a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -393,8 +389,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * Set whether the Config client should expect to load credentials
          * through a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -411,7 +406,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * Credentials. This is useful in a situation in which the user needs to
          * assume an IAM role for doing operations in Config.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -428,8 +423,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * Credentials. This is useful in a situation in which the user needs to
          * assume an IAM role for doing operations in Config.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -464,7 +458,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -487,8 +481,7 @@ public interface AWSConfigEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -504,7 +497,8 @@ public interface AWSConfigEndpointBuilderFactory {
          * Amazon AWS Config Client instance.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.config.ConfigClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.config.ConfigClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -519,7 +513,8 @@ public interface AWSConfigEndpointBuilderFactory {
          * Amazon AWS Config Client instance.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.config.ConfigClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.config.ConfigClient</code>
+         * type.
          * 
          * Group: advanced
          * 

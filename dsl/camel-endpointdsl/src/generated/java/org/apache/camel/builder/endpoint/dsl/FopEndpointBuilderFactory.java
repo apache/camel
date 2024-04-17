@@ -48,8 +48,7 @@ public interface FopEndpointBuilderFactory {
          * Allows to use a custom configured or implementation of
          * org.apache.fop.apps.FopFactory.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.fop.apps.FopFactory&lt;/code&gt; type.
+         * The option is a: <code>org.apache.fop.apps.FopFactory</code> type.
          * 
          * Group: producer
          * 
@@ -65,7 +64,7 @@ public interface FopEndpointBuilderFactory {
          * org.apache.fop.apps.FopFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.fop.apps.FopFactory&lt;/code&gt; type.
+         * <code>org.apache.fop.apps.FopFactory</code> type.
          * 
          * Group: producer
          * 
@@ -83,7 +82,7 @@ public interface FopEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -117,7 +116,7 @@ public interface FopEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -140,8 +139,7 @@ public interface FopEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

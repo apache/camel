@@ -48,7 +48,7 @@ public interface StreamEndpointBuilderFactory {
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -63,7 +63,7 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -78,7 +78,7 @@ public interface StreamEndpointBuilderFactory {
          * To use JVM file watcher to listen for file change events to support
          * re-loading files that may be overwritten, somewhat like tail --retry.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -94,8 +94,7 @@ public interface StreamEndpointBuilderFactory {
          * To use JVM file watcher to listen for file change events to support
          * re-loading files that may be overwritten, somewhat like tail --retry.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -112,7 +111,7 @@ public interface StreamEndpointBuilderFactory {
          * lines and therefore only spit out an Exchange with 10 lines, instead
          * of 1 Exchange per line.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -128,7 +127,7 @@ public interface StreamEndpointBuilderFactory {
          * lines and therefore only spit out an Exchange with 10 lines, instead
          * of 1 Exchange per line.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -143,7 +142,7 @@ public interface StreamEndpointBuilderFactory {
          * Allows to use a custom GroupStrategy to control how to group lines.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.stream.GroupStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
          * 
          * Group: consumer
          * 
@@ -158,7 +157,7 @@ public interface StreamEndpointBuilderFactory {
          * Allows to use a custom GroupStrategy to control how to group lines.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.stream.GroupStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
          * 
          * Group: consumer
          * 
@@ -176,7 +175,7 @@ public interface StreamEndpointBuilderFactory {
          * or HEADER:VALUE. In accordance with the HTTP/1.1 specification,
          * leading and/or trailing whitespace is ignored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -191,7 +190,7 @@ public interface StreamEndpointBuilderFactory {
          * When using stream:http format, this option specifies the http url to
          * stream from.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -208,7 +207,7 @@ public interface StreamEndpointBuilderFactory {
          * message prompts being written while other logging is done to the
          * system out.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 2000
          * Group: consumer
@@ -226,7 +225,7 @@ public interface StreamEndpointBuilderFactory {
          * message prompts being written while other logging is done to the
          * system out.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2000
          * Group: consumer
@@ -241,7 +240,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Optional delay in milliseconds before showing the message prompt.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -255,7 +254,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Optional delay in milliseconds before showing the message prompt.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -270,7 +269,7 @@ public interface StreamEndpointBuilderFactory {
          * Message prompt to use when reading from stream:in; for example, you
          * could set this to Enter a command:.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -286,7 +285,7 @@ public interface StreamEndpointBuilderFactory {
          * breaks). Setting this to false, will instead read the entire stream
          * until EOL.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -303,8 +302,7 @@ public interface StreamEndpointBuilderFactory {
          * breaks). Setting this to false, will instead read the entire stream
          * until EOL.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -321,7 +319,7 @@ public interface StreamEndpointBuilderFactory {
          * --retry If reading from files then you should also enable the
          * fileWatcher option, to make it work reliable.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -338,8 +336,7 @@ public interface StreamEndpointBuilderFactory {
          * --retry If reading from files then you should also enable the
          * fileWatcher option, to make it work reliable.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -355,7 +352,7 @@ public interface StreamEndpointBuilderFactory {
          * To be used for continuously reading a stream such as the unix tail
          * command.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -371,8 +368,7 @@ public interface StreamEndpointBuilderFactory {
          * To be used for continuously reading a stream such as the unix tail
          * command.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -387,7 +383,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Delay in milliseconds between read attempts when using scanStream.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -401,7 +397,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Delay in milliseconds between read attempts when using scanStream.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -437,7 +433,7 @@ public interface StreamEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -463,8 +459,7 @@ public interface StreamEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -482,8 +477,8 @@ public interface StreamEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -501,7 +496,7 @@ public interface StreamEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -515,8 +510,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -531,7 +525,7 @@ public interface StreamEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -550,7 +544,7 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -569,7 +563,7 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -597,7 +591,7 @@ public interface StreamEndpointBuilderFactory {
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -612,7 +606,7 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -626,7 +620,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Whether to append a new line character at end of output.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -641,8 +635,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Whether to append a new line character at end of output.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -660,7 +653,7 @@ public interface StreamEndpointBuilderFactory {
          * more messages are sent, the stream is reopened for another
          * autoCloseCount batch.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -677,7 +670,7 @@ public interface StreamEndpointBuilderFactory {
          * more messages are sent, the stream is reopened for another
          * autoCloseCount batch.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -694,7 +687,7 @@ public interface StreamEndpointBuilderFactory {
          * the Splitter is done, to improve performance. Mind this requires that
          * you only stream to the same file, and not 2 or more files.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -712,8 +705,7 @@ public interface StreamEndpointBuilderFactory {
          * the Splitter is done, to improve performance. Mind this requires that
          * you only stream to the same file, and not 2 or more files.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -728,7 +720,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Initial delay in milliseconds before producing the stream.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -742,7 +734,7 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Initial delay in milliseconds before producing the stream.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -774,7 +766,7 @@ public interface StreamEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -797,8 +789,7 @@ public interface StreamEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -818,7 +809,7 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -837,7 +828,7 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -866,7 +857,7 @@ public interface StreamEndpointBuilderFactory {
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -881,7 +872,7 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -913,7 +904,7 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -932,7 +923,7 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 

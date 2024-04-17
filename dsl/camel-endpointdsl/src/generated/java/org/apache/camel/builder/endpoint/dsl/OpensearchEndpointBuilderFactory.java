@@ -47,7 +47,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * The time in ms to wait before connection will timeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -62,7 +62,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * The time in ms to wait before connection will timeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -77,7 +77,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Disconnect after it finish calling the producer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -92,8 +92,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Disconnect after it finish calling the producer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -108,7 +107,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Starting index of the response.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -122,8 +121,8 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Starting index of the response.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -138,7 +137,7 @@ public interface OpensearchEndpointBuilderFactory {
          * Comma separated list with ip:port formatted remote transport
          * addresses to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -152,7 +151,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * The name of the index to act against.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -166,7 +165,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * The time in ms before retry.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -181,7 +180,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * The time in ms before retry.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -197,7 +196,7 @@ public interface OpensearchEndpointBuilderFactory {
          * What operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.opensearch.OpensearchOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.opensearch.OpensearchOperation</code> type.
          * 
          * Group: producer
          * 
@@ -212,7 +211,7 @@ public interface OpensearchEndpointBuilderFactory {
          * What operation to perform.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.opensearch.OpensearchOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.opensearch.OpensearchOperation</code> type.
          * 
          * Group: producer
          * 
@@ -226,7 +225,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Time in ms during which OpenSearch will keep search context alive.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60000
          * Group: producer
@@ -241,7 +240,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Time in ms during which OpenSearch will keep search context alive.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60000
          * Group: producer
@@ -256,7 +255,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Size of the response.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -270,8 +269,8 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Size of the response.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -285,7 +284,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * The timeout in ms to wait before the socket will timeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -300,7 +299,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * The timeout in ms to wait before the socket will timeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -315,7 +314,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Enable scroll usage.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -330,8 +329,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Enable scroll usage.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -347,7 +345,7 @@ public interface OpensearchEndpointBuilderFactory {
          * Index creation waits for the write consistency number of shards to be
          * available.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -363,7 +361,7 @@ public interface OpensearchEndpointBuilderFactory {
          * Index creation waits for the write consistency number of shards to be
          * available.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -383,7 +381,7 @@ public interface OpensearchEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -397,7 +395,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Enable SSL.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -412,8 +410,7 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * Enable SSL.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -448,7 +445,7 @@ public interface OpensearchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -471,8 +468,7 @@ public interface OpensearchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -487,8 +483,8 @@ public interface OpensearchEndpointBuilderFactory {
         /**
          * The class to use when deserializing the documents.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Default: ObjectNode
          * Group: advanced
@@ -504,7 +500,7 @@ public interface OpensearchEndpointBuilderFactory {
          * The class to use when deserializing the documents.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Default: ObjectNode
          * Group: advanced
@@ -522,7 +518,7 @@ public interface OpensearchEndpointBuilderFactory {
          * it's managed by the Spring Boot configuration (see: Disable Sniffer
          * in Spring Boot).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -540,8 +536,7 @@ public interface OpensearchEndpointBuilderFactory {
          * it's managed by the Spring Boot configuration (see: Disable Sniffer
          * in Spring Boot).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -557,7 +552,7 @@ public interface OpensearchEndpointBuilderFactory {
          * The delay of a sniff execution scheduled after a failure (in
          * milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60000
          * Group: advanced
@@ -573,7 +568,7 @@ public interface OpensearchEndpointBuilderFactory {
          * The delay of a sniff execution scheduled after a failure (in
          * milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60000
          * Group: advanced
@@ -590,7 +585,7 @@ public interface OpensearchEndpointBuilderFactory {
          * milliseconds. Will be honoured when sniffOnFailure is disabled or
          * when there are no failures between consecutive sniff executions.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -607,7 +602,7 @@ public interface OpensearchEndpointBuilderFactory {
          * milliseconds. Will be honoured when sniffOnFailure is disabled or
          * when there are no failures between consecutive sniff executions.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced

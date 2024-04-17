@@ -49,7 +49,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Whether to only enrich the Exchange with headers, and leave the body
          * as-is.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -65,8 +65,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Whether to only enrich the Exchange with headers, and leave the body
          * as-is.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -81,7 +80,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * The language to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: en
          * Group: producer
@@ -96,7 +95,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * URL to the geocoder server. Mandatory for Nominatim server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -111,7 +110,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Type of GeoCoding server. Supported Nominatim and Google.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.geocoder.GeoCoderType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.geocoder.GeoCoderType</code> type.
          * 
          * Group: producer
          * 
@@ -126,7 +125,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Type of GeoCoding server. Supported Nominatim and Google.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.geocoder.GeoCoderType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.geocoder.GeoCoderType</code> type.
          * 
          * Group: producer
          * 
@@ -140,7 +139,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Authentication Domain to access Google GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -154,7 +153,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Authentication Host to access Google GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -168,7 +167,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Authentication Method to Google GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -182,7 +181,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Password to access GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -196,7 +195,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Username to access GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -210,7 +209,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Host to access GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -224,7 +223,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Port to access GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -238,8 +237,8 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Port to access GeoCoding server.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -253,7 +252,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * API Key to access Google. Mandatory for Google GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -267,7 +266,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Client ID to access Google GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -281,7 +280,7 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Client Key to access Google GeoCoding server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -315,7 +314,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -338,8 +337,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

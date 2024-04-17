@@ -47,7 +47,7 @@ public interface GridFsEndpointBuilderFactory {
          * Sets the name of the GridFS bucket within the database. Default is
          * fs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: fs
          * Group: common
@@ -62,7 +62,7 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB database to target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -82,8 +82,7 @@ public interface GridFsEndpointBuilderFactory {
          * examples for the possible values are nearest, primary or secondary
          * etc.
          * 
-         * The option is a: &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt;
-         * type.
+         * The option is a: <code>com.mongodb.ReadPreference</code> type.
          * 
          * Group: common
          * 
@@ -103,7 +102,7 @@ public interface GridFsEndpointBuilderFactory {
          * etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt; type.
+         * <code>com.mongodb.ReadPreference</code> type.
          * 
          * Group: common
          * 
@@ -119,8 +118,7 @@ public interface GridFsEndpointBuilderFactory {
          * standard ones. Resolved from the fields of the WriteConcern class by
          * calling the WriteConcern#valueOf(String) method.
          * 
-         * The option is a: &lt;code&gt;com.mongodb.WriteConcern&lt;/code&gt;
-         * type.
+         * The option is a: <code>com.mongodb.WriteConcern</code> type.
          * 
          * Group: common
          * 
@@ -137,7 +135,7 @@ public interface GridFsEndpointBuilderFactory {
          * calling the WriteConcern#valueOf(String) method.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.WriteConcern&lt;/code&gt; type.
+         * <code>com.mongodb.WriteConcern</code> type.
          * 
          * Group: common
          * 
@@ -151,7 +149,7 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets the delay between polls within the Consumer. Default is 500ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: consumer
@@ -166,7 +164,7 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets the delay between polls within the Consumer. Default is 500ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: consumer
@@ -182,7 +180,7 @@ public interface GridFsEndpointBuilderFactory {
          * If the QueryType uses a FileAttribute, this sets the name of the
          * attribute that is used. Default is camel-processed.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel-processed
          * Group: consumer
@@ -198,7 +196,7 @@ public interface GridFsEndpointBuilderFactory {
          * Sets the initialDelay before the consumer will start polling. Default
          * is 1000ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -214,7 +212,7 @@ public interface GridFsEndpointBuilderFactory {
          * Sets the initialDelay before the consumer will start polling. Default
          * is 1000ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -230,7 +228,7 @@ public interface GridFsEndpointBuilderFactory {
          * If the QueryType uses a persistent timestamp, this sets the name of
          * the collection within the DB to store the timestamp.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel-timestamps
          * Group: consumer
@@ -246,7 +244,7 @@ public interface GridFsEndpointBuilderFactory {
          * If the QueryType uses a persistent timestamp, this is the ID of the
          * object in the collection to store the timestamp.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel-timestamp
          * Group: consumer
@@ -262,7 +260,7 @@ public interface GridFsEndpointBuilderFactory {
          * Additional query parameters (in JSON) that are used to configure the
          * query used for finding files in the GridFsConsumer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -278,7 +276,8 @@ public interface GridFsEndpointBuilderFactory {
          * Default is Timestamp.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mongodb.gridfs.QueryStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.gridfs.QueryStrategy</code>
+         * type.
          * 
          * Default: TimeStamp
          * Group: consumer
@@ -295,7 +294,8 @@ public interface GridFsEndpointBuilderFactory {
          * Default is Timestamp.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mongodb.gridfs.QueryStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.gridfs.QueryStrategy</code>
+         * type.
          * 
          * Default: TimeStamp
          * Group: consumer
@@ -332,7 +332,7 @@ public interface GridFsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -358,8 +358,7 @@ public interface GridFsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -377,8 +376,8 @@ public interface GridFsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -396,7 +395,7 @@ public interface GridFsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -410,8 +409,7 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -426,7 +424,7 @@ public interface GridFsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -453,7 +451,7 @@ public interface GridFsEndpointBuilderFactory {
          * Sets the name of the GridFS bucket within the database. Default is
          * fs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: fs
          * Group: common
@@ -468,7 +466,7 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB database to target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -488,8 +486,7 @@ public interface GridFsEndpointBuilderFactory {
          * examples for the possible values are nearest, primary or secondary
          * etc.
          * 
-         * The option is a: &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt;
-         * type.
+         * The option is a: <code>com.mongodb.ReadPreference</code> type.
          * 
          * Group: common
          * 
@@ -509,7 +506,7 @@ public interface GridFsEndpointBuilderFactory {
          * etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt; type.
+         * <code>com.mongodb.ReadPreference</code> type.
          * 
          * Group: common
          * 
@@ -525,8 +522,7 @@ public interface GridFsEndpointBuilderFactory {
          * standard ones. Resolved from the fields of the WriteConcern class by
          * calling the WriteConcern#valueOf(String) method.
          * 
-         * The option is a: &lt;code&gt;com.mongodb.WriteConcern&lt;/code&gt;
-         * type.
+         * The option is a: <code>com.mongodb.WriteConcern</code> type.
          * 
          * Group: common
          * 
@@ -543,7 +539,7 @@ public interface GridFsEndpointBuilderFactory {
          * calling the WriteConcern#valueOf(String) method.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.WriteConcern&lt;/code&gt; type.
+         * <code>com.mongodb.WriteConcern</code> type.
          * 
          * Group: common
          * 
@@ -557,7 +553,7 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets the operation this endpoint will execute against GridFs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -589,7 +585,7 @@ public interface GridFsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -612,8 +608,7 @@ public interface GridFsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -642,7 +637,7 @@ public interface GridFsEndpointBuilderFactory {
          * Sets the name of the GridFS bucket within the database. Default is
          * fs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: fs
          * Group: common
@@ -657,7 +652,7 @@ public interface GridFsEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB database to target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -677,8 +672,7 @@ public interface GridFsEndpointBuilderFactory {
          * examples for the possible values are nearest, primary or secondary
          * etc.
          * 
-         * The option is a: &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt;
-         * type.
+         * The option is a: <code>com.mongodb.ReadPreference</code> type.
          * 
          * Group: common
          * 
@@ -698,7 +692,7 @@ public interface GridFsEndpointBuilderFactory {
          * etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.ReadPreference&lt;/code&gt; type.
+         * <code>com.mongodb.ReadPreference</code> type.
          * 
          * Group: common
          * 
@@ -714,8 +708,7 @@ public interface GridFsEndpointBuilderFactory {
          * standard ones. Resolved from the fields of the WriteConcern class by
          * calling the WriteConcern#valueOf(String) method.
          * 
-         * The option is a: &lt;code&gt;com.mongodb.WriteConcern&lt;/code&gt;
-         * type.
+         * The option is a: <code>com.mongodb.WriteConcern</code> type.
          * 
          * Group: common
          * 
@@ -732,7 +725,7 @@ public interface GridFsEndpointBuilderFactory {
          * calling the WriteConcern#valueOf(String) method.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.WriteConcern&lt;/code&gt; type.
+         * <code>com.mongodb.WriteConcern</code> type.
          * 
          * Group: common
          * 

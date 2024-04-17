@@ -46,7 +46,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -61,7 +61,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -76,7 +76,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -91,8 +91,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -107,7 +106,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -122,7 +121,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -138,7 +137,7 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -154,7 +153,7 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -169,7 +168,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -184,7 +183,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -202,7 +201,7 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -220,8 +219,7 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -237,7 +235,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -253,8 +251,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -269,7 +266,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -284,8 +281,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -301,7 +297,7 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 120000
          * Group: common
@@ -317,7 +313,7 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 120000
          * Group: common
@@ -332,7 +328,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -347,8 +343,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -363,7 +358,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -378,7 +373,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -393,7 +388,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -408,7 +403,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -424,7 +419,7 @@ public interface NatsEndpointBuilderFactory {
          * URLs to one or more NAT servers. Use comma to separate URLs when
          * specifying multiple servers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -438,7 +433,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -453,8 +448,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -470,7 +464,7 @@ public interface NatsEndpointBuilderFactory {
          * Stop receiving messages from a topic we are subscribing to after
          * maxMessages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -484,7 +478,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Consumer thread pool size (default is 10).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -499,7 +493,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Consumer thread pool size (default is 10).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -514,7 +508,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * The Queue name if we are using nats for a queue configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -528,7 +522,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Can be used to turn off sending back reply message in the consumer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -543,8 +537,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Can be used to turn off sending back reply message in the consumer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -559,7 +552,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -574,8 +567,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -591,7 +583,7 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -606,7 +598,7 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -642,7 +634,7 @@ public interface NatsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -668,8 +660,7 @@ public interface NatsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -687,8 +678,8 @@ public interface NatsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -706,7 +697,7 @@ public interface NatsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -720,8 +711,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -736,7 +726,7 @@ public interface NatsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -750,8 +740,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Reference an already instantiated connection to Nats server.
          * 
-         * The option is a: &lt;code&gt;io.nats.client.Connection&lt;/code&gt;
-         * type.
+         * The option is a: <code>io.nats.client.Connection</code> type.
          * 
          * Group: advanced
          * 
@@ -766,7 +755,7 @@ public interface NatsEndpointBuilderFactory {
          * Reference an already instantiated connection to Nats server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.nats.client.Connection&lt;/code&gt; type.
+         * <code>io.nats.client.Connection</code> type.
          * 
          * Group: advanced
          * 
@@ -781,8 +770,7 @@ public interface NatsEndpointBuilderFactory {
          * Define the header filtering strategy.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -797,8 +785,7 @@ public interface NatsEndpointBuilderFactory {
          * Define the header filtering strategy.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -813,7 +800,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -829,8 +816,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -857,7 +843,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -872,7 +858,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -887,7 +873,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -902,8 +888,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -918,7 +903,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -933,7 +918,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -949,7 +934,7 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -965,7 +950,7 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -980,7 +965,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -995,7 +980,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -1013,7 +998,7 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1031,8 +1016,7 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1048,7 +1032,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1064,8 +1048,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1080,7 +1063,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1095,8 +1078,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1112,7 +1094,7 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 120000
          * Group: common
@@ -1128,7 +1110,7 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 120000
          * Group: common
@@ -1143,7 +1125,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1158,8 +1140,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1174,7 +1155,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -1189,7 +1170,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -1204,7 +1185,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -1219,7 +1200,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -1235,7 +1216,7 @@ public interface NatsEndpointBuilderFactory {
          * URLs to one or more NAT servers. Use comma to separate URLs when
          * specifying multiple servers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1249,7 +1230,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1264,8 +1245,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1280,7 +1260,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * the subject to which subscribers should send response.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1294,7 +1274,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Request timeout in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 20000
          * Group: producer
@@ -1309,7 +1289,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Request timeout in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 20000
          * Group: producer
@@ -1324,7 +1304,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1339,8 +1319,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1356,7 +1335,7 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1371,7 +1350,7 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1403,7 +1382,7 @@ public interface NatsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1426,8 +1405,7 @@ public interface NatsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1442,8 +1420,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Reference an already instantiated connection to Nats server.
          * 
-         * The option is a: &lt;code&gt;io.nats.client.Connection&lt;/code&gt;
-         * type.
+         * The option is a: <code>io.nats.client.Connection</code> type.
          * 
          * Group: advanced
          * 
@@ -1458,7 +1435,7 @@ public interface NatsEndpointBuilderFactory {
          * Reference an already instantiated connection to Nats server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.nats.client.Connection&lt;/code&gt; type.
+         * <code>io.nats.client.Connection</code> type.
          * 
          * Group: advanced
          * 
@@ -1473,8 +1450,7 @@ public interface NatsEndpointBuilderFactory {
          * Define the header filtering strategy.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1489,8 +1465,7 @@ public interface NatsEndpointBuilderFactory {
          * Define the header filtering strategy.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1505,7 +1480,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1521,8 +1496,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1550,7 +1524,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -1565,7 +1539,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -1580,7 +1554,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1595,8 +1569,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1611,7 +1584,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -1626,7 +1599,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -1642,7 +1615,7 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -1658,7 +1631,7 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -1673,7 +1646,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -1688,7 +1661,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60
          * Group: common
@@ -1706,7 +1679,7 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1724,8 +1697,7 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1741,7 +1713,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1757,8 +1729,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1773,7 +1744,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1788,8 +1759,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1805,7 +1775,7 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 120000
          * Group: common
@@ -1821,7 +1791,7 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 120000
          * Group: common
@@ -1836,7 +1806,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1851,8 +1821,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1867,7 +1836,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -1882,7 +1851,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2000
          * Group: common
@@ -1897,7 +1866,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -1912,7 +1881,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: common
@@ -1928,7 +1897,7 @@ public interface NatsEndpointBuilderFactory {
          * URLs to one or more NAT servers. Use comma to separate URLs when
          * specifying multiple servers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1942,7 +1911,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1957,8 +1926,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1973,7 +1941,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1988,8 +1956,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2005,7 +1972,7 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2020,7 +1987,7 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2047,8 +2014,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Reference an already instantiated connection to Nats server.
          * 
-         * The option is a: &lt;code&gt;io.nats.client.Connection&lt;/code&gt;
-         * type.
+         * The option is a: <code>io.nats.client.Connection</code> type.
          * 
          * Group: advanced
          * 
@@ -2063,7 +2029,7 @@ public interface NatsEndpointBuilderFactory {
          * Reference an already instantiated connection to Nats server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.nats.client.Connection&lt;/code&gt; type.
+         * <code>io.nats.client.Connection</code> type.
          * 
          * Group: advanced
          * 
@@ -2078,8 +2044,7 @@ public interface NatsEndpointBuilderFactory {
          * Define the header filtering strategy.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -2094,8 +2059,7 @@ public interface NatsEndpointBuilderFactory {
          * Define the header filtering strategy.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -2110,7 +2074,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2126,8 +2090,7 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

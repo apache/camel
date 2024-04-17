@@ -46,7 +46,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
         /**
          * Logger ID to use when a match to the parent route required.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -62,7 +62,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.pubsublite.GooglePubsubLiteConstants.AckMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.google.pubsublite.GooglePubsubLiteConstants.AckMode</code> type.
          * 
          * Default: AUTO
          * Group: consumer
@@ -79,7 +79,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.pubsublite.GooglePubsubLiteConstants.AckMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.google.pubsublite.GooglePubsubLiteConstants.AckMode</code> type.
          * 
          * Default: AUTO
          * Group: consumer
@@ -94,7 +94,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
         /**
          * The number of parallel streams consuming from the subscription.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -109,8 +109,8 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
         /**
          * The number of parallel streams consuming from the subscription.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 1
          * Group: consumer
@@ -126,7 +126,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * Set the maximum period a message ack deadline will be extended. Value
          * in seconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 3600
          * Group: consumer
@@ -142,7 +142,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * Set the maximum period a message ack deadline will be extended. Value
          * in seconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 3600
          * Group: consumer
@@ -158,7 +158,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * The max number of messages to receive from the server in a single API
          * call.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -174,8 +174,8 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * The max number of messages to receive from the server in a single API
          * call.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 1
          * Group: consumer
@@ -193,7 +193,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * classpath, but you can prefix with classpath:, file:, or http: to
          * load the resource from different systems.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -229,7 +229,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -255,8 +255,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -274,8 +273,8 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -293,7 +292,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -307,8 +306,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -323,7 +321,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -349,7 +347,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
         /**
          * Logger ID to use when a match to the parent route required.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -366,7 +364,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * classpath, but you can prefix with classpath:, file:, or http: to
          * load the resource from different systems.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -398,7 +396,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -421,8 +419,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -439,7 +436,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * ensures that messages are received in order even when multiple
          * publishers are used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -455,7 +452,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * payloads in the producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.pubsublite.serializer.GooglePubsubSerializer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.google.pubsublite.serializer.GooglePubsubSerializer</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -471,7 +468,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * payloads in the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.pubsublite.serializer.GooglePubsubSerializer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.google.pubsublite.serializer.GooglePubsubSerializer</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -498,7 +495,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
         /**
          * Logger ID to use when a match to the parent route required.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -515,7 +512,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * classpath, but you can prefix with classpath:, file:, or http: to
          * load the resource from different systems.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 

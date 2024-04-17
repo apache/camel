@@ -46,8 +46,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use.
          * 
-         * The option is a: &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.avro.Protocol</code> type.
          * 
          * Group: common
          * 
@@ -62,7 +61,7 @@ public interface AvroEndpointBuilderFactory {
          * Avro protocol to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt; type.
+         * <code>org.apache.avro.Protocol</code> type.
          * 
          * Group: common
          * 
@@ -76,7 +75,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use defined by the FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -90,7 +89,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -106,7 +105,7 @@ public interface AvroEndpointBuilderFactory {
          * used only with protocol parameter because for protocolClassName
          * protocol type will be auto-detected.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -123,8 +122,7 @@ public interface AvroEndpointBuilderFactory {
          * used only with protocol parameter because for protocolClassName
          * protocol type will be auto-detected.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -140,7 +138,7 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into an array. Will fail
          * if protocol specifies more than one parameter for the message.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -156,8 +154,7 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into an array. Will fail
          * if protocol specifies more than one parameter for the message.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -172,7 +169,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Authority to use (username and password).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -208,7 +205,7 @@ public interface AvroEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -234,8 +231,7 @@ public interface AvroEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -253,8 +249,8 @@ public interface AvroEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -272,7 +268,7 @@ public interface AvroEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -286,8 +282,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -302,7 +297,7 @@ public interface AvroEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -328,8 +323,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use.
          * 
-         * The option is a: &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.avro.Protocol</code> type.
          * 
          * Group: common
          * 
@@ -344,7 +338,7 @@ public interface AvroEndpointBuilderFactory {
          * Avro protocol to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt; type.
+         * <code>org.apache.avro.Protocol</code> type.
          * 
          * Group: common
          * 
@@ -358,7 +352,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use defined by the FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -372,7 +366,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -388,7 +382,7 @@ public interface AvroEndpointBuilderFactory {
          * used only with protocol parameter because for protocolClassName
          * protocol type will be auto-detected.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -405,8 +399,7 @@ public interface AvroEndpointBuilderFactory {
          * used only with protocol parameter because for protocolClassName
          * protocol type will be auto-detected.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -422,7 +415,7 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into an array. Will fail
          * if protocol specifies more than one parameter for the message.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -438,8 +431,7 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into an array. Will fail
          * if protocol specifies more than one parameter for the message.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -454,7 +446,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Authority to use (username and password).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -486,7 +478,7 @@ public interface AvroEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -509,8 +501,7 @@ public interface AvroEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -538,8 +529,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use.
          * 
-         * The option is a: &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.avro.Protocol</code> type.
          * 
          * Group: common
          * 
@@ -554,7 +544,7 @@ public interface AvroEndpointBuilderFactory {
          * Avro protocol to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt; type.
+         * <code>org.apache.avro.Protocol</code> type.
          * 
          * Group: common
          * 
@@ -568,7 +558,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use defined by the FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -582,7 +572,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -598,7 +588,7 @@ public interface AvroEndpointBuilderFactory {
          * used only with protocol parameter because for protocolClassName
          * protocol type will be auto-detected.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -615,8 +605,7 @@ public interface AvroEndpointBuilderFactory {
          * used only with protocol parameter because for protocolClassName
          * protocol type will be auto-detected.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -632,7 +621,7 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into an array. Will fail
          * if protocol specifies more than one parameter for the message.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -648,8 +637,7 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into an array. Will fail
          * if protocol specifies more than one parameter for the message.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -664,7 +652,7 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Authority to use (username and password).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 

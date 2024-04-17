@@ -50,10 +50,10 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -74,10 +74,10 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -95,7 +95,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
@@ -111,7 +111,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
@@ -130,7 +130,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -147,7 +147,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -165,7 +165,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -180,7 +180,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -195,7 +195,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -211,7 +211,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
@@ -227,7 +227,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -242,7 +242,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -257,7 +257,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -272,7 +272,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -287,7 +287,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -302,7 +302,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -321,7 +321,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * base64-url-safe-encoded string; 'hex' represents binary data as
          * hex-encoded (base16) string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: bytes
          * Group: postgres
@@ -336,7 +336,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Regular expressions matching columns to exclude from change events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -350,7 +350,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Regular expressions matching columns to include in change events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -367,7 +367,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * and original length as parameters to the corresponding field schemas
          * in the emitted change records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -383,7 +383,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -401,7 +401,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * corresponding value would be the value of that tag the key is. For
          * example: k1=v1,k2=v2.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -416,7 +416,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the database from which the connector should capture
          * changes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -430,7 +430,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Resolvable hostname or IP address of the database server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -449,7 +449,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * only, but not for executing DML statements. Use doubled semicolon
          * (';;') to use a semicolon as a character and not as a delimiter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -464,7 +464,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Password of the database user to be used when connecting to the
          * database.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: postgres
@@ -479,7 +479,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Port of the database server.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5432
          * Group: postgres
@@ -494,7 +494,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Port of the database server.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5432
          * Group: postgres
@@ -510,7 +510,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * File containing the SSL Certificate for the client. See the Postgres
          * SSL docs for further information.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -526,7 +526,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * org.postgresql.ssl.NonValidatingFactory to disable SSL validation in
          * development environments.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -541,7 +541,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * File containing the SSL private key for the client. See the Postgres
          * SSL docs for further information.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -566,7 +566,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 'verify-ca' but additionally verify that the server certificate
          * matches the host to which the connection is attempted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: prefer
          * Group: postgres
@@ -582,7 +582,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Password to access the client private key from the file specified by
          * 'database.sslkey'. See the Postgres SSL docs for further information.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -597,7 +597,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * File containing the root certificate(s) against which the server is
          * validated. See the Postgres JDBC SSL docs for further information.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -612,7 +612,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Enable or disable TCP keep-alive probe to avoid dropping TCP
          * connection.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: postgres
@@ -628,8 +628,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Enable or disable TCP keep-alive probe to avoid dropping TCP
          * connection.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: postgres
@@ -644,7 +643,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Name of the database user to be used when connecting to the database.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -661,7 +660,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * type and original length as parameters to the corresponding field
          * schemas in the emitted change records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -682,7 +681,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * which may not offer the precision but will be far easier to use in
          * consumers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: precise
          * Group: postgres
@@ -698,7 +697,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of retries on connection errors before failing (-1
          * = no limit, 0 = disabled, 0 = num of retries).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: postgres
@@ -714,7 +713,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of retries on connection errors before failing (-1
          * = no limit, 0 = disabled, 0 = num of retries).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: postgres
@@ -734,7 +733,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped; 'ignore' the problematic event will be skipped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: fail
          * Group: postgres
@@ -751,7 +750,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * postgres database. If set to false, user will have to flush the LSN
          * manually outside Debezium.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: postgres
@@ -768,8 +767,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * postgres database. If set to false, user will have to flush the LSN
          * manually outside Debezium.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: postgres
@@ -784,7 +782,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The query executed with every heartbeat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -800,7 +798,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0ms
          * Group: postgres
@@ -817,7 +815,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0ms
          * Group: postgres
@@ -833,7 +831,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: __debezium-heartbeat
          * Group: postgres
@@ -850,7 +848,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * including: 'json' represents values as string-ified JSON (default);
          * 'map' represents values as a key/value map.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: json
          * Group: postgres
@@ -870,7 +868,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * connectors, and adding a String to each of them can potentially be
          * quite heavy. The default is 'false'.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -890,8 +888,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * connectors, and adding a String to each of them can potentially be
          * quite heavy. The default is 'false'.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -909,7 +906,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * converts the field into an implementation dependent binary
          * representation.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -927,8 +924,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * converts the field into an implementation dependent binary
          * representation.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -944,7 +940,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum size of chunk (number of documents/rows) for incremental
          * snapshotting.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1024
          * Group: postgres
@@ -960,7 +956,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum size of chunk (number of documents/rows) for incremental
          * snapshotting.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1024
          * Group: postgres
@@ -979,7 +975,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * written on signal data collection, the close will delete the relative
          * open signal;.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: INSERT_INSERT
          * Group: postgres
@@ -997,7 +993,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * string; 'numeric' (default) represents values using the inexact
          * conversion into microseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: numeric
          * Group: postgres
@@ -1012,7 +1008,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2048
          * Group: postgres
@@ -1027,7 +1023,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2048
          * Group: postgres
@@ -1044,7 +1040,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 8192
          * Group: postgres
@@ -1061,7 +1057,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 8192
          * Group: postgres
@@ -1078,7 +1074,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * database log but not yet recorded or forwarded. Defaults to 0. Mean
          * the feature is not enabled.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: postgres
@@ -1095,7 +1091,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * database log but not yet recorded or forwarded. Defaults to 0. Mean
          * the feature is not enabled.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: postgres
@@ -1118,7 +1114,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * used as message key. Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1133,7 +1129,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * A comma-separated list of regular expressions that match the logical
          * decoding message prefixes to be excluded from monitoring.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1149,7 +1145,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * decoding message prefixes to be monitored. All prefixes are monitored
          * by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1163,7 +1159,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * List of notification channels names that are enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1178,7 +1174,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1194,7 +1190,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * server. Supported values are 'decoderbufs' and 'pgoutput'. Defaults
          * to 'decoderbufs'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: decoderbufs
          * Group: postgres
@@ -1210,7 +1206,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500ms
          * Group: postgres
@@ -1226,7 +1222,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500ms
          * Group: postgres
@@ -1242,7 +1238,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Optional list of post processors. The processors are defined using
          * '.type' config option and configured using options ''.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1256,7 +1252,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -1271,8 +1267,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -1300,7 +1295,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * include/exclude list properties). If the publication already exists,
          * it will be used. i.e CREATE PUBLICATION FOR TABLE.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: all_tables
          * Group: postgres
@@ -1316,7 +1311,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the Postgres 10 publication used for streaming changes
          * from a plugin. Defaults to 'dbz_publication'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: dbz_publication
          * Group: postgres
@@ -1332,7 +1327,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * streaming. A value of '0' uses the default JDBC fetch size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: postgres
@@ -1348,7 +1343,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * streaming. A value of '0' uses the default JDBC fetch size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: postgres
@@ -1377,7 +1372,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * the row.NOTHING - Records no information about the old row. This is
          * the default for system tables.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1392,7 +1387,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: postgres
@@ -1408,7 +1403,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: postgres
@@ -1423,7 +1418,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The schemas for which events must not be captured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1438,7 +1433,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The path to the file that will be used to record the database schema
          * history.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1452,7 +1447,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The schemas for which events should be captured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1472,7 +1467,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * like _uxxxx. Note: _ is an escape sequence like backslash in
          * Java;'none' does not apply any adjustment (default).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: none
          * Group: postgres
@@ -1498,7 +1493,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * possible for the in-memory schema to become outdated if TOASTable
          * columns are dropped from the table.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: columns_diff
          * Group: postgres
@@ -1514,7 +1509,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1529,7 +1524,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: source
          * Group: postgres
@@ -1545,7 +1540,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Interval for looking for new signals in registered channels, given in
          * milliseconds. Defaults to 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5s
          * Group: postgres
@@ -1561,7 +1556,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Interval for looking for new signals in registered channels, given in
          * milliseconds. Defaults to 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5s
          * Group: postgres
@@ -1579,7 +1574,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 't' for truncates, and 'none' to indicate nothing skipped. By
          * default, only truncate operations will be skipped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: t
          * Group: postgres
@@ -1596,7 +1591,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * connector finishes orderly. By default the replication is kept so
          * that on restart progress can resume from the last recorded location.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -1613,8 +1608,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * connector finishes orderly. By default the replication is kept so
          * that on restart progress can resume from the last recorded location.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -1630,7 +1624,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * How many times to retry connecting to a replication slot when an
          * attempt fails.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 6
          * Group: postgres
@@ -1646,7 +1640,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * How many times to retry connecting to a replication slot when an
          * attempt fails.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 6
          * Group: postgres
@@ -1662,7 +1656,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the Postgres logical decoding slot created for streaming
          * changes from a plugin. Defaults to 'debezium.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: debezium
          * Group: postgres
@@ -1679,7 +1673,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * connect to a replication slot, given in milliseconds. Defaults to 10
          * seconds (10,000 ms).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: postgres
@@ -1696,7 +1690,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * connect to a replication slot, given in milliseconds. Defaults to 10
          * seconds (10,000 ms).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: postgres
@@ -1713,7 +1707,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * separated. E.g.
          * 'add-tables=public.table,public.table2;include-lsn=true'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1728,7 +1722,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0ms
          * Group: postgres
@@ -1744,7 +1738,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0ms
          * Group: postgres
@@ -1760,7 +1754,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: postgres
          * 
@@ -1775,7 +1769,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: postgres
          * 
@@ -1790,7 +1784,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * This setting must be set to specify a list of tables/collections
          * whose snapshot must be taken on creating or restarting the connector.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1813,7 +1807,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * mode is only safe to use if no schema changes are happening while the
          * snapshot is taken.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: none
          * Group: postgres
@@ -1832,7 +1826,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 'SnapshotterLocking' interface and is called to determine how to lock
          * tables during schema snapshot.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -1848,7 +1842,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: postgres
@@ -1865,7 +1859,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: postgres
@@ -1881,7 +1875,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of threads used to perform the snapshot. Defaults
          * to 1.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: postgres
@@ -1897,7 +1891,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of threads used to perform the snapshot. Defaults
          * to 1.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: postgres
@@ -1929,7 +1923,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * more information, see Custom snapshotter SPI in the PostgreSQL
          * connector documentation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: initial
          * Group: postgres
@@ -1945,7 +1939,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the data should be snapshotted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -1961,8 +1955,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the data should be snapshotted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -1979,7 +1972,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * permits to specify whenever the data should be snapshotted or not in
          * case of error.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -1997,8 +1990,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * permits to specify whenever the data should be snapshotted or not in
          * case of error.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2016,7 +2008,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * permits to specify whenever the schema should be snapshotted or not
          * in case of error.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2034,8 +2026,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * permits to specify whenever the schema should be snapshotted or not
          * in case of error.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2052,7 +2043,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the schema should be snapshotted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2068,8 +2059,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the schema should be snapshotted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2086,7 +2076,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * permits to specify whenever the stream should start or not after
          * snapshot.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2103,8 +2093,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * permits to specify whenever the stream should start or not after
          * snapshot.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2123,7 +2112,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * interface and is called on each app boot to determine whether to do a
          * snapshot.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -2137,7 +2126,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Controls query used during the snapshot.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: select_all
          * Group: postgres
@@ -2156,7 +2145,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 'SnapshotterQuery' interface and is called to determine how to build
          * queries during snapshot.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -2181,7 +2170,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * setting a specific point where to start (resume) snapshotting, in
          * case a previous snapshotting was interrupted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -2199,7 +2188,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * ascending. A value of disabled (the default) will disable ordering by
          * row count.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: disabled
          * Group: postgres
@@ -2215,7 +2204,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the SourceInfoStructMaker class that returns SourceInfo
          * schema and struct.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default:
          * io.debezium.connector.postgresql.PostgresSourceInfoStructMaker
@@ -2232,7 +2221,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Frequency for sending replication connection status updates to the
          * server, given in milliseconds. Defaults to 10 seconds (10,000 ms).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10s
          * Group: postgres
@@ -2248,7 +2237,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Frequency for sending replication connection status updates to the
          * server, given in milliseconds. Defaults to 10 seconds (10,000 ms).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10s
          * Group: postgres
@@ -2264,7 +2253,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -2278,7 +2267,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: postgres
@@ -2293,8 +2282,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: postgres
@@ -2309,7 +2297,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The tables for which changes are to be captured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: postgres
          * 
@@ -2330,7 +2318,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * built-in representations for Time, Date, and Timestamp, which uses
          * millisecond precision regardless of the database columns' precision.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: adaptive
          * Group: postgres
@@ -2349,7 +2337,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Kafka to completely delete all events pertaining to the given key
          * once the source record got deleted.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2368,8 +2356,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Kafka to completely delete all events pertaining to the given key
          * once the source record got deleted.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: postgres
@@ -2386,7 +2373,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * determine the topic name for data change, schema change, transaction,
          * heartbeat event etc.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.schema.SchemaTopicNamingStrategy
          * Group: postgres
@@ -2406,7 +2393,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * this connector. Only alphanumeric characters, hyphens, dots and
          * underscores must be accepted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: postgres
@@ -2424,7 +2411,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * database. If starts with 'hex:' prefix it is expected that the rest
          * of the string represents hexadecimal encoded octets.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: __debezium_unavailable_value
          * Group: postgres
@@ -2446,7 +2433,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * but the lower the performance penalty. The default is set to 0 ms,
          * which disables tracking xmin.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0ms
          * Group: postgres
@@ -2468,7 +2455,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * but the lower the performance penalty. The default is set to 0 ms,
          * which disables tracking xmin.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0ms
          * Group: postgres
@@ -2506,7 +2493,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2532,8 +2519,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2551,8 +2537,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2570,7 +2556,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2584,8 +2570,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2600,7 +2585,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 

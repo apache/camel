@@ -51,7 +51,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -70,8 +70,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -86,7 +85,7 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * Whether templates have to be considered cacheable or not.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -100,8 +99,8 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * Whether templates have to be considered cacheable or not.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -115,7 +114,7 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * The cache Time To Live for templates, expressed in milliseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -129,8 +128,7 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * The cache Time To Live for templates, expressed in milliseconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -145,7 +143,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * Whether a template resources will be checked for existence before
          * being returned.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -160,8 +158,8 @@ public interface ThymeleafEndpointBuilderFactory {
          * Whether a template resources will be checked for existence before
          * being returned.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -175,7 +173,7 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -190,8 +188,7 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -206,7 +203,7 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * The template mode to be applied to templates.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: HTML
          * Group: producer
@@ -241,7 +238,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -264,8 +261,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -280,7 +276,7 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * The character encoding to be used for reading template resources.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -295,7 +291,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * The order in which this template will be resolved as part of the
          * resolver chain.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -310,8 +306,8 @@ public interface ThymeleafEndpointBuilderFactory {
          * The order in which this template will be resolved as part of the
          * resolver chain.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -326,7 +322,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * An optional prefix added to template names to convert them into
          * resource names.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -341,7 +337,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * The type of resolver to be used by the template engine.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thymeleaf.ThymeleafResolverType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thymeleaf.ThymeleafResolverType</code> type.
          * 
          * Default: CLASS_LOADER
          * Group: advanced
@@ -357,7 +353,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * The type of resolver to be used by the template engine.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thymeleaf.ThymeleafResolverType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thymeleaf.ThymeleafResolverType</code> type.
          * 
          * Default: CLASS_LOADER
          * Group: advanced
@@ -373,7 +369,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * An optional suffix added to template names to convert them into
          * resource names.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 

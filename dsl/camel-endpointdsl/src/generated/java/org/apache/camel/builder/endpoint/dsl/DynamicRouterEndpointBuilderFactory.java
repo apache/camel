@@ -51,7 +51,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * Multicast. By default, Camel will use the last reply as the outgoing
          * message. You can also use a POJO as the AggregationStrategy.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -68,8 +68,8 @@ public interface DynamicRouterEndpointBuilderFactory {
          * Multicast. By default, Camel will use the last reply as the outgoing
          * message. You can also use a POJO as the AggregationStrategy.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.AggregationStrategy&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.AggregationStrategy</code>
+         * type.
          * 
          * Group: common
          * 
@@ -87,7 +87,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * message. You can also use a POJO as the AggregationStrategy.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.AggregationStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.AggregationStrategy</code> type.
          * 
          * Group: common
          * 
@@ -104,7 +104,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * is used as the oldExchange (when no data to enrich), when using POJOs
          * as the AggregationStrategy.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -122,8 +122,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * is used as the oldExchange (when no data to enrich), when using POJOs
          * as the AggregationStrategy.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -139,7 +138,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * You can use a POJO as the AggregationStrategy. This refers to the
          * name of the method that aggregates the exchanges.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -154,7 +153,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * When caching producer endpoints, this is the size of the cache.
          * Default is 100.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 100
          * Group: common
@@ -170,7 +169,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * When caching producer endpoints, this is the size of the cache.
          * Default is 100.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 100
          * Group: common
@@ -188,7 +187,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * automatically implied, and you do not have to enable that option in
          * addition to this one.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -205,8 +204,8 @@ public interface DynamicRouterEndpointBuilderFactory {
          * automatically implied, and you do not have to enable that option in
          * addition to this one.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.ExecutorService</code>
+         * type.
          * 
          * Group: common
          * 
@@ -224,7 +223,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * addition to this one.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ExecutorService</code> type.
          * 
          * Group: common
          * 
@@ -239,7 +238,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * Ignore the invalid endpoint exception when attempting to create a
          * producer with an invalid endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -255,8 +254,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * Ignore the invalid endpoint exception when attempting to create a
          * producer with an invalid endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -274,7 +272,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * to provide any custom logic that is needed before the exchange is
          * sent. This is the name of a bean in the registry.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -291,8 +289,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * to provide any custom logic that is needed before the exchange is
          * sent. This is a Processor instance.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Processor&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.camel.Processor</code> type.
          * 
          * Group: common
          * 
@@ -310,7 +307,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * sent. This is a Processor instance.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Processor&lt;/code&gt; type.
+         * <code>org.apache.camel.Processor</code> type.
          * 
          * Group: common
          * 
@@ -330,7 +327,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * use-cases, this can be used to archive higher performance when the
          * AggregationStrategy is implemented as thread-safe.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -351,8 +348,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * use-cases, this can be used to archive higher performance when the
          * AggregationStrategy is implemented as thread-safe.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -375,7 +371,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * original thread that called the multicast, then make sure to enable
          * the synchronous option as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -398,8 +394,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * original thread that called the multicast, then make sure to enable
          * the synchronous option as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -414,7 +409,7 @@ public interface DynamicRouterEndpointBuilderFactory {
         /**
          * Recipient mode: firstMatch or allMatch.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: firstMatch
          * Group: common
@@ -432,7 +427,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * work between the parent exchange and each multicasted exchange. This
          * means each sub exchange has its own individual unit of work.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -450,8 +445,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * work between the parent exchange and each multicasted exchange. This
          * means each sub exchange has its own individual unit of work.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -473,7 +467,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * as in the pipeline that is used by the routing engine. The default
          * behavior is to not stop, but to continue processing until the end.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -495,8 +489,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * as in the pipeline that is used by the routing engine. The default
          * behavior is to not stop, but to continue processing until the end.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -513,7 +506,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * the order they come back). If disabled, Camel will process replies in
          * the same order as defined by the multicast.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -530,8 +523,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * the order they come back). If disabled, Camel will process replies in
          * the same order as defined by the multicast.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -548,7 +540,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * enabled then the same thread is used to continue routing after the
          * multicast is complete, even if parallel processing is enabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -565,8 +557,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * enabled then the same thread is used to continue routing after the
          * multicast is complete, even if parallel processing is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -589,7 +580,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * to shut down in a graceful manner) may continue to run. So use this
          * option with a bit of care.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -612,7 +603,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * to shut down in a graceful manner) may continue to run. So use this
          * option with a bit of care.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -627,7 +618,7 @@ public interface DynamicRouterEndpointBuilderFactory {
         /**
          * Flag to log a warning if no predicates match for an exchange.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -642,8 +633,7 @@ public interface DynamicRouterEndpointBuilderFactory {
         /**
          * Flag to log a warning if no predicates match for an exchange.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -678,7 +668,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -701,8 +691,7 @@ public interface DynamicRouterEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

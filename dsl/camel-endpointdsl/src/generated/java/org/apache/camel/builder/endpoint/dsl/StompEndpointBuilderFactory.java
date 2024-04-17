@@ -47,7 +47,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The URI of the Stomp broker to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: tcp://localhost:61613
@@ -63,7 +63,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: common
          * 
@@ -77,8 +77,8 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -92,7 +92,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The virtual host name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -106,7 +106,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The stomp version (1.1, or 1.2).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -120,7 +120,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The username.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -134,7 +134,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -149,7 +149,7 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -164,7 +164,7 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -200,7 +200,7 @@ public interface StompEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -226,8 +226,7 @@ public interface StompEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -245,8 +244,8 @@ public interface StompEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -264,7 +263,7 @@ public interface StompEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -278,8 +277,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -294,7 +292,7 @@ public interface StompEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -310,8 +308,7 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -327,8 +324,7 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -354,7 +350,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The URI of the Stomp broker to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: tcp://localhost:61613
@@ -370,7 +366,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: common
          * 
@@ -384,8 +380,8 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -399,7 +395,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The virtual host name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -413,7 +409,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The stomp version (1.1, or 1.2).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -427,7 +423,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The username.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -441,7 +437,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -456,7 +452,7 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -471,7 +467,7 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -503,7 +499,7 @@ public interface StompEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -526,8 +522,7 @@ public interface StompEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -544,8 +539,7 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -561,8 +555,7 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -589,7 +582,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The URI of the Stomp broker to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: tcp://localhost:61613
@@ -605,7 +598,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: common
          * 
@@ -619,8 +612,8 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -634,7 +627,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The virtual host name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -648,7 +641,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The stomp version (1.1, or 1.2).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -662,7 +655,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The username.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -676,7 +669,7 @@ public interface StompEndpointBuilderFactory {
         /**
          * The password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -691,7 +684,7 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -706,7 +699,7 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -735,8 +728,7 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -752,8 +744,7 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 

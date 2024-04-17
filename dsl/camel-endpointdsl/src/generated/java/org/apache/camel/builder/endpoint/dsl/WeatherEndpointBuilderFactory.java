@@ -46,7 +46,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * APPID ID used to authenticate the user connected to the API Server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -62,7 +62,7 @@ public interface WeatherEndpointBuilderFactory {
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -77,7 +77,7 @@ public interface WeatherEndpointBuilderFactory {
          * Language of the response.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherLanguage&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
          * Default: en
          * Group: common
@@ -93,7 +93,7 @@ public interface WeatherEndpointBuilderFactory {
          * Language of the response.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherLanguage&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
          * Default: en
          * Group: common
@@ -109,7 +109,7 @@ public interface WeatherEndpointBuilderFactory {
          * The output format of the weather data.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
          * Default: JSON
          * Group: common
@@ -125,7 +125,7 @@ public interface WeatherEndpointBuilderFactory {
          * The output format of the weather data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
          * Default: JSON
          * Group: common
@@ -143,7 +143,7 @@ public interface WeatherEndpointBuilderFactory {
          * actually parsed, so spelling, capitalisation of the time period is up
          * to you (its ignored).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -158,7 +158,7 @@ public interface WeatherEndpointBuilderFactory {
          * The units for temperature measurement.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherUnits&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
          * 
          * Group: common
          * 
@@ -173,7 +173,7 @@ public interface WeatherEndpointBuilderFactory {
          * The units for temperature measurement.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherUnits&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
          * 
          * Group: common
          * 
@@ -188,7 +188,7 @@ public interface WeatherEndpointBuilderFactory {
          * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherApi&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherApi</code> type.
          * 
          * Group: common
          * 
@@ -203,7 +203,7 @@ public interface WeatherEndpointBuilderFactory {
          * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherApi&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherApi</code> type.
          * 
          * Group: common
          * 
@@ -218,7 +218,7 @@ public interface WeatherEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -234,8 +234,7 @@ public interface WeatherEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -250,7 +249,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Number of results to be found.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: filter
          * 
@@ -264,8 +263,8 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Number of results to be found.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: filter
          * 
@@ -280,7 +279,7 @@ public interface WeatherEndpointBuilderFactory {
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -295,7 +294,7 @@ public interface WeatherEndpointBuilderFactory {
          * Latitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the bottom latitude.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -316,7 +315,7 @@ public interface WeatherEndpointBuilderFactory {
          * longitude and use that to get the weather details. You can use lat
          * and lon options instead of location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -331,7 +330,7 @@ public interface WeatherEndpointBuilderFactory {
          * Longitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the left longtitude.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -346,7 +345,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the right longtitude. Needs to be used in
          * combination with topLat and zoom.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -361,7 +360,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the top latitude. Needs to be used in
          * combination with rightLon and zoom.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -375,7 +374,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Zip-code, e.g. 94040,us.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -390,7 +389,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: filter
          * 
@@ -405,8 +404,8 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: filter
          * 
@@ -421,7 +420,7 @@ public interface WeatherEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -436,7 +435,7 @@ public interface WeatherEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -451,7 +450,7 @@ public interface WeatherEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -466,7 +465,7 @@ public interface WeatherEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -485,7 +484,7 @@ public interface WeatherEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -504,7 +503,7 @@ public interface WeatherEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -518,7 +517,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -533,7 +532,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -549,7 +548,7 @@ public interface WeatherEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -565,8 +564,7 @@ public interface WeatherEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -581,7 +579,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -596,7 +594,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -613,7 +611,7 @@ public interface WeatherEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -630,7 +628,7 @@ public interface WeatherEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -646,8 +644,7 @@ public interface WeatherEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -664,7 +661,7 @@ public interface WeatherEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -682,7 +679,7 @@ public interface WeatherEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -699,7 +696,7 @@ public interface WeatherEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -714,7 +711,7 @@ public interface WeatherEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -730,8 +727,7 @@ public interface WeatherEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -747,8 +743,8 @@ public interface WeatherEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -767,8 +763,8 @@ public interface WeatherEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -785,7 +781,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -800,8 +796,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -816,8 +811,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -833,7 +827,7 @@ public interface WeatherEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -849,7 +843,7 @@ public interface WeatherEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -865,8 +859,7 @@ public interface WeatherEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -881,7 +874,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The geolocation service now needs an accessKey to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -897,7 +890,7 @@ public interface WeatherEndpointBuilderFactory {
          * The geolocation service now needs to specify the IP associated to the
          * accessKey you're using.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -934,7 +927,7 @@ public interface WeatherEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -960,8 +953,7 @@ public interface WeatherEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -979,8 +971,8 @@ public interface WeatherEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -998,7 +990,7 @@ public interface WeatherEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1012,8 +1004,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1028,7 +1019,7 @@ public interface WeatherEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1046,7 +1037,7 @@ public interface WeatherEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1064,7 +1055,7 @@ public interface WeatherEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1082,7 +1073,7 @@ public interface WeatherEndpointBuilderFactory {
          * geolocationRequestHostIP.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.geolocation.GeoLocationProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
          * 
          * Group: advanced
          * 
@@ -1100,7 +1091,7 @@ public interface WeatherEndpointBuilderFactory {
          * geolocationRequestHostIP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.geolocation.GeoLocationProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
          * 
          * Group: advanced
          * 
@@ -1116,7 +1107,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1132,7 +1123,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1158,7 +1149,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * APPID ID used to authenticate the user connected to the API Server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -1174,7 +1165,7 @@ public interface WeatherEndpointBuilderFactory {
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1189,7 +1180,7 @@ public interface WeatherEndpointBuilderFactory {
          * Language of the response.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherLanguage&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
          * Default: en
          * Group: common
@@ -1205,7 +1196,7 @@ public interface WeatherEndpointBuilderFactory {
          * Language of the response.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherLanguage&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
          * Default: en
          * Group: common
@@ -1221,7 +1212,7 @@ public interface WeatherEndpointBuilderFactory {
          * The output format of the weather data.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
          * Default: JSON
          * Group: common
@@ -1237,7 +1228,7 @@ public interface WeatherEndpointBuilderFactory {
          * The output format of the weather data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
          * Default: JSON
          * Group: common
@@ -1255,7 +1246,7 @@ public interface WeatherEndpointBuilderFactory {
          * actually parsed, so spelling, capitalisation of the time period is up
          * to you (its ignored).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1270,7 +1261,7 @@ public interface WeatherEndpointBuilderFactory {
          * The units for temperature measurement.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherUnits&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
          * 
          * Group: common
          * 
@@ -1285,7 +1276,7 @@ public interface WeatherEndpointBuilderFactory {
          * The units for temperature measurement.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherUnits&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
          * 
          * Group: common
          * 
@@ -1300,7 +1291,7 @@ public interface WeatherEndpointBuilderFactory {
          * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherApi&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherApi</code> type.
          * 
          * Group: common
          * 
@@ -1315,7 +1306,7 @@ public interface WeatherEndpointBuilderFactory {
          * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherApi&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherApi</code> type.
          * 
          * Group: common
          * 
@@ -1329,7 +1320,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Number of results to be found.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: filter
          * 
@@ -1343,8 +1334,8 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Number of results to be found.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: filter
          * 
@@ -1359,7 +1350,7 @@ public interface WeatherEndpointBuilderFactory {
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1374,7 +1365,7 @@ public interface WeatherEndpointBuilderFactory {
          * Latitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the bottom latitude.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1395,7 +1386,7 @@ public interface WeatherEndpointBuilderFactory {
          * longitude and use that to get the weather details. You can use lat
          * and lon options instead of location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1410,7 +1401,7 @@ public interface WeatherEndpointBuilderFactory {
          * Longitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the left longtitude.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1425,7 +1416,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the right longtitude. Needs to be used in
          * combination with topLat and zoom.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1440,7 +1431,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the top latitude. Needs to be used in
          * combination with rightLon and zoom.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1454,7 +1445,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Zip-code, e.g. 94040,us.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1469,7 +1460,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: filter
          * 
@@ -1484,8 +1475,8 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: filter
          * 
@@ -1499,7 +1490,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The geolocation service now needs an accessKey to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -1515,7 +1506,7 @@ public interface WeatherEndpointBuilderFactory {
          * The geolocation service now needs to specify the IP associated to the
          * accessKey you're using.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -1548,7 +1539,7 @@ public interface WeatherEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1571,8 +1562,7 @@ public interface WeatherEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1591,7 +1581,7 @@ public interface WeatherEndpointBuilderFactory {
          * geolocationRequestHostIP.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.geolocation.GeoLocationProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
          * 
          * Group: advanced
          * 
@@ -1609,7 +1599,7 @@ public interface WeatherEndpointBuilderFactory {
          * geolocationRequestHostIP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.geolocation.GeoLocationProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
          * 
          * Group: advanced
          * 
@@ -1625,7 +1615,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1641,7 +1631,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1668,7 +1658,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * APPID ID used to authenticate the user connected to the API Server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -1684,7 +1674,7 @@ public interface WeatherEndpointBuilderFactory {
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1699,7 +1689,7 @@ public interface WeatherEndpointBuilderFactory {
          * Language of the response.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherLanguage&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
          * Default: en
          * Group: common
@@ -1715,7 +1705,7 @@ public interface WeatherEndpointBuilderFactory {
          * Language of the response.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherLanguage&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
          * Default: en
          * Group: common
@@ -1731,7 +1721,7 @@ public interface WeatherEndpointBuilderFactory {
          * The output format of the weather data.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
          * Default: JSON
          * Group: common
@@ -1747,7 +1737,7 @@ public interface WeatherEndpointBuilderFactory {
          * The output format of the weather data.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
          * Default: JSON
          * Group: common
@@ -1765,7 +1755,7 @@ public interface WeatherEndpointBuilderFactory {
          * actually parsed, so spelling, capitalisation of the time period is up
          * to you (its ignored).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1780,7 +1770,7 @@ public interface WeatherEndpointBuilderFactory {
          * The units for temperature measurement.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherUnits&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
          * 
          * Group: common
          * 
@@ -1795,7 +1785,7 @@ public interface WeatherEndpointBuilderFactory {
          * The units for temperature measurement.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherUnits&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
          * 
          * Group: common
          * 
@@ -1810,7 +1800,7 @@ public interface WeatherEndpointBuilderFactory {
          * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherApi&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherApi</code> type.
          * 
          * Group: common
          * 
@@ -1825,7 +1815,7 @@ public interface WeatherEndpointBuilderFactory {
          * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.WeatherApi&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.WeatherApi</code> type.
          * 
          * Group: common
          * 
@@ -1839,7 +1829,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Number of results to be found.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: filter
          * 
@@ -1853,8 +1843,8 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Number of results to be found.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: filter
          * 
@@ -1869,7 +1859,7 @@ public interface WeatherEndpointBuilderFactory {
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1884,7 +1874,7 @@ public interface WeatherEndpointBuilderFactory {
          * Latitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the bottom latitude.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1905,7 +1895,7 @@ public interface WeatherEndpointBuilderFactory {
          * longitude and use that to get the weather details. You can use lat
          * and lon options instead of location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1920,7 +1910,7 @@ public interface WeatherEndpointBuilderFactory {
          * Longitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the left longtitude.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1935,7 +1925,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the right longtitude. Needs to be used in
          * combination with topLat and zoom.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1950,7 +1940,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the top latitude. Needs to be used in
          * combination with rightLon and zoom.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1964,7 +1954,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Zip-code, e.g. 94040,us.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1979,7 +1969,7 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: filter
          * 
@@ -1994,8 +1984,8 @@ public interface WeatherEndpointBuilderFactory {
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: filter
          * 
@@ -2009,7 +1999,7 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The geolocation service now needs an accessKey to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -2025,7 +2015,7 @@ public interface WeatherEndpointBuilderFactory {
          * The geolocation service now needs to specify the IP associated to the
          * accessKey you're using.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -2057,7 +2047,7 @@ public interface WeatherEndpointBuilderFactory {
          * geolocationRequestHostIP.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.weather.geolocation.GeoLocationProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
          * 
          * Group: advanced
          * 
@@ -2075,7 +2065,7 @@ public interface WeatherEndpointBuilderFactory {
          * geolocationRequestHostIP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.weather.geolocation.GeoLocationProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
          * 
          * Group: advanced
          * 
@@ -2091,7 +2081,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -2107,7 +2097,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
          * 
          * Group: advanced
          * 

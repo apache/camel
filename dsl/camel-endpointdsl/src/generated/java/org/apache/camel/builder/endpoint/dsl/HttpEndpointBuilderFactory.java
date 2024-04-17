@@ -62,7 +62,7 @@ public interface HttpEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -92,8 +92,7 @@ public interface HttpEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -111,7 +110,7 @@ public interface HttpEndpointBuilderFactory {
          * option throwExceptionOnFailure to be false to let the HttpProducer
          * send all the fault response back.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -129,8 +128,7 @@ public interface HttpEndpointBuilderFactory {
          * option throwExceptionOnFailure to be false to let the HttpProducer
          * send all the fault response back.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -146,7 +144,7 @@ public interface HttpEndpointBuilderFactory {
          * Specifies whether a Connection Close header must be added to HTTP
          * Request. By default connectionClose is false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -162,8 +160,7 @@ public interface HttpEndpointBuilderFactory {
          * Specifies whether a Connection Close header must be added to HTTP
          * Request. By default connectionClose is false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -180,8 +177,7 @@ public interface HttpEndpointBuilderFactory {
          * override this option if set.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.http.common.HttpMethods&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.http.common.HttpMethods</code> type.
          * 
          * Group: producer
          * 
@@ -197,8 +193,7 @@ public interface HttpEndpointBuilderFactory {
          * override this option if set.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.http.common.HttpMethods&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.http.common.HttpMethods</code> type.
          * 
          * Group: producer
          * 
@@ -215,7 +210,7 @@ public interface HttpEndpointBuilderFactory {
          * included in the HTTP request then this can avoid parsing overhead
          * with many object allocations for the JVM garbage collector.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -233,8 +228,7 @@ public interface HttpEndpointBuilderFactory {
          * included in the HTTP request then this can avoid parsing overhead
          * with many object allocations for the JVM garbage collector.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -252,7 +246,7 @@ public interface HttpEndpointBuilderFactory {
          * avoid parsing overhead with many object allocations for the JVM
          * garbage collector.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -270,8 +264,7 @@ public interface HttpEndpointBuilderFactory {
          * avoid parsing overhead with many object allocations for the JVM
          * garbage collector.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -288,7 +281,7 @@ public interface HttpEndpointBuilderFactory {
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -305,8 +298,7 @@ public interface HttpEndpointBuilderFactory {
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -321,7 +313,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication domain to use with NTML.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -335,7 +327,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication host.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -349,7 +341,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication method to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -363,7 +355,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication domain (workstation name) to use with NTML.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -377,7 +369,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -391,7 +383,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication port.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: proxy
          * 
@@ -405,7 +397,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication port.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: proxy
          * 
@@ -419,7 +411,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication scheme to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -433,7 +425,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication username.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -447,7 +439,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy hostname to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -461,7 +453,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy port to use.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: proxy
          * 
@@ -475,7 +467,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy port to use.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: proxy
          * 
@@ -489,7 +481,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Authentication domain to use with NTML.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -504,7 +496,7 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true, camel-http sends preemptive basic
          * authentication to the server.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -520,8 +512,7 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true, camel-http sends preemptive basic
          * authentication to the server.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -536,7 +527,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Authentication host to use with NTML.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -551,7 +542,7 @@ public interface HttpEndpointBuilderFactory {
          * Authentication methods allowed to use as a comma separated list of
          * values Basic, Digest or NTLM.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -566,7 +557,7 @@ public interface HttpEndpointBuilderFactory {
          * Which authentication method to prioritize to use, either as Basic,
          * Digest or NTLM.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -580,7 +571,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Authentication password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -594,7 +585,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Authentication username.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -608,7 +599,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * OAuth2 client id.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -622,7 +613,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * OAuth2 client secret.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -636,7 +627,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * OAuth2 Token endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -655,7 +646,7 @@ public interface HttpEndpointBuilderFactory {
          * need.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -674,7 +665,7 @@ public interface HttpEndpointBuilderFactory {
          * need.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -689,8 +680,7 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
          * or NoopHostnameVerifier.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
@@ -706,7 +696,7 @@ public interface HttpEndpointBuilderFactory {
          * or NoopHostnameVerifier.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
@@ -734,8 +724,7 @@ public interface HttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -751,8 +740,7 @@ public interface HttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common (advanced)
          * 
@@ -770,7 +758,7 @@ public interface HttpEndpointBuilderFactory {
          * component has disabled cookie management then this option is disabled
          * too.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -789,8 +777,7 @@ public interface HttpEndpointBuilderFactory {
          * component has disabled cookie management then this option is disabled
          * too.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -806,7 +793,7 @@ public interface HttpEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -821,7 +808,7 @@ public interface HttpEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -842,7 +829,7 @@ public interface HttpEndpointBuilderFactory {
          * then performed by the cookieHandler.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hc.client5.http.cookie.CookieStore&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.cookie.CookieStore</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -863,7 +850,7 @@ public interface HttpEndpointBuilderFactory {
          * then performed by the cookieHandler.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.client5.http.cookie.CookieStore&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.cookie.CookieStore</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -880,7 +867,7 @@ public interface HttpEndpointBuilderFactory {
          * allows to only include the headers from the HTTP response (not
          * propagating IN headers).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -898,8 +885,7 @@ public interface HttpEndpointBuilderFactory {
          * allows to only include the headers from the HTTP response (not
          * propagating IN headers).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -915,7 +901,7 @@ public interface HttpEndpointBuilderFactory {
          * To use custom host header for producer. When not set in query will be
          * ignored. When set will override host header derived from url.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -931,7 +917,7 @@ public interface HttpEndpointBuilderFactory {
          * default HTTP DELETE do not include any HTTP body. However in some
          * rare cases users may need to be able to include the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -948,8 +934,7 @@ public interface HttpEndpointBuilderFactory {
          * default HTTP DELETE do not include any HTTP body. However in some
          * rare cases users may need to be able to include the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -965,7 +950,7 @@ public interface HttpEndpointBuilderFactory {
          * Whether to the HTTP request should follow redirects. By default the
          * HTTP request does not follow redirects.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -981,8 +966,7 @@ public interface HttpEndpointBuilderFactory {
          * Whether to the HTTP request should follow redirects. By default the
          * HTTP request does not follow redirects.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -999,7 +983,7 @@ public interface HttpEndpointBuilderFactory {
          * default HTTP GET do not include any HTTP body. However in some rare
          * cases users may need to be able to include the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1016,8 +1000,7 @@ public interface HttpEndpointBuilderFactory {
          * default HTTP GET do not include any HTTP body. However in some rare
          * cases users may need to be able to include the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1033,7 +1016,7 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true, The http producer won't read response body
          * and cache the input stream.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1049,8 +1032,7 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true, The http producer won't read response body
          * and cache the input stream.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1073,7 +1055,7 @@ public interface HttpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1096,8 +1078,7 @@ public interface HttpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1115,7 +1096,7 @@ public interface HttpEndpointBuilderFactory {
          * e.g. 200-204,209,301-304. Each range must be a single number or
          * from-to with the dash included.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 200-299
          * Group: producer (advanced)
@@ -1135,7 +1116,7 @@ public interface HttpEndpointBuilderFactory {
          * client, this allows applications which use the Host header to
          * generate accurate URL's for a proxied service.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1155,8 +1136,7 @@ public interface HttpEndpointBuilderFactory {
          * client, this allows applications which use the Host header to
          * generate accurate URL's for a proxied service.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1171,7 +1151,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To set a custom HTTP User-Agent request header.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -1188,7 +1168,7 @@ public interface HttpEndpointBuilderFactory {
          * endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.HttpClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.impl.classic.HttpClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1205,7 +1185,7 @@ public interface HttpEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.HttpClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.impl.classic.HttpClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1220,7 +1200,7 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom HttpClientConnectionManager to manage connections.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hc.client5.http.io.HttpClientConnectionManager&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.io.HttpClientConnectionManager</code> type.
          * 
          * Group: advanced
          * 
@@ -1235,7 +1215,7 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom HttpClientConnectionManager to manage connections.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.client5.http.io.HttpClientConnectionManager&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.io.HttpClientConnectionManager</code> type.
          * 
          * Group: advanced
          * 
@@ -1249,7 +1229,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * The maximum number of connections per route.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 20
          * Group: advanced
@@ -1264,7 +1244,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * The maximum number of connections per route.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 20
          * Group: advanced
@@ -1280,7 +1260,7 @@ public interface HttpEndpointBuilderFactory {
          * Sets a custom HttpClient to be used by the producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hc.client5.http.classic.HttpClient&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.classic.HttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1295,7 +1275,7 @@ public interface HttpEndpointBuilderFactory {
          * Sets a custom HttpClient to be used by the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.client5.http.classic.HttpClient&lt;/code&gt; type.
+         * <code>org.apache.hc.client5.http.classic.HttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1312,7 +1292,8 @@ public interface HttpEndpointBuilderFactory {
          * mechanisms etc.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.http.HttpClientConfigurer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1329,7 +1310,8 @@ public interface HttpEndpointBuilderFactory {
          * mechanisms etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.http.HttpClientConfigurer&lt;/code&gt; type.
+         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1343,8 +1325,8 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * httpClientOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1362,8 +1344,8 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * httpClientOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1381,8 +1363,8 @@ public interface HttpEndpointBuilderFactory {
          * To configure the connection and the socket using the key/values from
          * the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * httpConnectionOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1401,8 +1383,8 @@ public interface HttpEndpointBuilderFactory {
          * To configure the connection and the socket using the key/values from
          * the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * httpConnectionOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1420,7 +1402,7 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom HttpContext instance.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.http.protocol.HttpContext&lt;/code&gt; type.
+         * <code>org.apache.hc.core5.http.protocol.HttpContext</code> type.
          * 
          * Group: advanced
          * 
@@ -1435,7 +1417,7 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom HttpContext instance.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.core5.http.protocol.HttpContext&lt;/code&gt; type.
+         * <code>org.apache.hc.core5.http.protocol.HttpContext</code> type.
          * 
          * Group: advanced
          * 
@@ -1449,7 +1431,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * The maximum number of connections.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 200
          * Group: advanced
@@ -1464,7 +1446,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * The maximum number of connections.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 200
          * Group: advanced
@@ -1479,7 +1461,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use System Properties as fallback for configuration.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1494,8 +1476,7 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use System Properties as fallback for configuration.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

@@ -48,7 +48,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Determines whether strong consistency should be enforced when data is
          * read.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -64,8 +64,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Determines whether strong consistency should be enforced when data is
          * read.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -81,7 +80,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Set whether the initial Describe table operation in the DDB Endpoint
          * must be done, or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -97,8 +96,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Set whether the initial Describe table operation in the DDB Endpoint
          * must be done, or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -113,7 +111,7 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Attribute name when creating table.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -127,7 +125,7 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Attribute type when creating table.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -141,7 +139,7 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The key scalar type, it can be S (String), N (Number) and B (Bytes).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -156,7 +154,7 @@ public interface Ddb2EndpointBuilderFactory {
          * What operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.ddb.Ddb2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
          * 
          * Default: PutItem
          * Group: producer
@@ -172,7 +170,7 @@ public interface Ddb2EndpointBuilderFactory {
          * What operation to perform.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.ddb.Ddb2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
          * 
          * Default: PutItem
          * Group: producer
@@ -188,7 +186,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -204,8 +202,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -221,7 +218,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The provisioned throughput to reserve for reading resources from your
          * table.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -236,8 +233,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The provisioned throughput to reserve for reading resources from your
          * table.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -251,7 +247,7 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The region in which DDB client needs to work.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -266,7 +262,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -281,7 +277,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -296,8 +292,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -311,7 +306,7 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the DDB client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -328,7 +323,7 @@ public interface Ddb2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -345,8 +340,8 @@ public interface Ddb2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -360,8 +355,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the DDB client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -377,7 +372,7 @@ public interface Ddb2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the DDB client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -392,7 +387,7 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -407,7 +402,7 @@ public interface Ddb2EndpointBuilderFactory {
          * If using a profile credentials provider this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -421,7 +416,7 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -436,7 +431,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume a IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -451,7 +446,7 @@ public interface Ddb2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -467,8 +462,7 @@ public interface Ddb2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -485,7 +479,7 @@ public interface Ddb2EndpointBuilderFactory {
          * default credentials provider or to expect static credentials to be
          * passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -502,8 +496,7 @@ public interface Ddb2EndpointBuilderFactory {
          * default credentials provider or to expect static credentials to be
          * passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -519,7 +512,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Set whether the DDB client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -535,8 +528,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Set whether the DDB client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -553,7 +545,7 @@ public interface Ddb2EndpointBuilderFactory {
          * This is useful in situation in which the user needs to assume a IAM
          * role for doing operations in DDB.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -570,8 +562,7 @@ public interface Ddb2EndpointBuilderFactory {
          * This is useful in situation in which the user needs to assume a IAM
          * role for doing operations in DDB.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -606,7 +597,7 @@ public interface Ddb2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -629,8 +620,7 @@ public interface Ddb2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -646,7 +636,8 @@ public interface Ddb2EndpointBuilderFactory {
          * To use the AmazonDynamoDB as the client.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.DynamoDbClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -661,7 +652,8 @@ public interface Ddb2EndpointBuilderFactory {
          * To use the AmazonDynamoDB as the client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.DynamoDbClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbClient</code>
+         * type.
          * 
          * Group: advanced
          * 

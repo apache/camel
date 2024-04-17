@@ -46,7 +46,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the AS2From header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -63,7 +63,8 @@ public interface AS2EndpointBuilderFactory {
          * no signature, ENCRYPTED_SIGNED - Encryption, signature.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2MessageStructure&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
+         * type.
          * 
          * Group: common
          * 
@@ -80,7 +81,8 @@ public interface AS2EndpointBuilderFactory {
          * no signature, ENCRYPTED_SIGNED - Encryption, signature.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2MessageStructure&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
+         * type.
          * 
          * Group: common
          * 
@@ -94,7 +96,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the AS2To header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -108,7 +110,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The version of the AS2 protocol.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 1.1
          * Group: common
@@ -123,7 +125,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The name of the attached file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -138,7 +140,7 @@ public interface AS2EndpointBuilderFactory {
          * The Client Fully Qualified Domain Name (FQDN). Used in message ids
          * sent by endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel.apache.org
          * Group: common
@@ -154,7 +156,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to compress EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2CompressionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
          * Group: common
          * 
@@ -169,7 +171,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to compress EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2CompressionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
          * Group: common
          * 
@@ -185,7 +187,7 @@ public interface AS2EndpointBuilderFactory {
          * value to this parameter requests a message disposition notification
          * (MDN) for the AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -199,7 +201,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The transfer encoding of EDI message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -214,8 +216,8 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
+         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -231,7 +233,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
+         * <code>org.apache.hc.core5.http.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -245,7 +247,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the From header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -259,8 +261,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Set hostname verifier for SSL session.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: common
          * 
@@ -275,7 +276,7 @@ public interface AS2EndpointBuilderFactory {
          * Set hostname verifier for SSL session.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: common
          * 
@@ -290,7 +291,7 @@ public interface AS2EndpointBuilderFactory {
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 5
          * Group: common
@@ -306,8 +307,8 @@ public interface AS2EndpointBuilderFactory {
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 5
          * Group: common
@@ -323,7 +324,7 @@ public interface AS2EndpointBuilderFactory {
          * The time to live for connections in the connection pool (client
          * only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 15m
          * Group: common
@@ -339,8 +340,8 @@ public interface AS2EndpointBuilderFactory {
          * The time to live for connections in the connection pool (client
          * only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 15m
          * Group: common
@@ -355,7 +356,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the http connection (client only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 5s
          * Group: common
@@ -370,8 +371,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the http connection (client only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 5s
          * Group: common
@@ -386,7 +387,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the underlying http socket (client only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 5s
          * Group: common
@@ -401,8 +402,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the underlying http socket (client only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 5s
          * Group: common
@@ -417,7 +418,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -431,7 +432,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The template used to format MDN message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -445,7 +446,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The request URI of EDI message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: /
          * Group: common
@@ -461,7 +462,7 @@ public interface AS2EndpointBuilderFactory {
          * The value included in the Server message header identifying the AS2
          * Server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel AS2 Server Endpoint
          * Group: common
@@ -477,7 +478,7 @@ public interface AS2EndpointBuilderFactory {
          * The Server Fully Qualified Domain Name (FQDN). Used in message ids
          * sent by endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel.apache.org
          * Group: common
@@ -492,7 +493,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of server.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -506,8 +507,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of server.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -521,8 +522,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Set SSL context for connection to remote server.
          * 
-         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
-         * type.
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
          * 
          * Group: common
          * 
@@ -537,7 +537,7 @@ public interface AS2EndpointBuilderFactory {
          * Set SSL context for connection to remote server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * <code>javax.net.ssl.SSLContext</code> type.
          * 
          * Group: common
          * 
@@ -551,7 +551,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of Subject header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -565,7 +565,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The host name (IP or DNS name) of target host.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -579,7 +579,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of target host. -1 indicates the scheme default port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 80
          * Group: common
@@ -594,8 +594,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of target host. -1 indicates the scheme default port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 80
          * Group: common
@@ -611,7 +611,7 @@ public interface AS2EndpointBuilderFactory {
          * The value included in the User-Agent message header identifying the
          * AS2 user agent.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel AS2 Client Endpoint
          * Group: common
@@ -626,8 +626,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The key used to encrypt the EDI message.
          * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -642,7 +641,7 @@ public interface AS2EndpointBuilderFactory {
          * The key used to encrypt the EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -657,7 +656,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to encrypt EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
          * Group: security
          * 
@@ -672,7 +671,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to encrypt EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
          * Group: security
          * 
@@ -686,8 +685,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The chain of certificates used to encrypt EDI message.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -702,7 +700,7 @@ public interface AS2EndpointBuilderFactory {
          * The chain of certificates used to encrypt EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -718,7 +716,7 @@ public interface AS2EndpointBuilderFactory {
          * a message integrity check (MIC) returned in message dispostion
          * notification (MDN).
          * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String[]</code> type.
          * 
          * Group: security
          * 
@@ -734,8 +732,8 @@ public interface AS2EndpointBuilderFactory {
          * a message integrity check (MIC) returned in message dispostion
          * notification (MDN).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.String[]</code>
+         * type.
          * 
          * Group: security
          * 
@@ -750,7 +748,8 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to sign EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
+         * type.
          * 
          * Group: security
          * 
@@ -765,7 +764,8 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to sign EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
+         * type.
          * 
          * Group: security
          * 
@@ -779,8 +779,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The chain of certificates used to sign EDI message.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -795,7 +794,7 @@ public interface AS2EndpointBuilderFactory {
          * The chain of certificates used to sign EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -809,8 +808,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The key used to sign the EDI message.
          * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -825,7 +823,7 @@ public interface AS2EndpointBuilderFactory {
          * The key used to sign the EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -842,8 +840,7 @@ public interface AS2EndpointBuilderFactory {
          * received message. Client: not yet implemented, should validate the
          * MDN.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -861,7 +858,7 @@ public interface AS2EndpointBuilderFactory {
          * MDN.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -889,8 +886,8 @@ public interface AS2EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -908,7 +905,7 @@ public interface AS2EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -922,8 +919,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -938,7 +934,7 @@ public interface AS2EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -964,7 +960,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the AS2From header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -981,7 +977,8 @@ public interface AS2EndpointBuilderFactory {
          * no signature, ENCRYPTED_SIGNED - Encryption, signature.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2MessageStructure&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
+         * type.
          * 
          * Group: common
          * 
@@ -998,7 +995,8 @@ public interface AS2EndpointBuilderFactory {
          * no signature, ENCRYPTED_SIGNED - Encryption, signature.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2MessageStructure&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1012,7 +1010,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the AS2To header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1026,7 +1024,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The version of the AS2 protocol.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 1.1
          * Group: common
@@ -1041,7 +1039,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The name of the attached file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1056,7 +1054,7 @@ public interface AS2EndpointBuilderFactory {
          * The Client Fully Qualified Domain Name (FQDN). Used in message ids
          * sent by endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel.apache.org
          * Group: common
@@ -1072,7 +1070,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to compress EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2CompressionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
          * Group: common
          * 
@@ -1087,7 +1085,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to compress EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2CompressionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
          * Group: common
          * 
@@ -1103,7 +1101,7 @@ public interface AS2EndpointBuilderFactory {
          * value to this parameter requests a message disposition notification
          * (MDN) for the AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1117,7 +1115,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The transfer encoding of EDI message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1132,8 +1130,8 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
+         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1149,7 +1147,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
+         * <code>org.apache.hc.core5.http.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -1163,7 +1161,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the From header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1177,8 +1175,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Set hostname verifier for SSL session.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: common
          * 
@@ -1193,7 +1190,7 @@ public interface AS2EndpointBuilderFactory {
          * Set hostname verifier for SSL session.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: common
          * 
@@ -1208,7 +1205,7 @@ public interface AS2EndpointBuilderFactory {
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 5
          * Group: common
@@ -1224,8 +1221,8 @@ public interface AS2EndpointBuilderFactory {
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 5
          * Group: common
@@ -1241,7 +1238,7 @@ public interface AS2EndpointBuilderFactory {
          * The time to live for connections in the connection pool (client
          * only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 15m
          * Group: common
@@ -1257,8 +1254,8 @@ public interface AS2EndpointBuilderFactory {
          * The time to live for connections in the connection pool (client
          * only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 15m
          * Group: common
@@ -1273,7 +1270,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the http connection (client only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 5s
          * Group: common
@@ -1288,8 +1285,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the http connection (client only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 5s
          * Group: common
@@ -1304,7 +1301,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the underlying http socket (client only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 5s
          * Group: common
@@ -1319,8 +1316,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the underlying http socket (client only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 5s
          * Group: common
@@ -1335,7 +1332,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1349,7 +1346,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The template used to format MDN message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1363,7 +1360,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The request URI of EDI message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: /
          * Group: common
@@ -1379,7 +1376,7 @@ public interface AS2EndpointBuilderFactory {
          * The value included in the Server message header identifying the AS2
          * Server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel AS2 Server Endpoint
          * Group: common
@@ -1395,7 +1392,7 @@ public interface AS2EndpointBuilderFactory {
          * The Server Fully Qualified Domain Name (FQDN). Used in message ids
          * sent by endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel.apache.org
          * Group: common
@@ -1410,7 +1407,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of server.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -1424,8 +1421,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of server.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1439,8 +1436,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Set SSL context for connection to remote server.
          * 
-         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
-         * type.
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
          * 
          * Group: common
          * 
@@ -1455,7 +1451,7 @@ public interface AS2EndpointBuilderFactory {
          * Set SSL context for connection to remote server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * <code>javax.net.ssl.SSLContext</code> type.
          * 
          * Group: common
          * 
@@ -1469,7 +1465,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of Subject header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1483,7 +1479,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The host name (IP or DNS name) of target host.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1497,7 +1493,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of target host. -1 indicates the scheme default port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 80
          * Group: common
@@ -1512,8 +1508,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of target host. -1 indicates the scheme default port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 80
          * Group: common
@@ -1529,7 +1525,7 @@ public interface AS2EndpointBuilderFactory {
          * The value included in the User-Agent message header identifying the
          * AS2 user agent.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel AS2 Client Endpoint
          * Group: common
@@ -1544,8 +1540,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The key used to encrypt the EDI message.
          * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -1560,7 +1555,7 @@ public interface AS2EndpointBuilderFactory {
          * The key used to encrypt the EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -1575,7 +1570,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to encrypt EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
          * Group: security
          * 
@@ -1590,7 +1585,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to encrypt EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
          * Group: security
          * 
@@ -1604,8 +1599,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The chain of certificates used to encrypt EDI message.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -1620,7 +1614,7 @@ public interface AS2EndpointBuilderFactory {
          * The chain of certificates used to encrypt EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -1636,7 +1630,7 @@ public interface AS2EndpointBuilderFactory {
          * a message integrity check (MIC) returned in message dispostion
          * notification (MDN).
          * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String[]</code> type.
          * 
          * Group: security
          * 
@@ -1652,8 +1646,8 @@ public interface AS2EndpointBuilderFactory {
          * a message integrity check (MIC) returned in message dispostion
          * notification (MDN).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.String[]</code>
+         * type.
          * 
          * Group: security
          * 
@@ -1668,7 +1662,8 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to sign EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
+         * type.
          * 
          * Group: security
          * 
@@ -1683,7 +1678,8 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to sign EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
+         * type.
          * 
          * Group: security
          * 
@@ -1697,8 +1693,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The chain of certificates used to sign EDI message.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -1713,7 +1708,7 @@ public interface AS2EndpointBuilderFactory {
          * The chain of certificates used to sign EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -1727,8 +1722,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The key used to sign the EDI message.
          * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -1743,7 +1737,7 @@ public interface AS2EndpointBuilderFactory {
          * The key used to sign the EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -1760,8 +1754,7 @@ public interface AS2EndpointBuilderFactory {
          * received message. Client: not yet implemented, should validate the
          * MDN.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -1779,7 +1772,7 @@ public interface AS2EndpointBuilderFactory {
          * MDN.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -1811,7 +1804,7 @@ public interface AS2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1834,8 +1827,7 @@ public interface AS2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1863,7 +1855,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the AS2From header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1880,7 +1872,8 @@ public interface AS2EndpointBuilderFactory {
          * no signature, ENCRYPTED_SIGNED - Encryption, signature.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2MessageStructure&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1897,7 +1890,8 @@ public interface AS2EndpointBuilderFactory {
          * no signature, ENCRYPTED_SIGNED - Encryption, signature.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2MessageStructure&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1911,7 +1905,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the AS2To header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1925,7 +1919,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The version of the AS2 protocol.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 1.1
          * Group: common
@@ -1940,7 +1934,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The name of the attached file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1955,7 +1949,7 @@ public interface AS2EndpointBuilderFactory {
          * The Client Fully Qualified Domain Name (FQDN). Used in message ids
          * sent by endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel.apache.org
          * Group: common
@@ -1971,7 +1965,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to compress EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2CompressionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
          * Group: common
          * 
@@ -1986,7 +1980,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to compress EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2CompressionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
          * Group: common
          * 
@@ -2002,7 +1996,7 @@ public interface AS2EndpointBuilderFactory {
          * value to this parameter requests a message disposition notification
          * (MDN) for the AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2016,7 +2010,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The transfer encoding of EDI message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2031,8 +2025,8 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
+         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2048,7 +2042,7 @@ public interface AS2EndpointBuilderFactory {
          * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hc.core5.http.ContentType&lt;/code&gt; type.
+         * <code>org.apache.hc.core5.http.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -2062,7 +2056,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of the From header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2076,8 +2070,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Set hostname verifier for SSL session.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: common
          * 
@@ -2092,7 +2085,7 @@ public interface AS2EndpointBuilderFactory {
          * Set hostname verifier for SSL session.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: common
          * 
@@ -2107,7 +2100,7 @@ public interface AS2EndpointBuilderFactory {
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 5
          * Group: common
@@ -2123,8 +2116,8 @@ public interface AS2EndpointBuilderFactory {
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 5
          * Group: common
@@ -2140,7 +2133,7 @@ public interface AS2EndpointBuilderFactory {
          * The time to live for connections in the connection pool (client
          * only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 15m
          * Group: common
@@ -2156,8 +2149,8 @@ public interface AS2EndpointBuilderFactory {
          * The time to live for connections in the connection pool (client
          * only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 15m
          * Group: common
@@ -2172,7 +2165,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the http connection (client only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 5s
          * Group: common
@@ -2187,8 +2180,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the http connection (client only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 5s
          * Group: common
@@ -2203,7 +2196,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the underlying http socket (client only).
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 5s
          * Group: common
@@ -2218,8 +2211,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The timeout of the underlying http socket (client only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 5s
          * Group: common
@@ -2234,7 +2227,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2248,7 +2241,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The template used to format MDN message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2262,7 +2255,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The request URI of EDI message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: /
          * Group: common
@@ -2278,7 +2271,7 @@ public interface AS2EndpointBuilderFactory {
          * The value included in the Server message header identifying the AS2
          * Server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel AS2 Server Endpoint
          * Group: common
@@ -2294,7 +2287,7 @@ public interface AS2EndpointBuilderFactory {
          * The Server Fully Qualified Domain Name (FQDN). Used in message ids
          * sent by endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel.apache.org
          * Group: common
@@ -2309,7 +2302,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of server.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -2323,8 +2316,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of server.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2338,8 +2331,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * Set SSL context for connection to remote server.
          * 
-         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
-         * type.
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
          * 
          * Group: common
          * 
@@ -2354,7 +2346,7 @@ public interface AS2EndpointBuilderFactory {
          * Set SSL context for connection to remote server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * <code>javax.net.ssl.SSLContext</code> type.
          * 
          * Group: common
          * 
@@ -2368,7 +2360,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The value of Subject header of AS2 message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2382,7 +2374,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The host name (IP or DNS name) of target host.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2396,7 +2388,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of target host. -1 indicates the scheme default port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 80
          * Group: common
@@ -2411,8 +2403,8 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The port number of target host. -1 indicates the scheme default port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 80
          * Group: common
@@ -2428,7 +2420,7 @@ public interface AS2EndpointBuilderFactory {
          * The value included in the User-Agent message header identifying the
          * AS2 user agent.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel AS2 Client Endpoint
          * Group: common
@@ -2443,8 +2435,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The key used to encrypt the EDI message.
          * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -2459,7 +2450,7 @@ public interface AS2EndpointBuilderFactory {
          * The key used to encrypt the EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -2474,7 +2465,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to encrypt EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
          * Group: security
          * 
@@ -2489,7 +2480,7 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to encrypt EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
          * Group: security
          * 
@@ -2503,8 +2494,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The chain of certificates used to encrypt EDI message.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -2519,7 +2509,7 @@ public interface AS2EndpointBuilderFactory {
          * The chain of certificates used to encrypt EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -2535,7 +2525,7 @@ public interface AS2EndpointBuilderFactory {
          * a message integrity check (MIC) returned in message dispostion
          * notification (MDN).
          * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String[]</code> type.
          * 
          * Group: security
          * 
@@ -2551,8 +2541,8 @@ public interface AS2EndpointBuilderFactory {
          * a message integrity check (MIC) returned in message dispostion
          * notification (MDN).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.String[]</code>
+         * type.
          * 
          * Group: security
          * 
@@ -2567,7 +2557,8 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to sign EDI message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
+         * type.
          * 
          * Group: security
          * 
@@ -2582,7 +2573,8 @@ public interface AS2EndpointBuilderFactory {
          * The algorithm used to sign EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
+         * type.
          * 
          * Group: security
          * 
@@ -2596,8 +2588,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The chain of certificates used to sign EDI message.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -2612,7 +2603,7 @@ public interface AS2EndpointBuilderFactory {
          * The chain of certificates used to sign EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -2626,8 +2617,7 @@ public interface AS2EndpointBuilderFactory {
         /**
          * The key used to sign the EDI message.
          * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -2642,7 +2632,7 @@ public interface AS2EndpointBuilderFactory {
          * The key used to sign the EDI message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * <code>java.security.PrivateKey</code> type.
          * 
          * Group: security
          * 
@@ -2659,8 +2649,7 @@ public interface AS2EndpointBuilderFactory {
          * received message. Client: not yet implemented, should validate the
          * MDN.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 
@@ -2678,7 +2667,7 @@ public interface AS2EndpointBuilderFactory {
          * MDN.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate[]</code> type.
          * 
          * Group: security
          * 

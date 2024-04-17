@@ -48,7 +48,7 @@ public interface LogEndpointBuilderFactory {
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -64,8 +64,8 @@ public interface LogEndpointBuilderFactory {
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -80,7 +80,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Set the initial delay for stats (in millis).
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -94,8 +94,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Set the initial delay for stats (in millis).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -110,7 +109,7 @@ public interface LogEndpointBuilderFactory {
          * If specified will group message stats by this time interval (in
          * millis).
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -125,8 +124,7 @@ public interface LogEndpointBuilderFactory {
          * If specified will group message stats by this time interval (in
          * millis).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -140,7 +138,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * An integer that specifies a group size for throughput logging.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -154,8 +152,8 @@ public interface LogEndpointBuilderFactory {
         /**
          * An integer that specifies a group size for throughput logging.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -169,7 +167,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Logging level to use. The default value is INFO.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: INFO
          * Group: producer
@@ -185,7 +183,7 @@ public interface LogEndpointBuilderFactory {
          * If true, mask sensitive information like password or passphrase in
          * the log.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: producer
          * 
@@ -200,8 +198,8 @@ public interface LogEndpointBuilderFactory {
          * If true, mask sensitive information like password or passphrase in
          * the log.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -215,7 +213,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * An optional Marker name to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -229,7 +227,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled only the body will be printed out.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -244,8 +242,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled only the body will be printed out.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -263,7 +260,7 @@ public interface LogEndpointBuilderFactory {
          * name. However, if the source location is disabled or not possible to
          * resolve then the existing logger name will be used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -281,8 +278,7 @@ public interface LogEndpointBuilderFactory {
          * name. However, if the source location is disabled or not possible to
          * resolve then the existing logger name will be used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -297,7 +293,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Limits the number of characters logged per line.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: formatting
@@ -312,7 +308,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Limits the number of characters logged per line.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: formatting
@@ -327,7 +323,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled then each information is outputted on a newline.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -342,8 +338,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled then each information is outputted on a newline.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -359,7 +354,7 @@ public interface LogEndpointBuilderFactory {
          * Quick option for turning all options on. (multiline, maxChars has to
          * be manually set if to be used).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -375,8 +370,7 @@ public interface LogEndpointBuilderFactory {
          * Quick option for turning all options on. (multiline, maxChars has to
          * be manually set if to be used).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -391,7 +385,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show all of the exchange properties (both internal and custom).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -406,8 +400,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show all of the exchange properties (both internal and custom).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -422,7 +415,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: formatting
@@ -437,8 +430,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: formatting
@@ -453,7 +445,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the body Java type.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: formatting
@@ -468,8 +460,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the body Java type.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: formatting
@@ -485,7 +476,7 @@ public interface LogEndpointBuilderFactory {
          * Whether Camel should show cached stream bodies or not
          * (org.apache.camel.StreamCache).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: formatting
@@ -501,8 +492,7 @@ public interface LogEndpointBuilderFactory {
          * Whether Camel should show cached stream bodies or not
          * (org.apache.camel.StreamCache).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: formatting
@@ -520,7 +510,7 @@ public interface LogEndpointBuilderFactory {
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
          * and for instance a doCatch can catch exceptions.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -538,8 +528,7 @@ public interface LogEndpointBuilderFactory {
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
          * and for instance a doCatch can catch exceptions.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -555,7 +544,7 @@ public interface LogEndpointBuilderFactory {
          * If the exchange has an exception, show the exception message (no
          * stacktrace).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -571,8 +560,7 @@ public interface LogEndpointBuilderFactory {
          * If the exchange has an exception, show the exception message (no
          * stacktrace).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -587,7 +575,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the unique exchange ID.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -602,8 +590,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the unique exchange ID.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -618,7 +605,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Shows the Message Exchange Pattern (or MEP for short).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -633,8 +620,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Shows the Message Exchange Pattern (or MEP for short).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -649,7 +635,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled Camel will output files.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -664,8 +650,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled Camel will output files.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -681,7 +666,7 @@ public interface LogEndpointBuilderFactory {
          * If enabled Camel will on Future objects wait for it to complete to
          * obtain the payload to be logged.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -697,8 +682,7 @@ public interface LogEndpointBuilderFactory {
          * If enabled Camel will on Future objects wait for it to complete to
          * obtain the payload to be logged.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -713,7 +697,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the message headers.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -728,8 +712,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the message headers.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -745,7 +728,7 @@ public interface LogEndpointBuilderFactory {
          * Show the exchange properties (only custom). Use showAllProperties to
          * show both internal and custom properties.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -761,8 +744,7 @@ public interface LogEndpointBuilderFactory {
          * Show the exchange properties (only custom). Use showAllProperties to
          * show both internal and custom properties.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -777,7 +759,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show route Group.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -792,8 +774,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show route Group.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -808,7 +789,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show route ID.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -823,8 +804,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show route ID.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -840,7 +820,7 @@ public interface LogEndpointBuilderFactory {
          * Show the stack trace, if an exchange has an exception. Only effective
          * if one of showAll, showException or showCaughtException are enabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -856,8 +836,7 @@ public interface LogEndpointBuilderFactory {
          * Show the stack trace, if an exchange has an exception. Only effective
          * if one of showAll, showException or showCaughtException are enabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -876,7 +855,7 @@ public interface LogEndpointBuilderFactory {
          * already been read by this logger. To remedy this you will have to use
          * Stream Caching.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -895,8 +874,7 @@ public interface LogEndpointBuilderFactory {
          * already been read by this logger. To remedy this you will have to use
          * Stream Caching.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -911,7 +889,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the variables.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -926,8 +904,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the variables.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: formatting
@@ -945,7 +922,7 @@ public interface LogEndpointBuilderFactory {
          * false will preserve any line separators from the body, which then
          * will log the body as is.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: formatting
@@ -963,8 +940,7 @@ public interface LogEndpointBuilderFactory {
          * false will preserve any line separators from the body, which then
          * will log the body as is.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: formatting
@@ -980,7 +956,7 @@ public interface LogEndpointBuilderFactory {
          * Sets the outputs style to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle&lt;/code&gt; type.
+         * <code>org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle</code> type.
          * 
          * Default: Default
          * Group: formatting
@@ -996,7 +972,7 @@ public interface LogEndpointBuilderFactory {
          * Sets the outputs style to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle&lt;/code&gt; type.
+         * <code>org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle</code> type.
          * 
          * Default: Default
          * Group: formatting
@@ -1031,7 +1007,7 @@ public interface LogEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1054,8 +1030,7 @@ public interface LogEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1070,8 +1045,8 @@ public interface LogEndpointBuilderFactory {
         /**
          * To use a custom exchange formatter.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExchangeFormatter</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1086,7 +1061,7 @@ public interface LogEndpointBuilderFactory {
          * To use a custom exchange formatter.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExchangeFormatter</code> type.
          * 
          * Group: advanced
          * 

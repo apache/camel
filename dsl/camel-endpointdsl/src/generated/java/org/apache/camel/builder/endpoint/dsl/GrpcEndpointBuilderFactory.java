@@ -46,7 +46,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1048576
          * Group: common
@@ -61,7 +61,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1048576
          * Group: common
@@ -76,7 +76,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 4194304
          * Group: common
@@ -91,7 +91,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 4194304
          * Group: common
@@ -108,7 +108,7 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ServerInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -125,8 +125,7 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ServerInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -152,7 +151,8 @@ public interface GrpcEndpointBuilderFactory {
          * able to achieve the assumption.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcConsumerStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
+         * type.
          * 
          * Default: PROPAGATION
          * Group: consumer
@@ -178,7 +178,8 @@ public interface GrpcEndpointBuilderFactory {
          * able to achieve the assumption.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcConsumerStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
+         * type.
          * 
          * Default: PROPAGATION
          * Group: consumer
@@ -193,7 +194,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Determines if onCompleted events should be pushed to the Camel route.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -208,8 +209,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Determines if onCompleted events should be pushed to the Camel route.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -225,7 +225,7 @@ public interface GrpcEndpointBuilderFactory {
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -241,8 +241,7 @@ public interface GrpcEndpointBuilderFactory {
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -257,7 +256,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets the initial flow control window in bytes.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1048576
          * Group: consumer
@@ -272,7 +271,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets the initial flow control window in bytes.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1048576
          * Group: consumer
@@ -290,7 +289,7 @@ public interface GrpcEndpointBuilderFactory {
          * greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will
          * disable keepalive.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 7200000
          * Group: consumer
@@ -308,7 +307,7 @@ public interface GrpcEndpointBuilderFactory {
          * greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will
          * disable keepalive.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 7200000
          * Group: consumer
@@ -324,7 +323,7 @@ public interface GrpcEndpointBuilderFactory {
          * Sets a custom keepalive timeout in milliseconds, the timeout for
          * keepalive ping requests.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 20000
          * Group: consumer
@@ -340,7 +339,7 @@ public interface GrpcEndpointBuilderFactory {
          * Sets a custom keepalive timeout in milliseconds, the timeout for
          * keepalive ping requests.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 20000
          * Group: consumer
@@ -356,7 +355,7 @@ public interface GrpcEndpointBuilderFactory {
          * The maximum number of concurrent calls permitted for each incoming
          * server connection. Defaults to no limit.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: consumer
@@ -372,7 +371,7 @@ public interface GrpcEndpointBuilderFactory {
          * The maximum number of concurrent calls permitted for each incoming
          * server connection. Defaults to no limit.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: consumer
@@ -392,7 +391,7 @@ public interface GrpcEndpointBuilderFactory {
          * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
          * age.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 9223372036854775807
          * Group: consumer
@@ -412,7 +411,7 @@ public interface GrpcEndpointBuilderFactory {
          * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
          * age.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 9223372036854775807
          * Group: consumer
@@ -430,7 +429,7 @@ public interface GrpcEndpointBuilderFactory {
          * greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE is
          * considered infinite.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 9223372036854775807
          * Group: consumer
@@ -448,7 +447,7 @@ public interface GrpcEndpointBuilderFactory {
          * greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE is
          * considered infinite.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 9223372036854775807
          * Group: consumer
@@ -467,7 +466,7 @@ public interface GrpcEndpointBuilderFactory {
          * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
          * idle.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 9223372036854775807
          * Group: consumer
@@ -486,7 +485,7 @@ public interface GrpcEndpointBuilderFactory {
          * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
          * idle.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 9223372036854775807
          * Group: consumer
@@ -502,7 +501,7 @@ public interface GrpcEndpointBuilderFactory {
          * Sets the maximum size of metadata allowed to be received. The default
          * is 8 KiB.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 8192
          * Group: consumer
@@ -518,7 +517,7 @@ public interface GrpcEndpointBuilderFactory {
          * Sets the maximum size of metadata allowed to be received. The default
          * is 8 KiB.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 8192
          * Group: consumer
@@ -535,7 +534,7 @@ public interface GrpcEndpointBuilderFactory {
          * maxRstFramesPerWindow per maxRstPeriodSeconds. This option MUST be
          * used in conjunction with maxRstPeriodSeconds for it to be effective.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -552,7 +551,7 @@ public interface GrpcEndpointBuilderFactory {
          * maxRstFramesPerWindow per maxRstPeriodSeconds. This option MUST be
          * used in conjunction with maxRstPeriodSeconds for it to be effective.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -569,7 +568,7 @@ public interface GrpcEndpointBuilderFactory {
          * maxRstPeriodSeconds. This option MUST be used in conjunction with
          * maxRstFramesPerWindow for it to be effective.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -586,7 +585,7 @@ public interface GrpcEndpointBuilderFactory {
          * maxRstPeriodSeconds. This option MUST be used in conjunction with
          * maxRstFramesPerWindow for it to be effective.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -603,7 +602,7 @@ public interface GrpcEndpointBuilderFactory {
          * are permitted to configure. The server will try to detect clients
          * exceeding this rate and will forcefully close the connection.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 300000
          * Group: consumer
@@ -620,7 +619,7 @@ public interface GrpcEndpointBuilderFactory {
          * are permitted to configure. The server will try to detect clients
          * exceeding this rate and will forcefully close the connection.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 300000
          * Group: consumer
@@ -636,7 +635,7 @@ public interface GrpcEndpointBuilderFactory {
          * Sets whether to allow clients to send keep-alive HTTP/ 2 PINGs even
          * if there are no outstanding RPCs on the connection.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -652,8 +651,7 @@ public interface GrpcEndpointBuilderFactory {
          * Sets whether to allow clients to send keep-alive HTTP/ 2 PINGs even
          * if there are no outstanding RPCs on the connection.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -672,7 +670,7 @@ public interface GrpcEndpointBuilderFactory {
          * Please note that the stream observer's onNext(), onError(),
          * onCompleted() methods should be called in the route.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -691,8 +689,7 @@ public interface GrpcEndpointBuilderFactory {
          * Please note that the stream observer's onNext(), onError(),
          * onCompleted() methods should be called in the route.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -708,8 +705,7 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
          * Default: NONE
          * Group: security
@@ -725,8 +721,7 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
          * Default: NONE
          * Group: security
@@ -742,7 +737,8 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
+         * type.
          * 
          * Default: HMAC256
          * Group: security
@@ -758,7 +754,8 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
+         * type.
          * 
          * Default: HMAC256
          * Group: security
@@ -773,7 +770,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token issuer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -787,7 +784,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token secret.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -801,7 +798,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token subject.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -818,7 +815,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -832,7 +829,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -849,7 +846,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -864,8 +861,7 @@ public interface GrpcEndpointBuilderFactory {
          * Identifies the security negotiation type used for HTTP/2
          * communication.
          * 
-         * The option is a:
-         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
+         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -882,7 +878,7 @@ public interface GrpcEndpointBuilderFactory {
          * communication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
+         * <code>io.grpc.netty.NegotiationType</code> type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -901,7 +897,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -919,7 +915,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -955,7 +951,7 @@ public interface GrpcEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -981,8 +977,7 @@ public interface GrpcEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1000,8 +995,8 @@ public interface GrpcEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1019,7 +1014,7 @@ public interface GrpcEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1033,8 +1028,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1049,7 +1043,7 @@ public interface GrpcEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1063,7 +1057,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1078,8 +1072,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1106,7 +1099,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1048576
          * Group: common
@@ -1121,7 +1114,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1048576
          * Group: common
@@ -1136,7 +1129,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 4194304
          * Group: common
@@ -1151,7 +1144,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 4194304
          * Group: common
@@ -1168,7 +1161,7 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ClientInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1185,8 +1178,7 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ClientInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1202,7 +1194,7 @@ public interface GrpcEndpointBuilderFactory {
          * Copies exchange properties from original exchange to all exchanges
          * created for route defined by streamRepliesTo.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1218,8 +1210,7 @@ public interface GrpcEndpointBuilderFactory {
          * Copies exchange properties from original exchange to all exchanges
          * created for route defined by streamRepliesTo.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1234,7 +1225,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * gRPC method name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1253,7 +1244,8 @@ public interface GrpcEndpointBuilderFactory {
          * 'stream').
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcProducerStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
+         * type.
          * 
          * Default: SIMPLE
          * Group: producer
@@ -1273,7 +1265,8 @@ public interface GrpcEndpointBuilderFactory {
          * 'stream').
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcProducerStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
+         * type.
          * 
          * Default: SIMPLE
          * Group: producer
@@ -1289,7 +1282,7 @@ public interface GrpcEndpointBuilderFactory {
          * When using STREAMING client mode, it indicates the endpoint where
          * responses should be forwarded.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1305,7 +1298,7 @@ public interface GrpcEndpointBuilderFactory {
          * is set. Takes its value and calls onNext, onError and onComplete on
          * that StreamObserver. All other gRPC parameters are ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1322,8 +1315,7 @@ public interface GrpcEndpointBuilderFactory {
          * is set. Takes its value and calls onNext, onError and onComplete on
          * that StreamObserver. All other gRPC parameters are ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1338,7 +1330,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The user agent header passed to the server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1353,8 +1345,7 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
          * Default: NONE
          * Group: security
@@ -1370,8 +1361,7 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
          * Default: NONE
          * Group: security
@@ -1387,7 +1377,8 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
+         * type.
          * 
          * Default: HMAC256
          * Group: security
@@ -1403,7 +1394,8 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
+         * type.
          * 
          * Default: HMAC256
          * Group: security
@@ -1418,7 +1410,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token issuer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1432,7 +1424,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token secret.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1446,7 +1438,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token subject.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1463,7 +1455,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1477,7 +1469,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1494,7 +1486,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1509,8 +1501,7 @@ public interface GrpcEndpointBuilderFactory {
          * Identifies the security negotiation type used for HTTP/2
          * communication.
          * 
-         * The option is a:
-         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
+         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -1527,7 +1518,7 @@ public interface GrpcEndpointBuilderFactory {
          * communication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
+         * <code>io.grpc.netty.NegotiationType</code> type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -1546,7 +1537,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1564,7 +1555,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1596,7 +1587,7 @@ public interface GrpcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1619,8 +1610,7 @@ public interface GrpcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1635,7 +1625,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1650,8 +1640,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1679,7 +1668,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1048576
          * Group: common
@@ -1694,7 +1683,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1048576
          * Group: common
@@ -1709,7 +1698,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 4194304
          * Group: common
@@ -1724,7 +1713,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 4194304
          * Group: common
@@ -1740,8 +1729,7 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
          * Default: NONE
          * Group: security
@@ -1757,8 +1745,7 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
          * Default: NONE
          * Group: security
@@ -1774,7 +1761,8 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
+         * type.
          * 
          * Default: HMAC256
          * Group: security
@@ -1790,7 +1778,8 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
+         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
+         * type.
          * 
          * Default: HMAC256
          * Group: security
@@ -1805,7 +1794,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token issuer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1819,7 +1808,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token secret.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1833,7 +1822,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token subject.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1850,7 +1839,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1864,7 +1853,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1881,7 +1870,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1896,8 +1885,7 @@ public interface GrpcEndpointBuilderFactory {
          * Identifies the security negotiation type used for HTTP/2
          * communication.
          * 
-         * The option is a:
-         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
+         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -1914,7 +1902,7 @@ public interface GrpcEndpointBuilderFactory {
          * communication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
+         * <code>io.grpc.netty.NegotiationType</code> type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -1933,7 +1921,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1951,7 +1939,7 @@ public interface GrpcEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1978,7 +1966,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1993,8 +1981,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

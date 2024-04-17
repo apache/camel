@@ -47,7 +47,7 @@ public interface CMEndpointBuilderFactory {
         /**
          * This is the sender name. The maximum length is 11 characters.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -65,7 +65,7 @@ public interface CMEndpointBuilderFactory {
          * larger than 160 characters, if so, the message will be cut into
          * multiple 153 characters parts limited by these parameters.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 8
          * Group: producer
@@ -83,7 +83,7 @@ public interface CMEndpointBuilderFactory {
          * larger than 160 characters, if so, the message will be cut into
          * multiple 153 characters parts limited by these parameters.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 8
          * Group: producer
@@ -98,7 +98,7 @@ public interface CMEndpointBuilderFactory {
         /**
          * The unique token to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -113,7 +113,7 @@ public interface CMEndpointBuilderFactory {
         /**
          * Whether to test the connection to the SMS Gateway on startup.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -128,8 +128,7 @@ public interface CMEndpointBuilderFactory {
         /**
          * Whether to test the connection to the SMS Gateway on startup.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -164,7 +163,7 @@ public interface CMEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -187,8 +186,7 @@ public interface CMEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

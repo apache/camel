@@ -48,7 +48,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -64,7 +65,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -81,7 +83,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -96,8 +98,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
+         * type.
          * 
          * Group: common
          * 
@@ -113,7 +115,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
          * Group: common
          * 
@@ -129,7 +131,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -143,7 +145,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -158,8 +160,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -196,7 +197,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -222,8 +223,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -241,8 +241,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -260,7 +260,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -274,8 +274,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -290,7 +289,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -318,7 +317,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -334,7 +334,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -351,7 +352,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -366,8 +367,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
+         * type.
          * 
          * Group: common
          * 
@@ -383,7 +384,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
          * Group: common
          * 
@@ -399,7 +400,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -413,7 +414,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -428,8 +429,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -462,7 +462,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -485,8 +485,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -516,7 +515,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -532,7 +532,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -549,7 +550,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -564,8 +565,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
+         * type.
          * 
          * Group: common
          * 
@@ -581,7 +582,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
          * Group: common
          * 
@@ -597,7 +598,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -611,7 +612,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -626,8 +627,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common

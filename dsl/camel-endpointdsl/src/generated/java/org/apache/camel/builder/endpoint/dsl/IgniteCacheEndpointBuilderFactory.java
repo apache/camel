@@ -48,7 +48,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -64,8 +64,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -81,7 +80,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -97,8 +96,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -114,7 +112,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Whether auto unsubscribe is enabled in the Continuous Query Consumer.
          * Default value notice: ContinuousQuery.DFLT_AUTO_UNSUBSCRIBE.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -130,8 +128,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Whether auto unsubscribe is enabled in the Continuous Query Consumer.
          * Default value notice: ContinuousQuery.DFLT_AUTO_UNSUBSCRIBE.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -147,7 +144,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Whether to process existing results that match the query. Used on
          * initialization of the Continuous Query Consumer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -163,8 +160,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Whether to process existing results that match the query. Used on
          * initialization of the Continuous Query Consumer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -181,7 +177,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * multiple updates are received in one batch. Only used by the
          * Continuous Query Consumer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -198,8 +194,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * multiple updates are received in one batch. Only used by the
          * Continuous Query Consumer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -215,7 +210,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The page size. Only used by the Continuous Query Consumer. Default
          * value notice: ContinuousQuery.DFLT_PAGE_SIZE.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -231,7 +226,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The page size. Only used by the Continuous Query Consumer. Default
          * value notice: ContinuousQuery.DFLT_PAGE_SIZE.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -247,7 +242,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The remote filter, only used by the Continuous Query Consumer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.ignite.cache.CacheEntryEventSerializableFilter&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -262,7 +257,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The remote filter, only used by the Continuous Query Consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.ignite.cache.CacheEntryEventSerializableFilter&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
          * Group: consumer
          * 
@@ -277,7 +272,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The time interval for the Continuous Query Consumer. Default value
          * notice: ContinuousQuery.DFLT_TIME_INTERVAL.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -293,7 +288,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The time interval for the Continuous Query Consumer. Default value
          * notice: ContinuousQuery.DFLT_TIME_INTERVAL.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -330,7 +325,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -356,8 +351,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -375,8 +369,8 @@ public interface IgniteCacheEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -394,7 +388,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -408,8 +402,7 @@ public interface IgniteCacheEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -424,7 +417,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -451,7 +444,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -467,8 +460,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -484,7 +476,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -500,8 +492,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -517,8 +508,8 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The CachePeekMode, only needed for operations that require it
          * (IgniteCacheOperation#SIZE).
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.ignite.cache.CachePeekMode&lt;/code&gt; type.
+         * The option is a: <code>org.apache.ignite.cache.CachePeekMode</code>
+         * type.
          * 
          * Default: ALL
          * Group: producer
@@ -535,7 +526,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * (IgniteCacheOperation#SIZE).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.ignite.cache.CachePeekMode&lt;/code&gt; type.
+         * <code>org.apache.ignite.cache.CachePeekMode</code> type.
          * 
          * Default: ALL
          * Group: producer
@@ -550,7 +541,7 @@ public interface IgniteCacheEndpointBuilderFactory {
         /**
          * Whether to fail the initialization if the cache doesn't exist.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -565,8 +556,7 @@ public interface IgniteCacheEndpointBuilderFactory {
         /**
          * Whether to fail the initialization if the cache doesn't exist.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -583,7 +573,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * SIZE, REBALANCE, QUERY, CLEAR.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ignite.cache.IgniteCacheOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code> type.
          * 
          * Group: producer
          * 
@@ -599,7 +589,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * SIZE, REBALANCE, QUERY, CLEAR.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ignite.cache.IgniteCacheOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code> type.
          * 
          * Group: producer
          * 
@@ -631,7 +621,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -654,8 +644,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -684,7 +673,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -700,8 +689,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -717,7 +705,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -733,8 +721,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common

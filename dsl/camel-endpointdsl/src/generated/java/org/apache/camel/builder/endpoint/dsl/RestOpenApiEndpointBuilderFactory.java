@@ -46,7 +46,7 @@ public interface RestOpenApiEndpointBuilderFactory {
         /**
          * Sets the context-path to use for servicing the OpenAPI specification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -61,7 +61,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * Whether to enable validation of the client request to check if the
          * incoming request is valid according to the OpenAPI specification.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -77,8 +77,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * Whether to enable validation of the client request to check if the
          * incoming request is valid according to the OpenAPI specification.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -97,7 +96,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * value of Accept HTTP header. If set overrides any value found in the
          * OpenApi specification and. in the component configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -112,7 +111,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * Whether the consumer should fail,ignore or return a mock response for
          * OpenAPI operations that are not mapped to a corresponding route.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: fail
          * Group: consumer
@@ -149,7 +148,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -175,8 +174,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -195,7 +193,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * CLASSPATH is searched for single component that implements
          * RestOpenApiConsumerFactory SPI. Overrides component configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -212,8 +210,8 @@ public interface RestOpenApiEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -231,7 +229,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -245,8 +243,7 @@ public interface RestOpenApiEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -261,7 +258,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -277,7 +274,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * pattern is using Ant-path style pattern. Multiple patterns can be
          * specified separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: classpath:camel-mock/**
          * Group: consumer (advanced)
@@ -293,7 +290,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * To use a custom strategy for how to process Rest DSL requests.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -308,7 +305,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * To use a custom strategy for how to process Rest DSL requests.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.rest.openapi.RestOpenapiProcessorStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -336,7 +333,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * value present in OpenApi specification and in the component
          * configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -356,7 +353,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * configuration last. If set overrides any value found in the OpenApi
          * specification, RestConfiguration. Overrides all other configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -373,7 +370,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * of Content-Type HTTP header. If set overrides any value present in
          * the OpenApi specification. Overrides all other configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -388,7 +385,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * Enable validation of requests against the configured OpenAPI
          * specification.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -404,8 +401,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * Enable validation of requests against the configured OpenAPI
          * specification.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -434,7 +430,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * is searched for single component that implements RestProducerFactory
          * SPI. Overrides component configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -456,7 +452,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -479,8 +475,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

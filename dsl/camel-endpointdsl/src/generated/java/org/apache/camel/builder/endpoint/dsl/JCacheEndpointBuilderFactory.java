@@ -47,7 +47,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: common
          * 
@@ -62,8 +62,8 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -78,7 +78,7 @@ public interface JCacheEndpointBuilderFactory {
          * The fully qualified class name of the
          * javax.cache.spi.CachingProvider.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -92,7 +92,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * An implementation specific URI for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -106,7 +106,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether management gathering is enabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -121,8 +121,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether management gathering is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -137,7 +136,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If read-through caching should be used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -152,8 +151,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If read-through caching should be used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -168,7 +166,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether statistics gathering is enabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -183,8 +181,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether statistics gathering is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -199,7 +196,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If cache should use store-by-value or store-by-reference semantics.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -214,8 +211,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If cache should use store-by-value or store-by-reference semantics.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -230,7 +226,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If write-through caching should be used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -245,8 +241,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If write-through caching should be used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -263,7 +258,7 @@ public interface JCacheEndpointBuilderFactory {
          * comma). If using filteredEvents option, then eventFilters one will be
          * ignored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -277,7 +272,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * if the old value is required for events.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -292,8 +287,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * if the old value is required for events.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -308,7 +302,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * if the event listener should block the thread causing the event.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -323,8 +317,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * if the event listener should block the thread causing the event.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -361,7 +354,7 @@ public interface JCacheEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -387,8 +380,7 @@ public interface JCacheEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -405,7 +397,7 @@ public interface JCacheEndpointBuilderFactory {
          * filteredEvents one will be ignored.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;javax.cache.event.CacheEntryEventFilter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;javax.cache.event.CacheEntryEventFilter&gt;</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -421,7 +413,7 @@ public interface JCacheEndpointBuilderFactory {
          * filteredEvents one will be ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;javax.cache.event.CacheEntryEventFilter&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;javax.cache.event.CacheEntryEventFilter&gt;</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -438,8 +430,8 @@ public interface JCacheEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -457,7 +449,7 @@ public interface JCacheEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -471,8 +463,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -487,7 +478,7 @@ public interface JCacheEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -501,8 +492,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * A Configuration for the Cache.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * The option is a: <code>javax.cache.configuration.Configuration</code>
          * type.
          * 
          * Group: advanced
@@ -518,8 +508,7 @@ public interface JCacheEndpointBuilderFactory {
          * A Configuration for the Cache.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
+         * <code>javax.cache.configuration.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -534,7 +523,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -549,7 +538,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -564,7 +553,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -579,7 +568,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -594,7 +583,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -610,8 +599,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -627,7 +615,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -642,7 +630,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -657,7 +645,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a camel-cache should try to find implementations of
          * jcache api in runtimes like OSGi.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -673,8 +661,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a camel-cache should try to find implementations of
          * jcache api in runtimes like OSGi.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -702,7 +689,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: common
          * 
@@ -717,8 +704,8 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -733,7 +720,7 @@ public interface JCacheEndpointBuilderFactory {
          * The fully qualified class name of the
          * javax.cache.spi.CachingProvider.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -747,7 +734,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * An implementation specific URI for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -761,7 +748,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether management gathering is enabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -776,8 +763,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether management gathering is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -792,7 +778,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If read-through caching should be used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -807,8 +793,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If read-through caching should be used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -823,7 +808,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether statistics gathering is enabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -838,8 +823,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether statistics gathering is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -854,7 +838,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If cache should use store-by-value or store-by-reference semantics.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -869,8 +853,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If cache should use store-by-value or store-by-reference semantics.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -885,7 +868,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If write-through caching should be used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -900,8 +883,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If write-through caching should be used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -918,7 +900,7 @@ public interface JCacheEndpointBuilderFactory {
          * the message header, then the operation from the header takes
          * precedence.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -950,7 +932,7 @@ public interface JCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -973,8 +955,7 @@ public interface JCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -989,8 +970,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * A Configuration for the Cache.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * The option is a: <code>javax.cache.configuration.Configuration</code>
          * type.
          * 
          * Group: advanced
@@ -1006,8 +986,7 @@ public interface JCacheEndpointBuilderFactory {
          * A Configuration for the Cache.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
+         * <code>javax.cache.configuration.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -1022,7 +1001,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1037,7 +1016,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1052,7 +1031,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1067,7 +1046,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1082,7 +1061,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1098,8 +1077,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1115,7 +1093,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1130,7 +1108,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1145,7 +1123,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a camel-cache should try to find implementations of
          * jcache api in runtimes like OSGi.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1161,8 +1139,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a camel-cache should try to find implementations of
          * jcache api in runtimes like OSGi.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1191,7 +1168,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: common
          * 
@@ -1206,8 +1183,8 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1222,7 +1199,7 @@ public interface JCacheEndpointBuilderFactory {
          * The fully qualified class name of the
          * javax.cache.spi.CachingProvider.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1236,7 +1213,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * An implementation specific URI for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1250,7 +1227,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether management gathering is enabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1265,8 +1242,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether management gathering is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1281,7 +1257,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If read-through caching should be used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1296,8 +1272,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If read-through caching should be used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1312,7 +1287,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether statistics gathering is enabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1327,8 +1302,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * Whether statistics gathering is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1343,7 +1317,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If cache should use store-by-value or store-by-reference semantics.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1358,8 +1332,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If cache should use store-by-value or store-by-reference semantics.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1374,7 +1347,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If write-through caching should be used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1389,8 +1362,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * If write-through caching should be used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1418,8 +1390,7 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * A Configuration for the Cache.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
+         * The option is a: <code>javax.cache.configuration.Configuration</code>
          * type.
          * 
          * Group: advanced
@@ -1435,8 +1406,7 @@ public interface JCacheEndpointBuilderFactory {
          * A Configuration for the Cache.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
-         * type.
+         * <code>javax.cache.configuration.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -1451,7 +1421,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1466,7 +1436,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheLoader factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheLoader&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1481,7 +1451,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1496,7 +1466,7 @@ public interface JCacheEndpointBuilderFactory {
          * The CacheWriter factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.integration.CacheWriter&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1511,7 +1481,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1527,8 +1497,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1544,7 +1513,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1559,7 +1528,7 @@ public interface JCacheEndpointBuilderFactory {
          * The ExpiryPolicy factory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.cache.configuration.Factory&amp;lt;javax.cache.expiry.ExpiryPolicy&amp;gt;&lt;/code&gt; type.
+         * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1574,7 +1543,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a camel-cache should try to find implementations of
          * jcache api in runtimes like OSGi.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1590,8 +1559,7 @@ public interface JCacheEndpointBuilderFactory {
          * Configure if a camel-cache should try to find implementations of
          * jcache api in runtimes like OSGi.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

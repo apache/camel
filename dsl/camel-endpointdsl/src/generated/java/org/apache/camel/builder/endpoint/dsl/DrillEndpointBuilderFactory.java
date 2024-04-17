@@ -48,7 +48,7 @@ public interface DrillEndpointBuilderFactory {
          * Cluster ID
          * https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -62,7 +62,7 @@ public interface DrillEndpointBuilderFactory {
         /**
          * Drill directory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -78,7 +78,8 @@ public interface DrillEndpointBuilderFactory {
          * https://drill.apache.org/docs/using-the-jdbc-driver/.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.drill.DrillConnectionMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.drill.DrillConnectionMode</code>
+         * type.
          * 
          * Default: ZK
          * Group: producer
@@ -95,7 +96,8 @@ public interface DrillEndpointBuilderFactory {
          * https://drill.apache.org/docs/using-the-jdbc-driver/.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.drill.DrillConnectionMode&lt;/code&gt; type.
+         * <code>org.apache.camel.component.drill.DrillConnectionMode</code>
+         * type.
          * 
          * Default: ZK
          * Group: producer
@@ -110,7 +112,7 @@ public interface DrillEndpointBuilderFactory {
         /**
          * Port number.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 2181
          * Group: producer
@@ -125,8 +127,8 @@ public interface DrillEndpointBuilderFactory {
         /**
          * Port number.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 2181
          * Group: producer
@@ -161,7 +163,7 @@ public interface DrillEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -184,8 +186,7 @@ public interface DrillEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

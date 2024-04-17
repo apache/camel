@@ -48,8 +48,8 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * OpenStack configuration.
          * 
-         * The option is a:
-         * &lt;code&gt;org.openstack4j.core.transport.Config&lt;/code&gt; type.
+         * The option is a: <code>org.openstack4j.core.transport.Config</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -64,7 +64,7 @@ public interface KeystoneEndpointBuilderFactory {
          * OpenStack configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.openstack4j.core.transport.Config&lt;/code&gt; type.
+         * <code>org.openstack4j.core.transport.Config</code> type.
          * 
          * Group: producer
          * 
@@ -78,7 +78,7 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * Authentication domain.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: default
          * Group: producer
@@ -93,7 +93,7 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * The operation to do.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -107,7 +107,7 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * OpenStack password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -122,7 +122,7 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * The project ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -137,7 +137,7 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * OpenStack Keystone subsystem.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -152,7 +152,7 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * OpenStack username.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -187,7 +187,7 @@ public interface KeystoneEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -210,8 +210,7 @@ public interface KeystoneEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

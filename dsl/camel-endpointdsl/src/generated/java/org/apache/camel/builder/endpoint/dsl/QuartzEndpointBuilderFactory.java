@@ -47,7 +47,7 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Specifies a cron expression to define when to trigger.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -65,7 +65,7 @@ public interface QuartzEndpointBuilderFactory {
          * camel Uri. Just ensure the names match. Notice you cannot have both
          * deleteJob and pauseJob set to true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -84,8 +84,7 @@ public interface QuartzEndpointBuilderFactory {
          * camel Uri. Just ensure the names match. Notice you cannot have both
          * deleteJob and pauseJob set to true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -101,7 +100,7 @@ public interface QuartzEndpointBuilderFactory {
          * Whether or not the job should remain stored after it is orphaned (no
          * triggers point to it).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -117,8 +116,7 @@ public interface QuartzEndpointBuilderFactory {
          * Whether or not the job should remain stored after it is orphaned (no
          * triggers point to it).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -137,7 +135,7 @@ public interface QuartzEndpointBuilderFactory {
          * camel Uri. Just ensure the names match. Notice you cannot have both
          * deleteJob and pauseJob set to true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -156,8 +154,7 @@ public interface QuartzEndpointBuilderFactory {
          * camel Uri. Just ensure the names match. Notice you cannot have both
          * deleteJob and pauseJob set to true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -173,7 +170,7 @@ public interface QuartzEndpointBuilderFactory {
          * Instructs the scheduler whether or not the job should be re-executed
          * if a 'recovery' or 'fail-over' situation is encountered.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -189,8 +186,7 @@ public interface QuartzEndpointBuilderFactory {
          * Instructs the scheduler whether or not the job should be re-executed
          * if a 'recovery' or 'fail-over' situation is encountered.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -206,7 +202,7 @@ public interface QuartzEndpointBuilderFactory {
          * Uses a Quartz PersistJobDataAfterExecution and
          * DisallowConcurrentExecution instead of the default job.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -222,8 +218,7 @@ public interface QuartzEndpointBuilderFactory {
          * Uses a Quartz PersistJobDataAfterExecution and
          * DisallowConcurrentExecution instead of the default job.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -238,7 +233,7 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Whether or not the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -253,8 +248,7 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Whether or not the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -272,7 +266,7 @@ public interface QuartzEndpointBuilderFactory {
          * before the job kicks in. Negative value shifts trigger start time in
          * the past.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -290,7 +284,7 @@ public interface QuartzEndpointBuilderFactory {
          * before the job kicks in. Negative value shifts trigger start time in
          * the past.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -328,7 +322,7 @@ public interface QuartzEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -354,8 +348,7 @@ public interface QuartzEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -373,8 +366,8 @@ public interface QuartzEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -392,7 +385,7 @@ public interface QuartzEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -406,8 +399,7 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -422,7 +414,7 @@ public interface QuartzEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -436,7 +428,7 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Specifies a custom calendar to avoid specific range of date.
          * 
-         * The option is a: &lt;code&gt;org.quartz.Calendar&lt;/code&gt; type.
+         * The option is a: <code>org.quartz.Calendar</code> type.
          * 
          * Group: advanced
          * 
@@ -450,8 +442,8 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Specifies a custom calendar to avoid specific range of date.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;org.quartz.Calendar&lt;/code&gt; type.
+         * The option will be converted to a <code>org.quartz.Calendar</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -471,7 +463,7 @@ public interface QuartzEndpointBuilderFactory {
          * then ignore the problem, meaning that the route will never fire in
          * the future.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -492,8 +484,7 @@ public interface QuartzEndpointBuilderFactory {
          * then ignore the problem, meaning that the route will never fire in
          * the future.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -508,8 +499,8 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * To configure additional options on the job.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the jobParameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -527,8 +518,8 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * To configure additional options on the job.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the jobParameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -545,7 +536,7 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Whether the job name should be prefixed with endpoint id.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -560,8 +551,7 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Whether the job name should be prefixed with endpoint id.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -581,8 +571,8 @@ public interface QuartzEndpointBuilderFactory {
          * after starting the camel context may be fired more rapidly than
          * expected.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * triggerParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -605,8 +595,8 @@ public interface QuartzEndpointBuilderFactory {
          * after starting the camel context may be fired more rapidly than
          * expected.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * triggerParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -626,7 +616,7 @@ public interface QuartzEndpointBuilderFactory {
          * CamelContext management name which could be changed during the deploy
          * time.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -644,8 +634,7 @@ public interface QuartzEndpointBuilderFactory {
          * CamelContext management name which could be changed during the deploy
          * time.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

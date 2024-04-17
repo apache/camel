@@ -46,7 +46,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB collection to bind to this endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -61,7 +61,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the collection index (JSON FORMAT : { field1 : order1, field2 :
          * order2}).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -76,7 +76,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -92,8 +92,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -108,7 +107,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB database to target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -125,7 +124,7 @@ public interface MongoDbEndpointBuilderFactory {
          * host1:port1,host2:port2. If the hosts parameter is specified, the
          * provided connectionBean is ignored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -140,8 +139,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the connection bean used as a client for connecting to a
          * database.
          * 
-         * The option is a:
-         * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.
+         * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          * 
@@ -157,7 +155,7 @@ public interface MongoDbEndpointBuilderFactory {
          * database.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.
+         * <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          * 
@@ -172,7 +170,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -187,7 +186,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -205,7 +205,8 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -223,7 +224,8 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -237,7 +239,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Consumer type.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -251,7 +253,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Set the whole Connection String/Uri for mongodb endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: additional
          * 
@@ -268,7 +270,7 @@ public interface MongoDbEndpointBuilderFactory {
          * default, updateLookup, required and whenAvailable.
          * 
          * The option is a:
-         * &lt;code&gt;com.mongodb.client.model.changestream.FullDocument&lt;/code&gt; type.
+         * <code>com.mongodb.client.model.changestream.FullDocument</code> type.
          * 
          * Default: default
          * Group: changeStream
@@ -286,7 +288,7 @@ public interface MongoDbEndpointBuilderFactory {
          * default, updateLookup, required and whenAvailable.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.client.model.changestream.FullDocument&lt;/code&gt; type.
+         * <code>com.mongodb.client.model.changestream.FullDocument</code> type.
          * 
          * Default: default
          * Group: changeStream
@@ -301,7 +303,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Filter condition for change streams consumer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: changeStream
          * 
@@ -315,7 +317,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The database name associated with the user's credentials.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -329,7 +331,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * User password for mongodb connection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -343,7 +345,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Username for mongodb connection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -359,7 +361,7 @@ public interface MongoDbEndpointBuilderFactory {
          * tailable consumers. To keep them separate, each tracker should have
          * its own unique persistentId.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: tail
          * 
@@ -376,7 +378,7 @@ public interface MongoDbEndpointBuilderFactory {
          * the system is up, the endpoint will recover the cursor from the point
          * where it last stopped slurping records.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: tail
@@ -394,8 +396,7 @@ public interface MongoDbEndpointBuilderFactory {
          * the system is up, the endpoint will recover the cursor from the point
          * where it last stopped slurping records.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: tail
@@ -412,7 +413,7 @@ public interface MongoDbEndpointBuilderFactory {
          * specified, MongoDbTailTrackingConfig#DEFAULT_COLLECTION will be used
          * by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: tail
          * 
@@ -429,7 +430,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Dynamicity will not be taken into account even if enabled, i.e. the
          * tail tracking database will not vary past endpoint initialisation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: tail
          * 
@@ -444,7 +445,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Field where the last tracked value will be placed. If not specified,
          * MongoDbTailTrackingConfig#DEFAULT_FIELD will be used by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: tail
          * 
@@ -464,7 +465,7 @@ public interface MongoDbEndpointBuilderFactory {
          * etc. NOTE: No support for dot notation at the current time, so the
          * field should be at the top level of the document.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: tail
          * 
@@ -500,7 +501,7 @@ public interface MongoDbEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -526,8 +527,7 @@ public interface MongoDbEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -545,8 +545,8 @@ public interface MongoDbEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -564,7 +564,7 @@ public interface MongoDbEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -578,8 +578,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -594,7 +593,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -611,7 +610,7 @@ public interface MongoDbEndpointBuilderFactory {
          * in server logs, slow query logs, and profile collection. Default:
          * null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -628,7 +627,7 @@ public interface MongoDbEndpointBuilderFactory {
          * instance. Possible values include: zlib, snappy, and zstd. Default:
          * null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -645,7 +644,7 @@ public interface MongoDbEndpointBuilderFactory {
          * instructs the driver to never time out while waiting for a connection
          * to open. Default: 10000 (10 seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -663,8 +662,8 @@ public interface MongoDbEndpointBuilderFactory {
          * instructs the driver to never time out while waiting for a connection
          * to open. Default: 10000 (10 seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 10000
          * Group: advanced
@@ -685,7 +684,7 @@ public interface MongoDbEndpointBuilderFactory {
          * fails, how long before the next attempt is made. Default value is
          * 1000ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -706,7 +705,7 @@ public interface MongoDbEndpointBuilderFactory {
          * fails, how long before the next attempt is made. Default value is
          * 1000ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -722,7 +721,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must connect to the host directly. Default:
          * false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -738,8 +737,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must connect to the host directly. Default:
          * false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -759,7 +757,7 @@ public interface MongoDbEndpointBuilderFactory {
          * default to boost performance. Enabling it will take a minimal
          * performance hit.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -779,8 +777,7 @@ public interface MongoDbEndpointBuilderFactory {
          * default to boost performance. Enabling it will take a minimal
          * performance hit.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -799,7 +796,7 @@ public interface MongoDbEndpointBuilderFactory {
          * beginning of the next one. Default: Single-threaded drivers: 60
          * seconds. Multi-threaded drivers: 10 seconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -817,8 +814,8 @@ public interface MongoDbEndpointBuilderFactory {
          * beginning of the next one. Default: Single-threaded drivers: 60
          * seconds. Multi-threaded drivers: 10 seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -833,7 +830,7 @@ public interface MongoDbEndpointBuilderFactory {
          * If true the driver will assume that it's connecting to MongoDB
          * through a load balancer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -849,8 +846,7 @@ public interface MongoDbEndpointBuilderFactory {
          * If true the driver will assume that it's connecting to MongoDB
          * through a load balancer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -866,7 +862,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The size (in milliseconds) of the latency window for selecting among
          * multiple suitable MongoDB instances. Default: 15 milliseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 15
          * Group: advanced
@@ -882,8 +878,8 @@ public interface MongoDbEndpointBuilderFactory {
          * The size (in milliseconds) of the latency window for selecting among
          * multiple suitable MongoDB instances. Default: 15 milliseconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 15
          * Group: advanced
@@ -899,7 +895,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the maximum number of connections a pool may be
          * establishing concurrently. Default: 2.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 2
          * Group: advanced
@@ -915,8 +911,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the maximum number of connections a pool may be
          * establishing concurrently. Default: 2.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 2
          * Group: advanced
@@ -935,7 +931,7 @@ public interface MongoDbEndpointBuilderFactory {
          * how long the driver can allow a pooled collection to be idle.
          * Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -954,8 +950,8 @@ public interface MongoDbEndpointBuilderFactory {
          * how long the driver can allow a pooled collection to be idle.
          * Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -973,7 +969,7 @@ public interface MongoDbEndpointBuilderFactory {
          * connection. A value of 0 indicates that there is no upper bound on
          * how long the driver can keep a pooled connection open. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -991,8 +987,8 @@ public interface MongoDbEndpointBuilderFactory {
          * connection. A value of 0 indicates that there is no upper bound on
          * how long the driver can keep a pooled connection open. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -1008,7 +1004,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The maximum number of connections in the connection pool. The default
          * value is 100.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1024,8 +1020,8 @@ public interface MongoDbEndpointBuilderFactory {
          * The maximum number of connections in the connection pool. The default
          * value is 100.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -1046,7 +1042,7 @@ public interface MongoDbEndpointBuilderFactory {
          * specifying -1 indicates that there should be no staleness check for
          * secondaries. Default: -1.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -1067,8 +1063,8 @@ public interface MongoDbEndpointBuilderFactory {
          * specifying -1 indicates that there should be no staleness check for
          * secondaries. Default: -1.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: -1
          * Group: advanced
@@ -1084,7 +1080,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the minimum number of connections that must exist at any
          * moment in a single connection pool. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -1100,8 +1096,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the minimum number of connections that must exist at any
          * moment in a single connection pool. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -1118,7 +1114,7 @@ public interface MongoDbEndpointBuilderFactory {
          * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
          * SECONDARY, SECONDARY_PREFERRED or NEAREST.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: PRIMARY
          * Group: advanced
@@ -1137,7 +1133,7 @@ public interface MongoDbEndpointBuilderFactory {
          * list of tag sets, using multiple readPreferenceTags, e.g.
          * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1153,7 +1149,7 @@ public interface MongoDbEndpointBuilderFactory {
          * hosts. When specified, the driver attempts to find all members of
          * that set.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1168,7 +1164,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported read operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1184,8 +1180,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported read operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1201,7 +1196,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported write operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1217,8 +1212,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported write operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1234,7 +1228,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies how long (in milliseconds) to block for server selection
          * before throwing an exception. Default: 30,000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -1250,8 +1244,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies how long (in milliseconds) to block for server selection
          * before throwing an exception. Default: 30,000 milliseconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 30000
          * Group: advanced
@@ -1269,7 +1263,7 @@ public interface MongoDbEndpointBuilderFactory {
          * value of 0 instructs the driver to never time out while waiting to
          * send or receive a request. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -1287,8 +1281,8 @@ public interface MongoDbEndpointBuilderFactory {
          * value of 0 instructs the driver to never time out while waiting to
          * send or receive a request. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -1303,7 +1297,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The maximum number of hosts from the SRV record to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -1317,8 +1311,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The maximum number of hosts from the SRV record to connect to.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1335,7 +1329,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Connection Format in your connection URI to use this option. Default:
          * mongodb.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: mongodb
          * Group: advanced
@@ -1351,7 +1345,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that all communication with MongoDB instances should use
          * TLS. Supersedes the ssl option. Default: false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1367,8 +1361,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that all communication with MongoDB instances should use
          * TLS. Supersedes the ssl option. Default: false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1386,7 +1379,7 @@ public interface MongoDbEndpointBuilderFactory {
          * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
          * setting tlsAllowInvalidHostnames to true. Default: false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1404,8 +1397,7 @@ public interface MongoDbEndpointBuilderFactory {
          * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
          * setting tlsAllowInvalidHostnames to true. Default: false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1422,7 +1414,7 @@ public interface MongoDbEndpointBuilderFactory {
          * may wait for a connection to become available. Default: 120000 (120
          * seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 120000
          * Group: advanced
@@ -1439,8 +1431,8 @@ public interface MongoDbEndpointBuilderFactory {
          * may wait for a connection to become available. Default: 120000 (120
          * seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 120000
          * Group: advanced
@@ -1458,7 +1450,7 @@ public interface MongoDbEndpointBuilderFactory {
          * replicaset or cluster. Possible values are ACKNOWLEDGED, W1, W2, W3,
          * UNACKNOWLEDGED, JOURNALED or MAJORITY.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ACKNOWLEDGED
          * Group: advanced
@@ -1475,7 +1467,7 @@ public interface MongoDbEndpointBuilderFactory {
          * WriteResult as the body of the OUT message, we transfer the IN
          * message to the OUT and attach the WriteResult as a header.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1492,8 +1484,7 @@ public interface MongoDbEndpointBuilderFactory {
          * WriteResult as the body of the OUT message, we transfer the IN
          * message to the OUT and attach the WriteResult as a header.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1512,7 +1503,7 @@ public interface MongoDbEndpointBuilderFactory {
          * resulting in larger requests) and larger values compressing slower
          * (but resulting in smaller requests). Default: null.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -1530,8 +1521,8 @@ public interface MongoDbEndpointBuilderFactory {
          * resulting in larger requests) and larger values compressing slower
          * (but resulting in smaller requests). Default: null.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1557,7 +1548,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB collection to bind to this endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1572,7 +1563,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the collection index (JSON FORMAT : { field1 : order1, field2 :
          * order2}).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1587,7 +1578,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1603,8 +1594,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1619,7 +1609,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB database to target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1636,7 +1626,7 @@ public interface MongoDbEndpointBuilderFactory {
          * host1:port1,host2:port2. If the hosts parameter is specified, the
          * provided connectionBean is ignored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1651,8 +1641,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the connection bean used as a client for connecting to a
          * database.
          * 
-         * The option is a:
-         * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.
+         * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          * 
@@ -1668,7 +1657,7 @@ public interface MongoDbEndpointBuilderFactory {
          * database.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.
+         * <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          * 
@@ -1683,7 +1672,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1698,7 +1688,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1716,7 +1707,8 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1734,7 +1726,8 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1748,7 +1741,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Set the whole Connection String/Uri for mongodb endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: additional
          * 
@@ -1762,7 +1755,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The database name associated with the user's credentials.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1776,7 +1769,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * User password for mongodb connection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1790,7 +1783,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Username for mongodb connection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1822,7 +1815,7 @@ public interface MongoDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1845,8 +1838,7 @@ public interface MongoDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1864,7 +1856,7 @@ public interface MongoDbEndpointBuilderFactory {
          * in server logs, slow query logs, and profile collection. Default:
          * null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1881,7 +1873,7 @@ public interface MongoDbEndpointBuilderFactory {
          * instance. Possible values include: zlib, snappy, and zstd. Default:
          * null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1898,7 +1890,7 @@ public interface MongoDbEndpointBuilderFactory {
          * instructs the driver to never time out while waiting for a connection
          * to open. Default: 10000 (10 seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -1916,8 +1908,8 @@ public interface MongoDbEndpointBuilderFactory {
          * instructs the driver to never time out while waiting for a connection
          * to open. Default: 10000 (10 seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 10000
          * Group: advanced
@@ -1938,7 +1930,7 @@ public interface MongoDbEndpointBuilderFactory {
          * fails, how long before the next attempt is made. Default value is
          * 1000ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -1959,7 +1951,7 @@ public interface MongoDbEndpointBuilderFactory {
          * fails, how long before the next attempt is made. Default value is
          * 1000ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -1975,7 +1967,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must connect to the host directly. Default:
          * false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1991,8 +1983,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must connect to the host directly. Default:
          * false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2012,7 +2003,7 @@ public interface MongoDbEndpointBuilderFactory {
          * default to boost performance. Enabling it will take a minimal
          * performance hit.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2032,8 +2023,7 @@ public interface MongoDbEndpointBuilderFactory {
          * default to boost performance. Enabling it will take a minimal
          * performance hit.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2052,7 +2042,7 @@ public interface MongoDbEndpointBuilderFactory {
          * beginning of the next one. Default: Single-threaded drivers: 60
          * seconds. Multi-threaded drivers: 10 seconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -2070,8 +2060,8 @@ public interface MongoDbEndpointBuilderFactory {
          * beginning of the next one. Default: Single-threaded drivers: 60
          * seconds. Multi-threaded drivers: 10 seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2086,7 +2076,7 @@ public interface MongoDbEndpointBuilderFactory {
          * If true the driver will assume that it's connecting to MongoDB
          * through a load balancer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2102,8 +2092,7 @@ public interface MongoDbEndpointBuilderFactory {
          * If true the driver will assume that it's connecting to MongoDB
          * through a load balancer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2119,7 +2108,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The size (in milliseconds) of the latency window for selecting among
          * multiple suitable MongoDB instances. Default: 15 milliseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 15
          * Group: advanced
@@ -2135,8 +2124,8 @@ public interface MongoDbEndpointBuilderFactory {
          * The size (in milliseconds) of the latency window for selecting among
          * multiple suitable MongoDB instances. Default: 15 milliseconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 15
          * Group: advanced
@@ -2152,7 +2141,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the maximum number of connections a pool may be
          * establishing concurrently. Default: 2.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 2
          * Group: advanced
@@ -2168,8 +2157,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the maximum number of connections a pool may be
          * establishing concurrently. Default: 2.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 2
          * Group: advanced
@@ -2188,7 +2177,7 @@ public interface MongoDbEndpointBuilderFactory {
          * how long the driver can allow a pooled collection to be idle.
          * Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -2207,8 +2196,8 @@ public interface MongoDbEndpointBuilderFactory {
          * how long the driver can allow a pooled collection to be idle.
          * Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -2226,7 +2215,7 @@ public interface MongoDbEndpointBuilderFactory {
          * connection. A value of 0 indicates that there is no upper bound on
          * how long the driver can keep a pooled connection open. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -2244,8 +2233,8 @@ public interface MongoDbEndpointBuilderFactory {
          * connection. A value of 0 indicates that there is no upper bound on
          * how long the driver can keep a pooled connection open. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -2261,7 +2250,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The maximum number of connections in the connection pool. The default
          * value is 100.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -2277,8 +2266,8 @@ public interface MongoDbEndpointBuilderFactory {
          * The maximum number of connections in the connection pool. The default
          * value is 100.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -2299,7 +2288,7 @@ public interface MongoDbEndpointBuilderFactory {
          * specifying -1 indicates that there should be no staleness check for
          * secondaries. Default: -1.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -2320,8 +2309,8 @@ public interface MongoDbEndpointBuilderFactory {
          * specifying -1 indicates that there should be no staleness check for
          * secondaries. Default: -1.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: -1
          * Group: advanced
@@ -2337,7 +2326,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the minimum number of connections that must exist at any
          * moment in a single connection pool. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -2353,8 +2342,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the minimum number of connections that must exist at any
          * moment in a single connection pool. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -2371,7 +2360,7 @@ public interface MongoDbEndpointBuilderFactory {
          * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
          * SECONDARY, SECONDARY_PREFERRED or NEAREST.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: PRIMARY
          * Group: advanced
@@ -2390,7 +2379,7 @@ public interface MongoDbEndpointBuilderFactory {
          * list of tag sets, using multiple readPreferenceTags, e.g.
          * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -2406,7 +2395,7 @@ public interface MongoDbEndpointBuilderFactory {
          * hosts. When specified, the driver attempts to find all members of
          * that set.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -2421,7 +2410,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported read operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2437,8 +2426,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported read operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2454,7 +2442,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported write operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2470,8 +2458,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported write operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2487,7 +2474,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies how long (in milliseconds) to block for server selection
          * before throwing an exception. Default: 30,000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -2503,8 +2490,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies how long (in milliseconds) to block for server selection
          * before throwing an exception. Default: 30,000 milliseconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 30000
          * Group: advanced
@@ -2522,7 +2509,7 @@ public interface MongoDbEndpointBuilderFactory {
          * value of 0 instructs the driver to never time out while waiting to
          * send or receive a request. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -2540,8 +2527,8 @@ public interface MongoDbEndpointBuilderFactory {
          * value of 0 instructs the driver to never time out while waiting to
          * send or receive a request. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -2556,7 +2543,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The maximum number of hosts from the SRV record to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -2570,8 +2557,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The maximum number of hosts from the SRV record to connect to.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2588,7 +2575,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Connection Format in your connection URI to use this option. Default:
          * mongodb.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: mongodb
          * Group: advanced
@@ -2604,7 +2591,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that all communication with MongoDB instances should use
          * TLS. Supersedes the ssl option. Default: false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2620,8 +2607,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that all communication with MongoDB instances should use
          * TLS. Supersedes the ssl option. Default: false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2639,7 +2625,7 @@ public interface MongoDbEndpointBuilderFactory {
          * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
          * setting tlsAllowInvalidHostnames to true. Default: false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2657,8 +2643,7 @@ public interface MongoDbEndpointBuilderFactory {
          * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
          * setting tlsAllowInvalidHostnames to true. Default: false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2675,7 +2660,7 @@ public interface MongoDbEndpointBuilderFactory {
          * may wait for a connection to become available. Default: 120000 (120
          * seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 120000
          * Group: advanced
@@ -2692,8 +2677,8 @@ public interface MongoDbEndpointBuilderFactory {
          * may wait for a connection to become available. Default: 120000 (120
          * seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 120000
          * Group: advanced
@@ -2711,7 +2696,7 @@ public interface MongoDbEndpointBuilderFactory {
          * replicaset or cluster. Possible values are ACKNOWLEDGED, W1, W2, W3,
          * UNACKNOWLEDGED, JOURNALED or MAJORITY.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ACKNOWLEDGED
          * Group: advanced
@@ -2728,7 +2713,7 @@ public interface MongoDbEndpointBuilderFactory {
          * WriteResult as the body of the OUT message, we transfer the IN
          * message to the OUT and attach the WriteResult as a header.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2745,8 +2730,7 @@ public interface MongoDbEndpointBuilderFactory {
          * WriteResult as the body of the OUT message, we transfer the IN
          * message to the OUT and attach the WriteResult as a header.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2765,7 +2749,7 @@ public interface MongoDbEndpointBuilderFactory {
          * resulting in larger requests) and larger values compressing slower
          * (but resulting in smaller requests). Default: null.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -2783,8 +2767,8 @@ public interface MongoDbEndpointBuilderFactory {
          * resulting in larger requests) and larger values compressing slower
          * (but resulting in smaller requests). Default: null.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2811,7 +2795,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB collection to bind to this endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2826,7 +2810,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the collection index (JSON FORMAT : { field1 : order1, field2 :
          * order2}).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2841,7 +2825,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2857,8 +2841,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2873,7 +2856,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Sets the name of the MongoDB database to target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2890,7 +2873,7 @@ public interface MongoDbEndpointBuilderFactory {
          * host1:port1,host2:port2. If the hosts parameter is specified, the
          * provided connectionBean is ignored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2905,8 +2888,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the connection bean used as a client for connecting to a
          * database.
          * 
-         * The option is a:
-         * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.
+         * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          * 
@@ -2922,7 +2904,7 @@ public interface MongoDbEndpointBuilderFactory {
          * database.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.
+         * <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          * 
@@ -2937,7 +2919,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2952,7 +2935,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2970,7 +2954,8 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2988,7 +2973,8 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mongodb.MongoDbOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3002,7 +2988,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Set the whole Connection String/Uri for mongodb endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: additional
          * 
@@ -3016,7 +3002,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The database name associated with the user's credentials.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3030,7 +3016,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * User password for mongodb connection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3044,7 +3030,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Username for mongodb connection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3074,7 +3060,7 @@ public interface MongoDbEndpointBuilderFactory {
          * in server logs, slow query logs, and profile collection. Default:
          * null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -3091,7 +3077,7 @@ public interface MongoDbEndpointBuilderFactory {
          * instance. Possible values include: zlib, snappy, and zstd. Default:
          * null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -3108,7 +3094,7 @@ public interface MongoDbEndpointBuilderFactory {
          * instructs the driver to never time out while waiting for a connection
          * to open. Default: 10000 (10 seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -3126,8 +3112,8 @@ public interface MongoDbEndpointBuilderFactory {
          * instructs the driver to never time out while waiting for a connection
          * to open. Default: 10000 (10 seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 10000
          * Group: advanced
@@ -3148,7 +3134,7 @@ public interface MongoDbEndpointBuilderFactory {
          * fails, how long before the next attempt is made. Default value is
          * 1000ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -3169,7 +3155,7 @@ public interface MongoDbEndpointBuilderFactory {
          * fails, how long before the next attempt is made. Default value is
          * 1000ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -3185,7 +3171,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must connect to the host directly. Default:
          * false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3201,8 +3187,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must connect to the host directly. Default:
          * false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3222,7 +3207,7 @@ public interface MongoDbEndpointBuilderFactory {
          * default to boost performance. Enabling it will take a minimal
          * performance hit.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3242,8 +3227,7 @@ public interface MongoDbEndpointBuilderFactory {
          * default to boost performance. Enabling it will take a minimal
          * performance hit.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3262,7 +3246,7 @@ public interface MongoDbEndpointBuilderFactory {
          * beginning of the next one. Default: Single-threaded drivers: 60
          * seconds. Multi-threaded drivers: 10 seconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -3280,8 +3264,8 @@ public interface MongoDbEndpointBuilderFactory {
          * beginning of the next one. Default: Single-threaded drivers: 60
          * seconds. Multi-threaded drivers: 10 seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3296,7 +3280,7 @@ public interface MongoDbEndpointBuilderFactory {
          * If true the driver will assume that it's connecting to MongoDB
          * through a load balancer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3312,8 +3296,7 @@ public interface MongoDbEndpointBuilderFactory {
          * If true the driver will assume that it's connecting to MongoDB
          * through a load balancer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3329,7 +3312,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The size (in milliseconds) of the latency window for selecting among
          * multiple suitable MongoDB instances. Default: 15 milliseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 15
          * Group: advanced
@@ -3345,8 +3328,8 @@ public interface MongoDbEndpointBuilderFactory {
          * The size (in milliseconds) of the latency window for selecting among
          * multiple suitable MongoDB instances. Default: 15 milliseconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 15
          * Group: advanced
@@ -3362,7 +3345,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the maximum number of connections a pool may be
          * establishing concurrently. Default: 2.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 2
          * Group: advanced
@@ -3378,8 +3361,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the maximum number of connections a pool may be
          * establishing concurrently. Default: 2.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 2
          * Group: advanced
@@ -3398,7 +3381,7 @@ public interface MongoDbEndpointBuilderFactory {
          * how long the driver can allow a pooled collection to be idle.
          * Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -3417,8 +3400,8 @@ public interface MongoDbEndpointBuilderFactory {
          * how long the driver can allow a pooled collection to be idle.
          * Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -3436,7 +3419,7 @@ public interface MongoDbEndpointBuilderFactory {
          * connection. A value of 0 indicates that there is no upper bound on
          * how long the driver can keep a pooled connection open. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -3454,8 +3437,8 @@ public interface MongoDbEndpointBuilderFactory {
          * connection. A value of 0 indicates that there is no upper bound on
          * how long the driver can keep a pooled connection open. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -3471,7 +3454,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The maximum number of connections in the connection pool. The default
          * value is 100.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -3487,8 +3470,8 @@ public interface MongoDbEndpointBuilderFactory {
          * The maximum number of connections in the connection pool. The default
          * value is 100.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -3509,7 +3492,7 @@ public interface MongoDbEndpointBuilderFactory {
          * specifying -1 indicates that there should be no staleness check for
          * secondaries. Default: -1.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -3530,8 +3513,8 @@ public interface MongoDbEndpointBuilderFactory {
          * specifying -1 indicates that there should be no staleness check for
          * secondaries. Default: -1.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: -1
          * Group: advanced
@@ -3547,7 +3530,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the minimum number of connections that must exist at any
          * moment in a single connection pool. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -3563,8 +3546,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies the minimum number of connections that must exist at any
          * moment in a single connection pool. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -3581,7 +3564,7 @@ public interface MongoDbEndpointBuilderFactory {
          * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
          * SECONDARY, SECONDARY_PREFERRED or NEAREST.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: PRIMARY
          * Group: advanced
@@ -3600,7 +3583,7 @@ public interface MongoDbEndpointBuilderFactory {
          * list of tag sets, using multiple readPreferenceTags, e.g.
          * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -3616,7 +3599,7 @@ public interface MongoDbEndpointBuilderFactory {
          * hosts. When specified, the driver attempts to find all members of
          * that set.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -3631,7 +3614,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported read operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3647,8 +3630,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported read operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3664,7 +3646,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported write operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3680,8 +3662,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that the driver must retry supported write operations if
          * they fail due to a network error. Default: true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3697,7 +3678,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies how long (in milliseconds) to block for server selection
          * before throwing an exception. Default: 30,000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -3713,8 +3694,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies how long (in milliseconds) to block for server selection
          * before throwing an exception. Default: 30,000 milliseconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 30000
          * Group: advanced
@@ -3732,7 +3713,7 @@ public interface MongoDbEndpointBuilderFactory {
          * value of 0 instructs the driver to never time out while waiting to
          * send or receive a request. Default: 0.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 0
          * Group: advanced
@@ -3750,8 +3731,8 @@ public interface MongoDbEndpointBuilderFactory {
          * value of 0 instructs the driver to never time out while waiting to
          * send or receive a request. Default: 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 0
          * Group: advanced
@@ -3766,7 +3747,7 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The maximum number of hosts from the SRV record to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -3780,8 +3761,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * The maximum number of hosts from the SRV record to connect to.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3798,7 +3779,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Connection Format in your connection URI to use this option. Default:
          * mongodb.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: mongodb
          * Group: advanced
@@ -3814,7 +3795,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that all communication with MongoDB instances should use
          * TLS. Supersedes the ssl option. Default: false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3830,8 +3811,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Specifies that all communication with MongoDB instances should use
          * TLS. Supersedes the ssl option. Default: false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3849,7 +3829,7 @@ public interface MongoDbEndpointBuilderFactory {
          * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
          * setting tlsAllowInvalidHostnames to true. Default: false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3867,8 +3847,7 @@ public interface MongoDbEndpointBuilderFactory {
          * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
          * setting tlsAllowInvalidHostnames to true. Default: false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3885,7 +3864,7 @@ public interface MongoDbEndpointBuilderFactory {
          * may wait for a connection to become available. Default: 120000 (120
          * seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 120000
          * Group: advanced
@@ -3902,8 +3881,8 @@ public interface MongoDbEndpointBuilderFactory {
          * may wait for a connection to become available. Default: 120000 (120
          * seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 120000
          * Group: advanced
@@ -3921,7 +3900,7 @@ public interface MongoDbEndpointBuilderFactory {
          * replicaset or cluster. Possible values are ACKNOWLEDGED, W1, W2, W3,
          * UNACKNOWLEDGED, JOURNALED or MAJORITY.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ACKNOWLEDGED
          * Group: advanced
@@ -3938,7 +3917,7 @@ public interface MongoDbEndpointBuilderFactory {
          * WriteResult as the body of the OUT message, we transfer the IN
          * message to the OUT and attach the WriteResult as a header.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3955,8 +3934,7 @@ public interface MongoDbEndpointBuilderFactory {
          * WriteResult as the body of the OUT message, we transfer the IN
          * message to the OUT and attach the WriteResult as a header.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3975,7 +3953,7 @@ public interface MongoDbEndpointBuilderFactory {
          * resulting in larger requests) and larger values compressing slower
          * (but resulting in smaller requests). Default: null.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -3993,8 +3971,8 @@ public interface MongoDbEndpointBuilderFactory {
          * resulting in larger requests) and larger values compressing slower
          * (but resulting in smaller requests). Default: null.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 

@@ -50,10 +50,10 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -74,10 +74,10 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -95,7 +95,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
@@ -111,7 +111,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
@@ -130,7 +130,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -147,7 +147,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -165,7 +165,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -180,7 +180,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -195,7 +195,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -211,7 +211,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
@@ -227,7 +227,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -242,7 +242,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -257,7 +257,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -272,7 +272,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -287,7 +287,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -302,7 +302,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -318,7 +318,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * archive logs.When not set, the connector will automatically select
          * the first LOCAL and VALID destination.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -333,7 +333,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The number of hours in the past from SYSDATE to mine archive logs.
          * Using 0 mines all available archive logs.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: oracle
@@ -349,7 +349,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The number of hours in the past from SYSDATE to mine archive logs.
          * Using 0 mines all available archive logs.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: oracle
@@ -369,7 +369,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * base64-url-safe-encoded string; 'hex' represents binary data as
          * hex-encoded (base16) string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: bytes
          * Group: oracle
@@ -384,7 +384,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Regular expressions matching columns to exclude from change events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -398,7 +398,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Regular expressions matching columns to include in change events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -415,7 +415,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * and original length as parameters to the corresponding field schemas
          * in the emitted change records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -431,7 +431,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -449,7 +449,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * corresponding value would be the value of that tag the key is. For
          * example: k1=v1,k2=v2.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -465,7 +465,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * include: 'logminer': (the default) to capture changes using native
          * Oracle LogMiner; 'xstream' to capture changes using Oracle XStreams.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: LogMiner
          * Group: oracle
@@ -481,7 +481,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The name of the database from which the connector should capture
          * changes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -495,7 +495,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Resolvable hostname or IP address of the database server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -509,7 +509,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Name of the XStream Out server to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -524,7 +524,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Password of the database user to be used when connecting to the
          * database.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: oracle
@@ -540,7 +540,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Name of the pluggable database when working with a multi-tenant
          * set-up. The CDB name must be given via database.dbname in this case.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -554,7 +554,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Port of the database server.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1528
          * Group: oracle
@@ -569,7 +569,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Port of the database server.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1528
          * Group: oracle
@@ -586,7 +586,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * database provided as a way to support alternative connection
          * scenarios.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -600,7 +600,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Name of the database user to be used when connecting to the database.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -617,7 +617,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * type and original length as parameters to the corresponding field
          * schemas in the emitted change records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -638,7 +638,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * which may not offer the precision but will be far easier to use in
          * consumers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: precise
          * Group: oracle
@@ -654,7 +654,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The maximum number of retries on connection errors before failing (-1
          * = no limit, 0 = disabled, 0 = num of retries).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: oracle
@@ -670,7 +670,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The maximum number of retries on connection errors before failing (-1
          * = no limit, 0 = disabled, 0 = num of retries).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: oracle
@@ -690,7 +690,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped; 'ignore' the problematic event will be skipped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: fail
          * Group: oracle
@@ -705,7 +705,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * The query executed with every heartbeat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -721,7 +721,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -738,7 +738,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -754,7 +754,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: __debezium-heartbeat
          * Group: oracle
@@ -775,7 +775,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * independent of how the connector internally records database schema
          * history.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: oracle
@@ -796,8 +796,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * independent of how the connector internally records database schema
          * history.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: oracle
@@ -817,7 +816,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * connectors, and adding a String to each of them can potentially be
          * quite heavy. The default is 'false'.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -837,8 +836,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * connectors, and adding a String to each of them can potentially be
          * quite heavy. The default is 'false'.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -857,7 +855,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * written on signal data collection, the close will delete the relative
          * open signal;.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: INSERT_INSERT
          * Group: oracle
@@ -875,7 +873,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * string; 'numeric' (default) represents values using the inexact
          * conversion into microseconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: numeric
          * Group: oracle
@@ -892,7 +890,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * emitted. When set to 'true', the connector will capture LOB fields
          * and emit changes for those fields like any other column type.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -909,8 +907,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * emitted. When set to 'true', the connector will capture LOB fields
          * and emit changes for those fields like any other column type.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -929,7 +926,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * where its advantageous to only mine archive logs and accept latency
          * in event emission due to frequent revolving redo logs.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -948,8 +945,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * where its advantageous to only mine archive logs and accept latency
          * in event emission due to frequent revolving redo logs.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -965,7 +961,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The interval in milliseconds to wait between polls checking to see if
          * the SCN is in the archive logs.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: oracle
@@ -981,7 +977,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The interval in milliseconds to wait between polls checking to see if
          * the SCN is in the archive logs.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: oracle
@@ -997,7 +993,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The starting SCN interval size that the connector will use for
          * reading data from redo/archive logs.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 20000
          * Group: oracle
@@ -1013,7 +1009,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The starting SCN interval size that the connector will use for
          * reading data from redo/archive logs.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 20000
          * Group: oracle
@@ -1029,7 +1025,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The maximum SCN interval size that this connector will use when
          * reading from redo/archive logs.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 100000
          * Group: oracle
@@ -1045,7 +1041,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The maximum SCN interval size that this connector will use when
          * reading from redo/archive logs.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 100000
          * Group: oracle
@@ -1063,7 +1059,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * increased/decreased by this amount for tuning connector throughput
          * when needed.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: oracle
@@ -1081,7 +1077,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * increased/decreased by this amount for tuning connector throughput
          * when needed.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: oracle
@@ -1098,7 +1094,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * connector is stopped. When set to false (the default), the buffer
          * cache is retained across restarts.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -1115,8 +1111,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * connector is stopped. When set to false (the default), the buffer
          * cache is retained across restarts.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -1131,7 +1126,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Specifies the XML configuration for the Infinispan 'events' cache.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1146,7 +1141,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Specifies the XML configuration for the Infinispan 'global'
          * configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1161,7 +1156,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Specifies the XML configuration for the Infinispan
          * 'processed-transactions' cache.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1177,7 +1172,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Specifies the XML configuration for the Infinispan 'schema-changes'
          * cache.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1192,7 +1187,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Specifies the XML configuration for the Infinispan 'transactions'
          * cache.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1210,7 +1205,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * that no threshold is applied and transactions can have unlimited
          * events.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: oracle
@@ -1229,7 +1224,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * that no threshold is applied and transactions can have unlimited
          * events.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: oracle
@@ -1249,7 +1244,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * infinispan_remote - This option uses a remote Infinispan cluster to
          * buffer transaction data and persist it to disk.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: memory
          * Group: oracle
@@ -1265,7 +1260,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The name of the flush table used by the connector, defaults to
          * LOG_MINING_FLUSH.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: LOG_MINING_FLUSH
          * Group: oracle
@@ -1281,7 +1276,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * When enabled, the transaction log REDO SQL will be included in the
          * source information block.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -1297,8 +1292,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * When enabled, the transaction log REDO SQL will be included in the
          * source information block.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -1318,7 +1312,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * filters. regex - The query uses Oracle REGEXP_LIKE expressions to
          * specify the schema or table filters.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: none
          * Group: oracle
@@ -1338,7 +1332,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * database connection after every detected log switch or if the
          * log.mining.session.max.ms has been reached.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -1358,8 +1352,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * database connection after every detected log switch or if the
          * log.mining.session.max.ms has been reached.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -1378,7 +1371,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * log.mining.scn.gap.detection.time.interval.max.ms, consider it a SCN
          * gap.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000000
          * Group: oracle
@@ -1397,7 +1390,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * log.mining.scn.gap.detection.time.interval.max.ms, consider it a SCN
          * gap.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000000
          * Group: oracle
@@ -1416,7 +1409,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * current SCN and previous end SCN is smaller than this value, consider
          * it a SCN gap.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 20s
          * Group: oracle
@@ -1435,7 +1428,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * current SCN and previous end SCN is smaller than this value, consider
          * it a SCN gap.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 20s
          * Group: oracle
@@ -1452,7 +1445,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * before being restarted. Defaults to 0 (indefinite until a log switch
          * occurs).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -1469,7 +1462,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * before being restarted. Defaults to 0 (indefinite until a log switch
          * occurs).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -1486,7 +1479,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * from redo/archive logs and before starting reading data again. Value
          * is in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1s
          * Group: oracle
@@ -1503,7 +1496,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * from redo/archive logs and before starting reading data again. Value
          * is in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1s
          * Group: oracle
@@ -1520,7 +1513,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * optimal sleep time when reading data from LogMiner. Value is in
          * milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 200ms
          * Group: oracle
@@ -1537,7 +1530,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * optimal sleep time when reading data from LogMiner. Value is in
          * milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 200ms
          * Group: oracle
@@ -1554,7 +1547,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * reading data from redo/archive logs and before starting reading data
          * again. Value is in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 3s
          * Group: oracle
@@ -1571,7 +1564,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * reading data from redo/archive logs and before starting reading data
          * again. Value is in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 3s
          * Group: oracle
@@ -1588,7 +1581,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * reading data from redo/archive logs and before starting reading data
          * again. Value is in milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -1605,7 +1598,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * reading data from redo/archive logs and before starting reading data
          * again. Value is in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -1622,7 +1615,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * captured DDL. Another - with data dictionary loaded into REDO LOG
          * files.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: redo_log_catalog
          * Group: oracle
@@ -1639,7 +1632,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * transaction buffer between log mining sessions. By default, all
          * transactions are retained.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -1656,7 +1649,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * transaction buffer between log mining sessions. By default, all
          * transactions are retained.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -1671,7 +1664,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Comma separated list of usernames to exclude from LogMiner query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1685,7 +1678,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Comma separated list of usernames to include from LogMiner query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1699,7 +1692,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2048
          * Group: oracle
@@ -1714,7 +1707,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2048
          * Group: oracle
@@ -1731,7 +1724,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 8192
          * Group: oracle
@@ -1748,7 +1741,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 8192
          * Group: oracle
@@ -1765,7 +1758,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * database log but not yet recorded or forwarded. Defaults to 0. Mean
          * the feature is not enabled.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: oracle
@@ -1782,7 +1775,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * database log but not yet recorded or forwarded. Defaults to 0. Mean
          * the feature is not enabled.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: oracle
@@ -1805,7 +1798,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * used as message key. Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1819,7 +1812,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * List of notification channels names that are enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1834,7 +1827,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1848,7 +1841,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * The hostname of the OpenLogReplicator network service.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1862,7 +1855,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * The port of the OpenLogReplicator network service.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: oracle
          * 
@@ -1876,7 +1869,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * The port of the OpenLogReplicator network service.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: oracle
          * 
@@ -1891,7 +1884,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The configured logical source name in the OpenLogReplicator
          * configuration that is to stream changes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1906,7 +1899,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500ms
          * Group: oracle
@@ -1922,7 +1915,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500ms
          * Group: oracle
@@ -1938,7 +1931,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Optional list of post processors. The processors are defined using
          * '.type' config option and configured using options ''.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -1952,7 +1945,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -1967,8 +1960,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -1985,7 +1977,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * streaming. A value of '0' uses the default JDBC fetch size, defaults
          * to '2000'.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: oracle
@@ -2002,7 +1994,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * streaming. A value of '0' uses the default JDBC fetch size, defaults
          * to '2000'.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: oracle
@@ -2017,7 +2009,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * A comma-separated list of RAC node hostnames or ip addresses.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2032,7 +2024,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: oracle
@@ -2048,7 +2040,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: oracle
@@ -2065,7 +2057,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * recover database schema changes. The configuration properties for the
          * history are prefixed with the 'schema.history.internal.' string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.storage.kafka.history.KafkaSchemaHistory
          * Group: oracle
@@ -2081,7 +2073,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The path to the file that will be used to record the database schema
          * history.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2099,7 +2091,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * which it cannot parse. If skipping is enabled then Debezium can miss
          * metadata changes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2118,8 +2110,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * which it cannot parse. If skipping is enabled then Debezium can miss
          * metadata changes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2137,7 +2128,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * schema/database will be stored. If set to false, then Debezium will
          * store all incoming DDL statements.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2156,8 +2147,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * schema/database will be stored. If set to false, then Debezium will
          * store all incoming DDL statements.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2176,7 +2166,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * set to true, then only DDL that manipulates a captured table will be
          * stored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2195,8 +2185,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * set to true, then only DDL that manipulates a captured table will be
          * stored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2218,7 +2207,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * like _uxxxx. Note: _ is an escape sequence like backslash in
          * Java;'none' does not apply any adjustment (default).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: none
          * Group: oracle
@@ -2234,7 +2223,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2249,7 +2238,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: source
          * Group: oracle
@@ -2265,7 +2254,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Interval for looking for new signals in registered channels, given in
          * milliseconds. Defaults to 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5s
          * Group: oracle
@@ -2281,7 +2270,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Interval for looking for new signals in registered channels, given in
          * milliseconds. Defaults to 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5s
          * Group: oracle
@@ -2299,7 +2288,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * 't' for truncates, and 'none' to indicate nothing skipped. By
          * default, only truncate operations will be skipped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: t
          * Group: oracle
@@ -2315,7 +2304,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The number of attempts to retry database errors during snapshots
          * before failing.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: oracle
@@ -2331,7 +2320,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The number of attempts to retry database errors during snapshots
          * before failing.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: oracle
@@ -2347,7 +2336,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -2363,7 +2352,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0ms
          * Group: oracle
@@ -2378,7 +2367,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * A token to replace on snapshot predicate template.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2393,7 +2382,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: oracle
          * 
@@ -2408,7 +2397,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: oracle
          * 
@@ -2423,7 +2412,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * This setting must be set to specify a list of tables/collections
          * whose snapshot must be taken on creating or restarting the connector.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2446,7 +2435,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * 'none'. This mode is only safe to use if no schema changes are
          * happening while the snapshot is taken.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: shared
          * Group: oracle
@@ -2463,7 +2452,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: oracle
@@ -2480,7 +2469,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: oracle
@@ -2496,7 +2485,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The maximum number of threads used to perform the snapshot. Defaults
          * to 1.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: oracle
@@ -2512,7 +2501,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The maximum number of threads used to perform the snapshot. Defaults
          * to 1.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: oracle
@@ -2546,7 +2535,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * restore a corrupted or lost database schema history topic. Do not use
          * if the database schema was modified after the connector stopped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: initial
          * Group: oracle
@@ -2562,7 +2551,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the data should be snapshotted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2578,8 +2567,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the data should be snapshotted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2596,7 +2584,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * permits to specify whenever the data should be snapshotted or not in
          * case of error.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2614,8 +2602,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * permits to specify whenever the data should be snapshotted or not in
          * case of error.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2633,7 +2620,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * permits to specify whenever the schema should be snapshotted or not
          * in case of error.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2651,8 +2638,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * permits to specify whenever the schema should be snapshotted or not
          * in case of error.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2669,7 +2655,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the schema should be snapshotted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2685,8 +2671,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the schema should be snapshotted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2703,7 +2688,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * permits to specify whenever the stream should start or not after
          * snapshot.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2720,8 +2705,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * permits to specify whenever the stream should start or not after
          * snapshot.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2740,7 +2724,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * interface and is called on each app boot to determine whether to do a
          * snapshot.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2765,7 +2749,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * setting a specific point where to start (resume) snapshotting, in
          * case a previous snapshotting was interrupted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2783,7 +2767,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * ascending. A value of disabled (the default) will disable ordering by
          * row count.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: disabled
          * Group: oracle
@@ -2799,7 +2783,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * The name of the SourceInfoStructMaker class that returns SourceInfo
          * schema and struct.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.connector.oracle.OracleSourceInfoStructMaker
          * Group: oracle
@@ -2815,7 +2799,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2829,7 +2813,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * The tables for which changes are to be captured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: oracle
          * 
@@ -2850,7 +2834,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * built-in representations for Time, Date, and Timestamp, which uses
          * millisecond precision regardless of the database columns' precision.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: adaptive
          * Group: oracle
@@ -2869,7 +2853,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Kafka to completely delete all events pertaining to the given key
          * once the source record got deleted.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2888,8 +2872,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Kafka to completely delete all events pertaining to the given key
          * once the source record got deleted.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: oracle
@@ -2906,7 +2889,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * determine the topic name for data change, schema change, transaction,
          * heartbeat event etc.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.schema.SchemaTopicNamingStrategy
          * Group: oracle
@@ -2926,7 +2909,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * this connector. Only alphanumeric characters, hyphens, dots and
          * underscores must be accepted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: oracle
@@ -2943,7 +2926,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * that the original value is unavailable and not provided by the
          * database.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: __debezium_unavailable_value
          * Group: oracle
@@ -2981,7 +2964,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -3007,8 +2990,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -3026,8 +3008,8 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -3045,7 +3027,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -3059,8 +3041,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -3075,7 +3056,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 

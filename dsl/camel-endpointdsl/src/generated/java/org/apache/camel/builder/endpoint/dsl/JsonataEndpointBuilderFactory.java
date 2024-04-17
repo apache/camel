@@ -51,7 +51,7 @@ public interface JsonataEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -70,8 +70,7 @@ public interface JsonataEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -86,7 +85,7 @@ public interface JsonataEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -101,8 +100,7 @@ public interface JsonataEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -118,7 +116,7 @@ public interface JsonataEndpointBuilderFactory {
          * Specifies if the input should be Jackson JsonNode or a JSON String.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
          * 
          * Default: Jackson
          * Group: producer
@@ -134,7 +132,7 @@ public interface JsonataEndpointBuilderFactory {
          * Specifies if the input should be Jackson JsonNode or a JSON String.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
          * 
          * Default: Jackson
          * Group: producer
@@ -150,7 +148,7 @@ public interface JsonataEndpointBuilderFactory {
          * Specifies if the output should be Jackson JsonNode or a JSON String.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
          * 
          * Default: Jackson
          * Group: producer
@@ -166,7 +164,7 @@ public interface JsonataEndpointBuilderFactory {
          * Specifies if the output should be Jackson JsonNode or a JSON String.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
          * 
          * Default: Jackson
          * Group: producer
@@ -201,7 +199,7 @@ public interface JsonataEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -224,8 +222,7 @@ public interface JsonataEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

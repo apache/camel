@@ -48,7 +48,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * The authorization access token taken from whatsapp-business
          * dashboard.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -83,7 +83,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -106,8 +106,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -122,7 +121,7 @@ public interface WhatsAppEndpointBuilderFactory {
         /**
          * Facebook graph api version.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -137,7 +136,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * Can be used to set an alternative base URI, e.g. when you want to
          * test the component against a mock WhatsApp API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -151,8 +150,7 @@ public interface WhatsAppEndpointBuilderFactory {
         /**
          * HttpClient implementation.
          * 
-         * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.net.http.HttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -167,7 +165,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * HttpClient implementation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.net.http.HttpClient&lt;/code&gt; type.
+         * <code>java.net.http.HttpClient</code> type.
          * 
          * Group: advanced
          * 
@@ -181,7 +179,7 @@ public interface WhatsAppEndpointBuilderFactory {
         /**
          * Webhook path.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: webhook
          * Group: advanced
@@ -196,7 +194,7 @@ public interface WhatsAppEndpointBuilderFactory {
         /**
          * Webhook verify token.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -211,7 +209,8 @@ public interface WhatsAppEndpointBuilderFactory {
          * WhatsApp service implementation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.whatsapp.WhatsAppService&lt;/code&gt; type.
+         * <code>org.apache.camel.component.whatsapp.WhatsAppService</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -226,7 +225,8 @@ public interface WhatsAppEndpointBuilderFactory {
          * WhatsApp service implementation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.whatsapp.WhatsAppService&lt;/code&gt; type.
+         * <code>org.apache.camel.component.whatsapp.WhatsAppService</code>
+         * type.
          * 
          * Group: advanced
          * 

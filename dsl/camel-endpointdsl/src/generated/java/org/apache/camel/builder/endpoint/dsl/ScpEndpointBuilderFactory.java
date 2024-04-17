@@ -47,7 +47,7 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Allows you to set chmod on the stored file. For example chmod=664.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 664
          * Group: producer
@@ -65,7 +65,7 @@ public interface ScpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -83,8 +83,7 @@ public interface ScpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -103,7 +102,7 @@ public interface ScpEndpointBuilderFactory {
          * checksum file will always be written in the same folder as the
          * original file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -132,7 +131,7 @@ public interface ScpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -151,7 +150,7 @@ public interface ScpEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -171,8 +170,7 @@ public interface ScpEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -192,7 +190,7 @@ public interface ScpEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -212,8 +210,7 @@ public interface ScpEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -229,7 +226,7 @@ public interface ScpEndpointBuilderFactory {
          * Sets whether to use strict host key checking. Possible values are:
          * no, yes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: no
          * Group: producer
@@ -249,7 +246,7 @@ public interface ScpEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -263,7 +260,7 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -281,7 +278,7 @@ public interface ScpEndpointBuilderFactory {
          * gssapi-with-mic,publickey,keyboard-interactive,password If not
          * specified the JSCH and/or system defaults will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -297,7 +294,7 @@ public interface ScpEndpointBuilderFactory {
          * verification. This must be used only if privateKeyFile wasn't set.
          * Otherwise the file will have the priority.
          * 
-         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
+         * The option is a: <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -313,8 +310,7 @@ public interface ScpEndpointBuilderFactory {
          * verification. This must be used only if privateKeyFile wasn't set.
          * Otherwise the file will have the priority.
          * 
-         * The option will be converted to a &lt;code&gt;byte[]&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -330,7 +326,7 @@ public interface ScpEndpointBuilderFactory {
          * verification. You can prefix with classpath: to load the file from
          * classpath instead of file system.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -345,7 +341,7 @@ public interface ScpEndpointBuilderFactory {
          * Set the private key file passphrase to that the endpoint can do
          * private key verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -359,7 +355,7 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -374,7 +370,7 @@ public interface ScpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured, then use the host
          * file from System.getProperty(user.home) /.ssh/known_hosts.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -390,8 +386,7 @@ public interface ScpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured, then use the host
          * file from System.getProperty(user.home) /.ssh/known_hosts.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -424,7 +419,7 @@ public interface ScpEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -445,8 +440,7 @@ public interface ScpEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -463,7 +457,7 @@ public interface ScpEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -480,8 +474,7 @@ public interface ScpEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -504,7 +497,7 @@ public interface ScpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -527,8 +520,7 @@ public interface ScpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -546,7 +538,7 @@ public interface ScpEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -563,7 +555,7 @@ public interface ScpEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -578,7 +570,7 @@ public interface ScpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -594,7 +586,7 @@ public interface ScpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -612,7 +604,7 @@ public interface ScpEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -630,7 +622,7 @@ public interface ScpEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -645,7 +637,7 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -660,7 +652,7 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -678,7 +670,7 @@ public interface ScpEndpointBuilderFactory {
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security (advanced)
          * 

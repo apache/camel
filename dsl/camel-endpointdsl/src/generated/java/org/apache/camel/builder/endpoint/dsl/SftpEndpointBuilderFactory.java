@@ -47,7 +47,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -63,8 +63,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -87,7 +86,7 @@ public interface SftpEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -104,7 +103,7 @@ public interface SftpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -122,8 +121,7 @@ public interface SftpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -148,7 +146,7 @@ public interface SftpEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -177,7 +175,7 @@ public interface SftpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -192,8 +190,7 @@ public interface SftpEndpointBuilderFactory {
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: common
@@ -210,7 +207,7 @@ public interface SftpEndpointBuilderFactory {
          * verbose at by default at INFO level the threshold is WARN by default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: common
@@ -225,7 +222,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -240,8 +237,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -259,7 +255,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -277,7 +273,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -292,7 +288,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If true, the file will be deleted after it is processed successfully.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -307,8 +303,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If true, the file will be deleted after it is processed successfully.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -326,7 +321,7 @@ public interface SftpEndpointBuilderFactory {
          * When moving the files to the fail location Camel will handle the
          * error and will not pick up the file again.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -343,7 +338,7 @@ public interface SftpEndpointBuilderFactory {
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -361,8 +356,7 @@ public interface SftpEndpointBuilderFactory {
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -379,7 +373,7 @@ public interface SftpEndpointBuilderFactory {
          * filename when moving it before processing. For example to move
          * in-progress files into the order directory set this value to order.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -398,7 +392,7 @@ public interface SftpEndpointBuilderFactory {
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -418,8 +412,7 @@ public interface SftpEndpointBuilderFactory {
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -435,7 +428,7 @@ public interface SftpEndpointBuilderFactory {
          * If a directory, will look for files in all the sub-directories as
          * well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -451,8 +444,7 @@ public interface SftpEndpointBuilderFactory {
          * If a directory, will look for files in all the sub-directories as
          * well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -468,7 +460,7 @@ public interface SftpEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -484,8 +476,7 @@ public interface SftpEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -505,7 +496,7 @@ public interface SftpEndpointBuilderFactory {
          * you must set stepwise=false as both cannot be enabled at the same
          * time.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -525,8 +516,7 @@ public interface SftpEndpointBuilderFactory {
          * you must set stepwise=false as both cannot be enabled at the same
          * time.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -543,7 +533,7 @@ public interface SftpEndpointBuilderFactory {
          * used, antExclude takes precedence over antInclude. Multiple
          * exclusions may be specified in comma-delimited format.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -557,7 +547,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets case sensitive flag on ant filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -572,8 +562,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets case sensitive flag on ant filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -589,7 +578,7 @@ public interface SftpEndpointBuilderFactory {
          * Ant style filter inclusion. Multiple inclusions may be specified in
          * comma-delimited format.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -608,7 +597,7 @@ public interface SftpEndpointBuilderFactory {
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -628,8 +617,7 @@ public interface SftpEndpointBuilderFactory {
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -648,7 +636,7 @@ public interface SftpEndpointBuilderFactory {
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -668,7 +656,7 @@ public interface SftpEndpointBuilderFactory {
          * named mydata.tar.gz will have extension as tar.gz. For more
          * flexibility then use the include/exclude options.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -685,7 +673,7 @@ public interface SftpEndpointBuilderFactory {
          * files if filter returns false in its accept() method.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileFilter&amp;lt;org.apache.camel.component.file.remote.SftpRemoteFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
          * Group: filter
          * 
@@ -702,7 +690,7 @@ public interface SftpEndpointBuilderFactory {
          * files if filter returns false in its accept() method.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileFilter&amp;lt;org.apache.camel.component.file.remote.SftpRemoteFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
          * Group: filter
          * 
@@ -718,7 +706,7 @@ public interface SftpEndpointBuilderFactory {
          * on current date, you can use a simple date pattern such as
          * ${date:now:yyyMMdd}.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -733,7 +721,7 @@ public interface SftpEndpointBuilderFactory {
          * Filters the file based on Simple language. For example to filter on
          * file size, you can use ${file:size} 5000.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -750,7 +738,7 @@ public interface SftpEndpointBuilderFactory {
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: filter
@@ -768,8 +756,8 @@ public interface SftpEndpointBuilderFactory {
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: filter
@@ -787,7 +775,7 @@ public interface SftpEndpointBuilderFactory {
          * file name and file size, you can do:
          * idempotentKey=${file:name}-${file:size}.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -804,8 +792,7 @@ public interface SftpEndpointBuilderFactory {
          * and idempotent is true.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: filter
          * 
@@ -822,8 +809,7 @@ public interface SftpEndpointBuilderFactory {
          * and idempotent is true.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: filter
          * 
@@ -841,7 +827,7 @@ public interface SftpEndpointBuilderFactory {
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -861,7 +847,7 @@ public interface SftpEndpointBuilderFactory {
          * named mydata.tar.gz will have extension as tar.gz. For more
          * flexibility then use the include/exclude options.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -876,7 +862,7 @@ public interface SftpEndpointBuilderFactory {
          * The maximum depth to traverse when recursively processing a
          * directory.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: filter
@@ -892,7 +878,7 @@ public interface SftpEndpointBuilderFactory {
          * The maximum depth to traverse when recursively processing a
          * directory.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: filter
@@ -915,7 +901,7 @@ public interface SftpEndpointBuilderFactory {
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: filter
          * 
@@ -937,7 +923,7 @@ public interface SftpEndpointBuilderFactory {
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: filter
          * 
@@ -953,7 +939,7 @@ public interface SftpEndpointBuilderFactory {
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: filter
          * 
@@ -969,7 +955,7 @@ public interface SftpEndpointBuilderFactory {
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: filter
          * 
@@ -985,7 +971,7 @@ public interface SftpEndpointBuilderFactory {
          * filename when moving it after processing. To move files into a .done
          * subdirectory just enter .done.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: filter
          * 
@@ -1002,7 +988,7 @@ public interface SftpEndpointBuilderFactory {
          * implementation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&amp;lt;org.apache.camel.component.file.remote.SftpRemoteFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
          * Group: lock
          * 
@@ -1019,7 +1005,7 @@ public interface SftpEndpointBuilderFactory {
          * implementation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&amp;lt;org.apache.camel.component.file.remote.SftpRemoteFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
          * Group: lock
          * 
@@ -1070,7 +1056,7 @@ public interface SftpEndpointBuilderFactory {
          * repository supports clustering, such as Hazelcast Component or
          * Infinispan.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: none
          * Group: lock
@@ -1095,7 +1081,7 @@ public interface SftpEndpointBuilderFactory {
          * ample time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: lock
@@ -1120,7 +1106,7 @@ public interface SftpEndpointBuilderFactory {
          * ample time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: lock
@@ -1141,7 +1127,7 @@ public interface SftpEndpointBuilderFactory {
          * another node is concurrently reading files from the same shared
          * directory.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1162,8 +1148,7 @@ public interface SftpEndpointBuilderFactory {
          * another node is concurrently reading files from the same shared
          * directory.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1180,7 +1165,7 @@ public interface SftpEndpointBuilderFactory {
          * asynchronous. See more details at the readLockIdempotentReleaseDelay
          * option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: lock
@@ -1197,8 +1182,7 @@ public interface SftpEndpointBuilderFactory {
          * asynchronous. See more details at the readLockIdempotentReleaseDelay
          * option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: lock
@@ -1220,7 +1204,7 @@ public interface SftpEndpointBuilderFactory {
          * readLockIdempotentReleaseExecutorService option. See more details at
          * the readLockIdempotentReleaseDelay option.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: lock
          * 
@@ -1241,7 +1225,7 @@ public interface SftpEndpointBuilderFactory {
          * readLockIdempotentReleaseExecutorService option. See more details at
          * the readLockIdempotentReleaseDelay option.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: lock
          * 
@@ -1262,7 +1246,7 @@ public interface SftpEndpointBuilderFactory {
          * these situations. Note delaying is only needed if you have configured
          * readLockRemoveOnCommit to true.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: lock
          * 
@@ -1283,7 +1267,7 @@ public interface SftpEndpointBuilderFactory {
          * these situations. Note delaying is only needed if you have configured
          * readLockRemoveOnCommit to true.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: lock
          * 
@@ -1299,7 +1283,7 @@ public interface SftpEndpointBuilderFactory {
          * tasks. See more details at the readLockIdempotentReleaseDelay option.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: lock
          * 
@@ -1315,7 +1299,7 @@ public interface SftpEndpointBuilderFactory {
          * tasks. See more details at the readLockIdempotentReleaseDelay option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: lock
          * 
@@ -1333,8 +1317,7 @@ public interface SftpEndpointBuilderFactory {
          * types: changed, fileLock, idempotent, idempotent-changed,
          * idempotent-rename, rename.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: lock
@@ -1354,7 +1337,7 @@ public interface SftpEndpointBuilderFactory {
          * idempotent-rename, rename.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: lock
@@ -1374,7 +1357,7 @@ public interface SftpEndpointBuilderFactory {
          * not want to write marker files to the file systems by the Camel
          * application.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1394,8 +1377,7 @@ public interface SftpEndpointBuilderFactory {
          * not want to write marker files to the file systems by the Camel
          * application.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1415,7 +1397,7 @@ public interface SftpEndpointBuilderFactory {
          * as it will only attempt to acquire files which are at least that
          * given age.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: lock
@@ -1435,7 +1417,7 @@ public interface SftpEndpointBuilderFactory {
          * as it will only attempt to acquire files which are at least that
          * given age.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: lock
@@ -1453,7 +1435,7 @@ public interface SftpEndpointBuilderFactory {
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1
          * Group: lock
@@ -1471,7 +1453,7 @@ public interface SftpEndpointBuilderFactory {
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1
          * Group: lock
@@ -1494,7 +1476,7 @@ public interface SftpEndpointBuilderFactory {
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: lock
@@ -1517,8 +1499,7 @@ public interface SftpEndpointBuilderFactory {
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: lock
@@ -1537,7 +1518,7 @@ public interface SftpEndpointBuilderFactory {
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1556,8 +1537,7 @@ public interface SftpEndpointBuilderFactory {
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: lock
@@ -1583,7 +1563,7 @@ public interface SftpEndpointBuilderFactory {
          * ample time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: lock
@@ -1609,7 +1589,7 @@ public interface SftpEndpointBuilderFactory {
          * ample time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: lock
@@ -1625,7 +1605,7 @@ public interface SftpEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1640,7 +1620,7 @@ public interface SftpEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1655,7 +1635,7 @@ public interface SftpEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1670,7 +1650,7 @@ public interface SftpEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1689,7 +1669,7 @@ public interface SftpEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1708,7 +1688,7 @@ public interface SftpEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1722,7 +1702,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -1737,7 +1717,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -1753,7 +1733,7 @@ public interface SftpEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -1769,8 +1749,7 @@ public interface SftpEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -1785,7 +1764,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -1800,7 +1779,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -1817,7 +1796,7 @@ public interface SftpEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -1834,7 +1813,7 @@ public interface SftpEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -1850,8 +1829,7 @@ public interface SftpEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -1868,7 +1846,7 @@ public interface SftpEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -1886,7 +1864,7 @@ public interface SftpEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1903,7 +1881,7 @@ public interface SftpEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1918,7 +1896,7 @@ public interface SftpEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1934,8 +1912,7 @@ public interface SftpEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1951,8 +1928,8 @@ public interface SftpEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1971,8 +1948,8 @@ public interface SftpEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1989,7 +1966,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -2004,8 +1981,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -2020,8 +1996,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -2037,7 +2012,7 @@ public interface SftpEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -2053,7 +2028,7 @@ public interface SftpEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -2069,8 +2044,7 @@ public interface SftpEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -2087,7 +2061,7 @@ public interface SftpEndpointBuilderFactory {
          * and file (beware that the file will be created by the current user of
          * the running Java process, which may not have file permission).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2104,8 +2078,7 @@ public interface SftpEndpointBuilderFactory {
          * and file (beware that the file will be created by the current user of
          * the running Java process, which may not have file permission).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2123,7 +2096,7 @@ public interface SftpEndpointBuilderFactory {
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2140,7 +2113,7 @@ public interface SftpEndpointBuilderFactory {
          * JCraft JSCH. Some examples include:
          * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2155,7 +2128,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
-         * The option is a: &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
+         * The option is a: <code>java.security.KeyPair</code> type.
          * 
          * Group: security
          * 
@@ -2170,8 +2143,8 @@ public interface SftpEndpointBuilderFactory {
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
+         * The option will be converted to a <code>java.security.KeyPair</code>
+         * type.
          * 
          * Group: security
          * 
@@ -2186,7 +2159,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
          * 
-         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
+         * The option is a: <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -2201,8 +2174,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
          * 
-         * The option will be converted to a &lt;code&gt;byte[]&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -2217,7 +2189,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts file, so that the SFTP endpoint can do host key
          * verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2235,7 +2207,7 @@ public interface SftpEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2249,7 +2221,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2265,7 +2237,7 @@ public interface SftpEndpointBuilderFactory {
          * example include:password,publickey. If not specified the default list
          * from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2280,7 +2252,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
          * 
-         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
+         * The option is a: <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -2295,8 +2267,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
          * 
-         * The option will be converted to a &lt;code&gt;byte[]&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -2311,7 +2282,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key file so that the SFTP endpoint can do private key
          * verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2326,7 +2297,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key file passphrase so that the SFTP endpoint can do
          * private key verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2344,7 +2315,7 @@ public interface SftpEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2360,7 +2331,7 @@ public interface SftpEndpointBuilderFactory {
          * examples include:
          * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2376,7 +2347,7 @@ public interface SftpEndpointBuilderFactory {
          * host key. Some examples include:
          * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2390,7 +2361,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether to use strict host key checking.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: no
          * Group: security
@@ -2405,7 +2376,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2420,7 +2391,7 @@ public interface SftpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -2436,8 +2407,7 @@ public interface SftpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -2452,7 +2422,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To shuffle the list of files (sort in random order).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: sort
@@ -2467,8 +2437,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To shuffle the list of files (sort in random order).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: sort
@@ -2485,7 +2454,7 @@ public interface SftpEndpointBuilderFactory {
          * you can have a sort by file name and as a 2nd group sort by modified
          * date.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: sort
          * 
@@ -2500,7 +2469,7 @@ public interface SftpEndpointBuilderFactory {
          * Pluggable sorter as a java.util.Comparator class.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.component.file.GenericFile&amp;lt;org.apache.camel.component.file.remote.SftpRemoteFile&amp;gt;&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
          * 
          * Group: sort
          * 
@@ -2515,7 +2484,7 @@ public interface SftpEndpointBuilderFactory {
          * Pluggable sorter as a java.util.Comparator class.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.component.file.GenericFile&amp;lt;org.apache.camel.component.file.remote.SftpRemoteFile&amp;gt;&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
          * 
          * Group: sort
          * 
@@ -2547,7 +2516,7 @@ public interface SftpEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -2569,8 +2538,7 @@ public interface SftpEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -2596,7 +2564,7 @@ public interface SftpEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2622,8 +2590,7 @@ public interface SftpEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2642,7 +2609,7 @@ public interface SftpEndpointBuilderFactory {
          * such as file name, file size, etc. It's just that the file will not
          * be downloaded.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2661,8 +2628,7 @@ public interface SftpEndpointBuilderFactory {
          * such as file name, file size, etc. It's just that the file will not
          * be downloaded.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2680,8 +2646,8 @@ public interface SftpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2699,7 +2665,7 @@ public interface SftpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2713,8 +2679,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2729,7 +2694,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2747,7 +2712,7 @@ public interface SftpEndpointBuilderFactory {
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2766,8 +2731,7 @@ public interface SftpEndpointBuilderFactory {
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -2786,8 +2750,7 @@ public interface SftpEndpointBuilderFactory {
          * default a memory based repository is used.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2805,8 +2768,7 @@ public interface SftpEndpointBuilderFactory {
          * default a memory based repository is used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2823,7 +2785,7 @@ public interface SftpEndpointBuilderFactory {
          * content into memory. This is beneficial, if you consume a very big
          * remote file and thus can conserve memory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2840,8 +2802,8 @@ public interface SftpEndpointBuilderFactory {
          * where the consumer does either a commit or rollback. The default
          * implementation will log any exception at WARN level and ignore.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2859,7 +2821,7 @@ public interface SftpEndpointBuilderFactory {
          * implementation will log any exception at WARN level and ignore.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2877,7 +2839,7 @@ public interface SftpEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2895,7 +2857,7 @@ public interface SftpEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2915,7 +2877,7 @@ public interface SftpEndpointBuilderFactory {
          * then the readLock option does not apply.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileProcessStrategy&amp;lt;org.apache.camel.component.file.remote.SftpRemoteFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2935,7 +2897,7 @@ public interface SftpEndpointBuilderFactory {
          * then the readLock option does not apply.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileProcessStrategy&amp;lt;org.apache.camel.component.file.remote.SftpRemoteFile&amp;gt;&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -2955,7 +2917,7 @@ public interface SftpEndpointBuilderFactory {
          * as file size, timestamp, permissions etc, because those information
          * is only possible to retrieve when LIST command is in use.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -2976,8 +2938,7 @@ public interface SftpEndpointBuilderFactory {
          * as file size, timestamp, permissions etc, because those information
          * is only possible to retrieve when LIST command is in use.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -2995,7 +2956,7 @@ public interface SftpEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3013,8 +2974,7 @@ public interface SftpEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3030,7 +2990,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the address of the local interface against which the
          * connection should bind.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -3046,7 +3006,7 @@ public interface SftpEndpointBuilderFactory {
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -3062,8 +3022,8 @@ public interface SftpEndpointBuilderFactory {
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3079,7 +3039,7 @@ public interface SftpEndpointBuilderFactory {
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -3095,7 +3055,7 @@ public interface SftpEndpointBuilderFactory {
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -3110,7 +3070,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -3126,7 +3086,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -3145,7 +3105,7 @@ public interface SftpEndpointBuilderFactory {
          * cause a problem on windows system in some situations and therefore
          * you can disable this option to use CD.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3164,8 +3124,7 @@ public interface SftpEndpointBuilderFactory {
          * cause a problem on windows system in some situations and therefore
          * you can disable this option to use CD.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3181,7 +3140,7 @@ public interface SftpEndpointBuilderFactory {
          * Encoding to use for FTP client when parsing filenames. By default,
          * UTF-8 is used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -3196,7 +3155,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -3211,7 +3170,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -3226,7 +3185,7 @@ public interface SftpEndpointBuilderFactory {
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
          * 
-         * The option is a: &lt;code&gt;com.jcraft.jsch.Proxy&lt;/code&gt; type.
+         * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
          * 
          * Group: advanced
          * 
@@ -3241,8 +3200,8 @@ public interface SftpEndpointBuilderFactory {
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;com.jcraft.jsch.Proxy&lt;/code&gt; type.
+         * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3257,7 +3216,7 @@ public interface SftpEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -3273,7 +3232,7 @@ public interface SftpEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -3291,7 +3250,7 @@ public interface SftpEndpointBuilderFactory {
          * reached while keep-alive messages are being sent, the connection will
          * be disconnected. The default value is one.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -3309,7 +3268,7 @@ public interface SftpEndpointBuilderFactory {
          * reached while keep-alive messages are being sent, the connection will
          * be disconnected. The default value is one.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -3326,7 +3285,7 @@ public interface SftpEndpointBuilderFactory {
          * specified, any keep-alive message must not be sent. The default
          * interval is zero.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -3342,7 +3301,7 @@ public interface SftpEndpointBuilderFactory {
          * specified, any keep-alive message must not be sent. The default
          * interval is zero.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -3358,8 +3317,7 @@ public interface SftpEndpointBuilderFactory {
          * the FTP server. This can be used during troubleshooting to raise the
          * logging level and inspect the logs received from the FTP server.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: advanced
@@ -3377,7 +3335,7 @@ public interface SftpEndpointBuilderFactory {
          * logging level and inspect the logs received from the FTP server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: advanced
@@ -3395,7 +3353,7 @@ public interface SftpEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -3413,7 +3371,7 @@ public interface SftpEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -3433,7 +3391,7 @@ public interface SftpEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3453,8 +3411,7 @@ public interface SftpEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -3473,7 +3430,7 @@ public interface SftpEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3492,8 +3449,7 @@ public interface SftpEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3508,7 +3464,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -3523,7 +3479,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -3551,7 +3507,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3567,8 +3523,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3591,7 +3546,7 @@ public interface SftpEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3608,7 +3563,7 @@ public interface SftpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3626,8 +3581,7 @@ public interface SftpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3652,7 +3606,7 @@ public interface SftpEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3681,7 +3635,7 @@ public interface SftpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3696,8 +3650,7 @@ public interface SftpEndpointBuilderFactory {
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: common
@@ -3714,7 +3667,7 @@ public interface SftpEndpointBuilderFactory {
          * verbose at by default at INFO level the threshold is WARN by default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: common
@@ -3729,7 +3682,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3744,8 +3697,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3763,7 +3715,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -3781,7 +3733,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -3800,7 +3752,7 @@ public interface SftpEndpointBuilderFactory {
          * checksum file will always be written in the same folder as the
          * original file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -3829,7 +3781,7 @@ public interface SftpEndpointBuilderFactory {
          * systems and especially FTP servers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileExist&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
          * Default: Override
          * Group: producer
@@ -3859,7 +3811,7 @@ public interface SftpEndpointBuilderFactory {
          * systems and especially FTP servers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.GenericFileExist&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
          * Default: Override
          * Group: producer
@@ -3879,7 +3831,7 @@ public interface SftpEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -3899,8 +3851,7 @@ public interface SftpEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -3920,7 +3871,7 @@ public interface SftpEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -3940,8 +3891,7 @@ public interface SftpEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -3963,7 +3913,7 @@ public interface SftpEndpointBuilderFactory {
          * component, as the FTP component can only move any existing files to a
          * relative directory based on current dir as base.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -3983,7 +3933,7 @@ public interface SftpEndpointBuilderFactory {
          * dir/finalFilename then tempFileName is relative to that subdirectory
          * dir.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -4001,7 +3951,7 @@ public interface SftpEndpointBuilderFactory {
          * using exclusive read locks) reading in progress files. Is often used
          * by FTP when uploading big files.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -4017,7 +3967,7 @@ public interface SftpEndpointBuilderFactory {
          * and file (beware that the file will be created by the current user of
          * the running Java process, which may not have file permission).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -4034,8 +3984,7 @@ public interface SftpEndpointBuilderFactory {
          * and file (beware that the file will be created by the current user of
          * the running Java process, which may not have file permission).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -4053,7 +4002,7 @@ public interface SftpEndpointBuilderFactory {
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4070,7 +4019,7 @@ public interface SftpEndpointBuilderFactory {
          * JCraft JSCH. Some examples include:
          * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4085,7 +4034,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
-         * The option is a: &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
+         * The option is a: <code>java.security.KeyPair</code> type.
          * 
          * Group: security
          * 
@@ -4100,8 +4049,8 @@ public interface SftpEndpointBuilderFactory {
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
+         * The option will be converted to a <code>java.security.KeyPair</code>
+         * type.
          * 
          * Group: security
          * 
@@ -4116,7 +4065,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
          * 
-         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
+         * The option is a: <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -4131,8 +4080,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
          * 
-         * The option will be converted to a &lt;code&gt;byte[]&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -4147,7 +4095,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts file, so that the SFTP endpoint can do host key
          * verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4165,7 +4113,7 @@ public interface SftpEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4179,7 +4127,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4195,7 +4143,7 @@ public interface SftpEndpointBuilderFactory {
          * example include:password,publickey. If not specified the default list
          * from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4210,7 +4158,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
          * 
-         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
+         * The option is a: <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -4225,8 +4173,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
          * 
-         * The option will be converted to a &lt;code&gt;byte[]&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -4241,7 +4188,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key file so that the SFTP endpoint can do private key
          * verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4256,7 +4203,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key file passphrase so that the SFTP endpoint can do
          * private key verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4274,7 +4221,7 @@ public interface SftpEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4290,7 +4237,7 @@ public interface SftpEndpointBuilderFactory {
          * examples include:
          * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4306,7 +4253,7 @@ public interface SftpEndpointBuilderFactory {
          * host key. Some examples include:
          * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4320,7 +4267,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether to use strict host key checking.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: no
          * Group: security
@@ -4335,7 +4282,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -4350,7 +4297,7 @@ public interface SftpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -4366,8 +4313,7 @@ public interface SftpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -4399,7 +4345,7 @@ public interface SftpEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -4421,8 +4367,7 @@ public interface SftpEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -4443,7 +4388,7 @@ public interface SftpEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4464,8 +4409,7 @@ public interface SftpEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4480,7 +4424,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Allows you to set chmod on the stored file. For example chmod=640.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -4494,7 +4438,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Allows you to set chmod during path creation. For example chmod=640.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -4510,7 +4454,7 @@ public interface SftpEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4527,8 +4471,7 @@ public interface SftpEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4555,7 +4498,7 @@ public interface SftpEndpointBuilderFactory {
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -4582,8 +4525,7 @@ public interface SftpEndpointBuilderFactory {
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -4604,7 +4546,7 @@ public interface SftpEndpointBuilderFactory {
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4625,8 +4567,7 @@ public interface SftpEndpointBuilderFactory {
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4649,7 +4590,7 @@ public interface SftpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4672,8 +4613,7 @@ public interface SftpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -4691,7 +4631,7 @@ public interface SftpEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -4708,7 +4648,7 @@ public interface SftpEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -4726,7 +4666,7 @@ public interface SftpEndpointBuilderFactory {
          * to be able to upload the file. However if this causes problems, you
          * can turn this option off.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -4745,8 +4685,7 @@ public interface SftpEndpointBuilderFactory {
          * to be able to upload the file. However if this causes problems, you
          * can turn this option off.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -4764,7 +4703,7 @@ public interface SftpEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4782,8 +4721,7 @@ public interface SftpEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4799,7 +4737,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the address of the local interface against which the
          * connection should bind.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -4815,7 +4753,7 @@ public interface SftpEndpointBuilderFactory {
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -4831,8 +4769,8 @@ public interface SftpEndpointBuilderFactory {
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -4848,7 +4786,7 @@ public interface SftpEndpointBuilderFactory {
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -4864,7 +4802,7 @@ public interface SftpEndpointBuilderFactory {
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -4879,7 +4817,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -4895,7 +4833,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -4914,7 +4852,7 @@ public interface SftpEndpointBuilderFactory {
          * cause a problem on windows system in some situations and therefore
          * you can disable this option to use CD.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4933,8 +4871,7 @@ public interface SftpEndpointBuilderFactory {
          * cause a problem on windows system in some situations and therefore
          * you can disable this option to use CD.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4950,7 +4887,7 @@ public interface SftpEndpointBuilderFactory {
          * Encoding to use for FTP client when parsing filenames. By default,
          * UTF-8 is used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -4965,7 +4902,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -4980,7 +4917,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -4995,7 +4932,7 @@ public interface SftpEndpointBuilderFactory {
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
          * 
-         * The option is a: &lt;code&gt;com.jcraft.jsch.Proxy&lt;/code&gt; type.
+         * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
          * 
          * Group: advanced
          * 
@@ -5010,8 +4947,8 @@ public interface SftpEndpointBuilderFactory {
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;com.jcraft.jsch.Proxy&lt;/code&gt; type.
+         * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -5026,7 +4963,7 @@ public interface SftpEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -5042,7 +4979,7 @@ public interface SftpEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -5060,7 +4997,7 @@ public interface SftpEndpointBuilderFactory {
          * reached while keep-alive messages are being sent, the connection will
          * be disconnected. The default value is one.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -5078,7 +5015,7 @@ public interface SftpEndpointBuilderFactory {
          * reached while keep-alive messages are being sent, the connection will
          * be disconnected. The default value is one.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -5095,7 +5032,7 @@ public interface SftpEndpointBuilderFactory {
          * specified, any keep-alive message must not be sent. The default
          * interval is zero.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -5111,7 +5048,7 @@ public interface SftpEndpointBuilderFactory {
          * specified, any keep-alive message must not be sent. The default
          * interval is zero.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -5127,8 +5064,7 @@ public interface SftpEndpointBuilderFactory {
          * the FTP server. This can be used during troubleshooting to raise the
          * logging level and inspect the logs received from the FTP server.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: advanced
@@ -5146,7 +5082,7 @@ public interface SftpEndpointBuilderFactory {
          * logging level and inspect the logs received from the FTP server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: advanced
@@ -5164,7 +5100,7 @@ public interface SftpEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -5182,7 +5118,7 @@ public interface SftpEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -5202,7 +5138,7 @@ public interface SftpEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -5222,8 +5158,7 @@ public interface SftpEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -5242,7 +5177,7 @@ public interface SftpEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5261,8 +5196,7 @@ public interface SftpEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5277,7 +5211,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -5292,7 +5226,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -5321,7 +5255,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5337,8 +5271,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5361,7 +5294,7 @@ public interface SftpEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5378,7 +5311,7 @@ public interface SftpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5396,8 +5329,7 @@ public interface SftpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5422,7 +5354,7 @@ public interface SftpEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5451,7 +5383,7 @@ public interface SftpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5466,8 +5398,7 @@ public interface SftpEndpointBuilderFactory {
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: common
@@ -5484,7 +5415,7 @@ public interface SftpEndpointBuilderFactory {
          * verbose at by default at INFO level the threshold is WARN by default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: common
@@ -5499,7 +5430,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5514,8 +5445,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5533,7 +5463,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -5551,7 +5481,7 @@ public interface SftpEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator</code> type.
          * 
          * Default: UNIX
          * Group: common
@@ -5568,7 +5498,7 @@ public interface SftpEndpointBuilderFactory {
          * and file (beware that the file will be created by the current user of
          * the running Java process, which may not have file permission).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -5585,8 +5515,7 @@ public interface SftpEndpointBuilderFactory {
          * and file (beware that the file will be created by the current user of
          * the running Java process, which may not have file permission).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -5604,7 +5533,7 @@ public interface SftpEndpointBuilderFactory {
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5621,7 +5550,7 @@ public interface SftpEndpointBuilderFactory {
          * JCraft JSCH. Some examples include:
          * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5636,7 +5565,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
-         * The option is a: &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
+         * The option is a: <code>java.security.KeyPair</code> type.
          * 
          * Group: security
          * 
@@ -5651,8 +5580,8 @@ public interface SftpEndpointBuilderFactory {
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
+         * The option will be converted to a <code>java.security.KeyPair</code>
+         * type.
          * 
          * Group: security
          * 
@@ -5667,7 +5596,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
          * 
-         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
+         * The option is a: <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -5682,8 +5611,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
          * 
-         * The option will be converted to a &lt;code&gt;byte[]&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -5698,7 +5626,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts file, so that the SFTP endpoint can do host key
          * verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5716,7 +5644,7 @@ public interface SftpEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5730,7 +5658,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5746,7 +5674,7 @@ public interface SftpEndpointBuilderFactory {
          * example include:password,publickey. If not specified the default list
          * from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5761,7 +5689,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
          * 
-         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
+         * The option is a: <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -5776,8 +5704,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
          * 
-         * The option will be converted to a &lt;code&gt;byte[]&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>byte[]</code> type.
          * 
          * Group: security
          * 
@@ -5792,7 +5719,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key file so that the SFTP endpoint can do private key
          * verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5807,7 +5734,7 @@ public interface SftpEndpointBuilderFactory {
          * Set the private key file passphrase so that the SFTP endpoint can do
          * private key verification.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5825,7 +5752,7 @@ public interface SftpEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5841,7 +5768,7 @@ public interface SftpEndpointBuilderFactory {
          * examples include:
          * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5857,7 +5784,7 @@ public interface SftpEndpointBuilderFactory {
          * host key. Some examples include:
          * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5871,7 +5798,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether to use strict host key checking.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: no
          * Group: security
@@ -5886,7 +5813,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5901,7 +5828,7 @@ public interface SftpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -5917,8 +5844,7 @@ public interface SftpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -5953,7 +5879,7 @@ public interface SftpEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -5975,8 +5901,7 @@ public interface SftpEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -5994,7 +5919,7 @@ public interface SftpEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6012,8 +5937,7 @@ public interface SftpEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6029,7 +5953,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the address of the local interface against which the
          * connection should bind.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -6045,7 +5969,7 @@ public interface SftpEndpointBuilderFactory {
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -6061,8 +5985,8 @@ public interface SftpEndpointBuilderFactory {
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -6078,7 +6002,7 @@ public interface SftpEndpointBuilderFactory {
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -6094,7 +6018,7 @@ public interface SftpEndpointBuilderFactory {
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -6109,7 +6033,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -6125,7 +6049,7 @@ public interface SftpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -6144,7 +6068,7 @@ public interface SftpEndpointBuilderFactory {
          * cause a problem on windows system in some situations and therefore
          * you can disable this option to use CD.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6163,8 +6087,7 @@ public interface SftpEndpointBuilderFactory {
          * cause a problem on windows system in some situations and therefore
          * you can disable this option to use CD.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6180,7 +6103,7 @@ public interface SftpEndpointBuilderFactory {
          * Encoding to use for FTP client when parsing filenames. By default,
          * UTF-8 is used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -6195,7 +6118,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -6210,7 +6133,7 @@ public interface SftpEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -6225,7 +6148,7 @@ public interface SftpEndpointBuilderFactory {
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
          * 
-         * The option is a: &lt;code&gt;com.jcraft.jsch.Proxy&lt;/code&gt; type.
+         * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
          * 
          * Group: advanced
          * 
@@ -6240,8 +6163,8 @@ public interface SftpEndpointBuilderFactory {
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;com.jcraft.jsch.Proxy&lt;/code&gt; type.
+         * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -6256,7 +6179,7 @@ public interface SftpEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -6272,7 +6195,7 @@ public interface SftpEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -6290,7 +6213,7 @@ public interface SftpEndpointBuilderFactory {
          * reached while keep-alive messages are being sent, the connection will
          * be disconnected. The default value is one.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -6308,7 +6231,7 @@ public interface SftpEndpointBuilderFactory {
          * reached while keep-alive messages are being sent, the connection will
          * be disconnected. The default value is one.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -6325,7 +6248,7 @@ public interface SftpEndpointBuilderFactory {
          * specified, any keep-alive message must not be sent. The default
          * interval is zero.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -6341,7 +6264,7 @@ public interface SftpEndpointBuilderFactory {
          * specified, any keep-alive message must not be sent. The default
          * interval is zero.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          * 
@@ -6357,8 +6280,7 @@ public interface SftpEndpointBuilderFactory {
          * the FTP server. This can be used during troubleshooting to raise the
          * logging level and inspect the logs received from the FTP server.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: advanced
@@ -6376,7 +6298,7 @@ public interface SftpEndpointBuilderFactory {
          * logging level and inspect the logs received from the FTP server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: DEBUG
          * Group: advanced
@@ -6394,7 +6316,7 @@ public interface SftpEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -6412,7 +6334,7 @@ public interface SftpEndpointBuilderFactory {
          * not have a hanged connection. On SFTP this option is set as timeout
          * on the JSCH Session instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 300000
          * Group: advanced
@@ -6432,7 +6354,7 @@ public interface SftpEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6452,8 +6374,7 @@ public interface SftpEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6472,7 +6393,7 @@ public interface SftpEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6491,8 +6412,7 @@ public interface SftpEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6507,7 +6427,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -6522,7 +6442,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced

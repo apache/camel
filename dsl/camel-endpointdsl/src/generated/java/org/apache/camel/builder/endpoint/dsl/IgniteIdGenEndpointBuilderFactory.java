@@ -47,7 +47,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
         /**
          * The batch size.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -61,8 +61,8 @@ public interface IgniteIdGenEndpointBuilderFactory {
         /**
          * The batch size.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -76,7 +76,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
         /**
          * The initial value.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: 0
          * Group: producer
@@ -91,8 +91,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
         /**
          * The initial value.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: 0
          * Group: producer
@@ -111,7 +110,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * INCREMENT_AND_GET.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ignite.idgen.IgniteIdGenOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code> type.
          * 
          * Group: producer
          * 
@@ -129,7 +128,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * INCREMENT_AND_GET.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ignite.idgen.IgniteIdGenOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code> type.
          * 
          * Group: producer
          * 
@@ -144,7 +143,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -160,8 +159,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -177,7 +175,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -193,8 +191,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -229,7 +226,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -252,8 +249,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

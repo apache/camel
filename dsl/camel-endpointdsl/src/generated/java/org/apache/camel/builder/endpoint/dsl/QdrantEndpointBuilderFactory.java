@@ -47,7 +47,7 @@ public interface QdrantEndpointBuilderFactory {
         /**
          * Sets the API key to use for authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -61,7 +61,7 @@ public interface QdrantEndpointBuilderFactory {
         /**
          * The host to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: localhost
          * Group: producer
@@ -76,7 +76,7 @@ public interface QdrantEndpointBuilderFactory {
         /**
          * The port to connect to.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 6334
          * Group: producer
@@ -91,7 +91,7 @@ public interface QdrantEndpointBuilderFactory {
         /**
          * The port to connect to.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 6334
          * Group: producer
@@ -106,7 +106,7 @@ public interface QdrantEndpointBuilderFactory {
         /**
          * Sets a default timeout for all requests.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: producer
          * 
@@ -120,8 +120,8 @@ public interface QdrantEndpointBuilderFactory {
         /**
          * Sets a default timeout for all requests.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -136,7 +136,7 @@ public interface QdrantEndpointBuilderFactory {
          * Whether the client uses Transport Layer Security (TLS) to secure
          * communications.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -152,8 +152,7 @@ public interface QdrantEndpointBuilderFactory {
          * Whether the client uses Transport Layer Security (TLS) to secure
          * communications.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -188,7 +187,7 @@ public interface QdrantEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -211,8 +210,7 @@ public interface QdrantEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

@@ -46,7 +46,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * client id for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -61,7 +61,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not a file changed event raised indicates completion
          * (true) or modification (false).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -76,8 +76,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not a file changed event raised indicates completion
          * (true) or modification (false).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -91,7 +91,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * check for closing stream after read.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -105,8 +105,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * check for closing stream after read.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -121,7 +121,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -137,7 +137,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -152,7 +152,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * count number of bytes to download.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -166,8 +166,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * count number of bytes to download.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -182,7 +181,8 @@ public interface DataLakeEndpointBuilderFactory {
          * service client of data lake.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -197,7 +197,8 @@ public interface DataLakeEndpointBuilderFactory {
          * service client of data lake.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -211,7 +212,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * directory of the file to be handled in component.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -225,7 +226,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * download link expiration time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -239,8 +240,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * download link expiration time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -254,7 +254,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * expression for queryInputStream.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -268,7 +268,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * directory of file to do operations in the local system.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -282,7 +282,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * name of file to be handled in component.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -296,7 +296,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * offset position in file for different operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -310,8 +310,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * offset position in file for different operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -325,7 +324,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * maximum number of results to show at a time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -339,8 +338,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * maximum number of results to show at a time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -354,7 +353,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * no of retries to a given request.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -368,7 +367,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * no of retries to a given request.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -383,7 +382,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Set&lt;java.nio.file.OpenOption&gt;</code> type.
          * 
          * Group: common
          * 
@@ -398,7 +397,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Set&lt;java.nio.file.OpenOption&gt;</code> type.
          * 
          * Group: common
          * 
@@ -412,7 +411,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * path in azure data lake for operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -426,7 +425,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * permission string for the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -441,7 +440,7 @@ public interface DataLakeEndpointBuilderFactory {
          * This parameter allows the caller to upload data in parallel and
          * control the order in which it is appended to the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -456,8 +455,7 @@ public interface DataLakeEndpointBuilderFactory {
          * This parameter allows the caller to upload data in parallel and
          * control the order in which it is appended to the file.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -471,7 +469,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * recursively include all paths.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -485,8 +483,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * recursively include all paths.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -500,7 +498,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * regular expression for matching file names.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -515,7 +513,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not uncommitted data is to be retained after the
          * operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -530,8 +528,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not uncommitted data is to be retained after the
          * operation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -546,7 +544,8 @@ public interface DataLakeEndpointBuilderFactory {
          * data lake service client for azure storage data lake.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -561,7 +560,8 @@ public interface DataLakeEndpointBuilderFactory {
          * data lake service client for azure storage data lake.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -576,7 +576,8 @@ public interface DataLakeEndpointBuilderFactory {
          * shared key credential for azure data lake gen2.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -591,7 +592,8 @@ public interface DataLakeEndpointBuilderFactory {
          * shared key credential for azure data lake gen2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -605,7 +607,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * tenant id for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -619,7 +621,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Timeout for operation.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -633,8 +635,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Timeout for operation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -648,7 +650,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * umask permission for file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -662,7 +664,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * whether or not to use upn.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -676,8 +678,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * whether or not to use upn.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -692,7 +694,7 @@ public interface DataLakeEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -708,8 +710,7 @@ public interface DataLakeEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -725,7 +726,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -740,7 +741,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -755,7 +756,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -770,7 +771,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -789,7 +790,7 @@ public interface DataLakeEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -808,7 +809,7 @@ public interface DataLakeEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -822,7 +823,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -837,7 +838,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -853,7 +854,7 @@ public interface DataLakeEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -869,8 +870,7 @@ public interface DataLakeEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -885,7 +885,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -900,7 +900,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -917,7 +917,7 @@ public interface DataLakeEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -934,7 +934,7 @@ public interface DataLakeEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -950,8 +950,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -968,7 +967,7 @@ public interface DataLakeEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -986,7 +985,7 @@ public interface DataLakeEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1003,7 +1002,7 @@ public interface DataLakeEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1018,7 +1017,7 @@ public interface DataLakeEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1034,8 +1033,7 @@ public interface DataLakeEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1051,8 +1049,8 @@ public interface DataLakeEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1071,8 +1069,8 @@ public interface DataLakeEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1089,7 +1087,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1104,8 +1102,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1120,8 +1117,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1137,7 +1133,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1153,7 +1149,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1169,8 +1165,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1185,7 +1180,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * account key for authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1199,7 +1194,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * client secret for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1214,8 +1209,7 @@ public interface DataLakeEndpointBuilderFactory {
          * client secret credential for authentication.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.identity.ClientSecretCredential</code> type.
          * 
          * Group: security
          * 
@@ -1230,8 +1224,7 @@ public interface DataLakeEndpointBuilderFactory {
          * client secret credential for authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.identity.ClientSecretCredential</code> type.
          * 
          * Group: security
          * 
@@ -1246,8 +1239,7 @@ public interface DataLakeEndpointBuilderFactory {
          * SAS token credential.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.AzureSasCredential</code> type.
          * 
          * Group: security
          * 
@@ -1262,8 +1254,7 @@ public interface DataLakeEndpointBuilderFactory {
          * SAS token credential.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.AzureSasCredential</code> type.
          * 
          * Group: security
          * 
@@ -1277,7 +1268,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * SAS token signature.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1313,7 +1304,7 @@ public interface DataLakeEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1339,8 +1330,7 @@ public interface DataLakeEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1358,8 +1348,8 @@ public interface DataLakeEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1377,7 +1367,7 @@ public interface DataLakeEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1391,8 +1381,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1407,7 +1396,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1425,7 +1414,7 @@ public interface DataLakeEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1443,7 +1432,7 @@ public interface DataLakeEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1469,7 +1458,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * client id for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1484,7 +1473,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not a file changed event raised indicates completion
          * (true) or modification (false).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -1499,8 +1488,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not a file changed event raised indicates completion
          * (true) or modification (false).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1514,7 +1503,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * check for closing stream after read.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -1528,8 +1517,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * check for closing stream after read.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1544,7 +1533,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -1560,7 +1549,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -1575,7 +1564,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * count number of bytes to download.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1589,8 +1578,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * count number of bytes to download.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1605,7 +1593,8 @@ public interface DataLakeEndpointBuilderFactory {
          * service client of data lake.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1620,7 +1609,8 @@ public interface DataLakeEndpointBuilderFactory {
          * service client of data lake.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1634,7 +1624,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * directory of the file to be handled in component.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1648,7 +1638,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * download link expiration time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1662,8 +1652,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * download link expiration time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1677,7 +1666,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * expression for queryInputStream.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1691,7 +1680,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * directory of file to do operations in the local system.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1705,7 +1694,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * name of file to be handled in component.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1719,7 +1708,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * offset position in file for different operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1733,8 +1722,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * offset position in file for different operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1748,7 +1736,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * maximum number of results to show at a time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -1762,8 +1750,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * maximum number of results to show at a time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1777,7 +1765,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * no of retries to a given request.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -1791,7 +1779,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * no of retries to a given request.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -1806,7 +1794,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Set&lt;java.nio.file.OpenOption&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1821,7 +1809,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Set&lt;java.nio.file.OpenOption&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1835,7 +1823,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * path in azure data lake for operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1849,7 +1837,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * permission string for the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1864,7 +1852,7 @@ public interface DataLakeEndpointBuilderFactory {
          * This parameter allows the caller to upload data in parallel and
          * control the order in which it is appended to the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1879,8 +1867,7 @@ public interface DataLakeEndpointBuilderFactory {
          * This parameter allows the caller to upload data in parallel and
          * control the order in which it is appended to the file.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -1894,7 +1881,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * recursively include all paths.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -1908,8 +1895,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * recursively include all paths.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1923,7 +1910,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * regular expression for matching file names.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1938,7 +1925,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not uncommitted data is to be retained after the
          * operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -1953,8 +1940,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not uncommitted data is to be retained after the
          * operation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1969,7 +1956,8 @@ public interface DataLakeEndpointBuilderFactory {
          * data lake service client for azure storage data lake.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1984,7 +1972,8 @@ public interface DataLakeEndpointBuilderFactory {
          * data lake service client for azure storage data lake.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1999,7 +1988,8 @@ public interface DataLakeEndpointBuilderFactory {
          * shared key credential for azure data lake gen2.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2014,7 +2004,8 @@ public interface DataLakeEndpointBuilderFactory {
          * shared key credential for azure data lake gen2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2028,7 +2019,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * tenant id for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2042,7 +2033,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Timeout for operation.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -2056,8 +2047,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Timeout for operation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2071,7 +2062,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * umask permission for file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2085,7 +2076,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * whether or not to use upn.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2099,8 +2090,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * whether or not to use upn.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2115,7 +2106,7 @@ public interface DataLakeEndpointBuilderFactory {
          * operation to be performed.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition</code> type.
          * 
          * Default: listFileSystem
          * Group: producer
@@ -2131,7 +2122,7 @@ public interface DataLakeEndpointBuilderFactory {
          * operation to be performed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition</code> type.
          * 
          * Default: listFileSystem
          * Group: producer
@@ -2146,7 +2137,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * account key for authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2160,7 +2151,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * client secret for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2175,8 +2166,7 @@ public interface DataLakeEndpointBuilderFactory {
          * client secret credential for authentication.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.identity.ClientSecretCredential</code> type.
          * 
          * Group: security
          * 
@@ -2191,8 +2181,7 @@ public interface DataLakeEndpointBuilderFactory {
          * client secret credential for authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.identity.ClientSecretCredential</code> type.
          * 
          * Group: security
          * 
@@ -2207,8 +2196,7 @@ public interface DataLakeEndpointBuilderFactory {
          * SAS token credential.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.AzureSasCredential</code> type.
          * 
          * Group: security
          * 
@@ -2223,8 +2211,7 @@ public interface DataLakeEndpointBuilderFactory {
          * SAS token credential.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.AzureSasCredential</code> type.
          * 
          * Group: security
          * 
@@ -2238,7 +2225,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * SAS token signature.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2270,7 +2257,7 @@ public interface DataLakeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2293,8 +2280,7 @@ public interface DataLakeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2322,7 +2308,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * client id for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2337,7 +2323,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not a file changed event raised indicates completion
          * (true) or modification (false).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2352,8 +2338,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not a file changed event raised indicates completion
          * (true) or modification (false).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2367,7 +2353,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * check for closing stream after read.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2381,8 +2367,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * check for closing stream after read.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2397,7 +2383,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -2413,7 +2399,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -2428,7 +2414,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * count number of bytes to download.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2442,8 +2428,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * count number of bytes to download.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2458,7 +2443,8 @@ public interface DataLakeEndpointBuilderFactory {
          * service client of data lake.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2473,7 +2459,8 @@ public interface DataLakeEndpointBuilderFactory {
          * service client of data lake.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2487,7 +2474,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * directory of the file to be handled in component.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2501,7 +2488,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * download link expiration time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2515,8 +2502,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * download link expiration time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2530,7 +2516,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * expression for queryInputStream.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2544,7 +2530,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * directory of file to do operations in the local system.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2558,7 +2544,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * name of file to be handled in component.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2572,7 +2558,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * offset position in file for different operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2586,8 +2572,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * offset position in file for different operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2601,7 +2586,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * maximum number of results to show at a time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -2615,8 +2600,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * maximum number of results to show at a time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2630,7 +2615,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * no of retries to a given request.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -2644,7 +2629,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * no of retries to a given request.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -2659,7 +2644,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Set&lt;java.nio.file.OpenOption&gt;</code> type.
          * 
          * Group: common
          * 
@@ -2674,7 +2659,7 @@ public interface DataLakeEndpointBuilderFactory {
          * set open options for creating file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;java.nio.file.OpenOption&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Set&lt;java.nio.file.OpenOption&gt;</code> type.
          * 
          * Group: common
          * 
@@ -2688,7 +2673,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * path in azure data lake for operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2702,7 +2687,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * permission string for the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2717,7 +2702,7 @@ public interface DataLakeEndpointBuilderFactory {
          * This parameter allows the caller to upload data in parallel and
          * control the order in which it is appended to the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2732,8 +2717,7 @@ public interface DataLakeEndpointBuilderFactory {
          * This parameter allows the caller to upload data in parallel and
          * control the order in which it is appended to the file.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          * 
@@ -2747,7 +2731,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * recursively include all paths.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2761,8 +2745,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * recursively include all paths.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2776,7 +2760,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * regular expression for matching file names.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2791,7 +2775,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not uncommitted data is to be retained after the
          * operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2806,8 +2790,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Whether or not uncommitted data is to be retained after the
          * operation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2822,7 +2806,8 @@ public interface DataLakeEndpointBuilderFactory {
          * data lake service client for azure storage data lake.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2837,7 +2822,8 @@ public interface DataLakeEndpointBuilderFactory {
          * data lake service client for azure storage data lake.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.file.datalake.DataLakeServiceClient&lt;/code&gt; type.
+         * <code>com.azure.storage.file.datalake.DataLakeServiceClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2852,7 +2838,8 @@ public interface DataLakeEndpointBuilderFactory {
          * shared key credential for azure data lake gen2.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2867,7 +2854,8 @@ public interface DataLakeEndpointBuilderFactory {
          * shared key credential for azure data lake gen2.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2881,7 +2869,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * tenant id for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2895,7 +2883,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Timeout for operation.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -2909,8 +2897,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Timeout for operation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2924,7 +2912,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * umask permission for file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2938,7 +2926,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * whether or not to use upn.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2952,8 +2940,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * whether or not to use upn.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2967,7 +2955,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * account key for authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2981,7 +2969,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * client secret for azure account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2996,8 +2984,7 @@ public interface DataLakeEndpointBuilderFactory {
          * client secret credential for authentication.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.identity.ClientSecretCredential</code> type.
          * 
          * Group: security
          * 
@@ -3012,8 +2999,7 @@ public interface DataLakeEndpointBuilderFactory {
          * client secret credential for authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.identity.ClientSecretCredential</code> type.
          * 
          * Group: security
          * 
@@ -3028,8 +3014,7 @@ public interface DataLakeEndpointBuilderFactory {
          * SAS token credential.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.AzureSasCredential</code> type.
          * 
          * Group: security
          * 
@@ -3044,8 +3029,7 @@ public interface DataLakeEndpointBuilderFactory {
          * SAS token credential.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.AzureSasCredential</code> type.
          * 
          * Group: security
          * 
@@ -3059,7 +3043,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * SAS token signature.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 

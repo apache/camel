@@ -50,8 +50,7 @@ public interface SnmpEndpointBuilderFactory {
          * or a coma separated list of OIDs. Example:
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
+         * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
          * type.
          * 
          * Group: common
@@ -70,8 +69,7 @@ public interface SnmpEndpointBuilderFactory {
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.snmp.OIDList</code> type.
          * 
          * Group: common
          * 
@@ -86,7 +84,7 @@ public interface SnmpEndpointBuilderFactory {
          * Here you can select which protocol to use. You can use either udp or
          * tcp.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: udp
          * Group: common
@@ -101,7 +99,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -116,7 +114,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -131,7 +129,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the community octet string for the snmp request.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: public
          * Group: common
@@ -146,7 +144,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context engine ID field of the scoped PDU.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -160,7 +158,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context name field of this scoped PDU.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -175,7 +173,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -191,7 +189,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -206,7 +204,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -221,7 +219,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -237,7 +235,7 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
          * Group: common
          * 
@@ -252,7 +250,7 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
          * Group: common
          * 
@@ -266,7 +264,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -281,7 +279,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -297,7 +295,7 @@ public interface SnmpEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -313,8 +311,7 @@ public interface SnmpEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -330,7 +327,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the flag whether the scoped PDU will be displayed as the list if
          * it has child elements in its tree.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -346,8 +343,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the flag whether the scoped PDU will be displayed as the list if
          * it has child elements in its tree.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -363,7 +359,7 @@ public interface SnmpEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -378,7 +374,7 @@ public interface SnmpEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -393,7 +389,7 @@ public interface SnmpEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -408,7 +404,7 @@ public interface SnmpEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -427,7 +423,7 @@ public interface SnmpEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -446,7 +442,7 @@ public interface SnmpEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -461,7 +457,7 @@ public interface SnmpEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -477,8 +473,7 @@ public interface SnmpEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -493,7 +488,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -508,7 +503,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -525,7 +520,7 @@ public interface SnmpEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -542,7 +537,7 @@ public interface SnmpEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -558,8 +553,7 @@ public interface SnmpEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -576,7 +570,7 @@ public interface SnmpEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -594,7 +588,7 @@ public interface SnmpEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -611,7 +605,7 @@ public interface SnmpEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -626,7 +620,7 @@ public interface SnmpEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -642,8 +636,7 @@ public interface SnmpEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -659,8 +652,8 @@ public interface SnmpEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -679,8 +672,8 @@ public interface SnmpEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -697,7 +690,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -712,8 +705,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -728,8 +720,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -745,7 +736,7 @@ public interface SnmpEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -761,7 +752,7 @@ public interface SnmpEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -777,8 +768,7 @@ public interface SnmpEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -796,7 +786,7 @@ public interface SnmpEndpointBuilderFactory {
          * minimum length of 8 bytes. If the length of authenticationPassphrase
          * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -811,7 +801,7 @@ public interface SnmpEndpointBuilderFactory {
          * Authentication protocol to use if security level is set to enable
          * authentication The possible values are: MD5, SHA1.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -828,7 +818,7 @@ public interface SnmpEndpointBuilderFactory {
          * bytes. If the length of authenticationPassphrase is less than 8 bytes
          * an IllegalArgumentException is thrown.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -843,7 +833,7 @@ public interface SnmpEndpointBuilderFactory {
          * The privacy protocol ID to be associated with this user. If set to
          * null, this user only supports unencrypted messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -868,7 +858,7 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 3
          * Group: security
@@ -894,7 +884,7 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 3
          * Group: security
@@ -909,7 +899,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security name to be used with this target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -945,7 +935,7 @@ public interface SnmpEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -971,8 +961,7 @@ public interface SnmpEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -990,8 +979,8 @@ public interface SnmpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1009,7 +998,7 @@ public interface SnmpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1023,8 +1012,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1039,7 +1027,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1057,7 +1045,7 @@ public interface SnmpEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1075,7 +1063,7 @@ public interface SnmpEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1104,8 +1092,7 @@ public interface SnmpEndpointBuilderFactory {
          * or a coma separated list of OIDs. Example:
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
+         * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
          * type.
          * 
          * Group: common
@@ -1124,8 +1111,7 @@ public interface SnmpEndpointBuilderFactory {
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.snmp.OIDList</code> type.
          * 
          * Group: common
          * 
@@ -1140,7 +1126,7 @@ public interface SnmpEndpointBuilderFactory {
          * Here you can select which protocol to use. You can use either udp or
          * tcp.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: udp
          * Group: common
@@ -1155,7 +1141,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -1170,7 +1156,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -1185,7 +1171,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the community octet string for the snmp request.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: public
          * Group: common
@@ -1200,7 +1186,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context engine ID field of the scoped PDU.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1214,7 +1200,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context name field of this scoped PDU.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1229,7 +1215,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1245,7 +1231,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1260,7 +1246,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -1275,7 +1261,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -1291,7 +1277,7 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
          * Group: common
          * 
@@ -1306,7 +1292,7 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
          * Group: common
          * 
@@ -1323,7 +1309,7 @@ public interface SnmpEndpointBuilderFactory {
          * minimum length of 8 bytes. If the length of authenticationPassphrase
          * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1338,7 +1324,7 @@ public interface SnmpEndpointBuilderFactory {
          * Authentication protocol to use if security level is set to enable
          * authentication The possible values are: MD5, SHA1.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1355,7 +1341,7 @@ public interface SnmpEndpointBuilderFactory {
          * bytes. If the length of authenticationPassphrase is less than 8 bytes
          * an IllegalArgumentException is thrown.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1370,7 +1356,7 @@ public interface SnmpEndpointBuilderFactory {
          * The privacy protocol ID to be associated with this user. If set to
          * null, this user only supports unencrypted messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1395,7 +1381,7 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 3
          * Group: security
@@ -1421,7 +1407,7 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 3
          * Group: security
@@ -1436,7 +1422,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security name to be used with this target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1468,7 +1454,7 @@ public interface SnmpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1491,8 +1477,7 @@ public interface SnmpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1523,8 +1508,7 @@ public interface SnmpEndpointBuilderFactory {
          * or a coma separated list of OIDs. Example:
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
+         * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
          * type.
          * 
          * Group: common
@@ -1543,8 +1527,7 @@ public interface SnmpEndpointBuilderFactory {
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.snmp.OIDList</code> type.
          * 
          * Group: common
          * 
@@ -1559,7 +1542,7 @@ public interface SnmpEndpointBuilderFactory {
          * Here you can select which protocol to use. You can use either udp or
          * tcp.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: udp
          * Group: common
@@ -1574,7 +1557,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -1589,7 +1572,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
          * Group: common
@@ -1604,7 +1587,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the community octet string for the snmp request.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: public
          * Group: common
@@ -1619,7 +1602,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context engine ID field of the scoped PDU.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1633,7 +1616,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context name field of this scoped PDU.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1648,7 +1631,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1664,7 +1647,7 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: common
@@ -1679,7 +1662,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -1694,7 +1677,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -1710,7 +1693,7 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
          * Group: common
          * 
@@ -1725,7 +1708,7 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
          * Group: common
          * 
@@ -1742,7 +1725,7 @@ public interface SnmpEndpointBuilderFactory {
          * minimum length of 8 bytes. If the length of authenticationPassphrase
          * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1757,7 +1740,7 @@ public interface SnmpEndpointBuilderFactory {
          * Authentication protocol to use if security level is set to enable
          * authentication The possible values are: MD5, SHA1.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1774,7 +1757,7 @@ public interface SnmpEndpointBuilderFactory {
          * bytes. If the length of authenticationPassphrase is less than 8 bytes
          * an IllegalArgumentException is thrown.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1789,7 +1772,7 @@ public interface SnmpEndpointBuilderFactory {
          * The privacy protocol ID to be associated with this user. If set to
          * null, this user only supports unencrypted messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1814,7 +1797,7 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 3
          * Group: security
@@ -1840,7 +1823,7 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 3
          * Group: security
@@ -1855,7 +1838,7 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security name to be used with this target.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 

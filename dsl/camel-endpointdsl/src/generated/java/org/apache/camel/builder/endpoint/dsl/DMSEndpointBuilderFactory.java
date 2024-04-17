@@ -48,7 +48,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Access key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -64,7 +64,7 @@ public interface DMSEndpointBuilderFactory {
          * The username of a RabbitMQ instance. This option is mandatory when
          * creating a RabbitMQ instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -79,8 +79,8 @@ public interface DMSEndpointBuilderFactory {
          * The ID of an available zone. This option is mandatory when creating
          * an instance and it cannot be an empty array.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -96,7 +96,7 @@ public interface DMSEndpointBuilderFactory {
          * an instance and it cannot be an empty array.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: producer
          * 
@@ -111,7 +111,7 @@ public interface DMSEndpointBuilderFactory {
          * DMS url. Carries higher precedence than region parameter based client
          * initialization.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -126,7 +126,7 @@ public interface DMSEndpointBuilderFactory {
          * The message engine. Either kafka or rabbitmq. If the parameter is not
          * specified, all instances will be queried.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -141,7 +141,7 @@ public interface DMSEndpointBuilderFactory {
          * The version of the message engine. This option is mandatory when
          * creating an instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -155,7 +155,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -170,8 +170,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -187,7 +186,7 @@ public interface DMSEndpointBuilderFactory {
          * The id of the instance. This option is mandatory when deleting or
          * querying an instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -202,7 +201,7 @@ public interface DMSEndpointBuilderFactory {
          * The password for logging in to the Kafka Manager. This option is
          * mandatory when creating a Kafka instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -217,7 +216,7 @@ public interface DMSEndpointBuilderFactory {
          * The username for logging in to the Kafka Manager. This option is
          * mandatory when creating a Kafka instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -232,7 +231,7 @@ public interface DMSEndpointBuilderFactory {
          * The name of the instance for creating and updating an instance. This
          * option is mandatory when creating an instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -247,7 +246,7 @@ public interface DMSEndpointBuilderFactory {
          * The maximum number of partitions in a Kafka instance. This option is
          * mandatory when creating a Kafka instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -262,7 +261,7 @@ public interface DMSEndpointBuilderFactory {
          * The maximum number of partitions in a Kafka instance. This option is
          * mandatory when creating a Kafka instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -277,7 +276,7 @@ public interface DMSEndpointBuilderFactory {
          * The password of a RabbitMQ instance. This option is mandatory when
          * creating a RabbitMQ instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -291,7 +290,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * The product ID. This option is mandatory when creating an instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -305,7 +304,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Cloud project ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -320,7 +319,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Proxy server ip/hostname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -334,7 +333,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Proxy authentication password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -348,7 +347,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -362,7 +361,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -376,7 +375,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Proxy authentication user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -390,7 +389,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * DMS service region.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -405,7 +404,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * Secret key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -421,7 +420,7 @@ public interface DMSEndpointBuilderFactory {
          * The security group which the instance belongs to. This option is
          * mandatory when creating an instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -436,7 +435,7 @@ public interface DMSEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -451,7 +450,7 @@ public interface DMSEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -466,7 +465,7 @@ public interface DMSEndpointBuilderFactory {
          * The baseline bandwidth of a Kafka instance. This option is mandatory
          * when creating a Kafka instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -481,7 +480,7 @@ public interface DMSEndpointBuilderFactory {
          * The message storage space. This option is mandatory when creating an
          * instance.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -496,7 +495,7 @@ public interface DMSEndpointBuilderFactory {
          * The message storage space. This option is mandatory when creating an
          * instance.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -511,7 +510,7 @@ public interface DMSEndpointBuilderFactory {
          * The storage I/O specification. This option is mandatory when creating
          * an instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -525,7 +524,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * The subnet ID. This option is mandatory when creating an instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -539,7 +538,7 @@ public interface DMSEndpointBuilderFactory {
         /**
          * The VPC ID. This option is mandatory when creating an instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -573,7 +572,7 @@ public interface DMSEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -596,8 +595,7 @@ public interface DMSEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

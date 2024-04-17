@@ -51,7 +51,7 @@ public interface JoltEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -70,8 +70,7 @@ public interface JoltEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -86,7 +85,7 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -101,8 +100,7 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -118,7 +116,8 @@ public interface JoltEndpointBuilderFactory {
          * Specifies if the input is hydrated JSON or a JSON String.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jolt.JoltInputOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
+         * type.
          * 
          * Default: Hydrated
          * Group: producer
@@ -134,7 +133,8 @@ public interface JoltEndpointBuilderFactory {
          * Specifies if the input is hydrated JSON or a JSON String.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jolt.JoltInputOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
+         * type.
          * 
          * Default: Hydrated
          * Group: producer
@@ -150,7 +150,8 @@ public interface JoltEndpointBuilderFactory {
          * Specifies if the output should be hydrated JSON or a JSON String.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jolt.JoltInputOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
+         * type.
          * 
          * Default: Hydrated
          * Group: producer
@@ -166,7 +167,8 @@ public interface JoltEndpointBuilderFactory {
          * Specifies if the output should be hydrated JSON or a JSON String.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jolt.JoltInputOutputType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
+         * type.
          * 
          * Default: Hydrated
          * Group: producer
@@ -183,7 +185,7 @@ public interface JoltEndpointBuilderFactory {
          * specified Chainr will be used.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jolt.JoltTransformType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
          * 
          * Default: Chainr
          * Group: producer
@@ -200,7 +202,7 @@ public interface JoltEndpointBuilderFactory {
          * specified Chainr will be used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jolt.JoltTransformType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
          * 
          * Default: Chainr
          * Group: producer
@@ -235,7 +237,7 @@ public interface JoltEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -258,8 +260,7 @@ public interface JoltEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

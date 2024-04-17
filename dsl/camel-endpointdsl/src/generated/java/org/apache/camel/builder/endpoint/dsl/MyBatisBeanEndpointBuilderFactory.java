@@ -50,8 +50,8 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * executor does nothing special. reuse - executor reuses prepared
          * statements. batch - executor reuses statements and batches updates.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
+         * The option is a: <code>org.apache.ibatis.session.ExecutorType</code>
+         * type.
          * 
          * Default: SIMPLE
          * Group: producer
@@ -69,7 +69,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * statements. batch - executor reuses statements and batches updates.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
+         * <code>org.apache.ibatis.session.ExecutorType</code> type.
          * 
          * Default: SIMPLE
          * Group: producer
@@ -88,7 +88,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * used and query parameters will be taken from the header instead of
          * the body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -109,7 +109,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * CamelMyBatisResult header since it would be the same as outputHeader
          * all the time.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -143,7 +143,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -166,8 +166,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

@@ -53,7 +53,7 @@ public interface UndertowEndpointBuilderFactory {
          * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -74,8 +74,7 @@ public interface UndertowEndpointBuilderFactory {
          * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -90,7 +89,7 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether or not the consumer should write access log.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -105,8 +104,8 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether or not the consumer should write access log.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: consumer
@@ -123,7 +122,7 @@ public interface UndertowEndpointBuilderFactory {
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -138,7 +137,7 @@ public interface UndertowEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -154,8 +153,8 @@ public interface UndertowEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: consumer
@@ -171,7 +170,7 @@ public interface UndertowEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -187,8 +186,8 @@ public interface UndertowEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: consumer
@@ -204,7 +203,7 @@ public interface UndertowEndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -220,8 +219,7 @@ public interface UndertowEndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -243,7 +241,7 @@ public interface UndertowEndpointBuilderFactory {
          * be aware that Java will deserialize the incoming data from the
          * request to Java and that can be a potential security risk.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -265,8 +263,8 @@ public interface UndertowEndpointBuilderFactory {
          * be aware that Java will deserialize the incoming data from the
          * request to Java and that can be a potential security risk.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: consumer
@@ -282,7 +280,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration used by UndertowSecurityProvider. Comma separated list
          * of allowed roles.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -299,7 +297,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration is UndertowSecurityProvider specific. Each provider
          * decides whether accepts configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: security
          * 
@@ -316,8 +314,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration is UndertowSecurityProvider specific. Each provider
          * decides whether accepts configuration.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: security
          * 
@@ -334,7 +331,7 @@ public interface UndertowEndpointBuilderFactory {
          * security provider using SPI).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.undertow.spi.UndertowSecurityProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
          * 
          * Group: security
          * 
@@ -351,7 +348,7 @@ public interface UndertowEndpointBuilderFactory {
          * security provider using SPI).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.undertow.spi.UndertowSecurityProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
          * 
          * Group: security
          * 
@@ -366,7 +363,7 @@ public interface UndertowEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -381,7 +378,7 @@ public interface UndertowEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -397,7 +394,7 @@ public interface UndertowEndpointBuilderFactory {
          * WebSocket peer connects, disconnects, etc. See
          * UndertowConstants.EVENT_TYPE and EventType.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: websocket
@@ -414,8 +411,7 @@ public interface UndertowEndpointBuilderFactory {
          * WebSocket peer connects, disconnects, etc. See
          * UndertowConstants.EVENT_TYPE and EventType.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: websocket
@@ -452,7 +448,7 @@ public interface UndertowEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -478,8 +474,7 @@ public interface UndertowEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -497,8 +492,8 @@ public interface UndertowEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -516,7 +511,7 @@ public interface UndertowEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -530,8 +525,7 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -546,7 +540,7 @@ public interface UndertowEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -566,7 +560,7 @@ public interface UndertowEndpointBuilderFactory {
          * number. If you need different handlers, then use different port
          * numbers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -582,7 +576,8 @@ public interface UndertowEndpointBuilderFactory {
          * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option is a:
-         * &lt;code&gt;io.undertow.server.handlers.accesslog.AccessLogReceiver&lt;/code&gt; type.
+         * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -598,7 +593,8 @@ public interface UndertowEndpointBuilderFactory {
          * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.undertow.server.handlers.accesslog.AccessLogReceiver&lt;/code&gt; type.
+         * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -614,8 +610,7 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -631,8 +626,7 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -648,7 +642,8 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message and undertow.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.undertow.UndertowHttpBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -664,7 +659,8 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message and undertow.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.undertow.UndertowHttpBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -696,7 +692,7 @@ public interface UndertowEndpointBuilderFactory {
          * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -717,8 +713,7 @@ public interface UndertowEndpointBuilderFactory {
          * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -734,7 +729,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer
          * 
@@ -749,7 +744,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer
          * 
@@ -763,7 +758,7 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -778,8 +773,8 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -795,10 +790,10 @@ public interface UndertowEndpointBuilderFactory {
          * Sets additional channel options. The options that can be used are
          * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
-         * option.close-abort=true&amp;amp;option.send-buffer=8192.
+         * option.close-abort=true&amp;option.send-buffer=8192.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -817,10 +812,10 @@ public interface UndertowEndpointBuilderFactory {
          * Sets additional channel options. The options that can be used are
          * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
-         * option.close-abort=true&amp;amp;option.send-buffer=8192.
+         * option.close-abort=true&amp;option.send-buffer=8192.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -842,7 +837,7 @@ public interface UndertowEndpointBuilderFactory {
          * client, this allows applications which use the Host header to
          * generate accurate URL's for a proxied service.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -862,8 +857,7 @@ public interface UndertowEndpointBuilderFactory {
          * client, this allows applications which use the Host header to
          * generate accurate URL's for a proxied service.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -878,7 +872,7 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -893,8 +887,8 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -909,7 +903,7 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -924,8 +918,8 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -942,7 +936,7 @@ public interface UndertowEndpointBuilderFactory {
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -959,8 +953,8 @@ public interface UndertowEndpointBuilderFactory {
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -976,7 +970,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration used by UndertowSecurityProvider. Comma separated list
          * of allowed roles.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -993,7 +987,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration is UndertowSecurityProvider specific. Each provider
          * decides whether accepts configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: security
          * 
@@ -1010,8 +1004,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration is UndertowSecurityProvider specific. Each provider
          * decides whether accepts configuration.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: security
          * 
@@ -1028,7 +1021,7 @@ public interface UndertowEndpointBuilderFactory {
          * security provider using SPI).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.undertow.spi.UndertowSecurityProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
          * 
          * Group: security
          * 
@@ -1045,7 +1038,7 @@ public interface UndertowEndpointBuilderFactory {
          * security provider using SPI).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.undertow.spi.UndertowSecurityProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
          * 
          * Group: security
          * 
@@ -1060,7 +1053,7 @@ public interface UndertowEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1075,7 +1068,7 @@ public interface UndertowEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1090,7 +1083,7 @@ public interface UndertowEndpointBuilderFactory {
          * Timeout in milliseconds when sending to a websocket channel. The
          * default timeout is 30000 (30 seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 30000
          * Group: websocket
@@ -1106,8 +1099,8 @@ public interface UndertowEndpointBuilderFactory {
          * Timeout in milliseconds when sending to a websocket channel. The
          * default timeout is 30000 (30 seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 30000
          * Group: websocket
@@ -1124,7 +1117,7 @@ public interface UndertowEndpointBuilderFactory {
          * endpoint level, instead of having to use the
          * UndertowConstants.SEND_TO_ALL header on the message.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: websocket
          * 
@@ -1140,8 +1133,8 @@ public interface UndertowEndpointBuilderFactory {
          * endpoint level, instead of having to use the
          * UndertowConstants.SEND_TO_ALL header on the message.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: websocket
          * 
@@ -1173,7 +1166,7 @@ public interface UndertowEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1196,8 +1189,7 @@ public interface UndertowEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1214,7 +1206,8 @@ public interface UndertowEndpointBuilderFactory {
          * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option is a:
-         * &lt;code&gt;io.undertow.server.handlers.accesslog.AccessLogReceiver&lt;/code&gt; type.
+         * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1230,7 +1223,8 @@ public interface UndertowEndpointBuilderFactory {
          * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.undertow.server.handlers.accesslog.AccessLogReceiver&lt;/code&gt; type.
+         * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1246,8 +1240,7 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1263,8 +1256,7 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1280,7 +1272,8 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message and undertow.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.undertow.UndertowHttpBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1296,7 +1289,8 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message and undertow.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.undertow.UndertowHttpBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1329,7 +1323,7 @@ public interface UndertowEndpointBuilderFactory {
          * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1350,8 +1344,7 @@ public interface UndertowEndpointBuilderFactory {
          * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1367,7 +1360,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration used by UndertowSecurityProvider. Comma separated list
          * of allowed roles.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1384,7 +1377,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration is UndertowSecurityProvider specific. Each provider
          * decides whether accepts configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: security
          * 
@@ -1401,8 +1394,7 @@ public interface UndertowEndpointBuilderFactory {
          * Configuration is UndertowSecurityProvider specific. Each provider
          * decides whether accepts configuration.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: security
          * 
@@ -1419,7 +1411,7 @@ public interface UndertowEndpointBuilderFactory {
          * security provider using SPI).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.undertow.spi.UndertowSecurityProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
          * 
          * Group: security
          * 
@@ -1436,7 +1428,7 @@ public interface UndertowEndpointBuilderFactory {
          * security provider using SPI).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.undertow.spi.UndertowSecurityProvider&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
          * 
          * Group: security
          * 
@@ -1451,7 +1443,7 @@ public interface UndertowEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1466,7 +1458,7 @@ public interface UndertowEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1495,7 +1487,8 @@ public interface UndertowEndpointBuilderFactory {
          * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option is a:
-         * &lt;code&gt;io.undertow.server.handlers.accesslog.AccessLogReceiver&lt;/code&gt; type.
+         * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1511,7 +1504,8 @@ public interface UndertowEndpointBuilderFactory {
          * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.undertow.server.handlers.accesslog.AccessLogReceiver&lt;/code&gt; type.
+         * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1527,8 +1521,7 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1544,8 +1537,7 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1561,7 +1553,8 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message and undertow.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.undertow.UndertowHttpBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1577,7 +1570,8 @@ public interface UndertowEndpointBuilderFactory {
          * Camel message and undertow.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.undertow.UndertowHttpBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
+         * type.
          * 
          * Group: advanced
          * 

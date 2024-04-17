@@ -50,7 +50,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations</code> type.
          * 
          * Required: true
          * Default: CHAT_SINGLE_MESSAGE
@@ -69,7 +69,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations</code> type.
          * 
          * Required: true
          * Default: CHAT_SINGLE_MESSAGE
@@ -105,7 +105,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -128,8 +128,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -146,8 +145,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * dev.langchain4j.model.chat.ChatLanguageModel.
          * 
          * The option is a:
-         * &lt;code&gt;dev.langchain4j.model.chat.ChatLanguageModel&lt;/code&gt;
-         * type.
+         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
          * 
          * Group: advanced
          * 
@@ -163,8 +161,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * dev.langchain4j.model.chat.ChatLanguageModel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;dev.langchain4j.model.chat.ChatLanguageModel&lt;/code&gt;
-         * type.
+         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
          * 
          * Group: advanced
          * 

@@ -47,7 +47,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The query or mutation name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -61,7 +61,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The proxy host in the format hostname:port.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -75,7 +75,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The query text.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -89,7 +89,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The query file name located in the classpath.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -103,7 +103,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The name of a header containing the GraphQL query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -117,8 +117,8 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The JsonObject instance containing the operation variables.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.util.json.JsonObject&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.util.json.JsonObject</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -133,7 +133,7 @@ public interface GraphqlEndpointBuilderFactory {
          * The JsonObject instance containing the operation variables.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.util.json.JsonObject&lt;/code&gt; type.
+         * <code>org.apache.camel.util.json.JsonObject</code> type.
          * 
          * Group: producer
          * 
@@ -148,7 +148,7 @@ public interface GraphqlEndpointBuilderFactory {
          * The name of a header containing a JsonObject instance containing the
          * operation variables.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -162,7 +162,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The access token sent in the Authorization header.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -176,7 +176,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The JWT Authorization type. Default is Bearer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Bearer
          * Group: security
@@ -191,7 +191,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The password for Basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -205,7 +205,7 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The username for Basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -239,7 +239,7 @@ public interface GraphqlEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -262,8 +262,7 @@ public interface GraphqlEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

@@ -48,7 +48,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * You can set a base URI which is used in the URI dereferencing.
          * Relative URIs are then concatenated with the base URI.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -63,7 +63,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -79,8 +79,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -102,8 +102,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * org.jcp.xml.dsig.validateManifests
          * javax.xml.crypto.dsig.cacheReference.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: producer
          * 
@@ -125,8 +125,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * javax.xml.crypto.dsig.cacheReference.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -141,7 +141,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Disallows that the incoming XML document contains DTD DOCTYPE
          * declaration. The default value is Boolean#TRUE.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -157,8 +157,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Disallows that the incoming XML document contains DTD DOCTYPE
          * declaration. The default value is Boolean#TRUE.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -173,8 +173,7 @@ public interface XmlVerifierEndpointBuilderFactory {
         /**
          * Provides the key for validating the XML signature.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.xml.crypto.KeySelector&lt;/code&gt; type.
+         * The option is a: <code>javax.xml.crypto.KeySelector</code> type.
          * 
          * Group: producer
          * 
@@ -189,7 +188,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Provides the key for validating the XML signature.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.xml.crypto.KeySelector&lt;/code&gt; type.
+         * <code>javax.xml.crypto.KeySelector</code> type.
          * 
          * Group: producer
          * 
@@ -205,7 +204,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * should be omitted. Default value is false. Can be overwritten by the
          * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -222,8 +221,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * should be omitted. Default value is false. Can be overwritten by the
          * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: producer
@@ -241,7 +240,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The class of the value depends on the type of the output node search.
          * The output node search is forwarded to XmlSignature2Message.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -258,8 +257,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The class of the value depends on the type of the output node search.
          * The output node search is forwarded to XmlSignature2Message.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -276,7 +274,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * setOutputNodeSearch(Object). The supported default search types you
          * can find in DefaultXmlSignature2Message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Default
          * Group: producer
@@ -292,7 +290,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The character encoding of the resulting signed XML document. If null
          * then the encoding of the original XML document is used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -313,7 +311,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * search is of type
          * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -335,8 +333,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * search is of type
          * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: producer
@@ -359,7 +357,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -373,7 +371,7 @@ public interface XmlVerifierEndpointBuilderFactory {
         /**
          * Enables secure validation. If true then secure validation is enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -388,8 +386,8 @@ public interface XmlVerifierEndpointBuilderFactory {
         /**
          * Enables secure validation. If true then secure validation is enabled.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -412,7 +410,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * thrown. For more detailed information, see the JavaDoc.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler</code> type.
          * 
          * Group: producer
          * 
@@ -434,7 +432,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * thrown. For more detailed information, see the JavaDoc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler</code> type.
          * 
          * Group: producer
          * 
@@ -470,7 +468,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Signature Case.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignature2Message&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignature2Message</code> type.
          * 
          * Group: producer
          * 
@@ -506,7 +504,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Signature Case.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignature2Message&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignature2Message</code> type.
          * 
          * Group: producer
          * 
@@ -523,7 +521,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker</code> type.
          * 
          * Group: producer
          * 
@@ -540,7 +538,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker</code> type.
          * 
          * Group: producer
          * 
@@ -574,7 +572,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -597,8 +595,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -617,8 +614,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * file and XPpointer URIs. Attention: The implementation is provider
          * dependent!.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.
+         * The option is a: <code>javax.xml.crypto.URIDereferencer</code> type.
          * 
          * Group: advanced
          * 
@@ -637,7 +633,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * dependent!.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.
+         * <code>javax.xml.crypto.URIDereferencer</code> type.
          * 
          * Group: advanced
          * 

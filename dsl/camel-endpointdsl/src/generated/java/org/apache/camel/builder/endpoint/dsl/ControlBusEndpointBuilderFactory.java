@@ -55,7 +55,7 @@ public interface ControlBusEndpointBuilderFactory {
          * restart action will restart the route. And the fail action will stop
          * and mark the route as failed (stopped due to an exception).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -71,7 +71,7 @@ public interface ControlBusEndpointBuilderFactory {
          * this option is enabled, then any result from the task is not set on
          * the Exchange. This is only possible if executing tasks synchronously.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -88,8 +88,7 @@ public interface ControlBusEndpointBuilderFactory {
          * this option is enabled, then any result from the task is not set on
          * the Exchange. This is only possible if executing tasks synchronously.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -105,8 +104,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Logging level used for logging when task is done, or if any
          * exceptions occurred during processing the task.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: INFO
          * Group: producer
@@ -123,7 +121,7 @@ public interface ControlBusEndpointBuilderFactory {
          * exceptions occurred during processing the task.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: INFO
          * Group: producer
@@ -138,7 +136,7 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * The delay in millis to use when restarting a route.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -153,7 +151,7 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * The delay in millis to use when restarting a route.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: producer
@@ -169,7 +167,7 @@ public interface ControlBusEndpointBuilderFactory {
          * To specify a route by its id. The special keyword current indicates
          * the current route.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -203,7 +201,7 @@ public interface ControlBusEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -226,8 +224,7 @@ public interface ControlBusEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

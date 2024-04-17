@@ -48,7 +48,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * Username who initializes the CS conversation. To be set when chat is
          * initialized from camel route.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -62,7 +62,7 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Issues :reset command to start a new conversation everytime.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -77,8 +77,7 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Issues :reset command to start a new conversation everytime.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -113,7 +112,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -136,8 +135,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

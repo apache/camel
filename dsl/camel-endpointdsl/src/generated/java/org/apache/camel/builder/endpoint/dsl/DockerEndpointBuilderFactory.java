@@ -46,7 +46,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Email address associated with the user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -60,7 +60,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker host.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: localhost
@@ -76,7 +76,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 2375
          * Group: common
@@ -91,8 +91,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 2375
          * Group: common
@@ -107,7 +107,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Request timeout for response (in seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -121,8 +121,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Request timeout for response (in seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -136,7 +136,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Location containing the SSL certificate chain.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -150,7 +150,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Password to authenticate with.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -164,7 +164,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Use HTTPS communication.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -179,8 +179,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Use HTTPS communication.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -195,7 +194,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Check TLS.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -210,8 +209,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Check TLS.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -226,7 +224,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * User name to authenticate with.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -262,7 +260,7 @@ public interface DockerEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -288,8 +286,7 @@ public interface DockerEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -307,8 +304,8 @@ public interface DockerEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -326,7 +323,7 @@ public interface DockerEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -340,8 +337,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -356,7 +352,7 @@ public interface DockerEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -371,7 +367,7 @@ public interface DockerEndpointBuilderFactory {
          * The fully qualified class name of the DockerCmdExecFactory
          * implementation to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: com.github.dockerjava.netty.NettyDockerCmdExecFactory
          * Group: advanced
@@ -386,7 +382,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to follow redirect filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -401,8 +397,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to follow redirect filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -417,7 +412,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to use logging filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -432,8 +427,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to use logging filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -448,7 +442,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum route connections.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -463,8 +457,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum route connections.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -479,7 +473,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum total connections.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -494,8 +488,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum total connections.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -510,8 +504,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Additional configuration parameters as key/value pairs.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -526,8 +520,8 @@ public interface DockerEndpointBuilderFactory {
          * Additional configuration parameters as key/value pairs.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -541,7 +535,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Server address for docker registry.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https://index.docker.io/v1/
          * Group: advanced
@@ -556,7 +550,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Socket connection mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -571,8 +565,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Socket connection mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -599,7 +592,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Email address associated with the user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -613,7 +606,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker host.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: localhost
@@ -629,7 +622,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 2375
          * Group: common
@@ -644,8 +637,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 2375
          * Group: common
@@ -660,7 +653,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Request timeout for response (in seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -674,8 +667,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Request timeout for response (in seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -689,7 +682,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Location containing the SSL certificate chain.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -703,7 +696,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Password to authenticate with.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -717,7 +710,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Use HTTPS communication.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -732,8 +725,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Use HTTPS communication.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -748,7 +740,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Check TLS.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -763,8 +755,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Check TLS.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -779,7 +770,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * User name to authenticate with.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -811,7 +802,7 @@ public interface DockerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -834,8 +825,7 @@ public interface DockerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -851,7 +841,7 @@ public interface DockerEndpointBuilderFactory {
          * The fully qualified class name of the DockerCmdExecFactory
          * implementation to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: com.github.dockerjava.netty.NettyDockerCmdExecFactory
          * Group: advanced
@@ -866,7 +856,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to follow redirect filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -881,8 +871,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to follow redirect filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -897,7 +886,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to use logging filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -912,8 +901,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to use logging filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -928,7 +916,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum route connections.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -943,8 +931,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum route connections.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -959,7 +947,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum total connections.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -974,8 +962,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum total connections.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -990,8 +978,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Additional configuration parameters as key/value pairs.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1006,8 +994,8 @@ public interface DockerEndpointBuilderFactory {
          * Additional configuration parameters as key/value pairs.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1021,7 +1009,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Server address for docker registry.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https://index.docker.io/v1/
          * Group: advanced
@@ -1036,7 +1024,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Socket connection mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1051,8 +1039,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Socket connection mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1080,7 +1067,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Email address associated with the user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1094,7 +1081,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker host.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Default: localhost
@@ -1110,7 +1097,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 2375
          * Group: common
@@ -1125,8 +1112,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Docker port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 2375
          * Group: common
@@ -1141,7 +1128,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Request timeout for response (in seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -1155,8 +1142,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Request timeout for response (in seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1170,7 +1157,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Location containing the SSL certificate chain.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1184,7 +1171,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Password to authenticate with.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1198,7 +1185,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Use HTTPS communication.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1213,8 +1200,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Use HTTPS communication.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1229,7 +1215,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Check TLS.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1244,8 +1230,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Check TLS.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1260,7 +1245,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * User name to authenticate with.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1288,7 +1273,7 @@ public interface DockerEndpointBuilderFactory {
          * The fully qualified class name of the DockerCmdExecFactory
          * implementation to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: com.github.dockerjava.netty.NettyDockerCmdExecFactory
          * Group: advanced
@@ -1303,7 +1288,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to follow redirect filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1318,8 +1303,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to follow redirect filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1334,7 +1318,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to use logging filter.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1349,8 +1333,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Whether to use logging filter.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1365,7 +1348,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum route connections.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1380,8 +1363,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum route connections.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -1396,7 +1379,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum total connections.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1411,8 +1394,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Maximum total connections.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 100
          * Group: advanced
@@ -1427,8 +1410,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Additional configuration parameters as key/value pairs.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1443,8 +1426,8 @@ public interface DockerEndpointBuilderFactory {
          * Additional configuration parameters as key/value pairs.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1458,7 +1441,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Server address for docker registry.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https://index.docker.io/v1/
          * Group: advanced
@@ -1473,7 +1456,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Socket connection mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1488,8 +1471,7 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Socket connection mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced

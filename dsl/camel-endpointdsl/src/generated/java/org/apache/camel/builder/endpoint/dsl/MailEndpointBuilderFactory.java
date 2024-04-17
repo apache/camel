@@ -48,7 +48,7 @@ public interface MailEndpointBuilderFactory {
          * this option to false and having disconnect=false as well, then the
          * consumer keep the folder open between polls.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -65,8 +65,7 @@ public interface MailEndpointBuilderFactory {
          * this option to false and having disconnect=false as well, then the
          * consumer keep the folder open between polls.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -84,7 +83,7 @@ public interface MailEndpointBuilderFactory {
          * a header with the key copyTo, allowing you to copy messages to folder
          * names configured at runtime.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -100,7 +99,7 @@ public interface MailEndpointBuilderFactory {
          * decode the filename. This is similar to setting JVM system property
          * mail.mime.encodefilename.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -117,8 +116,7 @@ public interface MailEndpointBuilderFactory {
          * decode the filename. This is similar to setting JVM system property
          * mail.mime.encodefilename.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -137,7 +135,7 @@ public interface MailEndpointBuilderFactory {
          * option by setting a header with the key delete to determine if the
          * mail should be deleted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -156,8 +154,7 @@ public interface MailEndpointBuilderFactory {
          * option by setting a header with the key delete to determine if the
          * mail should be deleted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -173,7 +170,7 @@ public interface MailEndpointBuilderFactory {
          * Whether the consumer should disconnect after polling. If enabled this
          * forces Camel to connect on each poll.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -189,8 +186,7 @@ public interface MailEndpointBuilderFactory {
          * Whether the consumer should disconnect after polling. If enabled this
          * forces Camel to connect on each poll.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -210,7 +206,7 @@ public interface MailEndpointBuilderFactory {
          * default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -230,8 +226,7 @@ public interface MailEndpointBuilderFactory {
          * default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -249,7 +244,7 @@ public interface MailEndpointBuilderFactory {
          * to avoid downloading thousands of files when the server starts up.
          * Set a value of 0 or negative to disable this option.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -266,7 +261,7 @@ public interface MailEndpointBuilderFactory {
          * to avoid downloading thousands of files when the server starts up.
          * Set a value of 0 or negative to disable this option.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -281,7 +276,7 @@ public interface MailEndpointBuilderFactory {
          * This option enables transparent MIME decoding and unfolding for mail
          * headers.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -297,8 +292,7 @@ public interface MailEndpointBuilderFactory {
          * This option enables transparent MIME decoding and unfolding for mail
          * headers.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -316,7 +310,7 @@ public interface MailEndpointBuilderFactory {
          * a header with the key moveTo, allowing you to move messages to folder
          * names configured at runtime.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -334,7 +328,7 @@ public interface MailEndpointBuilderFactory {
          * server, which allows us to rollback the mail message if there is an
          * error processing in Camel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -353,8 +347,7 @@ public interface MailEndpointBuilderFactory {
          * server, which allows us to rollback the mail message if there is an
          * error processing in Camel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -370,7 +363,7 @@ public interface MailEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -386,8 +379,7 @@ public interface MailEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -406,7 +398,7 @@ public interface MailEndpointBuilderFactory {
          * exception and no mails from the batch would be able to be routed by
          * Camel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -425,8 +417,7 @@ public interface MailEndpointBuilderFactory {
          * exception and no mails from the batch would be able to be routed by
          * Camel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -441,7 +432,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to limit by unseen mails only.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -456,8 +447,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to limit by unseen mails only.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -476,8 +466,7 @@ public interface MailEndpointBuilderFactory {
          * consumer to process. By default no repository is in use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: filter
          * 
@@ -495,8 +484,7 @@ public interface MailEndpointBuilderFactory {
          * consumer to process. By default no repository is in use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
          * Group: filter
          * 
@@ -518,7 +506,7 @@ public interface MailEndpointBuilderFactory {
          * repository has little value. However this option allows to store the
          * message id, for whatever reason you may have.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -541,8 +529,7 @@ public interface MailEndpointBuilderFactory {
          * repository has little value. However this option allows to store the
          * message id, for whatever reason you may have.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: filter
@@ -559,8 +546,7 @@ public interface MailEndpointBuilderFactory {
          * mails based on search criteria such as subject, body, from, sent
          * after a certain date etc.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.mail.search.SearchTerm&lt;/code&gt; type.
+         * The option is a: <code>jakarta.mail.search.SearchTerm</code> type.
          * The option is multivalued, and you can use the searchTerm(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -580,8 +566,7 @@ public interface MailEndpointBuilderFactory {
          * mails based on search criteria such as subject, body, from, sent
          * after a certain date etc.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.mail.search.SearchTerm&lt;/code&gt; type.
+         * The option is a: <code>jakarta.mail.search.SearchTerm</code> type.
          * The option is multivalued, and you can use the searchTerm(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -599,7 +584,7 @@ public interface MailEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -614,7 +599,7 @@ public interface MailEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -629,7 +614,7 @@ public interface MailEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -644,7 +629,7 @@ public interface MailEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -663,7 +648,7 @@ public interface MailEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -682,7 +667,7 @@ public interface MailEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -696,7 +681,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: scheduler
@@ -711,7 +696,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: scheduler
@@ -727,7 +712,7 @@ public interface MailEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -743,8 +728,7 @@ public interface MailEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -759,7 +743,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -774,7 +758,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -791,7 +775,7 @@ public interface MailEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -808,7 +792,7 @@ public interface MailEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -824,8 +808,7 @@ public interface MailEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -842,7 +825,7 @@ public interface MailEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -860,7 +843,7 @@ public interface MailEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -877,7 +860,7 @@ public interface MailEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -892,7 +875,7 @@ public interface MailEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -908,8 +891,7 @@ public interface MailEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -925,8 +907,8 @@ public interface MailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -945,8 +927,8 @@ public interface MailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -963,7 +945,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -978,8 +960,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -994,8 +975,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1011,7 +991,7 @@ public interface MailEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1027,7 +1007,7 @@ public interface MailEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1043,8 +1023,7 @@ public interface MailEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1059,7 +1038,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1074,7 +1053,7 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1089,7 +1068,7 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1103,7 +1082,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1119,8 +1098,8 @@ public interface MailEndpointBuilderFactory {
          * Emulated to some degree when using POP3 or when IMAP server does not
          * have the SORT capability.
          * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.angus.mail.imap.SortTerm[]&lt;/code&gt; type.
+         * The option is a: <code>org.eclipse.angus.mail.imap.SortTerm[]</code>
+         * type.
          * 
          * Group: sort
          * 
@@ -1137,7 +1116,7 @@ public interface MailEndpointBuilderFactory {
          * have the SORT capability.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.eclipse.angus.mail.imap.SortTerm[]&lt;/code&gt; type.
+         * <code>org.eclipse.angus.mail.imap.SortTerm[]</code> type.
          * 
          * Group: sort
          * 
@@ -1173,7 +1152,7 @@ public interface MailEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1199,8 +1178,7 @@ public interface MailEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1218,8 +1196,8 @@ public interface MailEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1237,7 +1215,7 @@ public interface MailEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1251,8 +1229,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1267,7 +1244,7 @@ public interface MailEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1284,7 +1261,7 @@ public interface MailEndpointBuilderFactory {
          * duplicate attachment is skipped and a WARN is logged. If set to true
          * then an exception is thrown failing to process the mail message.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1302,8 +1279,7 @@ public interface MailEndpointBuilderFactory {
          * duplicate attachment is skipped and a WARN is logged. If set to true
          * then an exception is thrown failing to process the mail message.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1323,7 +1299,7 @@ public interface MailEndpointBuilderFactory {
          * special corner case, where Camel will not consume any messages at
          * all.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: consumer (advanced)
@@ -1343,7 +1319,7 @@ public interface MailEndpointBuilderFactory {
          * special corner case, where Camel will not consume any messages at
          * all.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: consumer (advanced)
@@ -1358,7 +1334,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The folder to poll.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: INBOX
          * Group: consumer (advanced)
@@ -1374,7 +1350,7 @@ public interface MailEndpointBuilderFactory {
          * Set this to 'uuid' to set a UUID for the filename of the attachment
          * if no filename was set.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1395,7 +1371,7 @@ public interface MailEndpointBuilderFactory {
          * duplicate attachment filenames each with a underscore and uuid
          * (filename_uuid.fileextension).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1411,7 +1387,7 @@ public interface MailEndpointBuilderFactory {
          * generate UUID of the mail message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.MailUidGenerator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailUidGenerator</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1427,7 +1403,7 @@ public interface MailEndpointBuilderFactory {
          * generate UUID of the mail message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.MailUidGenerator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailUidGenerator</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1448,7 +1424,7 @@ public interface MailEndpointBuilderFactory {
          * raw message by calling
          * exchange.getIn().getBody(jakarta.mail.Message.class).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1470,8 +1446,7 @@ public interface MailEndpointBuilderFactory {
          * raw message by calling
          * exchange.getIn().getBody(jakarta.mail.Message.class).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer (advanced)
@@ -1490,7 +1465,7 @@ public interface MailEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1508,7 +1483,7 @@ public interface MailEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1524,7 +1499,8 @@ public interface MailEndpointBuilderFactory {
          * on the mailbox once the normal processing ended.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.MailBoxPostProcessAction&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailBoxPostProcessAction</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1540,7 +1516,8 @@ public interface MailEndpointBuilderFactory {
          * on the mailbox once the normal processing ended.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.MailBoxPostProcessAction&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailBoxPostProcessAction</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1557,7 +1534,7 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -1578,7 +1555,7 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -1599,7 +1576,7 @@ public interface MailEndpointBuilderFactory {
          * email clients, set the alternative mail body with this key as a
          * header.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: CamelMailAlternativeBody
          * Group: advanced
@@ -1616,7 +1593,7 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -1632,7 +1609,7 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -1649,7 +1626,7 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
          * 
          * Group: advanced
          * 
@@ -1666,7 +1643,7 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
          * 
          * Group: advanced
          * 
@@ -1682,8 +1659,7 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -1699,8 +1675,7 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -1714,7 +1689,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -1729,7 +1704,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -1744,7 +1719,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The mail message content type. Use text/html for HTML mails.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: text/plain
          * Group: advanced
@@ -1760,7 +1735,8 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1775,7 +1751,8 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1790,7 +1767,7 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1806,8 +1783,7 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1824,8 +1800,7 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1841,8 +1816,7 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1859,7 +1833,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1877,8 +1851,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1896,7 +1869,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1914,8 +1887,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1931,7 +1903,7 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: advanced
          * 
@@ -1946,8 +1918,8 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1965,7 +1937,7 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
+         * The option is a: <code>jakarta.mail.Session</code> type.
          * 
          * Group: advanced
          * 
@@ -1983,8 +1955,8 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
+         * The option will be converted to a <code>jakarta.mail.Session</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1998,7 +1970,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2013,8 +1985,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2042,7 +2013,7 @@ public interface MailEndpointBuilderFactory {
          * Sets the BCC email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2057,7 +2028,7 @@ public interface MailEndpointBuilderFactory {
          * Sets the CC email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2071,7 +2042,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The from email address.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel@localhost
          * Group: producer
@@ -2087,7 +2058,7 @@ public interface MailEndpointBuilderFactory {
          * The Reply-To recipients (the receivers of the response mail).
          * Separate multiple email addresses with a comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2102,7 +2073,7 @@ public interface MailEndpointBuilderFactory {
          * The Subject of the message being sent. Note: Setting the subject in
          * the header takes precedence over this option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2117,7 +2088,7 @@ public interface MailEndpointBuilderFactory {
          * Sets the To email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2131,7 +2102,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2146,7 +2117,7 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2161,7 +2132,7 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2175,7 +2146,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2201,7 +2172,7 @@ public interface MailEndpointBuilderFactory {
          * sending emails.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.JavaMailSender&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.JavaMailSender</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -2217,7 +2188,7 @@ public interface MailEndpointBuilderFactory {
          * sending emails.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.JavaMailSender&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.JavaMailSender</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -2239,7 +2210,7 @@ public interface MailEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2262,8 +2233,7 @@ public interface MailEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2281,7 +2251,7 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -2302,7 +2272,7 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -2323,7 +2293,7 @@ public interface MailEndpointBuilderFactory {
          * email clients, set the alternative mail body with this key as a
          * header.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: CamelMailAlternativeBody
          * Group: advanced
@@ -2340,7 +2310,7 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -2356,7 +2326,7 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -2373,7 +2343,7 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
          * 
          * Group: advanced
          * 
@@ -2390,7 +2360,7 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
          * 
          * Group: advanced
          * 
@@ -2406,8 +2376,7 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -2423,8 +2392,7 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -2438,7 +2406,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -2453,7 +2421,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -2468,7 +2436,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The mail message content type. Use text/html for HTML mails.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: text/plain
          * Group: advanced
@@ -2484,7 +2452,8 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2499,7 +2468,8 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2514,7 +2484,7 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2530,8 +2500,7 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2548,8 +2517,7 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -2565,8 +2533,7 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -2583,7 +2550,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2601,8 +2568,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2620,7 +2586,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2638,8 +2604,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2655,7 +2620,7 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: advanced
          * 
@@ -2670,8 +2635,8 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2689,7 +2654,7 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
+         * The option is a: <code>jakarta.mail.Session</code> type.
          * 
          * Group: advanced
          * 
@@ -2707,8 +2672,8 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
+         * The option will be converted to a <code>jakarta.mail.Session</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2722,7 +2687,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2737,8 +2702,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2766,7 +2730,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2781,7 +2745,7 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2796,7 +2760,7 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -2810,7 +2774,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2840,7 +2804,7 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -2861,7 +2825,7 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
@@ -2882,7 +2846,7 @@ public interface MailEndpointBuilderFactory {
          * email clients, set the alternative mail body with this key as a
          * header.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: CamelMailAlternativeBody
          * Group: advanced
@@ -2899,7 +2863,7 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -2915,7 +2879,7 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -2932,7 +2896,7 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
          * 
          * Group: advanced
          * 
@@ -2949,7 +2913,7 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
          * 
          * Group: advanced
          * 
@@ -2965,8 +2929,7 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -2982,8 +2945,7 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
          * Group: advanced
          * 
@@ -2997,7 +2959,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -3012,7 +2974,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: advanced
@@ -3027,7 +2989,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * The mail message content type. Use text/html for HTML mails.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: text/plain
          * Group: advanced
@@ -3043,7 +3005,8 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3058,7 +3021,8 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3073,7 +3037,7 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3089,8 +3053,7 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3107,8 +3070,7 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -3124,8 +3086,7 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -3142,7 +3103,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3160,8 +3121,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3179,7 +3139,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3197,8 +3157,7 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3214,7 +3173,7 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option is a: <code>java.util.Properties</code> type.
          * 
          * Group: advanced
          * 
@@ -3229,8 +3188,8 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3248,7 +3207,7 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
+         * The option is a: <code>jakarta.mail.Session</code> type.
          * 
          * Group: advanced
          * 
@@ -3266,8 +3225,8 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
+         * The option will be converted to a <code>jakarta.mail.Session</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3281,7 +3240,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3296,8 +3255,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

@@ -48,7 +48,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Send only the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -63,8 +63,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Send only the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -79,7 +78,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Send only message headers.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -94,8 +93,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Send only message headers.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -111,7 +109,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * Splunk host field of the event message. This is not the Splunk host
          * to connect to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -125,7 +123,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk index to write to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel
          * Group: producer
@@ -140,7 +138,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk source argument.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel
          * Group: producer
@@ -155,7 +153,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk sourcetype argument.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel
          * Group: producer
@@ -174,7 +172,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * API endpoints) Example for Spunk 8.2.x:
          * https://docs.splunk.com/Documentation/SplunkCloud/8.2.2203/Data/HECRESTendpoints To extract timestamps in Splunk8.0 /services/collector/eventauto_extract_timestamp=true Remember to utilize RAW{} for questionmarks or slashes in parameters.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: /services/collector/event
          * Group: producer
@@ -190,7 +188,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * Time this even occurred. By default, the time will be when this event
          * hits the splunk server.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -205,8 +203,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * Time this even occurred. By default, the time will be when this event
          * hits the splunk server.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -220,7 +217,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Contact HEC over https.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -235,8 +232,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Contact HEC over https.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -251,7 +247,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk HEC TLS verification.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -266,8 +262,7 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk HEC TLS verification.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -283,7 +278,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * Splunk HEC token (this is the token created for HEC and not the
          * user's token).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -318,7 +313,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -341,8 +336,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

@@ -48,7 +48,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.key.vault.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.key.vault.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -64,7 +64,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.key.vault.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.key.vault.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -80,7 +80,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Operation to be performed.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.key.vault.KeyVaultOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.key.vault.KeyVaultOperation</code> type.
          * 
          * Group: producer
          * 
@@ -95,7 +95,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Operation to be performed.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.key.vault.KeyVaultOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.key.vault.KeyVaultOperation</code> type.
          * 
          * Group: producer
          * 
@@ -110,7 +110,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Instance of Secret client.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * <code>com.azure.security.keyvault.secrets.SecretClient</code> type.
          * 
          * Group: producer
          * 
@@ -125,7 +125,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Instance of Secret client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * <code>com.azure.security.keyvault.secrets.SecretClient</code> type.
          * 
          * Group: producer
          * 
@@ -139,7 +139,7 @@ public interface KeyVaultEndpointBuilderFactory {
         /**
          * Client Id to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -153,7 +153,7 @@ public interface KeyVaultEndpointBuilderFactory {
         /**
          * Client Secret to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -167,7 +167,7 @@ public interface KeyVaultEndpointBuilderFactory {
         /**
          * Tenant Id to be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -201,7 +201,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -224,8 +224,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

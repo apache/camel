@@ -47,10 +47,10 @@ public interface PlatformHttpEndpointBuilderFactory {
 
         /**
          * The content type this endpoint accepts as an input, such as
-         * application/xml or application/json. null or
-         * &amp;amp;#42;/&amp;amp;#42; mean no restriction.
+         * application/xml or application/json. null or &amp;#42;/&amp;#42; mean
+         * no restriction.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -64,7 +64,7 @@ public interface PlatformHttpEndpointBuilderFactory {
         /**
          * Sets which server can receive cookies.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -79,7 +79,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets whether to prevent client side scripts from accessing created
          * cookies.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -95,8 +95,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets whether to prevent client side scripts from accessing created
          * cookies.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -111,7 +110,7 @@ public interface PlatformHttpEndpointBuilderFactory {
         /**
          * Sets the maximum cookie age in seconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: consumer
          * 
@@ -125,8 +124,7 @@ public interface PlatformHttpEndpointBuilderFactory {
         /**
          * Sets the maximum cookie age in seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: consumer
          * 
@@ -141,7 +139,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets the URL path that must exist in the requested URL in order to
          * send the Cookie.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: /
          * Group: consumer
@@ -158,7 +156,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * cross-site requests.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite&lt;/code&gt; type.
+         * <code>org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite</code> type.
          * 
          * Default: Lax
          * Group: consumer
@@ -175,7 +173,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * cross-site requests.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite&lt;/code&gt; type.
+         * <code>org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite</code> type.
          * 
          * Default: Lax
          * Group: consumer
@@ -191,7 +189,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets whether the cookie is only sent to the server with an encrypted
          * request over HTTPS.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -207,8 +205,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets whether the cookie is only sent to the server with an encrypted
          * request over HTTPS.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -224,7 +221,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * A comma separated list of HTTP methods to serve, e.g. GET,POST . If
          * no methods are specified, all methods will be served.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -239,7 +236,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -255,8 +252,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -272,7 +268,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -288,8 +284,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -305,7 +300,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The content type this endpoint produces, such as application/xml or
          * application/json.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -333,7 +328,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * expiry, and retrieval (currently only supported by
          * camel-platform-http-vertx).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -350,8 +345,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * expiry, and retrieval (currently only supported by
          * camel-platform-http-vertx).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -367,7 +361,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Whether to use streaming for large requests and responses (currently
          * only supported by camel-platform-http-vertx).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -383,8 +377,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Whether to use streaming for large requests and responses (currently
          * only supported by camel-platform-http-vertx).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -410,7 +403,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -436,8 +429,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -455,8 +447,8 @@ public interface PlatformHttpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -474,7 +466,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -488,8 +480,7 @@ public interface PlatformHttpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -504,7 +495,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -520,7 +511,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * having these extensions will be stored locally. Null value or
          * asterisk () will allow all files.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -536,8 +527,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -553,8 +543,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -570,7 +559,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.platform.http.spi.PlatformHttpEngine&lt;/code&gt; type.
+         * <code>org.apache.camel.component.platform.http.spi.PlatformHttpEngine</code> type.
          * 
          * Group: advanced
          * 
@@ -586,7 +575,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.platform.http.spi.PlatformHttpEngine&lt;/code&gt; type.
+         * <code>org.apache.camel.component.platform.http.spi.PlatformHttpEngine</code> type.
          * 
          * Group: advanced
          * 

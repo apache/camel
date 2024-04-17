@@ -46,8 +46,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Contract address or a list of addresses.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -62,7 +62,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -76,7 +76,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The address the transaction is send from.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -91,7 +91,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: latest
          * Group: common
@@ -107,7 +107,7 @@ public interface Web3jEndpointBuilderFactory {
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -123,8 +123,7 @@ public interface Web3jEndpointBuilderFactory {
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -139,7 +138,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The maximum gas allowed in this block.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: common
          * 
@@ -153,8 +152,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The maximum gas allowed in this block.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: common
          * 
@@ -168,8 +167,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -184,7 +183,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -198,7 +197,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true, this will support Quorum API.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -213,8 +212,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true, this will support Quorum API.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -229,7 +227,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The address the transaction is directed to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -244,7 +242,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: latest
          * Group: common
@@ -260,7 +258,7 @@ public interface Web3jEndpointBuilderFactory {
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -274,8 +272,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The preconfigured Web3j object.
          * 
-         * The option is a: &lt;code&gt;org.web3j.protocol.Web3j&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.web3j.protocol.Web3j</code> type.
          * 
          * Group: common
          * 
@@ -290,7 +287,7 @@ public interface Web3jEndpointBuilderFactory {
          * The preconfigured Web3j object.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.web3j.protocol.Web3j&lt;/code&gt; type.
+         * <code>org.web3j.protocol.Web3j</code> type.
          * 
          * Group: common
          * 
@@ -326,7 +323,7 @@ public interface Web3jEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -352,8 +349,7 @@ public interface Web3jEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -371,8 +367,8 @@ public interface Web3jEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -390,7 +386,7 @@ public interface Web3jEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -404,8 +400,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -420,7 +415,7 @@ public interface Web3jEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -446,8 +441,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Contract address or a list of addresses.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -462,7 +457,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -476,7 +471,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The address the transaction is send from.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -491,7 +486,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: latest
          * Group: common
@@ -507,7 +502,7 @@ public interface Web3jEndpointBuilderFactory {
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -523,8 +518,7 @@ public interface Web3jEndpointBuilderFactory {
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -539,7 +533,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The maximum gas allowed in this block.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: common
          * 
@@ -553,8 +547,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The maximum gas allowed in this block.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: common
          * 
@@ -568,8 +562,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -584,7 +578,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -598,7 +592,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true, this will support Quorum API.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -613,8 +607,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true, this will support Quorum API.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -629,7 +622,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The address the transaction is directed to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -644,7 +637,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: latest
          * Group: common
@@ -660,7 +653,7 @@ public interface Web3jEndpointBuilderFactory {
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -674,8 +667,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The preconfigured Web3j object.
          * 
-         * The option is a: &lt;code&gt;org.web3j.protocol.Web3j&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.web3j.protocol.Web3j</code> type.
          * 
          * Group: common
          * 
@@ -690,7 +682,7 @@ public interface Web3jEndpointBuilderFactory {
          * The preconfigured Web3j object.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.web3j.protocol.Web3j&lt;/code&gt; type.
+         * <code>org.web3j.protocol.Web3j</code> type.
          * 
          * Group: common
          * 
@@ -704,7 +696,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Contract address.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -719,7 +711,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: latest
          * Group: producer
@@ -734,7 +726,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Hash of the block where this transaction was in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -748,7 +740,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * A random hexadecimal(32 bytes) ID identifying the client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -763,7 +755,7 @@ public interface Web3jEndpointBuilderFactory {
          * The compiled code of a contract OR the hash of the invoked method
          * signature and encoded parameters.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -777,7 +769,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The local database name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -791,7 +783,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The filter id to use.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: producer
          * 
@@ -805,8 +797,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The filter id to use.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -820,7 +812,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Gas price used for each paid gas.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: producer
          * 
@@ -834,8 +826,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Gas price used for each paid gas.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -849,7 +841,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * A hexadecimal string representation (32 bytes) of the hash rate.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -864,7 +856,7 @@ public interface Web3jEndpointBuilderFactory {
          * The header's pow-hash (256 bits) used for submitting a proof-of-work
          * solution.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -878,7 +870,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The transactions/uncle index position in the block.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: producer
          * 
@@ -892,8 +884,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The transactions/uncle index position in the block.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -907,7 +899,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The key name in the database.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -922,7 +914,7 @@ public interface Web3jEndpointBuilderFactory {
          * The mix digest (256 bits) used for submitting a proof-of-work
          * solution.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -937,7 +929,7 @@ public interface Web3jEndpointBuilderFactory {
          * The nonce found (64 bits) used for submitting a proof-of-work
          * solution.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -951,7 +943,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Operation to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: transaction
          * Group: producer
@@ -966,7 +958,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The transaction index position withing a block.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: producer
          * 
@@ -980,8 +972,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The transaction index position withing a block.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -995,7 +987,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The priority of a whisper message.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: producer
          * 
@@ -1009,8 +1001,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The priority of a whisper message.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -1024,7 +1016,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Message to sign by calculating an Ethereum specific signature.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1039,7 +1031,7 @@ public interface Web3jEndpointBuilderFactory {
          * The signed transaction data for a new message call transaction or a
          * contract creation for signed transactions.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1053,7 +1045,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The source code to compile.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1067,7 +1059,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The information about a transaction requested by transaction hash.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1081,7 +1073,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The time to live in seconds of a whisper message.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: producer
          * 
@@ -1095,8 +1087,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The time to live in seconds of a whisper message.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -1110,7 +1102,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The value sent within a transaction.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: producer
          * 
@@ -1124,8 +1116,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The value sent within a transaction.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -1157,7 +1149,7 @@ public interface Web3jEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1180,8 +1172,7 @@ public interface Web3jEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1209,8 +1200,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Contract address or a list of addresses.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1225,7 +1216,7 @@ public interface Web3jEndpointBuilderFactory {
          * Contract address or a list of addresses.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1239,7 +1230,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The address the transaction is send from.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1254,7 +1245,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: latest
          * Group: common
@@ -1270,7 +1261,7 @@ public interface Web3jEndpointBuilderFactory {
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1286,8 +1277,7 @@ public interface Web3jEndpointBuilderFactory {
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1302,7 +1292,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The maximum gas allowed in this block.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Group: common
          * 
@@ -1316,8 +1306,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The maximum gas allowed in this block.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1331,8 +1321,8 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1347,7 +1337,7 @@ public interface Web3jEndpointBuilderFactory {
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1361,7 +1351,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true, this will support Quorum API.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1376,8 +1366,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true, this will support Quorum API.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1392,7 +1381,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The address the transaction is directed to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1407,7 +1396,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: latest
          * Group: common
@@ -1423,7 +1412,7 @@ public interface Web3jEndpointBuilderFactory {
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1437,8 +1426,7 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The preconfigured Web3j object.
          * 
-         * The option is a: &lt;code&gt;org.web3j.protocol.Web3j&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.web3j.protocol.Web3j</code> type.
          * 
          * Group: common
          * 
@@ -1453,7 +1441,7 @@ public interface Web3jEndpointBuilderFactory {
          * The preconfigured Web3j object.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.web3j.protocol.Web3j&lt;/code&gt; type.
+         * <code>org.web3j.protocol.Web3j</code> type.
          * 
          * Group: common
          * 

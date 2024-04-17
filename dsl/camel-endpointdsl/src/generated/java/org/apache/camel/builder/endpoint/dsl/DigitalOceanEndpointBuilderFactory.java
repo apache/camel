@@ -47,7 +47,7 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Use for pagination. Force the page number.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -62,8 +62,8 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Use for pagination. Force the page number.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 1
          * Group: producer
@@ -79,7 +79,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Use for pagination. Set the number of item per request. The maximum
          * number of results per page is 200.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 25
          * Group: producer
@@ -95,8 +95,8 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Use for pagination. Set the number of item per request. The maximum
          * number of results per page is 200.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 25
          * Group: producer
@@ -112,7 +112,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The DigitalOcean resource type on which perform the operation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.digitalocean.constants.DigitalOceanResources&lt;/code&gt; type.
+         * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
          * 
          * Required: true
          * Group: producer
@@ -128,7 +128,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The DigitalOcean resource type on which perform the operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.digitalocean.constants.DigitalOceanResources&lt;/code&gt; type.
+         * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
          * 
          * Required: true
          * Group: producer
@@ -143,7 +143,7 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy host if needed.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -157,7 +157,7 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy password if needed.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -171,7 +171,7 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy port if needed.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -185,8 +185,8 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy port if needed.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -200,7 +200,7 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy host if needed.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -214,7 +214,7 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * DigitalOcean OAuth Token.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -248,7 +248,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -271,8 +271,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -288,7 +287,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * To use a existing configured DigitalOceanClient as client.
          * 
          * The option is a:
-         * &lt;code&gt;com.myjeeva.digitalocean.impl.DigitalOceanClient&lt;/code&gt; type.
+         * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
          * 
          * Group: advanced
          * 
@@ -303,7 +302,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * To use a existing configured DigitalOceanClient as client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.myjeeva.digitalocean.impl.DigitalOceanClient&lt;/code&gt; type.
+         * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
          * 
          * Group: advanced
          * 

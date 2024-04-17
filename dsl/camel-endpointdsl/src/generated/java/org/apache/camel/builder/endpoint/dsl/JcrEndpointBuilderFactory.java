@@ -47,7 +47,7 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -63,8 +63,7 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -81,7 +80,7 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -97,7 +96,7 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -113,7 +112,7 @@ public interface JcrEndpointBuilderFactory {
          * whose associated parent node has one of the node types (or a subtype
          * of one of the node types) in this list will be received.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -129,7 +128,7 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -146,8 +145,7 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -162,7 +160,7 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -177,7 +175,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: common
@@ -193,7 +191,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: common
@@ -209,7 +207,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 3000
          * Group: common
@@ -225,7 +223,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 3000
          * Group: common
@@ -240,7 +238,7 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -256,7 +254,7 @@ public interface JcrEndpointBuilderFactory {
          * associated parent node has one of the identifiers in the comma
          * separated uuid list will be received.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -271,7 +269,7 @@ public interface JcrEndpointBuilderFactory {
          * The workspace to access. If it's not specified then the default one
          * will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -307,7 +305,7 @@ public interface JcrEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -333,8 +331,7 @@ public interface JcrEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -352,8 +349,8 @@ public interface JcrEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -371,7 +368,7 @@ public interface JcrEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -385,8 +382,7 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -401,7 +397,7 @@ public interface JcrEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -428,7 +424,7 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -444,8 +440,7 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -462,7 +457,7 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -478,7 +473,7 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -494,7 +489,7 @@ public interface JcrEndpointBuilderFactory {
          * whose associated parent node has one of the node types (or a subtype
          * of one of the node types) in this list will be received.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -510,7 +505,7 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -527,8 +522,7 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -543,7 +537,7 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -558,7 +552,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: common
@@ -574,7 +568,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: common
@@ -590,7 +584,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 3000
          * Group: common
@@ -606,7 +600,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 3000
          * Group: common
@@ -621,7 +615,7 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -637,7 +631,7 @@ public interface JcrEndpointBuilderFactory {
          * associated parent node has one of the identifiers in the comma
          * separated uuid list will be received.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -652,7 +646,7 @@ public interface JcrEndpointBuilderFactory {
          * The workspace to access. If it's not specified then the default one
          * will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -684,7 +678,7 @@ public interface JcrEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -707,8 +701,7 @@ public interface JcrEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -737,7 +730,7 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -753,8 +746,7 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -771,7 +763,7 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -787,7 +779,7 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -803,7 +795,7 @@ public interface JcrEndpointBuilderFactory {
          * whose associated parent node has one of the node types (or a subtype
          * of one of the node types) in this list will be received.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -819,7 +811,7 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -836,8 +828,7 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -852,7 +843,7 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -867,7 +858,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: common
@@ -883,7 +874,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: common
@@ -899,7 +890,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 3000
          * Group: common
@@ -915,7 +906,7 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 3000
          * Group: common
@@ -930,7 +921,7 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -946,7 +937,7 @@ public interface JcrEndpointBuilderFactory {
          * associated parent node has one of the identifiers in the comma
          * separated uuid list will be received.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -961,7 +952,7 @@ public interface JcrEndpointBuilderFactory {
          * The workspace to access. If it's not specified then the default one
          * will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 

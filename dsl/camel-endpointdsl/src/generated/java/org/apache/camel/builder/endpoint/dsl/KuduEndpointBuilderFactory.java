@@ -49,7 +49,7 @@ public interface KuduEndpointBuilderFactory {
          * Operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kudu.KuduOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
          * 
          * Group: producer
          * 
@@ -64,7 +64,7 @@ public interface KuduEndpointBuilderFactory {
          * Operation to perform.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.kudu.KuduOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
          * 
          * Group: producer
          * 
@@ -98,7 +98,7 @@ public interface KuduEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -121,8 +121,7 @@ public interface KuduEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

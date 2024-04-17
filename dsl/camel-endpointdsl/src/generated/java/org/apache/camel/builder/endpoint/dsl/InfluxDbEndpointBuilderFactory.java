@@ -47,7 +47,7 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define if we want to auto create the database if it's not present.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -62,8 +62,7 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define if we want to auto create the database if it's not present.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -78,7 +77,7 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define if this operation is a batch operation or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -93,8 +92,7 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define if this operation is a batch operation or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -110,7 +108,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Define if we want to check the database existence while starting the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -126,8 +124,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Define if we want to check the database existence while starting the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -142,7 +139,7 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * The name of the database where the time series will be stored.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -156,7 +153,7 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define if this operation is an insert or a query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: insert
          * Group: producer
@@ -171,7 +168,7 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define the query in case of operation query.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -186,7 +183,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The string that defines the retention policy to the data created by
          * the endpoint.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: default
          * Group: producer
@@ -221,7 +218,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -244,8 +241,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

@@ -47,7 +47,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * Setting the auto-creation of the topic.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -62,8 +62,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * Setting the auto-creation of the topic.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -79,8 +78,7 @@ public interface Sns2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: producer
          * 
@@ -95,8 +93,7 @@ public interface Sns2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: producer
          * 
@@ -111,7 +108,7 @@ public interface Sns2EndpointBuilderFactory {
          * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or
          * a custom CMK.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -129,7 +126,7 @@ public interface Sns2EndpointBuilderFactory {
          * useContentBasedDeduplication option, no messageDeduplicationId will
          * be set on the message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: useExchangeId
          * Group: producer
@@ -147,7 +144,7 @@ public interface Sns2EndpointBuilderFactory {
          * useExchangeId, usePropertyValue. For the usePropertyValue option, the
          * value of property CamelAwsSnsMessageGroupId will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -161,7 +158,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * The message structure to use such as json.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -176,7 +173,7 @@ public interface Sns2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -192,8 +189,7 @@ public interface Sns2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -213,7 +209,7 @@ public interface Sns2EndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -227,7 +223,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * The ARN endpoint to subscribe to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -244,7 +240,7 @@ public interface Sns2EndpointBuilderFactory {
          * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -258,7 +254,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the topic.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -273,8 +269,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the topic.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -290,7 +285,7 @@ public interface Sns2EndpointBuilderFactory {
          * The subject which is used if the message header 'CamelAwsSnsSubject'
          * is not present.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -305,7 +300,7 @@ public interface Sns2EndpointBuilderFactory {
          * Define if the subscription between SNS Topic and SQS must be done or
          * not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -321,8 +316,7 @@ public interface Sns2EndpointBuilderFactory {
          * Define if the subscription between SNS Topic and SQS must be done or
          * not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -338,7 +332,7 @@ public interface Sns2EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -352,7 +346,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SNS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -366,7 +360,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SNS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -380,8 +374,8 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SNS client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -395,8 +389,8 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SNS client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -412,7 +406,7 @@ public interface Sns2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the SNS client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -427,7 +421,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -442,7 +436,7 @@ public interface Sns2EndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -456,7 +450,7 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -471,7 +465,7 @@ public interface Sns2EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -486,7 +480,7 @@ public interface Sns2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -502,8 +496,7 @@ public interface Sns2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -519,7 +512,7 @@ public interface Sns2EndpointBuilderFactory {
          * Set whether the SNS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -535,8 +528,7 @@ public interface Sns2EndpointBuilderFactory {
          * Set whether the SNS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -552,7 +544,7 @@ public interface Sns2EndpointBuilderFactory {
          * Set whether the SNS client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -568,8 +560,7 @@ public interface Sns2EndpointBuilderFactory {
          * Set whether the SNS client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -586,7 +577,7 @@ public interface Sns2EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in SNS.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -603,8 +594,7 @@ public interface Sns2EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in SNS.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -639,7 +629,7 @@ public interface Sns2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -662,8 +652,7 @@ public interface Sns2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -679,7 +668,7 @@ public interface Sns2EndpointBuilderFactory {
          * To use the AmazonSNS as the client.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sns.SnsClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.sns.SnsClient</code> type.
          * 
          * Group: advanced
          * 
@@ -694,7 +683,7 @@ public interface Sns2EndpointBuilderFactory {
          * To use the AmazonSNS as the client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.sns.SnsClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.sns.SnsClient</code> type.
          * 
          * Group: advanced
          * 

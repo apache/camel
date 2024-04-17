@@ -49,7 +49,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -65,7 +66,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -82,7 +84,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -97,8 +99,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
+         * type.
          * 
          * Group: common
          * 
@@ -114,7 +116,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
          * Group: common
          * 
@@ -130,7 +132,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -144,7 +146,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: seda
@@ -159,7 +161,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: seda
@@ -175,7 +177,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -191,7 +193,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -209,7 +211,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -227,7 +229,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -244,7 +246,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -261,8 +263,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -278,7 +279,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -294,8 +295,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -332,7 +332,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -358,8 +358,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -377,8 +376,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -396,7 +395,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -410,8 +409,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -426,7 +424,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -454,7 +452,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -470,7 +469,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -487,7 +487,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -502,8 +502,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
+         * type.
          * 
          * Group: common
          * 
@@ -519,7 +519,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
          * Group: common
          * 
@@ -535,7 +535,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -549,7 +549,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: seda
@@ -564,7 +564,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: seda
@@ -580,7 +580,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -596,7 +596,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -614,7 +614,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -632,7 +632,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -649,7 +649,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -666,8 +666,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -683,7 +682,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -699,8 +698,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -733,7 +731,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -756,8 +754,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -787,7 +784,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -803,7 +801,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
+         * type.
          * 
          * Group: common
          * 
@@ -820,7 +819,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -835,8 +834,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
+         * type.
          * 
          * Group: common
          * 
@@ -852,7 +851,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
+         * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
          * Group: common
          * 
@@ -868,7 +867,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -882,7 +881,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: seda
@@ -897,7 +896,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: seda
@@ -913,7 +912,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -929,7 +928,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -947,7 +946,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -965,7 +964,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: seda
@@ -982,7 +981,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -999,8 +998,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -1016,7 +1014,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda
@@ -1032,8 +1030,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: seda

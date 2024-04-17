@@ -48,7 +48,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Explicitly defines if the jobName should be taken from the headers
          * instead of the URI.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -64,8 +64,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Explicitly defines if the jobName should be taken from the headers
          * instead of the URI.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -81,7 +80,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Explicitly specifies a JobLauncher to be used.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.batch.core.launch.JobLauncher&lt;/code&gt; type.
+         * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
          * 
          * Group: producer
          * 
@@ -96,7 +95,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Explicitly specifies a JobLauncher to be used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.batch.core.launch.JobLauncher&lt;/code&gt; type.
+         * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
          * 
          * Group: producer
          * 
@@ -111,7 +110,8 @@ public interface SpringBatchEndpointBuilderFactory {
          * Explicitly specifies a JobRegistry to be used.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.batch.core.configuration.JobRegistry&lt;/code&gt; type.
+         * <code>org.springframework.batch.core.configuration.JobRegistry</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -126,7 +126,8 @@ public interface SpringBatchEndpointBuilderFactory {
          * Explicitly specifies a JobRegistry to be used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.batch.core.configuration.JobRegistry&lt;/code&gt; type.
+         * <code>org.springframework.batch.core.configuration.JobRegistry</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -160,7 +161,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -183,8 +184,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

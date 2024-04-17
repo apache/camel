@@ -49,7 +49,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
         /**
          * The destination URI for exchanges that match.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: control
          * 
@@ -63,7 +63,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
         /**
          * The subscription predicate language.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: simple
          * Group: control
@@ -78,7 +78,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
         /**
          * The subscription predicate.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: control
          * 
@@ -92,8 +92,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
         /**
          * A Predicate instance in the registry.
          * 
-         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
          * Group: control
          * 
@@ -108,7 +107,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
          * A Predicate instance in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
+         * <code>org.apache.camel.Predicate</code> type.
          * 
          * Group: control
          * 
@@ -122,7 +121,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
         /**
          * The subscription priority.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: control
          * 
@@ -136,8 +135,8 @@ public interface DynamicRouterControlEndpointBuilderFactory {
         /**
          * The subscription priority.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: control
          * 
@@ -151,7 +150,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
         /**
          * The channel to subscribe to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: control
          * 
@@ -166,7 +165,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
          * The subscription ID; if unspecified, one will be assigned and
          * returned.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: control
          * 
@@ -200,7 +199,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -223,8 +222,7 @@ public interface DynamicRouterControlEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

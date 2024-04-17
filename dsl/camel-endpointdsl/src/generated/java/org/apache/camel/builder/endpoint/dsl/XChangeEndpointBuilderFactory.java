@@ -47,8 +47,8 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * The currency.
          * 
-         * The option is a:
-         * &lt;code&gt;org.knowm.xchange.currency.Currency&lt;/code&gt; type.
+         * The option is a: <code>org.knowm.xchange.currency.Currency</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -63,7 +63,7 @@ public interface XChangeEndpointBuilderFactory {
          * The currency.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.knowm.xchange.currency.Currency&lt;/code&gt; type.
+         * <code>org.knowm.xchange.currency.Currency</code> type.
          * 
          * Group: producer
          * 
@@ -77,7 +77,7 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * The currency pair.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -92,7 +92,7 @@ public interface XChangeEndpointBuilderFactory {
          * The method to execute.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod</code> type.
          * 
          * Required: true
          * Group: producer
@@ -108,7 +108,7 @@ public interface XChangeEndpointBuilderFactory {
          * The method to execute.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod</code> type.
          * 
          * Required: true
          * Group: producer
@@ -124,7 +124,7 @@ public interface XChangeEndpointBuilderFactory {
          * The service to call.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration.XChangeService&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xchange.XChangeConfiguration.XChangeService</code> type.
          * 
          * Required: true
          * Group: producer
@@ -140,7 +140,7 @@ public interface XChangeEndpointBuilderFactory {
          * The service to call.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration.XChangeService&lt;/code&gt; type.
+         * <code>org.apache.camel.component.xchange.XChangeConfiguration.XChangeService</code> type.
          * 
          * Required: true
          * Group: producer
@@ -175,7 +175,7 @@ public interface XChangeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -198,8 +198,7 @@ public interface XChangeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

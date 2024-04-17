@@ -47,7 +47,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Font.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: HELVETICA
          * Group: producer
@@ -62,7 +62,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Font size in pixels.
          * 
-         * The option is a: &lt;code&gt;float&lt;/code&gt; type.
+         * The option is a: <code>float</code> type.
          * 
          * Default: 14.0
          * Group: producer
@@ -77,8 +77,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Font size in pixels.
          * 
-         * The option will be converted to a &lt;code&gt;float&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>float</code> type.
          * 
          * Default: 14.0
          * Group: producer
@@ -93,7 +92,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin bottom in pixels.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 20
          * Group: producer
@@ -108,7 +107,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin bottom in pixels.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 20
          * Group: producer
@@ -123,7 +122,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin left in pixels.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 20
          * Group: producer
@@ -138,7 +137,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin left in pixels.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 20
          * Group: producer
@@ -153,7 +152,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin right in pixels.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 40
          * Group: producer
@@ -168,7 +167,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin right in pixels.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 40
          * Group: producer
@@ -183,7 +182,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin top in pixels.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 20
          * Group: producer
@@ -198,7 +197,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin top in pixels.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 20
          * Group: producer
@@ -213,7 +212,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Page size.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: A4
          * Group: producer
@@ -235,7 +234,8 @@ public interface PdfEndpointBuilderFactory {
          * fits in the line or not.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.pdf.TextProcessingFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.pdf.TextProcessingFactory</code>
+         * type.
          * 
          * Default: lineTermination
          * Group: producer
@@ -257,7 +257,8 @@ public interface PdfEndpointBuilderFactory {
          * fits in the line or not.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.pdf.TextProcessingFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.pdf.TextProcessingFactory</code>
+         * type.
          * 
          * Default: lineTermination
          * Group: producer
@@ -292,7 +293,7 @@ public interface PdfEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -315,8 +316,7 @@ public interface PdfEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

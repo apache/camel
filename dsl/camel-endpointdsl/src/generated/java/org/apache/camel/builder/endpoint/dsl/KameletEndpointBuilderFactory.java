@@ -68,7 +68,7 @@ public interface KameletEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -94,8 +94,7 @@ public interface KameletEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -113,8 +112,8 @@ public interface KameletEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -132,7 +131,7 @@ public interface KameletEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -146,8 +145,7 @@ public interface KameletEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -162,7 +160,7 @@ public interface KameletEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -179,7 +177,7 @@ public interface KameletEndpointBuilderFactory {
          * and must refer to a file including extension, for example
          * file:/etc/foo-kamelet.xml.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -195,7 +193,7 @@ public interface KameletEndpointBuilderFactory {
          * works in no-error-handler mode. This can be turned off, to use old
          * behaviour in earlier versions of Camel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -212,8 +210,7 @@ public interface KameletEndpointBuilderFactory {
          * works in no-error-handler mode. This can be turned off, to use old
          * behaviour in earlier versions of Camel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -252,7 +249,7 @@ public interface KameletEndpointBuilderFactory {
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -269,8 +266,7 @@ public interface KameletEndpointBuilderFactory {
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -286,7 +282,7 @@ public interface KameletEndpointBuilderFactory {
          * Whether the producer should fail by throwing an exception, when
          * sending to a kamelet endpoint with no active consumers.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -302,8 +298,7 @@ public interface KameletEndpointBuilderFactory {
          * Whether the producer should fail by throwing an exception, when
          * sending to a kamelet endpoint with no active consumers.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -326,7 +321,7 @@ public interface KameletEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -349,8 +344,7 @@ public interface KameletEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -365,7 +359,7 @@ public interface KameletEndpointBuilderFactory {
         /**
          * The timeout value to use if block is enabled.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: producer (advanced)
@@ -380,7 +374,7 @@ public interface KameletEndpointBuilderFactory {
         /**
          * The timeout value to use if block is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: producer (advanced)
@@ -398,7 +392,7 @@ public interface KameletEndpointBuilderFactory {
          * and must refer to a file including extension, for example
          * file:/etc/foo-kamelet.xml.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -414,7 +408,7 @@ public interface KameletEndpointBuilderFactory {
          * works in no-error-handler mode. This can be turned off, to use old
          * behaviour in earlier versions of Camel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -431,8 +425,7 @@ public interface KameletEndpointBuilderFactory {
          * works in no-error-handler mode. This can be turned off, to use old
          * behaviour in earlier versions of Camel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -476,7 +469,7 @@ public interface KameletEndpointBuilderFactory {
          * and must refer to a file including extension, for example
          * file:/etc/foo-kamelet.xml.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -492,7 +485,7 @@ public interface KameletEndpointBuilderFactory {
          * works in no-error-handler mode. This can be turned off, to use old
          * behaviour in earlier versions of Camel.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -509,8 +502,7 @@ public interface KameletEndpointBuilderFactory {
          * works in no-error-handler mode. This can be turned off, to use old
          * behaviour in earlier versions of Camel.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced

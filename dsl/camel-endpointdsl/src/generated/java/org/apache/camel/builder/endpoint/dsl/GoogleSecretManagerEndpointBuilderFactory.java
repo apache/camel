@@ -48,7 +48,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * Service account key to authenticate an application as a service
          * account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -63,7 +63,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * The operation to perform on the producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.secret.manager.GoogleSecretManagerOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.google.secret.manager.GoogleSecretManagerOperations</code> type.
          * 
          * Group: producer
          * 
@@ -78,7 +78,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * The operation to perform on the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.secret.manager.GoogleSecretManagerOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.google.secret.manager.GoogleSecretManagerOperations</code> type.
          * 
          * Group: producer
          * 
@@ -92,7 +92,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
         /**
          * Specifies if the request is a pojo request.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -107,8 +107,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
         /**
          * Specifies if the request is a pojo request.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -143,7 +142,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -166,8 +165,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -183,7 +181,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * The client to use during service invocation.
          * 
          * The option is a:
-         * &lt;code&gt;com.google.cloud.secretmanager.v1.SecretManagerServiceClient&lt;/code&gt; type.
+         * <code>com.google.cloud.secretmanager.v1.SecretManagerServiceClient</code> type.
          * 
          * Group: advanced
          * 
@@ -198,7 +196,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * The client to use during service invocation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.google.cloud.secretmanager.v1.SecretManagerServiceClient&lt;/code&gt; type.
+         * <code>com.google.cloud.secretmanager.v1.SecretManagerServiceClient</code> type.
          * 
          * Group: advanced
          * 

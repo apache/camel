@@ -49,7 +49,8 @@ public interface IgniteComputeEndpointBuilderFactory {
          * instance.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ignite.ClusterGroupExpression&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -65,7 +66,8 @@ public interface IgniteComputeEndpointBuilderFactory {
          * instance.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ignite.ClusterGroupExpression&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -80,7 +82,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The name of the compute job, which will be set via
          * IgniteCompute#withName(String).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -97,7 +99,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * expects different payload types depending on the operation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ignite.compute.IgniteComputeExecutionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> type.
          * 
          * Required: true
          * Group: producer
@@ -115,7 +117,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * expects different payload types depending on the operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ignite.compute.IgniteComputeExecutionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> type.
          * 
          * Required: true
          * Group: producer
@@ -131,7 +133,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -147,8 +149,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -164,7 +165,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The task name, only applicable if using the
          * IgniteComputeExecutionType#EXECUTE execution type.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -179,7 +180,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The timeout interval for triggered jobs, in milliseconds, which will
          * be set via IgniteCompute#withTimeout(long).
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -194,8 +195,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The timeout interval for triggered jobs, in milliseconds, which will
          * be set via IgniteCompute#withTimeout(long).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -210,7 +210,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -226,8 +226,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -262,7 +261,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -285,8 +284,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

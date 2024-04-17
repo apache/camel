@@ -46,7 +46,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The hostname of the Amazon AWS cloud.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: amazonaws.com
          * Group: common
@@ -61,7 +61,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the auto-creation of the queue.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -76,8 +76,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the auto-creation of the queue.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -93,8 +92,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -109,8 +107,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -125,7 +122,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -141,8 +138,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -157,7 +153,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The underlying protocol used to communicate with SQS.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https
          * Group: common
@@ -173,7 +169,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the queue owner aws account id when you need to connect the
          * queue with a different account owner.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -190,7 +186,7 @@ public interface Sqs2EndpointBuilderFactory {
          * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -205,7 +201,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -220,7 +216,7 @@ public interface Sqs2EndpointBuilderFactory {
          * A list of attribute names to receive when consuming. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -235,7 +231,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Allows you to use multiple threads to poll the sqs queue to increase
          * throughput.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -251,7 +247,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Allows you to use multiple threads to poll the sqs queue to increase
          * throughput.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -266,7 +262,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The default visibility timeout (in seconds).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer
          * 
@@ -280,8 +276,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The default visibility timeout (in seconds).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -295,7 +291,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Delete message from SQS after it has been read.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -310,8 +306,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Delete message from SQS after it has been read.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -328,7 +323,7 @@ public interface Sqs2EndpointBuilderFactory {
          * has property with key Sqs2Constants#SQS_DELETE_FILTERED
          * (CamelAwsSqsDeleteFiltered) set to true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -345,8 +340,7 @@ public interface Sqs2EndpointBuilderFactory {
          * has property with key Sqs2Constants#SQS_DELETE_FILTERED
          * (CamelAwsSqsDeleteFiltered) set to true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -364,7 +358,7 @@ public interface Sqs2EndpointBuilderFactory {
          * process the message. If set to true defaultVisibilityTimeout must be
          * set. See details at Amazon docs.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -382,8 +376,7 @@ public interface Sqs2EndpointBuilderFactory {
          * process the message. If set to true defaultVisibilityTimeout must be
          * set. See details at Amazon docs.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -401,7 +394,7 @@ public interface Sqs2EndpointBuilderFactory {
          * integer representing seconds, between 60 seconds (1 minute) and
          * 86,400 seconds (24 hours). Default: 300 (5 minutes).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer
          * 
@@ -418,8 +411,8 @@ public interface Sqs2EndpointBuilderFactory {
          * integer representing seconds, between 60 seconds (1 minute) and
          * 86,400 seconds (24 hours). Default: 300 (5 minutes).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -434,7 +427,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The ID of an AWS-managed customer master key (CMK) for Amazon SQS or
          * a custom CMK.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -450,7 +443,7 @@ public interface Sqs2EndpointBuilderFactory {
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -466,7 +459,7 @@ public interface Sqs2EndpointBuilderFactory {
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -481,7 +474,7 @@ public interface Sqs2EndpointBuilderFactory {
          * A list of message attribute names to receive when consuming. Multiple
          * names can be separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -496,7 +489,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -512,8 +505,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -528,7 +520,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the queue.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -543,8 +535,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the queue.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -564,7 +555,7 @@ public interface Sqs2EndpointBuilderFactory {
          * makes sense if it's different from defaultVisibilityTimeout. It
          * changes the queue visibility timeout attribute permanently.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer
          * 
@@ -583,8 +574,8 @@ public interface Sqs2EndpointBuilderFactory {
          * makes sense if it's different from defaultVisibilityTimeout. It
          * changes the queue visibility timeout attribute permanently.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -599,7 +590,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Duration in seconds (0 to 20) that the ReceiveMessage action call
          * will wait until a message is in the queue to include in the response.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer
          * 
@@ -614,8 +605,8 @@ public interface Sqs2EndpointBuilderFactory {
          * Duration in seconds (0 to 20) that the ReceiveMessage action call
          * will wait until a message is in the queue to include in the response.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -629,7 +620,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -643,7 +634,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -657,8 +648,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -672,8 +663,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SQS client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -689,7 +680,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the SQS client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -705,7 +696,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -720,8 +711,8 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -736,7 +727,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -751,8 +742,8 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -771,7 +762,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -788,7 +779,7 @@ public interface Sqs2EndpointBuilderFactory {
          * used to connect to a mock implementation of SQS, for testing
          * purposes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -804,7 +795,7 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -820,8 +811,8 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -836,7 +827,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the policy that send message to DeadLetter queue. See detail
          * at Amazon docs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -851,7 +842,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -866,7 +857,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -881,7 +872,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -896,7 +887,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -915,7 +906,7 @@ public interface Sqs2EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -934,7 +925,7 @@ public interface Sqs2EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -948,7 +939,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -963,7 +954,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -979,7 +970,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -995,8 +986,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -1011,7 +1001,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -1026,7 +1016,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -1043,7 +1033,7 @@ public interface Sqs2EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -1060,7 +1050,7 @@ public interface Sqs2EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -1076,8 +1066,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -1094,7 +1083,7 @@ public interface Sqs2EndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -1112,7 +1101,7 @@ public interface Sqs2EndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1129,7 +1118,7 @@ public interface Sqs2EndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1144,7 +1133,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1160,8 +1149,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1177,8 +1165,8 @@ public interface Sqs2EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1197,8 +1185,8 @@ public interface Sqs2EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1215,7 +1203,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1230,8 +1218,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1246,8 +1233,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1263,7 +1249,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1279,7 +1265,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1295,8 +1281,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1311,7 +1296,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1326,7 +1311,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1340,7 +1325,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1355,7 +1340,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1370,7 +1355,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1386,8 +1371,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1403,7 +1387,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1419,8 +1403,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1436,7 +1419,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1452,8 +1435,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1470,7 +1452,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in SQS.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1487,8 +1469,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in SQS.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -1525,7 +1506,7 @@ public interface Sqs2EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1551,8 +1532,7 @@ public interface Sqs2EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1570,8 +1550,8 @@ public interface Sqs2EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1589,7 +1569,7 @@ public interface Sqs2EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1603,8 +1583,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1619,7 +1598,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1637,7 +1616,7 @@ public interface Sqs2EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1655,7 +1634,7 @@ public interface Sqs2EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1670,7 +1649,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS client.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1685,7 +1664,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
          * 
          * Group: advanced
          * 
@@ -1700,7 +1679,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1716,8 +1695,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1744,7 +1722,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The hostname of the Amazon AWS cloud.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: amazonaws.com
          * Group: common
@@ -1759,7 +1737,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the auto-creation of the queue.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1774,8 +1752,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the auto-creation of the queue.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1791,8 +1768,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -1807,8 +1783,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -1823,7 +1798,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1839,8 +1814,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1855,7 +1829,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The underlying protocol used to communicate with SQS.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https
          * Group: common
@@ -1871,7 +1845,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the queue owner aws account id when you need to connect the
          * queue with a different account owner.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1888,7 +1862,7 @@ public interface Sqs2EndpointBuilderFactory {
          * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1903,7 +1877,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1918,7 +1892,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the separator when passing a String to send batch message
          * operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: ,
          * Group: producer
@@ -1933,7 +1907,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Delay sending messages for a number of seconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -1947,8 +1921,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Delay sending messages for a number of seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -1966,7 +1940,7 @@ public interface Sqs2EndpointBuilderFactory {
          * useContentBasedDeduplication option, no messageDeduplicationId will
          * be set on the message.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: useExchangeId
          * Group: producer
@@ -1984,7 +1958,7 @@ public interface Sqs2EndpointBuilderFactory {
          * useExchangeId, usePropertyValue. For the usePropertyValue option, the
          * value of property CamelAwsMessageGroupId will be used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2005,7 +1979,7 @@ public interface Sqs2EndpointBuilderFactory {
          * additional headers, so the message can be sent to AWS. FAIL will
          * cause an exception to be thrown and the message is not sent to AWS.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: WARN
          * Group: producer
@@ -2022,7 +1996,7 @@ public interface Sqs2EndpointBuilderFactory {
          * message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.sqs.Sqs2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.sqs.Sqs2Operations</code> type.
          * 
          * Group: producer
          * 
@@ -2038,7 +2012,7 @@ public interface Sqs2EndpointBuilderFactory {
          * message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.sqs.Sqs2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.sqs.Sqs2Operations</code> type.
          * 
          * Group: producer
          * 
@@ -2052,7 +2026,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -2066,7 +2040,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -2080,8 +2054,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -2095,8 +2069,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SQS client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -2112,7 +2086,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the SQS client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -2128,7 +2102,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -2143,8 +2117,8 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -2159,7 +2133,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -2174,8 +2148,8 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -2194,7 +2168,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -2211,7 +2185,7 @@ public interface Sqs2EndpointBuilderFactory {
          * used to connect to a mock implementation of SQS, for testing
          * purposes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -2227,7 +2201,7 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -2243,8 +2217,8 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -2259,7 +2233,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the policy that send message to DeadLetter queue. See detail
          * at Amazon docs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -2273,7 +2247,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2288,7 +2262,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2302,7 +2276,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2317,7 +2291,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2332,7 +2306,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2348,8 +2322,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2365,7 +2338,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2381,8 +2354,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2398,7 +2370,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2414,8 +2386,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2432,7 +2403,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in SQS.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2449,8 +2420,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in SQS.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -2483,7 +2453,7 @@ public interface Sqs2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2506,8 +2476,7 @@ public interface Sqs2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2523,7 +2492,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS client.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
          * 
          * Group: advanced
          * 
@@ -2538,7 +2507,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
          * 
          * Group: advanced
          * 
@@ -2553,7 +2522,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2569,8 +2538,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2598,7 +2566,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The hostname of the Amazon AWS cloud.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: amazonaws.com
          * Group: common
@@ -2613,7 +2581,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the auto-creation of the queue.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2628,8 +2596,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the auto-creation of the queue.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2645,8 +2612,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -2661,8 +2627,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -2677,7 +2642,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2693,8 +2658,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2709,7 +2673,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The underlying protocol used to communicate with SQS.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https
          * Group: common
@@ -2725,7 +2689,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the queue owner aws account id when you need to connect the
          * queue with a different account owner.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2742,7 +2706,7 @@ public interface Sqs2EndpointBuilderFactory {
          * region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2757,7 +2721,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2771,7 +2735,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -2785,7 +2749,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -2799,8 +2763,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -2814,8 +2778,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SQS client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -2831,7 +2795,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the SQS client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -2847,7 +2811,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -2862,8 +2826,8 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -2878,7 +2842,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -2893,8 +2857,8 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -2913,7 +2877,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -2930,7 +2894,7 @@ public interface Sqs2EndpointBuilderFactory {
          * used to connect to a mock implementation of SQS, for testing
          * purposes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -2946,7 +2910,7 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: queue
          * 
@@ -2962,8 +2926,8 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: queue
          * 
@@ -2978,7 +2942,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the policy that send message to DeadLetter queue. See detail
          * at Amazon docs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: queue
          * 
@@ -2992,7 +2956,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3007,7 +2971,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3021,7 +2985,7 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3036,7 +3000,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3051,7 +3015,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3067,8 +3031,7 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3084,7 +3047,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3100,8 +3063,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3117,7 +3079,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3133,8 +3095,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Set whether the SQS client should expect to load credentials through
          * a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3151,7 +3112,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in SQS.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3168,8 +3129,7 @@ public interface Sqs2EndpointBuilderFactory {
          * This is useful in a situation in which the user needs to assume an
          * IAM role for doing operations in SQS.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -3198,7 +3158,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS client.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
          * 
          * Group: advanced
          * 
@@ -3213,7 +3173,7 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
          * 
          * Group: advanced
          * 
@@ -3228,7 +3188,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3244,8 +3204,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

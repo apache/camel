@@ -51,7 +51,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * database collections (SAVE_DOCUMENT , FIND_DOCUMENT_BY_KEY,
          * UPDATE_DOCUMENT, DELETE_DOCUMENT).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -68,7 +68,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * these operations : SAVE_VERTEX, FIND_VERTEX_BY_KEY, UPDATE_VERTEX,
          * DELETE_VERTEX. The graph attribute is mandatory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -84,7 +84,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * attribute with one of the two attributes vertexCollection and
          * edgeCollection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -98,7 +98,7 @@ public interface ArangoDbEndpointBuilderFactory {
         /**
          * ArangoDB host. If host and port are default, this field is Optional.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -114,7 +114,8 @@ public interface ArangoDbEndpointBuilderFactory {
          * need to specify a collection or graph.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.arangodb.ArangoDbOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.arangodb.ArangoDbOperation</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -130,7 +131,8 @@ public interface ArangoDbEndpointBuilderFactory {
          * need to specify a collection or graph.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.arangodb.ArangoDbOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.arangodb.ArangoDbOperation</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -145,7 +147,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * ArangoDB exposed port. If host and port are default, this field is
          * Optional.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -160,7 +162,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * ArangoDB exposed port. If host and port are default, this field is
          * Optional.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -177,7 +179,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * using these operations : SAVE_EDGE, FIND_EDGE_BY_KEY, UPDATE_EDGE,
          * DELETE_EDGE. The graph attribute is mandatory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -192,7 +194,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * ArangoDB password. If user and password are default, this field is
          * Optional.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -207,7 +209,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * ArangoDB user. If user and password are default, this field is
          * Optional.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -241,7 +243,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -264,8 +266,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -280,7 +281,7 @@ public interface ArangoDbEndpointBuilderFactory {
         /**
          * To use an existing ArangDB client.
          * 
-         * The option is a: &lt;code&gt;com.arangodb.ArangoDB&lt;/code&gt; type.
+         * The option is a: <code>com.arangodb.ArangoDB</code> type.
          * 
          * Group: advanced
          * 
@@ -294,8 +295,8 @@ public interface ArangoDbEndpointBuilderFactory {
         /**
          * To use an existing ArangDB client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;com.arangodb.ArangoDB&lt;/code&gt; type.
+         * The option will be converted to a <code>com.arangodb.ArangoDB</code>
+         * type.
          * 
          * Group: advanced
          * 

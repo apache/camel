@@ -51,7 +51,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -70,8 +70,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -86,7 +85,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -101,8 +100,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -117,7 +115,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -132,8 +130,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -148,7 +145,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -163,8 +160,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -179,7 +175,7 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * To validate against a header instead of the message body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -213,7 +209,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -236,8 +232,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -253,7 +248,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Comma-separated list of Jackson DeserializationFeature enum values
          * which will be disabled for parsing exchange body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -268,7 +263,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Comma-separated list of Jackson DeserializationFeature enum values
          * which will be enabled for parsing exchange body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -284,7 +279,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * captures the errors and throws an exception.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
          * 
          * Group: advanced
          * 
@@ -300,7 +295,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * captures the errors and throws an exception.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
          * 
          * Group: advanced
          * 
@@ -318,7 +313,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * of the specified schema.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader</code> type.
          * 
          * Group: advanced
          * 
@@ -336,7 +331,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * of the specified schema.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader</code> type.
          * 
          * Group: advanced
          * 

@@ -47,7 +47,7 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Tika Parse Output Encoding.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -65,7 +65,8 @@ public interface TikaEndpointBuilderFactory {
          * automatically extract the main content from a web page.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.tika.TikaParseOutputFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code>
+         * type.
          * 
          * Default: xml
          * Group: producer
@@ -84,7 +85,8 @@ public interface TikaEndpointBuilderFactory {
          * automatically extract the main content from a web page.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.tika.TikaParseOutputFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code>
+         * type.
          * 
          * Default: xml
          * Group: producer
@@ -119,7 +121,7 @@ public interface TikaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -142,8 +144,7 @@ public interface TikaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -158,8 +159,7 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Tika Config.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.tika.config.TikaConfig&lt;/code&gt; type.
+         * The option is a: <code>org.apache.tika.config.TikaConfig</code> type.
          * 
          * Group: advanced
          * 
@@ -174,7 +174,7 @@ public interface TikaEndpointBuilderFactory {
          * Tika Config.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.tika.config.TikaConfig&lt;/code&gt; type.
+         * <code>org.apache.tika.config.TikaConfig</code> type.
          * 
          * Group: advanced
          * 
@@ -188,7 +188,7 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Tika Config Url.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 

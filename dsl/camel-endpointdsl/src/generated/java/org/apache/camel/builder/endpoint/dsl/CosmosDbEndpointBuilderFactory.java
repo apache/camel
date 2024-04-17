@@ -51,7 +51,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -71,8 +71,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -94,7 +93,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * timeout config) of the first instantiated client will be used for all
          * other client instances.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -116,8 +115,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * timeout config) of the first instantiated client will be used for all
          * other client instances.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -138,8 +136,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * level documentation for additional details:
          * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
          * Default: SESSION
          * Group: common
@@ -161,7 +158,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
          * Default: SESSION
          * Group: common
@@ -176,7 +173,7 @@ public interface CosmosDbEndpointBuilderFactory {
         /**
          * Sets the container partition key path.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -195,7 +192,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * thus is shouldn't be overridden. In Producer, it advised to disable
          * it since it reduces the network overhead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -215,8 +212,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * thus is shouldn't be overridden. In Producer, it advised to disable
          * it since it reduces the network overhead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -234,8 +230,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * service. This asynchronous client is used to configure and execute
          * requests against the service.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.CosmosAsyncClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -253,7 +249,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * requests against the service.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.cosmos.CosmosAsyncClient</code> type.
          * 
          * Group: common
          * 
@@ -268,7 +264,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos container automatically in
          * case it doesn't exist in Cosmos database.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -284,8 +280,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos container automatically in
          * case it doesn't exist in Cosmos database.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -301,7 +296,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos database automatically in
          * case it doesn't exist in Cosmos account.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -317,8 +312,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos database automatically in
          * case it doesn't exist in Cosmos account.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -334,7 +328,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the Azure Cosmos database endpoint the component will connect
          * to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -357,7 +351,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * DEFAULT value is true indicating that writes are directed to
          * available writable regions of geo-replicated database account.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -380,8 +374,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * DEFAULT value is true indicating that writes are directed to
          * available writable regions of geo-replicated database account.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -400,7 +393,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -419,7 +412,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
          * account has more than one region.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -439,8 +432,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
          * account has more than one region.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -456,8 +448,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets throughput of the resources in the Azure Cosmos DB service.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
-         * type.
+         * <code>com.azure.cosmos.models.ThroughputProperties</code> type.
          * 
          * Group: common
          * 
@@ -472,8 +463,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets throughput of the resources in the Azure Cosmos DB service.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
-         * type.
+         * <code>com.azure.cosmos.models.ThroughputProperties</code> type.
          * 
          * Group: common
          * 
@@ -492,7 +482,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * delay: 5 seconds maximum scale count: unlimited.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.ChangeFeedProcessorOptions&lt;/code&gt; type.
+         * <code>com.azure.cosmos.models.ChangeFeedProcessorOptions</code> type.
          * 
          * Group: consumer
          * 
@@ -511,7 +501,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * delay: 5 seconds maximum scale count: unlimited.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.ChangeFeedProcessorOptions&lt;/code&gt; type.
+         * <code>com.azure.cosmos.models.ChangeFeedProcessorOptions</code> type.
          * 
          * Group: consumer
          * 
@@ -526,7 +516,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos lease container for the
          * consumer automatically in case it doesn't exist in Cosmos database.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -542,8 +532,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos lease container for the
          * consumer automatically in case it doesn't exist in Cosmos database.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -559,7 +548,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos lease database for the
          * consumer automatically in case it doesn't exist in Cosmos account.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -575,8 +564,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos lease database for the
          * consumer automatically in case it doesn't exist in Cosmos account.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -595,7 +583,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * each instance should have a different instance name. If not
          * specified, this will be a generated random hostname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -613,7 +601,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * container or in a separate account. It will be auto created if
          * createLeaseContainerIfNotExists is set to true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: camel-lease
          * Group: consumer
@@ -631,7 +619,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * in the same database that is specified in databaseName. It will be
          * auto created if createLeaseDatabaseIfNotExists is set to true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -646,7 +634,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets either a master or readonly key used to perform authentication
          * for accessing resource.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -661,7 +649,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: security
@@ -677,7 +666,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: security
@@ -714,7 +704,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -740,8 +730,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -759,8 +748,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -778,7 +767,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -792,8 +781,7 @@ public interface CosmosDbEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -808,7 +796,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -824,8 +812,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * creation, this option is related to createLeaseContainerIfNotExists
          * and it will be taken into account when the latter is true.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.models.IndexingPolicy</code>
+         * type.
          * 
          * Group:  advanced
          * 
@@ -842,7 +830,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * and it will be taken into account when the latter is true.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * <code>com.azure.cosmos.models.IndexingPolicy</code> type.
          * 
          * Group:  advanced
          * 
@@ -873,7 +861,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -893,8 +881,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -916,7 +903,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * timeout config) of the first instantiated client will be used for all
          * other client instances.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -938,8 +925,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * timeout config) of the first instantiated client will be used for all
          * other client instances.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -960,8 +946,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * level documentation for additional details:
          * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
          * Default: SESSION
          * Group: common
@@ -983,7 +968,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
          * Default: SESSION
          * Group: common
@@ -998,7 +983,7 @@ public interface CosmosDbEndpointBuilderFactory {
         /**
          * Sets the container partition key path.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1017,7 +1002,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * thus is shouldn't be overridden. In Producer, it advised to disable
          * it since it reduces the network overhead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1037,8 +1022,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * thus is shouldn't be overridden. In Producer, it advised to disable
          * it since it reduces the network overhead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1056,8 +1040,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * service. This asynchronous client is used to configure and execute
          * requests against the service.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.CosmosAsyncClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1075,7 +1059,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * requests against the service.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.cosmos.CosmosAsyncClient</code> type.
          * 
          * Group: common
          * 
@@ -1090,7 +1074,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos container automatically in
          * case it doesn't exist in Cosmos database.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1106,8 +1090,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos container automatically in
          * case it doesn't exist in Cosmos database.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1123,7 +1106,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos database automatically in
          * case it doesn't exist in Cosmos account.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1139,8 +1122,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos database automatically in
          * case it doesn't exist in Cosmos account.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1156,7 +1138,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the Azure Cosmos database endpoint the component will connect
          * to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -1179,7 +1161,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * DEFAULT value is true indicating that writes are directed to
          * available writable regions of geo-replicated database account.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1202,8 +1184,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * DEFAULT value is true indicating that writes are directed to
          * available writable regions of geo-replicated database account.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1222,7 +1203,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1241,7 +1222,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
          * account has more than one region.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1261,8 +1242,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
          * account has more than one region.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1278,8 +1258,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets throughput of the resources in the Azure Cosmos DB service.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
-         * type.
+         * <code>com.azure.cosmos.models.ThroughputProperties</code> type.
          * 
          * Group: common
          * 
@@ -1294,8 +1273,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets throughput of the resources in the Azure Cosmos DB service.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
-         * type.
+         * <code>com.azure.cosmos.models.ThroughputProperties</code> type.
          * 
          * Group: common
          * 
@@ -1310,7 +1288,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the itemId in case needed for operation on item like delete,
          * replace.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1326,7 +1304,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Cosmos DB database service. A partition key identifies the partition
          * where the item is stored in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1342,7 +1320,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition</code> type.
          * 
          * Default: listDatabases
          * Group: producer
@@ -1359,7 +1337,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition</code> type.
          * 
          * Default: listDatabases
          * Group: producer
@@ -1376,7 +1354,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Cosmos SQL API, check this link {link
          * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -1393,7 +1371,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * listContainers operations.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * <code>com.azure.cosmos.models.CosmosQueryRequestOptions</code> type.
          * 
          * Group: producer
          * 
@@ -1410,7 +1388,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * listContainers operations.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * <code>com.azure.cosmos.models.CosmosQueryRequestOptions</code> type.
          * 
          * Group: producer
          * 
@@ -1425,7 +1403,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets either a master or readonly key used to perform authentication
          * for accessing resource.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1440,7 +1418,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: security
@@ -1456,7 +1435,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: security
@@ -1489,7 +1469,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1512,8 +1492,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1530,8 +1509,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * creation, this option is related to createLeaseContainerIfNotExists
          * and it will be taken into account when the latter is true.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.models.IndexingPolicy</code>
+         * type.
          * 
          * Group:  advanced
          * 
@@ -1548,7 +1527,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * and it will be taken into account when the latter is true.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * <code>com.azure.cosmos.models.IndexingPolicy</code> type.
          * 
          * Group:  advanced
          * 
@@ -1580,7 +1559,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1600,8 +1579,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * indicating this is opt in feature, by default no telemetry
          * collection.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1623,7 +1601,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * timeout config) of the first instantiated client will be used for all
          * other client instances.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1645,8 +1623,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * timeout config) of the first instantiated client will be used for all
          * other client instances.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1667,8 +1644,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * level documentation for additional details:
          * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
          * Default: SESSION
          * Group: common
@@ -1690,7 +1666,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
          * Default: SESSION
          * Group: common
@@ -1705,7 +1681,7 @@ public interface CosmosDbEndpointBuilderFactory {
         /**
          * Sets the container partition key path.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1724,7 +1700,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * thus is shouldn't be overridden. In Producer, it advised to disable
          * it since it reduces the network overhead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1744,8 +1720,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * thus is shouldn't be overridden. In Producer, it advised to disable
          * it since it reduces the network overhead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1763,8 +1738,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * service. This asynchronous client is used to configure and execute
          * requests against the service.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.CosmosAsyncClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1782,7 +1757,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * requests against the service.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.cosmos.CosmosAsyncClient</code> type.
          * 
          * Group: common
          * 
@@ -1797,7 +1772,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos container automatically in
          * case it doesn't exist in Cosmos database.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1813,8 +1788,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos container automatically in
          * case it doesn't exist in Cosmos database.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1830,7 +1804,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos database automatically in
          * case it doesn't exist in Cosmos account.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1846,8 +1820,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets if the component should create Cosmos database automatically in
          * case it doesn't exist in Cosmos account.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1863,7 +1836,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets the Azure Cosmos database endpoint the component will connect
          * to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -1886,7 +1859,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * DEFAULT value is true indicating that writes are directed to
          * available writable regions of geo-replicated database account.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1909,8 +1882,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * DEFAULT value is true indicating that writes are directed to
          * available writable regions of geo-replicated database account.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1929,7 +1901,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * the SDK will prefer to use the regions in the container in the order
          * they are specified to perform operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1948,7 +1920,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
          * account has more than one region.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1968,8 +1940,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
          * account has more than one region.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1985,8 +1956,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets throughput of the resources in the Azure Cosmos DB service.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
-         * type.
+         * <code>com.azure.cosmos.models.ThroughputProperties</code> type.
          * 
          * Group: common
          * 
@@ -2001,8 +1971,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets throughput of the resources in the Azure Cosmos DB service.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
-         * type.
+         * <code>com.azure.cosmos.models.ThroughputProperties</code> type.
          * 
          * Group: common
          * 
@@ -2017,7 +1986,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Sets either a master or readonly key used to perform authentication
          * for accessing resource.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2032,7 +2001,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: security
@@ -2048,7 +2018,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: security
@@ -2078,8 +2049,8 @@ public interface CosmosDbEndpointBuilderFactory {
          * creation, this option is related to createLeaseContainerIfNotExists
          * and it will be taken into account when the latter is true.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * The option is a: <code>com.azure.cosmos.models.IndexingPolicy</code>
+         * type.
          * 
          * Group:  advanced
          * 
@@ -2096,7 +2067,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * and it will be taken into account when the latter is true.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
+         * <code>com.azure.cosmos.models.IndexingPolicy</code> type.
          * 
          * Group:  advanced
          * 

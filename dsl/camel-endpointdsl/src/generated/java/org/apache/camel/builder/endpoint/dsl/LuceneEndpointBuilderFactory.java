@@ -51,8 +51,8 @@ public interface LuceneEndpointBuilderFactory {
          * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of
          * analyzers out of the box.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.lucene.analysis.Analyzer&lt;/code&gt; type.
+         * The option is a: <code>org.apache.lucene.analysis.Analyzer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -71,7 +71,7 @@ public interface LuceneEndpointBuilderFactory {
          * analyzers out of the box.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.lucene.analysis.Analyzer&lt;/code&gt; type.
+         * <code>org.apache.lucene.analysis.Analyzer</code> type.
          * 
          * Group: producer
          * 
@@ -86,7 +86,7 @@ public interface LuceneEndpointBuilderFactory {
          * A file system directory in which index files are created upon
          * analysis of the document by the specified analyzer.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: <code>java.io.File</code> type.
          * 
          * Group: producer
          * 
@@ -101,8 +101,7 @@ public interface LuceneEndpointBuilderFactory {
          * A file system directory in which index files are created upon
          * analysis of the document by the specified analyzer.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option will be converted to a <code>java.io.File</code> type.
          * 
          * Group: producer
          * 
@@ -116,7 +115,7 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * An integer value that limits the result set of the search operation.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -130,7 +129,7 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * An integer value that limits the result set of the search operation.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -145,7 +144,7 @@ public interface LuceneEndpointBuilderFactory {
          * An optional directory containing files to be used to be analyzed and
          * added to the index at producer startup.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: <code>java.io.File</code> type.
          * 
          * Group: producer
          * 
@@ -160,8 +159,7 @@ public interface LuceneEndpointBuilderFactory {
          * An optional directory containing files to be used to be analyzed and
          * added to the index at producer startup.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option will be converted to a <code>java.io.File</code> type.
          * 
          * Group: producer
          * 
@@ -195,7 +193,7 @@ public interface LuceneEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -218,8 +216,7 @@ public interface LuceneEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

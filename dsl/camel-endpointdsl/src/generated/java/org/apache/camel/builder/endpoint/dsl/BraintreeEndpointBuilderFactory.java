@@ -47,7 +47,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The environment Either SANDBOX or PRODUCTION.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -61,7 +61,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -75,7 +75,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The merchant id provided by Braintree.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -89,7 +89,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set logging level for http calls, see java.util.logging.Level.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: logging
          * 
@@ -103,7 +103,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set log category to use to log http calls.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Braintree
          * Group: logging
@@ -121,7 +121,7 @@ public interface BraintreeEndpointBuilderFactory {
          * on the classpath. This option can also be configured globally on the
          * BraintreeComponent.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: logging
@@ -139,8 +139,7 @@ public interface BraintreeEndpointBuilderFactory {
          * on the classpath. This option can also be configured globally on the
          * BraintreeComponent.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: logging
@@ -155,7 +154,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy host.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -169,7 +168,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -183,8 +182,8 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -200,7 +199,7 @@ public interface BraintreeEndpointBuilderFactory {
          * transactions on their behalf. Used in place of environment, merchant
          * id, public key and private key fields.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -214,7 +213,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The private key provided by Braintree.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -228,7 +227,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The public key provided by Braintree.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -262,7 +261,7 @@ public interface BraintreeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -285,8 +284,7 @@ public interface BraintreeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -301,7 +299,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set read timeout for http calls.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: advanced
          * 
@@ -315,8 +313,8 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set read timeout for http calls.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: advanced
          * 

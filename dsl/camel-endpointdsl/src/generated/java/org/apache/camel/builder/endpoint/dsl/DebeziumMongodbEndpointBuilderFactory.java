@@ -50,10 +50,10 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -74,10 +74,10 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -95,7 +95,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
@@ -111,7 +111,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
@@ -130,7 +130,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -147,7 +147,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -165,7 +165,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -180,7 +180,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -195,7 +195,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -211,7 +211,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
@@ -227,7 +227,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -242,7 +242,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -257,7 +257,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -272,7 +272,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -287,7 +287,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -302,7 +302,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -320,7 +320,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 'change_streams_update_full' (the default) to capture changes via
          * MongoDB Change Streams, update events contain full documents.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: change_streams_update_full
          * Group: mongodb
@@ -336,7 +336,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A comma-separated list of regular expressions or literals that match
          * the collection names for which changes are to be excluded.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -351,7 +351,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A comma-separated list of regular expressions or literals that match
          * the collection names for which changes are to be captured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -367,7 +367,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -382,7 +382,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum processing time in milliseconds to wait for the oplog
          * cursor to process a single poll request.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: mongodb
          * 
@@ -397,7 +397,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum processing time in milliseconds to wait for the oplog
          * cursor to process a single poll request.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: mongodb
          * 
@@ -415,7 +415,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * corresponding value would be the value of that tag the key is. For
          * example: k1=v1,k2=v2.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -430,7 +430,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A comma-separated list of regular expressions or literals that match
          * the database names for which changes are to be excluded.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -445,7 +445,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A comma-separated list of regular expressions or literals that match
          * the database names for which changes are to be captured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -460,7 +460,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of retries on connection errors before failing (-1
          * = no limit, 0 = disabled, 0 = num of retries).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: mongodb
@@ -476,7 +476,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of retries on connection errors before failing (-1
          * = no limit, 0 = disabled, 0 = num of retries).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: mongodb
@@ -496,7 +496,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped; 'ignore' the problematic event will be skipped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: fail
          * Group: mongodb
@@ -512,7 +512,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A comma-separated list of the fully-qualified names of fields that
          * should be excluded from change event message values.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -529,7 +529,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Fully-qualified replacements for fields are of the form
          * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard () which matches any characters, the colon character (:) is used to determine rename mapping of field.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -545,7 +545,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0ms
          * Group: mongodb
@@ -562,7 +562,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0ms
          * Group: mongodb
@@ -578,7 +578,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: __debezium-heartbeat
          * Group: mongodb
@@ -597,7 +597,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * written on signal data collection, the close will delete the relative
          * open signal;.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: INSERT_INSERT
          * Group: mongodb
@@ -612,7 +612,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2048
          * Group: mongodb
@@ -627,7 +627,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2048
          * Group: mongodb
@@ -644,7 +644,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 8192
          * Group: mongodb
@@ -661,7 +661,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 8192
          * Group: mongodb
@@ -678,7 +678,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * database log but not yet recorded or forwarded. Defaults to 0. Mean
          * the feature is not enabled.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: mongodb
@@ -695,7 +695,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * database log but not yet recorded or forwarded. Defaults to 0. Mean
          * the feature is not enabled.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: mongodb
@@ -710,7 +710,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Database containing user credentials.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: admin
          * Group: mongodb
@@ -725,7 +725,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Database connection string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -740,7 +740,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The connection timeout, given in milliseconds. Defaults to 10 seconds
          * (10,000 ms).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10s
          * Group: mongodb
@@ -756,7 +756,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The connection timeout, given in milliseconds. Defaults to 10 seconds
          * (10,000 ms).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10s
          * Group: mongodb
@@ -772,7 +772,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The frequency that the cluster monitor attempts to reach each server.
          * Defaults to 10 seconds (10,000 ms).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10s
          * Group: mongodb
@@ -788,7 +788,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The frequency that the cluster monitor attempts to reach each server.
          * Defaults to 10 seconds (10,000 ms).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10s
          * Group: mongodb
@@ -803,7 +803,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Password to be used when connecting to MongoDB, if necessary.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: mongodb
@@ -819,7 +819,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Interval for looking for new, removed, or changed replica sets, given
          * in milliseconds. Defaults to 30 seconds (30,000 ms).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30s
          * Group: mongodb
@@ -835,7 +835,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Interval for looking for new, removed, or changed replica sets, given
          * in milliseconds. Defaults to 30 seconds (30,000 ms).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30s
          * Group: mongodb
@@ -851,7 +851,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The server selection timeout, given in milliseconds. Defaults to 10
          * seconds (10,000 ms).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30s
          * Group: mongodb
@@ -867,7 +867,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The server selection timeout, given in milliseconds. Defaults to 10
          * seconds (10,000 ms).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30s
          * Group: mongodb
@@ -882,7 +882,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * The socket timeout, given in milliseconds. Defaults to 0 ms.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0ms
          * Group: mongodb
@@ -897,7 +897,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * The socket timeout, given in milliseconds. Defaults to 0 ms.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0ms
          * Group: mongodb
@@ -912,7 +912,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Should connector use SSL to connect to MongoDB instances.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -927,8 +927,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Should connector use SSL to connect to MongoDB instances.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -944,7 +943,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Whether invalid host names are allowed when using SSL. If true the
          * connection will not prevent man-in-the-middle attacks.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -960,8 +959,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Whether invalid host names are allowed when using SSL. If true the
          * connection will not prevent man-in-the-middle attacks.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -976,7 +974,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Database user for connecting to MongoDB, if necessary.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -990,7 +988,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * List of notification channels names that are enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -1005,7 +1003,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -1020,7 +1018,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500ms
          * Group: mongodb
@@ -1036,7 +1034,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500ms
          * Group: mongodb
@@ -1052,7 +1050,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Optional list of post processors. The processors are defined using
          * '.type' config option and configured using options ''.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -1066,7 +1064,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1081,8 +1079,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1098,7 +1095,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * streaming. A value of '0' uses the default JDBC fetch size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: mongodb
@@ -1114,7 +1111,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * streaming. A value of '0' uses the default JDBC fetch size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: mongodb
@@ -1130,7 +1127,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: mongodb
@@ -1146,7 +1143,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: mongodb
@@ -1162,7 +1159,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The path to the file that will be used to record the database schema
          * history.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -1182,7 +1179,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * like _uxxxx. Note: _ is an escape sequence like backslash in
          * Java;'none' does not apply any adjustment (default).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: none
          * Group: mongodb
@@ -1198,7 +1195,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -1213,7 +1210,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: source
          * Group: mongodb
@@ -1229,7 +1226,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Interval for looking for new signals in registered channels, given in
          * milliseconds. Defaults to 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5s
          * Group: mongodb
@@ -1245,7 +1242,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Interval for looking for new signals in registered channels, given in
          * milliseconds. Defaults to 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5s
          * Group: mongodb
@@ -1263,7 +1260,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 't' for truncates, and 'none' to indicate nothing skipped. By
          * default, only truncate operations will be skipped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: t
          * Group: mongodb
@@ -1281,7 +1278,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The subset would be defined by mongodb filter query specified as
          * value for property snapshot.collection.filter.override..
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -1296,7 +1293,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0ms
          * Group: mongodb
@@ -1312,7 +1309,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0ms
          * Group: mongodb
@@ -1328,7 +1325,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: mongodb
          * 
@@ -1343,7 +1340,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: mongodb
          * 
@@ -1358,7 +1355,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * This setting must be set to specify a list of tables/collections
          * whose snapshot must be taken on creating or restarting the connector.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -1373,7 +1370,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of threads used to perform the snapshot. Defaults
          * to 1.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: mongodb
@@ -1389,7 +1386,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of threads used to perform the snapshot. Defaults
          * to 1.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: mongodb
@@ -1411,7 +1408,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * a snapshot. Upon first startup, the connector immediately begins
          * reading from the beginning of the oplog.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: initial
          * Group: mongodb
@@ -1427,7 +1424,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the data should be snapshotted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1443,8 +1440,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the data should be snapshotted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1461,7 +1457,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * permits to specify whenever the data should be snapshotted or not in
          * case of error.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1479,8 +1475,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * permits to specify whenever the data should be snapshotted or not in
          * case of error.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1498,7 +1493,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * permits to specify whenever the schema should be snapshotted or not
          * in case of error.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1516,8 +1511,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * permits to specify whenever the schema should be snapshotted or not
          * in case of error.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1534,7 +1528,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the schema should be snapshotted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1550,8 +1544,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the schema should be snapshotted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1568,7 +1561,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * permits to specify whenever the stream should start or not after
          * snapshot.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1585,8 +1578,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * permits to specify whenever the stream should start or not after
          * snapshot.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1605,7 +1597,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * interface and is called on each app boot to determine whether to do a
          * snapshot.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          * 
@@ -1620,7 +1612,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The name of the SourceInfoStructMaker class that returns SourceInfo
          * schema and struct.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.connector.mongodb.MongoDbSourceInfoStructMaker
          * Group: mongodb
@@ -1639,7 +1631,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Kafka to completely delete all events pertaining to the given key
          * once the source record got deleted.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1658,8 +1650,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Kafka to completely delete all events pertaining to the given key
          * once the source record got deleted.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: mongodb
@@ -1676,7 +1667,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * determine the topic name for data change, schema change, transaction,
          * heartbeat event etc.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.schema.SchemaTopicNamingStrategy
          * Group: mongodb
@@ -1696,7 +1687,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * this connector. Only alphanumeric characters, hyphens, dots and
          * underscores must be accepted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: mongodb
@@ -1734,7 +1725,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1760,8 +1751,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1779,8 +1769,8 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1798,7 +1788,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1812,8 +1802,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1828,7 +1817,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 

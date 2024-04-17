@@ -47,7 +47,7 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Enables or disables batch mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -62,8 +62,7 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Enables or disables batch mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -78,7 +77,7 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Sets the DataSource to use to communicate with the database.
          * 
-         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
+         * The option is a: <code>javax.sql.DataSource</code> type.
          * 
          * Group: producer
          * 
@@ -92,8 +91,8 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Sets the DataSource to use to communicate with the database.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
+         * The option will be converted to a <code>javax.sql.DataSource</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -107,7 +106,7 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Whether this call is for a function.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -122,8 +121,7 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Whether this call is for a function.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -140,7 +138,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * use the existing IN message as the OUT message for the continuation
          * of processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -157,8 +155,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * use the existing IN message as the OUT message for the continuation
          * of processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -178,7 +175,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * the header to store the template result and the original message body
          * is preserved.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -194,7 +191,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * then headers for parameters. If this option is enabled then the
          * template in the uri is not used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -211,8 +208,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * then headers for parameters. If this option is enabled then the
          * template in the uri is not used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -247,7 +243,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -270,8 +266,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -286,8 +281,8 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -305,8 +300,8 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * templateOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).

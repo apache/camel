@@ -46,7 +46,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * APEX method name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -60,8 +60,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Query params for APEX method.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -76,8 +76,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Query params for APEX method.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -91,7 +91,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce API version.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 56.0
          * Group: common
@@ -107,7 +107,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Backoff interval increment for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -123,7 +123,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Backoff interval increment for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -138,7 +138,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Batch ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -153,7 +153,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.bulk.ContentType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -168,7 +168,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.bulk.ContentType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -182,7 +182,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Default replayId setting if no value is found in initialReplayIdMap.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -197,8 +197,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Default replayId setting if no value is found in initialReplayIdMap.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -213,7 +212,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * ReplayId to fall back to after an Invalid Replay Id response.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -228,8 +227,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * ReplayId to fall back to after an Invalid Replay Id response.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -247,7 +245,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Raw operation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * 
          * Group: common
          * 
@@ -264,7 +262,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Raw operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * 
          * Group: common
          * 
@@ -279,7 +277,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jetty Http Client to use to connect to Salesforce.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceHttpClient&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -294,7 +292,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jetty Http Client to use to connect to Salesforce.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceHttpClient&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -308,7 +306,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -322,8 +320,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -337,8 +335,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Replay IDs to start from per channel name.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Long&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Long&gt;</code> type.
          * 
          * Group: common
          * 
@@ -353,8 +351,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Replay IDs to start from per channel name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Long&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Long&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -368,7 +366,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce1 Analytics report execution instance ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -382,7 +380,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Job ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -397,7 +395,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Limit on number of returned records. Applicable to some of the API,
          * check the Salesforce documentation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -412,8 +410,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Limit on number of returned records. Applicable to some of the API,
          * check the Salesforce documentation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -428,7 +426,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Locator provided by salesforce Bulk 2.0 API for use in getting
          * results for a Query job.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -443,7 +441,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -459,7 +457,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -481,7 +479,7 @@ public interface SalesforceEndpointBuilderFactory {
          * splits the results into smaller sets with this value as the maximum
          * size.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -502,8 +500,8 @@ public interface SalesforceEndpointBuilderFactory {
          * splits the results into smaller sets with this value as the maximum
          * size.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -521,7 +519,8 @@ public interface SalesforceEndpointBuilderFactory {
          * the default.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.NotFoundBehaviour&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
+         * type.
          * 
          * Default: EXCEPTION
          * Group: common
@@ -540,7 +539,8 @@ public interface SalesforceEndpointBuilderFactory {
          * the default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.NotFoundBehaviour&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
+         * type.
          * 
          * Default: EXCEPTION
          * Group: common
@@ -556,7 +556,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * 
          * Group: common
          * 
@@ -571,7 +571,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * 
          * Group: common
          * 
@@ -583,10 +583,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for create operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -598,11 +598,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for create operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -614,10 +614,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for delete operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -629,11 +629,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for delete operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -646,10 +646,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version &amp;amp;lt; 29.0).
+         * version &amp;lt; 29.0).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * 
          * Group: common
          * 
@@ -662,10 +662,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version &amp;amp;lt; 29.0).
+         * version &amp;lt; 29.0).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * 
          * Group: common
          * 
@@ -678,9 +678,9 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for un-delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * &amp;gt;= 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -693,10 +693,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for un-delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * &amp;gt;= 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -708,10 +708,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for update operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -723,11 +723,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for update operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -743,8 +743,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option is a:
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -760,8 +759,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -776,7 +774,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
          * performs PK chunking automatically, if necessary.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -791,8 +789,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
          * performs PK chunking automatically, if necessary.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -807,7 +805,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Chunk size for use with PK Chunking. If unspecified, salesforce
          * default is 100,000. Maximum size is 250,000.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -822,8 +820,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Chunk size for use with PK Chunking. If unspecified, salesforce
          * default is 100,000. Maximum size is 250,000.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -842,7 +840,7 @@ public interface SalesforceEndpointBuilderFactory {
          * object. PK chunking is supported for sharing objects as long as the
          * parent object is supported.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -858,7 +856,7 @@ public interface SalesforceEndpointBuilderFactory {
          * the lower boundary for the first chunk. Use this parameter to specify
          * a starting ID when restarting a job that failed between batches.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -874,7 +872,7 @@ public interface SalesforceEndpointBuilderFactory {
          * more records than can be retrieved in a single call. Use this value
          * in a subsequent call to retrieve additional records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -889,7 +887,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use raw payload String for request and response (either JSON or XML
          * depending on format), instead of DTOs, false by default.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -905,8 +903,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use raw payload String for request and response (either JSON or XML
          * depending on format), instead of DTOs, false by default.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -921,7 +918,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce1 Analytics report Id.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -936,7 +933,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce1 Analytics report metadata for filtering.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * 
          * Group: common
          * 
@@ -951,7 +948,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce1 Analytics report metadata for filtering.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * 
          * Group: common
          * 
@@ -965,7 +962,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Result ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -979,7 +976,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject blob field name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -994,7 +991,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Fully qualified SObject class name, usually generated using
          * camel-salesforce-maven-plugin.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1008,7 +1005,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject fields to retrieve.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1022,7 +1019,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject ID if required by API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1036,7 +1033,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject external ID field name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1050,7 +1047,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject external ID field value.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1064,7 +1061,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject name if required or supported by API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1078,7 +1075,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce SOQL query string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1092,7 +1089,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce SOSL search string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1108,7 +1105,7 @@ public interface SalesforceEndpointBuilderFactory {
          * subsequent requests if there are multiple pages. Otherwise, results
          * are returned one page at a time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1125,8 +1122,8 @@ public interface SalesforceEndpointBuilderFactory {
          * subsequent requests if there are multiple pages. Otherwise, results
          * are returned one page at a time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: common
@@ -1142,7 +1139,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1158,8 +1155,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1174,7 +1170,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Max number of events to receive in a batch from the Pub/Sub API.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 100
          * Group: consumer
@@ -1189,7 +1185,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Max number of events to receive in a batch from the Pub/Sub API.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 100
          * Group: consumer
@@ -1206,7 +1202,7 @@ public interface SalesforceEndpointBuilderFactory {
          * a SpecificRecord subclass if found, otherwise GenericRecord.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.PubSubDeserializeType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.PubSubDeserializeType</code> type.
          * 
          * Default: AVRO
          * Group: consumer
@@ -1223,7 +1219,7 @@ public interface SalesforceEndpointBuilderFactory {
          * a SpecificRecord subclass if found, otherwise GenericRecord.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.PubSubDeserializeType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.PubSubDeserializeType</code> type.
          * 
          * Default: AVRO
          * Group: consumer
@@ -1238,7 +1234,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Fully qualified class name to deserialize Pub/Sub API event to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -1252,7 +1248,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * The replayId value to use when subscribing to the Pub/Sub API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -1266,7 +1262,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * The replayId value to use when subscribing to the Streaming API.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: consumer
          * 
@@ -1280,8 +1276,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * The replayId value to use when subscribing to the Streaming API.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: consumer
          * 
@@ -1296,7 +1291,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Replay preset for Pub/Sub API.
          * 
          * The option is a:
-         * &lt;code&gt;com.salesforce.eventbus.protobuf.ReplayPreset&lt;/code&gt; type.
+         * <code>com.salesforce.eventbus.protobuf.ReplayPreset</code> type.
          * 
          * Default: LATEST
          * Group: consumer
@@ -1312,7 +1307,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Replay preset for Pub/Sub API.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.salesforce.eventbus.protobuf.ReplayPreset&lt;/code&gt; type.
+         * <code>com.salesforce.eventbus.protobuf.ReplayPreset</code> type.
          * 
          * Default: LATEST
          * Group: consumer
@@ -1349,7 +1344,7 @@ public interface SalesforceEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1375,8 +1370,7 @@ public interface SalesforceEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1394,8 +1388,8 @@ public interface SalesforceEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1413,7 +1407,7 @@ public interface SalesforceEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1427,8 +1421,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1443,7 +1436,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1469,7 +1462,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * APEX method name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1483,8 +1476,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Query params for APEX method.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1499,8 +1492,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Query params for APEX method.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1514,7 +1507,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce API version.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 56.0
          * Group: common
@@ -1530,7 +1523,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Backoff interval increment for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -1546,7 +1539,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Backoff interval increment for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -1561,7 +1554,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Batch ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1576,7 +1569,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.bulk.ContentType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -1591,7 +1584,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.bulk.ContentType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -1605,7 +1598,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Default replayId setting if no value is found in initialReplayIdMap.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1620,8 +1613,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Default replayId setting if no value is found in initialReplayIdMap.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1636,7 +1628,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * ReplayId to fall back to after an Invalid Replay Id response.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1651,8 +1643,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * ReplayId to fall back to after an Invalid Replay Id response.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -1670,7 +1661,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Raw operation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * 
          * Group: common
          * 
@@ -1687,7 +1678,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Raw operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * 
          * Group: common
          * 
@@ -1702,7 +1693,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jetty Http Client to use to connect to Salesforce.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceHttpClient&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -1717,7 +1708,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jetty Http Client to use to connect to Salesforce.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceHttpClient&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -1731,7 +1722,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -1745,8 +1736,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1760,8 +1751,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Replay IDs to start from per channel name.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Long&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Long&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1776,8 +1767,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Replay IDs to start from per channel name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Long&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Long&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1791,7 +1782,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce1 Analytics report execution instance ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1805,7 +1796,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Job ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1820,7 +1811,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Limit on number of returned records. Applicable to some of the API,
          * check the Salesforce documentation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -1835,8 +1826,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Limit on number of returned records. Applicable to some of the API,
          * check the Salesforce documentation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1851,7 +1842,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Locator provided by salesforce Bulk 2.0 API for use in getting
          * results for a Query job.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1866,7 +1857,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1882,7 +1873,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1904,7 +1895,7 @@ public interface SalesforceEndpointBuilderFactory {
          * splits the results into smaller sets with this value as the maximum
          * size.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -1925,8 +1916,8 @@ public interface SalesforceEndpointBuilderFactory {
          * splits the results into smaller sets with this value as the maximum
          * size.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1944,7 +1935,8 @@ public interface SalesforceEndpointBuilderFactory {
          * the default.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.NotFoundBehaviour&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
+         * type.
          * 
          * Default: EXCEPTION
          * Group: common
@@ -1963,7 +1955,8 @@ public interface SalesforceEndpointBuilderFactory {
          * the default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.NotFoundBehaviour&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
+         * type.
          * 
          * Default: EXCEPTION
          * Group: common
@@ -1979,7 +1972,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * 
          * Group: common
          * 
@@ -1994,7 +1987,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * 
          * Group: common
          * 
@@ -2006,10 +1999,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for create operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2021,11 +2014,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for create operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2037,10 +2030,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for delete operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2052,11 +2045,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for delete operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2069,10 +2062,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version &amp;amp;lt; 29.0).
+         * version &amp;lt; 29.0).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * 
          * Group: common
          * 
@@ -2085,10 +2078,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version &amp;amp;lt; 29.0).
+         * version &amp;lt; 29.0).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * 
          * Group: common
          * 
@@ -2101,9 +2094,9 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for un-delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * &amp;gt;= 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2116,10 +2109,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for un-delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * &amp;gt;= 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2131,10 +2124,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for update operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2146,11 +2139,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for update operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2166,8 +2159,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option is a:
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -2183,8 +2175,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -2199,7 +2190,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
          * performs PK chunking automatically, if necessary.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -2214,8 +2205,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
          * performs PK chunking automatically, if necessary.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2230,7 +2221,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Chunk size for use with PK Chunking. If unspecified, salesforce
          * default is 100,000. Maximum size is 250,000.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -2245,8 +2236,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Chunk size for use with PK Chunking. If unspecified, salesforce
          * default is 100,000. Maximum size is 250,000.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2265,7 +2256,7 @@ public interface SalesforceEndpointBuilderFactory {
          * object. PK chunking is supported for sharing objects as long as the
          * parent object is supported.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2281,7 +2272,7 @@ public interface SalesforceEndpointBuilderFactory {
          * the lower boundary for the first chunk. Use this parameter to specify
          * a starting ID when restarting a job that failed between batches.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2297,7 +2288,7 @@ public interface SalesforceEndpointBuilderFactory {
          * more records than can be retrieved in a single call. Use this value
          * in a subsequent call to retrieve additional records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2312,7 +2303,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use raw payload String for request and response (either JSON or XML
          * depending on format), instead of DTOs, false by default.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2328,8 +2319,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use raw payload String for request and response (either JSON or XML
          * depending on format), instead of DTOs, false by default.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2344,7 +2334,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce1 Analytics report Id.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2359,7 +2349,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce1 Analytics report metadata for filtering.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * 
          * Group: common
          * 
@@ -2374,7 +2364,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce1 Analytics report metadata for filtering.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * 
          * Group: common
          * 
@@ -2388,7 +2378,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Result ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2402,7 +2392,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject blob field name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2417,7 +2407,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Fully qualified SObject class name, usually generated using
          * camel-salesforce-maven-plugin.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2431,7 +2421,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject fields to retrieve.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2445,7 +2435,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject ID if required by API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2459,7 +2449,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject external ID field name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2473,7 +2463,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject external ID field value.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2487,7 +2477,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject name if required or supported by API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2501,7 +2491,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce SOQL query string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2515,7 +2505,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce SOSL search string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2531,7 +2521,7 @@ public interface SalesforceEndpointBuilderFactory {
          * subsequent requests if there are multiple pages. Otherwise, results
          * are returned one page at a time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2548,8 +2538,8 @@ public interface SalesforceEndpointBuilderFactory {
          * subsequent requests if there are multiple pages. Otherwise, results
          * are returned one page at a time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: common
@@ -2565,7 +2555,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2581,8 +2571,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2598,7 +2587,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Composite API option to indicate to rollback all records if any are
          * not successful.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2614,8 +2603,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Composite API option to indicate to rollback all records if any are
          * not successful.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2630,7 +2618,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * APEX method URL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2644,7 +2632,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Composite (raw) method.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2658,7 +2646,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Name of Platform Event, Change Data Capture Event, custom event, etc.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2676,7 +2664,7 @@ public interface SalesforceEndpointBuilderFactory {
          * available in API version 43.0 and later.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum</code> type.
          * 
          * Group: producer
          * 
@@ -2694,7 +2682,7 @@ public interface SalesforceEndpointBuilderFactory {
          * available in API version 43.0 and later.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum</code> type.
          * 
          * Group: producer
          * 
@@ -2708,7 +2696,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * The ID of the event schema.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2723,7 +2711,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Comma separated list of message headers to include as HTTP parameters
          * for Raw operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2737,7 +2725,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * HTTP method to use for the Raw operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2752,7 +2740,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The portion of the endpoint URL after the domain name. E.g.,
          * '/services/data/v52.0/sobjects/Account/'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2768,7 +2756,7 @@ public interface SalesforceEndpointBuilderFactory {
          * parameters for Raw operation. Do not url-encode values as this will
          * be done automatically.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2800,7 +2788,7 @@ public interface SalesforceEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2823,8 +2811,7 @@ public interface SalesforceEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2852,7 +2839,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * APEX method name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2866,8 +2853,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Query params for APEX method.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -2882,8 +2869,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Query params for APEX method.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2897,7 +2884,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce API version.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 56.0
          * Group: common
@@ -2913,7 +2900,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Backoff interval increment for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -2929,7 +2916,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Backoff interval increment for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: common
@@ -2944,7 +2931,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Batch ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2959,7 +2946,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.bulk.ContentType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -2974,7 +2961,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.bulk.ContentType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * 
          * Group: common
          * 
@@ -2988,7 +2975,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Default replayId setting if no value is found in initialReplayIdMap.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -3003,8 +2990,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Default replayId setting if no value is found in initialReplayIdMap.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -3019,7 +3005,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * ReplayId to fall back to after an Invalid Replay Id response.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -3034,8 +3020,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * ReplayId to fall back to after an Invalid Replay Id response.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Default: -1
          * Group: common
@@ -3053,7 +3038,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Raw operation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * 
          * Group: common
          * 
@@ -3070,7 +3055,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Raw operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * 
          * Group: common
          * 
@@ -3085,7 +3070,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jetty Http Client to use to connect to Salesforce.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceHttpClient&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -3100,7 +3085,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jetty Http Client to use to connect to Salesforce.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceHttpClient&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -3114,7 +3099,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -3128,8 +3113,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3143,8 +3128,8 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Replay IDs to start from per channel name.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Long&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Long&gt;</code> type.
          * 
          * Group: common
          * 
@@ -3159,8 +3144,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Replay IDs to start from per channel name.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Long&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Long&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3174,7 +3159,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce1 Analytics report execution instance ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3188,7 +3173,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Job ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3203,7 +3188,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Limit on number of returned records. Applicable to some of the API,
          * check the Salesforce documentation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -3218,8 +3203,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Limit on number of returned records. Applicable to some of the API,
          * check the Salesforce documentation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3234,7 +3219,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Locator provided by salesforce Bulk 2.0 API for use in getting
          * results for a Query job.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3249,7 +3234,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -3265,7 +3250,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -3287,7 +3272,7 @@ public interface SalesforceEndpointBuilderFactory {
          * splits the results into smaller sets with this value as the maximum
          * size.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -3308,8 +3293,8 @@ public interface SalesforceEndpointBuilderFactory {
          * splits the results into smaller sets with this value as the maximum
          * size.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3327,7 +3312,8 @@ public interface SalesforceEndpointBuilderFactory {
          * the default.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.NotFoundBehaviour&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
+         * type.
          * 
          * Default: EXCEPTION
          * Group: common
@@ -3346,7 +3332,8 @@ public interface SalesforceEndpointBuilderFactory {
          * the default.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.NotFoundBehaviour&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
+         * type.
          * 
          * Default: EXCEPTION
          * Group: common
@@ -3362,7 +3349,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * 
          * Group: common
          * 
@@ -3377,7 +3364,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * 
          * Group: common
          * 
@@ -3389,10 +3376,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for create operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -3404,11 +3391,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for create operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for create operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3420,10 +3407,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for delete operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -3435,11 +3422,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for delete operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3452,10 +3439,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version &amp;amp;lt; 29.0).
+         * version &amp;lt; 29.0).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * 
          * Group: common
          * 
@@ -3468,10 +3455,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version &amp;amp;lt; 29.0).
+         * version &amp;lt; 29.0).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * 
          * Group: common
          * 
@@ -3484,9 +3471,9 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for un-delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * &amp;gt;= 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -3499,10 +3486,10 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Notify for un-delete operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * &amp;gt;= 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3514,10 +3501,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for update operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -3529,11 +3516,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Notify for update operation, defaults to false (API version
-         * &amp;amp;gt;= 29.0).
+         * Notify for update operation, defaults to false (API version &amp;gt;=
+         * 29.0).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3549,8 +3536,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option is a:
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -3566,8 +3552,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -3582,7 +3567,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
          * performs PK chunking automatically, if necessary.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          * 
@@ -3597,8 +3582,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API
          * performs PK chunking automatically, if necessary.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3613,7 +3598,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Chunk size for use with PK Chunking. If unspecified, salesforce
          * default is 100,000. Maximum size is 250,000.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -3628,8 +3613,8 @@ public interface SalesforceEndpointBuilderFactory {
          * Chunk size for use with PK Chunking. If unspecified, salesforce
          * default is 100,000. Maximum size is 250,000.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -3648,7 +3633,7 @@ public interface SalesforceEndpointBuilderFactory {
          * object. PK chunking is supported for sharing objects as long as the
          * parent object is supported.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3664,7 +3649,7 @@ public interface SalesforceEndpointBuilderFactory {
          * the lower boundary for the first chunk. Use this parameter to specify
          * a starting ID when restarting a job that failed between batches.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3680,7 +3665,7 @@ public interface SalesforceEndpointBuilderFactory {
          * more records than can be retrieved in a single call. Use this value
          * in a subsequent call to retrieve additional records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3695,7 +3680,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use raw payload String for request and response (either JSON or XML
          * depending on format), instead of DTOs, false by default.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3711,8 +3696,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Use raw payload String for request and response (either JSON or XML
          * depending on format), instead of DTOs, false by default.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3727,7 +3711,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce1 Analytics report Id.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3742,7 +3726,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce1 Analytics report metadata for filtering.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * 
          * Group: common
          * 
@@ -3757,7 +3741,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce1 Analytics report metadata for filtering.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata&lt;/code&gt; type.
+         * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * 
          * Group: common
          * 
@@ -3771,7 +3755,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Bulk API Result ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3785,7 +3769,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject blob field name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3800,7 +3784,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Fully qualified SObject class name, usually generated using
          * camel-salesforce-maven-plugin.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3814,7 +3798,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject fields to retrieve.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3828,7 +3812,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject ID if required by API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3842,7 +3826,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject external ID field name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3856,7 +3840,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject external ID field value.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3870,7 +3854,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * SObject name if required or supported by API.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3884,7 +3868,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce SOQL query string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3898,7 +3882,7 @@ public interface SalesforceEndpointBuilderFactory {
         /**
          * Salesforce SOSL search string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -3914,7 +3898,7 @@ public interface SalesforceEndpointBuilderFactory {
          * subsequent requests if there are multiple pages. Otherwise, results
          * are returned one page at a time.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3931,8 +3915,8 @@ public interface SalesforceEndpointBuilderFactory {
          * subsequent requests if there are multiple pages. Otherwise, results
          * are returned one page at a time.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: common
@@ -3948,7 +3932,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -3964,8 +3948,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common

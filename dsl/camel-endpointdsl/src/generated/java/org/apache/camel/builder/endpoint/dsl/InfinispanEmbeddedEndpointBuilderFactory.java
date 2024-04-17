@@ -47,7 +47,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -62,7 +62,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -76,7 +76,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * If true, the listener will be installed for the entire cluster.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -91,8 +91,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * If true, the listener will be installed for the entire cluster.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -108,7 +107,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Returns the custom listener in use, if provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener</code> type.
          * 
          * Group: consumer
          * 
@@ -123,7 +122,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Returns the custom listener in use, if provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener</code> type.
          * 
          * Group: consumer
          * 
@@ -144,7 +143,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED,
          * PERSISTENCE_AVAILABILITY_CHANGED.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -158,7 +157,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * If true, the consumer will receive notifications synchronously.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -173,8 +172,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * If true, the consumer will receive notifications synchronously.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -211,7 +209,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -237,8 +235,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -256,8 +253,8 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -275,7 +272,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -289,8 +286,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -305,7 +301,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -320,8 +316,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.manager.EmbeddedCacheManager&lt;/code&gt;
-         * type.
+         * <code>org.infinispan.manager.EmbeddedCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -336,8 +331,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.manager.EmbeddedCacheManager&lt;/code&gt;
-         * type.
+         * <code>org.infinispan.manager.EmbeddedCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -353,7 +347,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * defined.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.configuration.cache.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.configuration.cache.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -369,7 +363,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * defined.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.configuration.cache.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.configuration.cache.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -386,7 +380,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -401,7 +395,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * A comma separated list of org.infinispan.context.Flag to be applied
          * by default on each cache invocation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -415,8 +409,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -431,7 +424,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -451,7 +444,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -478,7 +471,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -493,7 +486,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -507,7 +500,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific default value for some producer operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -521,8 +514,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific default value for some producer operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -536,7 +528,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific key for producer operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -550,8 +542,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific key for producer operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -565,7 +556,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific old value for some producer operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -579,8 +570,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific old value for some producer operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -595,7 +585,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * 
          * Default: PUT
          * Group: producer
@@ -611,7 +601,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * 
          * Default: PUT
          * Group: producer
@@ -626,7 +616,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific value for producer operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -640,8 +630,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific value for producer operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -673,7 +662,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -696,8 +685,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -713,8 +701,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.manager.EmbeddedCacheManager&lt;/code&gt;
-         * type.
+         * <code>org.infinispan.manager.EmbeddedCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -729,8 +716,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.manager.EmbeddedCacheManager&lt;/code&gt;
-         * type.
+         * <code>org.infinispan.manager.EmbeddedCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -746,7 +732,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * defined.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.configuration.cache.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.configuration.cache.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -762,7 +748,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * defined.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.configuration.cache.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.configuration.cache.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -779,7 +765,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -794,7 +780,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * A comma separated list of org.infinispan.context.Flag to be applied
          * by default on each cache invocation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -808,8 +794,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -824,7 +809,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -844,7 +829,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -872,7 +857,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -887,7 +872,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -915,8 +900,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.manager.EmbeddedCacheManager&lt;/code&gt;
-         * type.
+         * <code>org.infinispan.manager.EmbeddedCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -931,8 +915,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.manager.EmbeddedCacheManager&lt;/code&gt;
-         * type.
+         * <code>org.infinispan.manager.EmbeddedCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -948,7 +931,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * defined.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.configuration.cache.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.configuration.cache.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -964,7 +947,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * defined.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.configuration.cache.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.configuration.cache.Configuration</code> type.
          * 
          * Group: advanced
          * 
@@ -981,7 +964,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -996,7 +979,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * A comma separated list of org.infinispan.context.Flag to be applied
          * by default on each cache invocation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1010,8 +993,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -1026,7 +1008,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -1046,7 +1028,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 

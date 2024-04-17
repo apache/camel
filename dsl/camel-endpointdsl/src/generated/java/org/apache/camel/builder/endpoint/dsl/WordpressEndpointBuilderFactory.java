@@ -46,7 +46,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The Wordpress REST API version.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 2
          * Group: common
@@ -61,8 +61,8 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -80,8 +80,8 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -98,7 +98,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -113,8 +113,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -130,7 +129,7 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -145,8 +144,8 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -160,7 +159,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Password from authorized user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -175,7 +174,7 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
+         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
          * Group: common
          * 
@@ -190,7 +189,7 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
+         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
          * Group: common
          * 
@@ -205,7 +204,7 @@ public interface WordpressEndpointBuilderFactory {
          * The Wordpress API URL from your site, e.g.
          * http://myblog.com/wp-json/.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -220,7 +219,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Authorized user to perform writing operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -256,7 +255,7 @@ public interface WordpressEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -282,8 +281,7 @@ public interface WordpressEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -301,8 +299,8 @@ public interface WordpressEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -320,7 +318,7 @@ public interface WordpressEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -334,8 +332,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -350,7 +347,7 @@ public interface WordpressEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -376,7 +373,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The Wordpress REST API version.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 2
          * Group: common
@@ -391,8 +388,8 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -410,8 +407,8 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -428,7 +425,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -443,8 +440,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -460,7 +456,7 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -475,8 +471,8 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -490,7 +486,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Password from authorized user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -505,7 +501,7 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
+         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
          * Group: common
          * 
@@ -520,7 +516,7 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
+         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
          * Group: common
          * 
@@ -535,7 +531,7 @@ public interface WordpressEndpointBuilderFactory {
          * The Wordpress API URL from your site, e.g.
          * http://myblog.com/wp-json/.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -550,7 +546,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Authorized user to perform writing operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -582,7 +578,7 @@ public interface WordpressEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -605,8 +601,7 @@ public interface WordpressEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -634,7 +629,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The Wordpress REST API version.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 2
          * Group: common
@@ -649,8 +644,8 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -668,8 +663,8 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -686,7 +681,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -701,8 +696,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -718,7 +712,7 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -733,8 +727,8 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -748,7 +742,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Password from authorized user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -763,7 +757,7 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
+         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
          * Group: common
          * 
@@ -778,7 +772,7 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
+         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
          * Group: common
          * 
@@ -793,7 +787,7 @@ public interface WordpressEndpointBuilderFactory {
          * The Wordpress API URL from your site, e.g.
          * http://myblog.com/wp-json/.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -808,7 +802,7 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Authorized user to perform writing operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 

@@ -46,7 +46,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Specifies the host of the cache on Infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -61,7 +61,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -76,7 +76,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -90,7 +90,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define if we are connecting to a secured Infinispan instance.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -105,8 +105,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define if we are connecting to a secured Infinispan instance.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -122,7 +121,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Returns the custom listener in use, if provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener</code> type.
          * 
          * Group: consumer
          * 
@@ -137,7 +136,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Returns the custom listener in use, if provided.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener</code> type.
          * 
          * Group: consumer
          * 
@@ -155,7 +154,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * CLIENT_CACHE_ENTRY_REMOVED, CLIENT_CACHE_ENTRY_EXPIRED,
          * CLIENT_CACHE_FAILOVER.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -169,7 +168,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the password to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -183,7 +182,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the SASL Mechanism to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -197,7 +196,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the security realm to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -211,7 +210,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the security server name to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -225,7 +224,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the username to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -261,7 +260,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -287,8 +286,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -306,8 +304,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -325,7 +323,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -339,8 +337,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -355,7 +352,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -370,7 +367,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.RemoteCacheManager&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.RemoteCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -385,7 +382,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.RemoteCacheManager&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.RemoteCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -401,7 +398,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * defined.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.configuration.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.configuration.Configuration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -417,7 +415,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * defined.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.configuration.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.configuration.Configuration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -431,8 +430,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -447,8 +446,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -465,7 +464,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -480,7 +479,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * A comma separated list of org.infinispan.client.hotrod.Flag to be
          * applied by default on each cache invocation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -494,8 +493,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -510,7 +508,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -530,7 +528,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -556,7 +554,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Specifies the host of the cache on Infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -571,7 +569,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -586,7 +584,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -600,7 +598,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define if we are connecting to a secured Infinispan instance.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -615,8 +613,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define if we are connecting to a secured Infinispan instance.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -631,7 +628,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific default value for some producer operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -645,8 +642,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific default value for some producer operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -660,7 +656,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific key for producer operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -674,8 +670,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific key for producer operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -689,7 +684,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific old value for some producer operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -703,8 +698,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific old value for some producer operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -719,7 +713,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * 
          * Default: PUT
          * Group: producer
@@ -735,7 +729,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * 
          * Default: PUT
          * Group: producer
@@ -750,7 +744,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific value for producer operations.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -764,8 +758,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific value for producer operations.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -779,7 +772,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the password to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -793,7 +786,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the SASL Mechanism to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -807,7 +800,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the security realm to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -821,7 +814,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the security server name to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -835,7 +828,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the username to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -867,7 +860,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -890,8 +883,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -907,7 +899,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.RemoteCacheManager&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.RemoteCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -922,7 +914,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.RemoteCacheManager&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.RemoteCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -938,7 +930,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * defined.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.configuration.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.configuration.Configuration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -954,7 +947,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * defined.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.configuration.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.configuration.Configuration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -968,8 +962,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -984,8 +978,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1002,7 +996,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1017,7 +1011,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * A comma separated list of org.infinispan.client.hotrod.Flag to be
          * applied by default on each cache invocation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1031,8 +1025,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -1047,7 +1040,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -1067,7 +1060,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1094,7 +1087,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Specifies the host of the cache on Infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1109,7 +1102,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -1124,7 +1117,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
+         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
          * Group: common
          * 
@@ -1138,7 +1131,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define if we are connecting to a secured Infinispan instance.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1153,8 +1146,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define if we are connecting to a secured Infinispan instance.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1169,7 +1161,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the password to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1183,7 +1175,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the SASL Mechanism to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1197,7 +1189,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the security realm to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1211,7 +1203,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the security server name to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1225,7 +1217,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Define the username to access the infinispan instance.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1253,7 +1245,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.RemoteCacheManager&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.RemoteCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -1268,7 +1260,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.RemoteCacheManager&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.RemoteCacheManager</code> type.
          * 
          * Group: advanced
          * 
@@ -1284,7 +1276,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * defined.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.client.hotrod.configuration.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.configuration.Configuration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1300,7 +1293,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * defined.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.infinispan.client.hotrod.configuration.Configuration&lt;/code&gt; type.
+         * <code>org.infinispan.client.hotrod.configuration.Configuration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1314,8 +1308,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1330,8 +1324,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1348,7 +1342,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1363,7 +1357,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * A comma separated list of org.infinispan.client.hotrod.Flag to be
          * applied by default on each cache invocation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1377,8 +1371,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -1393,7 +1386,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
+         * <code>java.util.function.BiFunction</code> type.
          * 
          * Group: advanced
          * 
@@ -1413,7 +1406,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 

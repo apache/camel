@@ -46,7 +46,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -60,8 +60,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -75,8 +75,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
-         * The option is a:
-         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
+         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
          * 
          * Group: common
          * 
@@ -91,7 +90,7 @@ public interface ConsulEndpointBuilderFactory {
          * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.Consul</code> type.
          * 
          * Group: common
          * 
@@ -105,7 +104,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The default key. Can be overridden by CamelConsulKey.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -120,7 +119,7 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -136,8 +135,7 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -152,7 +150,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -166,8 +164,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -181,7 +179,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -195,7 +193,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul agent URL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -209,7 +207,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -223,8 +221,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -238,7 +236,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the ACL token to be used with Consul.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -252,7 +250,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the password to be used for basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -268,7 +266,7 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -284,7 +282,7 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -298,7 +296,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the username to be used for basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -312,7 +310,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The second to wait for a watch event, default 10 seconds.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 10
          * Group: watch
@@ -327,8 +325,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The second to wait for a watch event, default 10 seconds.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 10
          * Group: watch
@@ -343,7 +341,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The first index for watch for, default 0.
          * 
-         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option is a: <code>java.math.BigInteger</code> type.
          * 
          * Default: 0
          * Group: watch
@@ -358,8 +356,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The first index for watch for, default 0.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
          * 
          * Default: 0
          * Group: watch
@@ -374,7 +372,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Recursively watch, default false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: watch
@@ -389,8 +387,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Recursively watch, default false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: watch
@@ -427,7 +424,7 @@ public interface ConsulEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -453,8 +450,7 @@ public interface ConsulEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -472,8 +468,8 @@ public interface ConsulEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -491,7 +487,7 @@ public interface ConsulEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -505,8 +501,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -521,7 +516,7 @@ public interface ConsulEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -537,7 +532,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.option.ConsistencyMode</code> type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -554,7 +549,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.option.ConsistencyMode</code> type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -569,7 +564,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The data center.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -583,7 +578,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The near node to use for queries.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -597,8 +592,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The note meta-data to use for queries.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -613,7 +608,7 @@ public interface ConsulEndpointBuilderFactory {
          * The note meta-data to use for queries.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -639,7 +634,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -653,8 +648,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -668,8 +663,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
-         * The option is a:
-         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
+         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
          * 
          * Group: common
          * 
@@ -684,7 +678,7 @@ public interface ConsulEndpointBuilderFactory {
          * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.Consul</code> type.
          * 
          * Group: common
          * 
@@ -698,7 +692,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The default key. Can be overridden by CamelConsulKey.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -713,7 +707,7 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -729,8 +723,7 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -745,7 +738,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -759,8 +752,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -774,7 +767,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -788,7 +781,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul agent URL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -802,7 +795,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -816,8 +809,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -831,7 +824,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The default action. Can be overridden by CamelConsulAction.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -846,7 +839,7 @@ public interface ConsulEndpointBuilderFactory {
          * Default to transform values retrieved from Consul i.e. on KV endpoint
          * to string.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -862,8 +855,7 @@ public interface ConsulEndpointBuilderFactory {
          * Default to transform values retrieved from Consul i.e. on KV endpoint
          * to string.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -878,7 +870,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the ACL token to be used with Consul.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -892,7 +884,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the password to be used for basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -908,7 +900,7 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -924,7 +916,7 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -938,7 +930,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the username to be used for basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -970,7 +962,7 @@ public interface ConsulEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -993,8 +985,7 @@ public interface ConsulEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1011,7 +1002,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.option.ConsistencyMode</code> type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -1028,7 +1019,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.option.ConsistencyMode</code> type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -1043,7 +1034,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The data center.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1057,7 +1048,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The near node to use for queries.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1071,8 +1062,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The note meta-data to use for queries.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1087,7 +1078,7 @@ public interface ConsulEndpointBuilderFactory {
          * The note meta-data to use for queries.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -1114,7 +1105,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -1128,8 +1119,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1143,8 +1134,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
-         * The option is a:
-         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
+         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
          * 
          * Group: common
          * 
@@ -1159,7 +1149,7 @@ public interface ConsulEndpointBuilderFactory {
          * Reference to a org.kiwiproject.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.Consul</code> type.
          * 
          * Group: common
          * 
@@ -1173,7 +1163,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The default key. Can be overridden by CamelConsulKey.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1188,7 +1178,7 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1204,8 +1194,7 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1220,7 +1209,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -1234,8 +1223,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1249,7 +1238,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1263,7 +1252,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul agent URL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1277,7 +1266,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          * 
@@ -1291,8 +1280,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1306,7 +1295,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the ACL token to be used with Consul.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1320,7 +1309,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the password to be used for basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1336,7 +1325,7 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1352,7 +1341,7 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1366,7 +1355,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the username to be used for basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1395,7 +1384,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.option.ConsistencyMode</code> type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -1412,7 +1401,7 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.kiwiproject.consul.option.ConsistencyMode&lt;/code&gt; type.
+         * <code>org.kiwiproject.consul.option.ConsistencyMode</code> type.
          * 
          * Default: DEFAULT
          * Group: advanced
@@ -1427,7 +1416,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The data center.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1441,7 +1430,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The near node to use for queries.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1455,8 +1444,8 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The note meta-data to use for queries.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1471,7 +1460,7 @@ public interface ConsulEndpointBuilderFactory {
          * The note meta-data to use for queries.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          * 

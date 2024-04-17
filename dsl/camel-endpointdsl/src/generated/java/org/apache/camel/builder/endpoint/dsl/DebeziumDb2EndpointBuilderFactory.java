@@ -50,10 +50,10 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -74,10 +74,10 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -95,7 +95,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
@@ -111,7 +111,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
@@ -130,7 +130,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -147,7 +147,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -165,7 +165,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -180,7 +180,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -195,7 +195,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -211,7 +211,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
@@ -227,7 +227,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -242,7 +242,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -257,7 +257,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -272,7 +272,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -287,7 +287,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -302,7 +302,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -316,7 +316,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Regular expressions matching columns to exclude from change events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -330,7 +330,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Regular expressions matching columns to include in change events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -347,7 +347,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * and original length as parameters to the corresponding field schemas
          * in the emitted change records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -363,7 +363,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -381,7 +381,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * corresponding value would be the value of that tag the key is. For
          * example: k1=v1,k2=v2.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -396,7 +396,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The name of the database from which the connector should capture
          * changes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -410,7 +410,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Resolvable hostname or IP address of the database server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -425,7 +425,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Password of the database user to be used when connecting to the
          * database.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: db2
@@ -440,7 +440,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Port of the database server.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 50000
          * Group: db2
@@ -455,7 +455,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Port of the database server.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 50000
          * Group: db2
@@ -470,7 +470,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Name of the database user to be used when connecting to the database.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -487,7 +487,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * type and original length as parameters to the corresponding field
          * schemas in the emitted change records.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -508,7 +508,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * which may not offer the precision but will be far easier to use in
          * consumers.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: precise
          * Group: db2
@@ -524,7 +524,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The maximum number of retries on connection errors before failing (-1
          * = no limit, 0 = disabled, 0 = num of retries).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: db2
@@ -540,7 +540,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The maximum number of retries on connection errors before failing (-1
          * = no limit, 0 = disabled, 0 = num of retries).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: db2
@@ -560,7 +560,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped; 'ignore' the problematic event will be skipped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: fail
          * Group: db2
@@ -577,7 +577,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0ms
          * Group: db2
@@ -594,7 +594,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0ms
          * Group: db2
@@ -610,7 +610,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: __debezium-heartbeat
          * Group: db2
@@ -631,7 +631,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * independent of how the connector internally records database schema
          * history.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: db2
@@ -652,8 +652,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * independent of how the connector internally records database schema
          * history.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: db2
@@ -669,7 +668,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The maximum size of chunk (number of documents/rows) for incremental
          * snapshotting.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1024
          * Group: db2
@@ -685,7 +684,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The maximum size of chunk (number of documents/rows) for incremental
          * snapshotting.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1024
          * Group: db2
@@ -704,7 +703,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * written on signal data collection, the close will delete the relative
          * open signal;.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: INSERT_INSERT
          * Group: db2
@@ -719,7 +718,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2048
          * Group: db2
@@ -734,7 +733,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2048
          * Group: db2
@@ -751,7 +750,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 8192
          * Group: db2
@@ -768,7 +767,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 8192
          * Group: db2
@@ -785,7 +784,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * database log but not yet recorded or forwarded. Defaults to 0. Mean
          * the feature is not enabled.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: db2
@@ -802,7 +801,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * database log but not yet recorded or forwarded. Defaults to 0. Mean
          * the feature is not enabled.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: db2
@@ -825,7 +824,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * used as message key. Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -839,7 +838,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * List of notification channels names that are enabled.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -854,7 +853,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -869,7 +868,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500ms
          * Group: db2
@@ -885,7 +884,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Time to wait for new change events to appear after receiving no
          * events, given in milliseconds. Defaults to 500 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500ms
          * Group: db2
@@ -901,7 +900,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Optional list of post processors. The processors are defined using
          * '.type' config option and configured using options ''.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -915,7 +914,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -930,8 +929,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -948,7 +946,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * streaming. A value of '0' uses the default JDBC fetch size. The
          * default value is '10000'.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10000
          * Group: db2
@@ -965,7 +963,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * streaming. A value of '0' uses the default JDBC fetch size. The
          * default value is '10000'.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10000
          * Group: db2
@@ -981,7 +979,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: db2
@@ -997,7 +995,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: db2
@@ -1014,7 +1012,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * recover database schema changes. The configuration properties for the
          * history are prefixed with the 'schema.history.internal.' string.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.storage.kafka.history.KafkaSchemaHistory
          * Group: db2
@@ -1030,7 +1028,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The path to the file that will be used to record the database schema
          * history.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -1048,7 +1046,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * which it cannot parse. If skipping is enabled then Debezium can miss
          * metadata changes.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1067,8 +1065,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * which it cannot parse. If skipping is enabled then Debezium can miss
          * metadata changes.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1086,7 +1083,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * schema/database will be stored. If set to false, then Debezium will
          * store all incoming DDL statements.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1105,8 +1102,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * schema/database will be stored. If set to false, then Debezium will
          * store all incoming DDL statements.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1125,7 +1121,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * set to true, then only DDL that manipulates a captured table will be
          * stored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1144,8 +1140,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * set to true, then only DDL that manipulates a captured table will be
          * stored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1167,7 +1162,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * like _uxxxx. Note: _ is an escape sequence like backslash in
          * Java;'none' does not apply any adjustment (default).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: none
          * Group: db2
@@ -1183,7 +1178,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -1198,7 +1193,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: source
          * Group: db2
@@ -1214,7 +1209,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Interval for looking for new signals in registered channels, given in
          * milliseconds. Defaults to 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5s
          * Group: db2
@@ -1230,7 +1225,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Interval for looking for new signals in registered channels, given in
          * milliseconds. Defaults to 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5s
          * Group: db2
@@ -1248,7 +1243,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * 't' for truncates, and 'none' to indicate nothing skipped. By
          * default, only truncate operations will be skipped.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: t
          * Group: db2
@@ -1264,7 +1259,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0ms
          * Group: db2
@@ -1280,7 +1275,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0ms
          * Group: db2
@@ -1296,7 +1291,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: db2
          * 
@@ -1311,7 +1306,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: db2
          * 
@@ -1326,7 +1321,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * This setting must be set to specify a list of tables/collections
          * whose snapshot must be taken on creating or restarting the connector.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -1342,7 +1337,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10s
          * Group: db2
@@ -1359,7 +1354,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10s
          * Group: db2
@@ -1379,7 +1374,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * run a snapshot of the schema when no offsets are available for the
          * logical server name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: initial
          * Group: db2
@@ -1395,7 +1390,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the data should be snapshotted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1411,8 +1406,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the data should be snapshotted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1429,7 +1423,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * permits to specify whenever the data should be snapshotted or not in
          * case of error.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1447,8 +1441,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * permits to specify whenever the data should be snapshotted or not in
          * case of error.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1466,7 +1459,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * permits to specify whenever the schema should be snapshotted or not
          * in case of error.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1484,8 +1477,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * permits to specify whenever the schema should be snapshotted or not
          * in case of error.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1502,7 +1494,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the schema should be snapshotted or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1518,8 +1510,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * When 'snapshot.mode' is set as configuration_based, this setting
          * permits to specify whenever the schema should be snapshotted or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1536,7 +1527,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * permits to specify whenever the stream should start or not after
          * snapshot.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1553,8 +1544,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * permits to specify whenever the stream should start or not after
          * snapshot.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1573,7 +1563,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * interface and is called on each app boot to determine whether to do a
          * snapshot.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -1598,7 +1588,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * setting a specific point where to start (resume) snapshotting, in
          * case a previous snapshotting was interrupted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -1616,7 +1606,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * ascending. A value of disabled (the default) will disable ordering by
          * row count.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: disabled
          * Group: db2
@@ -1632,7 +1622,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The name of the SourceInfoStructMaker class that returns SourceInfo
          * schema and struct.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.connector.db2.Db2SourceInfoStructMaker
          * Group: db2
@@ -1648,7 +1638,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -1662,7 +1652,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: db2
@@ -1677,8 +1667,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: db2
@@ -1693,7 +1682,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * The tables for which changes are to be captured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: db2
          * 
@@ -1714,7 +1703,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * built-in representations for Time, Date, and Timestamp, which uses
          * millisecond precision regardless of the database columns' precision.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: adaptive
          * Group: db2
@@ -1733,7 +1722,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Kafka to completely delete all events pertaining to the given key
          * once the source record got deleted.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1752,8 +1741,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Kafka to completely delete all events pertaining to the given key
          * once the source record got deleted.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: db2
@@ -1770,7 +1758,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * determine the topic name for data change, schema change, transaction,
          * heartbeat event etc.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: io.debezium.schema.SchemaTopicNamingStrategy
          * Group: db2
@@ -1790,7 +1778,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * this connector. Only alphanumeric characters, hyphens, dots and
          * underscores must be accepted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: db2
@@ -1828,7 +1816,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1854,8 +1842,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1873,8 +1860,8 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1892,7 +1879,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1906,8 +1893,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1922,7 +1908,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 

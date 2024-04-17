@@ -49,7 +49,7 @@ public interface AMQPEndpointBuilderFactory {
          * instance. It is typically only required for durable topic
          * subscriptions with JMS 1.1.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -64,8 +64,7 @@ public interface AMQPEndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
+         * The option is a: <code>jakarta.jms.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -81,7 +80,7 @@ public interface AMQPEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
+         * <code>jakarta.jms.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -102,7 +101,7 @@ public interface AMQPEndpointBuilderFactory {
          * to use Camel as a proxy between different message brokers and you
          * want to route message from one system to another.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -124,8 +123,7 @@ public interface AMQPEndpointBuilderFactory {
          * to use Camel as a proxy between different message brokers and you
          * want to route message from one system to another.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -141,7 +139,7 @@ public interface AMQPEndpointBuilderFactory {
          * The durable subscriber name for specifying durable topic
          * subscriptions. The clientId option must be configured as well.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -160,7 +158,7 @@ public interface AMQPEndpointBuilderFactory {
          * to specify it.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.JmsMessageType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
          * Group: common
          * 
@@ -179,7 +177,7 @@ public interface AMQPEndpointBuilderFactory {
          * to specify it.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.JmsMessageType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
          * Group: common
          * 
@@ -194,7 +192,7 @@ public interface AMQPEndpointBuilderFactory {
          * Provides an explicit ReplyTo destination (overrides any incoming
          * value of Message.getJMSReplyTo() in consumer).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -212,7 +210,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -231,8 +229,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -248,7 +245,7 @@ public interface AMQPEndpointBuilderFactory {
          * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,
          * CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: AUTO_ACKNOWLEDGE
          * Group: consumer
@@ -272,7 +269,7 @@ public interface AMQPEndpointBuilderFactory {
          * the message (for instance because it does not meet the criteria of
          * any selectors associated with the consumer).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -295,7 +292,7 @@ public interface AMQPEndpointBuilderFactory {
          * the message (for instance because it does not meet the criteria of
          * any selectors associated with the consumer).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -318,7 +315,7 @@ public interface AMQPEndpointBuilderFactory {
          * transaction must be executed synchronously (Camel 3.0 may support
          * async transactions).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -342,8 +339,7 @@ public interface AMQPEndpointBuilderFactory {
          * transaction must be executed synchronously (Camel 3.0 may support
          * async transactions).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -358,7 +354,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether the consumer container should auto-startup.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -373,8 +369,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether the consumer container should auto-startup.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -390,7 +385,7 @@ public interface AMQPEndpointBuilderFactory {
          * Sets the cache level by ID for the underlying JMS resources. See
          * cacheLevelName option for more details.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -405,7 +400,7 @@ public interface AMQPEndpointBuilderFactory {
          * Sets the cache level by ID for the underlying JMS resources. See
          * cacheLevelName option for more details.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -423,7 +418,7 @@ public interface AMQPEndpointBuilderFactory {
          * the Spring documentation and Transactions Cache Levels for more
          * information.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: CACHE_AUTO
          * Group: consumer
@@ -443,7 +438,7 @@ public interface AMQPEndpointBuilderFactory {
          * replyToConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -463,7 +458,7 @@ public interface AMQPEndpointBuilderFactory {
          * replyToConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -483,7 +478,7 @@ public interface AMQPEndpointBuilderFactory {
          * replyToMaxConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -502,7 +497,7 @@ public interface AMQPEndpointBuilderFactory {
          * replyToMaxConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -516,7 +511,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether to use persistent delivery by default for replies.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -531,8 +526,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether to use persistent delivery by default for replies.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -547,7 +541,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Sets the JMS selector to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -568,7 +562,7 @@ public interface AMQPEndpointBuilderFactory {
          * a topic (pub-sub domain), therefore this method switches the
          * pubSubDomain flag as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -590,8 +584,7 @@ public interface AMQPEndpointBuilderFactory {
          * a topic (pub-sub domain), therefore this method switches the
          * pubSubDomain flag as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -612,7 +605,7 @@ public interface AMQPEndpointBuilderFactory {
          * message listener container) is allowed for each subscription, except
          * for a shared subscription (which requires JMS 2.0).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -636,7 +629,7 @@ public interface AMQPEndpointBuilderFactory {
          * pubSubDomain flag as well. Requires a JMS 2.0 compatible message
          * broker.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -661,8 +654,7 @@ public interface AMQPEndpointBuilderFactory {
          * pubSubDomain flag as well. Requires a JMS 2.0 compatible message
          * broker.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -678,8 +670,7 @@ public interface AMQPEndpointBuilderFactory {
          * Allows to configure the default errorHandler logging level for
          * logging uncaught exceptions.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: logging
@@ -696,7 +687,7 @@ public interface AMQPEndpointBuilderFactory {
          * logging uncaught exceptions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: WARN
          * Group: logging
@@ -712,7 +703,7 @@ public interface AMQPEndpointBuilderFactory {
          * Allows to control whether stack-traces should be logged or not, by
          * the default errorHandler.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: logging
@@ -728,8 +719,7 @@ public interface AMQPEndpointBuilderFactory {
          * Allows to control whether stack-traces should be logged or not, by
          * the default errorHandler.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: logging
@@ -745,7 +735,7 @@ public interface AMQPEndpointBuilderFactory {
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -760,7 +750,7 @@ public interface AMQPEndpointBuilderFactory {
          * Username to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -774,7 +764,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether to use transacted mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -789,8 +779,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether to use transacted mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -821,7 +810,7 @@ public interface AMQPEndpointBuilderFactory {
          * be a native JDBC transaction), with the JMS transaction committing
          * right after the main transaction.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -852,8 +841,7 @@ public interface AMQPEndpointBuilderFactory {
          * be a native JDBC transaction), with the JMS transaction committing
          * right after the main transaction.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -886,7 +874,7 @@ public interface AMQPEndpointBuilderFactory {
          * message may be moved at a dead letter queue on the JMS broker. To
          * avoid this its recommended to enable this option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -908,8 +896,7 @@ public interface AMQPEndpointBuilderFactory {
          * message may be moved at a dead letter queue on the JMS broker. To
          * avoid this its recommended to enable this option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -930,7 +917,7 @@ public interface AMQPEndpointBuilderFactory {
          * stop ability is enabled by default in the regular JMS consumers but
          * to enable for reply managers you must enable this flag.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -951,8 +938,7 @@ public interface AMQPEndpointBuilderFactory {
          * stop ability is enabled by default in the regular JMS consumers but
          * to enable for reply managers you must enable this flag.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -977,8 +963,7 @@ public interface AMQPEndpointBuilderFactory {
          * use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.ConsumerType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
          * Default: Default
          * Group: consumer (advanced)
@@ -1003,8 +988,7 @@ public interface AMQPEndpointBuilderFactory {
          * use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.ConsumerType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
          * Default: Default
          * Group: consumer (advanced)
@@ -1029,7 +1013,8 @@ public interface AMQPEndpointBuilderFactory {
          * increasing and decreasing concurrent consumers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.DefaultTaskExecutorType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1053,7 +1038,8 @@ public interface AMQPEndpointBuilderFactory {
          * increasing and decreasing concurrent consumers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.DefaultTaskExecutorType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1071,7 +1057,7 @@ public interface AMQPEndpointBuilderFactory {
          * issues with the underlying JMS provider and the use of JMS
          * properties. See also the option eagerPoisonBody.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1090,8 +1076,7 @@ public interface AMQPEndpointBuilderFactory {
          * issues with the underlying JMS provider and the use of JMS
          * properties. See also the option eagerPoisonBody.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1111,7 +1096,7 @@ public interface AMQPEndpointBuilderFactory {
          * the Exchange). This can be turned off by setting
          * eagerPoisonBody=false. See also the option eagerLoadingOfProperties.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Poison JMS message due to ${exception.message}
          * Group: consumer (advanced)
@@ -1129,8 +1114,8 @@ public interface AMQPEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1148,7 +1133,7 @@ public interface AMQPEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1162,8 +1147,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1178,7 +1162,7 @@ public interface AMQPEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1193,7 +1177,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether the listener session should be exposed when
          * consuming messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1209,8 +1193,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether the listener session should be exposed when
          * consuming messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1235,8 +1218,7 @@ public interface AMQPEndpointBuilderFactory {
          * use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.ConsumerType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
          * Default: Default
          * Group: consumer (advanced)
@@ -1261,8 +1243,7 @@ public interface AMQPEndpointBuilderFactory {
          * use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.ConsumerType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
          * Default: Default
          * Group: consumer (advanced)
@@ -1280,7 +1261,7 @@ public interface AMQPEndpointBuilderFactory {
          * an endless loop by consuming and sending back the same message to
          * itself.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1298,8 +1279,7 @@ public interface AMQPEndpointBuilderFactory {
          * an endless loop by consuming and sending back the same message to
          * itself.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1315,8 +1295,7 @@ public interface AMQPEndpointBuilderFactory {
          * Allows you to specify a custom task executor for consuming messages.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.core.task.TaskExecutor&lt;/code&gt;
-         * type.
+         * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1331,8 +1310,7 @@ public interface AMQPEndpointBuilderFactory {
          * Allows you to specify a custom task executor for consuming messages.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.core.task.TaskExecutor&lt;/code&gt;
-         * type.
+         * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1349,7 +1327,7 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1367,8 +1345,7 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1385,7 +1362,7 @@ public interface AMQPEndpointBuilderFactory {
          * memory overhead when using Artemis with JMS StreamMessage types. This
          * option must only be enabled if Apache Artemis is being used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1402,8 +1379,7 @@ public interface AMQPEndpointBuilderFactory {
          * memory overhead when using Artemis with JMS StreamMessage types. This
          * option must only be enabled if Apache Artemis is being used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1427,7 +1403,7 @@ public interface AMQPEndpointBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1451,8 +1427,7 @@ public interface AMQPEndpointBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1468,7 +1443,7 @@ public interface AMQPEndpointBuilderFactory {
          * Whether to stop the JmsConsumer message listener asynchronously, when
          * stopping a route.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1484,8 +1459,7 @@ public interface AMQPEndpointBuilderFactory {
          * Whether to stop the JmsConsumer message listener asynchronously, when
          * stopping a route.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1504,7 +1478,7 @@ public interface AMQPEndpointBuilderFactory {
          * destination in a JNDI registry).
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.jms.support.destination.DestinationResolver&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -1522,7 +1496,7 @@ public interface AMQPEndpointBuilderFactory {
          * destination in a JNDI registry).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.jms.support.destination.DestinationResolver&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -1542,8 +1516,8 @@ public interface AMQPEndpointBuilderFactory {
          * and errorHandlerLogStackTrace options. This makes it much easier to
          * configure, than having to code a custom errorHandler.
          * 
-         * The option is a:
-         * &lt;code&gt;org.springframework.util.ErrorHandler&lt;/code&gt; type.
+         * The option is a: <code>org.springframework.util.ErrorHandler</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1564,7 +1538,7 @@ public interface AMQPEndpointBuilderFactory {
          * configure, than having to code a custom errorHandler.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.util.ErrorHandler&lt;/code&gt; type.
+         * <code>org.springframework.util.ErrorHandler</code> type.
          * 
          * Group: advanced
          * 
@@ -1579,8 +1553,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
+         * The option is a: <code>jakarta.jms.ExceptionListener</code> type.
          * 
          * Group: advanced
          * 
@@ -1596,7 +1569,7 @@ public interface AMQPEndpointBuilderFactory {
          * underlying JMS exceptions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
+         * <code>jakarta.jms.ExceptionListener</code> type.
          * 
          * Group: advanced
          * 
@@ -1612,8 +1585,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1629,8 +1601,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -1645,7 +1616,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specify the limit for the number of consumers that are allowed to be
          * idle at any given time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -1661,7 +1632,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specify the limit for the number of consumers that are allowed to be
          * idle at any given time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -1680,7 +1651,7 @@ public interface AMQPEndpointBuilderFactory {
          * (in the case of dynamic scheduling; see the maxConcurrentConsumers
          * setting). There is additional doc available from Spring.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -1699,7 +1670,7 @@ public interface AMQPEndpointBuilderFactory {
          * (in the case of dynamic scheduling; see the maxConcurrentConsumers
          * setting). There is additional doc available from Spring.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -1717,7 +1688,7 @@ public interface AMQPEndpointBuilderFactory {
          * as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1735,8 +1706,7 @@ public interface AMQPEndpointBuilderFactory {
          * as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -1760,7 +1730,8 @@ public interface AMQPEndpointBuilderFactory {
          * using the # notation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1783,7 +1754,8 @@ public interface AMQPEndpointBuilderFactory {
          * using the # notation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1798,7 +1770,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1814,8 +1786,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1833,7 +1804,7 @@ public interface AMQPEndpointBuilderFactory {
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -1851,7 +1822,7 @@ public interface AMQPEndpointBuilderFactory {
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -1869,7 +1840,7 @@ public interface AMQPEndpointBuilderFactory {
          * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1886,7 +1857,7 @@ public interface AMQPEndpointBuilderFactory {
          * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -1903,7 +1874,8 @@ public interface AMQPEndpointBuilderFactory {
          * sending a JMS message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.MessageCreatedStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1920,7 +1892,8 @@ public interface AMQPEndpointBuilderFactory {
          * sending a JMS message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.MessageCreatedStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1938,7 +1911,7 @@ public interface AMQPEndpointBuilderFactory {
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1957,8 +1930,7 @@ public interface AMQPEndpointBuilderFactory {
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -1978,7 +1950,7 @@ public interface AMQPEndpointBuilderFactory {
          * consumerType to Custom.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.MessageListenerContainerFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -1997,7 +1969,7 @@ public interface AMQPEndpointBuilderFactory {
          * consumerType to Custom.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.MessageListenerContainerFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -2015,7 +1987,7 @@ public interface AMQPEndpointBuilderFactory {
          * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2034,8 +2006,7 @@ public interface AMQPEndpointBuilderFactory {
          * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -2051,7 +2022,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2067,8 +2038,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2083,7 +2053,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The timeout for receiving messages (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -2098,7 +2068,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The timeout for receiving messages (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -2115,7 +2085,7 @@ public interface AMQPEndpointBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -2132,7 +2102,7 @@ public interface AMQPEndpointBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -2151,7 +2121,7 @@ public interface AMQPEndpointBuilderFactory {
          * can lower this interval, to check more frequently. The timeout is
          * determined by the option requestTimeout.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -2170,7 +2140,7 @@ public interface AMQPEndpointBuilderFactory {
          * can lower this interval, to check more frequently. The timeout is
          * determined by the option requestTimeout.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -2185,7 +2155,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2200,8 +2170,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2219,7 +2188,8 @@ public interface AMQPEndpointBuilderFactory {
          * special requirements for creating temporary queues).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.TemporaryQueueResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2236,7 +2206,8 @@ public interface AMQPEndpointBuilderFactory {
          * special requirements for creating temporary queues).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.TemporaryQueueResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -2263,7 +2234,7 @@ public interface AMQPEndpointBuilderFactory {
          * data at Class level, which forces a strong coupling between the
          * producers and consumer!.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2291,8 +2262,7 @@ public interface AMQPEndpointBuilderFactory {
          * data at Class level, which forces a strong coupling between the
          * producers and consumer!.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2318,7 +2288,7 @@ public interface AMQPEndpointBuilderFactory {
          * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2344,8 +2314,7 @@ public interface AMQPEndpointBuilderFactory {
          * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2361,7 +2330,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2377,8 +2346,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2395,7 +2363,7 @@ public interface AMQPEndpointBuilderFactory {
          * to the actual correlation id when doing request/reply over JMS and
          * when the option useMessageIDAsCorrelationID is enabled.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 50
          * Group: advanced
@@ -2412,7 +2380,7 @@ public interface AMQPEndpointBuilderFactory {
          * to the actual correlation id when doing request/reply over JMS and
          * when the option useMessageIDAsCorrelationID is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 50
          * Group: advanced
@@ -2428,7 +2396,7 @@ public interface AMQPEndpointBuilderFactory {
          * Interval in millis to sleep each time while waiting for provisional
          * correlation id to be updated.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -2445,7 +2413,7 @@ public interface AMQPEndpointBuilderFactory {
          * Interval in millis to sleep each time while waiting for provisional
          * correlation id to be updated.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -2462,7 +2430,7 @@ public interface AMQPEndpointBuilderFactory {
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: transaction (advanced)
@@ -2478,8 +2446,7 @@ public interface AMQPEndpointBuilderFactory {
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: transaction (advanced)
@@ -2495,7 +2462,7 @@ public interface AMQPEndpointBuilderFactory {
          * The Spring transaction manager to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
+         * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -2510,7 +2477,7 @@ public interface AMQPEndpointBuilderFactory {
          * The Spring transaction manager to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
+         * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -2524,7 +2491,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The name of the transaction to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -2539,7 +2506,7 @@ public interface AMQPEndpointBuilderFactory {
          * The timeout value of the transaction (in seconds), if using
          * transacted mode.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: transaction (advanced)
@@ -2555,7 +2522,7 @@ public interface AMQPEndpointBuilderFactory {
          * The timeout value of the transaction (in seconds), if using
          * transacted mode.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: transaction (advanced)
@@ -2585,7 +2552,7 @@ public interface AMQPEndpointBuilderFactory {
          * instance. It is typically only required for durable topic
          * subscriptions with JMS 1.1.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2600,8 +2567,7 @@ public interface AMQPEndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
+         * The option is a: <code>jakarta.jms.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -2617,7 +2583,7 @@ public interface AMQPEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
+         * <code>jakarta.jms.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -2638,7 +2604,7 @@ public interface AMQPEndpointBuilderFactory {
          * to use Camel as a proxy between different message brokers and you
          * want to route message from one system to another.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2660,8 +2626,7 @@ public interface AMQPEndpointBuilderFactory {
          * to use Camel as a proxy between different message brokers and you
          * want to route message from one system to another.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2677,7 +2642,7 @@ public interface AMQPEndpointBuilderFactory {
          * The durable subscriber name for specifying durable topic
          * subscriptions. The clientId option must be configured as well.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2696,7 +2661,7 @@ public interface AMQPEndpointBuilderFactory {
          * to specify it.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.JmsMessageType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
          * Group: common
          * 
@@ -2715,7 +2680,7 @@ public interface AMQPEndpointBuilderFactory {
          * to specify it.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.JmsMessageType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
          * Group: common
          * 
@@ -2730,7 +2695,7 @@ public interface AMQPEndpointBuilderFactory {
          * Provides an explicit ReplyTo destination (overrides any incoming
          * value of Message.getJMSReplyTo() in consumer).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2748,7 +2713,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2767,8 +2732,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2784,7 +2748,7 @@ public interface AMQPEndpointBuilderFactory {
          * Sets delivery delay to use for send calls for JMS. This option
          * requires JMS 2.0 compliant broker.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -2800,7 +2764,7 @@ public interface AMQPEndpointBuilderFactory {
          * Sets delivery delay to use for send calls for JMS. This option
          * requires JMS 2.0 compliant broker.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -2817,7 +2781,7 @@ public interface AMQPEndpointBuilderFactory {
          * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and
          * PERSISTENT = 2.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
@@ -2833,8 +2797,8 @@ public interface AMQPEndpointBuilderFactory {
          * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and
          * PERSISTENT = 2.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -2848,7 +2812,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether persistent delivery is used by default.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -2863,8 +2827,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether persistent delivery is used by default.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -2884,7 +2847,7 @@ public interface AMQPEndpointBuilderFactory {
          * preserveMessageQos option, which operates at message granularity,
          * reading QoS properties exclusively from the Camel In message headers.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2904,8 +2867,8 @@ public interface AMQPEndpointBuilderFactory {
          * preserveMessageQos option, which operates at message granularity,
          * reading QoS properties exclusively from the Camel In message headers.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: producer
@@ -2921,7 +2884,7 @@ public interface AMQPEndpointBuilderFactory {
          * Sets whether JMS date properties should be formatted according to the
          * ISO 8601 standard.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2937,8 +2900,7 @@ public interface AMQPEndpointBuilderFactory {
          * Sets whether JMS date properties should be formatted according to the
          * ISO 8601 standard.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2961,7 +2923,7 @@ public interface AMQPEndpointBuilderFactory {
          * by contrast, will only use options set on the endpoint, and not
          * values from the message header.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2984,8 +2946,7 @@ public interface AMQPEndpointBuilderFactory {
          * by contrast, will only use options set on the endpoint, and not
          * values from the message header.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -3003,7 +2964,7 @@ public interface AMQPEndpointBuilderFactory {
          * explicitQosEnabled option must also be enabled in order for this
          * option to have any effect.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 4
          * Group: producer
@@ -3021,7 +2982,7 @@ public interface AMQPEndpointBuilderFactory {
          * explicitQosEnabled option must also be enabled in order for this
          * option to have any effect.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 4
          * Group: producer
@@ -3038,7 +2999,7 @@ public interface AMQPEndpointBuilderFactory {
          * request/reply over JMS. See also the maxMessagesPerTask option to
          * control dynamic scaling up/down of threads.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -3055,7 +3016,7 @@ public interface AMQPEndpointBuilderFactory {
          * request/reply over JMS. See also the maxMessagesPerTask option to
          * control dynamic scaling up/down of threads.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -3072,7 +3033,7 @@ public interface AMQPEndpointBuilderFactory {
          * request/reply over JMS. See also the maxMessagesPerTask option to
          * control dynamic scaling up/down of threads.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -3088,7 +3049,7 @@ public interface AMQPEndpointBuilderFactory {
          * request/reply over JMS. See also the maxMessagesPerTask option to
          * control dynamic scaling up/down of threads.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -3103,7 +3064,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies the maximum number of concurrent consumers for continue
          * routing when timeout occurred when using request/reply over JMS.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -3119,7 +3080,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies the maximum number of concurrent consumers for continue
          * routing when timeout occurred when using request/reply over JMS.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: producer
@@ -3137,7 +3098,7 @@ public interface AMQPEndpointBuilderFactory {
          * the message to a remote Queue and receive the reply message from the
          * ReplyTo destination.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -3160,8 +3121,7 @@ public interface AMQPEndpointBuilderFactory {
          * lower performance than its alternatives Temporary and Exclusive.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.ReplyToType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
          * Group: producer
          * 
@@ -3184,8 +3144,7 @@ public interface AMQPEndpointBuilderFactory {
          * lower performance than its alternatives Temporary and Exclusive.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.ReplyToType&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
          * Group: producer
          * 
@@ -3203,7 +3162,7 @@ public interface AMQPEndpointBuilderFactory {
          * configured timeout value, and thus have per message individual
          * timeout values. See also the requestTimeoutCheckerInterval option.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 20000
          * Group: producer
@@ -3222,7 +3181,7 @@ public interface AMQPEndpointBuilderFactory {
          * configured timeout value, and thus have per message individual
          * timeout values. See also the requestTimeoutCheckerInterval option.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 20000
          * Group: producer
@@ -3238,7 +3197,7 @@ public interface AMQPEndpointBuilderFactory {
          * When sending messages, specifies the time-to-live of the message (in
          * milliseconds).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -3254,7 +3213,7 @@ public interface AMQPEndpointBuilderFactory {
          * When sending messages, specifies the time-to-live of the message (in
          * milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -3270,7 +3229,7 @@ public interface AMQPEndpointBuilderFactory {
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3285,7 +3244,7 @@ public interface AMQPEndpointBuilderFactory {
          * Username to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -3299,7 +3258,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether to use transacted mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -3314,8 +3273,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether to use transacted mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -3346,7 +3304,7 @@ public interface AMQPEndpointBuilderFactory {
          * be a native JDBC transaction), with the JMS transaction committing
          * right after the main transaction.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -3377,8 +3335,7 @@ public interface AMQPEndpointBuilderFactory {
          * be a native JDBC transaction), with the JMS transaction committing
          * right after the main transaction.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -3408,7 +3365,7 @@ public interface AMQPEndpointBuilderFactory {
          * types. You can specify multiple header names separated by comma, and
          * use as suffix for wildcard matching.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -3423,7 +3380,7 @@ public interface AMQPEndpointBuilderFactory {
          * Whether to allow sending messages with no body. If this option is
          * false and the message body is null, then an JMSException is thrown.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -3439,8 +3396,7 @@ public interface AMQPEndpointBuilderFactory {
          * Whether to allow sending messages with no body. If this option is
          * false and the message body is null, then an JMSException is thrown.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -3460,7 +3416,7 @@ public interface AMQPEndpointBuilderFactory {
          * the alwaysCopyMessage option to true, if a
          * replyToDestinationSelectorName is set).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3480,8 +3436,7 @@ public interface AMQPEndpointBuilderFactory {
          * the alwaysCopyMessage option to true, if a
          * replyToDestinationSelectorName is set).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3499,7 +3454,7 @@ public interface AMQPEndpointBuilderFactory {
          * will be correlated solely on the value of this property
          * JMSCorrelationID property will be ignored and not set by Camel.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -3521,7 +3476,7 @@ public interface AMQPEndpointBuilderFactory {
          * on the receiver system. See below in section About time to live for
          * more details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3544,8 +3499,7 @@ public interface AMQPEndpointBuilderFactory {
          * on the receiver system. See below in section About time to live for
          * more details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3563,7 +3517,7 @@ public interface AMQPEndpointBuilderFactory {
          * during the route. Set this option to true to force Camel to send the
          * original JMS message that was received.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3581,8 +3535,7 @@ public interface AMQPEndpointBuilderFactory {
          * during the route. Set this option to true to force Camel to send the
          * original JMS message that was received.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3600,7 +3553,7 @@ public interface AMQPEndpointBuilderFactory {
          * the actual JMSMessageID that was used by the JMS client when the
          * message was sent to the JMS destination.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3618,8 +3571,7 @@ public interface AMQPEndpointBuilderFactory {
          * the actual JMSMessageID that was used by the JMS client when the
          * message was sent to the JMS destination.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3642,7 +3594,7 @@ public interface AMQPEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3665,8 +3617,7 @@ public interface AMQPEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3689,7 +3640,7 @@ public interface AMQPEndpointBuilderFactory {
          * queues then CACHE_NONE is not allowed, and you must use a higher
          * value such as CACHE_CONSUMER or CACHE_SESSION.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -3705,7 +3656,7 @@ public interface AMQPEndpointBuilderFactory {
          * filter out your own replies from the others when using a shared queue
          * (that is, if you are not using a temporary reply queue).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer (advanced)
          * 
@@ -3725,7 +3676,7 @@ public interface AMQPEndpointBuilderFactory {
          * option the message payload is read into memory in chunks and each
          * chunk is then written to the StreamMessage until no more data.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3746,8 +3697,7 @@ public interface AMQPEndpointBuilderFactory {
          * option the message payload is read into memory in chunks and each
          * chunk is then written to the StreamMessage until no more data.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -3765,7 +3715,7 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3783,8 +3733,7 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3801,7 +3750,7 @@ public interface AMQPEndpointBuilderFactory {
          * memory overhead when using Artemis with JMS StreamMessage types. This
          * option must only be enabled if Apache Artemis is being used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3818,8 +3767,7 @@ public interface AMQPEndpointBuilderFactory {
          * memory overhead when using Artemis with JMS StreamMessage types. This
          * option must only be enabled if Apache Artemis is being used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3843,7 +3791,7 @@ public interface AMQPEndpointBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3867,8 +3815,7 @@ public interface AMQPEndpointBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3884,7 +3831,7 @@ public interface AMQPEndpointBuilderFactory {
          * Whether to stop the JmsConsumer message listener asynchronously, when
          * stopping a route.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3900,8 +3847,7 @@ public interface AMQPEndpointBuilderFactory {
          * Whether to stop the JmsConsumer message listener asynchronously, when
          * stopping a route.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -3920,7 +3866,7 @@ public interface AMQPEndpointBuilderFactory {
          * destination in a JNDI registry).
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.jms.support.destination.DestinationResolver&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -3938,7 +3884,7 @@ public interface AMQPEndpointBuilderFactory {
          * destination in a JNDI registry).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.jms.support.destination.DestinationResolver&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -3958,8 +3904,8 @@ public interface AMQPEndpointBuilderFactory {
          * and errorHandlerLogStackTrace options. This makes it much easier to
          * configure, than having to code a custom errorHandler.
          * 
-         * The option is a:
-         * &lt;code&gt;org.springframework.util.ErrorHandler&lt;/code&gt; type.
+         * The option is a: <code>org.springframework.util.ErrorHandler</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -3980,7 +3926,7 @@ public interface AMQPEndpointBuilderFactory {
          * configure, than having to code a custom errorHandler.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.util.ErrorHandler&lt;/code&gt; type.
+         * <code>org.springframework.util.ErrorHandler</code> type.
          * 
          * Group: advanced
          * 
@@ -3995,8 +3941,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
+         * The option is a: <code>jakarta.jms.ExceptionListener</code> type.
          * 
          * Group: advanced
          * 
@@ -4012,7 +3957,7 @@ public interface AMQPEndpointBuilderFactory {
          * underlying JMS exceptions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
+         * <code>jakarta.jms.ExceptionListener</code> type.
          * 
          * Group: advanced
          * 
@@ -4028,8 +3973,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -4045,8 +3989,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -4061,7 +4004,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specify the limit for the number of consumers that are allowed to be
          * idle at any given time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -4077,7 +4020,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specify the limit for the number of consumers that are allowed to be
          * idle at any given time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -4096,7 +4039,7 @@ public interface AMQPEndpointBuilderFactory {
          * (in the case of dynamic scheduling; see the maxConcurrentConsumers
          * setting). There is additional doc available from Spring.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -4115,7 +4058,7 @@ public interface AMQPEndpointBuilderFactory {
          * (in the case of dynamic scheduling; see the maxConcurrentConsumers
          * setting). There is additional doc available from Spring.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -4133,7 +4076,7 @@ public interface AMQPEndpointBuilderFactory {
          * as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4151,8 +4094,7 @@ public interface AMQPEndpointBuilderFactory {
          * as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4176,7 +4118,8 @@ public interface AMQPEndpointBuilderFactory {
          * using the # notation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -4199,7 +4142,8 @@ public interface AMQPEndpointBuilderFactory {
          * using the # notation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -4214,7 +4158,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4230,8 +4174,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4249,7 +4192,7 @@ public interface AMQPEndpointBuilderFactory {
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -4267,7 +4210,7 @@ public interface AMQPEndpointBuilderFactory {
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -4285,7 +4228,7 @@ public interface AMQPEndpointBuilderFactory {
          * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -4302,7 +4245,7 @@ public interface AMQPEndpointBuilderFactory {
          * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -4319,7 +4262,8 @@ public interface AMQPEndpointBuilderFactory {
          * sending a JMS message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.MessageCreatedStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -4336,7 +4280,8 @@ public interface AMQPEndpointBuilderFactory {
          * sending a JMS message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.MessageCreatedStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -4354,7 +4299,7 @@ public interface AMQPEndpointBuilderFactory {
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4373,8 +4318,7 @@ public interface AMQPEndpointBuilderFactory {
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4394,7 +4338,7 @@ public interface AMQPEndpointBuilderFactory {
          * consumerType to Custom.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.MessageListenerContainerFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -4413,7 +4357,7 @@ public interface AMQPEndpointBuilderFactory {
          * consumerType to Custom.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.MessageListenerContainerFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -4431,7 +4375,7 @@ public interface AMQPEndpointBuilderFactory {
          * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4450,8 +4394,7 @@ public interface AMQPEndpointBuilderFactory {
          * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -4467,7 +4410,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4483,8 +4426,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4499,7 +4441,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The timeout for receiving messages (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -4514,7 +4456,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The timeout for receiving messages (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -4531,7 +4473,7 @@ public interface AMQPEndpointBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -4548,7 +4490,7 @@ public interface AMQPEndpointBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -4567,7 +4509,7 @@ public interface AMQPEndpointBuilderFactory {
          * can lower this interval, to check more frequently. The timeout is
          * determined by the option requestTimeout.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -4586,7 +4528,7 @@ public interface AMQPEndpointBuilderFactory {
          * can lower this interval, to check more frequently. The timeout is
          * determined by the option requestTimeout.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -4601,7 +4543,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4616,8 +4558,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4635,7 +4576,8 @@ public interface AMQPEndpointBuilderFactory {
          * special requirements for creating temporary queues).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.TemporaryQueueResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -4652,7 +4594,8 @@ public interface AMQPEndpointBuilderFactory {
          * special requirements for creating temporary queues).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.TemporaryQueueResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -4679,7 +4622,7 @@ public interface AMQPEndpointBuilderFactory {
          * data at Class level, which forces a strong coupling between the
          * producers and consumer!.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4707,8 +4650,7 @@ public interface AMQPEndpointBuilderFactory {
          * data at Class level, which forces a strong coupling between the
          * producers and consumer!.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4734,7 +4676,7 @@ public interface AMQPEndpointBuilderFactory {
          * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4760,8 +4702,7 @@ public interface AMQPEndpointBuilderFactory {
          * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4777,7 +4718,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4793,8 +4734,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -4811,7 +4751,7 @@ public interface AMQPEndpointBuilderFactory {
          * to the actual correlation id when doing request/reply over JMS and
          * when the option useMessageIDAsCorrelationID is enabled.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 50
          * Group: advanced
@@ -4828,7 +4768,7 @@ public interface AMQPEndpointBuilderFactory {
          * to the actual correlation id when doing request/reply over JMS and
          * when the option useMessageIDAsCorrelationID is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 50
          * Group: advanced
@@ -4844,7 +4784,7 @@ public interface AMQPEndpointBuilderFactory {
          * Interval in millis to sleep each time while waiting for provisional
          * correlation id to be updated.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -4861,7 +4801,7 @@ public interface AMQPEndpointBuilderFactory {
          * Interval in millis to sleep each time while waiting for provisional
          * correlation id to be updated.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -4878,7 +4818,7 @@ public interface AMQPEndpointBuilderFactory {
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: transaction (advanced)
@@ -4894,8 +4834,7 @@ public interface AMQPEndpointBuilderFactory {
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: transaction (advanced)
@@ -4911,7 +4850,7 @@ public interface AMQPEndpointBuilderFactory {
          * The Spring transaction manager to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
+         * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -4926,7 +4865,7 @@ public interface AMQPEndpointBuilderFactory {
          * The Spring transaction manager to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
+         * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -4940,7 +4879,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The name of the transaction to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -4955,7 +4894,7 @@ public interface AMQPEndpointBuilderFactory {
          * The timeout value of the transaction (in seconds), if using
          * transacted mode.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: transaction (advanced)
@@ -4971,7 +4910,7 @@ public interface AMQPEndpointBuilderFactory {
          * The timeout value of the transaction (in seconds), if using
          * transacted mode.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: transaction (advanced)
@@ -5002,7 +4941,7 @@ public interface AMQPEndpointBuilderFactory {
          * instance. It is typically only required for durable topic
          * subscriptions with JMS 1.1.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5017,8 +4956,7 @@ public interface AMQPEndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
+         * The option is a: <code>jakarta.jms.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -5034,7 +4972,7 @@ public interface AMQPEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
+         * <code>jakarta.jms.ConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -5055,7 +4993,7 @@ public interface AMQPEndpointBuilderFactory {
          * to use Camel as a proxy between different message brokers and you
          * want to route message from one system to another.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5077,8 +5015,7 @@ public interface AMQPEndpointBuilderFactory {
          * to use Camel as a proxy between different message brokers and you
          * want to route message from one system to another.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5094,7 +5031,7 @@ public interface AMQPEndpointBuilderFactory {
          * The durable subscriber name for specifying durable topic
          * subscriptions. The clientId option must be configured as well.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5113,7 +5050,7 @@ public interface AMQPEndpointBuilderFactory {
          * to specify it.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.JmsMessageType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
          * Group: common
          * 
@@ -5132,7 +5069,7 @@ public interface AMQPEndpointBuilderFactory {
          * to specify it.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.JmsMessageType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
          * Group: common
          * 
@@ -5147,7 +5084,7 @@ public interface AMQPEndpointBuilderFactory {
          * Provides an explicit ReplyTo destination (overrides any incoming
          * value of Message.getJMSReplyTo() in consumer).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -5165,7 +5102,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5184,8 +5121,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -5201,7 +5137,7 @@ public interface AMQPEndpointBuilderFactory {
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5216,7 +5152,7 @@ public interface AMQPEndpointBuilderFactory {
          * Username to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -5230,7 +5166,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether to use transacted mode.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -5245,8 +5181,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Specifies whether to use transacted mode.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -5277,7 +5212,7 @@ public interface AMQPEndpointBuilderFactory {
          * be a native JDBC transaction), with the JMS transaction committing
          * right after the main transaction.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -5308,8 +5243,7 @@ public interface AMQPEndpointBuilderFactory {
          * be a native JDBC transaction), with the JMS transaction committing
          * right after the main transaction.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: transaction
@@ -5340,7 +5274,7 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5358,8 +5292,7 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5376,7 +5309,7 @@ public interface AMQPEndpointBuilderFactory {
          * memory overhead when using Artemis with JMS StreamMessage types. This
          * option must only be enabled if Apache Artemis is being used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5393,8 +5326,7 @@ public interface AMQPEndpointBuilderFactory {
          * memory overhead when using Artemis with JMS StreamMessage types. This
          * option must only be enabled if Apache Artemis is being used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5418,7 +5350,7 @@ public interface AMQPEndpointBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5442,8 +5374,7 @@ public interface AMQPEndpointBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5459,7 +5390,7 @@ public interface AMQPEndpointBuilderFactory {
          * Whether to stop the JmsConsumer message listener asynchronously, when
          * stopping a route.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5475,8 +5406,7 @@ public interface AMQPEndpointBuilderFactory {
          * Whether to stop the JmsConsumer message listener asynchronously, when
          * stopping a route.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5495,7 +5425,7 @@ public interface AMQPEndpointBuilderFactory {
          * destination in a JNDI registry).
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.jms.support.destination.DestinationResolver&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -5513,7 +5443,7 @@ public interface AMQPEndpointBuilderFactory {
          * destination in a JNDI registry).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.jms.support.destination.DestinationResolver&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -5533,8 +5463,8 @@ public interface AMQPEndpointBuilderFactory {
          * and errorHandlerLogStackTrace options. This makes it much easier to
          * configure, than having to code a custom errorHandler.
          * 
-         * The option is a:
-         * &lt;code&gt;org.springframework.util.ErrorHandler&lt;/code&gt; type.
+         * The option is a: <code>org.springframework.util.ErrorHandler</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -5555,7 +5485,7 @@ public interface AMQPEndpointBuilderFactory {
          * configure, than having to code a custom errorHandler.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.util.ErrorHandler&lt;/code&gt; type.
+         * <code>org.springframework.util.ErrorHandler</code> type.
          * 
          * Group: advanced
          * 
@@ -5570,8 +5500,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
+         * The option is a: <code>jakarta.jms.ExceptionListener</code> type.
          * 
          * Group: advanced
          * 
@@ -5587,7 +5516,7 @@ public interface AMQPEndpointBuilderFactory {
          * underlying JMS exceptions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
+         * <code>jakarta.jms.ExceptionListener</code> type.
          * 
          * Group: advanced
          * 
@@ -5603,8 +5532,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -5620,8 +5548,7 @@ public interface AMQPEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: advanced
          * 
@@ -5636,7 +5563,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specify the limit for the number of consumers that are allowed to be
          * idle at any given time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -5652,7 +5579,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specify the limit for the number of consumers that are allowed to be
          * idle at any given time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -5671,7 +5598,7 @@ public interface AMQPEndpointBuilderFactory {
          * (in the case of dynamic scheduling; see the maxConcurrentConsumers
          * setting). There is additional doc available from Spring.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -5690,7 +5617,7 @@ public interface AMQPEndpointBuilderFactory {
          * (in the case of dynamic scheduling; see the maxConcurrentConsumers
          * setting). There is additional doc available from Spring.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -5708,7 +5635,7 @@ public interface AMQPEndpointBuilderFactory {
          * as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5726,8 +5653,7 @@ public interface AMQPEndpointBuilderFactory {
          * as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -5751,7 +5677,8 @@ public interface AMQPEndpointBuilderFactory {
          * using the # notation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -5774,7 +5701,8 @@ public interface AMQPEndpointBuilderFactory {
          * using the # notation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -5789,7 +5717,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -5805,8 +5733,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -5824,7 +5751,7 @@ public interface AMQPEndpointBuilderFactory {
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -5842,7 +5769,7 @@ public interface AMQPEndpointBuilderFactory {
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: advanced
@@ -5860,7 +5787,7 @@ public interface AMQPEndpointBuilderFactory {
          * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -5877,7 +5804,7 @@ public interface AMQPEndpointBuilderFactory {
          * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
+         * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
          * Group: advanced
          * 
@@ -5894,7 +5821,8 @@ public interface AMQPEndpointBuilderFactory {
          * sending a JMS message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.MessageCreatedStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -5911,7 +5839,8 @@ public interface AMQPEndpointBuilderFactory {
          * sending a JMS message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.MessageCreatedStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -5929,7 +5858,7 @@ public interface AMQPEndpointBuilderFactory {
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -5948,8 +5877,7 @@ public interface AMQPEndpointBuilderFactory {
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -5969,7 +5897,7 @@ public interface AMQPEndpointBuilderFactory {
          * consumerType to Custom.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.MessageListenerContainerFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -5988,7 +5916,7 @@ public interface AMQPEndpointBuilderFactory {
          * consumerType to Custom.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.MessageListenerContainerFactory&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -6006,7 +5934,7 @@ public interface AMQPEndpointBuilderFactory {
          * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6025,8 +5953,7 @@ public interface AMQPEndpointBuilderFactory {
          * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -6042,7 +5969,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6058,8 +5985,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6074,7 +6000,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The timeout for receiving messages (in milliseconds).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -6089,7 +6015,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The timeout for receiving messages (in milliseconds).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -6106,7 +6032,7 @@ public interface AMQPEndpointBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -6123,7 +6049,7 @@ public interface AMQPEndpointBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -6142,7 +6068,7 @@ public interface AMQPEndpointBuilderFactory {
          * can lower this interval, to check more frequently. The timeout is
          * determined by the option requestTimeout.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -6161,7 +6087,7 @@ public interface AMQPEndpointBuilderFactory {
          * can lower this interval, to check more frequently. The timeout is
          * determined by the option requestTimeout.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -6176,7 +6102,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6191,8 +6117,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6210,7 +6135,8 @@ public interface AMQPEndpointBuilderFactory {
          * special requirements for creating temporary queues).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.TemporaryQueueResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -6227,7 +6153,8 @@ public interface AMQPEndpointBuilderFactory {
          * special requirements for creating temporary queues).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.jms.TemporaryQueueResolver&lt;/code&gt; type.
+         * <code>org.apache.camel.component.jms.TemporaryQueueResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -6254,7 +6181,7 @@ public interface AMQPEndpointBuilderFactory {
          * data at Class level, which forces a strong coupling between the
          * producers and consumer!.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6282,8 +6209,7 @@ public interface AMQPEndpointBuilderFactory {
          * data at Class level, which forces a strong coupling between the
          * producers and consumer!.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6309,7 +6235,7 @@ public interface AMQPEndpointBuilderFactory {
          * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6335,8 +6261,7 @@ public interface AMQPEndpointBuilderFactory {
          * between the producers and consumers having to use compatible Camel
          * versions!.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6352,7 +6277,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6368,8 +6293,7 @@ public interface AMQPEndpointBuilderFactory {
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -6386,7 +6310,7 @@ public interface AMQPEndpointBuilderFactory {
          * to the actual correlation id when doing request/reply over JMS and
          * when the option useMessageIDAsCorrelationID is enabled.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 50
          * Group: advanced
@@ -6403,7 +6327,7 @@ public interface AMQPEndpointBuilderFactory {
          * to the actual correlation id when doing request/reply over JMS and
          * when the option useMessageIDAsCorrelationID is enabled.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 50
          * Group: advanced
@@ -6419,7 +6343,7 @@ public interface AMQPEndpointBuilderFactory {
          * Interval in millis to sleep each time while waiting for provisional
          * correlation id to be updated.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -6436,7 +6360,7 @@ public interface AMQPEndpointBuilderFactory {
          * Interval in millis to sleep each time while waiting for provisional
          * correlation id to be updated.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -6453,7 +6377,7 @@ public interface AMQPEndpointBuilderFactory {
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: transaction (advanced)
@@ -6469,8 +6393,7 @@ public interface AMQPEndpointBuilderFactory {
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: transaction (advanced)
@@ -6486,7 +6409,7 @@ public interface AMQPEndpointBuilderFactory {
          * The Spring transaction manager to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
+         * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -6501,7 +6424,7 @@ public interface AMQPEndpointBuilderFactory {
          * The Spring transaction manager to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
+         * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -6515,7 +6438,7 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * The name of the transaction to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: transaction (advanced)
          * 
@@ -6530,7 +6453,7 @@ public interface AMQPEndpointBuilderFactory {
          * The timeout value of the transaction (in seconds), if using
          * transacted mode.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: transaction (advanced)
@@ -6546,7 +6469,7 @@ public interface AMQPEndpointBuilderFactory {
          * The timeout value of the transaction (in seconds), if using
          * transacted mode.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: transaction (advanced)

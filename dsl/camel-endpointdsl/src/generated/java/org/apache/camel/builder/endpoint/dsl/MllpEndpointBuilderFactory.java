@@ -47,7 +47,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -63,8 +63,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -79,7 +78,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the default charset to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -94,7 +93,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -110,8 +109,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -130,7 +128,7 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -149,8 +147,7 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -171,7 +168,7 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -192,8 +189,7 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -213,7 +209,7 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -233,8 +229,7 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -254,7 +249,7 @@ public interface MllpEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions by logging them at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -274,8 +269,7 @@ public interface MllpEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions by logging them at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -302,7 +296,7 @@ public interface MllpEndpointBuilderFactory {
          * Timeout (in milliseconds) while waiting for a TCP connection TCP
          * Server Only.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -318,7 +312,7 @@ public interface MllpEndpointBuilderFactory {
          * Timeout (in milliseconds) while waiting for a TCP connection TCP
          * Server Only.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60000
          * Group: consumer
@@ -335,7 +329,7 @@ public interface MllpEndpointBuilderFactory {
          * request to connect) is set to the backlog parameter. If a connection
          * indication arrives when the queue is full, the connection is refused.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 5
          * Group: consumer
@@ -352,8 +346,8 @@ public interface MllpEndpointBuilderFactory {
          * request to connect) is set to the backlog parameter. If a connection
          * indication arrives when the queue is full, the connection is refused.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 5
          * Group: consumer
@@ -369,7 +363,7 @@ public interface MllpEndpointBuilderFactory {
          * TCP Server Only - The number of milliseconds to wait between bind
          * attempts.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -385,7 +379,7 @@ public interface MllpEndpointBuilderFactory {
          * TCP Server Only - The number of milliseconds to wait between bind
          * attempts.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: consumer
@@ -401,7 +395,7 @@ public interface MllpEndpointBuilderFactory {
          * TCP Server Only - The number of milliseconds to retry binding to a
          * server port.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: consumer
@@ -417,7 +411,7 @@ public interface MllpEndpointBuilderFactory {
          * TCP Server Only - The number of milliseconds to retry binding to a
          * server port.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: consumer
@@ -434,7 +428,7 @@ public interface MllpEndpointBuilderFactory {
          * ServerSocket is bound. In some environments, it may be desirable to
          * allow the endpoint to start before the TCP ServerSocket is bound.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -451,8 +445,7 @@ public interface MllpEndpointBuilderFactory {
          * ServerSocket is bound. In some environments, it may be desirable to
          * allow the endpoint to start before the TCP ServerSocket is bound.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -470,7 +463,7 @@ public interface MllpEndpointBuilderFactory {
          * are already established, the new connection will be reset
          * immediately.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5
          * Group: consumer
@@ -488,7 +481,7 @@ public interface MllpEndpointBuilderFactory {
          * are already established, the new connection will be reset
          * immediately.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5
          * Group: consumer
@@ -503,7 +496,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the SO_REUSEADDR socket option.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -518,8 +511,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the SO_REUSEADDR socket option.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: false
          * Group: consumer
@@ -537,8 +530,8 @@ public interface MllpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -556,7 +549,7 @@ public interface MllpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -570,8 +563,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Default: InOut
          * Group: consumer (advanced)
@@ -587,7 +579,7 @@ public interface MllpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Default: InOut
          * Group: consumer (advanced)
@@ -603,7 +595,7 @@ public interface MllpEndpointBuilderFactory {
          * Maximum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1073741824
          * Group: advanced
@@ -619,7 +611,7 @@ public interface MllpEndpointBuilderFactory {
          * Maximum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1073741824
          * Group: advanced
@@ -635,7 +627,7 @@ public interface MllpEndpointBuilderFactory {
          * Minimum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2048
          * Group: advanced
@@ -651,7 +643,7 @@ public interface MllpEndpointBuilderFactory {
          * Minimum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2048
          * Group: advanced
@@ -667,7 +659,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -683,7 +675,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -698,7 +690,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 8192
          * Group: advanced
@@ -713,8 +705,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 8192
          * Group: advanced
@@ -730,7 +722,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 15000
          * Group: advanced
@@ -746,7 +738,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 15000
          * Group: advanced
@@ -761,7 +753,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 8192
          * Group: advanced
@@ -776,8 +768,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 8192
          * Group: advanced
@@ -794,7 +786,7 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: tcp
          * 
@@ -810,8 +802,8 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: tcp
          * 
@@ -838,7 +830,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -854,8 +846,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -870,7 +861,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the default charset to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -885,7 +876,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -901,8 +892,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -921,7 +911,7 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -940,8 +930,7 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -962,7 +951,7 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -983,8 +972,7 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1004,7 +992,7 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1024,8 +1012,7 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1051,7 +1038,7 @@ public interface MllpEndpointBuilderFactory {
          * Timeout (in milliseconds) for establishing for a TCP connection TCP
          * Client only.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -1067,7 +1054,7 @@ public interface MllpEndpointBuilderFactory {
          * Timeout (in milliseconds) for establishing for a TCP connection TCP
          * Client only.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -1085,7 +1072,8 @@ public interface MllpEndpointBuilderFactory {
          * socket gracefully default is RESET.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.mllp.MllpIdleTimeoutStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mllp.MllpIdleTimeoutStrategy</code>
+         * type.
          * 
          * Default: RESET
          * Group: producer
@@ -1103,7 +1091,8 @@ public interface MllpEndpointBuilderFactory {
          * socket gracefully default is RESET.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.mllp.MllpIdleTimeoutStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.mllp.MllpIdleTimeoutStrategy</code>
+         * type.
          * 
          * Default: RESET
          * Group: producer
@@ -1118,7 +1107,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the SO_KEEPALIVE socket option.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1133,8 +1122,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the SO_KEEPALIVE socket option.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -1149,7 +1138,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the TCP_NODELAY socket option.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -1164,8 +1153,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the TCP_NODELAY socket option.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
          * 
          * Default: true
          * Group: producer
@@ -1188,7 +1177,7 @@ public interface MllpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1211,8 +1200,7 @@ public interface MllpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1228,7 +1216,7 @@ public interface MllpEndpointBuilderFactory {
          * Maximum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1073741824
          * Group: advanced
@@ -1244,7 +1232,7 @@ public interface MllpEndpointBuilderFactory {
          * Maximum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1073741824
          * Group: advanced
@@ -1260,7 +1248,7 @@ public interface MllpEndpointBuilderFactory {
          * Minimum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2048
          * Group: advanced
@@ -1276,7 +1264,7 @@ public interface MllpEndpointBuilderFactory {
          * Minimum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2048
          * Group: advanced
@@ -1292,7 +1280,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -1308,7 +1296,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -1323,7 +1311,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 8192
          * Group: advanced
@@ -1338,8 +1326,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 8192
          * Group: advanced
@@ -1355,7 +1343,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 15000
          * Group: advanced
@@ -1371,7 +1359,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 15000
          * Group: advanced
@@ -1386,7 +1374,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 8192
          * Group: advanced
@@ -1401,8 +1389,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 8192
          * Group: advanced
@@ -1419,7 +1407,7 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: tcp
          * 
@@ -1435,8 +1423,8 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: tcp
          * 
@@ -1464,7 +1452,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1480,8 +1468,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1496,7 +1483,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the default charset to use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1511,7 +1498,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1527,8 +1514,7 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1547,7 +1533,7 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1566,8 +1552,7 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1588,7 +1573,7 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1609,8 +1594,7 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1630,7 +1614,7 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1650,8 +1634,7 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1680,7 +1663,7 @@ public interface MllpEndpointBuilderFactory {
          * Maximum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1073741824
          * Group: advanced
@@ -1696,7 +1679,7 @@ public interface MllpEndpointBuilderFactory {
          * Maximum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1073741824
          * Group: advanced
@@ -1712,7 +1695,7 @@ public interface MllpEndpointBuilderFactory {
          * Minimum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2048
          * Group: advanced
@@ -1728,7 +1711,7 @@ public interface MllpEndpointBuilderFactory {
          * Minimum buffer size used when receiving or sending data over the
          * wire.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2048
          * Group: advanced
@@ -1744,7 +1727,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -1760,7 +1743,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: advanced
@@ -1775,7 +1758,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 8192
          * Group: advanced
@@ -1790,8 +1773,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 8192
          * Group: advanced
@@ -1807,7 +1790,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 15000
          * Group: advanced
@@ -1823,7 +1806,7 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 15000
          * Group: advanced
@@ -1838,7 +1821,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 8192
          * Group: advanced
@@ -1853,8 +1836,8 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 8192
          * Group: advanced
@@ -1871,7 +1854,7 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: tcp
          * 
@@ -1887,8 +1870,8 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: tcp
          * 

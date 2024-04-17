@@ -51,7 +51,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * listTables.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.redshift.data.RedshiftData2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.redshift.data.RedshiftData2Operations</code> type.
          * 
          * Required: true
          * Group: producer
@@ -70,7 +70,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * listTables.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.redshift.data.RedshiftData2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.redshift.data.RedshiftData2Operations</code> type.
          * 
          * Required: true
          * Group: producer
@@ -86,7 +86,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -102,8 +102,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -118,7 +117,7 @@ public interface RedshiftData2EndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -133,8 +132,7 @@ public interface RedshiftData2EndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -150,7 +148,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -167,7 +165,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * the region (for example, ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -182,7 +180,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -198,8 +196,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -215,7 +212,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -231,7 +228,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * through a default credentials provider or to expect static
          * credentials to be passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -248,8 +245,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * through a default credentials provider or to expect static
          * credentials to be passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -265,7 +261,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * Set whether the RedshiftData client should expect to load credentials
          * through a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -281,8 +277,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * Set whether the RedshiftData client should expect to load credentials
          * through a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -297,7 +292,7 @@ public interface RedshiftData2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the RedshiftData client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -311,7 +306,7 @@ public interface RedshiftData2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the RedshiftData client.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -325,8 +320,8 @@ public interface RedshiftData2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the RedshiftData client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -341,8 +336,8 @@ public interface RedshiftData2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the RedshiftData
          * client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -359,7 +354,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -374,7 +369,7 @@ public interface RedshiftData2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -388,7 +383,7 @@ public interface RedshiftData2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -403,7 +398,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume an IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -419,7 +414,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * Credentials. This is useful in a situation in which the user needs to
          * assume an IAM role for doing operations in Redshift.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -436,8 +431,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * Credentials. This is useful in a situation in which the user needs to
          * assume an IAM role for doing operations in Redshift.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -472,7 +466,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -495,8 +489,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -512,7 +505,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * To use an existing configured AwsRedshiftDataClient client.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.redshiftdata.RedshiftDataClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.redshiftdata.RedshiftDataClient</code> type.
          * 
          * Group: advanced
          * 
@@ -527,7 +520,7 @@ public interface RedshiftData2EndpointBuilderFactory {
          * To use an existing configured AwsRedshiftDataClient client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.redshiftdata.RedshiftDataClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.redshiftdata.RedshiftDataClient</code> type.
          * 
          * Group: advanced
          * 

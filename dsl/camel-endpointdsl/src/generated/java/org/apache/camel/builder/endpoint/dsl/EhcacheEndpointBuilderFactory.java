@@ -46,8 +46,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager.
          * 
-         * The option is a: &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.ehcache.CacheManager</code> type.
          * 
          * Group: common
          * 
@@ -62,7 +61,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt; type.
+         * <code>org.ehcache.CacheManager</code> type.
          * 
          * Group: common
          * 
@@ -76,8 +75,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager configuration.
          * 
-         * The option is a:
-         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
+         * The option is a: <code>org.ehcache.config.Configuration</code> type.
          * 
          * Group: common
          * 
@@ -92,7 +90,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
+         * <code>org.ehcache.config.Configuration</code> type.
          * 
          * Group: common
          * 
@@ -106,7 +104,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * URI pointing to the Ehcache XML configuration file's location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -121,7 +119,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -137,8 +135,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -153,8 +150,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Set the delivery mode (synchronous, asynchronous).
          * 
-         * The option is a:
-         * &lt;code&gt;org.ehcache.event.EventFiring&lt;/code&gt; type.
+         * The option is a: <code>org.ehcache.event.EventFiring</code> type.
          * 
          * Default: ASYNCHRONOUS
          * Group: consumer
@@ -170,7 +166,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Set the delivery mode (synchronous, asynchronous).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.event.EventFiring&lt;/code&gt; type.
+         * <code>org.ehcache.event.EventFiring</code> type.
          * 
          * Default: ASYNCHRONOUS
          * Group: consumer
@@ -185,8 +181,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Set the delivery mode (ordered, unordered).
          * 
-         * The option is a:
-         * &lt;code&gt;org.ehcache.event.EventOrdering&lt;/code&gt; type.
+         * The option is a: <code>org.ehcache.event.EventOrdering</code> type.
          * 
          * Default: ORDERED
          * Group: consumer
@@ -202,7 +197,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Set the delivery mode (ordered, unordered).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.event.EventOrdering&lt;/code&gt; type.
+         * <code>org.ehcache.event.EventOrdering</code> type.
          * 
          * Default: ORDERED
          * Group: consumer
@@ -219,7 +214,7 @@ public interface EhcacheEndpointBuilderFactory {
          * (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple
          * entries separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -255,7 +250,7 @@ public interface EhcacheEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -281,8 +276,7 @@ public interface EhcacheEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -300,8 +294,8 @@ public interface EhcacheEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -319,7 +313,7 @@ public interface EhcacheEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -333,8 +327,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -349,7 +342,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -363,8 +356,8 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The default cache configuration to be used to create caches.
          * 
-         * The option is a:
-         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
+         * The option is a: <code>org.ehcache.config.CacheConfiguration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -379,7 +372,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
+         * <code>org.ehcache.config.CacheConfiguration</code> type.
          * 
          * Group: advanced
          * 
@@ -393,8 +386,8 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * A map of cache configuration to be used to create caches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -409,8 +402,8 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -424,7 +417,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -438,7 +431,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -464,8 +457,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager.
          * 
-         * The option is a: &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.ehcache.CacheManager</code> type.
          * 
          * Group: common
          * 
@@ -480,7 +472,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt; type.
+         * <code>org.ehcache.CacheManager</code> type.
          * 
          * Group: common
          * 
@@ -494,8 +486,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager configuration.
          * 
-         * The option is a:
-         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
+         * The option is a: <code>org.ehcache.config.Configuration</code> type.
          * 
          * Group: common
          * 
@@ -510,7 +501,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
+         * <code>org.ehcache.config.Configuration</code> type.
          * 
          * Group: common
          * 
@@ -524,7 +515,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * URI pointing to the Ehcache XML configuration file's location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -539,7 +530,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -555,8 +546,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -572,7 +562,7 @@ public interface EhcacheEndpointBuilderFactory {
          * To configure the default cache action. If an action is set in the
          * message header, then the operation from the header takes precedence.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -587,7 +577,7 @@ public interface EhcacheEndpointBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -602,8 +592,7 @@ public interface EhcacheEndpointBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: producer
          * 
@@ -635,7 +624,7 @@ public interface EhcacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -658,8 +647,7 @@ public interface EhcacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -674,8 +662,8 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The default cache configuration to be used to create caches.
          * 
-         * The option is a:
-         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
+         * The option is a: <code>org.ehcache.config.CacheConfiguration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -690,7 +678,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
+         * <code>org.ehcache.config.CacheConfiguration</code> type.
          * 
          * Group: advanced
          * 
@@ -704,8 +692,8 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * A map of cache configuration to be used to create caches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -720,8 +708,8 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -735,7 +723,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -749,7 +737,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -776,8 +764,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager.
          * 
-         * The option is a: &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.ehcache.CacheManager</code> type.
          * 
          * Group: common
          * 
@@ -792,7 +779,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.CacheManager&lt;/code&gt; type.
+         * <code>org.ehcache.CacheManager</code> type.
          * 
          * Group: common
          * 
@@ -806,8 +793,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager configuration.
          * 
-         * The option is a:
-         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
+         * The option is a: <code>org.ehcache.config.Configuration</code> type.
          * 
          * Group: common
          * 
@@ -822,7 +808,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
+         * <code>org.ehcache.config.Configuration</code> type.
          * 
          * Group: common
          * 
@@ -836,7 +822,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * URI pointing to the Ehcache XML configuration file's location.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -851,7 +837,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -867,8 +853,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -896,8 +881,8 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The default cache configuration to be used to create caches.
          * 
-         * The option is a:
-         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
+         * The option is a: <code>org.ehcache.config.CacheConfiguration</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -912,7 +897,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.ehcache.config.CacheConfiguration&lt;/code&gt; type.
+         * <code>org.ehcache.config.CacheConfiguration</code> type.
          * 
          * Group: advanced
          * 
@@ -926,8 +911,8 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * A map of cache configuration to be used to create caches.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -942,8 +927,8 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          * 
@@ -957,7 +942,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -971,7 +956,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 

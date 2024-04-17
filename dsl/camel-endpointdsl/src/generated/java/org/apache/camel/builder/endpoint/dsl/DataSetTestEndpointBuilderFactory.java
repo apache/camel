@@ -49,7 +49,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Whether the expected messages should arrive in the same order or can
          * be in any order.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -65,8 +65,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Whether the expected messages should arrive in the same order or can
          * be in any order.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -88,7 +87,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -109,7 +108,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -125,7 +124,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * delimiter is new line based. The delimiter can be a regular
          * expression.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -150,7 +149,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * mock endpoint, then see also the setAssertPeriod(long) method for
          * further details.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -176,7 +175,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * mock endpoint, then see also the setAssertPeriod(long) method for
          * further details.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -195,7 +194,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * verifications. Is by default true. Set to false to use behavior as in
          * Camel 2.x.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -214,8 +213,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * verifications. Is by default true. Set to false to use behavior as in
          * Camel 2.x.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -233,7 +231,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * more detailed logging then set the logger to DEBUG level for the
          * org.apache.camel.component.mock.MockEndpoint class.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -251,8 +249,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * more detailed logging then set the logger to DEBUG level for the
          * org.apache.camel.component.mock.MockEndpoint class.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -268,7 +265,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -283,7 +280,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -298,7 +295,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -313,7 +310,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -328,7 +325,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -343,7 +340,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -370,7 +367,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -398,7 +395,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -426,7 +423,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -454,7 +451,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -470,7 +467,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -485,7 +482,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: producer
          * 
@@ -502,7 +499,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * example to use a file endpoint to load a file where each line is an
          * expected message.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -520,8 +517,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * example to use a file endpoint to load a file where each line is an
          * expected message.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -536,7 +532,7 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * The timeout to use when polling for message bodies from the URI.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 2000
          * Group: producer
@@ -551,7 +547,7 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * The timeout to use when polling for message bodies from the URI.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2000
          * Group: producer
@@ -579,7 +575,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -595,8 +591,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer (advanced)
@@ -619,7 +614,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -642,8 +637,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

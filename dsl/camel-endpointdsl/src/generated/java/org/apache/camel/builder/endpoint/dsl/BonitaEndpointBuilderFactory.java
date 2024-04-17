@@ -47,7 +47,7 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Hostname where Bonita engine runs.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: localhost
          * Group: producer
@@ -62,7 +62,7 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Port of the server hosting Bonita engine.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 8080
          * Group: producer
@@ -77,7 +77,7 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Name of the process involved in the operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -91,7 +91,7 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Password to authenticate to Bonita engine.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -105,7 +105,7 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Username to authenticate to Bonita engine.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -139,7 +139,7 @@ public interface BonitaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -162,8 +162,7 @@ public interface BonitaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

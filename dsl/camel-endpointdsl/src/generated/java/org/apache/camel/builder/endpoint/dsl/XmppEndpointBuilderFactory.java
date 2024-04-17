@@ -46,7 +46,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -61,8 +61,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -78,7 +77,7 @@ public interface XmppEndpointBuilderFactory {
          * Use nickname when joining room. If room is specified and nickname is
          * not, user will be used for the nickname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -92,7 +91,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -107,8 +106,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -130,7 +128,7 @@ public interface XmppEndpointBuilderFactory {
          * not contain the symbol, the domain part will be discovered and added
          * by Camel.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -145,7 +143,7 @@ public interface XmppEndpointBuilderFactory {
          * The name of the service you are connecting to. For Google Talk, this
          * would be gmail.com.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -165,7 +163,7 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -186,8 +184,7 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -205,7 +202,7 @@ public interface XmppEndpointBuilderFactory {
          * an initial consumer connection. Camel will try to re-establish a
          * connection if it has become inactive. Default is 10 seconds.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -223,7 +220,7 @@ public interface XmppEndpointBuilderFactory {
          * an initial consumer connection. Camel will try to re-establish a
          * connection if it has become inactive. Default is 10 seconds.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -240,7 +237,7 @@ public interface XmppEndpointBuilderFactory {
          * incoming packet; default is true if presence or pubsub are true,
          * otherwise false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -257,8 +254,7 @@ public interface XmppEndpointBuilderFactory {
          * incoming packet; default is true if presence or pubsub are true,
          * otherwise false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -275,8 +271,7 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: filter
          * 
@@ -292,8 +287,7 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: filter
          * 
@@ -307,7 +301,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -321,7 +315,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for room.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -336,7 +330,7 @@ public interface XmppEndpointBuilderFactory {
          * User name (without server name). If not specified, anonymous login
          * will be attempted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -362,7 +356,7 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -378,8 +372,7 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -394,7 +387,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * XMPP resource. The default is Camel.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel
          * Group: common (advanced)
@@ -420,7 +413,7 @@ public interface XmppEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -446,8 +439,7 @@ public interface XmppEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -465,8 +457,8 @@ public interface XmppEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -484,7 +476,7 @@ public interface XmppEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -498,8 +490,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -514,7 +505,7 @@ public interface XmppEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -531,7 +522,7 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option is a:
-         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
+         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
          * Group: advanced
          * 
@@ -548,7 +539,7 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
+         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
          * Group: advanced
          * 
@@ -574,7 +565,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -589,8 +580,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -606,7 +596,7 @@ public interface XmppEndpointBuilderFactory {
          * Use nickname when joining room. If room is specified and nickname is
          * not, user will be used for the nickname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -620,7 +610,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -635,8 +625,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -658,7 +647,7 @@ public interface XmppEndpointBuilderFactory {
          * not contain the symbol, the domain part will be discovered and added
          * by Camel.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -673,7 +662,7 @@ public interface XmppEndpointBuilderFactory {
          * The name of the service you are connecting to. For Google Talk, this
          * would be gmail.com.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -693,7 +682,7 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -714,8 +703,7 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -732,8 +720,7 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: filter
          * 
@@ -749,8 +736,7 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: filter
          * 
@@ -764,7 +750,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -778,7 +764,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for room.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -793,7 +779,7 @@ public interface XmppEndpointBuilderFactory {
          * User name (without server name). If not specified, anonymous login
          * will be attempted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -818,7 +804,7 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -834,8 +820,7 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -850,7 +835,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * XMPP resource. The default is Camel.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel
          * Group: common (advanced)
@@ -873,7 +858,7 @@ public interface XmppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -896,8 +881,7 @@ public interface XmppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -915,7 +899,7 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option is a:
-         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
+         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
          * Group: advanced
          * 
@@ -932,7 +916,7 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
+         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
          * Group: advanced
          * 
@@ -959,7 +943,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -974,8 +958,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -991,7 +974,7 @@ public interface XmppEndpointBuilderFactory {
          * Use nickname when joining room. If room is specified and nickname is
          * not, user will be used for the nickname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1005,7 +988,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1020,8 +1003,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1043,7 +1025,7 @@ public interface XmppEndpointBuilderFactory {
          * not contain the symbol, the domain part will be discovered and added
          * by Camel.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1058,7 +1040,7 @@ public interface XmppEndpointBuilderFactory {
          * The name of the service you are connecting to. For Google Talk, this
          * would be gmail.com.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1078,7 +1060,7 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1099,8 +1081,7 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1117,8 +1098,7 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: filter
          * 
@@ -1134,8 +1114,7 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: filter
          * 
@@ -1149,7 +1128,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1163,7 +1142,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for room.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1178,7 +1157,7 @@ public interface XmppEndpointBuilderFactory {
          * User name (without server name). If not specified, anonymous login
          * will be attempted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1206,7 +1185,7 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -1222,8 +1201,7 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common (advanced)
@@ -1238,7 +1216,7 @@ public interface XmppEndpointBuilderFactory {
         /**
          * XMPP resource. The default is Camel.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Camel
          * Group: common (advanced)
@@ -1256,7 +1234,7 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option is a:
-         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
+         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
          * Group: advanced
          * 
@@ -1273,7 +1251,7 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
+         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
          * Group: advanced
          * 

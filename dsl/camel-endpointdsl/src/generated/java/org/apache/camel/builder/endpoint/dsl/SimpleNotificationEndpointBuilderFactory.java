@@ -48,7 +48,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Access key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -64,7 +64,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
          * Fully qualified smn service url. Carries higher precedence than
          * region parameter based client initialization.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -78,7 +78,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -93,8 +93,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -109,7 +108,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * TTL for published message.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 3600
          * Group: producer
@@ -124,7 +123,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * TTL for published message.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 3600
          * Group: producer
@@ -139,7 +138,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Name of operation to perform.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -154,7 +153,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Cloud project ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -169,7 +168,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Proxy server ip/hostname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -183,7 +182,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Proxy authentication password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -197,7 +196,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -211,7 +210,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -225,7 +224,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Proxy authentication user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -240,7 +239,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
          * SMN service region. This is lower precedence than endpoint based
          * configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -255,7 +254,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
         /**
          * Secret key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -271,7 +270,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -286,7 +285,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -320,7 +319,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -343,8 +342,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

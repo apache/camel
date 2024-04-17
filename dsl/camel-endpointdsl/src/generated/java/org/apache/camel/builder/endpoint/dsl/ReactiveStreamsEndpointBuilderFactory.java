@@ -47,7 +47,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Number of threads used to process exchanges in the Camel route.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -62,7 +62,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Number of threads used to process exchanges in the Camel route.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -85,7 +85,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * each time an exchange is processed (chatty). Any intermediate value
          * can be used.
          * 
-         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
+         * The option is a: <code>double</code> type.
          * 
          * Default: 0.25
          * Group: consumer
@@ -108,8 +108,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * each time an exchange is processed (chatty). Any intermediate value
          * can be used.
          * 
-         * The option will be converted to a &lt;code&gt;double&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>double</code> type.
          * 
          * Default: 0.25
          * Group: consumer
@@ -124,7 +123,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Determines if onComplete events should be pushed to the Camel route.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -139,8 +138,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Determines if onComplete events should be pushed to the Camel route.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -156,7 +154,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -172,8 +170,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -190,7 +187,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * This parameter controls backpressure on the stream. Setting a
          * non-positive value will disable backpressure.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 128
          * Group: consumer
@@ -207,8 +204,8 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * This parameter controls backpressure on the stream. Setting a
          * non-positive value will disable backpressure.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 128
          * Group: consumer
@@ -245,7 +242,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -271,8 +268,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -290,8 +286,8 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -309,7 +305,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -323,8 +319,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -339,7 +334,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -367,7 +362,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * subscriber.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
          * 
          * Group: producer
          * 
@@ -383,7 +378,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * subscriber.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
          * 
          * Group: producer
          * 
@@ -415,7 +410,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -438,8 +433,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

@@ -47,7 +47,7 @@ public interface SshEndpointBuilderFactory {
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -63,8 +63,7 @@ public interface SshEndpointBuilderFactory {
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -79,7 +78,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the resource path for a known_hosts file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -94,7 +93,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -110,7 +109,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -128,7 +127,7 @@ public interface SshEndpointBuilderFactory {
          * consumer, i.e. from(ssh://...) You may need to end your command with
          * a newline, and that must be URL encoded %0A.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -143,7 +142,7 @@ public interface SshEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -159,8 +158,7 @@ public interface SshEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -176,7 +174,7 @@ public interface SshEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -191,7 +189,7 @@ public interface SshEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -206,7 +204,7 @@ public interface SshEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -221,7 +219,7 @@ public interface SshEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -240,7 +238,7 @@ public interface SshEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -259,7 +257,7 @@ public interface SshEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -273,7 +271,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -288,7 +286,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -304,7 +302,7 @@ public interface SshEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -320,8 +318,7 @@ public interface SshEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -336,7 +333,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -351,7 +348,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -368,7 +365,7 @@ public interface SshEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -385,7 +382,7 @@ public interface SshEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -401,8 +398,7 @@ public interface SshEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -419,7 +415,7 @@ public interface SshEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -437,7 +433,7 @@ public interface SshEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -454,7 +450,7 @@ public interface SshEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -469,7 +465,7 @@ public interface SshEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -485,8 +481,7 @@ public interface SshEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -502,8 +497,8 @@ public interface SshEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -522,8 +517,8 @@ public interface SshEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -540,7 +535,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -555,8 +550,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -571,8 +565,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -588,7 +581,7 @@ public interface SshEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -604,7 +597,7 @@ public interface SshEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -620,8 +613,7 @@ public interface SshEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -638,7 +630,7 @@ public interface SshEndpointBuilderFactory {
          * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -653,7 +645,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the password to use in loading certResource, if certResource is
          * an encrypted key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -668,7 +660,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported ciphers in their order of
          * preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -683,7 +675,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported key exchange algorithms in
          * their order of preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -699,7 +691,7 @@ public interface SshEndpointBuilderFactory {
          * Certificates to the remote SSH Server.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.sshd.common.keyprovider.KeyPairProvider&lt;/code&gt; type.
+         * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
          * Group: security
          * 
@@ -715,7 +707,7 @@ public interface SshEndpointBuilderFactory {
          * Certificates to the remote SSH Server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.sshd.common.keyprovider.KeyPairProvider&lt;/code&gt; type.
+         * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
          * Group: security
          * 
@@ -733,7 +725,7 @@ public interface SshEndpointBuilderFactory {
          * first available KeyPair that is loaded. Prior to this, a KeyType of
          * 'ssh-rsa' was enforced by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -749,7 +741,7 @@ public interface SshEndpointBuilderFactory {
          * algorithms in their order of preference. The MAC algorithm is used
          * for data integrity protection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -764,7 +756,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -779,7 +771,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported signature algorithms in
          * their order of preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -793,7 +785,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the username to use in logging into the remote SSH server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -829,7 +821,7 @@ public interface SshEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -855,8 +847,7 @@ public interface SshEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -874,8 +865,8 @@ public interface SshEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -893,7 +884,7 @@ public interface SshEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -907,8 +898,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -923,7 +913,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -941,7 +931,7 @@ public interface SshEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -959,7 +949,7 @@ public interface SshEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -974,7 +964,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the channel type to pass to the Channel as part of command
          * execution. Defaults to exec.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: exec
          * Group: advanced
@@ -990,8 +980,8 @@ public interface SshEndpointBuilderFactory {
          * Instance of ClientBuilder used by the producer or consumer to create
          * a new SshClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * The option is a: <code>org.apache.sshd.client.ClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1007,7 +997,7 @@ public interface SshEndpointBuilderFactory {
          * a new SshClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.sshd.client.ClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1021,7 +1011,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether to use compression, and if so which.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1036,7 +1026,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1051,7 +1041,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1067,7 +1057,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1095,7 +1085,7 @@ public interface SshEndpointBuilderFactory {
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1111,8 +1101,7 @@ public interface SshEndpointBuilderFactory {
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1127,7 +1116,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the resource path for a known_hosts file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1142,7 +1131,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1158,7 +1147,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1175,7 +1164,7 @@ public interface SshEndpointBuilderFactory {
          * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1190,7 +1179,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the password to use in loading certResource, if certResource is
          * an encrypted key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1205,7 +1194,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported ciphers in their order of
          * preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1220,7 +1209,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported key exchange algorithms in
          * their order of preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1236,7 +1225,7 @@ public interface SshEndpointBuilderFactory {
          * Certificates to the remote SSH Server.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.sshd.common.keyprovider.KeyPairProvider&lt;/code&gt; type.
+         * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
          * Group: security
          * 
@@ -1252,7 +1241,7 @@ public interface SshEndpointBuilderFactory {
          * Certificates to the remote SSH Server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.sshd.common.keyprovider.KeyPairProvider&lt;/code&gt; type.
+         * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
          * Group: security
          * 
@@ -1270,7 +1259,7 @@ public interface SshEndpointBuilderFactory {
          * first available KeyPair that is loaded. Prior to this, a KeyType of
          * 'ssh-rsa' was enforced by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1286,7 +1275,7 @@ public interface SshEndpointBuilderFactory {
          * algorithms in their order of preference. The MAC algorithm is used
          * for data integrity protection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1301,7 +1290,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1316,7 +1305,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported signature algorithms in
          * their order of preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1330,7 +1319,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the username to use in logging into the remote SSH server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1362,7 +1351,7 @@ public interface SshEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1385,8 +1374,7 @@ public interface SshEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1402,7 +1390,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the channel type to pass to the Channel as part of command
          * execution. Defaults to exec.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: exec
          * Group: advanced
@@ -1418,8 +1406,8 @@ public interface SshEndpointBuilderFactory {
          * Instance of ClientBuilder used by the producer or consumer to create
          * a new SshClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * The option is a: <code>org.apache.sshd.client.ClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1435,7 +1423,7 @@ public interface SshEndpointBuilderFactory {
          * a new SshClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.sshd.client.ClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1449,7 +1437,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether to use compression, and if so which.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1464,7 +1452,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1479,7 +1467,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1495,7 +1483,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1524,7 +1512,7 @@ public interface SshEndpointBuilderFactory {
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1540,8 +1528,7 @@ public interface SshEndpointBuilderFactory {
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1556,7 +1543,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the resource path for a known_hosts file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1571,7 +1558,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1587,7 +1574,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1604,7 +1591,7 @@ public interface SshEndpointBuilderFactory {
          * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1619,7 +1606,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the password to use in loading certResource, if certResource is
          * an encrypted key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1634,7 +1621,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported ciphers in their order of
          * preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1649,7 +1636,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported key exchange algorithms in
          * their order of preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1665,7 +1652,7 @@ public interface SshEndpointBuilderFactory {
          * Certificates to the remote SSH Server.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.sshd.common.keyprovider.KeyPairProvider&lt;/code&gt; type.
+         * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
          * Group: security
          * 
@@ -1681,7 +1668,7 @@ public interface SshEndpointBuilderFactory {
          * Certificates to the remote SSH Server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.sshd.common.keyprovider.KeyPairProvider&lt;/code&gt; type.
+         * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
          * Group: security
          * 
@@ -1699,7 +1686,7 @@ public interface SshEndpointBuilderFactory {
          * first available KeyPair that is loaded. Prior to this, a KeyType of
          * 'ssh-rsa' was enforced by default.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1715,7 +1702,7 @@ public interface SshEndpointBuilderFactory {
          * algorithms in their order of preference. The MAC algorithm is used
          * for data integrity protection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1730,7 +1717,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1745,7 +1732,7 @@ public interface SshEndpointBuilderFactory {
          * Comma-separated list of allowed/supported signature algorithms in
          * their order of preference.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1759,7 +1746,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the username to use in logging into the remote SSH server.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1787,7 +1774,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the channel type to pass to the Channel as part of command
          * execution. Defaults to exec.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: exec
          * Group: advanced
@@ -1803,8 +1790,8 @@ public interface SshEndpointBuilderFactory {
          * Instance of ClientBuilder used by the producer or consumer to create
          * a new SshClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * The option is a: <code>org.apache.sshd.client.ClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1820,7 +1807,7 @@ public interface SshEndpointBuilderFactory {
          * a new SshClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.sshd.client.ClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.sshd.client.ClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1834,7 +1821,7 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether to use compression, and if so which.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1849,7 +1836,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1864,7 +1851,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced
@@ -1880,7 +1867,7 @@ public interface SshEndpointBuilderFactory {
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 100
          * Group: advanced

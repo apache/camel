@@ -47,7 +47,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Access key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -63,7 +63,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * Fully qualified Image Recognition service url. Carries higher
          * precedence than region based configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -82,7 +82,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * BMP. Configure either this parameter or imageUrl, and this one
          * carries higher precedence than imageUrl.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -102,7 +102,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * parameter or imageContent, and this one carries lower precedence than
          * imageContent.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -116,7 +116,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Cloud project ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -131,7 +131,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Proxy server ip/hostname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -145,7 +145,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Proxy authentication password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -159,7 +159,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -173,7 +173,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -187,7 +187,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Proxy authentication user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -203,7 +203,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * cn-north-4 are supported. This is lower precedence than endpoint
          * based configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -218,7 +218,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Secret key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -234,7 +234,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -249,7 +249,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -264,7 +264,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * Indicates the language of the returned tags when the operation is
          * tagRecognition, including zh and en.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: zh
          * Group: producer
@@ -280,7 +280,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * Indicates the maximum number of the returned tags when the operation
          * is tagRecognition.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 50
          * Group: producer
@@ -296,7 +296,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * Indicates the maximum number of the returned tags when the operation
          * is tagRecognition.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 50
          * Group: producer
@@ -317,7 +317,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * lower than the threshold will not be returned. The default value is
          * 0.48.
          * 
-         * The option is a: &lt;code&gt;float&lt;/code&gt; type.
+         * The option is a: <code>float</code> type.
          * 
          * Group: producer
          * 
@@ -337,8 +337,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * lower than the threshold will not be returned. The default value is
          * 0.48.
          * 
-         * The option will be converted to a &lt;code&gt;float&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>float</code> type.
          * 
          * Group: producer
          * 
@@ -352,7 +351,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -367,8 +366,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -403,7 +401,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -426,8 +424,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

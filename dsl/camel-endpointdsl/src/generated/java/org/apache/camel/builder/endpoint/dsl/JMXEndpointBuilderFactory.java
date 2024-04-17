@@ -49,7 +49,7 @@ public interface JMXEndpointBuilderFactory {
          * notification is serialized to xml. If raw, then the raw java object
          * is set as the body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: xml
          * Group: consumer
@@ -65,7 +65,7 @@ public interface JMXEndpointBuilderFactory {
          * The frequency to poll the bean to check the monitor (monitor types
          * only).
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: consumer
@@ -81,7 +81,7 @@ public interface JMXEndpointBuilderFactory {
          * The frequency to poll the bean to check the monitor (monitor types
          * only).
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: consumer
@@ -97,7 +97,7 @@ public interface JMXEndpointBuilderFactory {
          * The type of monitor to create. One of string, gauge, counter (monitor
          * types only).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -111,7 +111,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * The domain for the mbean you're connecting to.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: consumer
@@ -127,7 +127,7 @@ public interface JMXEndpointBuilderFactory {
          * The name key for the mbean you're connecting to. This value is
          * mutually exclusive with the object properties that get passed.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -141,7 +141,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * The attribute to observe for the monitor bean or consumer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -156,7 +156,7 @@ public interface JMXEndpointBuilderFactory {
          * Initial threshold for the monitor. The value must exceed this before
          * notifications are fired (counter monitor only).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: counter
          * 
@@ -171,7 +171,7 @@ public interface JMXEndpointBuilderFactory {
          * Initial threshold for the monitor. The value must exceed this before
          * notifications are fired (counter monitor only).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: counter
          * 
@@ -186,7 +186,7 @@ public interface JMXEndpointBuilderFactory {
          * The value at which the counter is reset to zero (counter monitor
          * only).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: counter
          * 
@@ -201,7 +201,7 @@ public interface JMXEndpointBuilderFactory {
          * The value at which the counter is reset to zero (counter monitor
          * only).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: counter
          * 
@@ -216,7 +216,7 @@ public interface JMXEndpointBuilderFactory {
          * The amount to increment the threshold after it's been exceeded
          * (counter monitor only).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: counter
          * 
@@ -231,7 +231,7 @@ public interface JMXEndpointBuilderFactory {
          * The amount to increment the threshold after it's been exceeded
          * (counter monitor only).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: counter
          * 
@@ -247,7 +247,7 @@ public interface JMXEndpointBuilderFactory {
          * difference from the threshold as opposed to the value itself (counter
          * and gauge monitor only).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: gauge
@@ -264,8 +264,7 @@ public interface JMXEndpointBuilderFactory {
          * difference from the threshold as opposed to the value itself (counter
          * and gauge monitor only).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: gauge
@@ -281,7 +280,7 @@ public interface JMXEndpointBuilderFactory {
          * If true, the gauge will fire a notification when the high threshold
          * is exceeded (gauge monitor only).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: gauge
@@ -297,8 +296,7 @@ public interface JMXEndpointBuilderFactory {
          * If true, the gauge will fire a notification when the high threshold
          * is exceeded (gauge monitor only).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: gauge
@@ -314,7 +312,7 @@ public interface JMXEndpointBuilderFactory {
          * If true, the gauge will fire a notification when the low threshold is
          * exceeded (gauge monitor only).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: gauge
@@ -330,8 +328,7 @@ public interface JMXEndpointBuilderFactory {
          * If true, the gauge will fire a notification when the low threshold is
          * exceeded (gauge monitor only).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: gauge
@@ -346,7 +343,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value for the gauge's high threshold (gauge monitor only).
          * 
-         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Double</code> type.
          * 
          * Group: gauge
          * 
@@ -360,8 +357,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value for the gauge's high threshold (gauge monitor only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Double</code> type.
          * 
          * Group: gauge
          * 
@@ -375,7 +371,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value for the gauge's low threshold (gauge monitor only).
          * 
-         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Double</code> type.
          * 
          * Group: gauge
          * 
@@ -389,8 +385,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value for the gauge's low threshold (gauge monitor only).
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Double</code> type.
          * 
          * Group: gauge
          * 
@@ -404,7 +399,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Credentials for making a remote connection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -418,7 +413,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Credentials for making a remote connection.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -435,7 +430,7 @@ public interface JMXEndpointBuilderFactory {
          * the consumer will notify match if observed attribute and string to
          * compare has been configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: string
@@ -453,8 +448,7 @@ public interface JMXEndpointBuilderFactory {
          * the consumer will notify match if observed attribute and string to
          * compare has been configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: string
@@ -472,7 +466,7 @@ public interface JMXEndpointBuilderFactory {
          * consumer will notify match if observed attribute and string to
          * compare has been configured.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: string
@@ -490,8 +484,7 @@ public interface JMXEndpointBuilderFactory {
          * consumer will notify match if observed attribute and string to
          * compare has been configured.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: string
@@ -508,7 +501,7 @@ public interface JMXEndpointBuilderFactory {
          * default the consumer will notify match if observed attribute and
          * string to compare has been configured.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: string
          * 
@@ -545,7 +538,7 @@ public interface JMXEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -571,8 +564,7 @@ public interface JMXEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -590,8 +582,8 @@ public interface JMXEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -609,7 +601,7 @@ public interface JMXEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -623,8 +615,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -639,7 +630,7 @@ public interface JMXEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -654,8 +645,8 @@ public interface JMXEndpointBuilderFactory {
          * To use a custom shared thread pool for the consumers. By default each
          * consume has their own thread-pool to process and route notifications.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.ExecutorService</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -671,7 +662,7 @@ public interface JMXEndpointBuilderFactory {
          * consume has their own thread-pool to process and route notifications.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ExecutorService</code> type.
          * 
          * Group: advanced
          * 
@@ -687,7 +678,7 @@ public interface JMXEndpointBuilderFactory {
          * This value will be put in the message header with the key
          * JMXConstants#JMX_HANDBACK.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Group: advanced
          * 
@@ -703,8 +694,7 @@ public interface JMXEndpointBuilderFactory {
          * This value will be put in the message header with the key
          * JMXConstants#JMX_HANDBACK.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Group: advanced
          * 
@@ -718,8 +708,8 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Reference to a bean that implements the NotificationFilter.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.management.NotificationFilter&lt;/code&gt; type.
+         * The option is a: <code>javax.management.NotificationFilter</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -734,7 +724,7 @@ public interface JMXEndpointBuilderFactory {
          * Reference to a bean that implements the NotificationFilter.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.management.NotificationFilter&lt;/code&gt; type.
+         * <code>javax.management.NotificationFilter</code> type.
          * 
          * Group: advanced
          * 
@@ -749,8 +739,8 @@ public interface JMXEndpointBuilderFactory {
          * Properties for the object name. These values will be used if the
          * objectName param is not set.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the
          * objectProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -769,8 +759,8 @@ public interface JMXEndpointBuilderFactory {
          * Properties for the object name. These values will be used if the
          * objectName param is not set.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the
          * objectProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -789,7 +779,7 @@ public interface JMXEndpointBuilderFactory {
          * establishment of the initial connection or attempt to reconnect a
          * lost connection.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: advanced
@@ -806,7 +796,7 @@ public interface JMXEndpointBuilderFactory {
          * establishment of the initial connection or attempt to reconnect a
          * lost connection.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: advanced
@@ -824,7 +814,7 @@ public interface JMXEndpointBuilderFactory {
          * re-establish the JMX connection every 'x' seconds until the
          * connection is made-- where 'x' is the configured reconnectionDelay.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -842,8 +832,7 @@ public interface JMXEndpointBuilderFactory {
          * re-establish the JMX connection every 'x' seconds until the
          * connection is made-- where 'x' is the configured reconnectionDelay.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -861,7 +850,7 @@ public interface JMXEndpointBuilderFactory {
          * to establish the JMX connection every 'x' seconds until the
          * connection is made -- where 'x' is the configured reconnectionDelay.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -879,8 +868,7 @@ public interface JMXEndpointBuilderFactory {
          * to establish the JMX connection every 'x' seconds until the
          * connection is made -- where 'x' is the configured reconnectionDelay.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced

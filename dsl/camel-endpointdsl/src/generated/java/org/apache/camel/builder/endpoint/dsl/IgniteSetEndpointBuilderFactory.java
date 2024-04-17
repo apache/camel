@@ -50,7 +50,8 @@ public interface IgniteSetEndpointBuilderFactory {
          * options.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.ignite.configuration.CollectionConfiguration&lt;/code&gt; type.
+         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -67,7 +68,8 @@ public interface IgniteSetEndpointBuilderFactory {
          * options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.ignite.configuration.CollectionConfiguration&lt;/code&gt; type.
+         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -85,7 +87,8 @@ public interface IgniteSetEndpointBuilderFactory {
          * RETAIN_ALL, ARRAY.The set operation to perform.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ignite.set.IgniteSetOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -103,7 +106,8 @@ public interface IgniteSetEndpointBuilderFactory {
          * RETAIN_ALL, ARRAY.The set operation to perform.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.ignite.set.IgniteSetOperation&lt;/code&gt; type.
+         * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -118,7 +122,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -134,8 +138,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -151,7 +154,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -167,8 +170,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -203,7 +205,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -226,8 +228,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

@@ -48,7 +48,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * If the JSON Map contains only a single entry, then flattern by
          * storing that single entry value as the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -64,8 +64,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * If the JSON Map contains only a single entry, then flattern by
          * storing that single entry value as the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -81,7 +80,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Whether to return data in JSON format. If this option is false, then
          * XML is returned in Atom format.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -97,8 +96,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Whether to return data in JSON format. If this option is false, then
          * XML is returned in Atom format.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -113,7 +111,7 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * To transform the JSON from a String to a Map in the message body.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -128,8 +126,7 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * To transform the JSON from a String to a Map in the message body.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -144,7 +141,7 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Password for account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -159,7 +156,7 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Username for account.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -194,7 +191,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -217,8 +214,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

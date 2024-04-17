@@ -47,7 +47,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Regex pattern to match the origin header sent by WebSocket clients.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -62,7 +62,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * When set to true, the consumer acts as a WebSocket client, creating
          * exchanges on each received WebSocket event.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -78,8 +78,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * When set to true, the consumer acts as a WebSocket client, creating
          * exchanges on each received WebSocket event.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -95,7 +94,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Whether the server consumer will create a message exchange when a new
          * WebSocket peer connects or disconnects.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -111,8 +110,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Whether the server consumer will create a message exchange when a new
          * WebSocket peer connects or disconnects.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -129,7 +127,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * allowed reconnection attempts to a previously closed WebSocket. A
          * value of 0 (the default) will attempt to reconnect indefinitely.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -146,7 +144,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * allowed reconnection attempts to a previously closed WebSocket. A
          * value of 0 (the default) will attempt to reconnect indefinitely.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -163,7 +161,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * milliseconds before attempting to reconnect to a previously closed
          * WebSocket.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -180,7 +178,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * milliseconds before attempting to reconnect to a previously closed
          * WebSocket.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
          * Group: consumer
@@ -197,7 +195,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * milliseconds at which reconnecting to a previously closed WebSocket
          * occurs.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -214,7 +212,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * milliseconds at which reconnecting to a previously closed WebSocket
          * occurs.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -229,8 +227,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * To use an existing vertx router for the HTTP server.
          * 
-         * The option is a: &lt;code&gt;io.vertx.ext.web.Router&lt;/code&gt;
-         * type.
+         * The option is a: <code>io.vertx.ext.web.Router</code> type.
          * 
          * Group: consumer
          * 
@@ -245,7 +242,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To use an existing vertx router for the HTTP server.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.vertx.ext.web.Router&lt;/code&gt; type.
+         * <code>io.vertx.ext.web.Router</code> type.
          * 
          * Group: consumer
          * 
@@ -260,8 +257,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets customized options for configuring the HTTP server hosting the
          * WebSocket for the consumer.
          * 
-         * The option is a:
-         * &lt;code&gt;io.vertx.core.http.HttpServerOptions&lt;/code&gt; type.
+         * The option is a: <code>io.vertx.core.http.HttpServerOptions</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -277,7 +274,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * WebSocket for the consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.vertx.core.http.HttpServerOptions&lt;/code&gt; type.
+         * <code>io.vertx.core.http.HttpServerOptions</code> type.
          * 
          * Group: consumer
          * 
@@ -292,7 +289,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -307,7 +304,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -343,7 +340,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -369,8 +366,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -388,8 +384,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -407,7 +403,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -421,8 +417,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -437,7 +432,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -464,8 +459,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets customized options for configuring the WebSocket client used in
          * the producer.
          * 
-         * The option is a:
-         * &lt;code&gt;io.vertx.core.http.HttpClientOptions&lt;/code&gt; type.
+         * The option is a: <code>io.vertx.core.http.HttpClientOptions</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -481,7 +476,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.vertx.core.http.HttpClientOptions&lt;/code&gt; type.
+         * <code>io.vertx.core.http.HttpClientOptions</code> type.
          * 
          * Group: producer
          * 
@@ -496,7 +491,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Comma separated list of WebSocket subprotocols that the client should
          * use for the Sec-WebSocket-Protocol header.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -517,7 +512,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * producing messages to endpoints hosted by the vertx-websocket
          * consumer and not to an externally hosted WebSocket.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -539,8 +534,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * producing messages to endpoints hosted by the vertx-websocket
          * consumer and not to an externally hosted WebSocket.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -556,7 +550,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -571,7 +565,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -603,7 +597,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -626,8 +620,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -656,7 +649,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -671,7 +664,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 

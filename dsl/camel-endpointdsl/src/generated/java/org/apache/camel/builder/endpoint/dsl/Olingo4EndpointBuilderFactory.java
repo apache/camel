@@ -47,7 +47,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -63,7 +63,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -79,7 +79,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Content-Type header value can be used to specify JSON or XML message
          * format, defaults to application/json;charset=utf-8.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: application/json;charset=utf-8
          * Group: common
@@ -95,7 +95,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -111,8 +111,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -128,8 +127,8 @@ public interface Olingo4EndpointBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -145,8 +144,8 @@ public interface Olingo4EndpointBuilderFactory {
          * OAuth tokens, etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -160,7 +159,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -174,8 +173,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * HTTP proxy server configuration.
          * 
-         * The option is a: &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.http.HttpHost</code> type.
          * 
          * Group: common
          * 
@@ -190,7 +188,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP proxy server configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt; type.
+         * <code>org.apache.http.HttpHost</code> type.
          * 
          * Group: common
          * 
@@ -205,7 +203,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Target OData service base URI, e.g.
          * http://services.odata.org/OData/OData.svc.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -220,7 +218,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -236,7 +234,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -252,7 +250,7 @@ public interface Olingo4EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -268,8 +266,7 @@ public interface Olingo4EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -286,7 +283,7 @@ public interface Olingo4EndpointBuilderFactory {
          * will map every element to distinct messages, unless splitResult is
          * set to false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -303,8 +300,7 @@ public interface Olingo4EndpointBuilderFactory {
          * will map every element to distinct messages, unless splitResult is
          * set to false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -320,7 +316,7 @@ public interface Olingo4EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -335,7 +331,7 @@ public interface Olingo4EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -350,7 +346,7 @@ public interface Olingo4EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -365,7 +361,7 @@ public interface Olingo4EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -384,7 +380,7 @@ public interface Olingo4EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -403,7 +399,7 @@ public interface Olingo4EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -417,7 +413,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -432,7 +428,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -448,7 +444,7 @@ public interface Olingo4EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -464,8 +460,7 @@ public interface Olingo4EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -480,7 +475,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -495,7 +490,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -512,7 +507,7 @@ public interface Olingo4EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -529,7 +524,7 @@ public interface Olingo4EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -545,8 +540,7 @@ public interface Olingo4EndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -563,7 +557,7 @@ public interface Olingo4EndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -581,7 +575,7 @@ public interface Olingo4EndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -598,7 +592,7 @@ public interface Olingo4EndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -613,7 +607,7 @@ public interface Olingo4EndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -629,8 +623,7 @@ public interface Olingo4EndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -646,8 +639,8 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -666,8 +659,8 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -684,7 +677,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -699,8 +692,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -715,8 +707,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -732,7 +723,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -748,7 +739,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -764,8 +755,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -781,7 +771,7 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -796,7 +786,7 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -832,7 +822,7 @@ public interface Olingo4EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -858,8 +848,7 @@ public interface Olingo4EndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -877,8 +866,8 @@ public interface Olingo4EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -896,7 +885,7 @@ public interface Olingo4EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -910,8 +899,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -926,7 +914,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -944,7 +932,7 @@ public interface Olingo4EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -962,7 +950,7 @@ public interface Olingo4EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -980,7 +968,8 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -998,7 +987,8 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1016,7 +1006,7 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1034,7 +1024,7 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1061,7 +1051,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1077,7 +1067,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1093,7 +1083,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Content-Type header value can be used to specify JSON or XML message
          * format, defaults to application/json;charset=utf-8.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: application/json;charset=utf-8
          * Group: common
@@ -1109,7 +1099,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1125,8 +1115,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1142,8 +1131,8 @@ public interface Olingo4EndpointBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1159,8 +1148,8 @@ public interface Olingo4EndpointBuilderFactory {
          * OAuth tokens, etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1174,7 +1163,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1188,8 +1177,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * HTTP proxy server configuration.
          * 
-         * The option is a: &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.http.HttpHost</code> type.
          * 
          * Group: common
          * 
@@ -1204,7 +1192,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP proxy server configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt; type.
+         * <code>org.apache.http.HttpHost</code> type.
          * 
          * Group: common
          * 
@@ -1219,7 +1207,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Target OData service base URI, e.g.
          * http://services.odata.org/OData/OData.svc.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1234,7 +1222,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1250,7 +1238,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1266,7 +1254,7 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1281,7 +1269,7 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1313,7 +1301,7 @@ public interface Olingo4EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1336,8 +1324,7 @@ public interface Olingo4EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1356,7 +1343,8 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1374,7 +1362,8 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1392,7 +1381,7 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1410,7 +1399,7 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1438,7 +1427,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1454,7 +1443,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1470,7 +1459,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Content-Type header value can be used to specify JSON or XML message
          * format, defaults to application/json;charset=utf-8.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: application/json;charset=utf-8
          * Group: common
@@ -1486,7 +1475,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1502,8 +1491,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1519,8 +1507,8 @@ public interface Olingo4EndpointBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          * 
@@ -1536,8 +1524,8 @@ public interface Olingo4EndpointBuilderFactory {
          * OAuth tokens, etc.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1551,7 +1539,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1565,8 +1553,7 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * HTTP proxy server configuration.
          * 
-         * The option is a: &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt;
-         * type.
+         * The option is a: <code>org.apache.http.HttpHost</code> type.
          * 
          * Group: common
          * 
@@ -1581,7 +1568,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP proxy server configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt; type.
+         * <code>org.apache.http.HttpHost</code> type.
          * 
          * Group: common
          * 
@@ -1596,7 +1583,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Target OData service base URI, e.g.
          * http://services.odata.org/OData/OData.svc.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1611,7 +1598,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1627,7 +1614,7 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1643,7 +1630,7 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1658,7 +1645,7 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -1689,7 +1676,8 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1707,7 +1695,8 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -1725,7 +1714,7 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
          * Group: advanced
          * 
@@ -1743,7 +1732,7 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
          * Group: advanced
          * 

@@ -50,7 +50,7 @@ public interface FileWatchEndpointBuilderFactory {
          * relative to endpoint path. Pattern must be also relative (not
          * starting with slash).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: **
          * Group: consumer
@@ -65,7 +65,7 @@ public interface FileWatchEndpointBuilderFactory {
         /**
          * Auto create directory if does not exist.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -80,8 +80,7 @@ public interface FileWatchEndpointBuilderFactory {
         /**
          * Auto create directory if does not exist.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -97,7 +96,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Comma separated list of events to watch. Possible values:
          * CREATE,MODIFY,DELETE.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: CREATE,MODIFY,DELETE
          * Group: consumer
@@ -113,7 +112,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Watch recursive in current and child directories (including newly
          * created directories).
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -129,8 +128,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Watch recursive in current and child directories (including newly
          * created directories).
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -148,7 +146,7 @@ public interface FileWatchEndpointBuilderFactory {
          * platforms and JDKs. Check java.nio.file.WatchService limitations for
          * your target platform.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -166,8 +164,7 @@ public interface FileWatchEndpointBuilderFactory {
          * platforms and JDKs. Check java.nio.file.WatchService limitations for
          * your target platform.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -205,7 +202,7 @@ public interface FileWatchEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -231,8 +228,7 @@ public interface FileWatchEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -250,8 +246,8 @@ public interface FileWatchEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -269,7 +265,7 @@ public interface FileWatchEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -283,8 +279,7 @@ public interface FileWatchEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -299,7 +294,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -314,7 +309,7 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of concurrent consumers. Increase this value, if your
          * route is slow to prevent buffering in queue.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -330,7 +325,7 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of concurrent consumers. Increase this value, if your
          * route is slow to prevent buffering in queue.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -349,8 +344,8 @@ public interface FileWatchEndpointBuilderFactory {
          * per file, use #lastModifiedTimeFileHasher. You can also provide
          * custom implementation in registry.
          * 
-         * The option is a:
-         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
+         * The option is a: <code>io.methvin.watcher.hashing.FileHasher</code>
+         * type.
          * 
          * Default: #murmur3FFileHasher
          * Group: advanced
@@ -370,7 +365,7 @@ public interface FileWatchEndpointBuilderFactory {
          * custom implementation in registry.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
+         * <code>io.methvin.watcher.hashing.FileHasher</code> type.
          * 
          * Default: #murmur3FFileHasher
          * Group: advanced
@@ -386,7 +381,7 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of threads polling WatchService. Increase this value, if
          * you see OVERFLOW messages in log.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -402,7 +397,7 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of threads polling WatchService. Increase this value, if
          * you see OVERFLOW messages in log.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: advanced
@@ -418,7 +413,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Maximum size of queue between WatchService and consumer. Unbounded by
          * default.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: advanced
@@ -434,7 +429,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Maximum size of queue between WatchService and consumer. Unbounded by
          * default.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2147483647
          * Group: advanced

@@ -48,7 +48,8 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
+         * type.
          * 
          * Default: NONE
          * Group: common
@@ -64,7 +65,8 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
+         * type.
          * 
          * Default: NONE
          * Group: common
@@ -80,7 +82,8 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
+         * type.
          * 
          * Default: BINARY
          * Group: common
@@ -96,7 +99,8 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
+         * type.
          * 
          * Default: BINARY
          * Group: common
@@ -111,7 +115,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Client timeout for consumers.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -125,7 +129,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Client timeout for consumers.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -139,7 +143,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift server consumer max thread pool size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -154,7 +158,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift server consumer max thread pool size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -169,7 +173,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift server consumer initial thread pool size.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -184,7 +188,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift server consumer initial thread pool size.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -200,7 +204,8 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
+         * type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -216,7 +221,8 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
+         * type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -232,7 +238,7 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -247,7 +253,7 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -283,7 +289,7 @@ public interface ThriftEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -309,8 +315,7 @@ public interface ThriftEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -328,8 +333,8 @@ public interface ThriftEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -347,7 +352,7 @@ public interface ThriftEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -361,8 +366,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -377,7 +381,7 @@ public interface ThriftEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -391,7 +395,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -406,8 +410,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -435,7 +438,8 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
+         * type.
          * 
          * Default: NONE
          * Group: common
@@ -451,7 +455,8 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
+         * type.
          * 
          * Default: NONE
          * Group: common
@@ -467,7 +472,8 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
+         * type.
          * 
          * Default: BINARY
          * Group: common
@@ -483,7 +489,8 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
+         * type.
          * 
          * Default: BINARY
          * Group: common
@@ -498,7 +505,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift invoked method name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -513,7 +520,8 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
+         * type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -529,7 +537,8 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
+         * type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -545,7 +554,7 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -560,7 +569,7 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -592,7 +601,7 @@ public interface ThriftEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -615,8 +624,7 @@ public interface ThriftEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -631,7 +639,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -646,8 +654,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -676,7 +683,8 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
+         * type.
          * 
          * Default: NONE
          * Group: common
@@ -692,7 +700,8 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
+         * type.
          * 
          * Default: NONE
          * Group: common
@@ -708,7 +717,8 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
+         * type.
          * 
          * Default: BINARY
          * Group: common
@@ -724,7 +734,8 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
+         * type.
          * 
          * Default: BINARY
          * Group: common
@@ -740,7 +751,8 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
+         * type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -756,7 +768,8 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
+         * type.
          * 
          * Default: PLAINTEXT
          * Group: security
@@ -772,7 +785,7 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -787,7 +800,7 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -814,7 +827,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -829,8 +842,7 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced

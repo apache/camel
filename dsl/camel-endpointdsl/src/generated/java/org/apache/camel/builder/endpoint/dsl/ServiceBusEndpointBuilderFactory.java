@@ -47,8 +47,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the retry options for Service Bus clients. If not specified, the
          * default retry options are used.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -64,7 +64,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * default retry options are used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
          * 
          * Group: common
          * 
@@ -79,8 +79,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the transport type by which all the communication with Azure
          * Service Bus occurs. Default value is AMQP.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
          * 
          * Default: AMQP
          * Group: common
@@ -97,7 +97,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Service Bus occurs. Default value is AMQP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
          * Default: AMQP
          * Group: common
@@ -114,8 +114,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * builder, enabling customization of certain properties, as well as
          * support the addition of custom header information.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.util.ClientOptions</code> type.
          * 
          * Group: common
          * 
@@ -132,7 +131,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * support the addition of custom header information.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * <code>com.azure.core.util.ClientOptions</code> type.
          * 
          * Group: common
          * 
@@ -148,8 +147,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * application properties to and from Camel message headers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -165,8 +163,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * application properties to and from Camel message headers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -182,8 +179,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.ProxyOptions</code> type.
          * 
          * Group: common
          * 
@@ -200,7 +196,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * transport type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.ProxyOptions</code> type.
          * 
          * Group: common
          * 
@@ -216,7 +212,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * queue option and topic for subscription based model.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusType</code> type.
          * 
          * Required: true
          * Default: queue
@@ -234,7 +230,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * queue option and topic for subscription based model.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusType</code> type.
          * 
          * Required: true
          * Default: queue
@@ -251,7 +247,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the desired operation to be used in the consumer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition</code> type.
          * 
          * Default: receiveMessages
          * Group: consumer
@@ -267,7 +263,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the desired operation to be used in the consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition</code> type.
          * 
          * Default: receiveMessages
          * Group: consumer
@@ -284,7 +280,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * default, a successfully processed message is completed. If an error
          * happens when the message is abandoned.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -301,8 +297,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * default, a successfully processed message is completed. If an error
          * happens when the message is abandoned.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -318,7 +313,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Enable application level deadlettering to the subscription deadletter
          * subqueue if deadletter related headers are set.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -334,8 +329,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Enable application level deadlettering to the subscription deadletter
          * subqueue if deadletter related headers are set.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -352,7 +346,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * ZERO disables auto-renewal. For ServiceBus receive mode
          * (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Default: 5m
          * Group: consumer
@@ -369,8 +363,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * ZERO disables auto-renewal. For ServiceBus receive mode
          * (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
          * 
          * Default: 5m
          * Group: consumer
@@ -386,7 +380,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Set the max number of messages to be peeked during the peek
          * operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: consumer
          * 
@@ -401,8 +395,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Set the max number of messages to be peeked during the peek
          * operation.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: consumer
          * 
@@ -422,7 +416,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * value will prefetch that number of messages. Setting the value to
          * zero turns prefetch off.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -442,7 +436,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * value will prefetch that number of messages. Setting the value to
          * zero turns prefetch off.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          * 
@@ -458,7 +452,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * consumer.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient</code> type.
          * 
          * Group: consumer
          * 
@@ -474,7 +468,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient</code> type.
          * 
          * Group: consumer
          * 
@@ -489,7 +483,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the receive mode for the receiver.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.servicebus.models.ServiceBusReceiveMode&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.models.ServiceBusReceiveMode</code> type.
          * 
          * Default: PEEK_LOCK
          * Group: consumer
@@ -505,7 +499,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the receive mode for the receiver.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.messaging.servicebus.models.ServiceBusReceiveMode&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.models.ServiceBusReceiveMode</code> type.
          * 
          * Default: PEEK_LOCK
          * Group: consumer
@@ -521,7 +515,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the type of the SubQueue to connect to.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.servicebus.models.SubQueue&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.models.SubQueue</code> type.
          * 
          * Group: consumer
          * 
@@ -536,7 +530,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the type of the SubQueue to connect to.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.messaging.servicebus.models.SubQueue&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.models.SubQueue</code> type.
          * 
          * Group: consumer
          * 
@@ -553,7 +547,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * property is required if serviceBusType=topic and the consumer is in
          * use.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -568,7 +562,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the connection string for a Service Bus namespace or a specific
          * Service Bus resource.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -583,7 +577,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -599,7 +593,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -614,7 +608,7 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * Fully Qualified Namespace of the service bus.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -629,8 +623,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * A TokenCredential for Azure AD authentication.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -645,8 +638,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * A TokenCredential for Azure AD authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -682,7 +674,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -708,8 +700,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -727,8 +718,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -746,7 +737,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -760,8 +751,7 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -776,7 +766,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -791,7 +781,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * If the consumer has connection failure to Azure ServiceBus, then
          * delay (millis) some time before re-connecting.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 5000
          * Group: consumer (advanced)
@@ -807,7 +797,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * If the consumer has connection failure to Azure ServiceBus, then
          * delay (millis) some time before re-connecting.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 5000
          * Group: consumer (advanced)
@@ -835,8 +825,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the retry options for Service Bus clients. If not specified, the
          * default retry options are used.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -852,7 +842,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * default retry options are used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
          * 
          * Group: common
          * 
@@ -867,8 +857,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the transport type by which all the communication with Azure
          * Service Bus occurs. Default value is AMQP.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
          * 
          * Default: AMQP
          * Group: common
@@ -885,7 +875,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Service Bus occurs. Default value is AMQP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
          * Default: AMQP
          * Group: common
@@ -902,8 +892,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * builder, enabling customization of certain properties, as well as
          * support the addition of custom header information.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.util.ClientOptions</code> type.
          * 
          * Group: common
          * 
@@ -920,7 +909,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * support the addition of custom header information.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * <code>com.azure.core.util.ClientOptions</code> type.
          * 
          * Group: common
          * 
@@ -936,8 +925,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * application properties to and from Camel message headers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -953,8 +941,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * application properties to and from Camel message headers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -970,8 +957,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.ProxyOptions</code> type.
          * 
          * Group: common
          * 
@@ -988,7 +974,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * transport type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.ProxyOptions</code> type.
          * 
          * Group: common
          * 
@@ -1004,7 +990,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * queue option and topic for subscription based model.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusType</code> type.
          * 
          * Required: true
          * Default: queue
@@ -1022,7 +1008,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * queue option and topic for subscription based model.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusType</code> type.
          * 
          * Required: true
          * Default: queue
@@ -1039,7 +1025,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Set binary mode. If true, message body will be sent as byte. By
          * default, it is false.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1055,8 +1041,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Set binary mode. If true, message body will be sent as byte. By
          * default, it is false.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -1072,7 +1057,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the desired operation to be used in the producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition</code> type.
          * 
          * Default: sendMessages
          * Group: producer
@@ -1088,7 +1073,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the desired operation to be used in the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition</code> type.
          * 
          * Default: sendMessages
          * Group: producer
@@ -1104,8 +1089,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets OffsetDateTime at which the message should appear in the Service
          * Bus queue or topic.
          * 
-         * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.time.OffsetDateTime</code> type.
          * 
          * Group: producer
          * 
@@ -1121,7 +1105,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Bus queue or topic.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt; type.
+         * <code>java.time.OffsetDateTime</code> type.
          * 
          * Group: producer
          * 
@@ -1136,7 +1120,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets SenderAsyncClient to be used in the producer.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.ServiceBusSenderAsyncClient</code> type.
          * 
          * Group: producer
          * 
@@ -1151,7 +1135,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets SenderAsyncClient to be used in the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.ServiceBusSenderAsyncClient</code> type.
          * 
          * Group: producer
          * 
@@ -1167,7 +1151,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * transaction id.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusTransactionContext&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.ServiceBusTransactionContext</code> type.
          * 
          * Group: producer
          * 
@@ -1183,7 +1167,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * transaction id.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusTransactionContext&lt;/code&gt; type.
+         * <code>com.azure.messaging.servicebus.ServiceBusTransactionContext</code> type.
          * 
          * Group: producer
          * 
@@ -1198,7 +1182,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the connection string for a Service Bus namespace or a specific
          * Service Bus resource.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1213,7 +1197,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1229,7 +1213,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1244,7 +1228,7 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * Fully Qualified Namespace of the service bus.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1259,8 +1243,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * A TokenCredential for Azure AD authentication.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -1275,8 +1258,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * A TokenCredential for Azure AD authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -1308,7 +1290,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1331,8 +1313,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -1361,8 +1342,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the retry options for Service Bus clients. If not specified, the
          * default retry options are used.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1378,7 +1359,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * default retry options are used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpRetryOptions</code> type.
          * 
          * Group: common
          * 
@@ -1393,8 +1374,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the transport type by which all the communication with Azure
          * Service Bus occurs. Default value is AMQP.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
+         * type.
          * 
          * Default: AMQP
          * Group: common
@@ -1411,7 +1392,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Service Bus occurs. Default value is AMQP.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
          * Default: AMQP
          * Group: common
@@ -1428,8 +1409,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * builder, enabling customization of certain properties, as well as
          * support the addition of custom header information.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.util.ClientOptions</code> type.
          * 
          * Group: common
          * 
@@ -1446,7 +1426,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * support the addition of custom header information.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
+         * <code>com.azure.core.util.ClientOptions</code> type.
          * 
          * Group: common
          * 
@@ -1462,8 +1442,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * application properties to and from Camel message headers.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -1479,8 +1458,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * application properties to and from Camel message headers.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Group: common
          * 
@@ -1496,8 +1474,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * The option is a: <code>com.azure.core.amqp.ProxyOptions</code> type.
          * 
          * Group: common
          * 
@@ -1514,7 +1491,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * transport type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
+         * <code>com.azure.core.amqp.ProxyOptions</code> type.
          * 
          * Group: common
          * 
@@ -1530,7 +1507,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * queue option and topic for subscription based model.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusType</code> type.
          * 
          * Required: true
          * Default: queue
@@ -1548,7 +1525,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * queue option and topic for subscription based model.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.ServiceBusType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.ServiceBusType</code> type.
          * 
          * Required: true
          * Default: queue
@@ -1565,7 +1542,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Sets the connection string for a Service Bus namespace or a specific
          * Service Bus resource.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1580,7 +1557,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1596,7 +1573,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1611,7 +1588,7 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * Fully Qualified Namespace of the service bus.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1626,8 +1603,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * A TokenCredential for Azure AD authentication.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 
@@ -1642,8 +1618,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * A TokenCredential for Azure AD authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
-         * type.
+         * <code>com.azure.core.credential.TokenCredential</code> type.
          * 
          * Group: security
          * 

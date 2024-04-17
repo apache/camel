@@ -46,7 +46,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Name server address of RocketMQ cluster.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: localhost:9876
          * Group: common
@@ -61,7 +61,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Consumer group name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -76,7 +76,7 @@ public interface RocketMQEndpointBuilderFactory {
          * Subscribe tags of consumer. Multiple tags could be split by , such as
          * TagATagB.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: *
          * Group: consumer
@@ -91,7 +91,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Access key for RocketMQ ACL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -105,7 +105,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Secret key for RocketMQ ACL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -141,7 +141,7 @@ public interface RocketMQEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -167,8 +167,7 @@ public interface RocketMQEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -186,8 +185,8 @@ public interface RocketMQEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -205,7 +204,7 @@ public interface RocketMQEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -219,8 +218,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -235,7 +233,7 @@ public interface RocketMQEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -249,7 +247,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Check interval milliseconds of request timeout.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -264,7 +262,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Check interval milliseconds of request timeout.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -279,7 +277,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Timeout milliseconds of receiving response when using in-out pattern.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -294,7 +292,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Timeout milliseconds of receiving response when using in-out pattern.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -321,7 +319,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Name server address of RocketMQ cluster.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: localhost:9876
          * Group: common
@@ -336,7 +334,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Producer group name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -350,7 +348,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Consumer group name used for receiving response.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -364,7 +362,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Topic used for receiving response when using in-out pattern.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -378,7 +376,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Each message would be sent with this tag.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -392,7 +390,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Whether waiting for send result before routing to next endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -407,8 +405,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Whether waiting for send result before routing to next endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -423,7 +420,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Access key for RocketMQ ACL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -437,7 +434,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Secret key for RocketMQ ACL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -469,7 +466,7 @@ public interface RocketMQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -492,8 +489,7 @@ public interface RocketMQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -508,7 +504,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Check interval milliseconds of request timeout.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -523,7 +519,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Check interval milliseconds of request timeout.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -538,7 +534,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Timeout milliseconds of receiving response when using in-out pattern.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -553,7 +549,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Timeout milliseconds of receiving response when using in-out pattern.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -581,7 +577,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Name server address of RocketMQ cluster.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: localhost:9876
          * Group: common
@@ -596,7 +592,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Access key for RocketMQ ACL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -610,7 +606,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Secret key for RocketMQ ACL.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -637,7 +633,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Check interval milliseconds of request timeout.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -652,7 +648,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Check interval milliseconds of request timeout.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: advanced
@@ -667,7 +663,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Timeout milliseconds of receiving response when using in-out pattern.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 10000
          * Group: advanced
@@ -682,7 +678,7 @@ public interface RocketMQEndpointBuilderFactory {
         /**
          * Timeout milliseconds of receiving response when using in-out pattern.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 10000
          * Group: advanced

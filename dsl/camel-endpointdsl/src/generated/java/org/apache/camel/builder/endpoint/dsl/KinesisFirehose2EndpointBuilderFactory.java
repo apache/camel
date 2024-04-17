@@ -47,7 +47,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
         /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -62,8 +62,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
         /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -79,7 +78,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -95,8 +94,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -112,7 +110,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -128,7 +126,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * record.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> type.
          * 
          * Group: producer
          * 
@@ -144,7 +142,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * record.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> type.
          * 
          * Group: producer
          * 
@@ -161,7 +159,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * the region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -177,7 +175,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * credentials through a default credentials provider or to expect
          * static credentials to be passed in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -194,8 +192,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * credentials through a default credentials provider or to expect
          * static credentials to be passed in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -211,7 +208,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * To define a proxy host when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -226,7 +223,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * To define a proxy port when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -241,8 +238,8 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * To define a proxy port when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -257,8 +254,8 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -275,7 +272,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * client.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: proxy
@@ -290,7 +287,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -305,7 +302,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * If using a profile credentials provider this parameter will set the
          * profile name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -319,7 +316,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -334,7 +331,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Amazon AWS Session Token used when the user needs to assume a IAM
          * role.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -349,7 +346,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -365,8 +362,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -382,7 +378,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Set whether the Kinesis Firehose client should expect to load
          * credentials through a profile credentials provider.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -398,8 +394,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Set whether the Kinesis Firehose client should expect to load
          * credentials through a profile credentials provider.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -416,7 +411,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Credentials. This is useful in situation in which the user needs to
          * assume a IAM role for doing operations in Kinesis Firehose.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -433,8 +428,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Credentials. This is useful in situation in which the user needs to
          * assume a IAM role for doing operations in Kinesis Firehose.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -469,7 +463,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -492,8 +486,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -510,7 +503,8 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.firehose.FirehoseClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.firehose.FirehoseClient</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -526,7 +520,8 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.firehose.FirehoseClient&lt;/code&gt; type.
+         * <code>software.amazon.awssdk.services.firehose.FirehoseClient</code>
+         * type.
          * 
          * Group: advanced
          * 

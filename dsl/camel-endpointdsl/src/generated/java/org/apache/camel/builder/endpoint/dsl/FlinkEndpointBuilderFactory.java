@@ -47,7 +47,7 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * Indicates if results should be collected or counted.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -62,8 +62,7 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * Indicates if results should be collected or counted.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -78,8 +77,7 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * DataSet to compute against.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.flink.api.java.DataSet&lt;/code&gt; type.
+         * The option is a: <code>org.apache.flink.api.java.DataSet</code> type.
          * 
          * Group: producer
          * 
@@ -94,7 +92,7 @@ public interface FlinkEndpointBuilderFactory {
          * DataSet to compute against.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.flink.api.java.DataSet&lt;/code&gt; type.
+         * <code>org.apache.flink.api.java.DataSet</code> type.
          * 
          * Group: producer
          * 
@@ -109,7 +107,7 @@ public interface FlinkEndpointBuilderFactory {
          * Function performing action against a DataSet.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.flink.DataSetCallback&lt;/code&gt; type.
+         * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
          * 
          * Group: producer
          * 
@@ -124,7 +122,7 @@ public interface FlinkEndpointBuilderFactory {
          * Function performing action against a DataSet.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.flink.DataSetCallback&lt;/code&gt; type.
+         * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
          * 
          * Group: producer
          * 
@@ -139,7 +137,8 @@ public interface FlinkEndpointBuilderFactory {
          * DataStream to compute against.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.flink.streaming.api.datastream.DataStream&lt;/code&gt; type.
+         * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -154,7 +153,8 @@ public interface FlinkEndpointBuilderFactory {
          * DataStream to compute against.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.flink.streaming.api.datastream.DataStream&lt;/code&gt; type.
+         * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -169,7 +169,8 @@ public interface FlinkEndpointBuilderFactory {
          * Function performing action against a DataStream.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.flink.DataStreamCallback&lt;/code&gt; type.
+         * <code>org.apache.camel.component.flink.DataStreamCallback</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -184,7 +185,8 @@ public interface FlinkEndpointBuilderFactory {
          * Function performing action against a DataStream.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.flink.DataStreamCallback&lt;/code&gt; type.
+         * <code>org.apache.camel.component.flink.DataStreamCallback</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -218,7 +220,7 @@ public interface FlinkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -241,8 +243,7 @@ public interface FlinkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

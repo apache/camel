@@ -51,7 +51,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -70,8 +70,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -90,7 +89,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -109,8 +108,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -125,8 +123,7 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets the Freemarker configuration to use.
          * 
-         * The option is a:
-         * &lt;code&gt;freemarker.template.Configuration&lt;/code&gt; type.
+         * The option is a: <code>freemarker.template.Configuration</code> type.
          * 
          * Group: producer
          * 
@@ -141,7 +138,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Sets the Freemarker configuration to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;freemarker.template.Configuration&lt;/code&gt; type.
+         * <code>freemarker.template.Configuration</code> type.
          * 
          * Group: producer
          * 
@@ -155,7 +152,7 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -170,8 +167,7 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -186,7 +182,7 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets the encoding to be used for loading the template file.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -201,7 +197,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Number of seconds the loaded template resource will remain in the
          * cache.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -216,7 +212,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Number of seconds the loaded template resource will remain in the
          * cache.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -250,7 +246,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -273,8 +269,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

@@ -47,7 +47,7 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -61,7 +61,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the incoming POJO binding type as a FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -75,7 +75,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -90,7 +90,7 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -104,7 +104,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * Name of the route this REST services creates.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -123,7 +123,7 @@ public interface RestEndpointBuilderFactory {
          * org.apache.camel.spi.RestConsumerFactory is registered in the
          * registry. If either one is found, then that is being used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -137,7 +137,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * Human description to document this REST service.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -173,7 +173,7 @@ public interface RestEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -199,8 +199,7 @@ public interface RestEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -218,8 +217,8 @@ public interface RestEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -237,7 +236,7 @@ public interface RestEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -251,8 +250,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -267,7 +265,7 @@ public interface RestEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -294,7 +292,7 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -308,7 +306,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the incoming POJO binding type as a FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -322,7 +320,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -337,7 +335,7 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -351,7 +349,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * Name of the route this REST services creates.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -366,7 +364,7 @@ public interface RestEndpointBuilderFactory {
          * The openapi api doc resource to use. The resource is loaded from
          * classpath by default and must be in JSON format.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -384,7 +382,8 @@ public interface RestEndpointBuilderFactory {
          * from json or xml to outType.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.RestConfiguration.RestBindingMode&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.RestConfiguration.RestBindingMode</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -402,7 +401,8 @@ public interface RestEndpointBuilderFactory {
          * from json or xml to outType.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.RestConfiguration.RestBindingMode&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.RestConfiguration.RestBindingMode</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -417,7 +417,7 @@ public interface RestEndpointBuilderFactory {
          * Host and port of HTTP service to use (override host in openapi
          * schema).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -436,7 +436,7 @@ public interface RestEndpointBuilderFactory {
          * is registered in the registry. If either one is found, then that is
          * being used.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -450,9 +450,9 @@ public interface RestEndpointBuilderFactory {
         /**
          * Query parameters for the HTTP service to call. The query parameters
          * can contain multiple parameters separated by ampersand such such as
-         * foo=123&amp;amp;bar=456.
+         * foo=123&amp;bar=456.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -484,7 +484,7 @@ public interface RestEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -507,8 +507,7 @@ public interface RestEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -537,7 +536,7 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -551,7 +550,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the incoming POJO binding type as a FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -565,7 +564,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -580,7 +579,7 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -594,7 +593,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * Name of the route this REST services creates.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 

@@ -46,7 +46,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -61,8 +61,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -77,7 +76,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
+         * The option is a: <code>okhttp3.OkHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -91,8 +90,8 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
+         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -106,7 +105,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -120,7 +119,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option is a: &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
+         * The option is a: <code>io.minio.MinioClient</code> type.
          * 
          * Group: common
          * 
@@ -134,8 +133,8 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
+         * The option will be converted to a <code>io.minio.MinioClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -149,7 +148,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -164,8 +163,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -180,7 +178,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * The policy for this queue to set in the method.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -195,7 +193,7 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -210,8 +208,8 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -228,7 +226,7 @@ public interface MinioEndpointBuilderFactory {
          * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -242,7 +240,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -257,8 +255,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -273,8 +270,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Server-side encryption.
          * 
-         * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          * 
@@ -289,7 +285,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
+         * <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          * 
@@ -304,8 +300,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
-         * type.
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
          * 
          * Group: common
          * 
@@ -320,8 +315,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
-         * type.
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
          * 
          * Group: common
          * 
@@ -340,7 +334,7 @@ public interface MinioEndpointBuilderFactory {
          * to the caller to close the MinioObject stream. Setting autocloseBody
          * to true, will close the MinioObject stream automatically.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -360,8 +354,7 @@ public interface MinioEndpointBuilderFactory {
          * to the caller to close the MinioObject stream. Setting autocloseBody
          * to true, will close the MinioObject stream automatically.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -377,7 +370,7 @@ public interface MinioEndpointBuilderFactory {
          * Set this flag if you want to bypassGovernanceMode when deleting a
          * particular object.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -393,8 +386,7 @@ public interface MinioEndpointBuilderFactory {
          * Set this flag if you want to bypassGovernanceMode when deleting a
          * particular object.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -416,7 +408,7 @@ public interface MinioEndpointBuilderFactory {
          * and MinioConstants#OBJECT_NAME headers, or only the
          * MinioConstants#OBJECT_NAME header.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -438,8 +430,7 @@ public interface MinioEndpointBuilderFactory {
          * and MinioConstants#OBJECT_NAME headers, or only the
          * MinioConstants#OBJECT_NAME header.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -455,7 +446,7 @@ public interface MinioEndpointBuilderFactory {
          * The delimiter which is used in the ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -469,7 +460,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Destination bucket name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -483,7 +474,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Destination object name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -503,7 +494,7 @@ public interface MinioEndpointBuilderFactory {
          * caller to close the MinioObject stream. Setting autocloseBody to
          * true, will close the MinioObject stream automatically.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -524,8 +515,7 @@ public interface MinioEndpointBuilderFactory {
          * caller to close the MinioObject stream. Setting autocloseBody to
          * true, will close the MinioObject stream automatically.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: consumer
@@ -541,7 +531,7 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to set include
          * folders.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -557,8 +547,7 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to set include
          * folders.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -574,7 +563,7 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * user meta data.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -590,8 +579,7 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * user meta data.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -607,7 +595,7 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * versioning.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -623,8 +611,7 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * versioning.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -639,7 +626,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Number of bytes of object data from offset.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -653,7 +640,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Number of bytes of object data from offset.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -667,7 +654,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set match ETag parameter for get object(s).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -681,7 +668,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set the maxConnections parameter in the minio client configuration.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60
          * Group: consumer
@@ -696,7 +683,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set the maxConnections parameter in the minio client configuration.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60
          * Group: consumer
@@ -714,7 +701,7 @@ public interface MinioEndpointBuilderFactory {
          * each polling. The default value is 10. Use 0 or a negative number to
          * set it as unlimited.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -732,7 +719,7 @@ public interface MinioEndpointBuilderFactory {
          * each polling. The default value is 10. Use 0 or a negative number to
          * set it as unlimited.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 10
          * Group: consumer
@@ -747,8 +734,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set modified since parameter for get object(s).
          * 
-         * The option is a: &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.time.ZonedDateTime</code> type.
          * 
          * Group: consumer
          * 
@@ -763,7 +749,7 @@ public interface MinioEndpointBuilderFactory {
          * Set modified since parameter for get object(s).
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt; type.
+         * <code>java.time.ZonedDateTime</code> type.
          * 
          * Group: consumer
          * 
@@ -780,7 +766,7 @@ public interface MinioEndpointBuilderFactory {
          * must be set. The copy bucket operation is only performed if the
          * Exchange is committed. If a rollback occurs, the object is not moved.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -798,8 +784,7 @@ public interface MinioEndpointBuilderFactory {
          * must be set. The copy bucket operation is only performed if the
          * Exchange is committed. If a rollback occurs, the object is not moved.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -814,7 +799,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set not match ETag parameter for get object(s).
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -828,7 +813,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * To get the object from the bucket with the given object name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -842,7 +827,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Start byte position of object data.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -856,7 +841,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Start byte position of object data.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -870,7 +855,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Object name starts with prefix.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -884,7 +869,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * List recursively than directory structure emulation.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -899,8 +884,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * List recursively than directory structure emulation.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -916,7 +900,7 @@ public interface MinioEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -932,8 +916,7 @@ public interface MinioEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -948,7 +931,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * list objects in bucket after this object name.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -962,8 +945,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set un modified since parameter for get object(s).
          * 
-         * The option is a: &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.time.ZonedDateTime</code> type.
          * 
          * Group: consumer
          * 
@@ -978,7 +960,7 @@ public interface MinioEndpointBuilderFactory {
          * Set un modified since parameter for get object(s).
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt; type.
+         * <code>java.time.ZonedDateTime</code> type.
          * 
          * Group: consumer
          * 
@@ -992,7 +974,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * when true, version 1 of REST API is used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -1007,8 +989,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * when true, version 1 of REST API is used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -1023,7 +1004,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set specific version_ID of a object when deleting the object.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
@@ -1038,7 +1019,7 @@ public interface MinioEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1053,7 +1034,7 @@ public interface MinioEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1068,7 +1049,7 @@ public interface MinioEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1083,7 +1064,7 @@ public interface MinioEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1102,7 +1083,7 @@ public interface MinioEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1121,7 +1102,7 @@ public interface MinioEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: scheduler
          * 
@@ -1135,7 +1116,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -1150,7 +1131,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 500
          * Group: scheduler
@@ -1166,7 +1147,7 @@ public interface MinioEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -1182,8 +1163,7 @@ public interface MinioEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: scheduler
@@ -1198,7 +1178,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -1213,7 +1193,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: scheduler
@@ -1230,7 +1210,7 @@ public interface MinioEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -1247,7 +1227,7 @@ public interface MinioEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
          * Group: scheduler
@@ -1263,8 +1243,7 @@ public interface MinioEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -1281,7 +1260,7 @@ public interface MinioEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -1299,7 +1278,7 @@ public interface MinioEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1316,7 +1295,7 @@ public interface MinioEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
          * Group: scheduler
          * 
@@ -1331,7 +1310,7 @@ public interface MinioEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1347,8 +1326,7 @@ public interface MinioEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Object</code> type.
          * 
          * Default: none
          * Group: scheduler
@@ -1364,8 +1342,8 @@ public interface MinioEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1384,8 +1362,8 @@ public interface MinioEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
@@ -1402,7 +1380,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1417,8 +1395,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1433,8 +1410,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1450,7 +1426,7 @@ public interface MinioEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * <code>java.util.concurrent.TimeUnit</code> type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
@@ -1466,7 +1442,7 @@ public interface MinioEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1482,8 +1458,7 @@ public interface MinioEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: scheduler
@@ -1499,7 +1474,7 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Secret Access Key or Minio Access Key. If not set camel
          * will connect to service for anonymous access.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1514,7 +1489,7 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Access Key Id or Minio Secret Key. If not set camel will
          * connect to service for anonymous access.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1550,7 +1525,7 @@ public interface MinioEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1576,8 +1551,7 @@ public interface MinioEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -1595,8 +1569,8 @@ public interface MinioEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1614,7 +1588,7 @@ public interface MinioEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1628,8 +1602,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1644,7 +1617,7 @@ public interface MinioEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1662,7 +1635,7 @@ public interface MinioEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1680,7 +1653,7 @@ public interface MinioEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1706,7 +1679,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1721,8 +1694,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1737,7 +1709,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
+         * The option is a: <code>okhttp3.OkHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -1751,8 +1723,8 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
+         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1766,7 +1738,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1780,7 +1752,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option is a: &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
+         * The option is a: <code>io.minio.MinioClient</code> type.
          * 
          * Group: common
          * 
@@ -1794,8 +1766,8 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
+         * The option will be converted to a <code>io.minio.MinioClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1809,7 +1781,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1824,8 +1796,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1840,7 +1811,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * The policy for this queue to set in the method.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1855,7 +1826,7 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -1870,8 +1841,8 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -1888,7 +1859,7 @@ public interface MinioEndpointBuilderFactory {
          * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1902,7 +1873,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1917,8 +1888,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -1933,8 +1903,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Server-side encryption.
          * 
-         * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          * 
@@ -1949,7 +1918,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
+         * <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          * 
@@ -1964,8 +1933,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
-         * type.
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
          * 
          * Group: common
          * 
@@ -1980,8 +1948,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
-         * type.
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
          * 
          * Group: common
          * 
@@ -1995,7 +1962,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Delete file object after the Minio file has been uploaded.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2010,8 +1977,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Delete file object after the Minio file has been uploaded.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2027,7 +1993,7 @@ public interface MinioEndpointBuilderFactory {
          * Setting the key name for an element in the bucket through endpoint
          * parameter.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2042,7 +2008,7 @@ public interface MinioEndpointBuilderFactory {
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.minio.MinioOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.minio.MinioOperations</code> type.
          * 
          * Group: producer
          * 
@@ -2057,7 +2023,7 @@ public interface MinioEndpointBuilderFactory {
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.minio.MinioOperations&lt;/code&gt; type.
+         * <code>org.apache.camel.component.minio.MinioOperations</code> type.
          * 
          * Group: producer
          * 
@@ -2071,7 +2037,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2086,8 +2052,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -2102,7 +2067,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * The storage class to set in the request.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -2117,7 +2082,7 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Secret Access Key or Minio Access Key. If not set camel
          * will connect to service for anonymous access.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2132,7 +2097,7 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Access Key Id or Minio Secret Key. If not set camel will
          * connect to service for anonymous access.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2164,7 +2129,7 @@ public interface MinioEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2187,8 +2152,7 @@ public interface MinioEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -2216,7 +2180,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2231,8 +2195,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -2247,7 +2210,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
+         * The option is a: <code>okhttp3.OkHttpClient</code> type.
          * 
          * Group: common
          * 
@@ -2261,8 +2224,8 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
+         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2276,7 +2239,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2290,7 +2253,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option is a: &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
+         * The option is a: <code>io.minio.MinioClient</code> type.
          * 
          * Group: common
          * 
@@ -2304,8 +2267,8 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
+         * The option will be converted to a <code>io.minio.MinioClient</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2319,7 +2282,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2334,8 +2297,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2350,7 +2312,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * The policy for this queue to set in the method.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2365,7 +2327,7 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          * 
@@ -2380,8 +2342,8 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: common
          * 
@@ -2398,7 +2360,7 @@ public interface MinioEndpointBuilderFactory {
          * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2412,7 +2374,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2427,8 +2389,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -2443,8 +2404,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Server-side encryption.
          * 
-         * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          * 
@@ -2459,7 +2419,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
+         * <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          * 
@@ -2474,8 +2434,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
-         * type.
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
          * 
          * Group: common
          * 
@@ -2490,8 +2449,7 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
-         * type.
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
          * 
          * Group: common
          * 
@@ -2506,7 +2464,7 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Secret Access Key or Minio Access Key. If not set camel
          * will connect to service for anonymous access.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2521,7 +2479,7 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Access Key Id or Minio Secret Key. If not set camel will
          * connect to service for anonymous access.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 

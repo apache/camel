@@ -47,7 +47,7 @@ public interface RedisEndpointBuilderFactory {
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -64,8 +64,7 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.redis.Command</code> type.
          * 
          * Default: SET
          * Group: common
@@ -83,8 +82,7 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.redis.Command</code> type.
          * 
          * Default: SET
          * Group: common
@@ -100,7 +98,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -115,7 +113,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -130,7 +128,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.core.RedisTemplate&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -145,7 +143,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.core.RedisTemplate&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -160,7 +158,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.serializer.RedisSerializer&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -175,7 +173,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.serializer.RedisSerializer&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -211,7 +209,7 @@ public interface RedisEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -237,8 +235,7 @@ public interface RedisEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -256,8 +253,8 @@ public interface RedisEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -275,7 +272,7 @@ public interface RedisEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -289,8 +286,7 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -305,7 +301,7 @@ public interface RedisEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -321,7 +317,7 @@ public interface RedisEndpointBuilderFactory {
          * to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.listener.RedisMessageListenerContainer&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.listener.RedisMessageListenerContainer</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -337,7 +333,7 @@ public interface RedisEndpointBuilderFactory {
          * to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.listener.RedisMessageListenerContainer&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.listener.RedisMessageListenerContainer</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -364,7 +360,7 @@ public interface RedisEndpointBuilderFactory {
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -381,8 +377,7 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.redis.Command</code> type.
          * 
          * Default: SET
          * Group: common
@@ -400,8 +395,7 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.redis.Command</code> type.
          * 
          * Default: SET
          * Group: common
@@ -417,7 +411,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -432,7 +426,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -447,7 +441,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.core.RedisTemplate&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -462,7 +456,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.core.RedisTemplate&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -477,7 +471,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.serializer.RedisSerializer&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -492,7 +486,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.serializer.RedisSerializer&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -524,7 +518,7 @@ public interface RedisEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -547,8 +541,7 @@ public interface RedisEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -577,7 +570,7 @@ public interface RedisEndpointBuilderFactory {
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -594,8 +587,7 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.redis.Command</code> type.
          * 
          * Default: SET
          * Group: common
@@ -613,8 +605,7 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.component.redis.Command</code> type.
          * 
          * Default: SET
          * Group: common
@@ -630,7 +621,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -645,7 +636,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
          * Group: common
          * 
@@ -660,7 +651,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.core.RedisTemplate&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -675,7 +666,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.core.RedisTemplate&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -690,7 +681,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.serializer.RedisSerializer&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -705,7 +696,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>org.springframework.data.redis.serializer.RedisSerializer&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 

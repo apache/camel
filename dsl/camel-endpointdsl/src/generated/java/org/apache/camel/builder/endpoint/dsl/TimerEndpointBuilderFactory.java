@@ -47,7 +47,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Delay before first event is triggered.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -62,7 +62,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Delay before first event is triggered.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -78,7 +78,7 @@ public interface TimerEndpointBuilderFactory {
          * Events take place at approximately regular intervals, separated by
          * the specified period.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -94,8 +94,7 @@ public interface TimerEndpointBuilderFactory {
          * Events take place at approximately regular intervals, separated by
          * the specified period.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -111,7 +110,7 @@ public interface TimerEndpointBuilderFactory {
          * Whether to include metadata in the exchange such as fired time, timer
          * name, timer count etc.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -127,8 +126,7 @@ public interface TimerEndpointBuilderFactory {
          * Whether to include metadata in the exchange such as fired time, timer
          * name, timer count etc.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -143,7 +141,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * If greater than 0, generate periodic events every period.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -158,7 +156,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * If greater than 0, generate periodic events every period.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 1000
          * Group: consumer
@@ -175,7 +173,7 @@ public interface TimerEndpointBuilderFactory {
          * the timer will only fire once. If you set it to 5, it will only fire
          * five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -191,7 +189,7 @@ public interface TimerEndpointBuilderFactory {
          * the timer will only fire once. If you set it to 5, it will only fire
          * five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Group: consumer
          * 
@@ -206,8 +204,7 @@ public interface TimerEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -224,7 +221,7 @@ public interface TimerEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * <code>org.apache.camel.LoggingLevel</code> type.
          * 
          * Default: TRACE
          * Group: scheduler
@@ -262,7 +259,7 @@ public interface TimerEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -288,8 +285,7 @@ public interface TimerEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -307,8 +303,8 @@ public interface TimerEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -326,7 +322,7 @@ public interface TimerEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -340,8 +336,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -356,7 +351,7 @@ public interface TimerEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -371,7 +366,7 @@ public interface TimerEndpointBuilderFactory {
          * Specifies whether or not the thread associated with the timer
          * endpoint runs as a daemon. The default value is true.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -387,8 +382,7 @@ public interface TimerEndpointBuilderFactory {
          * Specifies whether or not the thread associated with the timer
          * endpoint runs as a daemon. The default value is true.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -404,7 +398,7 @@ public interface TimerEndpointBuilderFactory {
          * Allows you to specify a custom Date pattern to use for setting the
          * time option using URI syntax.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -418,7 +412,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -433,8 +427,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -451,7 +444,7 @@ public interface TimerEndpointBuilderFactory {
          * URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or
          * yyyy-MM-dd'T'HH:mm:ss.
          * 
-         * The option is a: &lt;code&gt;java.util.Date&lt;/code&gt; type.
+         * The option is a: <code>java.util.Date</code> type.
          * 
          * Group: advanced
          * 
@@ -467,8 +460,7 @@ public interface TimerEndpointBuilderFactory {
          * URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or
          * yyyy-MM-dd'T'HH:mm:ss.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Date&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Date</code> type.
          * 
          * Group: advanced
          * 
@@ -482,7 +474,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * To use a custom Timer.
          * 
-         * The option is a: &lt;code&gt;java.util.Timer&lt;/code&gt; type.
+         * The option is a: <code>java.util.Timer</code> type.
          * 
          * Group: advanced
          * 
@@ -496,8 +488,7 @@ public interface TimerEndpointBuilderFactory {
         /**
          * To use a custom Timer.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Timer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.util.Timer</code> type.
          * 
          * Group: advanced
          * 

@@ -48,7 +48,7 @@ public interface CometdEndpointBuilderFactory {
          * The origins domain that support to cross, if the crosssOriginFilterOn
          * is true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: *
          * Group: common
@@ -67,7 +67,7 @@ public interface CometdEndpointBuilderFactory {
          * required for OSGI deployment where the resources are packaged in the
          * jar.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -81,7 +81,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * If true, the server will support for cross-domain filtering.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -96,8 +96,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * If true, the server will support for cross-domain filtering.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -113,7 +112,7 @@ public interface CometdEndpointBuilderFactory {
          * The filterPath will be used by the CrossOriginFilter, if the
          * crosssOriginFilterOn is true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -128,7 +127,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -143,7 +142,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -159,7 +158,7 @@ public interface CometdEndpointBuilderFactory {
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -176,8 +175,7 @@ public interface CometdEndpointBuilderFactory {
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -192,7 +190,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Logging level. 0=none, 1=info, 2=debug.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -207,7 +205,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Logging level. 0=none, 1=info, 2=debug.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -223,7 +221,7 @@ public interface CometdEndpointBuilderFactory {
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -239,7 +237,7 @@ public interface CometdEndpointBuilderFactory {
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -255,7 +253,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -271,7 +269,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -287,7 +285,7 @@ public interface CometdEndpointBuilderFactory {
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 240000
          * Group: common
@@ -303,7 +301,7 @@ public interface CometdEndpointBuilderFactory {
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 240000
          * Group: common
@@ -319,7 +317,7 @@ public interface CometdEndpointBuilderFactory {
          * Whether to include the server session headers in the Camel message
          * when creating a Camel Message for incoming requests.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -335,8 +333,7 @@ public interface CometdEndpointBuilderFactory {
          * Whether to include the server session headers in the Camel message
          * when creating a Camel Message for incoming requests.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -373,7 +370,7 @@ public interface CometdEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -399,8 +396,7 @@ public interface CometdEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -418,8 +414,8 @@ public interface CometdEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -437,7 +433,7 @@ public interface CometdEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -451,8 +447,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -467,7 +462,7 @@ public interface CometdEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -494,7 +489,7 @@ public interface CometdEndpointBuilderFactory {
          * The origins domain that support to cross, if the crosssOriginFilterOn
          * is true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: *
          * Group: common
@@ -513,7 +508,7 @@ public interface CometdEndpointBuilderFactory {
          * required for OSGI deployment where the resources are packaged in the
          * jar.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -527,7 +522,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * If true, the server will support for cross-domain filtering.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -542,8 +537,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * If true, the server will support for cross-domain filtering.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -559,7 +553,7 @@ public interface CometdEndpointBuilderFactory {
          * The filterPath will be used by the CrossOriginFilter, if the
          * crosssOriginFilterOn is true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -574,7 +568,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -589,7 +583,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -605,7 +599,7 @@ public interface CometdEndpointBuilderFactory {
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -622,8 +616,7 @@ public interface CometdEndpointBuilderFactory {
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -638,7 +631,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Logging level. 0=none, 1=info, 2=debug.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -653,7 +646,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Logging level. 0=none, 1=info, 2=debug.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -669,7 +662,7 @@ public interface CometdEndpointBuilderFactory {
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -685,7 +678,7 @@ public interface CometdEndpointBuilderFactory {
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -701,7 +694,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -717,7 +710,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -733,7 +726,7 @@ public interface CometdEndpointBuilderFactory {
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 240000
          * Group: common
@@ -749,7 +742,7 @@ public interface CometdEndpointBuilderFactory {
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 240000
          * Group: common
@@ -766,7 +759,7 @@ public interface CometdEndpointBuilderFactory {
          * its channel. Disconnecting local session is needed as they are not
          * swept by default by CometD, and therefore you can run out of memory.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -783,8 +776,7 @@ public interface CometdEndpointBuilderFactory {
          * its channel. Disconnecting local session is needed as they are not
          * swept by default by CometD, and therefore you can run out of memory.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -817,7 +809,7 @@ public interface CometdEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -840,8 +832,7 @@ public interface CometdEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -870,7 +861,7 @@ public interface CometdEndpointBuilderFactory {
          * The origins domain that support to cross, if the crosssOriginFilterOn
          * is true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: *
          * Group: common
@@ -889,7 +880,7 @@ public interface CometdEndpointBuilderFactory {
          * required for OSGI deployment where the resources are packaged in the
          * jar.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -903,7 +894,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * If true, the server will support for cross-domain filtering.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -918,8 +909,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * If true, the server will support for cross-domain filtering.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
@@ -935,7 +925,7 @@ public interface CometdEndpointBuilderFactory {
          * The filterPath will be used by the CrossOriginFilter, if the
          * crosssOriginFilterOn is true.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -950,7 +940,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: common
          * 
@@ -965,7 +955,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: common
          * 
@@ -981,7 +971,7 @@ public interface CometdEndpointBuilderFactory {
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -998,8 +988,7 @@ public interface CometdEndpointBuilderFactory {
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: common
@@ -1014,7 +1003,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Logging level. 0=none, 1=info, 2=debug.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -1029,7 +1018,7 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Logging level. 0=none, 1=info, 2=debug.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: common
@@ -1045,7 +1034,7 @@ public interface CometdEndpointBuilderFactory {
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1061,7 +1050,7 @@ public interface CometdEndpointBuilderFactory {
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 30000
          * Group: common
@@ -1077,7 +1066,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -1093,7 +1082,7 @@ public interface CometdEndpointBuilderFactory {
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1500
          * Group: common
@@ -1109,7 +1098,7 @@ public interface CometdEndpointBuilderFactory {
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 240000
          * Group: common
@@ -1125,7 +1114,7 @@ public interface CometdEndpointBuilderFactory {
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 240000
          * Group: common

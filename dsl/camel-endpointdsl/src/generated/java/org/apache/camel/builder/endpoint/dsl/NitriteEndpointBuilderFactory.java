@@ -47,7 +47,7 @@ public interface NitriteEndpointBuilderFactory {
          * Name of Nitrite collection. Cannot be used in combination with
          * repositoryClass option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -62,8 +62,8 @@ public interface NitriteEndpointBuilderFactory {
          * Class of Nitrite ObjectRepository. Cannot be used in combination with
          * collection option.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -79,7 +79,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -94,7 +94,7 @@ public interface NitriteEndpointBuilderFactory {
          * Optional name of ObjectRepository. Can be only used in combination
          * with repositoryClass, otherwise have no effect.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -109,7 +109,7 @@ public interface NitriteEndpointBuilderFactory {
          * Password for Nitrite database. Required, if option username
          * specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -124,7 +124,7 @@ public interface NitriteEndpointBuilderFactory {
          * Username for Nitrite database. Database is not secured if option not
          * specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -160,7 +160,7 @@ public interface NitriteEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -186,8 +186,7 @@ public interface NitriteEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -205,8 +204,8 @@ public interface NitriteEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -224,7 +223,7 @@ public interface NitriteEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -238,8 +237,7 @@ public interface NitriteEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -254,7 +252,7 @@ public interface NitriteEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -281,7 +279,7 @@ public interface NitriteEndpointBuilderFactory {
          * Name of Nitrite collection. Cannot be used in combination with
          * repositoryClass option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -296,8 +294,8 @@ public interface NitriteEndpointBuilderFactory {
          * Class of Nitrite ObjectRepository. Cannot be used in combination with
          * collection option.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -313,7 +311,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -328,7 +326,7 @@ public interface NitriteEndpointBuilderFactory {
          * Optional name of ObjectRepository. Can be only used in combination
          * with repositoryClass, otherwise have no effect.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -343,7 +341,7 @@ public interface NitriteEndpointBuilderFactory {
          * Password for Nitrite database. Required, if option username
          * specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -358,7 +356,7 @@ public interface NitriteEndpointBuilderFactory {
          * Username for Nitrite database. Database is not secured if option not
          * specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -390,7 +388,7 @@ public interface NitriteEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -413,8 +411,7 @@ public interface NitriteEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -443,7 +440,7 @@ public interface NitriteEndpointBuilderFactory {
          * Name of Nitrite collection. Cannot be used in combination with
          * repositoryClass option.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -458,8 +455,8 @@ public interface NitriteEndpointBuilderFactory {
          * Class of Nitrite ObjectRepository. Cannot be used in combination with
          * collection option.
          * 
-         * The option is a:
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: common
          * 
@@ -475,7 +472,7 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: common
          * 
@@ -490,7 +487,7 @@ public interface NitriteEndpointBuilderFactory {
          * Optional name of ObjectRepository. Can be only used in combination
          * with repositoryClass, otherwise have no effect.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -505,7 +502,7 @@ public interface NitriteEndpointBuilderFactory {
          * Password for Nitrite database. Required, if option username
          * specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -520,7 +517,7 @@ public interface NitriteEndpointBuilderFactory {
          * Username for Nitrite database. Database is not secured if option not
          * specified.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 

@@ -48,7 +48,7 @@ public interface PubNubEndpointBuilderFactory {
          * UUID to be used as a device identifier, a default UUID is generated
          * if not passed.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -63,7 +63,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Also subscribe to related presence information.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -78,8 +78,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Also subscribe to related presence information.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -95,7 +94,7 @@ public interface PubNubEndpointBuilderFactory {
          * If Access Manager is utilized, client will use this authKey in all
          * restricted requests.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -110,7 +109,7 @@ public interface PubNubEndpointBuilderFactory {
          * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -125,7 +124,7 @@ public interface PubNubEndpointBuilderFactory {
          * The publish key obtained from your PubNub account. Required when
          * publishing messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -139,7 +138,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * The secret key used for message signing.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -153,7 +152,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -168,8 +167,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -185,7 +183,7 @@ public interface PubNubEndpointBuilderFactory {
          * The subscribe key obtained from your PubNub account. Required when
          * subscribing to channels or listening for presence events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -221,7 +219,7 @@ public interface PubNubEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -247,8 +245,7 @@ public interface PubNubEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -266,8 +263,8 @@ public interface PubNubEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -285,7 +282,7 @@ public interface PubNubEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -299,8 +296,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -315,7 +311,7 @@ public interface PubNubEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -329,7 +325,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
+         * The option is a: <code>com.pubnub.api.PubNub</code> type.
          * 
          * Group: advanced
          * 
@@ -343,8 +339,8 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
+         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -371,7 +367,7 @@ public interface PubNubEndpointBuilderFactory {
          * UUID to be used as a device identifier, a default UUID is generated
          * if not passed.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -397,7 +393,7 @@ public interface PubNubEndpointBuilderFactory {
          * key/value pairs specific to a subscriber uuid GETHISTORY: Fetches
          * historical messages of a channel.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -412,7 +408,7 @@ public interface PubNubEndpointBuilderFactory {
          * If Access Manager is utilized, client will use this authKey in all
          * restricted requests.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -427,7 +423,7 @@ public interface PubNubEndpointBuilderFactory {
          * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -442,7 +438,7 @@ public interface PubNubEndpointBuilderFactory {
          * The publish key obtained from your PubNub account. Required when
          * publishing messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -456,7 +452,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * The secret key used for message signing.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -470,7 +466,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -485,8 +481,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -502,7 +497,7 @@ public interface PubNubEndpointBuilderFactory {
          * The subscribe key obtained from your PubNub account. Required when
          * subscribing to channels or listening for presence events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -534,7 +529,7 @@ public interface PubNubEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -557,8 +552,7 @@ public interface PubNubEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -573,7 +567,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
+         * The option is a: <code>com.pubnub.api.PubNub</code> type.
          * 
          * Group: advanced
          * 
@@ -587,8 +581,8 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
+         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -616,7 +610,7 @@ public interface PubNubEndpointBuilderFactory {
          * UUID to be used as a device identifier, a default UUID is generated
          * if not passed.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: common
@@ -632,7 +626,7 @@ public interface PubNubEndpointBuilderFactory {
          * If Access Manager is utilized, client will use this authKey in all
          * restricted requests.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -647,7 +641,7 @@ public interface PubNubEndpointBuilderFactory {
          * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -662,7 +656,7 @@ public interface PubNubEndpointBuilderFactory {
          * The publish key obtained from your PubNub account. Required when
          * publishing messages.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -676,7 +670,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * The secret key used for message signing.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -690,7 +684,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -705,8 +699,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: security
@@ -722,7 +715,7 @@ public interface PubNubEndpointBuilderFactory {
          * The subscribe key obtained from your PubNub account. Required when
          * subscribing to channels or listening for presence events.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -749,7 +742,7 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
+         * The option is a: <code>com.pubnub.api.PubNub</code> type.
          * 
          * Group: advanced
          * 
@@ -763,8 +756,8 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
+         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
+         * type.
          * 
          * Group: advanced
          * 

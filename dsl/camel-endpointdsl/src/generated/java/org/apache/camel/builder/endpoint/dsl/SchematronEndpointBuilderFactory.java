@@ -47,7 +47,7 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Flag to abort the route and throw a schematron validation exception.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -62,8 +62,7 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Flag to abort the route and throw a schematron validation exception.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -78,8 +77,7 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * To use the given schematron rules instead of loading from the path.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.xml.transform.Templates&lt;/code&gt; type.
+         * The option is a: <code>javax.xml.transform.Templates</code> type.
          * 
          * Group: producer
          * 
@@ -94,7 +92,7 @@ public interface SchematronEndpointBuilderFactory {
          * To use the given schematron rules instead of loading from the path.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.xml.transform.Templates&lt;/code&gt; type.
+         * <code>javax.xml.transform.Templates</code> type.
          * 
          * Group: producer
          * 
@@ -128,7 +126,7 @@ public interface SchematronEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -151,8 +149,7 @@ public interface SchematronEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -168,8 +165,7 @@ public interface SchematronEndpointBuilderFactory {
          * Set the URIResolver to be used for resolving schematron includes in
          * the rules file.
          * 
-         * The option is a:
-         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
+         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -185,7 +181,7 @@ public interface SchematronEndpointBuilderFactory {
          * the rules file.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
+         * <code>javax.xml.transform.URIResolver</code> type.
          * 
          * Group: advanced
          * 

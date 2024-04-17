@@ -48,7 +48,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * The amount of time in milliseconds until a connection is established.
          * A timeout value of zero is interpreted as an infinite timeout.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 60000
          * Group: producer
@@ -64,7 +64,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * The amount of time in milliseconds until a connection is established.
          * A timeout value of zero is interpreted as an infinite timeout.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 60000
          * Group: producer
@@ -80,8 +80,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * A custom CookieStore to use when session management is enabled. If
          * this option is not set then an in-memory CookieStore is used.
          * 
-         * The option is a:
-         * &lt;code&gt;io.vertx.ext.web.client.spi.CookieStore&lt;/code&gt;
+         * The option is a: <code>io.vertx.ext.web.client.spi.CookieStore</code>
          * type.
          * 
          * Default: InMemoryCookieStore
@@ -99,8 +98,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * this option is not set then an in-memory CookieStore is used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.vertx.ext.web.client.spi.CookieStore&lt;/code&gt;
-         * type.
+         * <code>io.vertx.ext.web.client.spi.CookieStore</code> type.
          * 
          * Default: InMemoryCookieStore
          * Group: producer
@@ -117,8 +115,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * to and from Camel message.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Default: VertxHttpHeaderFilterStrategy
          * Group: producer
@@ -135,8 +132,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * to and from Camel message.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
          * Default: VertxHttpHeaderFilterStrategy
          * Group: producer
@@ -152,8 +148,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * The HTTP method to use. The HttpMethod header cannot override this
          * option if set.
          * 
-         * The option is a:
-         * &lt;code&gt;io.vertx.core.http.HttpMethod&lt;/code&gt; type.
+         * The option is a: <code>io.vertx.core.http.HttpMethod</code> type.
          * 
          * Group: producer
          * 
@@ -169,7 +164,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * option if set.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.vertx.core.http.HttpMethod&lt;/code&gt; type.
+         * <code>io.vertx.core.http.HttpMethod</code> type.
          * 
          * Group: producer
          * 
@@ -186,7 +181,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * e.g. 200-204,209,301-304. Each range must be a single number or
          * from-to with the dash included.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: 200-299
          * Group: producer
@@ -202,7 +197,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * Whether the response body should be byte or as
          * io.vertx.core.buffer.Buffer.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -218,8 +213,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * Whether the response body should be byte or as
          * io.vertx.core.buffer.Buffer.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -236,7 +230,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * client is configured to use an in-memory CookieStore. The cookieStore
          * option can be used to override this.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -253,8 +247,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * client is configured to use an in-memory CookieStore. The cookieStore
          * option can be used to override this.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -270,7 +263,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * Disable throwing HttpOperationFailedException in case of failed
          * responses from the remote server.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -286,8 +279,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * Disable throwing HttpOperationFailedException in case of failed
          * responses from the remote server.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -305,7 +297,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * fails the request. Setting zero or a negative value disables the
          * timeout.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -323,7 +315,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * fails the request. Setting zero or a negative value disables the
          * timeout.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: -1
          * Group: producer
@@ -346,7 +338,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * data from the request to a Java object, which can be a potential
          * security risk.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -369,8 +361,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * data from the request to a Java object, which can be a potential
          * security risk.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -386,7 +377,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * Set whether compression is enabled to handled compressed (E.g
          * gzipped) responses.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -402,8 +393,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * Set whether compression is enabled to handled compressed (E.g
          * gzipped) responses.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -420,7 +410,8 @@ public interface VertxHttpEndpointBuilderFactory {
          * Vert.x and Camel.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.vertx.http.VertxHttpBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.vertx.http.VertxHttpBinding</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -436,7 +427,8 @@ public interface VertxHttpEndpointBuilderFactory {
          * Vert.x and Camel.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.vertx.http.VertxHttpBinding&lt;/code&gt; type.
+         * <code>org.apache.camel.component.vertx.http.VertxHttpBinding</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -451,8 +443,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * Sets customized options for configuring the Vert.x WebClient.
          * 
          * The option is a:
-         * &lt;code&gt;io.vertx.ext.web.client.WebClientOptions&lt;/code&gt;
-         * type.
+         * <code>io.vertx.ext.web.client.WebClientOptions</code> type.
          * 
          * Group: producer
          * 
@@ -467,8 +458,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * Sets customized options for configuring the Vert.x WebClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.vertx.ext.web.client.WebClientOptions&lt;/code&gt;
-         * type.
+         * <code>io.vertx.ext.web.client.WebClientOptions</code> type.
          * 
          * Group: producer
          * 
@@ -482,7 +472,7 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The proxy server host address.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -496,7 +486,7 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The proxy server password if authentication is required.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -510,7 +500,7 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The proxy server port.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: proxy
          * 
@@ -524,8 +514,8 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The proxy server port.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Group: proxy
          * 
@@ -539,8 +529,7 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The proxy server type.
          * 
-         * The option is a: &lt;code&gt;io.vertx.core.net.ProxyType&lt;/code&gt;
-         * type.
+         * The option is a: <code>io.vertx.core.net.ProxyType</code> type.
          * 
          * Group: proxy
          * 
@@ -555,7 +544,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * The proxy server type.
          * 
          * The option will be converted to a
-         * &lt;code&gt;io.vertx.core.net.ProxyType&lt;/code&gt; type.
+         * <code>io.vertx.core.net.ProxyType</code> type.
          * 
          * Group: proxy
          * 
@@ -569,7 +558,7 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The proxy server username if authentication is required.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -583,7 +572,7 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -597,7 +586,7 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -611,7 +600,7 @@ public interface VertxHttpEndpointBuilderFactory {
         /**
          * The bearer token to use for bearer token authentication.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -626,7 +615,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -641,7 +630,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
          * Group: security
          * 
@@ -675,7 +664,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -698,8 +687,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

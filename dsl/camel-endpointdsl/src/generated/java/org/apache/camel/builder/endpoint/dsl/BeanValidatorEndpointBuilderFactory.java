@@ -47,7 +47,7 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * To use a custom validation group.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: jakarta.validation.groups.Default
          * Group: producer
@@ -62,7 +62,7 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * Whether to ignore data from the META-INF/validation.xml file.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -77,8 +77,7 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * Whether to ignore data from the META-INF/validation.xml file.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -113,7 +112,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -136,8 +135,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -153,7 +151,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option is a:
-         * &lt;code&gt;jakarta.validation.ConstraintValidatorFactory&lt;/code&gt; type.
+         * <code>jakarta.validation.ConstraintValidatorFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -168,7 +166,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.validation.ConstraintValidatorFactory&lt;/code&gt; type.
+         * <code>jakarta.validation.ConstraintValidatorFactory</code> type.
          * 
          * Group: advanced
          * 
@@ -182,8 +180,8 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * To use a custom MessageInterpolator.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.validation.MessageInterpolator&lt;/code&gt; type.
+         * The option is a: <code>jakarta.validation.MessageInterpolator</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -198,7 +196,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom MessageInterpolator.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.validation.MessageInterpolator&lt;/code&gt; type.
+         * <code>jakarta.validation.MessageInterpolator</code> type.
          * 
          * Group: advanced
          * 
@@ -212,8 +210,8 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * To use a custom TraversableResolver.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.validation.TraversableResolver&lt;/code&gt; type.
+         * The option is a: <code>jakarta.validation.TraversableResolver</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -228,7 +226,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom TraversableResolver.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.validation.TraversableResolver&lt;/code&gt; type.
+         * <code>jakarta.validation.TraversableResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -243,7 +241,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option is a:
-         * &lt;code&gt;jakarta.validation.ValidationProviderResolver&lt;/code&gt; type.
+         * <code>jakarta.validation.ValidationProviderResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -258,7 +256,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.validation.ValidationProviderResolver&lt;/code&gt; type.
+         * <code>jakarta.validation.ValidationProviderResolver</code> type.
          * 
          * Group: advanced
          * 
@@ -272,8 +270,8 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * To use a custom ValidatorFactory.
          * 
-         * The option is a:
-         * &lt;code&gt;jakarta.validation.ValidatorFactory&lt;/code&gt; type.
+         * The option is a: <code>jakarta.validation.ValidatorFactory</code>
+         * type.
          * 
          * Group: advanced
          * 
@@ -288,7 +286,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ValidatorFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;jakarta.validation.ValidatorFactory&lt;/code&gt; type.
+         * <code>jakarta.validation.ValidatorFactory</code> type.
          * 
          * Group: advanced
          * 

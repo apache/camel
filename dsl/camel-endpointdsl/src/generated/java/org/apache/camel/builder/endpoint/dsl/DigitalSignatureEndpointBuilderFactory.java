@@ -49,7 +49,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the JCE name of the Algorithm that should be used for the
          * signer.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: SHA256withRSA
          * Group: producer
@@ -68,7 +68,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * the message header
          * org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -83,7 +83,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the reference name for a PrivateKey that can be found in the
          * registry.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -102,8 +102,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * supplied and there is only a single entry in the Keystore, then this
          * single entry will be used.
          * 
-         * The option is a: &lt;code&gt;java.security.KeyStore&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.KeyStore</code> type.
          * 
          * Group: producer
          * 
@@ -122,8 +121,8 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * supplied and there is only a single entry in the Keystore, then this
          * single entry will be used.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.KeyStore&lt;/code&gt; type.
+         * The option will be converted to a <code>java.security.KeyStore</code>
+         * type.
          * 
          * Group: producer
          * 
@@ -138,7 +137,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the reference name for a Keystore that can be found in the
          * registry.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -152,8 +151,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the PrivateKey that should be used to sign the exchange.
          * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.PrivateKey</code> type.
          * 
          * Group: producer
          * 
@@ -168,7 +166,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the PrivateKey that should be used to sign the exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * <code>java.security.PrivateKey</code> type.
          * 
          * Group: producer
          * 
@@ -183,7 +181,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the reference name for a PrivateKey that can be found in the
          * registry.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -198,7 +196,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the id of the security provider that provides the configured
          * Signature algorithm.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -212,7 +210,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * references that should be resolved when the context changes.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -227,7 +225,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the reference name for a SecureRandom that can be found in the
          * registry.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -242,7 +240,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the name of the message header that should be used to store the
          * base64 encoded signature. This defaults to 'CamelDigitalSignature'.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -257,7 +255,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the password used to access an aliased PrivateKey in the
          * KeyStore.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -291,7 +289,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -314,8 +312,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -330,7 +327,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the size of the buffer used to read in the Exchange payload data.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Default: 2048
          * Group: advanced
@@ -345,8 +342,8 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the size of the buffer used to read in the Exchange payload data.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
          * 
          * Default: 2048
          * Group: advanced
@@ -362,8 +359,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the Certificate that should be used to verify the signature in
          * the exchange based on its payload.
          * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate&lt;/code&gt; type.
+         * The option is a: <code>java.security.cert.Certificate</code> type.
          * 
          * Group: advanced
          * 
@@ -379,7 +375,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * the exchange based on its payload.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate&lt;/code&gt; type.
+         * <code>java.security.cert.Certificate</code> type.
          * 
          * Group: advanced
          * 
@@ -396,7 +392,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * at your extreme peril as vital private information such as Keys and
          * passwords may escape if unset.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -414,8 +410,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * at your extreme peril as vital private information such as Keys and
          * passwords may escape if unset.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: advanced
@@ -437,7 +432,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * entry will be used.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.KeyStoreParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * 
          * Group: advanced
          * 
@@ -458,7 +453,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * entry will be used.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.KeyStoreParameters&lt;/code&gt; type.
+         * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * 
          * Group: advanced
          * 
@@ -473,8 +468,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the PublicKey that should be used to verify the signature in the
          * exchange.
          * 
-         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.PublicKey</code> type.
          * 
          * Group: advanced
          * 
@@ -490,7 +484,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
+         * <code>java.security.PublicKey</code> type.
          * 
          * Group: advanced
          * 
@@ -504,8 +498,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the SecureRandom used to initialize the Signature service.
          * 
-         * The option is a: &lt;code&gt;java.security.SecureRandom&lt;/code&gt;
-         * type.
+         * The option is a: <code>java.security.SecureRandom</code> type.
          * 
          * Group: advanced
          * 
@@ -520,7 +513,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the SecureRandom used to initialize the Signature service.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.security.SecureRandom&lt;/code&gt; type.
+         * <code>java.security.SecureRandom</code> type.
          * 
          * Group: advanced
          * 

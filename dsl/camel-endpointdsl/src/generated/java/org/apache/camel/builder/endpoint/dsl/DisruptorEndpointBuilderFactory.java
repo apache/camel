@@ -51,7 +51,7 @@ public interface DisruptorEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1024
          * Group: common
@@ -71,7 +71,7 @@ public interface DisruptorEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1024
          * Group: common
@@ -86,7 +86,7 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -101,7 +101,7 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1
          * Group: consumer
@@ -120,7 +120,7 @@ public interface DisruptorEndpointBuilderFactory {
          * message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -139,8 +139,7 @@ public interface DisruptorEndpointBuilderFactory {
          * message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
@@ -158,7 +157,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Sleeping, BusySpin and Yielding.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorWaitStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * 
          * Default: Blocking
          * Group: consumer
@@ -176,7 +175,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Sleeping, BusySpin and Yielding.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorWaitStrategy&lt;/code&gt; type.
+         * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * 
          * Default: Blocking
          * Group: consumer
@@ -213,7 +212,7 @@ public interface DisruptorEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -239,8 +238,7 @@ public interface DisruptorEndpointBuilderFactory {
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
@@ -258,8 +256,8 @@ public interface DisruptorEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
          * 
          * Group: consumer (advanced)
          * 
@@ -277,7 +275,7 @@ public interface DisruptorEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -291,8 +289,7 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -307,7 +304,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * <code>org.apache.camel.ExchangePattern</code> type.
          * 
          * Group: consumer (advanced)
          * 
@@ -338,7 +335,7 @@ public interface DisruptorEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1024
          * Group: common
@@ -358,7 +355,7 @@ public interface DisruptorEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1024
          * Group: common
@@ -377,7 +374,7 @@ public interface DisruptorEndpointBuilderFactory {
          * accepted. By disabling this option, an exception will be thrown
          * stating that the queue is full.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -396,8 +393,7 @@ public interface DisruptorEndpointBuilderFactory {
          * accepted. By disabling this option, an exception will be thrown
          * stating that the queue is full.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
@@ -416,7 +412,7 @@ public interface DisruptorEndpointBuilderFactory {
          * thread or otherwise synchronized) is active.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorProducerType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
          * Default: Multi
          * Group: producer
@@ -435,7 +431,7 @@ public interface DisruptorEndpointBuilderFactory {
          * thread or otherwise synchronized) is active.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorProducerType&lt;/code&gt; type.
+         * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
          * Default: Multi
          * Group: producer
@@ -452,7 +448,7 @@ public interface DisruptorEndpointBuilderFactory {
          * asynchronous task to complete. You can disable timeout by using 0 or
          * a negative value.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: <code>long</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -469,7 +465,7 @@ public interface DisruptorEndpointBuilderFactory {
          * asynchronous task to complete. You can disable timeout by using 0 or
          * a negative value.
          * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
          * Group: producer
@@ -488,8 +484,8 @@ public interface DisruptorEndpointBuilderFactory {
          * self-explanatory. The last value, IfReplyExpected, will only wait if
          * the message is Request Reply based.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
+         * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
+         * type.
          * 
          * Default: IfReplyExpected
          * Group: producer
@@ -509,7 +505,7 @@ public interface DisruptorEndpointBuilderFactory {
          * the message is Request Reply based.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
+         * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * 
          * Default: IfReplyExpected
          * Group: producer
@@ -542,7 +538,7 @@ public interface DisruptorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -565,8 +561,7 @@ public interface DisruptorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -599,7 +594,7 @@ public interface DisruptorEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Default: 1024
          * Group: common
@@ -619,7 +614,7 @@ public interface DisruptorEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Default: 1024
          * Group: common

@@ -48,7 +48,7 @@ public interface FunctionGraphEndpointBuilderFactory {
          * FunctionGraph url. Carries higher precedence than region parameter
          * based client initialization.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -62,7 +62,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Name of the function to invoke.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -76,7 +76,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Functions that can be logically grouped together.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: default
          * Group: producer
@@ -91,7 +91,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Cloud project ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -107,7 +107,7 @@ public interface FunctionGraphEndpointBuilderFactory {
          * FunctionGraph service region. This is lower precedence than endpoint
          * based configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -123,7 +123,7 @@ public interface FunctionGraphEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -138,7 +138,7 @@ public interface FunctionGraphEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -152,7 +152,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Proxy server ip/hostname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -166,7 +166,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Proxy authentication password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -180,7 +180,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: proxy
          * 
@@ -194,7 +194,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: proxy
          * 
@@ -208,7 +208,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Proxy authentication user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: proxy
          * 
@@ -222,7 +222,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Access key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -237,7 +237,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -252,8 +252,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -268,7 +267,7 @@ public interface FunctionGraphEndpointBuilderFactory {
         /**
          * Secret key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: security
@@ -303,7 +302,7 @@ public interface FunctionGraphEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -326,8 +325,7 @@ public interface FunctionGraphEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)

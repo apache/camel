@@ -49,7 +49,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Access key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -68,7 +68,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * the head to the left. 2: Shake the head to the right. 3: Nod the
          * head. 4: Mouth movement.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -86,7 +86,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * time of the action in the corresponding sequence. The unit is the
          * milliseconds from the video start time.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -105,7 +105,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * 15 pixels, and that of the wide sides cannot exceed 4096 pixels. The
          * supported image formats include JPG, PNG, and BMP.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -122,7 +122,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * imageFilePath is set. Image size cannot exceed 8 MB, and it is
          * recommended that the image size be less than 1 MB.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -142,7 +142,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * anonymous public authorization. For details, see Configuring the
          * Access Permission of OBS.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -157,7 +157,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * Fully qualified Face Recognition service url. Carries higher
          * precedence than region based configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -178,7 +178,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * that of the wide sides cannot exceed 4096 pixels. The supported image
          * formats include JPG, PNG, and BMP.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -197,7 +197,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * exceed 8 MB, and it is recommended that the image size be less than 1
          * MB.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -218,7 +218,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * temporary authorization, and anonymous public authorization. For
          * details, see Configuring the Access Permission of OBS.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -232,7 +232,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Cloud project ID.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -247,7 +247,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Proxy server ip/hostname.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -261,7 +261,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Proxy authentication password.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -275,7 +275,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * The option is a: <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -289,7 +289,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Proxy server port.
          * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * The option will be converted to a <code>int</code> type.
          * 
          * Group: producer
          * 
@@ -303,7 +303,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Proxy authentication user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -319,7 +319,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * cn-north-4 are supported. This is lower precedence than endpoint
          * based configuration.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -334,7 +334,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Secret key for the cloud user.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
          * Group: producer
@@ -350,7 +350,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -365,7 +365,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * Configuration object for cloud service authentication.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.huaweicloud.common.models.ServiceKeys&lt;/code&gt; type.
+         * <code>org.apache.camel.component.huaweicloud.common.models.ServiceKeys</code> type.
          * 
          * Group: producer
          * 
@@ -388,7 +388,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * format can be MP4, AVI, FLV, WEBM, ASF, or MOV. 5.The video encoding
          * format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -411,7 +411,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * format can be MP4, AVI, FLV, WEBM, ASF, or MOV. 5.The video encoding
          * format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -436,7 +436,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * FLV, WEBM, ASF, or MOV. 5.The video encoding format can be H.261,
          * H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
@@ -450,7 +450,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -465,8 +465,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * Ignore SSL verification.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: security
@@ -501,7 +500,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
@@ -524,8 +523,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer (advanced)
