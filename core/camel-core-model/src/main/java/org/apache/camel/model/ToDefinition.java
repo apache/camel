@@ -76,7 +76,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Copyab
         this.pattern = pattern.name();
     }
 
-    ToDefinition(ToDefinition source) {
+    protected ToDefinition(ToDefinition source) {
         super(source);
         this.variableSend = source.variableSend;
         this.variableReceive = source.variableReceive;

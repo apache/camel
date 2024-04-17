@@ -32,7 +32,7 @@ public abstract class NoOutputDefinition<Type extends ProcessorDefinition<Type>>
     public NoOutputDefinition() {
     }
 
-    NoOutputDefinition(NoOutputDefinition source) {
+    protected NoOutputDefinition(NoOutputDefinition source) {
         super(source);
     }
 }
