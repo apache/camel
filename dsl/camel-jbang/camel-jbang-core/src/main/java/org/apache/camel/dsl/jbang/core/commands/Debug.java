@@ -478,8 +478,10 @@ public class Debug extends Run {
         List<Panel> panel = new ArrayList<>();
         if (!row.code.isEmpty()) {
             String loc = StringHelper.beforeLast(row.location, ":", row.location);
-            if (loc.length() < 72) {
+            if (loc != null && loc.length() < 72) {
                 loc = loc + " ".repeat(72 - loc.length());
+            } else {
+                loc = "";
             }
             panel.add(Panel.withCode("Source: " + loc).andHistory("History"));
             panel.add(Panel.withCode("-".repeat(80))
