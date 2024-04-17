@@ -16,23 +16,10 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
- * Base class for definitions which does not support outputs.
+ * This interface is used to copy {@link ProcessorDefinition ProcessorDefinitions} during instantiation of a route
+ * template.
  */
-public abstract class NoOutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
-
-    @Override
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return Collections.emptyList();
-    }
-
-    public NoOutputDefinition() {
-    }
-
-    NoOutputDefinition(NoOutputDefinition source) {
-        super(source);
-    }
+interface CopyableProcessorDefinition {
+    ProcessorDefinition<?> copy();
 }
