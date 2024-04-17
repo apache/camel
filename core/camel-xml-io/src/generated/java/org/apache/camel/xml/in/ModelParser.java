@@ -333,6 +333,7 @@ public class ModelParser extends BaseParser {
                 case "deadLetterChannel": def.setErrorHandlerType(doParseDeadLetterChannelDefinition()); yield true;
                 case "defaultErrorHandler": def.setErrorHandlerType(doParseDefaultErrorHandlerDefinition()); yield true;
                 case "noErrorHandler": def.setErrorHandlerType(doParseNoErrorHandlerDefinition()); yield true;
+                case "refErrorHandler": def.setErrorHandlerType(doParseRefErrorHandlerDefinition()); yield true;
                 case "jtaTransactionErrorHandler": def.setErrorHandlerType(doParseJtaTransactionErrorHandlerDefinition()); yield true;
                 case "springTransactionErrorHandler": def.setErrorHandlerType(doParseSpringTransactionErrorHandlerDefinition()); yield true;
                 default: yield false;

@@ -938,6 +938,7 @@ public class ModelWriter extends BaseWriter {
                 case "DeadLetterChannelDefinition" -> doWriteDeadLetterChannelDefinition("deadLetterChannel", (DeadLetterChannelDefinition) v);
                 case "DefaultErrorHandlerDefinition" -> doWriteDefaultErrorHandlerDefinition("defaultErrorHandler", (DefaultErrorHandlerDefinition) v);
                 case "NoErrorHandlerDefinition" -> doWriteNoErrorHandlerDefinition("noErrorHandler", (NoErrorHandlerDefinition) v);
+                case "RefErrorHandlerDefinition" -> doWriteRefErrorHandlerDefinition("refErrorHandler", (RefErrorHandlerDefinition) v);
                 case "JtaTransactionErrorHandlerDefinition" -> doWriteJtaTransactionErrorHandlerDefinition("jtaTransactionErrorHandler", (JtaTransactionErrorHandlerDefinition) v);
                 case "SpringTransactionErrorHandlerDefinition" -> doWriteSpringTransactionErrorHandlerDefinition("springTransactionErrorHandler", (SpringTransactionErrorHandlerDefinition) v);
             }

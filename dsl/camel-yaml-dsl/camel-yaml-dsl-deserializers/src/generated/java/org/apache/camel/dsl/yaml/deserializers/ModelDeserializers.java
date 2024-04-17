@@ -5288,6 +5288,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "jtaTransactionErrorHandler", type = "object:org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition", oneOf = "errorHandlerType"),
                     @YamlProperty(name = "noErrorHandler", type = "object:org.apache.camel.model.errorhandler.NoErrorHandlerDefinition", oneOf = "errorHandlerType"),
+                    @YamlProperty(name = "refErrorHandler", type = "object:org.apache.camel.model.errorhandler.RefErrorHandlerDefinition", oneOf = "errorHandlerType"),
                     @YamlProperty(name = "springTransactionErrorHandler", type = "object:org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition", oneOf = "errorHandlerType")
             }
     )
@@ -5323,6 +5324,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "noErrorHandler": {
                     org.apache.camel.model.errorhandler.NoErrorHandlerDefinition val = asType(node, org.apache.camel.model.errorhandler.NoErrorHandlerDefinition.class);
+                    target.setErrorHandlerType(val);
+                    break;
+                }
+                case "refErrorHandler": {
+                    org.apache.camel.model.errorhandler.RefErrorHandlerDefinition val = asType(node, org.apache.camel.model.errorhandler.RefErrorHandlerDefinition.class);
                     target.setErrorHandlerType(val);
                     break;
                 }
