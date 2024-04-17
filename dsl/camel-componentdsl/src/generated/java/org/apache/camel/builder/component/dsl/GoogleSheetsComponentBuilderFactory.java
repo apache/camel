@@ -116,17 +116,16 @@ public interface GoogleSheetsComponentBuilderFactory {
          * Specifies the level of permissions you want a sheets application to
          * have to a user account. See
          * https://developers.google.com/identity/protocols/googlescopes for
-         * more info.
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleSheetsComponentBuilder scopes(java.util.Collection<java.lang.String> scopes) {
+        default GoogleSheetsComponentBuilder scopes(java.lang.String scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -330,7 +329,7 @@ public interface GoogleSheetsComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleSheetsComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleSheetsComponent) component).setConfiguration((org.apache.camel.component.google.sheets.GoogleSheetsConfiguration) value); return true;
             case "delegate": getOrCreateConfiguration((GoogleSheetsComponent) component).setDelegate((java.lang.String) value); return true;
-            case "scopes": getOrCreateConfiguration((GoogleSheetsComponent) component).setScopes((java.util.Collection) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleSheetsComponent) component).setScopes((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleSheetsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "splitResult": getOrCreateConfiguration((GoogleSheetsComponent) component).setSplitResult((boolean) value); return true;
             case "lazyStartProducer": ((GoogleSheetsComponent) component).setLazyStartProducer((boolean) value); return true;
