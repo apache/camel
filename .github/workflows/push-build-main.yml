@@ -60,8 +60,8 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: build-${{ matrix.java }}.log
-          path: build.log
+          name: build.log
+          path: build-${{ matrix.java }}.log
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:

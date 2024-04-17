@@ -66,8 +66,8 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: build-${{ matrix.java }}.log
-          path: build.log
+          name: build.log
+          path: build-${{ matrix.java }}.log
       - name: Fail if there are uncommitted changes
         shell: bash
         run: |
