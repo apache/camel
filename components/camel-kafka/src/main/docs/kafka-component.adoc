@@ -506,7 +506,7 @@ The size of the batch is controlled by the option `maxPollRecords`.
 
 To avoid blocking for too long, waiting for the whole set of records to fill the batch, it is possible to use the `pollTimeoutMs` option to set a timeout for the polling. In this case, the batch may contain less messages than set in the `maxPollRecords`.
 
-==== Automatic Commits
+=== Automatic Commits
 
 By default, Camel uses automatic commits when using batch processing. In this case, Camel automatically commits the records after they have been successfully processed by the application.
 
@@ -535,7 +535,7 @@ public void configure() {
 }
 ----
 
-===== Handling Errors with Automatic Commits
+==== Handling Errors with Automatic Commits
 
 When using automatic commits, Camel will not commit records if there is a failure in processing. Because of this, there is a risk that records could be reprocessed multiple times.
 
