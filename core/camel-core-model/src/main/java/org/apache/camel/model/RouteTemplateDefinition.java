@@ -40,10 +40,6 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.requireNonNullElse;
-
 /**
  * Defines a route template (parameterized routes)
  */
@@ -416,9 +412,9 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         copy.setMessageHistory(route.getMessageHistory());
         copy.setOutputType(route.getOutputType());
         copy.setOutputs(copy(route.getOutputs()));
-        copy.setRoutePolicies(new ArrayList<>(requireNonNullElse(route.getRoutePolicies(), emptyList())));
+        copy.setRoutePolicies(shallowCopy(route.getRoutePolicies()));
         copy.setRoutePolicyRef(route.getRoutePolicyRef());
-        copy.setRouteProperties(new ArrayList<>(requireNonNullElse(route.getRouteProperties(), emptyList())));
+        copy.setRouteProperties(shallowCopy(route.getRouteProperties()));
         copy.setShutdownRoute(route.getShutdownRoute());
         copy.setShutdownRunningTask(route.getShutdownRunningTask());
         copy.setStartupOrder(route.getStartupOrder());
@@ -432,8 +428,16 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         }
         copy.setPrecondition(route.getPrecondition());
         copy.setRouteConfigurationId(route.getRouteConfigurationId());
-        copy.setTemplateParameters(new HashMap<>(requireNonNullElse(route.getTemplateParameters(), emptyMap())));
+        copy.setTemplateParameters(shallowCopy(route.getTemplateParameters()));
         return copy;
+    }
+
+    private <T> List<T> shallowCopy(List<T> list) {
+        return (list != null) ? new ArrayList<>(list) : null;
+    }
+
+    private <K, V> Map<K, V> shallowCopy(Map<K, V> map) {
+        return (map != null) ? new HashMap<>(map) : null;
     }
 
     private List<ProcessorDefinition<?>> copy(List<ProcessorDefinition<?>> outputs) {
