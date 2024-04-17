@@ -49,7 +49,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     public OptionalIdentifiedDefinition() {
     }
 
-    OptionalIdentifiedDefinition(OptionalIdentifiedDefinition source) {
+    protected OptionalIdentifiedDefinition(OptionalIdentifiedDefinition source) {
         this.camelContext = source.camelContext;
         this.id = source.id;
         this.customId = source.customId;

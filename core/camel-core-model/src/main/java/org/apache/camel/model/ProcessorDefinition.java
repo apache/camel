@@ -103,7 +103,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         index = COUNTER.getAndIncrement();
     }
 
-    ProcessorDefinition(ProcessorDefinition source) {
+    protected ProcessorDefinition(ProcessorDefinition source) {
         super(source);
         this.disabled = source.disabled;
         this.inheritErrorHandler = source.inheritErrorHandler;

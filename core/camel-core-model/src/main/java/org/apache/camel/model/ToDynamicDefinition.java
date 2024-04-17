@@ -64,7 +64,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         this.uri = uri;
     }
 
-    ToDynamicDefinition(ToDynamicDefinition source) {
+    protected ToDynamicDefinition(ToDynamicDefinition source) {
         super(source);
         this.endpointProducerBuilder = source.endpointProducerBuilder;
         this.uri = source.uri;
