@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "toD")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> {
+public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> implements CopyableProcessorDefinition {
 
     @XmlTransient
     protected EndpointProducerBuilder endpointProducerBuilder;
@@ -62,6 +62,17 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     public ToDynamicDefinition(String uri) {
         this.uri = uri;
+    }
+
+    ToDynamicDefinition(ToDynamicDefinition source) {
+        super(source);
+        this.endpointProducerBuilder = source.endpointProducerBuilder;
+        this.uri = source.uri;
+        this.pattern = source.pattern;
+        this.cacheSize = source.cacheSize;
+        this.ignoreInvalidEndpoint = source.ignoreInvalidEndpoint;
+        this.allowOptimisedComponents = source.allowOptimisedComponents;
+        this.autoStartComponents = source.autoStartComponents;
     }
 
     @Override
@@ -268,5 +279,9 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     public void setAutoStartComponents(String autoStartComponents) {
         this.autoStartComponents = autoStartComponents;
+    }
+
+    public ToDynamicDefinition copy() {
+        return new ToDynamicDefinition(this);
     }
 }

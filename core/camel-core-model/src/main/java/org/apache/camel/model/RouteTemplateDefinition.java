@@ -16,7 +16,12 @@
  */
 package org.apache.camel.model;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Objects.requireNonNullElse;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -34,6 +39,10 @@ import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Objects.requireNonNullElse;
 
 /**
  * Defines a route template (parameterized routes)
@@ -405,10 +414,10 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         copy.setLogMask(route.getLogMask());
         copy.setMessageHistory(route.getMessageHistory());
         copy.setOutputType(route.getOutputType());
-        copy.setOutputs(route.getOutputs());
-        copy.setRoutePolicies(route.getRoutePolicies());
+        copy.setOutputs(copy(route.getOutputs()));
+        copy.setRoutePolicies(new ArrayList<>(requireNonNullElse(route.getRoutePolicies(), emptyList())));
         copy.setRoutePolicyRef(route.getRoutePolicyRef());
-        copy.setRouteProperties(route.getRouteProperties());
+        copy.setRouteProperties(new ArrayList<>(requireNonNullElse(route.getRouteProperties(), emptyList())));
         copy.setShutdownRoute(route.getShutdownRoute());
         copy.setShutdownRunningTask(route.getShutdownRunningTask());
         copy.setStartupOrder(route.getStartupOrder());
@@ -422,6 +431,19 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         }
         copy.setPrecondition(route.getPrecondition());
         copy.setRouteConfigurationId(route.getRouteConfigurationId());
+        copy.setTemplateParameters(new HashMap<>(requireNonNullElse(route.getTemplateParameters(), emptyMap())));
+        return copy;
+    }
+
+    private List<ProcessorDefinition<?>> copy(List<ProcessorDefinition<?>> outputs) {
+        var copy = new ArrayList<ProcessorDefinition<?>>();
+        for (var definition : outputs) {
+            if (definition instanceof CopyableProcessorDefinition) {
+                copy.add(((CopyableProcessorDefinition)definition).copy());
+            } else {
+                copy.add(definition);
+            }
+        }
         return copy;
     }
 
