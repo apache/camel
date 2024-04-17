@@ -416,7 +416,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return JavadocHelper.xmlEncode(str);
     }
 
-    public String printJavadoc(String indent, String doc) {
+    public String javadoc(String indent, String doc) {
         StringBuilder sb = new StringBuilder();
         List<String> lines = formatJavadocOrCommentStringAsList(doc, indent);
         if (!lines.isEmpty()) {

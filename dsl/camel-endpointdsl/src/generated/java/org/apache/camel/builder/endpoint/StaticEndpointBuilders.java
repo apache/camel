@@ -2605,7 +2605,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapTcp(String path) {
-        return coapTcp("coap+tcp", path);
+        return coap("coap+tcp", path);
     }
     /**
      * CoAP (Secure) (camel-coap)
@@ -2624,7 +2624,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coaps(String path) {
-        return coaps("coaps", path);
+        return coap("coaps", path);
     }
     /**
      * CoAP (camel-coap)
@@ -2643,7 +2643,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapsTcp(String path) {
-        return coapsTcp("coaps+tcp", path);
+        return coap("coaps+tcp", path);
     }
     /**
      * CometD (camel-cometd)
@@ -2726,7 +2726,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(String path) {
-        return cometds("cometds", path);
+        return cometd("cometds", path);
     }
     /**
      * Consul (camel-consul)
@@ -6319,7 +6319,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static HttpEndpointBuilderFactory.HttpEndpointBuilder https(String path) {
-        return https("https", path);
+        return http("https", path);
     }
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
@@ -7047,7 +7047,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static MailEndpointBuilderFactory.MailEndpointBuilder imaps(String path) {
-        return imaps("imaps", path);
+        return imap("imaps", path);
     }
     /**
      * Infinispan (camel-infinispan)
@@ -11547,7 +11547,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3(String path) {
-        return pop3("pop3", path);
+        return imap("pop3", path);
     }
     /**
      * POP3S (camel-mail)
@@ -11569,7 +11569,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3s(String path) {
-        return pop3s("pop3s", path);
+        return imap("pop3s", path);
     }
     /**
      * PubNub (camel-pubnub)
@@ -13012,7 +13012,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static SmppEndpointBuilderFactory.SmppEndpointBuilder smpps(String path) {
-        return smpps("smpps", path);
+        return smpp("smpps", path);
     }
     /**
      * SMTP (camel-mail)
@@ -13034,7 +13034,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static MailEndpointBuilderFactory.MailEndpointBuilder smtp(String path) {
-        return smtp("smtp", path);
+        return imap("smtp", path);
     }
     /**
      * SMTPS (camel-mail)
@@ -13056,7 +13056,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static MailEndpointBuilderFactory.MailEndpointBuilder smtps(String path) {
-        return smtps("smtps", path);
+        return imap("smtps", path);
     }
     /**
      * SNMP (camel-snmp)
