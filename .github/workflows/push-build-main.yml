@@ -55,7 +55,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: mvn formatter and build
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dquickly package
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build-${{ matrix.java }}.log -Dquickly package
       - name: archive logs
         uses: actions/upload-artifact@v4
         if: always()
