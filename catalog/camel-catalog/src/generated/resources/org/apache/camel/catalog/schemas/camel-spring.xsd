@@ -5497,6 +5497,7 @@ Whether to auto startup components when enricher is starting up. Default value: 
             <xs:element ref="tns:deadLetterChannel"/>
             <xs:element ref="tns:defaultErrorHandler"/>
             <xs:element ref="tns:noErrorHandler"/>
+            <xs:element ref="tns:refErrorHandler"/>
             <xs:element ref="tns:jtaTransactionErrorHandler"/>
             <xs:element ref="tns:springTransactionErrorHandler"/>
           </xs:choice>
@@ -5933,6 +5934,22 @@ Sets the reference of the instance of org.apache.camel.spi.ExchangeFormatter to 
     <xs:complexContent>
       <xs:extension base="tns:baseErrorHandlerDefinition">
         <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="refErrorHandlerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:baseErrorHandlerDefinition">
+        <xs:sequence/>
+        <xs:attribute name="ref" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+References to an existing or custom error handler.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -15204,22 +15221,6 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="refErrorHandlerDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:baseErrorHandlerDefinition">
-        <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-References to an existing or custom error handler.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
