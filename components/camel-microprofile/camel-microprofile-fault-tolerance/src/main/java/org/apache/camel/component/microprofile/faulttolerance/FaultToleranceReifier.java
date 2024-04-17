@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
+import io.smallrye.faulttolerance.ExecutorHolder;
 import io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker;
+import io.smallrye.faulttolerance.core.timer.Timer;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -69,6 +71,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
             answer.setCircuitBreaker(cb);
         }
         configureBulkheadExecutorService(answer, config);
+        configureTimer(answer);
         return answer;
     }
 
@@ -124,6 +127,25 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
             processor.setExecutorService(executorService);
             processor.setShutdownExecutorService(shutdownThreadPool);
         }
+    }
+
+    private void configureTimer(FaultToleranceProcessor answer) throws Exception {
+        Timer timer;
+
+        // If running in a CDI container, try to find the singleton scoped ExecutorHolder. Else we have to manage the Timer ourselves
+        ExecutorHolder executorHolder = findSingleByType(ExecutorHolder.class);
+        if (executorHolder != null) {
+            timer = executorHolder.getTimer();
+        } else {
+            FaultToleranceTimerService threadTimerService = camelContext.hasService(FaultToleranceTimerService.class);
+            if (threadTimerService == null) {
+                threadTimerService = new FaultToleranceTimerService();
+                camelContext.addService(threadTimerService);
+            }
+            timer = threadTimerService.getTimer();
+        }
+
+        answer.setTimer(timer);
     }
 
     // *******************************
