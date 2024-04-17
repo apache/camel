@@ -51,6 +51,14 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         this.uri = uri;
     }
 
+    SendDefinition(SendDefinition source) {
+        super(source);
+        this.endpointUriToString = source.endpointUriToString;
+        this.endpoint = source.endpoint;
+        this.endpointProducerBuilder = source.endpointProducerBuilder;
+        this.uri = source.uri;
+    }
+
     @Override
     public String getEndpointUri() {
         if (endpointProducerBuilder != null) {

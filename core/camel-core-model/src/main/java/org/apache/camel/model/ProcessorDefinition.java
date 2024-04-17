@@ -102,6 +102,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         index = COUNTER.getAndIncrement();
     }
 
+    ProcessorDefinition(ProcessorDefinition source) {
+        super(source);
+        this.disabled = source.disabled;
+        this.inheritErrorHandler = source.inheritErrorHandler;
+        this.blocks.addAll(source.blocks);
+        this.parent = source.parent;
+        this.routeConfiguration = source.routeConfiguration;
+        this.interceptStrategies.addAll(source.interceptStrategies);
+        this.index = source.index;
+    }
+
     private static <T extends ExpressionNode> ExpressionClause<T> createAndSetExpression(T result) {
         ExpressionClause<T> clause = new ExpressionClause<>(result);
         result.setExpression(clause);
