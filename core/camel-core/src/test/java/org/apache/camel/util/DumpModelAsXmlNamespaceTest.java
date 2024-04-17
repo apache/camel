@@ -43,13 +43,19 @@ public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
         NodeList nl = dom.getElementsByTagName("xpath");
         assertEquals(2, nl.getLength());
 
-        Element n1 = (Element) nl.item(0);
-        String attributeFoo = n1.getAttribute("xmlns:foo");
+        String attributeFoo = dom.getDocumentElement().getAttribute("xmlns:foo");
+        if (attributeFoo.isEmpty()) {
+            Element n1 = (Element) nl.item(0);
+            attributeFoo = n1.getAttribute("xmlns:foo");
+        }
         assertNotNull(attributeFoo);
         assertEquals(URL_FOO, attributeFoo);
 
-        Element n2 = (Element) nl.item(1);
-        String attributeBar = n2.getAttribute("xmlns:bar");
+        String attributeBar = dom.getDocumentElement().getAttribute("xmlns:bar");
+        if (attributeBar.isEmpty()) {
+            Element n1 = (Element) nl.item(0);
+            attributeBar = n1.getAttribute("xmlns:bar");
+        }
         assertNotNull(attributeBar);
         assertEquals(URL_BAR, attributeBar);
     }
