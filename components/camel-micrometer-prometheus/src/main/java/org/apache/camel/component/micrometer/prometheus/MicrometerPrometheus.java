@@ -58,6 +58,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -320,7 +321,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         super.doStart();
 
         server = camelContext.hasService(MainHttpServer.class);
-        router = VertxPlatformHttpRouter.lookup(camelContext);
+        router = CamelContextHelper.lookup(camelContext, "platform-http-router", VertxPlatformHttpRouter.class);
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
         if (server != null && server.isMetricsEnabled() && router != null && platformHttpComponent != null) {

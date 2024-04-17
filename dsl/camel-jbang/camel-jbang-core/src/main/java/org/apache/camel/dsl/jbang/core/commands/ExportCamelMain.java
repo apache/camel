@@ -300,6 +300,15 @@ class ExportCamelMain extends Export {
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 
+        if (profile != null && profile.exists()) {
+            Properties prop = new CamelCaseOrderedProperties();
+            RuntimeUtil.loadProperties(prop, profile);
+            // if metrics is defined then include camel-micrometer-prometheus for camel-main runtime
+            if (prop.getProperty("camel.metrics.enabled") != null || prop.getProperty("camel.server.metricsEnabled") != null) {
+                answer.add("mvn:org.apache.camel:camel-micrometer-prometheus");
+            }
+        }
+
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-main"));
