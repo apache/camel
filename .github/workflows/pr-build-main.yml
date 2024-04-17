@@ -61,7 +61,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ./etc/scripts/regen.sh > build.log 2>&1
+        run: ./etc/scripts/regen.sh > build-${{ matrix.java }}.log 2>&1
       - name: archive logs
         uses: actions/upload-artifact@v4
         if: always()
