@@ -151,8 +151,9 @@
                         <configuration>
                             <systemPropertyVariables>
                                 <infinispan.test.jgroups.protocol>tcp</infinispan.test.jgroups.protocol>
-                                <infinispan.server.log.path>${project.build.directory}</infinispan.server.log.path>
+                                <infinispan.server.log.path>${project.build.directory}/infinispan-log</infinispan.server.log.path>
                             </systemPropertyVariables>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                 </plugins>
