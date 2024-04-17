@@ -103,3 +103,27 @@ route:
     steps:
       - to: "mock:bar"
 ----
+
+=== camel-spring-boot
+
+The auto configuration of xref:clustering.adoc[Cluster Service] implementations has been moved to dedicated starters:
+
+[%header, cols="1,2"]
+|===
+| Type         | Starter
+| Consul       | camel-consul-cluster-service-starter
+| File         | camel-file-cluster-service-starter
+| Infinispan   | camel-infinispan-cluster-service-starter
+| JGroups Lock | camel-jgroups-cluster-service-starter
+| JGroups Raft | camel-jgroups-raft-cluster-service-starter
+| Kubernetes   | camel-kubernetes-cluster-service-starter
+| Zookeeper    | camel-zookeeper-cluster-service-starter
+|===
+
+
+The Cluster Services are turned on by default unless they are explicit disabled, as example:
+
+[source, properties]
+----
+camel.cluster.consul.enabled = false
+----
