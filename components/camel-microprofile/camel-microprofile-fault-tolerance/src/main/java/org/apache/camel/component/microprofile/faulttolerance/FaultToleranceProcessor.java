@@ -29,7 +29,7 @@ import io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker;
 import io.smallrye.faulttolerance.core.fallback.Fallback;
 import io.smallrye.faulttolerance.core.stopwatch.SystemStopwatch;
 import io.smallrye.faulttolerance.core.timeout.Timeout;
-import io.smallrye.faulttolerance.core.timer.ThreadTimer;
+import io.smallrye.faulttolerance.core.timer.Timer;
 import io.smallrye.faulttolerance.core.util.ExceptionDecision;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -83,12 +83,10 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
     private boolean shutdownScheduledExecutorService;
     private ExecutorService executorService;
     private boolean shutdownExecutorService;
-    private ExecutorService threadTimerExecutorService;
-    private boolean shutdownThreadTimerExecutorService;
     private ProcessorExchangeFactory processorExchangeFactory;
     private PooledExchangeTaskFactory taskFactory;
     private PooledExchangeTaskFactory fallbackTaskFactory;
-    private ThreadTimer timer;
+    private Timer timer;
 
     public FaultToleranceProcessor(FaultToleranceConfiguration config, Processor processor,
                                    Processor fallbackProcessor) {
@@ -149,6 +147,14 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 
     @Override
@@ -262,7 +268,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             }
             // 2. timeout
             if (config.isTimeoutEnabled()) {
-                target = new Timeout<>(target, "timeout", config.getTimeoutDuration(), timer);
+                target = new Timeout<>(target, "timeout", config.getTimeoutDuration(), getTimer());
             }
             // 3. fallback
             if (fallbackProcessor != null) {
@@ -349,15 +355,10 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         if (circuitBreaker == null) {
-            threadTimerExecutorService
-                    = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "CircuitBreakerThreadTimer");
-            shutdownThreadTimerExecutorService = true;
-
-            timer = ThreadTimer.create(threadTimerExecutorService);
             circuitBreaker = new CircuitBreaker<>(
                     invocation(), id, ExceptionDecision.ALWAYS_FAILURE, config.getDelay(), config.getRequestVolumeThreshold(),
                     config.getFailureRatio(),
-                    config.getSuccessThreshold(), SystemStopwatch.INSTANCE, timer);
+                    config.getSuccessThreshold(), SystemStopwatch.INSTANCE, getTimer());
         }
 
         ServiceHelper.initService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
@@ -388,14 +389,6 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         if (shutdownExecutorService && executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
-        }
-        if (timer != null) {
-            timer.shutdown();
-            timer = null;
-        }
-        if (shutdownThreadTimerExecutorService && threadTimerExecutorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(threadTimerExecutorService);
-            threadTimerExecutorService = null;
         }
 
         ServiceHelper.stopService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
