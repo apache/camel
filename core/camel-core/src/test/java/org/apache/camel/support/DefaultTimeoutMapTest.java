@@ -27,12 +27,14 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.TimeoutMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated("Depends on precise timing that may be hard to achieve if the system is under pressure")
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class DefaultTimeoutMapTest {
 
