@@ -1089,7 +1089,6 @@ public final class SimpleExpressionBuilder {
         private final String toStringValue;
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
         private String key;
-        private String keySuffix;
         private final String method;
         private Expression keyExpression;
         private Expression ognlExpression;
@@ -1106,7 +1105,7 @@ public final class SimpleExpressionBuilder {
             List<String> methods = OgnlHelper.splitOgnl(ognl);
 
             key = methods.get(0);
-            keySuffix = "";
+            String keySuffix = "";
             // if ognl starts with a key inside brackets (eg: [foo.bar])
             // remove starting and ending brackets from key
             if (key.startsWith("[") && key.endsWith("]")) {

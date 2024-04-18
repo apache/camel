@@ -29,7 +29,6 @@ public final class ProxyBuilder {
 
     private final CamelContext camelContext;
     private Endpoint endpoint;
-    private final boolean binding = true;
 
     public ProxyBuilder(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -83,7 +82,7 @@ public final class ProxyBuilder {
         ObjectHelper.notNull(endpoint, "endpoint");
         // use proxy service
         BeanProxyFactory factory = PluginHelper.getBeanProxyFactory(camelContext);
-        return factory.createProxy(endpoint, binding, interfaceClasses);
+        return factory.createProxy(endpoint, true, interfaceClasses);
     }
 
 }

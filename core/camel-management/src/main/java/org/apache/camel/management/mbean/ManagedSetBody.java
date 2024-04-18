@@ -24,11 +24,9 @@ import org.apache.camel.processor.SetBodyProcessor;
 
 @ManagedResource(description = "Managed SetBody")
 public class ManagedSetBody extends ManagedProcessor implements ManagedSetBodyMBean {
-    private final SetBodyProcessor processor;
 
     public ManagedSetBody(CamelContext context, SetBodyProcessor processor, SetBodyDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
