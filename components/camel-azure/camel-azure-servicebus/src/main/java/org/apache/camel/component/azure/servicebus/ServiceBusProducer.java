@@ -27,11 +27,7 @@ import java.util.stream.StreamSupport;
 
 import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.*;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
 import org.apache.camel.component.azure.servicebus.operations.ServiceBusSenderOperations;
@@ -46,12 +42,36 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceBusProducer.class);
 
-    private ServiceBusSenderAsyncClientWrapper senderClientWrapper;
-    private ServiceBusConfigurationOptionsProxy configurationOptionsProxy;
-    private ServiceBusSenderOperations serviceBusSenderOperations;
+    private static final Set<String> BROKER_PROPERTY_HEADERS = Set.of(
+            ServiceBusConstants.APPLICATION_PROPERTIES,
+            ServiceBusConstants.CONTENT_TYPE,
+            ServiceBusConstants.MESSAGE_ID,
+            ServiceBusConstants.CORRELATION_ID,
+            ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION,
+            ServiceBusConstants.DEAD_LETTER_REASON,
+            ServiceBusConstants.DEAD_LETTER_SOURCE,
+            ServiceBusConstants.DELIVERY_COUNT,
+            ServiceBusConstants.SCHEDULED_ENQUEUE_TIME,
+            ServiceBusConstants.ENQUEUED_SEQUENCE_NUMBER,
+            ServiceBusConstants.ENQUEUED_TIME,
+            ServiceBusConstants.EXPIRES_AT,
+            ServiceBusConstants.LOCK_TOKEN,
+            ServiceBusConstants.LOCKED_UNTIL,
+            ServiceBusConstants.PARTITION_KEY,
+            ServiceBusConstants.RAW_AMQP_MESSAGE,
+            ServiceBusConstants.REPLY_TO,
+            ServiceBusConstants.REPLY_TO_SESSION_ID,
+            ServiceBusConstants.SEQUENCE_NUMBER,
+            ServiceBusConstants.SESSION_ID,
+            ServiceBusConstants.SUBJECT,
+            ServiceBusConstants.TIME_TO_LIVE,
+            ServiceBusConstants.TO);
 
     private final Map<ServiceBusProducerOperationDefinition, BiConsumer<Exchange, AsyncCallback>> operationsToExecute
             = new EnumMap<>(ServiceBusProducerOperationDefinition.class);
+    private ServiceBusSenderAsyncClientWrapper senderClientWrapper;
+    private ServiceBusConfigurationOptionsProxy configurationOptionsProxy;
+    private ServiceBusSenderOperations serviceBusSenderOperations;
 
     {
         bind(ServiceBusProducerOperationDefinition.sendMessages, sendMessages());
@@ -257,6 +277,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
         final HeaderFilterStrategy headerFilterStrategy = getConfiguration().getHeaderFilterStrategy();
         applicationProperties.putAll(
                 exchange.getMessage().getHeaders().entrySet().stream()
+                        .filter(entry -> !BROKER_PROPERTY_HEADERS.contains(entry.getKey()))
                         .filter(entry -> !headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(),
                                 exchange))
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
