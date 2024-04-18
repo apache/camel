@@ -16,10 +16,6 @@
  */
 package org.apache.camel.model;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.requireNonNullElse;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
