@@ -63,11 +63,9 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     FromDefinition copy() {
         FromDefinition copy = new FromDefinition();
-        copy.parent = this.parent;
         copy.endpoint = this.endpoint;
         copy.endpointConsumerBuilder = this.endpointConsumerBuilder;
         copy.uri = this.uri;
-        copy.variableReceive = this.variableReceive;
         copy.setCamelContext(this.getCamelContext());
         copy.setId(this.getId());
         copy.setCustomId(this.getCustomId());

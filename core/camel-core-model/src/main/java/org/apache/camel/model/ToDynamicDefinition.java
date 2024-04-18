@@ -68,8 +68,6 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         super(source);
         this.endpointProducerBuilder = source.endpointProducerBuilder;
         this.uri = source.uri;
-        this.variableSend = source.variableSend;
-        this.variableReceive = source.variableReceive;
         this.pattern = source.pattern;
         this.cacheSize = source.cacheSize;
         this.ignoreInvalidEndpoint = source.ignoreInvalidEndpoint;
