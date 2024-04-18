@@ -218,7 +218,7 @@ public class ResourceLoaderTest extends TestSupport {
     }
 
     @Test
-    public void testLoadFileNotFound() throws Exception {
+    public void testLoadFileNotFound() {
         DefaultCamelContext context = new DefaultCamelContext();
         Resource resource = PluginHelper.getResourceLoader(context).resolveResource("file:src/test/resources/notfound.txt");
 
@@ -226,7 +226,7 @@ public class ResourceLoaderTest extends TestSupport {
     }
 
     @Test
-    public void testLoadClasspathNotFound() throws Exception {
+    public void testLoadClasspathNotFound() {
         DefaultCamelContext context = new DefaultCamelContext();
         Resource resource = PluginHelper.getResourceLoader(context).resolveResource("classpath:notfound.txt");
 

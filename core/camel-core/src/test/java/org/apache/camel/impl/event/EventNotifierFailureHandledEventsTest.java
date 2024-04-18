@@ -45,12 +45,12 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createCamelRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
 
             @Override
-            protected void doBuild() throws Exception {
+            protected void doBuild() {
                 setIgnoreExchangeAsyncProcessingStartedEvents(true);
             }
         });
@@ -61,7 +61,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
     public void testExchangeDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
@@ -117,7 +117,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
     public void testExchangeOnException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:dead");
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
@@ -165,7 +165,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
     public void testExchangeDoTryDoCatch() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().throwException(new IllegalArgumentException("Damn"))
                         .doCatch(IllegalArgumentException.class).to("mock:dead").end();
             }

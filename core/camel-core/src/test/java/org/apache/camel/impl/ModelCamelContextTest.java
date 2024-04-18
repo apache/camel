@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ModelCamelContextTest extends ContextTestSupport {
 
     @Test
-    public void testAdapt() throws Exception {
+    public void testAdapt() {
         ModelCamelContext mcc = context;
         assertNotNull(mcc);
         assertSame(context, mcc);
@@ -35,10 +35,10 @@ public class ModelCamelContextTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").to("mock:result");
             }
         };

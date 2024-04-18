@@ -61,7 +61,7 @@ public class SagaOptionsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             @Override

@@ -87,7 +87,7 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("timer:file-lock?delay=10&period=100").routeId("route-" + id).log("From ${routeId}")
                             .process(e -> contextLatch.countDown());
                 }

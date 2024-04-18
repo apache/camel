@@ -56,10 +56,10 @@ public class MulticastStopOnExceptionWithOnExceptionTest extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
                 from("direct:start").multicast().stopOnException().to("direct:foo", "direct:bar", "direct:baz").end()
@@ -77,7 +77,7 @@ public class MulticastStopOnExceptionWithOnExceptionTest extends ContextTestSupp
     public static class MyProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(body)) {
                 throw new IllegalArgumentException("Forced");

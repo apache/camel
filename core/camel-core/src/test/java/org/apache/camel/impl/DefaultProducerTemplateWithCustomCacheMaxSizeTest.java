@@ -39,7 +39,7 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
     }
 
     @Test
-    public void testCacheProducers() throws Exception {
+    public void testCacheProducers() {
         ProducerTemplate template = context.createProducerTemplate();
 
         assertEquals(0, template.getCurrentCacheSize(), "Size should be 0");

@@ -40,7 +40,7 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
     public void testAsyncEndpointOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
@@ -64,7 +64,7 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
     public void testAsyncEndpointERROR() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
@@ -98,7 +98,7 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
 
     public static class MyFailBean {
 
-        public String doSomething(Exchange exchange) throws Exception {
+        public String doSomething(Exchange exchange) {
             counter++;
             assertEquals("bean://fail", exchange.getProperty(Exchange.TO_ENDPOINT, String.class));
             throw new IllegalArgumentException("Damn");

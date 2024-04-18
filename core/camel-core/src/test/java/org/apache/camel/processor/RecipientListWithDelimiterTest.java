@@ -32,7 +32,7 @@ public class RecipientListWithDelimiterTest extends ContextTestSupport {
     public void testRecipientList() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").recipientList(header("myHeader"), "#");
             }
         });
@@ -55,7 +55,7 @@ public class RecipientListWithDelimiterTest extends ContextTestSupport {
     public void testRecipientListWithDelimiterDisabled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").recipientList(header("myHeader"), "false");
             }
         });
@@ -73,7 +73,7 @@ public class RecipientListWithDelimiterTest extends ContextTestSupport {
     public void testRecipientListWithTokenizer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").recipientList(header("myHeader").tokenize("#"));
             }
         });

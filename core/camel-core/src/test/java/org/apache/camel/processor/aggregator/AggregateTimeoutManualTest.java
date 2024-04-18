@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class AggregateTimeoutManualTest extends ContextTestSupport {
 
     @Test
-    public void testDisabled() throws Exception {
+    public void testDisabled() {
         // noop
     }
 
@@ -48,10 +48,10 @@ public class AggregateTimeoutManualTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         // timeout after 3 seconds

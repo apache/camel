@@ -60,7 +60,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesComponentRegistryPlain() throws Exception {
+    public void testPropertiesComponentRegistryPlain() {
         context.start();
 
         assertSame(foo, context.getRegistry().lookupByName("foo"));
@@ -69,7 +69,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesComponentRegistryLookupName() throws Exception {
+    public void testPropertiesComponentRegistryLookupName() {
         context.start();
 
         assertSame(foo, context.getRegistry().lookupByName("{{bean.foo}}"));

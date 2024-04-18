@@ -34,10 +34,10 @@ public class PropertiesComponentInterceptSendToEndpointTest extends ContextTestS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("{{cool.end}}").to("mock:foo");
 
                 from("direct:start").to("{{cool.end}}");

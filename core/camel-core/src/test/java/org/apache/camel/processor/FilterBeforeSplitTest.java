@@ -60,10 +60,10 @@ public class FilterBeforeSplitTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Predicate goodWord = body().contains("World");
 
                 from("direct:start").to("mock:before").filter(goodWord).to("mock:good").end()

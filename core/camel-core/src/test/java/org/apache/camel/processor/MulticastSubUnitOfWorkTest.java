@@ -75,10 +75,10 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("direct:start").to("mock:start").process(new MyPreProcessor()).multicast().shareUnitOfWork().to("direct:a")
@@ -98,7 +98,7 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
     public static class MyPreProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // if its a bye message then alter it to something with
             // Donkey to cause a failure in the sub unit of work
             // but the DLC should still receive the original input
@@ -112,7 +112,7 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
     public static class MyProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             if (body.contains("Donkey")) {
                 counter++;

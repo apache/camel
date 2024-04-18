@@ -36,10 +36,10 @@ public class RouteIdRestDefinitionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start1?timeout=30000").to("mock:result");
                 from("direct:start2").to("mock:result");
                 rest("/say/hello").get("/bar").id("getSayHelloBar").to("mock:result").get("/bar/{user}")

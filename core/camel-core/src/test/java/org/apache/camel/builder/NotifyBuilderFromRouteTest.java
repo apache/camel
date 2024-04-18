@@ -40,7 +40,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDoneFromRoute() throws Exception {
+    public void testDoneFromRoute() {
         // notify when exchange is done
         NotifyBuilder builder = new NotifyBuilder(context).fromRoute("foo").whenDone(1);
         builder.create();
@@ -51,7 +51,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDoneFromCurrentRoute() throws Exception {
+    public void testDoneFromCurrentRoute() {
         // notify when exchange is done
         NotifyBuilder builder = new NotifyBuilder(context).fromCurrentRoute("bar").whenDone(1);
         builder.create();
@@ -62,7 +62,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDoneFromCurrentRouteStartRoute() throws Exception {
+    public void testDoneFromCurrentRouteStartRoute() {
         // notify when exchange is done
         NotifyBuilder builder = new NotifyBuilder(context).fromCurrentRoute("foo").whenDone(1);
         builder.create();
@@ -73,10 +73,10 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("proxy:seda:foo").routeId("foo").to("direct:bar").to("mock:foo");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
@@ -87,7 +87,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
     private static final class ProxyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new ProxyEndpoint(this, uri, remaining);
         }
 

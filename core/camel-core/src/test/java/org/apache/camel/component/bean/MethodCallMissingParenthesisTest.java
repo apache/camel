@@ -35,7 +35,7 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
     public void testCorrect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform()
                         .method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo})")
                         .to("mock:result");
@@ -71,7 +71,7 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
     public void testInvalidName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform()
                         .method(MethodCallMissingParenthesisTest.class, "--doSomething(${body}, ${header.foo})")
                         .to("mock:result");

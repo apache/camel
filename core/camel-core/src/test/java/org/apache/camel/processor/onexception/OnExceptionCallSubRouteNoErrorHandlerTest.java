@@ -37,10 +37,10 @@ public class OnExceptionCallSubRouteNoErrorHandlerTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).to("mock:error").end();
 
                 from("direct:start").to("mock:start").doTry().to("direct:bar").to("mock:afterbar").doCatch(Exception.class)

@@ -38,10 +38,10 @@ public class OnExceptionContinuedNoFailureProcessorTest extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 // continue runtime exception
@@ -49,7 +49,7 @@ public class OnExceptionContinuedNoFailureProcessorTest extends ContextTestSuppo
 
                 from("direct:start").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new RuntimeException("FAIL!");
                     }
                 }).to("mock:end");

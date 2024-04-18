@@ -24,10 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class DumpModelAsXmlSplitNestedChoiceEndChoiceRouteTest extends DumpModelAsXmlSplitNestedChoiceEndRouteTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").split().body().to("mock:sub").id("myMock").choice().when(header("foo"))
                         .to("mock:foo") // eg
                         // we

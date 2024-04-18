@@ -44,7 +44,7 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
         AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveById("myException").remove();
             }
         });
@@ -72,7 +72,7 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
         AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveById("myException").replace().onException(Exception.class).handled(true).to("mock:dead2");
             }
         });
@@ -85,10 +85,10 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).id("myException").handled(true).transform(constant("Bye World")).to("mock:dead");
 
                 from("direct:bar").routeId("bar").to("mock:c").to("mock:d");

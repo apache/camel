@@ -42,7 +42,7 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAutowired() throws Exception {
+    public void testAutowired() {
         context.addComponent("mycomponent", new MyComponent(context));
 
         MyComponent my = context.getComponent("mycomponent", MyComponent.class);
@@ -65,7 +65,7 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return null;
         }
 

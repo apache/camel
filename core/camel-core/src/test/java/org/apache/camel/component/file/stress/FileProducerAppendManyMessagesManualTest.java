@@ -57,10 +57,10 @@ public class FileProducerAppendManyMessagesManualTest extends ContextTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("big")).split(body().tokenize(LS)).streaming().to("log:processing?groupSize=1000")
                         .to(fileUri("out/also-big.txt?fileExist=Append"))
                         .end().to("mock:done");

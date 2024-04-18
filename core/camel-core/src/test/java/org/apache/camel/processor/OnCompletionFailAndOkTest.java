@@ -69,10 +69,10 @@ public class OnCompletionFailAndOkTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                     .onCompletion().onCompleteOnly().to("log:ok").to("mock:ok").end()
                     .onCompletion().onFailureOnly().to("log:fail").to("mock:fail").end()

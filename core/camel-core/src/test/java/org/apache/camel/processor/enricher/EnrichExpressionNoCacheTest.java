@@ -34,10 +34,10 @@ public class EnrichExpressionNoCacheTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").enrich().header("source").cacheSize(-1).to("mock:result");
 
                 from("direct:foo").transform().constant("Hello World");

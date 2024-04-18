@@ -30,10 +30,10 @@ import org.slf4j.LoggerFactory;
 public class BeanValidatorInputValidateTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 validator().type("toValidate").withBean("testValidator");
 
                 onException(ValidationException.class).handled(true).log("Invalid validation: ${exception.message}")

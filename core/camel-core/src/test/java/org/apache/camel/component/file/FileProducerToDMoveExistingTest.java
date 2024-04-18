@@ -43,10 +43,10 @@ public class FileProducerToDMoveExistingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toD(fileUri("${header.myDir}?fileExist=Move&moveExisting=" + testDirectory("out").toString()
                                      + "/old-${file:onlyname}"))

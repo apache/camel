@@ -86,10 +86,10 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final Path path = testDirectory();
                 context.getStreamCachingStrategy().setSpoolDirectory(path.toFile());
                 context.getStreamCachingStrategy().setSpoolEnabled(true);
@@ -101,7 +101,7 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                         .to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // check if spool file exists
                                 if (spoolRule.isSpool()) {
                                     String[] names = path.toFile().list();

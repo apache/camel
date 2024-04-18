@@ -32,10 +32,10 @@ public class ProcessRefClassTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .process("#class:org.apache.camel.processor.EchoProcessor")
                         .to("mock:result");

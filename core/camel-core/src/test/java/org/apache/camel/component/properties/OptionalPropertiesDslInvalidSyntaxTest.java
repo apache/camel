@@ -33,7 +33,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
     public void testPlaceholderDslKeyNotFoundTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").multicast().stopOnException("{{xxx}}").to("mock:a")
                         .throwException(new IllegalAccessException("Damn")).to("mock:b");
             }

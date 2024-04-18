@@ -32,7 +32,7 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersClaimCheckTest ext
     public void testMulticastMixOriginalAndHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true)
                         // merge the message with the original message body but keep
                         // any existing headers

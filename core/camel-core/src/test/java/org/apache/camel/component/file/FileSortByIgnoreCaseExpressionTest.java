@@ -42,7 +42,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("a/?sortBy=file:name&initialDelay=250&delay=1000")).convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -60,7 +60,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("b/?initialDelay=0&delay=10&sortBy=ignoreCase:file:name")).convertBodyTo(String.class)
                         .to("mock:nocase");
             }
@@ -79,7 +79,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("c/?initialDelay=0&delay=10&sortBy=reverse:ignoreCase:file:name")).convertBodyTo(String.class)
                         .to("mock:nocasereverse");
             }

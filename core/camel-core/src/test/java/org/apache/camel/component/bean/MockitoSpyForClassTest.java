@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class MockitoSpyForClassTest extends ContextTestSupport {
 
     @Test
-    public void testCallingSpy() throws Exception {
+    public void testCallingSpy() {
         Object response = template.requestBody("direct:start", "anything");
         assertEquals("mocked answer", response);
     }
@@ -45,9 +45,9 @@ public class MockitoSpyForClassTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean("bean:myService");
             }
         };

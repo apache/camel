@@ -64,10 +64,10 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
 
     // START SNIPPET: e2
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // to handle any IOException being thrown
                 onException(IOException.class).handled(true).log("IOException occurred due: ${exception.message}")
                         // as we handle the exception we can send it to
@@ -126,7 +126,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
             //
             template.send("direct:file-error", new Processor() {
                 @Override
-                public void process(Exchange exchange) throws Exception {
+                public void process(Exchange exchange) {
                     // set an exception on the message from the start so the
                     // error handling is triggered
                     exchange.setException(exception);
@@ -143,8 +143,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
         private int counter;
 
         @Override
-        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint)
-                throws Exception {
+        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
             // noop
         }
 
@@ -165,22 +164,19 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
 
         @Override
         public void releaseExclusiveReadLockOnAbort(
-                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-                throws Exception {
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) {
             // noop
         }
 
         @Override
         public void releaseExclusiveReadLockOnRollback(
-                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-                throws Exception {
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) {
             // noop
         }
 
         @Override
         public void releaseExclusiveReadLockOnCommit(
-                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-                throws Exception {
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) {
             // noop
         }
 

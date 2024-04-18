@@ -40,10 +40,10 @@ public class StreamCachingOnlyRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getGlobalOptions().put("CamelCachedOutputStreamThreshold", "4096");
 
                 from("direct:c").streamCaching().to("mock:c");

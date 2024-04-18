@@ -68,15 +68,15 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&readLockIdempotentReleaseAsync=true&idempotentRepository=#myRepo"))
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // we are in progress
                                 int size = myRepo.getCacheSize();
                                 assertTrue(size == 1 || size == 2);

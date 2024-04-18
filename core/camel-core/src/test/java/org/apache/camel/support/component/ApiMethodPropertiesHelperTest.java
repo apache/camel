@@ -51,7 +51,7 @@ public class ApiMethodPropertiesHelperTest {
             };
 
     @Test
-    public void testGetExchangeProperties() throws Exception {
+    public void testGetExchangeProperties() {
         final CamelContext camelContext = new DefaultCamelContext();
         MockEndpoint mock = new MockEndpoint(null, new MockComponent(camelContext));
 
@@ -67,7 +67,7 @@ public class ApiMethodPropertiesHelperTest {
     }
 
     @Test
-    public void testGetEndpointProperties() throws Exception {
+    public void testGetEndpointProperties() {
         final HashMap<String, Object> properties = new HashMap<>();
         final TestEndpointConfiguration endpointConfiguration = new TestEndpointConfiguration();
         endpointConfiguration.setProperty1(VALUE_1);
@@ -79,7 +79,7 @@ public class ApiMethodPropertiesHelperTest {
     }
 
     @Test
-    public void testGetEndpointPropertyNames() throws Exception {
+    public void testGetEndpointPropertyNames() {
         final TestEndpointConfiguration endpointConfiguration = new TestEndpointConfiguration();
         endpointConfiguration.setProperty1(VALUE_1);
         endpointConfiguration.setProperty4(Boolean.valueOf(VALUE_4));
@@ -87,7 +87,7 @@ public class ApiMethodPropertiesHelperTest {
     }
 
     @Test
-    public void testGetValidEndpointProperties() throws Exception {
+    public void testGetValidEndpointProperties() {
         assertEquals(2,
                 propertiesHelper.getValidEndpointProperties(new DefaultCamelContext(), new TestEndpointConfiguration()).size());
     }

@@ -45,20 +45,20 @@ public class AsyncEndpointRoutingSlip3Test extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).routingSlip(constant("async:hi:world, direct:foo"));
 
                 from("direct:foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                         String body = exchange.getIn().getBody(String.class);
                         assertEquals("Hi World", body);

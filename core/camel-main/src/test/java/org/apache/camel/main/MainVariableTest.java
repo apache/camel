@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainVariableTest {
 
     @Test
-    public void testMainVariableParameters() throws Exception {
+    public void testMainVariableParameters() {
         Main main = new Main();
 
         main.addInitialProperty("camel.variable.global.greeting", "Random number");
@@ -64,7 +64,7 @@ public class MainVariableTest {
     }
 
     @Test
-    public void testMainVariableContext() throws Exception {
+    public void testMainVariableContext() {
         Main main = new Main();
 
         main.start();

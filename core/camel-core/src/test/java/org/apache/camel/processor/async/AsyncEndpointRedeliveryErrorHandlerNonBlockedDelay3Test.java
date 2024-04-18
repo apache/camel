@@ -46,20 +46,20 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay3Test extends Con
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
 
                 from("seda:start").to("log:before").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).to("async:bye:camel?failFirstAttempts=2").to("log:after").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                     }
                 }).to("mock:result");

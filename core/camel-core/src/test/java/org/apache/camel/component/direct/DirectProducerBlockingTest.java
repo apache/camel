@@ -98,9 +98,9 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:suspended").routeId("foo").to("mock:result");
             }
         };

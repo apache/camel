@@ -55,10 +55,10 @@ public class FilerConsumerDoneFileNamePrefixTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?doneFileName=done-${file:name}&initialDelay=0&delay=10")).to("mock:result");
             }
         };

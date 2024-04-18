@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
     @Test
-    public void testSimpleUnbalanceFunction() throws Exception {
+    public void testSimpleUnbalanceFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body is a nice day", true, null);
         try {
             parser.parseExpression();
@@ -40,7 +40,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleNestedUnbalanceFunction() throws Exception {
+    public void testSimpleNestedUnbalanceFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body${foo}", true, null);
         try {
             parser.parseExpression();
@@ -51,7 +51,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleUnknownFunction() throws Exception {
+    public void testSimpleUnknownFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${foo} how are you?", true, null);
         try {
             parser.parseExpression();
@@ -62,7 +62,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleNestedUnknownFunction() throws Exception {
+    public void testSimpleNestedUnknownFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${bodyAs(${foo})} how are you?", true, null);
         try {
             // nested functions can only be syntax evaluated when evaluating an
@@ -76,7 +76,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testNoEndFunction() throws Exception {
+    public void testNoEndFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${body", true, null);
         try {
             parser.parseExpression();

@@ -35,7 +35,7 @@ public class DataSetTestFileTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("dataset-test:" + fileUri("?noop=true&timeout=1500"));
             }
         });

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class RouteNodePrefixIdTest extends ContextTestSupport {
 
     @Test
-    public void testRoutePrefixId() throws Exception {
+    public void testRoutePrefixId() {
         Assertions.assertEquals(3, context.getRoutes().size());
 
         // ID should be prefixed
@@ -42,10 +42,10 @@ public class RouteNodePrefixIdTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").nodePrefixId("aaa")
                         .to("mock:foo").id("myFoo")
                         .to("seda:foo");

@@ -22,10 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class MethodCallBeanFunctionScopeTest extends SimpleLanguageBeanFunctionScopeTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:single").choice().when().method("foo", BeanScope.Singleton).to("mock:result")
                         .otherwise().to("mock:other");
 

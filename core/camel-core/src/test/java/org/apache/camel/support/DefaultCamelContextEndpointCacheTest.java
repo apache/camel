@@ -36,11 +36,11 @@ public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
         for (int i = 0; i < 1234; i++) {
             String uri = "my:endpoint?id=" + i;
             DefaultEndpoint e = new DefaultEndpoint() {
-                public Producer createProducer() throws Exception {
+                public Producer createProducer() {
                     return null;
                 }
 
-                public Consumer createConsumer(Processor processor) throws Exception {
+                public Consumer createConsumer(Processor processor) {
                     return null;
                 }
 

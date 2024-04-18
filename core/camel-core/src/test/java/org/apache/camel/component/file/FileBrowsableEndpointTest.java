@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileBrowsableEndpointTest extends ContextTestSupport {
 
     @Test
-    public void testBrowsableNoFiles() throws Exception {
+    public void testBrowsableNoFiles() {
         BrowsableEndpoint browse
                 = context.getEndpoint(fileUri("?initialDelay=0&delay=10"), BrowsableEndpoint.class);
         assertNotNull(browse);
@@ -46,7 +46,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBrowsableOneFile() throws Exception {
+    public void testBrowsableOneFile() {
         template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, "a.txt");
 
         FileEndpoint endpoint = context.getEndpoint(fileUri("?initialDelay=0&delay=10"), FileEndpoint.class);
@@ -69,7 +69,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBrowsableTwoFiles() throws Exception {
+    public void testBrowsableTwoFiles() {
         template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME, "b.txt");
 
@@ -96,7 +96,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBrowsableThreeFilesRecursive() throws Exception {
+    public void testBrowsableThreeFilesRecursive() {
         template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME, "foo/b.txt");
         template.sendBodyAndHeader(fileUri(), "C", Exchange.FILE_NAME, "bar/c.txt");

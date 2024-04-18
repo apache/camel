@@ -68,10 +68,10 @@ public class ManagedRouteNodePrefixIdTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").nodePrefixId("aaa")
                         .to("mock:foo").id("myMock")
                         .log("Hello foo");

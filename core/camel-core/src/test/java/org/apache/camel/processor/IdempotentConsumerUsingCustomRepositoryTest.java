@@ -39,10 +39,10 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
     protected final IdempotentRepository customRepo = new MyRepo();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").idempotentConsumer(header("messageId"), customRepo).to("mock:result");
             }
         };

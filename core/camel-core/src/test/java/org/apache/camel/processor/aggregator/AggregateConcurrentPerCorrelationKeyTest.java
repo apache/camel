@@ -43,7 +43,7 @@ public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport
             final int id = i % 5;
             final int count = i;
             tasks.add(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     template.sendBodyAndHeader(uri, "" + count, "id", id);
                     return null;
                 }
@@ -61,10 +61,10 @@ public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(40)
                         .to("mock:result");
             }

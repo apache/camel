@@ -28,7 +28,7 @@ public class MulticastParallelFineGrainedErrorHandlingTest extends ContextTestSu
     public void testMulticastOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start").to("mock:a").multicast().stopOnException().parallelProcessing().to("mock:foo", "mock:bar",
@@ -51,7 +51,7 @@ public class MulticastParallelFineGrainedErrorHandlingTest extends ContextTestSu
     public void testMulticastError() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start").to("mock:a").multicast().stopOnException().parallelProcessing().to("mock:foo", "mock:bar")

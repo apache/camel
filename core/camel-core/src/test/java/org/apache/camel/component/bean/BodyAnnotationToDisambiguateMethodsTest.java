@@ -33,7 +33,7 @@ public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport 
     protected final MyBean myBean = new MyBean();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         String expectedBody = "Wobble";
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");

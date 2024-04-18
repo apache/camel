@@ -34,7 +34,7 @@ public class AdviceWithAutoStartupTest extends ContextTestSupport {
 
         AdviceWith.adviceWith(context.getRouteDefinition("bar"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 replaceFromWith("seda:newBar");
             }
         });
@@ -56,10 +56,10 @@ public class AdviceWithAutoStartupTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setAutoStartup(false);
 
                 from("direct:start").routeId("foo").to("seda:newBar");

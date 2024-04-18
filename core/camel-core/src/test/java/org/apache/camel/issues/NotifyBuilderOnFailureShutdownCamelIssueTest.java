@@ -29,16 +29,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NotifyBuilderOnFailureShutdownCamelIssueTest extends ContextTestSupport {
 
     @Test
-    public void testIssue() throws Exception {
+    public void testIssue() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
         assertTrue(notify.matchesWaitTime());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:foo?delay=0&period=10").throwException(new IllegalArgumentException("Forced"));
             }
         };

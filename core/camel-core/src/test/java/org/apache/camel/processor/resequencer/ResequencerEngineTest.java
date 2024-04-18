@@ -41,7 +41,7 @@ class ResequencerEngineTest extends TestSupport {
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (runner != null) {
             runner.cancel();
         }

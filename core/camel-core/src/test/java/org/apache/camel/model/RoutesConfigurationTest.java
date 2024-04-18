@@ -34,11 +34,11 @@ public class RoutesConfigurationTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:start")
                                 .throwException(new IllegalArgumentException("Foo"));
 
@@ -48,7 +48,7 @@ public class RoutesConfigurationTest extends ContextTestSupport {
                 },
                 new RouteConfigurationBuilder() {
                     @Override
-                    public void configuration() throws Exception {
+                    public void configuration() {
                         // global routes configuration
                         routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
                     }

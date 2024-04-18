@@ -128,7 +128,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         aEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
 
         exceptionSettingEndpoint.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setException(new Exception("Throw me!"));
             }
         });

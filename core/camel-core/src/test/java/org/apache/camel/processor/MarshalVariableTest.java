@@ -65,10 +65,10 @@ public class MarshalVariableTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("myDF", new MyByeDataFormat());
 
                 from("direct:send")
@@ -101,7 +101,7 @@ public class MarshalVariableTest extends ContextTestSupport {
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        public Object unmarshal(Exchange exchange, InputStream stream) {
             // noop
             return null;
         }

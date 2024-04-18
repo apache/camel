@@ -119,17 +119,17 @@ public class UnmarshalProcessorTest extends TestSupport {
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        public Object unmarshal(Exchange exchange, InputStream stream) {
             return object;
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             // noop
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             // noop
         }
     }

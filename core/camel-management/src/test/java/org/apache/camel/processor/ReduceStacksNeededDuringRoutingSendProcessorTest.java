@@ -52,10 +52,10 @@ public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // context.setTracing(true);
                 MyEndpoint my = new MyEndpoint("myendpoint:foo", getContext());
 
@@ -77,12 +77,12 @@ public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTes
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return new MyProducer(this);
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return null;
         }
 

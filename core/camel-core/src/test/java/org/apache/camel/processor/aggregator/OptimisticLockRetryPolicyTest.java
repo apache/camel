@@ -53,7 +53,7 @@ class OptimisticLockRetryPolicyTest {
     }
 
     @Test
-    void testExponentialBackOffMaximumRetryDelay() throws Exception {
+    void testExponentialBackOffMaximumRetryDelay() {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(true);

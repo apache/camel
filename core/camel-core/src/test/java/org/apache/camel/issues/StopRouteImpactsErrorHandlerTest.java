@@ -33,7 +33,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
         RouteDefinition testRoute = context.getRouteDefinition("TestRoute");
         AdviceWith.adviceWith(testRoute, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().to("log:seda")
                         .throwException(new IllegalArgumentException("Forced"));
             }
@@ -42,7 +42,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
         RouteDefinition smtpRoute = context.getRouteDefinition("smtpRoute");
         AdviceWith.adviceWith(smtpRoute, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("smtp*").to("log:smtp").skipSendToOriginalEndpoint().to("mock:smtp");
             }
         });
@@ -59,10 +59,10 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("smtp", context.getComponent("mock"));
 
                 errorHandler(deadLetterChannel("direct:emailSupport").maximumRedeliveries(2).redeliveryDelay(0));

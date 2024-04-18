@@ -29,7 +29,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
     @Test
     public void testInterceptorNoPredicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().to("mock:test");
                 from("seda:order").to("mock:ok");
             }
@@ -50,7 +50,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
     @Test
     public void testInterceptorNoPredicateAndProceed() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().to("mock:test");
                 from("seda:order").to("mock:ok");
             }
@@ -71,7 +71,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
     @Test
     public void testInterceptorNoPredicateAndStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().to("mock:test").stop();
                 from("seda:order").to("mock:ok");
             }
@@ -92,7 +92,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
     @Test
     public void testInterceptorWithPredicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().when(header("user").isEqualTo("test")).to("mock:test");
                 from("seda:order").to("mock:ok");
             }
@@ -113,7 +113,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
     @Test
     public void testInterceptorWithPredicateAndProceed() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().when(header("user").isEqualTo("test")).to("mock:test");
                 from("seda:order").to("mock:ok");
             }
@@ -134,7 +134,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
     @Test
     public void testInterceptorWithPredicateAndStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().when(header("user").isEqualTo("test")).to("mock:test").stop();
                 from("seda:order").to("mock:ok");
             }

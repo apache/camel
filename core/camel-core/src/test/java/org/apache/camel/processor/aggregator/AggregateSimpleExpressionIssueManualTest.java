@@ -74,10 +74,10 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri()).routeId("foo").noAutoStartup().log("Picked up ${file:name}").split()
                         .tokenize("\n").streaming()
                         .aggregate(constant(true), aggStrategy).completionSize(simple("1000")).completionTimeout(simple("500"))

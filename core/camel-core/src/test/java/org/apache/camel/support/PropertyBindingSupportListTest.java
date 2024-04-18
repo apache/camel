@@ -58,7 +58,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesList() throws Exception {
+    public void testPropertiesList() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -83,7 +83,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesListWithGaps() throws Exception {
+    public void testPropertiesListWithGaps() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -108,7 +108,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesListNested() throws Exception {
+    public void testPropertiesListNested() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -135,7 +135,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesListNestedWithType() throws Exception {
+    public void testPropertiesListNestedWithType() {
         Foo foo = new Foo();
 
         // use CollectionHelper::mapOf to avoid insertion ordered iteration
@@ -153,7 +153,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesListFirst() throws Exception {
+    public void testPropertiesListFirst() {
         Bar bar = new Bar();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -172,7 +172,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesNotList() throws Exception {
+    public void testPropertiesNotList() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();

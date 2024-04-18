@@ -77,10 +77,10 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").delay(10).transform(constant("Bye World"));
             }
         };

@@ -38,7 +38,7 @@ public class TransformDataTypeProcessorTest extends TransformViaDSLTest {
     public static class MyDataTypeTransformer extends Transformer {
 
         @Override
-        public void transform(Message message, DataType from, DataType to) throws Exception {
+        public void transform(Message message, DataType from, DataType to) {
             message.setBody(message.getBody(String.class) + " World!");
         }
     }

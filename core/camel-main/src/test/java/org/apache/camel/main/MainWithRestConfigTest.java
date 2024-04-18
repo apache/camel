@@ -34,7 +34,7 @@ public class MainWithRestConfigTest {
         try {
             main.configure().addRoutesBuilder(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     restConfiguration();
                 }
             });
@@ -59,7 +59,7 @@ public class MainWithRestConfigTest {
         try {
             main.configure().addRoutesBuilder(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     restConfiguration()
                             .component("jetty");
                 }

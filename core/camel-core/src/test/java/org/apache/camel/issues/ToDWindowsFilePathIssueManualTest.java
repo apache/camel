@@ -25,15 +25,15 @@ import org.junit.jupiter.api.Test;
 public class ToDWindowsFilePathIssueManualTest extends ContextTestSupport {
 
     @Test
-    public void testWindows() throws Exception {
+    public void testWindows() {
         template.sendBody("direct:start", "Hello Windows");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toD("file:C:\\temp");
             }

@@ -48,15 +48,15 @@ public class RedeliveryErrorHandlerNonBlockedDelayTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use async delayed which means non blocking
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(10).asyncDelayedRedelivery());
 
                 from("seda:start").to("log:before").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         LOG.info("Processing at attempt {} {}", attempt, exchange);
 
                         String body = exchange.getIn().getBody(String.class);

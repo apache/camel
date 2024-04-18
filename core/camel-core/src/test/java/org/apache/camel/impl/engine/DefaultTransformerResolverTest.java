@@ -39,7 +39,7 @@ class DefaultTransformerResolverTest {
     }
 
     @Test
-    public void shouldHandleUnresolvableDataTypeTransformers() throws Exception {
+    public void shouldHandleUnresolvableDataTypeTransformers() {
         Transformer transformer = resolver.resolve(new TransformerKey("unknown"), camelContext);
         Assertions.assertNull(transformer);
 
@@ -50,7 +50,7 @@ class DefaultTransformerResolverTest {
     }
 
     @Test
-    public void shouldResolveDataTypeTransformers() throws Exception {
+    public void shouldResolveDataTypeTransformers() {
         Transformer transformer = resolver.resolve(new TransformerKey("text-plain"), camelContext);
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(StringDataTypeTransformer.class, transformer.getClass());

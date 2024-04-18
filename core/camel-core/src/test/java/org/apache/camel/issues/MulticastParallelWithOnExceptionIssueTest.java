@@ -21,10 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class MulticastParallelWithOnExceptionIssueTest extends MulticastWithOnExceptionIssueTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("log:onException").to("mock:end4").transform(constant("Stop!"));
 
                 from("direct:start").multicast().parallelProcessing().to("mock:end1", "mock:end2").end().to("mock:end3")

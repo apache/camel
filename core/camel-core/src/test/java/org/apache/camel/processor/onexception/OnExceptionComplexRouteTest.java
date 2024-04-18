@@ -105,10 +105,10 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // global error handler
                 // as its based on a unit test we do not have any delays between

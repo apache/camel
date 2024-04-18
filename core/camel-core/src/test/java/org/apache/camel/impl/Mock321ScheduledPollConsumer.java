@@ -28,7 +28,7 @@ public class Mock321ScheduledPollConsumer extends MockScheduledPollConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
+    protected int poll() {
         if (counter > 0) {
             counter = counter - 1;
         }

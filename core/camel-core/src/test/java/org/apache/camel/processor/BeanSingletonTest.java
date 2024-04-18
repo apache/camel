@@ -87,7 +87,7 @@ public class BeanSingletonTest extends ContextTestSupport {
     public static class MyBean {
         private boolean invoked;
 
-        public void doSomething(Exchange exchange) throws Exception {
+        public void doSomething(Exchange exchange) {
             if (invoked) {
                 throw new IllegalStateException("This bean is not supported to be invoked again!");
             } else {

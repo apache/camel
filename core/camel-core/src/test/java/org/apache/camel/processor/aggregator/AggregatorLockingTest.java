@@ -43,10 +43,10 @@ public class AggregatorLockingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // in case of blocked thread then retry
                 errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(1));
 

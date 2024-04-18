@@ -33,7 +33,7 @@ public class DeadLetterChannelHandleNewExceptionTest extends ContextTestSupport 
     public void testDeadLetterChannelHandleNewException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").deadLetterHandleNewException(true));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
@@ -52,7 +52,7 @@ public class DeadLetterChannelHandleNewExceptionTest extends ContextTestSupport 
     public void testDeadLetterChannelNotHandleNewException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").deadLetterHandleNewException(false));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));

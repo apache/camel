@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HeaderTest extends LanguageTestSupport {
 
     @Test
-    public void testHeaderExpressions() throws Exception {
+    public void testHeaderExpressions() {
         assertExpression("foo", "abc");
     }
 
     @Test
-    public void testPredicates() throws Exception {
+    public void testPredicates() {
         assertPredicate("foo");
     }
 

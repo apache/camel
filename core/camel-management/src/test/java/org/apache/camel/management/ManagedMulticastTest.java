@@ -64,10 +64,10 @@ public class ManagedMulticastTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo")
                         .multicast().id("myMulticast")
                         .to("mock:a").to("mock:b");

@@ -32,10 +32,10 @@ public class WireTapOnPrepareRefTest extends WireTapOnPrepareTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").wireTap("direct:a").onPrepare("deepClone").to("direct:b");
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");

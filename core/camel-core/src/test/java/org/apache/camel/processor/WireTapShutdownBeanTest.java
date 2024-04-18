@@ -81,7 +81,7 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
         private String tapped;
 
-        public void tapSomething(String body) throws Exception {
+        public void tapSomething(String body) {
             try {
                 EXCHANGER.exchange(null);
                 Thread.sleep(100);

@@ -28,7 +28,7 @@ public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSuppor
     protected final MyBean myBean = new MyBean();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         template.sendBody("bean:myBean", "<a><b>12</b></a>");
         assertEquals("12", myBean.ab, "bean ab: " + myBean);
         assertEquals("a12", myBean.abText, "bean abText: " + myBean);

@@ -34,7 +34,7 @@ public class DefaultComponentNameResolverTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultComponentNameResolver() throws Exception {
+    public void testDefaultComponentNameResolver() {
         context.start();
 
         ComponentNameResolver resolver = PluginHelper.getComponentNameResolver(context);

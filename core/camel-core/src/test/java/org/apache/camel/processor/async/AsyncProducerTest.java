@@ -46,7 +46,7 @@ public class AsyncProducerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -54,11 +54,11 @@ public class AsyncProducerTest extends ContextTestSupport {
                 Producer myAsyncProducer = context.getEndpoint("async:bye:camel").createProducer();
 
                 from("direct:start").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).process(myAsyncProducer).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                     }
                 }).to("mock:after").to("mock:result");

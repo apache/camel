@@ -39,7 +39,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createCamelRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
 
@@ -91,10 +91,10 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").to("mock:result");
 
                 from("direct:bar").to("mock:result");

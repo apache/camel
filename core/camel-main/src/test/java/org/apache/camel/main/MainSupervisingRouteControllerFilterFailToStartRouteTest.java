@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
 
     @Test
-    public void testMain() throws Exception {
+    public void testMain() {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
@@ -57,7 +57,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
 
     private class MyRoute extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             getContext().addComponent("jms", new MyJmsComponent());
 
             from("timer:foo").to("mock:foo").routeId("foo");
@@ -73,7 +73,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
     private static class MyJmsComponent extends SedaComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyJmsEndpoint();
         }
     }
@@ -84,7 +84,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return new MyJmsConsumer(this, processor);
         }
 
@@ -101,7 +101,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             throw new IllegalArgumentException("Cannot start");
         }
     }

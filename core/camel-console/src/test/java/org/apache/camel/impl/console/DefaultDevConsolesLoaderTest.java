@@ -26,14 +26,14 @@ import org.junit.jupiter.api.Test;
 public class DefaultDevConsolesLoaderTest extends ContextTestSupport {
 
     @Test
-    public void testLoader() throws Exception {
+    public void testLoader() {
         DefaultDevConsolesLoader loader = new DefaultDevConsolesLoader(context);
         Collection<DevConsole> col = loader.loadDevConsoles();
         Assertions.assertTrue(col.size() > 3);
     }
 
     @Test
-    public void testLoaderForce() throws Exception {
+    public void testLoaderForce() {
         DefaultDevConsolesLoader loader = new DefaultDevConsolesLoader(context);
         Collection<DevConsole> col = loader.loadDevConsoles(true);
         Assertions.assertTrue(col.size() > 3);

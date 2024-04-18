@@ -120,7 +120,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         Exchange out = template.send("direct:exception", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }
         });
@@ -167,7 +167,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         Exchange out = template.request("direct:exception", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }
         });
@@ -194,7 +194,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRequestBody() throws Exception {
+    public void testRequestBody() {
         // with endpoint as string uri
         Integer out = template.requestBody("direct:inout", "Hello", Integer.class);
         assertEquals(Integer.valueOf(123), (Object) out);
@@ -220,7 +220,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRequestUsingDefaultEndpoint() throws Exception {
+    public void testRequestUsingDefaultEndpoint() {
         ProducerTemplate producer = new DefaultProducerTemplate(context, context.getEndpoint("direct:out"));
         producer.start();
 
@@ -258,30 +258,30 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // for faster unit test
                 errorHandler(noErrorHandler());
 
                 from("direct:in").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getIn().setBody("Bye World");
                     }
                 }).to("mock:result");
 
                 from("direct:out").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("Bye Bye World");
                     }
                 }).to("mock:result");
 
                 from("direct:exception").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new IllegalArgumentException("Forced exception by unit test");
                     }
                 }).to("mock:result");
@@ -292,7 +292,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCacheProducers() throws Exception {
+    public void testCacheProducers() {
         ProducerTemplate template = new DefaultProducerTemplate(context);
         template.setMaximumCacheSize(500);
         template.start();
@@ -317,7 +317,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCacheProducersFromContext() throws Exception {
+    public void testCacheProducersFromContext() {
         ProducerTemplate template = context.createProducerTemplate(500);
 
         assertEquals(0, template.getCurrentCacheSize(), "Size should be 0");

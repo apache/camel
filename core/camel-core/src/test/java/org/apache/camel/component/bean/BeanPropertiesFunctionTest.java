@@ -35,7 +35,7 @@ public class BeanPropertiesFunctionTest extends ContextTestSupport {
     public void testParseEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:{{bean:fooBean.foo}}").to("mock:{{bean:barBean.bar}}");
             }
         });

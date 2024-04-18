@@ -38,9 +38,9 @@ public class BeanPackageScopeOutsideTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // this bean is now outside this package
                 bindToRegistry("myBean", new MyPackageScopedBean());
 

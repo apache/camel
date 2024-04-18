@@ -71,10 +71,10 @@ public class TripleNestedChoiceIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when(header("foo").isGreaterThan(1)).choice().when(header("foo").isGreaterThan(5))
                         .choice().when(header("foo").isGreaterThan(10))
                         .to("mock:verybig").otherwise().to("mock:big").endChoice().otherwise().to("mock:med").endChoice()

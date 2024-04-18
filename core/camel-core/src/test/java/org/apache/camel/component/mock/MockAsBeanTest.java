@@ -37,7 +37,7 @@ public class MockAsBeanTest extends ContextTestSupport {
         // the foo bean is a MockEndpoint which we use in this test to transform
         // the message
         foo.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 String in = exchange.getIn().getBody(String.class);
                 exchange.getIn().setBody("Bye " + in);
             }
@@ -51,10 +51,10 @@ public class MockAsBeanTest extends ContextTestSupport {
 
     @Override
     // START SNIPPET: e2
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("foo", foo);
 
                 from("direct:start")

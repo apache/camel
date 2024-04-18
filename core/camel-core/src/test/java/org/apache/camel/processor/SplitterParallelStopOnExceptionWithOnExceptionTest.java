@@ -78,10 +78,10 @@ public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
                 from("direct:start").split(body().tokenize(",")).stopOnException().parallelProcessing()
@@ -93,7 +93,7 @@ public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextT
     public static class MyProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(body)) {
                 throw new IllegalArgumentException("Forced");

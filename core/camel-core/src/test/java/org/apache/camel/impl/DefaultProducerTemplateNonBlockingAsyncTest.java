@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,12 +39,12 @@ public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducer
 
     @Test
     @Override
-    public void testSendAsyncProcessor() throws Exception {
+    public void testSendAsyncProcessor() {
         // noop
     }
 
     @Test
-    public void testRunningInSameThread() throws ExecutionException, InterruptedException {
+    public void testRunningInSameThread() {
         Thread originalThread = Thread.currentThread();
         CompletableFuture<Exchange> future = template.asyncSend("direct:echo", e -> {
             assertSame(originalThread, Thread.currentThread());

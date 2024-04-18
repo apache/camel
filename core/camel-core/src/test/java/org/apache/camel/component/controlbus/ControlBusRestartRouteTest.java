@@ -29,7 +29,7 @@ public class ControlBusRestartRouteTest extends ContextTestSupport {
     private final MyRoutePolicy myRoutePolicy = new MyRoutePolicy();
 
     @Test
-    public void testControlBusRestart() throws Exception {
+    public void testControlBusRestart() {
         assertEquals(1, myRoutePolicy.getStart());
         assertEquals(0, myRoutePolicy.getStop());
 
@@ -44,10 +44,10 @@ public class ControlBusRestartRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").routePolicy(myRoutePolicy).to("mock:foo");
             }
         };

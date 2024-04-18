@@ -52,10 +52,10 @@ public class BeanParameterThreeBodyOgnlTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:foo?method=bar(${body[0]},${body[1]},${body[2]})").to("mock:result");
             }
         };

@@ -33,7 +33,7 @@ public class PredicateAsBeanTest extends ContextTestSupport {
     protected final MyPredicate myPredicate = new MyPredicate();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         String expectedBody = "Wobble";
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");

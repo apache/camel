@@ -37,9 +37,9 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
     protected final MyBean myBean = new MyBean();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         Exchange out = template.send("direct:in", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("p1", "abc");
                 exchange.setProperty("p2", 123);
 

@@ -42,10 +42,10 @@ public class AggregateExpressionSizeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         // aggregate all exchanges correlated by the id header.

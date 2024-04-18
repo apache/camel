@@ -39,10 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").noAutoStartup()
                         .to("mock:result");
             }

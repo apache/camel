@@ -44,10 +44,10 @@ public class OnExceptionsPerRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(IllegalArgumentException.class, IOException.class).handled(true)
                         .to("mock:error").end().choice().when(body().contains("Damn"))
                         .throwException(new IllegalArgumentException("Damn")).when(body().contains("Connect"))

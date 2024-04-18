@@ -52,10 +52,10 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // will use original
                 ErrorHandlerFactory a = deadLetterChannel("mock:a").maximumRedeliveries(2).redeliveryDelay(0)
                         .logStackTrace(false).useOriginalMessage();
@@ -77,7 +77,7 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             assertEquals("Hello World", exchange.getIn().getBody(String.class));
             throw new IllegalArgumentException("Forced");
         }

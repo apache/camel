@@ -42,10 +42,10 @@ public class MethodCallRefOrBeanPrefixPredicateTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").filter().method("ref:foo").to("mock:a");
 
                 from("direct:b").filter().method("bean:foo").to("mock:b");

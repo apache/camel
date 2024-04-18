@@ -138,10 +138,10 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:fails").aggregate(header("id"), new BodyInAggregatingStrategy())
                         .aggregationRepository(new AlwaysFailingRepository()).optimisticLocking()
                         // do not use retry delay to speedup test

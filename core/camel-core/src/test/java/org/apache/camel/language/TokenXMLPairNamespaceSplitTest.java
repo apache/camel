@@ -65,10 +65,10 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:pair")
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag

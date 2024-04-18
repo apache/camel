@@ -29,7 +29,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     @Test
-    public void testProducerWithMessageIdAsFileName() throws Exception {
+    public void testProducerWithMessageIdAsFileName() {
         Endpoint endpoint = context.getEndpoint("direct:report");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("This is a good report");
@@ -43,15 +43,15 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerWithHeaderFileName() throws Exception {
+    public void testProducerWithHeaderFileName() {
         template.sendBody("direct:report2", "This is super good report");
         assertFileExists(testFile("report-super.txt"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:report")
                         .to(fileUri("reports"));
 

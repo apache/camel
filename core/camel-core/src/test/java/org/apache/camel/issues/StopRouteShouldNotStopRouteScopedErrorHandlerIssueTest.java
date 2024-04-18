@@ -39,10 +39,10 @@ public class StopRouteShouldNotStopRouteScopedErrorHandlerIssueTest extends Cont
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         // use context scoped
                         .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0)).to("log:start")

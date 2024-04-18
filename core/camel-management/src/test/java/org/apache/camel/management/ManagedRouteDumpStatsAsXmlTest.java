@@ -58,10 +58,10 @@ public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo")
                         .to("log:foo").id("to-log")
                         .delay(100)

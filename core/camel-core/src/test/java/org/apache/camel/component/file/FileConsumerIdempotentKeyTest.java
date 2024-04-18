@@ -24,9 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileConsumerIdempotentKeyTest extends FileConsumerIdempotentTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?idempotent=true&idempotentKey=${file:onlyname}&move=done/${file:name}&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class)
                         .to("mock:result");

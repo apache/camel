@@ -36,7 +36,7 @@ public class DefaultErrorHandlerOnExceptionOccurredProcessorTest extends Context
     }
 
     @Test
-    public void testOnExceptionOccurred() throws Exception {
+    public void testOnExceptionOccurred() {
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should throw exception");
@@ -50,10 +50,10 @@ public class DefaultErrorHandlerOnExceptionOccurredProcessorTest extends Context
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 MyProcessor myProcessor = context.getRegistry().lookupByNameAndType("myProcessor", MyProcessor.class);
 
                 errorHandler(defaultErrorHandler().onExceptionOccurred(myProcessor));
@@ -70,7 +70,7 @@ public class DefaultErrorHandlerOnExceptionOccurredProcessorTest extends Context
         private int invoked;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             invoked++;
         }
 

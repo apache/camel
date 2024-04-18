@@ -64,10 +64,10 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getComponent("direct", DirectComponent.class).setBlock(false);
 
                 from("direct:foo").routeId("foo").to("log:foo").to("mock:result");

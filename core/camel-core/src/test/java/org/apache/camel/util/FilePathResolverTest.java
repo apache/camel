@@ -26,7 +26,7 @@ public class FilePathResolverTest {
 
     @Test
     @ResourceLock(Resources.SYSTEM_PROPERTIES)
-    public void testFilePathResolver() throws Exception {
+    public void testFilePathResolver() {
         assertEquals("/foo/bar", FilePathResolver.resolvePath("/foo/bar"));
 
         assertEquals("/foo/myserver/bar", FilePathResolver.resolvePath("/foo/${env:FOO_SERVICE_HOST}/bar"));

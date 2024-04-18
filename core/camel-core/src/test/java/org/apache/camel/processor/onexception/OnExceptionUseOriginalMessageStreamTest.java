@@ -95,10 +95,10 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(ExceptionOne.class, MyDataFormatException.class)
                         .useOriginalMessage()
                         .convertBodyTo(String.class)
@@ -158,7 +158,7 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
     public static class MyDataFormat extends ServiceSupport implements DataFormat {
 
         @Override
-        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
             // noop
         }
 

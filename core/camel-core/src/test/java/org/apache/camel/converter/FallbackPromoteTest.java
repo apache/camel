@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FallbackPromoteTest extends ContextTestSupport {
 
     @Test
-    public void testFallbackPromote() throws Exception {
+    public void testFallbackPromote() {
         MyCoolBean cool = new MyCoolBean();
         cool.setCool("Camel rocks");
 

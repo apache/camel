@@ -80,10 +80,10 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").setBody(simple("Hello ${body}")).to("mock:result");
 
                 from("direct:other").routeId("myOtherRoute").setBody(xpath("/foo")).to("mock:result");

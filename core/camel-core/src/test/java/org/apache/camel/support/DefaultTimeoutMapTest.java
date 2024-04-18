@@ -42,7 +42,7 @@ public class DefaultTimeoutMapTest {
     private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
 
     @Test
-    public void testDefaultTimeoutMap() throws Exception {
+    public void testDefaultTimeoutMap() {
         DefaultTimeoutMap<?, ?> map = new DefaultTimeoutMap<>(executor);
         map.start();
         assertTrue(map.currentTime() > 0);
@@ -53,7 +53,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testDefaultTimeoutMapPurge() throws Exception {
+    public void testDefaultTimeoutMapPurge() {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         assertTrue(map.currentTime() > 0);
@@ -89,7 +89,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testDefaultTimeoutMapGetRemove() throws Exception {
+    public void testDefaultTimeoutMapGetRemove() {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         assertTrue(map.currentTime() > 0);
@@ -110,7 +110,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testExecutor() throws Exception {
+    public void testExecutor() {
         ScheduledExecutorService e = Executors.newScheduledThreadPool(2);
 
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(e, 50);
@@ -130,7 +130,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testExpiredInCorrectOrder() throws Exception {
+    public void testExpiredInCorrectOrder() {
         final List<String> keys = new ArrayList<>();
         final List<Integer> values = new ArrayList<>();
 
@@ -174,7 +174,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testDefaultTimeoutMapStopStart() throws Exception {
+    public void testDefaultTimeoutMapStopStart() {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         map.put("A", 1, 500);

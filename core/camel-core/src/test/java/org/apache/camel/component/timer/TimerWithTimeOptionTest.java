@@ -37,7 +37,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
     public void testFiredInFutureWithTPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Date future = new Date(new Date().getTime() + 10);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -60,7 +60,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
     public void testFiredInFutureWithTPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Date future = new Date(new Date().getTime() + 10);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -82,7 +82,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
     public void testFiredInFutureWithTPatternFixedRate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Date future = new Date(new Date().getTime() + 10);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -105,7 +105,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
     public void testFiredInFutureWithoutTPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Date future = new Date(new Date().getTime() + 10);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -128,7 +128,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
     public void testFiredInFutureWithoutTPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Date future = new Date(new Date().getTime() + 10);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -150,7 +150,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
     public void testFiredInFutureCustomPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Date future = new Date(new Date().getTime() + 10);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
@@ -173,7 +173,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
     public void testFiredInFutureCustomPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Date future = new Date(new Date().getTime() + 10);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
@@ -195,7 +195,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
     public void testFiredInFutureIllegalTime() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("timer://foo?time=%s", "20090101").to("mock:result");
             }
         });

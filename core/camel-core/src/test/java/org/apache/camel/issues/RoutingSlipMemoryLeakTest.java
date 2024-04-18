@@ -29,7 +29,7 @@ public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
      * Reproducer for the memory leak: CAMEL-10048
      */
     @Test
-    public void testMemoryLeakInExceptionHandlerCaching() throws Exception {
+    public void testMemoryLeakInExceptionHandlerCaching() {
         int messageCount = 100;
         for (int i = 0; i < messageCount; i++) {
             template.sendBody("direct:start", "message " + i);
@@ -39,10 +39,10 @@ public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start").routingSlip(method(SlipProvider.class)).id("memory-leak");

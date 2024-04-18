@@ -37,7 +37,7 @@ public class HealthCheckResultStrategyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMyFoo() throws Exception {
+    public void testMyFoo() {
         context.getRegistry().bind("myStrategy", new MyResultStrategy());
         context.start();
 
@@ -54,7 +54,7 @@ public class HealthCheckResultStrategyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAddToRegistry() throws Exception {
+    public void testAddToRegistry() {
         context.getRegistry().bind("myStrategy", new MyResultStrategy());
         context.start();
 

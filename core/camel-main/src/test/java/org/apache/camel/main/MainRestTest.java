@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MainRestTest {
 
     @Test
-    public void testMain() throws Exception {
+    public void testMain() {
         Main main = new Main();
 
         main.addInitialProperty("camel.rest.bindingMode", "json");

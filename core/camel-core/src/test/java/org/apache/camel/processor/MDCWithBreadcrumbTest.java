@@ -26,16 +26,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MDCWithBreadcrumbTest extends MDCTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable MDC and breadcrumb
                 context.setUseMDCLogging(true);
                 context.setUseBreadcrumb(true);
 
                 from("direct:a").routeId("route-a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals("route-a", MDC.get("camel.routeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));
@@ -43,7 +43,7 @@ public class MDCWithBreadcrumbTest extends MDCTest {
                 }).to("log:foo").to("direct:b");
 
                 from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals("route-b", MDC.get("camel.routeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));

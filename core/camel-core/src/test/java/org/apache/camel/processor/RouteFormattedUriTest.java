@@ -38,11 +38,11 @@ public class RouteFormattedUriTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         String path = testDirectory().toString();
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").toF("file://%s?fileName=%s", path, name);
 

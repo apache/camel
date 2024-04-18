@@ -147,7 +147,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         assertTrue(context.getRouteController().getRouteStatus("foo").isStarted(), "Route should be started");
 
         getMockEndpoint("mock:foo").whenExchangeReceived(2, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setException(new IllegalArgumentException("Damn"));
             }
         });

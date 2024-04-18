@@ -47,7 +47,7 @@ public class TransactedSetHeaderIssueTest extends ContextTestSupport {
     public void testSetHeaderOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("myPolicy", policy);
 
                 from("direct:start")
@@ -71,7 +71,7 @@ public class TransactedSetHeaderIssueTest extends ContextTestSupport {
     public void testSetHeaderIssue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("myPolicy", policy);
 
                 from("direct:start")

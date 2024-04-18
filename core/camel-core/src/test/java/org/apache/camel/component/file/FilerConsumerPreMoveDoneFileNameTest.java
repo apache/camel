@@ -55,10 +55,10 @@ public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?preMove=work/work-${file:name}&doneFileName=ready&initialDelay=0&delay=10"))
                         .to("mock:result");
             }

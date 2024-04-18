@@ -40,10 +40,10 @@ public class LanguageScriptRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").to("language:simple?script=#myScript").to("mock:result");
                 // END SNIPPET: e1

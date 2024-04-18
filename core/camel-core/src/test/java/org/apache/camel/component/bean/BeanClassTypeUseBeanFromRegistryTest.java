@@ -35,7 +35,7 @@ public class BeanClassTypeUseBeanFromRegistryTest extends ContextTestSupport {
         context.getRegistry().bind("foo", new MyFooBean());
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(FooService.class).to("mock:result");
             }
         });
@@ -54,7 +54,7 @@ public class BeanClassTypeUseBeanFromRegistryTest extends ContextTestSupport {
         context.getRegistry().bind("bar", new MyFooBean());
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(FooService.class).to("mock:result");
             }
         });
@@ -69,7 +69,7 @@ public class BeanClassTypeUseBeanFromRegistryTest extends ContextTestSupport {
     public void testZeroInstancesInRegistry() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(FooService.class).to("mock:result");
             }
         });

@@ -57,10 +57,10 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost");
                 // we have logic to clean up those paths so there is only one /
                 // between the paths

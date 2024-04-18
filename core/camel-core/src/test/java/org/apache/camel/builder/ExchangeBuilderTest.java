@@ -54,7 +54,7 @@ public class ExchangeBuilderTest {
     }
 
     @Test
-    public void testBuildAnExchangeWithBodyHeaderAndPatternInOnly() throws Exception {
+    public void testBuildAnExchangeWithBodyHeaderAndPatternInOnly() {
 
         Exchange exchange = ExchangeBuilder.anExchange(context).withBody(BODY).withHeader(KEY, VALUE)
                 .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOnly)
@@ -67,7 +67,7 @@ public class ExchangeBuilderTest {
     }
 
     @Test
-    public void testBuildAnExchangeWithBodyHeaderAndPatternInOut() throws Exception {
+    public void testBuildAnExchangeWithBodyHeaderAndPatternInOut() {
 
         Exchange exchange = ExchangeBuilder.anExchange(context).withBody(BODY).withHeader(KEY, VALUE)
                 .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOut)

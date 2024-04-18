@@ -35,7 +35,7 @@ public class EndpointPrototypeTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetPrototype() throws Exception {
+    public void testGetPrototype() {
         context.start();
 
         assertEquals(0, context.getEndpointRegistry().size());
@@ -69,7 +69,7 @@ public class EndpointPrototypeTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetPrototypeNoLifecycleStrategy() throws Exception {
+    public void testGetPrototypeNoLifecycleStrategy() {
         final List<Endpoint> endpoints = new ArrayList<>();
 
         LifecycleStrategySupport dummy = new LifecycleStrategySupport() {

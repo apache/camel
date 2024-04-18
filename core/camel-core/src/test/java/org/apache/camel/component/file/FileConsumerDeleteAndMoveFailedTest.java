@@ -25,13 +25,13 @@ import org.junit.jupiter.api.parallel.Isolated;
 public class FileConsumerDeleteAndMoveFailedTest extends FileConsumerDeleteAndFailureTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?delete=true&moveFailed=error&initialDelay=0&delay=10"))
                         .setBody(simple("${body} IS processed!")).process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 if (body != null && body.startsWith("Kaboom")) {
                                     throw new IllegalArgumentException("Forced");

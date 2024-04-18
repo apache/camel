@@ -33,11 +33,11 @@ public class RecipientListErrorHandlingIssueTest extends ContextTestSupport {
     public void testUsingInterceptor() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("mock:error");
 
                 interceptSendToEndpoint("direct:*").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String target = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
                         exchange.getIn().setHeader("target", target);
                     }
@@ -65,7 +65,7 @@ public class RecipientListErrorHandlingIssueTest extends ContextTestSupport {
     public void testUsingExistingHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("mock:error");
 
                 from("direct:start").recipientList(header("foo"));

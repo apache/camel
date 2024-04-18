@@ -61,10 +61,10 @@ public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Namespaces foo = new Namespaces("foo", URL_FOO);
                 Namespaces bar = new Namespaces("bar", URL_BAR);
 

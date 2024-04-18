@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class BeanValidatorOutputValidateTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 validator().type("toValidate").withBean("testValidator");
 
                 onException(ValidationException.class).handled(true).log("Invalid validation: ${exception.message}")

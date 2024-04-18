@@ -73,10 +73,10 @@ public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").threads(15, 30).id("myThreads").to("mock:result");
 
                 from("direct:foo").threads(1, 2).id("myOtherThreads").to("mock:foo");

@@ -36,7 +36,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
     public void testCreateDirectory() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri("foo"));
         Consumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // noop
             }
         });
@@ -56,7 +56,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
         Endpoint endpoint = context.getEndpoint("file://" + base);
         Consumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // noop
             }
         });
@@ -73,7 +73,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
     public void testDoNotCreateDirectory() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri("foo?autoCreate=false"));
         Consumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // noop
             }
         });
@@ -89,7 +89,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
     public void testAutoCreateDirectoryWithDot() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri("foo.bar?autoCreate=true"));
         Consumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // noop
             }
         });
@@ -103,7 +103,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testStartingDirectoryMustExistDirectory() throws Exception {
+    public void testStartingDirectoryMustExistDirectory() {
         Endpoint endpoint = context.getEndpoint(fileUri("foo?autoCreate=false&startingDirectoryMustExist=true"));
 
         FileNotFoundException e = assertThrows(FileNotFoundException.class,

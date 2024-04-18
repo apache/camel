@@ -49,10 +49,10 @@ public class LanguageCacheScriptTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String script = URLEncoder.encode("Hello ${body}", StandardCharsets.UTF_8);
                 endpoint = context.getEndpoint("language:simple:" + script + "?transform=false&cacheScript=true",
                         LanguageEndpoint.class);

@@ -37,13 +37,13 @@ public class FileConfigureTest extends ContextTestSupport {
     private static final String EXPECT_FILE = "some" + File.separator + "nested" + File.separator + "filename.txt";
 
     private static final Processor DUMMY_PROCESSOR = new Processor() {
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // Do nothing here
         }
     };
 
     @Test
-    public void testUriConfigurations() throws Exception {
+    public void testUriConfigurations() {
         assertFileEndpoint("file://target/data/FileConfigureTest/bar", EXPECT_PATH, false);
         assertFileEndpoint("file://target/data/FileConfigureTest/bar?delete=true", EXPECT_PATH, false);
         assertFileEndpoint("file:target/data/FileConfigureTest/bar?delete=true", EXPECT_PATH, false);

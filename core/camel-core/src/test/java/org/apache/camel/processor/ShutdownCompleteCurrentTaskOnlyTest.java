@@ -60,11 +60,11 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         String url = fileUri(FILE_QUERY);
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(url)
                         // let it complete only current task so we shutdown faster
                         .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed()

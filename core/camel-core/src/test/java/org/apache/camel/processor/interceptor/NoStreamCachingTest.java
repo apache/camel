@@ -52,7 +52,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
     public void testNoStreamCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").noStreamCaching().to("mock:a");
             }
         });
@@ -73,7 +73,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
     public void testStreamCacheIsDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("mock:a");
             }
         });
@@ -95,7 +95,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
     public void testMixed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").noStreamCaching().to("mock:a");
 
                 from("direct:b").streamCaching().to("mock:b");

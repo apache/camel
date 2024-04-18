@@ -51,10 +51,10 @@ public class SplitterCompletedPropertyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body().tokenize(",")).to("mock:split");
 
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:split");

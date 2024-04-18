@@ -51,10 +51,10 @@ public class SimpleSetHeaderPredicateTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("bar").simple("${header.foo} == 'Camel'", boolean.class).to("mock:result");
 
                 from("direct:other").setHeader("param1", constant("hello")).log("param1 = ${header.param1}").setHeader("param2")

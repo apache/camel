@@ -29,7 +29,7 @@ public class SynchronousExecutorServiceTest {
     private static String name2;
 
     @Test
-    public void testSynchronousExecutorService() throws Exception {
+    public void testSynchronousExecutorService() {
         String name1 = Thread.currentThread().getName();
 
         ExecutorService service = new SynchronousExecutorService();
@@ -45,7 +45,7 @@ public class SynchronousExecutorServiceTest {
     }
 
     @Test
-    public void testSynchronousExecutorServiceShutdown() throws Exception {
+    public void testSynchronousExecutorServiceShutdown() {
         ExecutorService service = new SynchronousExecutorService();
         service.execute(new Runnable() {
             public void run() {

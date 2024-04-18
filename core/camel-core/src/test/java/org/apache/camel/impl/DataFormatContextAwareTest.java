@@ -45,7 +45,7 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLanguageCamelContextAware() throws Exception {
+    public void testLanguageCamelContextAware() {
         DataFormat df = context.resolveDataFormat("my");
         assertNotNull(df);
 
@@ -68,21 +68,21 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
         }
 
         @Override
-        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        public Object unmarshal(Exchange exchange, InputStream stream) {
             return null;
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             // noop
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             // noop
         }
     }

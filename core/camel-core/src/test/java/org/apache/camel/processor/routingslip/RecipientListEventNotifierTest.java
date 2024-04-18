@@ -68,7 +68,7 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
         private int sent;
 
         @Override
-        public void notify(CamelEvent event) throws Exception {
+        public void notify(CamelEvent event) {
             if (event instanceof ExchangeSendingEvent) {
                 sending++;
             } else {

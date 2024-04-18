@@ -53,7 +53,7 @@ public class AddEventNotifierTest extends ContextTestSupport {
 
         // we should be able to add after CamelContext has been started
         EventNotifier notifier = new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
         };
@@ -80,10 +80,10 @@ public class AddEventNotifierTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("mock:result");
             }
         };

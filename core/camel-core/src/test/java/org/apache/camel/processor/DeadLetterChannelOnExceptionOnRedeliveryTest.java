@@ -62,10 +62,10 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // when we redeliver caused by an IOException we want to do some
                 // special
@@ -100,7 +100,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     public static class MyRedeliverProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // the message is being redelivered so we can alter it
 
             // we just append the redelivery counter to the body
@@ -122,7 +122,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     public static class MyIORedeliverProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // just for show and tell, here we set a special header to instruct
             // the receive a given timeout value
             exchange.getIn().setHeader("Timeout", 5000);
@@ -133,7 +133,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     public static class ThrowExceptionProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // force some error so Camel will do redelivery
             if (++counter <= 3) {
                 throw new IllegalArgumentException("Forced by unit test");

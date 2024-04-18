@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ReadinessAndLivenessTest {
 
     @Test
-    public void testLiveAndReady() throws Exception {
+    public void testLiveAndReady() {
         CamelContext context = new DefaultCamelContext();
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -70,7 +70,7 @@ public class ReadinessAndLivenessTest {
     }
 
     @Test
-    public void testAll() throws Exception {
+    public void testAll() {
         CamelContext context = new DefaultCamelContext();
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();

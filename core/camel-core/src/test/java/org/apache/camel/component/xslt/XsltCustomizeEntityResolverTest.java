@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-import java.io.IOException;
 import java.io.StringReader;
 
 import org.xml.sax.EntityResolver;
@@ -44,10 +43,10 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:src/test/data/?fileName=xml_with_entity.xml&noop=true&initialDelay=0&delay=10")
                         .to("xslt:xslt/common/copy.xsl?output=string&entityResolver=#customEntityResolver")
                         .to("mock:resultURIResolverDirect");
@@ -58,7 +57,7 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
     private EntityResolver getCustomEntityResolver() {
         return new EntityResolver() {
             @Override
-            public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
                 return new InputSource(new StringReader("<!ELEMENT A (#PCDATA)>"));
             }
         };

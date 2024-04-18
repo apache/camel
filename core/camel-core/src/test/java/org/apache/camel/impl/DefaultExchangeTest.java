@@ -97,7 +97,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testHeader() throws Exception {
+    public void testHeader() {
         assertNotNull(exchange.getIn().getHeaders());
 
         assertEquals(123, exchange.getIn().getHeader("bar"));
@@ -119,7 +119,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testProperty() throws Exception {
+    public void testProperty() {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
 
@@ -143,7 +143,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testVariable() throws Exception {
+    public void testVariable() {
         exchange.removeVariable("cheese");
         assertFalse(exchange.hasVariables());
 
@@ -167,7 +167,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testRemoveProperties() throws Exception {
+    public void testRemoveProperties() {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
 
@@ -189,7 +189,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testRemoveVariables() throws Exception {
+    public void testRemoveVariables() {
         exchange.removeVariable("cheese");
         assertFalse(exchange.hasVariables());
 
@@ -204,7 +204,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testRemoveAllProperties() throws Exception {
+    public void testRemoveAllProperties() {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
 
@@ -219,7 +219,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testRemoveAllVariables() throws Exception {
+    public void testRemoveAllVariables() {
         exchange.removeVariable("cheese");
         assertFalse(exchange.hasVariables());
 
@@ -234,7 +234,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testRemovePropertiesWithExclusion() throws Exception {
+    public void testRemovePropertiesWithExclusion() {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
 
@@ -259,7 +259,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testRemovePropertiesPatternWithAllExcluded() throws Exception {
+    public void testRemovePropertiesPatternWithAllExcluded() {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
 
@@ -284,7 +284,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testRemoveInternalProperties() throws Exception {
+    public void testRemoveInternalProperties() {
         exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
 
         assertEquals("iso-8859-1", exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
@@ -308,7 +308,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testAllProperties() throws Exception {
+    public void testAllProperties() {
         exchange.removeProperties("*");
         exchange.setProperty("foo", 123);
         exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, "seda:bar");
@@ -320,7 +320,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testCopyExchangeWithVariables() throws Exception {
+    public void testCopyExchangeWithVariables() {
         exchange.setVariable("beer", "Carlsberg");
         assertEquals(2, exchange.getVariables().size());
 
@@ -345,7 +345,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testInType() throws Exception {
+    public void testInType() {
         exchange.setIn(new MyMessage(context));
 
         MyMessage my = exchange.getIn(MyMessage.class);
@@ -353,7 +353,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testOutType() throws Exception {
+    public void testOutType() {
         exchange.setOut(new MyMessage(context));
 
         MyMessage my = exchange.getOut(MyMessage.class);

@@ -37,10 +37,10 @@ public class ShutdownStrategySuppressLoggingOnTimeoutManualTest extends ContextT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").delay(8000).to("log:out");
             }
         };

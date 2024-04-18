@@ -56,10 +56,10 @@ public class StreamCachingInOutTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getStreamCachingStrategy().setSpoolThreshold(1);
                 from("direct:c").noStreamCaching().to("direct:d").convertBodyTo(String.class).to("mock:c");
                 from("direct:d").streamCaching().process(new TestProcessor());

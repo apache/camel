@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CombinedServiceDiscoveryTest extends ContextTestSupport {
 
     @Test
-    public void testCombinedServiceDiscovery() throws Exception {
+    public void testCombinedServiceDiscovery() {
         StaticServiceDiscovery discovery1 = new StaticServiceDiscovery();
         discovery1.addServer(new DefaultServiceDefinition("discovery1", "localhost", 1111));
         discovery1.addServer(new DefaultServiceDefinition("discovery1", "localhost", 1112));

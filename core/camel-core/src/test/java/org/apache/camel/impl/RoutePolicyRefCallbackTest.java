@@ -37,10 +37,10 @@ public class RoutePolicyRefCallbackTest extends RoutePolicyCallbackTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").routePolicyRef("myPolicy").to("mock:result");
             }
         };

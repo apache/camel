@@ -27,16 +27,16 @@ public class ServiceSupportTest extends TestSupport {
     private static class MyService extends ServiceSupport {
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
         }
     }
 
     @Test
-    public void testServiceSupport() throws Exception {
+    public void testServiceSupport() {
         MyService service = new MyService();
         service.start();
 
@@ -54,7 +54,7 @@ public class ServiceSupportTest extends TestSupport {
     }
 
     @Test
-    public void testServiceSupportIsRunAllowed() throws Exception {
+    public void testServiceSupportIsRunAllowed() {
         MyService service = new MyService();
         assertFalse(service.isRunAllowed());
 
@@ -79,15 +79,15 @@ public class ServiceSupportTest extends TestSupport {
         private boolean shutdown;
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
         }
 
         @Override
-        protected void doShutdown() throws Exception {
+        protected void doShutdown() {
             shutdown = true;
         }
 
@@ -98,7 +98,7 @@ public class ServiceSupportTest extends TestSupport {
     }
 
     @Test
-    public void testServiceSupportShutdown() throws Exception {
+    public void testServiceSupportShutdown() {
         MyShutdownService service = new MyShutdownService();
         service.start();
 
@@ -119,7 +119,7 @@ public class ServiceSupportTest extends TestSupport {
     }
 
     @Test
-    public void testExceptionOnStart() throws Exception {
+    public void testExceptionOnStart() {
         ServiceSupportTestExOnStart service = new ServiceSupportTestExOnStart();
         // forced not being stopped at start
         assertFalse(service.isStopped());
@@ -135,7 +135,7 @@ public class ServiceSupportTest extends TestSupport {
     }
 
     @Test
-    public void testServiceBuild() throws Exception {
+    public void testServiceBuild() {
         MyService service = new MyService();
         assertTrue(service.isNew());
         service.build();
@@ -164,12 +164,12 @@ public class ServiceSupportTest extends TestSupport {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             throw new RuntimeException("This service throws an exception when starting");
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
         }
 
     }

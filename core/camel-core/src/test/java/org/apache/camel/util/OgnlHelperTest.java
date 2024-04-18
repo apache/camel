@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OgnlHelperTest {
 
     @Test
-    public void testSplitOgnlSimple() throws Exception {
+    public void testSplitOgnlSimple() {
         List<String> methods = OgnlHelper.splitOgnl(null);
         assertEquals(0, methods.size());
         methods = OgnlHelper.splitOgnl("");
@@ -53,7 +53,7 @@ public class OgnlHelperTest {
     }
 
     @Test
-    public void testSplitOgnlSquare() throws Exception {
+    public void testSplitOgnlSquare() {
         List<String> methods = OgnlHelper.splitOgnl("foo");
         assertEquals(1, methods.size());
         assertEquals("foo", methods.get(0));
@@ -90,7 +90,7 @@ public class OgnlHelperTest {
     }
 
     @Test
-    public void testSplitOgnlParenthesis() throws Exception {
+    public void testSplitOgnlParenthesis() {
         List<String> methods = OgnlHelper.splitOgnl("foo()");
         assertEquals(1, methods.size());
         assertEquals("foo()", methods.get(0));
@@ -121,7 +121,7 @@ public class OgnlHelperTest {
     }
 
     @Test
-    public void testSplitOgnlParenthesisAndBracket() throws Exception {
+    public void testSplitOgnlParenthesisAndBracket() {
         List<String> methods = OgnlHelper.splitOgnl("foo(${body['key']})");
         assertEquals(1, methods.size());
         assertEquals("foo(${body['key']})", methods.get(0));
@@ -137,7 +137,7 @@ public class OgnlHelperTest {
     }
 
     @Test
-    public void testMethodAsDoubleQuotes() throws Exception {
+    public void testMethodAsDoubleQuotes() {
         String out = OgnlHelper.methodAsDoubleQuotes("${bodyAs(String).compareTo('It\\'s a great World')}");
         assertEquals("${bodyAs(String).compareTo(\"It's a great World\")}", out);
 

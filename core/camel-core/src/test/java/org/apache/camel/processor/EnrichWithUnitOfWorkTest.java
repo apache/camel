@@ -35,7 +35,7 @@ public class EnrichWithUnitOfWorkTest extends ContextTestSupport {
     public void testEnrichWith() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:routeA").enrichWith("direct:routeB", true, false).body((a, b) -> b);
 
                 from("direct:routeB").enrichWith("direct:routeC", true, false).body((a, b) -> b);
@@ -47,7 +47,7 @@ public class EnrichWithUnitOfWorkTest extends ContextTestSupport {
 
         Exchange out = template.request("direct:routeA", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setBody("Hello World");
                 exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                     @Override
@@ -65,7 +65,7 @@ public class EnrichWithUnitOfWorkTest extends ContextTestSupport {
     public void testEnrichWithShareUnitOfWork() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:routeA").enrichWith("direct:routeB", true, true).body((a, b) -> b);
 
                 from("direct:routeB").enrichWith("direct:routeC", true, true).body((a, b) -> b);
@@ -77,7 +77,7 @@ public class EnrichWithUnitOfWorkTest extends ContextTestSupport {
 
         Exchange out = template.request("direct:routeA", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setBody("Hello World");
                 exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                     @Override

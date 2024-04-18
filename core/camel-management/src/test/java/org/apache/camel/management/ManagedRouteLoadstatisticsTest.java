@@ -45,7 +45,7 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
     public void testLoadStatisticsAreDisabledByDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // must be a bit more than 1 sec
                 from("direct:start").to("log:foo").delay(1200).to("mock:result");
             }
@@ -78,7 +78,7 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // must be a bit more than 1 sec
                 from("direct:start").to("log:foo").delay(1200).to("mock:result");
             }

@@ -25,22 +25,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BreadcrumbTest extends MDCTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // breadcrumb should also work without MDC
                 context.setUseMDCLogging(false);
                 context.setUseBreadcrumb(true);
 
                 from("direct:a").routeId("route-a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals(exchange.getExchangeId(), exchange.getIn().getHeader("breadcrumbId"));
                     }
                 }).to("log:foo").to("direct:b");
 
                 from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals(exchange.getExchangeId(), exchange.getIn().getHeader("breadcrumbId"));
                     }
                 }).to("log:bar").to("mock:result");

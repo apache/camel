@@ -38,7 +38,7 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-    private void sendFiles() throws Exception {
+    private void sendFiles() {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(fileUri(), "Report 1", Exchange.FILE_NAME, "report1.xml");
         template.sendBodyAndHeader(fileUri(), "Report 2", Exchange.FILE_NAME, "report2.txt");
@@ -48,9 +48,9 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&include=report.*txt&exclude=hello.*"))
                         .convertBodyTo(String.class).to("mock:result");
             }

@@ -182,10 +182,10 @@ public class ValidatorRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid")
                         .doCatch(ValidationException.class).to("mock:invalid")
                         .doFinally().to("mock:finally").end();

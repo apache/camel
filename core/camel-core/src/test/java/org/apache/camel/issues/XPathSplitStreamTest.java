@@ -56,10 +56,10 @@ public class XPathSplitStreamTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 XPathBuilder personXPath = XPathBuilder.xpath("/persons/person").documentType(InputSource.class);
 
                 // START SNIPPET: e1

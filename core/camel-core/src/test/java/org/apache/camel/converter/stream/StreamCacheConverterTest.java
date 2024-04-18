@@ -57,7 +57,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testConvertToStreamCache() throws Exception {
+    public void testConvertToStreamCache() {
         context.start();
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());

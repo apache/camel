@@ -45,10 +45,10 @@ public class FromRestGetInterceptTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost");
                 intercept().to("mock:intercept");
 

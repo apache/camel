@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class VariableTest extends LanguageTestSupport {
 
     @Test
-    public void testVariableExpressions() throws Exception {
+    public void testVariableExpressions() {
         exchange.setVariable("varFoo", "abc");
         assertExpression("varFoo", "abc");
     }
 
     @Test
-    public void testPredicates() throws Exception {
+    public void testPredicates() {
         context.setVariable("varFoo", true);
         assertPredicate("global:varFoo");
 
@@ -45,7 +45,7 @@ public class VariableTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testVariableHeaders() throws Exception {
+    public void testVariableHeaders() {
         exchange.setVariable("header:myKey.foo", "abc");
         exchange.setVariable("header:myKey.bar", 123);
         exchange.setVariable("myOtherKey", "Hello Again");

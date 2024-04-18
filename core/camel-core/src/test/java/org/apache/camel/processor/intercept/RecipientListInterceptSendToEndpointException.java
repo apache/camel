@@ -38,10 +38,10 @@ public class RecipientListInterceptSendToEndpointException extends ContextTestSu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // simulate ftp/http using mocks
                 context.addComponent("ftp", new MockComponent());
                 context.addComponent("http", new MockComponent());

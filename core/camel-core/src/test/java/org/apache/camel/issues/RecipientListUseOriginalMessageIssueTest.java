@@ -40,10 +40,10 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).useOriginalMessage()
                         .to(fileUri("outbox"))
                         .to("mock:error");
@@ -51,12 +51,12 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
                 from(fileUri("inbox?initialDelay=0&delay=10"))
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getIn().setBody("B");
                             }
                         }).process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // try to put some invalid destination
                                 exchange.getIn().setHeader("path", "xxx");
                             }

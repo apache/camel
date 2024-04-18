@@ -61,10 +61,10 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // define a global on completion that is invoked when the
                 // exchange is complete
@@ -82,7 +82,7 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if ("Kaboom".equals(exchange.getIn().getBody())) {
                 throw new IllegalArgumentException("Kaboom");
             }

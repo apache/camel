@@ -38,7 +38,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createCamelRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
 
@@ -82,10 +82,10 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("direct:bar").to("mock:result");
 
                 from("direct:bar").delay(500).to("mock:bar");

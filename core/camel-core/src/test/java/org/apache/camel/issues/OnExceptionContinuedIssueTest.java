@@ -39,7 +39,7 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
         context.getCamelContextExtension().setErrorHandlerFactory(defaultErrorHandlerBuilder);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(false);
 
                 onException(OrderFailedException.class).maximumRedeliveries(0).continued(true);
@@ -54,18 +54,18 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
                     }
                 }).to("mock:two").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         log.info("Second Processor Invoked");
                     }
                 }).to("mock:three").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         log.info("Third Processor Invoked");
                         throw new RuntimeException("Some Runtime Exception");
                     }
                 }).to("mock:four").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         log.info("Fourth Processor Invoked");
                     }
                 });

@@ -31,7 +31,7 @@ public class LogMaskTest {
 
     protected Registry registry;
 
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         registry = new DefaultRegistry();
         return new DefaultCamelContext(registry);
     }

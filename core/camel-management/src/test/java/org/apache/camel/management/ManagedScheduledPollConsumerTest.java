@@ -113,10 +113,10 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?delay=4000&backoffMultiplier=4&backoffIdleThreshold=2&backoffErrorThreshold=3"))
                         .to("mock:result");
             }

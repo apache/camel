@@ -34,7 +34,7 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
     }
 
     @Test
-    public void testEndpointRegistryKeepRouteEndpoints() throws Exception {
+    public void testEndpointRegistryKeepRouteEndpoints() {
         assertNotNull(context.hasEndpoint("direct://start"));
         assertNotNull(context.hasEndpoint("log://foo"));
         assertNotNull(context.hasEndpoint("log://bar"));
@@ -92,10 +92,10 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("log:bar").to("mock:result");
             }
         };

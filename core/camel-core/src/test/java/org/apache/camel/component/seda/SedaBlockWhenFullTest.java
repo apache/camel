@@ -48,7 +48,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(BLOCK_WHEN_FULL_URI).delay(DELAY_LONG).syncDelayed().to(MOCK_URI);
 
                 // use same delay as above on purpose

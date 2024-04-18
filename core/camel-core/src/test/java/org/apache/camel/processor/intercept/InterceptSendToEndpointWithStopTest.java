@@ -50,10 +50,10 @@ public class InterceptSendToEndpointWithStopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("mock:b").choice().when(body().isEqualTo("stop")).stop().otherwise().to("mock:c");
 
                 from("direct:start").to("mock:a").to("mock:b").to("mock:result");

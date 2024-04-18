@@ -50,9 +50,9 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class).to("mock:result");
             }
@@ -99,7 +99,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         }
 
         @Override
-        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
+        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) {
             if (cause.getMessage().equals("Damn I cannot do this")) {
                 event += "rollback";
                 // stop consumer as it does not work

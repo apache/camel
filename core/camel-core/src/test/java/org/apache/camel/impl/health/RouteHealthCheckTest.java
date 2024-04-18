@@ -36,7 +36,7 @@ public class RouteHealthCheckTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input").id(TEST_ROUTE_ID).log("Message");
             }
         });
@@ -57,7 +57,7 @@ public class RouteHealthCheckTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input").id(TEST_ROUTE_ID).autoStartup(false).log("Message");
             }
         });

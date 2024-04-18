@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UnitUtilsTest {
 
     @Test
-    public void testPrintUnitFromBytes() throws Exception {
+    public void testPrintUnitFromBytes() {
         // needed for the locales that have a decimal separator other than comma
         char decimalSeparator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
 
@@ -44,7 +44,7 @@ public class UnitUtilsTest {
     }
 
     @Test
-    public void testPrintUnitFromBytesDot() throws Exception {
+    public void testPrintUnitFromBytesDot() {
         char decimalSeparator = '.';
 
         assertEquals("999 B", printUnitFromBytes(999));

@@ -32,10 +32,10 @@ public class TimerDelaySecondsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer://foo?delay=1s").to("mock:result");
 
             }

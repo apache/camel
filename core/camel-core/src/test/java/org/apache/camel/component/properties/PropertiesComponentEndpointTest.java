@@ -32,7 +32,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
     public void testPropertiesComponentEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:{{cool.result}}");
             }
         });
@@ -49,7 +49,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
     public void testPropertiesComponentEndpoints() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("{{cool.start}}").to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
                         .to("mock:{{cool.result}}");
             }

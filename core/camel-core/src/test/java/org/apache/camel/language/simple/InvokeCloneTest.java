@@ -60,7 +60,7 @@ public class InvokeCloneTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startClone").to("language://simple:${body.clone()}").to("mock:result").end();
 
                 from("direct:startDeepCopy").to("language://simple:${body.deepCopy()}").to("mock:result").end();

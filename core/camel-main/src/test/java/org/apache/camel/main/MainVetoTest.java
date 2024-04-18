@@ -49,7 +49,7 @@ public class MainVetoTest {
 
     private static class MyRoute extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("timer:foo").to("mock:foo");
         }
     }

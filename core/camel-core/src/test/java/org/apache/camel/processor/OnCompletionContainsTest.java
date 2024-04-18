@@ -56,14 +56,14 @@ public class OnCompletionContainsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().to("mock:sync");
 
                 from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         SynchronizationAdapter adapter = new SimpleSynchronizationAdapter("mock:sync", "A");
                         exchange.getExchangeExtension().addOnCompletion(adapter);
 

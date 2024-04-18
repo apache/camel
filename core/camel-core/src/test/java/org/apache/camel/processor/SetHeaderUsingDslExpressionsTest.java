@@ -61,7 +61,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     public void testUseConstant() throws Exception {
         MyValueClass value = new MyValueClass("value1", "value2");
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 MyValueClass insteadValue = new MyValueClass("value1", "value2");
                 from("direct:start").setHeader("foo").constant("ABC").setHeader("value").constant(insteadValue)
                         .to("mock:result");
@@ -78,7 +78,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     @Test
     public void testUseConstantParameter() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("foo", constant("ABC")).to("mock:result");
             }
         });
@@ -91,7 +91,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     @Test
     public void testUseExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("foo").expression(new ExpressionAdapter() {
                     public Object evaluate(Exchange exchange) {
                         return "ABC";
@@ -108,7 +108,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     @Test
     public void testUseHeaderExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("foo").header("bar").to("mock:result");
             }
         });
@@ -121,7 +121,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     @Test
     public void testUseHeaderXpathExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("foo").xpath("/personFile/text()").to("mock:result");
             }
         });
@@ -134,7 +134,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     @Test
     public void testUseBodyExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("foo").body().to("mock:result");
             }
         });
@@ -147,7 +147,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     @Test
     public void testUseBodyAsTypeExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("foo").body(String.class).to("mock:result");
             }
         });

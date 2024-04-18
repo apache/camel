@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MemoryStateRepositoryTest {
     @Test
-    public void shouldSaveState() throws Exception {
+    public void shouldSaveState() {
         // Given an empty FileStateRepository
         MemoryStateRepository repository = new MemoryStateRepository();
 
@@ -34,7 +34,7 @@ public class MemoryStateRepositoryTest {
     }
 
     @Test
-    public void shouldUpdateState() throws Exception {
+    public void shouldUpdateState() {
         // Given a FileStateRepository with a state in it
         MemoryStateRepository repository = new MemoryStateRepository();
         repository.setState("key", "value");

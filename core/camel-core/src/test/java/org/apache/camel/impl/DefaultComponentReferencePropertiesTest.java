@@ -63,12 +63,12 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return null;
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return null;
         }
 
@@ -119,7 +119,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     public void testEmptyPath() throws Exception {
         DefaultComponent component = new DefaultComponent(context) {
             @Override
-            protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+            protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
                 assertEquals("foo://?name=Christian", uri);
                 assertEquals("", remaining);
                 assertEquals(1, parameters.size());

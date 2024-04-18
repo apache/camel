@@ -46,10 +46,10 @@ public class RoutingSlipInOutAndInOnlyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routingSlip(header("slip")).to("mock:result");
 
                 from("direct:a").transform(body().append("A"));

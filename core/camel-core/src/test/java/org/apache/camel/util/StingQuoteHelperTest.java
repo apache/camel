@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class StingQuoteHelperTest {
 
     @Test
-    public void testSplitSafeQuote() throws Exception {
+    public void testSplitSafeQuote() {
         assertNull(StringQuoteHelper.splitSafeQuote(null, ','));
 
         String[] out = StringQuoteHelper.splitSafeQuote("", ',');
@@ -162,7 +162,7 @@ public class StingQuoteHelperTest {
     }
 
     @Test
-    public void testLastIsQuote() throws Exception {
+    public void testLastIsQuote() {
         String[] out = StringQuoteHelper.splitSafeQuote(" ${body}, 5, 'Hello World'", ',', true);
         assertEquals(3, out.length);
         assertEquals("${body}", out[0]);
@@ -177,7 +177,7 @@ public class StingQuoteHelperTest {
     }
 
     @Test
-    public void testSingleInDoubleQuote() throws Exception {
+    public void testSingleInDoubleQuote() {
         String[] out = StringQuoteHelper.splitSafeQuote("\"Hello O'Connor\", 5, 'foo bar'", ',', true);
         assertEquals(3, out.length);
         assertEquals("Hello O'Connor", out[0]);
@@ -192,7 +192,7 @@ public class StingQuoteHelperTest {
     }
 
     @Test
-    public void testDoubleInSingleQuote() throws Exception {
+    public void testDoubleInSingleQuote() {
         String[] out = StringQuoteHelper.splitSafeQuote("'Hello O\"Connor', 5, 'foo bar'", ',', true);
         assertEquals(3, out.length);
         assertEquals("Hello O\"Connor", out[0]);
@@ -207,7 +207,7 @@ public class StingQuoteHelperTest {
     }
 
     @Test
-    public void testSpaceSeparator() throws Exception {
+    public void testSpaceSeparator() {
         String[] out = StringQuoteHelper
                 .splitSafeQuote("dependency=mvn:org.my:application:1.0 dependency=mvn:com.foo:myapp:2.1", ' ');
         assertEquals(2, out.length);
@@ -216,7 +216,7 @@ public class StingQuoteHelperTest {
     }
 
     @Test
-    public void testSpaceSeparatorQuote() throws Exception {
+    public void testSpaceSeparatorQuote() {
         String[] out = StringQuoteHelper.splitSafeQuote(
                 "dependency=mvn:org.my:application:1.0 property=hi='Hello World' dependency=mvn:com.foo:myapp:2.1", ' ');
         assertEquals(3, out.length);
@@ -226,7 +226,7 @@ public class StingQuoteHelperTest {
     }
 
     @Test
-    public void testKeepQuotes() throws Exception {
+    public void testKeepQuotes() {
         String[] out = StringQuoteHelper.splitSafeQuote("'body'", ',', false, true);
         assertEquals(1, out.length);
         assertEquals("'body'", out[0]);

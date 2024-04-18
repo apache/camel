@@ -59,7 +59,7 @@ public class ServiceCallConfigurationTest {
         context.setServiceCallConfiguration(conf);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .routeId("default")
                         .serviceCall("scall", "scall/api/${header.customerId}");
@@ -105,7 +105,7 @@ public class ServiceCallConfigurationTest {
         context.setServiceCallConfiguration(conf);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .routeId("default")
                         .serviceCall()
@@ -145,7 +145,7 @@ public class ServiceCallConfigurationTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .routeId("default")
                             .serviceCall()
@@ -187,7 +187,7 @@ public class ServiceCallConfigurationTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .routeId("default")
                             .serviceCall()
@@ -252,7 +252,7 @@ public class ServiceCallConfigurationTest {
         context.addServiceCallConfiguration("named", namedConfiguration);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:default")
                         .id("default")
                         .serviceCall()
@@ -340,7 +340,7 @@ public class ServiceCallConfigurationTest {
             context.setServiceCallConfiguration(global);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .routeId("default")
                             .serviceCall()
@@ -417,7 +417,7 @@ public class ServiceCallConfigurationTest {
             context.setServiceCallConfiguration(config);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .routeId("default")
                             .serviceCall("scall");

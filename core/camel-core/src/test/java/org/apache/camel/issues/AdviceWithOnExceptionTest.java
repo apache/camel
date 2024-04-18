@@ -30,7 +30,7 @@ public class AdviceWithOnExceptionTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveById("b").after().to("mock:result");
             }
         });
@@ -46,10 +46,10 @@ public class AdviceWithOnExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 from("direct:start").to("mock:a").id("a").to("mock:b").id("b");

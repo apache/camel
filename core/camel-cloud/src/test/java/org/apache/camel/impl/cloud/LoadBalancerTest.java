@@ -87,7 +87,7 @@ public class LoadBalancerTest {
     }
 
     @Test
-    public void testNoActiveServices() throws Exception {
+    public void testNoActiveServices() {
         DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
         DefaultCamelContext camelContext = new DefaultCamelContext();
         loadBalancer.setCamelContext(camelContext);

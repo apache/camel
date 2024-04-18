@@ -31,7 +31,7 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
     public void testOnCompletionTopMode() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                     .onCompletion().modeBeforeConsumer()
                         .to("mock:end")
@@ -63,7 +63,7 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
     public void testOnCompletionEndMode() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                     .transform(constant("a"))
                     .to("mock:a")
@@ -95,7 +95,7 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
     public void testOnCompletionTop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                     .onCompletion()
                         .to("mock:end")
@@ -127,7 +127,7 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
     public void testOnCompletionEnd() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                     .transform(constant("a"))
                     .to("mock:a")
@@ -159,7 +159,7 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
     public void testOnCompletionGlobalMode() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().modeBeforeConsumer().to("mock:end");
 
                 from("direct:start")
@@ -190,7 +190,7 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
     public void testOnCompletionGlobal() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().to("mock:end");
 
                 from("direct:start")

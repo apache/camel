@@ -32,7 +32,7 @@ public class DefaultErrorHandlerRedeliveryRefTest extends ContextTestSupport {
     private static int counter;
 
     @Test
-    public void testRedeliveryRefTest() throws Exception {
+    public void testRedeliveryRefTest() {
         counter = 0;
 
         try {
@@ -47,9 +47,9 @@ public class DefaultErrorHandlerRedeliveryRefTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 RedeliveryPolicy policy = new RedeliveryPolicy();
                 policy.maximumRedeliveries(2);
                 policy.redeliveryDelay(0);

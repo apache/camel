@@ -39,10 +39,10 @@ public class DumpModelAsYamlSplitNestedChoiceEndRouteTest extends DumpModelAsYam
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").split().body().to("mock:sub").id("myMock").choice().when(header("foo"))
                         .to("mock:foo").when(header("bar")).to("mock:bar")
                         .otherwise().to("mock:other").end().end().to("mock:last");

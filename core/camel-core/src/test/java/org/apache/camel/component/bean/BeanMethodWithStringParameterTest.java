@@ -53,10 +53,10 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=doSomething('Hello World', 2)").to("mock:result");
 
                 from("direct:other").to("bean:myBean?method=doSomethingWithExchange('Bye')").to("mock:result");

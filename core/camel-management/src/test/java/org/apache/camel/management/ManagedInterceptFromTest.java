@@ -38,10 +38,10 @@ public class ManagedInterceptFromTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().when(simple("${header.foo} == '123'")).to("mock:intercepted");
                 from("direct:start").to("mock:foo");
             }

@@ -82,10 +82,10 @@ public class BeanLifecycleTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething", BeanScope.Prototype)
                         .bean(MyStatefulBean.class, "doSomething")
                         .bean(MyStatefulBean.class.getName(), "doSomething", BeanScope.Singleton)

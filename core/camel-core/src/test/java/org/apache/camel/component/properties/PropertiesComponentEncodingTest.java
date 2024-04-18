@@ -35,10 +35,10 @@ public class PropertiesComponentEncodingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform().constant("{{elephant}}").to("mock:result");
             }
         };

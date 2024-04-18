@@ -50,7 +50,7 @@ public class StartupListenerComponentTest extends ContextTestSupport {
         private int invoked;
 
         @Override
-        public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
             invoked++;
 
             // the routes should not have been started as they start afterwards
@@ -64,10 +64,10 @@ public class StartupListenerComponentTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 my = new MyComponent();
                 context.addComponent("my", my);
 

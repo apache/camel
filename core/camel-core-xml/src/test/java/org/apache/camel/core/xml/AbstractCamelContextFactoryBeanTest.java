@@ -101,7 +101,7 @@ public class AbstractCamelContextFactoryBeanTest {
     // properties that should return value that can be converted to long
     final Set<String> valuesThatReturnLong = new HashSet<>(List.of("{{getDelayer}}"));
 
-    public AbstractCamelContextFactoryBeanTest() throws Exception {
+    public AbstractCamelContextFactoryBeanTest() {
         ((Service) typeConverter).start();
     }
 

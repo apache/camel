@@ -37,7 +37,7 @@ public class DefaultCamelContextStopFailureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testStopWithFailure() throws Exception {
+    public void testStopWithFailure() {
         stopOrder = "";
 
         context.stop();

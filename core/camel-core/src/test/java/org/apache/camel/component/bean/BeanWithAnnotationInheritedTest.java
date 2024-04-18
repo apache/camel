@@ -79,7 +79,7 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         answer.bind("b", new B());
         answer.bind("p", Proxy.newProxyInstance(I1.class.getClassLoader(), new Class[] { I1.class }, new InvocationHandler() {
             @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            public Object invoke(Object proxy, Method method, Object[] args) {
                 if (method.getName().equals("m1")) {
                     return args[0].toString() + args[1].toString();
                 } else {
@@ -91,9 +91,9 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in1").setHeader("foo", constant("x1")).setHeader("bar", constant("y1")).to("bean:b?method=m1")
                         .to("mock:result");
                 from("direct:in2").setHeader("foo", constant("x2")).setHeader("bar", constant("y2")).to("bean:b?method=m2")

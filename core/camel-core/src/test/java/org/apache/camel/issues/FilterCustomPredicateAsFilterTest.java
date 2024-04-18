@@ -64,10 +64,10 @@ public class FilterCustomPredicateAsFilterTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").filter(filter)
                         // only good messages will go here
                         .to("mock:good").end();

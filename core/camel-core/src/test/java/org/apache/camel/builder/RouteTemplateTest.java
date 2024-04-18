@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RouteTemplateTest extends ContextTestSupport {
 
     @Test
-    public void testDefineRouteTemplate() throws Exception {
+    public void testDefineRouteTemplate() {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
@@ -136,7 +136,7 @@ public class RouteTemplateTest extends ContextTestSupport {
     public void testCreateRouteFromRouteTemplateAutoAssignedRouteIdClash() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use a route id that can clash with auto assigned
                 from("direct:hello").to("mock:hello").routeId("route1");
             }
@@ -187,10 +187,10 @@ public class RouteTemplateTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("mock:{{bar}}");

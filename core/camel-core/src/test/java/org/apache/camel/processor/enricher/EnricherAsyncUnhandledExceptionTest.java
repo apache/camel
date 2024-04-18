@@ -83,9 +83,9 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("mock:pickedUp")
                         // using the async utility component to ensure that the
                         // async routing engine kicks in

@@ -63,10 +63,10 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(RuntimeException.class).process(new ShutDown());
 
                 from(fileUri("inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10"))
@@ -88,7 +88,7 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     protected class ShutDown implements Processor {
 
         @Override
-        public void process(final Exchange exchange) throws Exception {
+        public void process(final Exchange exchange) {
             // shutdown route
             Thread thread = new Thread() {
                 @Override

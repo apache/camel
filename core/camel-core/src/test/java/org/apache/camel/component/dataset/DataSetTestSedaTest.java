@@ -28,7 +28,7 @@ public class DataSetTestSedaTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("dataset-test:seda:testme?timeout=0");
             }
         });

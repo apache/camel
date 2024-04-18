@@ -59,9 +59,9 @@ public class InterceptFromUriWildcardHeaderUriTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom("seda*").to("mock:intercept");
 
                 from("direct:start").to("mock:result");

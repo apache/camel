@@ -103,7 +103,7 @@ public class ApiMethodHelperTest {
     }
 
     @Test
-    public void testGetMissingProperties() throws Exception {
+    public void testGetMissingProperties() {
         assertEquals(1, apiMethodHelper.getMissingProperties("hi", new HashSet<String>()).size(), "Missing properties for hi");
 
         final HashSet<String> argNames = new HashSet<>();
@@ -116,12 +116,12 @@ public class ApiMethodHelperTest {
     }
 
     @Test
-    public void testAllArguments() throws Exception {
+    public void testAllArguments() {
         assertEquals(8, apiMethodHelper.allArguments().size(), "Get all arguments");
     }
 
     @Test
-    public void testGetType() throws Exception {
+    public void testGetType() {
         assertEquals(String.class, apiMethodHelper.getType("name"), "Get type name");
         assertEquals(String.class, apiMethodHelper.getType("name1"), "Get type name1");
         assertEquals(String.class, apiMethodHelper.getType("name2"), "Get type name2");
@@ -130,13 +130,13 @@ public class ApiMethodHelperTest {
     }
 
     @Test
-    public void testGetHighestPriorityMethod() throws Exception {
+    public void testGetHighestPriorityMethod() {
         assertEquals(TestMethod.SAYHI_1, ApiMethodHelper.getHighestPriorityMethod(Arrays.asList(sayHis)),
                 "Get highest priority method");
     }
 
     @Test
-    public void testInvokeMethod() throws Exception {
+    public void testInvokeMethod() {
         TestProxy proxy = new TestProxy();
         assertEquals("Hello!", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI, Collections.emptyMap()),
                 "sayHi()");

@@ -39,7 +39,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
     public void testNoFunctionNotPresent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody().constant("{{?myKey}}")
                         .to("mock:result");
@@ -66,7 +66,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody().constant("{{?myKey}}")
                         .to("mock:result");
@@ -88,7 +88,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
     public void testFunctionNotPresent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody().constant("{{reverse:?myKey}}")
                         .to("mock:result");
@@ -115,7 +115,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody().constant("{{reverse:?myKey}}")
                         .to("mock:result");
@@ -132,7 +132,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
     }
 
     @Test
-    public void testKeepUnresolved() throws Exception {
+    public void testKeepUnresolved() {
         String out = context.getCamelContextExtension()
                 .resolvePropertyPlaceholders("{{reverse:?myKey}}", true);
         Assertions.assertEquals("{{?myKey}}", out);
@@ -142,7 +142,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
     public void testQueryOptionalNotPresent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result?retainFirst={{reverse:?maxKeep}}");
             }
@@ -164,7 +164,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         context.getPropertiesComponent().addInitialProperty("maxKeep", "321");
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result?retainFirst={{reverse:?maxKeep}}");
             }

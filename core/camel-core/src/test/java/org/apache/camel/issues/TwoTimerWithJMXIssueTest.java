@@ -52,9 +52,9 @@ public class TwoTimerWithJMXIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 context.getCamelContextExtension().addInterceptStrategy(new MyTracer());
 
                 from("timer://kickoff_1?period=250").to("mock:result");
@@ -67,8 +67,7 @@ public class TwoTimerWithJMXIssueTest extends ContextTestSupport {
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                CamelContext context, NamedNode definition, Processor target, Processor nextTarget)
-                throws Exception {
+                CamelContext context, NamedNode definition, Processor target, Processor nextTarget) {
             assertNotNull(target);
             counter++;
             return target;

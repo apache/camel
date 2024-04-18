@@ -57,7 +57,7 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
                 String routeId = UUID.randomUUID().toString();
                 context.addRoutes(new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         String endpointUri = "tmp:start_" + routeId;
                         MySlowEndpoint mySlowEndpoint = new MySlowEndpoint(endpointUri, context);
                         from(mySlowEndpoint).id(routeId).to("mock:result");
@@ -118,7 +118,7 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             LOG.info("Creating slow consumer");
             return new DefaultConsumer(this, processor) {
                 @Override
@@ -132,7 +132,7 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return null;
         }
     }

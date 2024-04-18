@@ -70,7 +70,7 @@ public class FutureConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testConvertFutureWithExchangeFailed() throws Exception {
+    public void testConvertFutureWithExchangeFailed() {
         Exchange exchange = new DefaultExchange(context);
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
@@ -105,10 +105,10 @@ public class FutureConverterTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").delay(10).transform(constant("Bye World"));
             }
         };

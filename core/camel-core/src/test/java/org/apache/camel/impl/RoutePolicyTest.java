@@ -32,7 +32,7 @@ public class RoutePolicyTest extends ContextTestSupport {
     private final MyRoutPolicy routePolicy = new MyRoutPolicy();
 
     @Test
-    public void testStartCalledWhenCamelStarts() throws Exception {
+    public void testStartCalledWhenCamelStarts() {
         assertEquals(1, routePolicy.getStartCount());
     }
 
@@ -84,7 +84,7 @@ public class RoutePolicyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRemoveCalledWhenCamelIsStopped() throws Exception {
+    public void testRemoveCalledWhenCamelIsStopped() {
         assertTrue(context.getStatus().isStarted());
         assertEquals(0, routePolicy.getRemoveCount());
         context.stop();
@@ -93,10 +93,10 @@ public class RoutePolicyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").routePolicy(routePolicy).to("mock:result");
             }
         };

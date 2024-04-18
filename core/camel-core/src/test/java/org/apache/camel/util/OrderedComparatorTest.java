@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OrderedComparatorTest {
 
     @Test
-    public void testOrderedComparatorGet() throws Exception {
+    public void testOrderedComparatorGet() {
         List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
@@ -46,7 +46,7 @@ public class OrderedComparatorTest {
     }
 
     @Test
-    public void testOrderedComparator() throws Exception {
+    public void testOrderedComparator() {
         List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
@@ -64,7 +64,7 @@ public class OrderedComparatorTest {
     }
 
     @Test
-    public void testOrderedComparatorGetReverse() throws Exception {
+    public void testOrderedComparatorGetReverse() {
         List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
@@ -82,7 +82,7 @@ public class OrderedComparatorTest {
     }
 
     @Test
-    public void testOrderedComparatorReverse() throws Exception {
+    public void testOrderedComparatorReverse() {
         List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
@@ -100,7 +100,7 @@ public class OrderedComparatorTest {
     }
 
     @Test
-    public void testOrderedComparatorHigh() throws Exception {
+    public void testOrderedComparatorHigh() {
         List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
@@ -120,7 +120,7 @@ public class OrderedComparatorTest {
     }
 
     @Test
-    public void testOrderedComparatorHighReverse() throws Exception {
+    public void testOrderedComparatorHighReverse() {
         List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
@@ -140,7 +140,7 @@ public class OrderedComparatorTest {
     }
 
     @Test
-    public void testOrderedComparatorLow() throws Exception {
+    public void testOrderedComparatorLow() {
         List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(-2));
@@ -160,7 +160,7 @@ public class OrderedComparatorTest {
     }
 
     @Test
-    public void testOrderedComparatorLowReverse() throws Exception {
+    public void testOrderedComparatorLowReverse() {
         List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(-2));

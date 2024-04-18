@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EmptyProducerCacheTest extends ContextTestSupport {
 
     @Test
-    public void testEmptyCache() throws Exception {
+    public void testEmptyCache() {
         ProducerCache cache = new EmptyProducerCache(this, context);
         cache.start();
 
@@ -48,7 +48,7 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCacheProducerAcquireAndRelease() throws Exception {
+    public void testCacheProducerAcquireAndRelease() {
         ProducerCache cache = new EmptyProducerCache(this, context);
         cache.start();
 

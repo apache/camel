@@ -29,7 +29,7 @@ public class DataSetTestAnyOrderTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("dataset-test:seda:testme?anyOrder=true&timeout=0");
             }
         });

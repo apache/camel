@@ -45,10 +45,10 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:test")
                         .to("log:foo?groupDelay=2000&groupSize=5&level=WARN")
                         .to("mock:result");

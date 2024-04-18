@@ -64,9 +64,9 @@ public class AggregateGroupedExchangeSizePredicateTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // must use eagerCheckCompletion so we can check the
                         // groupSize header on the incoming exchange

@@ -52,14 +52,14 @@ public class MainSupportCommandLineTest {
     }
 
     @Test
-    public void testMainSupportMaxMessages() throws Exception {
+    public void testMainSupportMaxMessages() {
         MyMainSupport my = new MyMainSupport();
         final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-d", "1", "-dm", "2" }));
         Assertions.assertEquals(0, ret, "The code should return 0 when -d, 1, -dm, 2 is requested");
     }
 
     @Test
-    public void testMainSupportHelp() throws Exception {
+    public void testMainSupportHelp() {
         MyMainSupport my = new MyMainSupport();
         final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-h" }));
         Assertions.assertEquals(0, ret, "The code should return 0 when -h is requested");

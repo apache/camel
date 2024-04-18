@@ -70,12 +70,12 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer://foo?period=10&delay=0").id("foo").startupOrder(2).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody(messageIndex++);
                         exchange.getMessage().setHeader("aggregateGroup", "group1");
                     }

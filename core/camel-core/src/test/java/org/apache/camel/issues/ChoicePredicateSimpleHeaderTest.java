@@ -67,10 +67,10 @@ public class ChoicePredicateSimpleHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when().simple("${in.header.Action} == 'AAE'").to("mock:aae").when()
                         .simple("${in.header.Action} == 'PCA'").to("mock:pca").otherwise()
                         .to("mock:error");

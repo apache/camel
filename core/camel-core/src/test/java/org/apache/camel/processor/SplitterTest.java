@@ -96,7 +96,7 @@ public class SplitterTest extends ContextTestSupport {
     @Test
     public void testEmptyBody() {
         Exchange result = template.request("direct:seqential", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader("foo", "bar");
             }
         });

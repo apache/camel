@@ -51,7 +51,7 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").idempotentConsumer(header("messageId"), repo).to("mock:result");
             }
         });

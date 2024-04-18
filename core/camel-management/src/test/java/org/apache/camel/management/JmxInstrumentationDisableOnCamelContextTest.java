@@ -42,7 +42,7 @@ public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentat
     }
 
     @Override
-    protected MBeanServerConnection getMBeanConnection() throws Exception {
+    protected MBeanServerConnection getMBeanConnection() {
         return ManagementFactory.getPlatformMBeanServer();
     }
 

@@ -42,7 +42,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").enrich("direct:enrich", new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                         if (oldExchange == null) {
@@ -56,7 +56,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
                 }).to("mock:foo").end().to("mock:result");
 
                 from("direct:enrich").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertFalse(failed, "Should not have out");
                         String s = exchange.getIn().getBody(String.class);
                         exchange.getIn().setBody("Hi " + s);
@@ -83,7 +83,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").enrich("direct:enrich", new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                         if (oldExchange == null) {
@@ -97,7 +97,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
                 }).to("mock:foo").end().to("mock:result");
 
                 from("direct:enrich").pipeline("log:a", "log:b").to("log:foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertFalse(failed, "Should not have out");
                         String s = exchange.getIn().getBody(String.class);
                         exchange.getIn().setBody("Hi " + s);

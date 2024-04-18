@@ -36,15 +36,15 @@ public class DoCatchCaughExceptionIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
 
                 from("direct:test").doTry().throwException(new IllegalArgumentException("Forced by me"))
                         .doCatch(Exception.class).process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Exception error = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                                 assertEquals("Forced by me", error.getMessage());
                                 exchange.getMessage().setBody(error.getMessage() + " but I fixed it");

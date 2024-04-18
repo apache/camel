@@ -41,10 +41,10 @@ public class SplitterAggregationStrategyInputExchangeTest extends ContextTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body(), new MyAggregateBean()).choice().when(body().contains("A")).to("direct:a")
                         .otherwise().to("direct:b").end().end();
 

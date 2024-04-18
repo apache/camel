@@ -135,7 +135,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCannotDeleteFile() throws Exception {
+    public void testCannotDeleteFile() {
         deleteCounter = 0;
         existsCounter = 0;
 

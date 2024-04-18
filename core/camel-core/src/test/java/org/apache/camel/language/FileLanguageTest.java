@@ -55,18 +55,18 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testConstantExpression() throws Exception {
+    public void testConstantExpression() {
         assertExpression("MyBigFile.txt", "MyBigFile.txt");
     }
 
     @Test
-    public void testMessageId() throws Exception {
+    public void testMessageId() {
         assertExpression("${id}", exchange.getIn().getMessageId());
         assertExpression("${id}.bak", exchange.getIn().getMessageId() + ".bak");
     }
 
     @Test
-    public void testInvalidSyntax() throws Exception {
+    public void testInvalidSyntax() {
         assertExpression("${file:onlyname}", file.getName());
         try {
             assertExpression("${file:onlyName}", file.getName());
@@ -77,7 +77,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testFile() throws Exception {
+    public void testFile() {
         assertExpression("${file:ext}", "txt");
         assertExpression("${file:name.ext}", "txt");
         assertExpression("${file:name.ext.single}", "txt");
@@ -100,7 +100,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testFileUsingAlternativeStartToken() throws Exception {
+    public void testFileUsingAlternativeStartToken() {
         assertExpression("$simple{file:ext}", "txt");
         assertExpression("$simple{file:name.ext}", "txt");
         assertExpression("$simple{file:name}", "test" + File.separator + file.getName());
@@ -120,7 +120,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testDate() throws Exception {
+    public void testDate() {
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertExpression("backup-${date:now:yyyyMMdd}", "backup-" + now);
 
@@ -139,7 +139,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testDateUsingAlternativeStartToken() throws Exception {
+    public void testDateUsingAlternativeStartToken() {
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertExpression("backup-$simple{date:now:yyyyMMdd}", "backup-" + now);
 
@@ -158,13 +158,13 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testSimpleAndFile() throws Exception {
+    public void testSimpleAndFile() {
         assertExpression("backup-${in.header.foo}-${file:name.noext}.bak", "backup-abc-test" + File.separator + "hello.bak");
         assertExpression("backup-${in.header.foo}-${file:onlyname.noext}.bak", "backup-abc-hello.bak");
     }
 
     @Test
-    public void testSimpleAndFileAndBean() throws Exception {
+    public void testSimpleAndFileAndBean() {
         assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak",
                 "backup-abc-generatorbybean-test" + File.separator + "hello.bak");
         assertExpression("backup-${in.header.foo}-${bean:generator}-${file:onlyname.noext}.bak",
@@ -172,19 +172,19 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testBean() throws Exception {
+    public void testBean() {
         assertExpression("backup-${bean:generator}.txt", "backup-generatorbybean.txt");
         assertExpression("backup-${bean:generator.generateFilename}.txt", "backup-generatorbybean.txt");
     }
 
     @Test
-    public void testNoEscapeAllowed() throws Exception {
+    public void testNoEscapeAllowed() {
         exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
         assertExpression("target\\newdir\\onwindows\\${file:name}", "target\\newdir\\onwindows\\hello.txt");
     }
 
     @Test
-    public void testFileNameDoubleExtension() throws Exception {
+    public void testFileNameDoubleExtension() {
         file = testFile("test/bigfile.tar.gz").toFile();
 
         String uri = fileUri("?fileExist=Override");
@@ -225,7 +225,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testIllegalSyntax() throws Exception {
+    public void testIllegalSyntax() {
         try {
             // it should be with colon
             assertExpression("${file.name}", "");
@@ -250,7 +250,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testConstantFilename() throws Exception {
+    public void testConstantFilename() {
         assertExpression("hello.txt", "hello.txt");
     }
 

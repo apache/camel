@@ -50,10 +50,10 @@ public class BeanThrowAssertionErrorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .bean(BeanThrowAssertionErrorTest.this, "doSomething")
                         .to("mock:result");
@@ -72,7 +72,7 @@ public class BeanThrowAssertionErrorTest extends ContextTestSupport {
     private static class MyProcessorBean implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             assertEquals("Hello World", exchange.getMessage().getBody());
         }
     }

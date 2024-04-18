@@ -40,7 +40,7 @@ public class IdempotentConsumerNoMessageIdTest extends ContextTestSupport {
     public void testNoMessageId() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start")

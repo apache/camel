@@ -36,10 +36,10 @@ public class DynamicRouter3Test extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // use a bean as the dynamic router
                         .dynamicRouter().method(DynamicRouter3Test.class, "slip");

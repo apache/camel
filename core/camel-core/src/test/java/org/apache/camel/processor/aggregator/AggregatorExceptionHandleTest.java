@@ -58,16 +58,16 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
                         .completionTimeoutCheckerInterval(10)
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 if ("Damn".equals(body)) {
                                     throw new IllegalArgumentException("Damn");

@@ -67,10 +67,10 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?preMove=work&noop=true&idempotent=false&initialDelay=0&delay=10"))
                         .process(new MyPreMoveCheckerProcessor()).to("mock:result");
             }
@@ -80,7 +80,7 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
     public class MyPreMoveCheckerProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             assertTrue(Files.exists(testFile("work/hello.txt")), "Pre move file should exist");
         }
     }

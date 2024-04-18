@@ -38,14 +38,14 @@ public class TracingWithDelayTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().setTracing(true);
 
                 from("direct:start").delay(10).to("mock:a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         LOG.info("This is the processor being invoked between mock:a and mock:b");
                     }
                 }).to("mock:b").toD("direct:c").to("mock:result").transform(simple("${body}${body}"));

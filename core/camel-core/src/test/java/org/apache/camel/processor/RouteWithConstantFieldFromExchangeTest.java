@@ -34,10 +34,10 @@ public class RouteWithConstantFieldFromExchangeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("Exchange.FILE_NAME", constant("foo.txt")).to("mock:result");
             }
         };

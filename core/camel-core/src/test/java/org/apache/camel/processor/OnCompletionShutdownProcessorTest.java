@@ -47,10 +47,10 @@ public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().process(processor);
 
                 from("direct:start").to("mock:result");
@@ -64,17 +64,17 @@ public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getIn().setBody("Bye World");
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             // noop
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             // noop
         }
     }

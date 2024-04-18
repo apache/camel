@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BeanExcludedMethodTest extends ContextTestSupport {
 
     @Test
-    public void testExcludedMethod() throws Exception {
+    public void testExcludedMethod() {
         BeanInfo info = new BeanInfo(context, MyDummyBean.class);
 
         Exchange exchange = new DefaultExchange(context);
@@ -36,7 +36,7 @@ public class BeanExcludedMethodTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNotExcludedMethod() throws Exception {
+    public void testNotExcludedMethod() {
         BeanInfo info = new BeanInfo(context, MyOtherDummyBean.class);
 
         Exchange exchange = new DefaultExchange(context);

@@ -37,10 +37,10 @@ public class XsltIncludeRelativeFileSchemeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
                         .to("xslt:file:src/test/resources/xslt/staff/staff.xsl").to("log:foo")
                         .to("mock:result");

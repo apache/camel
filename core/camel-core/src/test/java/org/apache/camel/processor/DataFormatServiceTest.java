@@ -73,10 +73,10 @@ public class DataFormatServiceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // marshal using our custom data format. (my is an instance of
                 // MyDataFormat)
@@ -110,17 +110,17 @@ public class DataFormatServiceTest extends ContextTestSupport {
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        public Object unmarshal(Exchange exchange, InputStream stream) {
             return "Bye World";
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             // noop
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             // noop
         }
     }

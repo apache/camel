@@ -49,7 +49,7 @@ public class SimulatorTest extends ContextTestSupport {
 
     protected void assertRespondsWith(final String value, String containedText) throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("answer");
                 in.setHeader("cheese", value);

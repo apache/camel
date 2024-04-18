@@ -43,15 +43,15 @@ public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").loadBalance().failover(1, false, false, IOException.class)
                         .to("seda:failover1", "seda:failover2").end();
 
                 from("seda:failover1").to("mock:failover1").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // mutate the message
                         exchange.getMessage().setBody("Hi Camel");
                         exchange.setException(new IOException("Forced exception for test"));
@@ -59,7 +59,7 @@ public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
                 });
 
                 from("seda:failover2").to("mock:failover2").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("Bye Camel");
                     }
                 });

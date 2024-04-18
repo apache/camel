@@ -41,10 +41,10 @@ public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setBody()
                         .simple("<search><key>foo-${id}</key><key>bar-${id}</key><key>baz-${id}</key></search>")
                         .to("direct:splitInOut").to("mock:result");

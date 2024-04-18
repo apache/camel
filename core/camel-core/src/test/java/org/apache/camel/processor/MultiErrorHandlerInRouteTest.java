@@ -71,9 +71,9 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliveryDelay(0))
                         .process(outer).to("direct:outer");
 
@@ -88,7 +88,7 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
         private String name;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if (name.equals("Error")) {
                 throw new IllegalArgumentException("Forced exception by unit test");
             }

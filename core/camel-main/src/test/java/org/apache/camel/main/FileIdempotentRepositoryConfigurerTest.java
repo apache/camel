@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileIdempotentRepositoryConfigurerTest {
 
     @Test
-    public void testReflectionFree() throws Exception {
+    public void testReflectionFree() {
         CamelContext context = new DefaultCamelContext();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);

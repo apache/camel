@@ -33,10 +33,10 @@ public class MockComponentLogTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 MockComponent mock = context.getComponent("mock", MockComponent.class);
                 mock.setLog(true);
 

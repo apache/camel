@@ -32,10 +32,10 @@ public class StubInOnlyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("stub:smtp://some.server.com?something=bar&whatnot=cheese");
 
                 from("stub:smtp://some.server.com?something=bar&whatnot=cheese").to("mock:result");

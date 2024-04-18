@@ -39,7 +39,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
     public void testOrderNoFQN() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MyBean.class, "order(MyOrder.class)").to("mock:result");
 
             }
@@ -57,7 +57,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
     public void testOrderNoFQNUnknown() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MyBean.class, "order(Unknown.class)").to("mock:result");
 
             }
@@ -77,7 +77,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
     public void testOrderNoFQNBoolean() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MyBean.class, "order(MyOrder.class,Boolean.class)").to("mock:result");
 
             }
@@ -95,7 +95,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
     public void testOrderFQN() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .bean(MyBean.class, "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder.class)")
                         .to("mock:result");
@@ -115,7 +115,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
     public void testOrderFQNUnknown() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .bean(MyBean.class, "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown.class)")
                         .to("mock:result");
@@ -137,7 +137,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
     public void testOrderFQNBoolean() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .bean(MyBean.class,
                                 "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder.class,Boolean.class)")

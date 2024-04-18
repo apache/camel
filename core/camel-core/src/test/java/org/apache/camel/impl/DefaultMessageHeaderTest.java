@@ -30,7 +30,7 @@ public class DefaultMessageHeaderTest {
     private CamelContext camelContext;
 
     @BeforeEach
-    protected void setUp() throws Exception {
+    protected void setUp() {
         camelContext = new DefaultCamelContext();
         camelContext.start();
     }

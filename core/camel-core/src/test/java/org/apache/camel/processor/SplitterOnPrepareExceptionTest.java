@@ -45,10 +45,10 @@ public class SplitterOnPrepareExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body().tokenize(",")).onPrepare(new FixNamePrepare()).stopOnException().to("mock:a");
             }
         };
@@ -57,7 +57,7 @@ public class SplitterOnPrepareExceptionTest extends ContextTestSupport {
     public static final class FixNamePrepare implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String name = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(name)) {
                 throw new IllegalArgumentException("Forced error");

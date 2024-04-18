@@ -46,7 +46,7 @@ public class ExpressionSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExpressionSupport() throws Exception {
+    public void testExpressionSupport() {
         MyExpression my = new MyExpression();
 
         Exchange e = new DefaultExchange(context);
@@ -56,7 +56,7 @@ public class ExpressionSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExpressionSupportFail() throws Exception {
+    public void testExpressionSupportFail() {
         MyExpression my = new MyExpression();
 
         Exchange e = new DefaultExchange(context);

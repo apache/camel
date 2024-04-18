@@ -87,10 +87,10 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("B").startupOrder(2).to("direct:foo");
 
                 from("direct:foo").routeId("A").startupOrder(1).to("mock:result");

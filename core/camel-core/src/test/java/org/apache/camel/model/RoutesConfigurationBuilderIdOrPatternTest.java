@@ -46,14 +46,14 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
 
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo")
                         .throwException(new IllegalArgumentException("Foo"));
             }
         });
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2").routeId("foo2")
                         .routeConfigurationId("handleError")
                         .throwException(new IllegalArgumentException("Foo2"));
@@ -61,7 +61,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         });
         routes.add(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // named routes configuration
                 routeConfiguration("handleError").onException(Exception.class).handled(true).to("mock:error");
             }
@@ -105,7 +105,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
 
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo")
                         .routeConfigurationId("general*")
                         .throwException(new IllegalArgumentException("Foo"));
@@ -113,7 +113,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         });
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2").routeId("foo2")
                         .routeConfigurationId("io*")
                         .throwException(new IOException("Foo2"));
@@ -121,7 +121,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         });
         routes.add(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // named routes configuration
                 routeConfiguration("generalError").onException(Exception.class).handled(true).to("mock:error");
                 routeConfiguration("ioError").onException(IOException.class).maximumRedeliveries(3).redeliveryDelay(0)
@@ -163,21 +163,21 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
 
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo")
                         .throwException(new IllegalArgumentException("Foo"));
             }
         });
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2").routeId("foo2")
                         .throwException(new IOException("Foo2"));
             }
         });
         routes.add(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // has no name so its the default
                 routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
                 // special for io, but only if included
@@ -216,7 +216,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
         // now re-configure route2 to use ioError route configuration
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2").routeId("foo2")
                         .routeConfigurationId("ioError")
                         .throwException(new IOException("Foo2"));
@@ -238,7 +238,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
     public void testRoutesConfigurationIdClash() throws Exception {
         RouteConfigurationBuilder rcb = new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration().onException(Exception.class).handled(true).to("mock:foo");
                 routeConfiguration("foo").onException(IOException.class).handled(true).to("mock:foo");
                 routeConfiguration("bar").onException(FileNotFoundException.class).handled(true).to("mock:bar");

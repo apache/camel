@@ -32,10 +32,10 @@ public class LanguageResourceLoadConstantFromClasspathTest extends ContextTestSu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("language:constant:resource:classpath:org/apache/camel/component/language/hello.txt")
                         .to("mock:result");
             }

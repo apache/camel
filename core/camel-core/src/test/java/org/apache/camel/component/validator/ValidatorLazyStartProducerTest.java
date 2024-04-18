@@ -49,10 +49,10 @@ public class ValidatorLazyStartProducerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:fail").to("validator:org/apache/camel/component/validator/unknown.xsd?lazyStartProducer=true")
                         .to("mock:result");
 

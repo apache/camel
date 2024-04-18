@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DefaultMaskingFormatterTest {
 
     @Test
-    public void testDefaultOption() throws Exception {
+    public void testDefaultOption() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
@@ -40,7 +40,7 @@ public class DefaultMaskingFormatterTest {
     }
 
     @Test
-    public void testDisableKeyValueMask() throws Exception {
+    public void testDisableKeyValueMask() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(false, true, true);
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
@@ -57,7 +57,7 @@ public class DefaultMaskingFormatterTest {
     }
 
     @Test
-    public void testDisableXmlElementMask() throws Exception {
+    public void testDisableXmlElementMask() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, false, true);
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
@@ -74,7 +74,7 @@ public class DefaultMaskingFormatterTest {
     }
 
     @Test
-    public void testDisableJsonMask() throws Exception {
+    public void testDisableJsonMask() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, true, false);
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
@@ -91,7 +91,7 @@ public class DefaultMaskingFormatterTest {
     }
 
     @Test
-    public void testCustomMaskString() throws Exception {
+    public void testCustomMaskString() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         formatter.setMaskString("**********");
         String answer
@@ -109,7 +109,7 @@ public class DefaultMaskingFormatterTest {
     }
 
     @Test
-    public void testDifferentSensitiveKeys() throws Exception {
+    public void testDifferentSensitiveKeys() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         String answer
                 = formatter.format("key=value, myAccessKey=foo,\n authkey=\"foo bar\", refreshtoken='!@#$%^&*() -+[]{};:'");
@@ -126,7 +126,7 @@ public class DefaultMaskingFormatterTest {
     }
 
     @Test
-    public void testCustomKeywords() throws Exception {
+    public void testCustomKeywords() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         formatter.addKeyword("cheese");
         formatter.setMaskString("**********");

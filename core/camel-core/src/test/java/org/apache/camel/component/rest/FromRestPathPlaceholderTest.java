@@ -40,7 +40,7 @@ public class FromRestPathPlaceholderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPlaceholder() throws Exception {
+    public void testPlaceholder() {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 
         RestDefinition rest = context.getRestDefinitions().get(0);
@@ -52,10 +52,10 @@ public class FromRestPathPlaceholderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getPropertiesComponent().addInitialProperty("mypath", "hello");
 
                 restConfiguration().host("localhost");

@@ -25,22 +25,22 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class BreadcrumbDisabledTest extends MDCTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // MDC and breadcrumb disabled
                 context.setUseMDCLogging(false);
                 context.setUseBreadcrumb(false);
 
                 from("direct:a").routeId("route-a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertNull(exchange.getIn().getHeader("breadcrumbId"), "Should not have breadcrumb");
                     }
                 }).to("log:foo").to("direct:b");
 
                 from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertNull(exchange.getIn().getHeader("breadcrumbId"), "Should not have breadcrumb");
                     }
                 }).to("log:bar").to("mock:result");

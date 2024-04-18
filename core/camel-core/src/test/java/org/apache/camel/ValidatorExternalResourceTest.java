@@ -48,10 +48,10 @@ public class ValidatorExternalResourceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toD("validator:https://raw.githubusercontent.com/apache/camel/main/core/camel-core/src/test/resources/org/apache/camel/component/validator/xsds/order.xsd")
                         .to("mock:out");

@@ -32,13 +32,13 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
     public void testGlobal() throws Exception {
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration().onCompletion().to("mock:global");
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result");
 
@@ -62,14 +62,14 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
     public void testLocalConfiguration() throws Exception {
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration("mylocal").onCompletion().to("mock:local");
 
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result");
 
@@ -94,14 +94,14 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
     public void testGlobalAndLocal() throws Exception {
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration().onCompletion().to("mock:global");
                 routeConfiguration("mylocal").onCompletion().to("mock:local");
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result");
 

@@ -53,10 +53,10 @@ public class BeanMethodValueWithExchangeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").to("bean:foo?method=bar(${exchange}, 'World')").to("mock:result");
 
                 from("direct:bar").to("bean:foo?method=bar(*, 'World')").to("mock:result");

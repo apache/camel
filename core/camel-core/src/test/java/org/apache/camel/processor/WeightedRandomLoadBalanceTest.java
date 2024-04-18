@@ -108,7 +108,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
     }
 
     @Test
-    public void testUnmatchedRatiosToProcessors() throws Exception {
+    public void testUnmatchedRatiosToProcessors() {
         try {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {

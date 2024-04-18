@@ -48,7 +48,7 @@ public class MainIoCBeanPostProcessorDisabledTest {
     }
 
     @Test
-    public void testMainIoCDisabled() throws Exception {
+    public void testMainIoCDisabled() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.configure().withBeanPostProcessorEnabled(false);
@@ -68,7 +68,7 @@ public class MainIoCBeanPostProcessorDisabledTest {
         private final String foo = "tony";
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").bean("tiger", "toString").to("mock:results");
         }
     }

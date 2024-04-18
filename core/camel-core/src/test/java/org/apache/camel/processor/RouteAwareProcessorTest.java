@@ -39,10 +39,10 @@ public class RouteAwareProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo")
                         .process(processor).id("myProcessor")
                         .to("mock:result");
@@ -76,17 +76,17 @@ public class RouteAwareProcessorTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getMessage().setBody("Hello route " + routeId + " from processor " + id);
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             // noop
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             // noop
         }
     }

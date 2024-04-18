@@ -57,7 +57,7 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesArray() throws Exception {
+    public void testPropertiesArray() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -82,7 +82,7 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesArrayWithGaps() throws Exception {
+    public void testPropertiesArrayWithGaps() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -107,7 +107,7 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesArrayNested() throws Exception {
+    public void testPropertiesArrayNested() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -134,7 +134,7 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesArrayNestedSimple() throws Exception {
+    public void testPropertiesArrayNestedSimple() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, mapOf(
@@ -153,7 +153,7 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesArrayFirst() throws Exception {
+    public void testPropertiesArrayFirst() {
         Bar bar = new Bar();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -172,7 +172,7 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesNotArray() throws Exception {
+    public void testPropertiesNotArray() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();

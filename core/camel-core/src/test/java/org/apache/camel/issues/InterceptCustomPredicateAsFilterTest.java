@@ -66,10 +66,10 @@ public class InterceptCustomPredicateAsFilterTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // secret messages should be filtered out asap
                 intercept().when(not(filter)).to("mock:secret").stop();
 

@@ -113,10 +113,10 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 transformer()
                         .fromType("xml:foo")
                         .toType("json:bar")
@@ -132,7 +132,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
 
     public static class MyTransformer extends Transformer {
         @Override
-        public void transform(Message message, DataType from, DataType to) throws Exception {
+        public void transform(Message message, DataType from, DataType to) {
             // empty
         }
     }

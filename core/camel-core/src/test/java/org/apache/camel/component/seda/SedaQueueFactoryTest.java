@@ -41,7 +41,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testArrayBlockingQueueFactory() throws Exception {
+    public void testArrayBlockingQueueFactory() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:arrayQueue?queueFactory=#arrayQueueFactory", SedaEndpoint.class);
 
         BlockingQueue<Exchange> queue = endpoint.getQueue();
@@ -51,7 +51,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testArrayBlockingQueueFactoryAndSize() throws Exception {
+    public void testArrayBlockingQueueFactoryAndSize() {
         SedaEndpoint endpoint
                 = resolveMandatoryEndpoint("seda:arrayQueue100?queueFactory=#arrayQueueFactory&size=100", SedaEndpoint.class);
 
@@ -61,7 +61,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultBlockingQueueFactory() throws Exception {
+    public void testDefaultBlockingQueueFactory() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:linkedQueue", SedaEndpoint.class);
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         assertIsInstanceOf(LinkedBlockingQueue.class, queue);

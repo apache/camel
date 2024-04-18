@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanInfoOverloadedTest extends ContextTestSupport {
 
     @Test
-    public void testBeanInfoOverloaded() throws Exception {
+    public void testBeanInfoOverloaded() {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
         Message message = new DefaultMessage(context);

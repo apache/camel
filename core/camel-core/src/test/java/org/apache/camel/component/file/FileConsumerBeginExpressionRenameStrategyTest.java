@@ -63,13 +63,13 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("reports?preMove=../inprogress/${file:name.noext}.bak&initialDelay=0&delay=10"))
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 GenericFile<File> file
                                         = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
                                 assertNotNull(file);

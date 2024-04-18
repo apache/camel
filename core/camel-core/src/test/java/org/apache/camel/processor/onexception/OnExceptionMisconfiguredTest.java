@@ -40,7 +40,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionMisconfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class);
 
                 from("direct:start").to("mock:result");
@@ -59,7 +59,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionMisconfigured2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).end();
 
                 from("direct:start").to("mock:result");
@@ -78,7 +78,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionMisconfigured3() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException();
 
                 from("direct:start").to("mock:result");
@@ -97,7 +97,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionMisconfigured4() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException().end();
 
                 from("direct:start").to("mock:result");
@@ -116,7 +116,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionMisconfigured5() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start").onException().end().to("mock:result");
             }
@@ -134,7 +134,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionNotMisconfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException().handled(true);
 
                 from("direct:start").to("mock:result");
@@ -148,7 +148,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionNotMisconfigured2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException().continued(true);
 
                 from("direct:start").to("mock:result");
@@ -162,7 +162,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionNotMisconfigured3() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true);
 
                 from("direct:start").to("mock:result");
@@ -176,7 +176,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionNotMisconfigured4() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).continued(true);
 
                 from("direct:start").to("mock:result");
@@ -190,7 +190,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionNotMisconfigured5() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error").end()
                         .to("mock:result");
             }

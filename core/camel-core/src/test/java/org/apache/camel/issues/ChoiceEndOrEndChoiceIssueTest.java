@@ -55,7 +55,7 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
     public void testEndChoiceValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .choice()
                             .when(header("number").isEqualTo("one")).to("mock:one")
@@ -83,7 +83,7 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
     public void testEndChoiceEndValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .choice()
                             .when(header("number").isEqualTo("one")).to("mock:one")

@@ -254,7 +254,7 @@ public class ResourceHelperTest extends TestSupport {
     }
 
     @Test
-    public void testIsHttp() throws Exception {
+    public void testIsHttp() {
         assertFalse(ResourceHelper.isHttpUri("direct:foo"));
         assertFalse(ResourceHelper.isHttpUri(""));
         assertFalse(ResourceHelper.isHttpUri(null));
@@ -264,7 +264,7 @@ public class ResourceHelperTest extends TestSupport {
     }
 
     @Test
-    public void testIsClasspath() throws Exception {
+    public void testIsClasspath() {
         assertFalse(ResourceHelper.isClasspathUri("direct:foo"));
         assertFalse(ResourceHelper.isClasspathUri("file:foo/bar.properties"));
         assertFalse(ResourceHelper.isClasspathUri("http://camel.apache.org"));
@@ -276,7 +276,7 @@ public class ResourceHelperTest extends TestSupport {
     }
 
     @Test
-    public void testGetScheme() throws Exception {
+    public void testGetScheme() {
         assertEquals("file:", ResourceHelper.getScheme("file:myfile.txt"));
         assertEquals("classpath:", ResourceHelper.getScheme("classpath:myfile.txt"));
         assertEquals("http:", ResourceHelper.getScheme("http:www.foo.com"));

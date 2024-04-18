@@ -30,7 +30,7 @@ public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport
     protected final MyBean myBean = new MyBean();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         template.sendBody("direct:in", "Hello");
 
         assertEquals("Hello", myBean.body);
@@ -38,7 +38,7 @@ public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport
     }
 
     @Test
-    public void testSendMessageWithFoo() throws Exception {
+    public void testSendMessageWithFoo() {
         template.sendBodyAndHeader("direct:in", "Hello", "foo", 123);
 
         assertEquals("Hello", myBean.body);

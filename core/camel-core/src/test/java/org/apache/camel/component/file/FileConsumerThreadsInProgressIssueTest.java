@@ -37,10 +37,10 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
     private final SampleProcessor processor = new SampleProcessor(duplicate);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?sortBy=file:name&delay=10&synchronous=false")).routeId("myRoute")
                         .noAutoStartup().threads(1, 10).maxQueueSize(0)
                         .convertBodyTo(String.class).process(processor).to("log:done", "mock:done");

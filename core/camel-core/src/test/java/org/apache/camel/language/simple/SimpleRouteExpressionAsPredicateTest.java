@@ -34,10 +34,10 @@ public class SimpleRouteExpressionAsPredicateTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo")
                         // evaluate as predicate because the result type is boolean
                         .setBody().simple("${header.foo} == ${header.foo}", boolean.class).to("mock:foo");

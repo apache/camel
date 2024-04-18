@@ -39,7 +39,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInstanceFallbackConverter() throws Exception {
+    public void testInstanceFallbackConverter() {
         Exchange exchange = new DefaultExchange(context);
         Currency cur = Currency.getInstance(Locale.US);
 
@@ -66,7 +66,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInstanceFallbackFailed() throws Exception {
+    public void testInstanceFallbackFailed() {
         Exchange exchange = new DefaultExchange(context);
 
         Date out = context.getTypeConverter().convertTo(Date.class, exchange, new Timestamp(0));

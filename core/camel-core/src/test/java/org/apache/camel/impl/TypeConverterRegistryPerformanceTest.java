@@ -37,7 +37,7 @@ public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
     private CountDownLatch latch;
 
     @Test
-    public void testManual() throws Exception {
+    public void testManual() {
         // noop
     }
 

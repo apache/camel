@@ -166,7 +166,7 @@ public class MainHealthCheckExcludedPatternTest {
     static class Routes extends RouteBuilder {
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").routeId("mydirect")
                     .to("log:direct");
 

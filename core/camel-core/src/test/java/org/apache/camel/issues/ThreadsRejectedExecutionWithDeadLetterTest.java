@@ -39,7 +39,7 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").errorHandler(deadLetterChannel("mock:failed")).to("log:before")
                         // will use our custom pool
                         .threads().maxPoolSize(1).poolSize(1) // 1 thread max
@@ -77,7 +77,7 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(10).redeliveryDelay(100L))
                         .to("log:before")
                         // will use our custom pool

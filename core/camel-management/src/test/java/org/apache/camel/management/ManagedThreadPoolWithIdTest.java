@@ -70,10 +70,10 @@ public class ManagedThreadPoolWithIdTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").threads(15, 30).id("myThreads").to("mock:result");
             }
         };

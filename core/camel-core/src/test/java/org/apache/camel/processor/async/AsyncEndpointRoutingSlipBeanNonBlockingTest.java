@@ -71,10 +71,10 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").to("bean:myBean");
@@ -101,7 +101,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
         }
 
         @Override
-        public Boolean call() throws Exception {
+        public Boolean call() {
             Exchange exchange = startEndpoint.createExchange(ExchangePattern.InOut);
             exchange.getIn().setBody("Hello Camel");
             return asyncSender.process(exchange, new AsyncCallback() {

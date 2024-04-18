@@ -51,7 +51,7 @@ public class SetBodyProcessorTest extends ContextTestSupport {
         });
 
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 MyMessage my = new MyMessage(exchange.getContext());
                 my.setBody("World");
                 my.setHeader("foo", 123);
@@ -73,10 +73,10 @@ public class SetBodyProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:foo").setBody(simple("Bye ${body}")).to("mock:result");
 
                 from("direct:start2").setBody(simple("${header.text.replace('a','b')}")).to("mock:test");

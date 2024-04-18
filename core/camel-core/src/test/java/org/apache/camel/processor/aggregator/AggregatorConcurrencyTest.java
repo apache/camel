@@ -55,7 +55,7 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
             final int count = i;
             total += i;
             tasks.add(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     template.sendBodyAndHeader(uri, "Hello World", "index", count);
                     return null;
                 }
@@ -79,9 +79,9 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(uri).aggregate(constant(true), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                         Exchange answer = oldExchange != null ? oldExchange : newExchange;

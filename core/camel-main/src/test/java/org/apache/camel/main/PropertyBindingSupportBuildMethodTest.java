@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class PropertyBindingSupportBuildMethodTest {
 
     @Test
-    public void testBuildClass() throws Exception {
+    public void testBuildClass() {
         CamelContext context = new DefaultCamelContext();
 
         context.start();

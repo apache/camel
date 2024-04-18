@@ -51,7 +51,7 @@ public class XPathFeatureTest extends ContextTestSupport {
         super.setUp();
     }
 
-    private void resetCoreConverters() throws Exception {
+    private void resetCoreConverters() {
         /*
          * Field field =
          * CoreStaticTypeConverterLoader.class.getDeclaredField("INSTANCE");
@@ -70,7 +70,7 @@ public class XPathFeatureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPathDocTypeDisallowed() throws Exception {
+    public void testXPathDocTypeDisallowed() {
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA));
             fail();
@@ -80,7 +80,7 @@ public class XPathFeatureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPath() throws Exception {
+    public void testXPath() {
         // Set these features will enable the external general entities
         System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities", "true");
         System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl", "false");
@@ -98,7 +98,7 @@ public class XPathFeatureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPathNoTypeConverter() throws Exception {
+    public void testXPathNoTypeConverter() {
         try {
             // define a class without type converter as document type
             xpath("/").documentType(Exchange.class).stringResult().evaluate(createExchange(XML_DATA));
@@ -111,7 +111,7 @@ public class XPathFeatureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPathResultOnInvalidData() throws Exception {
+    public void testXPathResultOnInvalidData() {
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA_INVALID));
             fail("Expect an Exception here");

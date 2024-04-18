@@ -64,7 +64,7 @@ public class LifecycleStrategyDiscoveryTest extends TestSupport {
                     OnCamelContextStopping {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                 }
 
                 @Override

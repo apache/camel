@@ -38,17 +38,17 @@ public class RoutingSlipNoErrorHandlerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start").routingSlip().constant("direct:foo").to("mock:result");
 
                 from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new IllegalArgumentException("Forced");
                     }
                 });

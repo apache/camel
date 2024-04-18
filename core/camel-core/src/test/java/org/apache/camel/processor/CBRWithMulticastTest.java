@@ -57,10 +57,10 @@ public class CBRWithMulticastTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").choice().when(body().contains("Camel"))
                         // we need to use endChoice to tell Java DSL to return scope

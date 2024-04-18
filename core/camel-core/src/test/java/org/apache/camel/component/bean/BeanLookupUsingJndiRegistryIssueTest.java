@@ -36,7 +36,7 @@ public class BeanLookupUsingJndiRegistryIssueTest {
         CamelContext camel = new DefaultCamelContext(new DefaultRegistry(new JndiBeanRepository(jndi)));
         camel.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean("foo");
             }
         });

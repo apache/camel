@@ -38,7 +38,7 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testScheduler() throws Exception {
+    public void testScheduler() {
         counter.set(0);
 
         PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
@@ -53,7 +53,7 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSchedulerLifecycle() throws Exception {
+    public void testSchedulerLifecycle() {
         counter.set(0);
 
         MyTask task = new MyTask();
@@ -85,12 +85,12 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             event += "start";
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             event += "stop";
         }
 

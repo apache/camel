@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 public class MDCUnitLoggingOutOfMemoryManualTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setUseMDCLogging(true);
 
                 from("direct:foo")
@@ -42,7 +42,7 @@ public class MDCUnitLoggingOutOfMemoryManualTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMDCLogging() throws Exception {
+    public void testMDCLogging() {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < 1_000_000; i++) {
             list.add("test");

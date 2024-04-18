@@ -52,10 +52,10 @@ public class SplitterWireTapStreamCacheTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 StreamCachingStrategy streamCachingStrategy = new DefaultStreamCachingStrategy();
                 streamCachingStrategy.setSpoolThreshold(1L);
 

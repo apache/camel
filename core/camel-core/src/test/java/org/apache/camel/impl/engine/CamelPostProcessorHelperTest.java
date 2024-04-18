@@ -65,7 +65,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     private final Properties myProp = new Properties();
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry jndi = new DefaultRegistry();
         jndi.bind("myProp", myProp);
         jndi.bind("foo", new FooBar());
@@ -748,7 +748,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             return consumer;
         }
 
-        public Exchange consume() throws Exception {
+        public Exchange consume() {
             return consumer.receive(1000);
         }
 
@@ -759,7 +759,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         @EndpointInject("mock:result")
         public ProducerTemplate producer;
 
-        public void send(Exchange exchange) throws Exception {
+        public void send(Exchange exchange) {
             producer.send(exchange);
         }
 
@@ -770,7 +770,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         @EndpointInject("mock:result")
         public FluentProducerTemplate producer;
 
-        public void send(Exchange exchange) throws Exception {
+        public void send(Exchange exchange) {
             producer.withExchange(exchange).send();
         }
 
@@ -781,7 +781,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         @EndpointInject()
         public ProducerTemplate producer;
 
-        public void send(Exchange exchange) throws Exception {
+        public void send(Exchange exchange) {
             producer.send("mock:result", exchange);
         }
 
@@ -792,7 +792,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         @EndpointInject("ref:unknown")
         public ProducerTemplate producer;
 
-        public void send(Exchange exchange) throws Exception {
+        public void send(Exchange exchange) {
             producer.send(exchange);
         }
 
@@ -803,7 +803,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         @EndpointInject("xxx:foo")
         public ProducerTemplate producer;
 
-        public void send(Exchange exchange) throws Exception {
+        public void send(Exchange exchange) {
             producer.send(exchange);
         }
 

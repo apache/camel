@@ -33,7 +33,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     private TestExchangeFormatter exchangeFormatter;
 
     @Test
-    public void testCustomFormatterInComponent() throws Exception {
+    public void testCustomFormatterInComponent() {
         context.stop();
 
         LogComponent log = new LogComponent();
@@ -53,7 +53,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCustomFormatterInRegistry() throws Exception {
+    public void testCustomFormatterInRegistry() {
         context.stop();
 
         exchangeFormatter = new TestExchangeFormatter();
@@ -71,7 +71,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCustomFormatterInRegistryOptions() throws Exception {
+    public void testCustomFormatterInRegistryOptions() {
         context.stop();
 
         exchangeFormatter = new TestExchangeFormatter();
@@ -89,7 +89,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCustomFormatterInRegistryUnknownOption() throws Exception {
+    public void testCustomFormatterInRegistryUnknownOption() {
         context.stop();
 
         exchangeFormatter = new TestExchangeFormatter();
@@ -110,7 +110,7 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFormatterNotPickedUpWithDifferentKey() throws Exception {
+    public void testFormatterNotPickedUpWithDifferentKey() {
         context.stop();
 
         exchangeFormatter = new TestExchangeFormatter();

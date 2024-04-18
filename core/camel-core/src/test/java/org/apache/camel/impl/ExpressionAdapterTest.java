@@ -46,7 +46,7 @@ public class ExpressionAdapterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExpressionAdapter() throws Exception {
+    public void testExpressionAdapter() {
         MyExpression my = new MyExpression();
 
         Exchange e = new DefaultExchange(context);
@@ -56,7 +56,7 @@ public class ExpressionAdapterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExpressionAdapterFail() throws Exception {
+    public void testExpressionAdapterFail() {
         MyExpression my = new MyExpression();
 
         Exchange e = new DefaultExchange(context);

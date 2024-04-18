@@ -51,10 +51,10 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&processStrategy=#myStrategy")).convertBodyTo(String.class)
                         .to("mock:result");
             }
@@ -67,16 +67,14 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
         @Override
         public void prepareOnStartup(
-                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint)
-                throws Exception {
+                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint) {
         }
 
         @Override
         public boolean begin(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile)
-                throws Exception {
+                GenericFile<File> fileGenericFile) {
             invoked++;
             if (invoked <= 1) {
                 throw new IllegalArgumentException("Damn I cannot do this");
@@ -88,8 +86,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         public void abort(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile)
-                throws Exception {
+                GenericFile<File> fileGenericFile) {
             // noop
         }
 
@@ -97,16 +94,14 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         public void commit(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile)
-                throws Exception {
+                GenericFile<File> fileGenericFile) {
         }
 
         @Override
         public void rollback(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile)
-                throws Exception {
+                GenericFile<File> fileGenericFile) {
         }
 
         public int getInvoked() {

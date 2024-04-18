@@ -35,7 +35,7 @@ public class OnExceptionAfterRouteTest extends ContextTestSupport {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").throwException(new IllegalArgumentException("Damn"));
 
                     onException(IllegalArgumentException.class).handled(true).to("mock:damn");
