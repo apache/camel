@@ -92,6 +92,25 @@ You can also add a default value if the key does not exist, such as:
 private int timeout;
 ----
 
+You can also use `@PropertyInject` to inject an array of values. For example you may configure multiple hostnames
+in the configuration file, and need to inject this into an `String[]` or `List<String>` field.
+To do this you need to tell Camel that the property value should be split using a separator, as follows:
+
+[source,java]
+----
+@PropertyInject(value = "myHostnames", separator = ",")
+private String[] servers;
+----
+
+Then in the `application.properties` file you can define the servers:
+
+[source,properties]
+----
+myHostnames = serverA, serverB, serverC
+----
+
+TIP: This also works for fields that are not String based, such as `int[]` for numeric values.
+
 == See Also
 
 ** xref:bean-injection.adoc[Bean Injection]

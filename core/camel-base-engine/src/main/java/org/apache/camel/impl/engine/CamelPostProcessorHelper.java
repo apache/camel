@@ -37,6 +37,7 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NoSuchBeanTypeException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
@@ -271,7 +272,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     public Object getInjectionPropertyValue(
-            Class<?> type, String propertyName, String propertyDefaultValue,
+            Class<?> type, String propertyName, String propertyDefaultValue, String separator,
             String injectionPointName, Object bean, String beanName) {
         try {
             String key;
@@ -286,6 +287,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             }
             String value = getCamelContext().resolvePropertyPlaceholders(key);
             if (value != null) {
+                if (separator != null && !separator.isBlank()) {
+                    Object[] values = convertValueUsingSeparator(camelContext, type, value, separator);
+                    return getCamelContext().getTypeConverter().mandatoryConvertTo(type, values);
+                }
                 return getCamelContext().getTypeConverter().mandatoryConvertTo(type, value);
             } else {
                 return null;
@@ -293,6 +298,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         } catch (Exception e) {
             if (ObjectHelper.isNotEmpty(propertyDefaultValue)) {
                 try {
+                    if (separator != null && !separator.isBlank()) {
+                        Object[] values = convertValueUsingSeparator(camelContext, type, propertyDefaultValue, separator);
+                        return getCamelContext().getTypeConverter().mandatoryConvertTo(type, values);
+                    }
                     return getCamelContext().getTypeConverter().mandatoryConvertTo(type, propertyDefaultValue);
                 } catch (Exception e2) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e2);
@@ -300,6 +309,20 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             }
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+    }
+
+    private static Object[] convertValueUsingSeparator(CamelContext camelContext, Class<?> type, String value, String separator)
+            throws NoTypeConversionAvailableException {
+        String[] arr = value.split(separator);
+        Object[] values = new Object[arr.length];
+        if (type.isArray()) {
+            Class<?> ct = type.getComponentType();
+            for (int i = 0; i < arr.length; i++) {
+                String v = arr[i].trim(); // trim values as user may have whitespace noise
+                values[i] = camelContext.getTypeConverter().mandatoryConvertTo(ct, v);
+            }
+        }
+        return values;
     }
 
     public Object getInjectionBeanValue(Class<?> type, String name) {
@@ -470,7 +493,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     Annotation ann = anns[0];
                     if (ann.annotationType() == PropertyInject.class) {
                         PropertyInject pi = (PropertyInject) ann;
-                        Object result = getInjectionPropertyValue(type, pi.value(), pi.defaultValue(),
+                        Object result = getInjectionPropertyValue(type, pi.value(), pi.defaultValue(), pi.separator(),
                                 null, null, null);
                         parameters[i] = result;
                     } else if (ann.annotationType() == BeanConfigInject.class) {
