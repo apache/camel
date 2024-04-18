@@ -48,7 +48,7 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
         super(context, processor, definition);
         this.processor = processor;
 
-        if (processor.getCatchClauses() != null) {
+        if (processor.getCatchClauses() != null && !processor.getCatchClauses().isEmpty()) {
             catchProcessors = new ArrayList<>();
             for (Processor p : processor.getCatchClauses()) {
                 Channel c = (Channel) p;

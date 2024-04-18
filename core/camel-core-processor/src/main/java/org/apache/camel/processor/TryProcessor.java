@@ -160,7 +160,7 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
         if (tryProcessor != null) {
             answer.add(tryProcessor);
         }
-        if (catchClauses != null) {
+        if (catchClauses != null && !catchClauses.isEmpty()) {
             answer.addAll(catchClauses);
         }
         if (finallyProcessor != null) {
