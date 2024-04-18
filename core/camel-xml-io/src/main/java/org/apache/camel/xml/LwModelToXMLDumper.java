@@ -68,8 +68,20 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
 
         Properties properties = new Properties();
         Map<String, String> namespaces = new LinkedHashMap<>();
-        final Consumer<RouteDefinition> extractor =
-                getRouteDefinitionConsumer(context, namespaces, properties);
+        Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
+        Consumer<RouteDefinition> extractor = route -> {
+            extractNamespaces(route, namespaces);
+            if (context.isDebugging()) {
+                extractSourceLocations(route, locations);
+            }
+            resolveEndpointDslUris(route);
+            if (Boolean.TRUE.equals(route.isTemplate())) {
+                Map<String, Object> parameters = route.getTemplateParameters();
+                if (parameters != null) {
+                    properties.putAll(parameters);
+                }
+            }
+        };
 
         StringWriter buffer = new StringWriter();
         ModelWriter writer = new ModelWriter(buffer, "http://camel.apache.org/schema/spring") {
@@ -162,25 +174,6 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
 
         return buffer.toString();
-    }
-
-    private static Consumer<RouteDefinition> getRouteDefinitionConsumer(
-            CamelContext context, Map<String, String> namespaces, Properties properties) {
-        Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
-        Consumer<RouteDefinition> extractor = route -> {
-            extractNamespaces(route, namespaces);
-            if (context.isDebugging()) {
-                extractSourceLocations(route, locations);
-            }
-            resolveEndpointDslUris(route);
-            if (Boolean.TRUE.equals(route.isTemplate())) {
-                Map<String, Object> parameters = route.getTemplateParameters();
-                if (parameters != null) {
-                    properties.putAll(parameters);
-                }
-            }
-        };
-        return extractor;
     }
 
     @Override

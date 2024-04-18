@@ -67,8 +67,21 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             boolean uriAsParameters, boolean generatedIds)
             throws Exception {
         Properties properties = new Properties();
-        final Consumer<RouteDefinition> extractor =
-                getRouteDefinitionConsumer(context, properties);
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
+        Consumer<RouteDefinition> extractor = route -> {
+            extractNamespaces(route, namespaces);
+            if (context.isDebugging()) {
+                extractSourceLocations(route, locations);
+            }
+            resolveEndpointDslUris(route);
+            if (Boolean.TRUE.equals(route.isTemplate())) {
+                Map<String, Object> parameters = route.getTemplateParameters();
+                if (parameters != null) {
+                    properties.putAll(parameters);
+                }
+            }
+        };
 
         StringWriter buffer = new StringWriter();
         ModelWriter writer = new ModelWriter(buffer) {
@@ -148,25 +161,6 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         }
 
         return buffer.toString();
-    }
-
-    private static Consumer<RouteDefinition> getRouteDefinitionConsumer(CamelContext context, Properties properties) {
-        Map<String, String> namespaces = new LinkedHashMap<>();
-        Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
-        Consumer<RouteDefinition> extractor = route -> {
-            extractNamespaces(route, namespaces);
-            if (context.isDebugging()) {
-                extractSourceLocations(route, locations);
-            }
-            resolveEndpointDslUris(route);
-            if (Boolean.TRUE.equals(route.isTemplate())) {
-                Map<String, Object> parameters = route.getTemplateParameters();
-                if (parameters != null) {
-                    properties.putAll(parameters);
-                }
-            }
-        };
-        return extractor;
     }
 
     @Override
