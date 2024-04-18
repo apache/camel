@@ -49,6 +49,7 @@ import static org.apache.camel.component.kamelet.Kamelet.NO_ERROR_HANDLER;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
+import static org.apache.camel.component.kamelet.Kamelet.PARAM_UUID;
 
 /**
  * Materialize route templates
@@ -105,7 +106,8 @@ public class KameletComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final String templateId = Kamelet.extractTemplateId(getCamelContext(), remaining, parameters);
-        final String routeId = Kamelet.extractRouteId(getCamelContext(), remaining, parameters);
+        final String uuid = Kamelet.extractUuid();
+        final String routeId = Kamelet.extractRouteId(getCamelContext(), remaining, parameters, uuid);
         final String loc = Kamelet.extractLocation(getCamelContext(), parameters);
 
         parameters.remove(PARAM_TEMPLATE_ID);
@@ -224,6 +226,7 @@ public class KameletComponent extends DefaultComponent {
             //
             kameletProperties.put(PARAM_TEMPLATE_ID, templateId);
             kameletProperties.put(PARAM_ROUTE_ID, routeId);
+            kameletProperties.put(PARAM_UUID, uuid);
             kameletProperties.put(NO_ERROR_HANDLER, endpoint.isNoErrorHandler());
 
             // set kamelet specific properties
@@ -415,6 +418,7 @@ public class KameletComponent extends DefaultComponent {
             final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
             final String loc = endpoint.getLocation() != null ? endpoint.getLocation() : getLocation();
+            final String uuid = (String) endpoint.getKameletProperties().get(PARAM_UUID);
 
             if (context.getRouteTemplateDefinition(templateId) == null && loc != null) {
                 LOGGER.debug("Loading route template={} from {}", templateId, loc);
@@ -424,7 +428,7 @@ public class KameletComponent extends DefaultComponent {
 
             LOGGER.debug("Creating route from template={} and id={}", templateId, routeId);
             try {
-                String id = context.addRouteFromTemplate(routeId, templateId, endpoint.getKameletProperties());
+                String id = context.addRouteFromTemplate(routeId, templateId, uuid, endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
 
                 // start the route if not already started
