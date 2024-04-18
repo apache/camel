@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDefinition extends SendDefinition<ToDefinition> {
+public class ToDefinition extends SendDefinition<ToDefinition> implements CopyableProcessorDefinition {
 
     @XmlAttribute
     private String variableSend;
@@ -74,6 +74,13 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     public ToDefinition(EndpointProducerBuilder endpoint, ExchangePattern pattern) {
         this(endpoint);
         this.pattern = pattern.name();
+    }
+
+    protected ToDefinition(ToDefinition source) {
+        super(source);
+        this.variableSend = source.variableSend;
+        this.variableReceive = source.variableReceive;
+        this.pattern = source.pattern;
     }
 
     @Override
@@ -127,5 +134,9 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
      */
     public void setVariableReceive(String variableReceive) {
         this.variableReceive = variableReceive;
+    }
+
+    public ToDefinition copy() {
+        return new ToDefinition(this);
     }
 }
