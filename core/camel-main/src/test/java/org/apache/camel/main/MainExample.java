@@ -25,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 // START SNIPPET: e1
 public class MainExample {
 
-    private Main main;
-
     public static void main(String[] args) throws Exception {
         MainExample example = new MainExample();
         example.boot();
@@ -34,7 +32,7 @@ public class MainExample {
 
     public void boot() throws Exception {
         // create a Main instance
-        main = new Main();
+        Main main = new Main();
         // bind MyBean into the registry
         main.bind("foo", new MyBean());
         // add routes
