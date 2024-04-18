@@ -18,7 +18,11 @@ package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BeanConfigInject;
@@ -374,13 +378,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Field field = bean.getClass().getField("timeout");
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
-        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "timeout", bean, "foo");
         assertEquals(Integer.valueOf(2000), (Object) Integer.valueOf(String.valueOf(value)));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
         type = field.getType();
-        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting", bean, "foo");
+        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "greeting", bean, "foo");
         assertEquals("Hello Camel", value);
     }
 
@@ -395,14 +399,104 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Field field = bean.getClass().getField("timeout");
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
-        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "5000", "timeout", bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "5000", "", "timeout", bean, "foo");
         assertEquals(Integer.valueOf(5000), (Object) Integer.valueOf(String.valueOf(value)));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
         type = field.getType();
-        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting", bean, "foo");
+        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "greeting", bean, "foo");
         assertEquals("Hello Camel", value);
+    }
+
+    @Test
+    public void testPropertyFieldSeparatorArrayInject() throws Exception {
+        myProp.put("serverPorts", "4444;5555"); // test with semicolon as separator
+        myProp.put("hosts", "serverA , serverB"); // test with whitespace noise
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyPropertyFieldSeparatorArrayBean bean = new MyPropertyFieldSeparatorArrayBean();
+
+        Field field = bean.getClass().getField("ports");
+        PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+        Class<?> type = field.getType();
+        Object value
+                = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", propertyInject.separator(), "ports",
+                        bean, "foo");
+        assertIsInstanceOf(int[].class, value);
+        int[] arr = (int[]) value;
+        assertEquals(2, arr.length);
+        assertEquals(4444, arr[0]);
+        assertEquals(5555, arr[1]);
+
+        field = bean.getClass().getField("hosts");
+        propertyInject = field.getAnnotation(PropertyInject.class);
+        type = field.getType();
+        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", propertyInject.separator(), "hosts",
+                bean,
+                "foo");
+        assertIsInstanceOf(String[].class, value);
+        String[] arr2 = (String[]) value;
+        assertEquals(2, arr2.length);
+        assertEquals("serverA", arr2[0]);
+        assertEquals("serverB", arr2[1]);
+    }
+
+    @Test
+    public void testPropertyFieldSeparatorListInject() throws Exception {
+        myProp.put("serverPorts", "4444;5555"); // test with semicolon as separator
+        myProp.put("hosts", "serverA , serverB"); // test with whitespace noise
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyPropertyFieldSeparatorListBean bean = new MyPropertyFieldSeparatorListBean();
+
+        Field field = bean.getClass().getField("ports");
+        PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+        Class<?> type = field.getType();
+        Object value = helper.getInjectionPropertyValue(type, field.getGenericType(),
+                propertyInject.value(), "", propertyInject.separator(), "ports",
+                bean, "foo");
+        assertIsInstanceOf(List.class, value);
+        List arr = (List) value;
+        assertEquals(2, arr.size());
+        assertEquals(4444, arr.get(0));
+        assertEquals(5555, arr.get(1));
+
+        field = bean.getClass().getField("hosts");
+        propertyInject = field.getAnnotation(PropertyInject.class);
+        type = field.getType();
+        value = helper.getInjectionPropertyValue(type, field.getGenericType(),
+                propertyInject.value(), "", propertyInject.separator(), "hosts", bean,
+                "foo");
+        assertIsInstanceOf(Set.class, value);
+        Set arr2 = (Set) value;
+        assertEquals(2, arr.size());
+        Iterator it = arr2.iterator();
+        assertEquals("serverA", it.next());
+        assertEquals("serverB", it.next());
+    }
+
+    @Test
+    public void testPropertyFieldSeparatorMapInject() throws Exception {
+        myProp.put("servers", "serverA = 4444 ; serverB=5555"); // test with semicolon as separator and whitespace
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyPropertyFieldSeparatorMapBean bean = new MyPropertyFieldSeparatorMapBean();
+
+        Field field = bean.getClass().getField("servers");
+        PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+        Class<?> type = field.getType();
+        Object value = helper.getInjectionPropertyValue(type, field.getGenericType(),
+                propertyInject.value(), "", propertyInject.separator(), "servers",
+                bean, "foo");
+        assertIsInstanceOf(Map.class, value);
+        Map arr = (Map) value;
+        assertEquals(2, arr.size());
+        assertEquals(4444, arr.get("serverA"));
+        assertEquals(5555, arr.get("serverB"));
     }
 
     @Test
@@ -417,13 +511,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Method method = bean.getClass().getMethod("setTimeout", int.class);
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         Class<?> type = method.getParameterTypes()[0];
-        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "timeout", bean, "foo");
         assertEquals(Integer.valueOf(2000), (Object) Integer.valueOf(String.valueOf(value)));
 
         method = bean.getClass().getMethod("setGreeting", String.class);
         propertyInject = method.getAnnotation(PropertyInject.class);
         type = method.getParameterTypes()[0];
-        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting", bean, "foo");
+        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "greeting", bean, "foo");
         assertEquals("Hello Camel", value);
     }
 
@@ -747,6 +841,43 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         public String doSomething(String body) {
             return greeting + " " + body + " with timeout=" + timeout;
+        }
+    }
+
+    public static class MyPropertyFieldSeparatorArrayBean {
+
+        @PropertyInject(value = "serverPorts", separator = ";")
+        public int[] ports;
+
+        @PropertyInject(value = "hosts", separator = ",")
+        public String[] hosts;
+
+        public String doSomething(String body) {
+            return String.format("%s:%d %s:%d with body: %s", hosts[0], ports[0], hosts[1], ports[1], body);
+        }
+    }
+
+    public static class MyPropertyFieldSeparatorListBean {
+
+        @PropertyInject(value = "serverPorts", separator = ";")
+        public List<Integer> ports;
+
+        @PropertyInject(value = "hosts", separator = ",")
+        public Set<String> hosts;
+
+        public String doSomething(String body) {
+            Iterator<String> it = hosts.iterator();
+            return String.format("%s:%d %s:%d with body: %s", it.next(), ports.get(0), it.next(), ports.get(1), body);
+        }
+    }
+
+    public static class MyPropertyFieldSeparatorMapBean {
+
+        @PropertyInject(value = "servers", separator = ";")
+        public Map<String, Integer> servers;
+
+        public String doSomething(String body) {
+            return null;
         }
     }
 
