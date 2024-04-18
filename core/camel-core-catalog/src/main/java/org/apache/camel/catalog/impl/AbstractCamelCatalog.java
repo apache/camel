@@ -854,16 +854,15 @@ public abstract class AbstractCamelCatalog {
         return null;
     }
 
-    public String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException {
+    public String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) {
         return doAsEndpointUri(scheme, properties, "&", encode);
     }
 
-    public String asEndpointUriXml(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException {
+    public String asEndpointUriXml(String scheme, Map<String, String> properties, boolean encode) {
         return doAsEndpointUri(scheme, properties, "&amp;", encode);
     }
 
-    String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand, boolean encode)
-            throws URISyntaxException {
+    String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand, boolean encode) {
         // grab the syntax
         ComponentModel model = componentModel(scheme);
         if (model == null) {
