@@ -30,6 +30,7 @@ public class DefaultMessageHistory implements MessageHistory {
     private final String nodeId;
     private final MonotonicClock clock = new MonotonicClock();
     private final Message message;
+    private boolean acceptDebugger;
     private long elapsed;
 
     public DefaultMessageHistory(String routeId, NamedNode node) {
@@ -71,6 +72,16 @@ public class DefaultMessageHistory implements MessageHistory {
     @Override
     public Message getMessage() {
         return message;
+    }
+
+    @Override
+    public void setAcceptDebugger(boolean acceptDebugger) {
+        this.acceptDebugger = acceptDebugger;
+    }
+
+    @Override
+    public boolean isAcceptDebugger() {
+        return acceptDebugger;
     }
 
     @Override

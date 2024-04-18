@@ -240,6 +240,7 @@ public class DebugDevConsole extends AbstractDevConsole {
                 jo.put("routeId", h.getRouteId());
             }
             jo.put("elapsed", h.getElapsed());
+            jo.put("acceptDebugger", h.isAcceptDebugger());
             if (h.getNode() != null) {
                 jo.put("nodeId", h.getNode().getId());
                 if (h.getNode().getLocation() != null) {

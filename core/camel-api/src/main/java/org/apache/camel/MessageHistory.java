@@ -58,4 +58,16 @@ public interface MessageHistory {
      */
     Message getMessage();
 
+    /**
+     * Used specially during debugging where some EIP nodes are not accepted for debugging and are essentially skipped.
+     * This allows tooling to avoid dumping message history for nodes that did not take part in the debugger.
+     */
+    void setAcceptDebugger(boolean acceptDebugger);
+
+    /**
+     * Used specially during debugging where some EIP nodes are not accepted for debugging and are essentially skipped.
+     * This allows tooling to avoid dumping message history for nodes that did not take part in the debugger.
+     */
+    boolean isAcceptDebugger();
+
 }

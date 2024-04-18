@@ -47,17 +47,18 @@ public class TryReifier extends ProcessorReifier<TryDefinition> {
             }
         }
 
+        // user must have configured at least one catch or finally
+        if (definition.getFinallyClause() == null && definition.getCatchClauses() == null) {
+            throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
+        }
+
+        // must have finally processor as it set some state after completing the entire doTry block
         FinallyDefinition finallyDefinition = definition.getFinallyClause();
         if (finallyDefinition == null) {
             finallyDefinition = new FinallyDefinition();
             finallyDefinition.setParent(definition);
         }
         Processor finallyProcessor = createProcessor(finallyDefinition);
-
-        // must have either a catch or finally
-        if (definition.getFinallyClause() == null && definition.getCatchClauses() == null) {
-            throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
-        }
 
         return new TryProcessor(camelContext, tryProcessor, catchProcessors, finallyProcessor);
     }

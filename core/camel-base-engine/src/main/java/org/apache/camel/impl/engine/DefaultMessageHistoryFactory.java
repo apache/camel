@@ -63,7 +63,9 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
             msg = exchange.getMessage().copy();
         }
 
-        return new DefaultMessageHistory(routeId, node, msg);
+        DefaultMessageHistory answer = new DefaultMessageHistory(routeId, node, msg);
+        answer.setAcceptDebugger(node.acceptDebugger(exchange));
+        return answer;
     }
 
     @ManagedAttribute(description = "Whether message history is enabled")

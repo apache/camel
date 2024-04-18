@@ -407,14 +407,18 @@ public class Debug extends Run {
                         lines = jo.getCollection("history");
                         if (lines != null) {
                             for (JsonObject line : lines) {
-                                History history = new History();
-                                history.routeId = line.getString("routeId");
-                                history.nodeId = line.getString("nodeId");
-                                history.elapsed = line.getLongOrDefault("elapsed", 0);
-                                history.location = line.getString("location");
-                                history.line = line.getIntegerOrDefault("line", -1);
-                                history.code = line.getString("code");
-                                row.history.add(history);
+                                // only include if accepted for debugging
+                                boolean accept = line.getBooleanOrDefault("acceptDebugger", true);
+                                if (accept) {
+                                    History history = new History();
+                                    history.routeId = line.getString("routeId");
+                                    history.nodeId = line.getString("nodeId");
+                                    history.elapsed = line.getLongOrDefault("elapsed", 0);
+                                    history.location = line.getString("location");
+                                    history.line = line.getIntegerOrDefault("line", -1);
+                                    history.code = line.getString("code");
+                                    row.history.add(history);
+                                }
                             }
                         }
                         rows.add(row);
