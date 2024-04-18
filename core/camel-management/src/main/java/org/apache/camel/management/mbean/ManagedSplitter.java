@@ -24,11 +24,9 @@ import org.apache.camel.processor.Splitter;
 
 @ManagedResource(description = "Managed Splitter")
 public class ManagedSplitter extends ManagedMulticast implements ManagedSplitterMBean {
-    private final Splitter processor;
 
     public ManagedSplitter(CamelContext context, Splitter processor, SplitDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override

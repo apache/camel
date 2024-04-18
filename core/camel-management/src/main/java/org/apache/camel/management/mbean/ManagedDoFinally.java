@@ -25,11 +25,8 @@ import org.apache.camel.processor.FinallyProcessor;
 @ManagedResource(description = "Managed DoFinally")
 public class ManagedDoFinally extends ManagedProcessor implements ManagedDoFinallyMBean {
 
-    private final FinallyProcessor processor;
-
     public ManagedDoFinally(CamelContext context, FinallyProcessor processor, FinallyDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
