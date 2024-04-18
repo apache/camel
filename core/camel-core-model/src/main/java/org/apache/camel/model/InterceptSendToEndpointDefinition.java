@@ -137,8 +137,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         // interceptor
         ProcessorDefinition<?> first = getOutputs().get(0);
         if (first instanceof WhenDefinition && !(first instanceof WhenSkipSendToEndpointDefinition)) {
-            final WhenSkipSendToEndpointDefinition newWhen =
-                    toWhenSkipSendToEndpointDefinition((WhenDefinition) first);
+            final WhenSkipSendToEndpointDefinition newWhen = toWhenSkipSendToEndpointDefinition((WhenDefinition) first);
             // remove the moved from the original output, by just keeping the
             // first one
             clearOutput();
