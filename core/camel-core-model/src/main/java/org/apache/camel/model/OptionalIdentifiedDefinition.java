@@ -45,6 +45,18 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private int lineNumber = -1;
     private String location;
 
+    public OptionalIdentifiedDefinition() {
+    }
+
+    protected OptionalIdentifiedDefinition(OptionalIdentifiedDefinition source) {
+        this.camelContext = source.camelContext;
+        this.id = source.id;
+        this.customId = source.customId;
+        this.description = source.description;
+        this.lineNumber = source.lineNumber;
+        this.location = source.location;
+    }
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
