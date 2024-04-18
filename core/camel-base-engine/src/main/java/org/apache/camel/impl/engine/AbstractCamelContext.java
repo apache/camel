@@ -207,7 +207,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
-    private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
+    private final Set<EndpointStrategy> endpointStrategies = ConcurrentHashMap.newKeySet();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
@@ -4159,7 +4159,7 @@ public abstract class AbstractCamelContext extends BaseService
         return camelContextExtension.getRegistry();
     }
 
-    List<EndpointStrategy> getEndpointStrategies() {
+    Set<EndpointStrategy> getEndpointStrategies() {
         return endpointStrategies;
     }
 
