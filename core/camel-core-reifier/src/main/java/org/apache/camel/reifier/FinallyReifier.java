@@ -22,8 +22,6 @@ import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.FinallyProcessor;
-import org.apache.camel.spi.IdAware;
-import org.apache.camel.spi.RouteIdAware;
 
 public class FinallyReifier extends ProcessorReifier<FinallyDefinition> {
 
@@ -41,13 +39,9 @@ public class FinallyReifier extends ProcessorReifier<FinallyDefinition> {
         // do finally does mandate a child processor
         FinallyProcessor processor = new FinallyProcessor(this.createChildProcessor(false));
         // inject id
-        if (processor instanceof IdAware) {
-            String id = getId(definition);
-            ((IdAware) processor).setId(id);
-        }
-        if (processor instanceof RouteIdAware) {
-            ((RouteIdAware) processor).setRouteId(route.getRouteId());
-        }
+        String id = getId(definition);
+        processor.setId(id);
+        processor.setRouteId(route.getRouteId());
         return wrapProcessor(processor);
     }
 
