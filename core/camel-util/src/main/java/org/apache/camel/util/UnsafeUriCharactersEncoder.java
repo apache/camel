@@ -180,7 +180,7 @@ public final class UnsafeUriCharactersEncoder {
     private static void appendEscape(StringBuilder sb, byte b) {
         sb.append('%');
         sb.append(HEX_DIGITS[(b >> 4) & 0x0f]);
-        sb.append(HEX_DIGITS[(b >> 0) & 0x0f]);
+        sb.append(HEX_DIGITS[(b) & 0x0f]);
     }
 
     private static boolean isHexDigit(char ch) {
