@@ -296,19 +296,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             }
 
             // find namespaces (there can be attributes mixed, so we should only grab the namespaces)
-            Map<String, String> namespaces = new LinkedHashMap<>();
-            Matcher matcher = NAMESPACE_PATTERN.matcher(text);
-            while (matcher.find()) {
-                String prefix = matcher.group(1);
-                String url = matcher.group(2);
-                if (ObjectHelper.isEmpty(prefix)) {
-                    prefix = "_DEFAULT_";
-                } else {
-                    // skip leading :
-                    prefix = prefix.substring(1);
-                }
-                namespaces.put(prefix, url);
-            }
+            final Map<String, String> namespaces = toStringStringMap(text);
 
             // did we find any namespaces
             if (namespaces.isEmpty()) {
@@ -367,6 +355,23 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             scanner.close();
         }
 
+    }
+
+    private static Map<String, String> toStringStringMap(String text) {
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        Matcher matcher = NAMESPACE_PATTERN.matcher(text);
+        while (matcher.find()) {
+            String prefix = matcher.group(1);
+            String url = matcher.group(2);
+            if (ObjectHelper.isEmpty(prefix)) {
+                prefix = "_DEFAULT_";
+            } else {
+                // skip leading :
+                prefix = prefix.substring(1);
+            }
+            namespaces.put(prefix, url);
+        }
+        return namespaces;
     }
 
     private static String buildXMLTail(String xmlhead) {

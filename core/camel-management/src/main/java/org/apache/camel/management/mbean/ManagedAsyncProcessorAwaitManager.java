@@ -21,6 +21,7 @@ import java.util.Collection;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
@@ -70,23 +71,28 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
             Collection<AsyncProcessorAwaitManager.AwaitThread> threads = manager.browse();
             for (AsyncProcessorAwaitManager.AwaitThread entry : threads) {
                 CompositeType ct = CamelOpenMBeanTypes.listAwaitThreadsCompositeType();
-                String id = Long.toString(entry.getBlockedThread().getId());
-                String name = entry.getBlockedThread().getName();
-                String exchangeId = entry.getExchange().getExchangeId();
-                String routeId = entry.getRouteId();
-                String nodeId = entry.getNodeId();
-                String duration = Long.toString(entry.getWaitDuration());
-
-                CompositeData data = new CompositeDataSupport(
-                        ct,
-                        new String[] { "id", "name", "exchangeId", "routeId", "nodeId", "duration" },
-                        new Object[] { id, name, exchangeId, routeId, nodeId, duration });
+                final CompositeData data = toCompositeData(entry, ct);
                 answer.put(data);
             }
             return answer;
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+    }
+
+    private static CompositeData toCompositeData(AsyncProcessorAwaitManager.AwaitThread entry, CompositeType ct)
+            throws OpenDataException {
+        String id = Long.toString(entry.getBlockedThread().getId());
+        String name = entry.getBlockedThread().getName();
+        String exchangeId = entry.getExchange().getExchangeId();
+        String routeId = entry.getRouteId();
+        String nodeId = entry.getNodeId();
+        String duration = Long.toString(entry.getWaitDuration());
+
+        return new CompositeDataSupport(
+                ct,
+                new String[] { "id", "name", "exchangeId", "routeId", "nodeId", "duration" },
+                new Object[] { id, name, exchangeId, routeId, nodeId, duration });
     }
 
     @Override
