@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDefinition extends SendDefinition<ToDefinition> {
+public class ToDefinition extends SendDefinition<ToDefinition> implements CopyableProcessorDefinition {
 
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
@@ -71,6 +71,11 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         this.pattern = pattern.name();
     }
 
+    protected ToDefinition(ToDefinition source) {
+        super(source);
+        this.pattern = source.pattern;
+    }
+
     @Override
     public String getShortName() {
         return "to";
@@ -93,4 +98,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         this.pattern = pattern;
     }
 
+    public ToDefinition copy() {
+        return new ToDefinition(this);
+    }
 }
