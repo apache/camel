@@ -118,23 +118,7 @@ final class InternalRouteStartupManager {
             // filter out already started routes
             Map<String, RouteService> filtered = new LinkedHashMap<>();
             for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-                boolean startable = false;
-
-                Consumer consumer = entry.getValue().getRoute().getConsumer();
-                if (consumer instanceof SuspendableService) {
-                    // consumer could be suspended, which is not reflected in
-                    // the BaseRouteService status
-                    startable = ((SuspendableService) consumer).isSuspended();
-                }
-
-                if (!startable && consumer instanceof StatefulService) {
-                    // consumer could be stopped, which is not reflected in the
-                    // BaseRouteService status
-                    startable = ((StatefulService) consumer).getStatus().isStartable();
-                } else if (!startable) {
-                    // no consumer so use state from route service
-                    startable = entry.getValue().getStatus().isStartable();
-                }
+                final boolean startable = isStartable(entry);
 
                 if (startable) {
                     filtered.put(entry.getKey(), entry.getValue());
@@ -147,6 +131,27 @@ final class InternalRouteStartupManager {
         } finally {
             camelContext.setStartingRoutes(false);
         }
+    }
+
+    private static boolean isStartable(Map.Entry<String, RouteService> entry) {
+        boolean startable = false;
+
+        Consumer consumer = entry.getValue().getRoute().getConsumer();
+        if (consumer instanceof SuspendableService) {
+            // consumer could be suspended, which is not reflected in
+            // the BaseRouteService status
+            startable = ((SuspendableService) consumer).isSuspended();
+        }
+
+        if (!startable && consumer instanceof StatefulService) {
+            // consumer could be stopped, which is not reflected in the
+            // BaseRouteService status
+            startable = ((StatefulService) consumer).getStatus().isStartable();
+        } else if (!startable) {
+            // no consumer so use state from route service
+            startable = entry.getValue().getStatus().isStartable();
+        }
+        return startable;
     }
 
     /**
