@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
+import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 
@@ -77,6 +78,24 @@ public final class ServiceBusTestUtils {
         }
 
         return clientBuilder.buildAsyncClient();
+    }
+
+    public static ServiceBusProcessorClient createServiceBusProcessorClient(final ServiceBusType type)
+            throws Exception {
+        final Properties properties = loadAzureAccessFromJvmEnv();
+
+        final ServiceBusClientBuilder.ServiceBusProcessorClientBuilder clientBuilder = new ServiceBusClientBuilder()
+                .connectionString(properties.getProperty(CONNECTION_STRING))
+                .processor()
+                .subscriptionName(properties.getProperty(SUBSCRIPTION_NAME));
+
+        if (type == ServiceBusType.queue) {
+            clientBuilder.queueName(properties.getProperty(QUEUE_NAME));
+        } else {
+            clientBuilder.topicName(properties.getProperty(TOPIC_NAME));
+        }
+
+        return clientBuilder.buildProcessorClient();
     }
 
     public static ServiceBusSenderAsyncClient createServiceBusSenderAsyncClient(final ServiceBusType type) throws Exception {

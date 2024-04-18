@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.azure.servicebus.client;
 
+import java.util.function.Consumer;
+
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.messaging.servicebus.ServiceBusClientBuilder;
-import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
-import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
+import com.azure.messaging.servicebus.*;
 import org.apache.camel.component.azure.servicebus.CredentialType;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.apache.camel.component.azure.servicebus.ServiceBusType;
@@ -36,15 +36,23 @@ public final class ServiceBusClientFactory {
                 .buildAsyncClient();
     }
 
-    public static ServiceBusReceiverAsyncClient createServiceBusReceiverAsyncClient(
-            final ServiceBusConfiguration configuration) {
-        return createBaseServiceBusReceiverClient(createBaseServiceBusClient(configuration), configuration)
-                .prefetchCount(configuration.getPrefetchCount())
-                .receiveMode(configuration.getServiceBusReceiveMode())
-                .subQueue(configuration.getSubQueue())
-                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
+    public static ServiceBusProcessorClient createServiceBusProcessorClient(
+            ServiceBusConfiguration configuration, Consumer<ServiceBusReceivedMessageContext> processMessage,
+            Consumer<ServiceBusErrorContext> processError) {
+        ServiceBusClientBuilder.ServiceBusProcessorClientBuilder clientBuilder
+                = createBaseServiceBusProcessorClient(createBaseServiceBusClient(configuration), configuration);
+
+        clientBuilder
                 .subscriptionName(configuration.getSubscriptionName())
-                .buildAsyncClient();
+                .receiveMode(configuration.getServiceBusReceiveMode())
+                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
+                .prefetchCount(configuration.getPrefetchCount())
+                .subQueue(configuration.getSubQueue())
+                .maxConcurrentCalls(configuration.getMaxConcurrentCalls())
+                .processMessage(processMessage)
+                .processError(processError);
+
+        return clientBuilder.buildProcessorClient();
     }
 
     private static ServiceBusClientBuilder createBaseServiceBusClient(final ServiceBusConfiguration configuration) {
@@ -81,19 +89,20 @@ public final class ServiceBusClientFactory {
         }
     }
 
-    private static ServiceBusClientBuilder.ServiceBusReceiverClientBuilder createBaseServiceBusReceiverClient(
+    private static ServiceBusClientBuilder.ServiceBusProcessorClientBuilder createBaseServiceBusProcessorClient(
             final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
-        final ServiceBusClientBuilder.ServiceBusReceiverClientBuilder receiverClientBuilder = busClientBuilder.receiver();
+        final ServiceBusClientBuilder.ServiceBusProcessorClientBuilder processorClientBuilder = busClientBuilder.processor();
 
         // We handle auto-complete in the consumer, since we have no way to propagate errors back to the reactive
         // pipeline messages are published on so the message would be completed even if an error occurs during Exchange
         // processing.
-        receiverClientBuilder.disableAutoComplete();
+        processorClientBuilder.disableAutoComplete();
 
-        if (configuration.getServiceBusType() == ServiceBusType.queue) {
-            return receiverClientBuilder.queueName(configuration.getTopicOrQueueName());
-        } else {
-            return receiverClientBuilder.topicName(configuration.getTopicOrQueueName());
+        switch (configuration.getServiceBusType()) {
+            case queue -> processorClientBuilder.queueName(configuration.getTopicOrQueueName());
+            case topic -> processorClientBuilder.topicName(configuration.getTopicOrQueueName());
         }
+
+        return processorClientBuilder;
     }
 }

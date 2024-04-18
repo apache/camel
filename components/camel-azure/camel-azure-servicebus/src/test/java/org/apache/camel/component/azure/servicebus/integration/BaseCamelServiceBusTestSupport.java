@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.servicebus.integration;
 
+import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.CamelContext;
@@ -47,14 +48,14 @@ public class BaseCamelServiceBusTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         final ServiceBusSenderAsyncClient injectedSenderAsyncClient
                 = ServiceBusTestUtils.createServiceBusSenderAsyncClient(ServiceBusType.topic);
-        final ServiceBusReceiverAsyncClient injectedReceiverAsyncClient
-                = ServiceBusTestUtils.createServiceBusReceiverAsyncClient(ServiceBusType.topic);
+        final ServiceBusProcessorClient injectedProcessorClient
+                = ServiceBusTestUtils.createServiceBusProcessorClient(ServiceBusType.topic);
 
         final CamelContext context = super.createCamelContext();
         final ServiceBusComponent component = new ServiceBusComponent(context);
 
         component.init();
-        component.getConfiguration().setReceiverAsyncClient(injectedReceiverAsyncClient);
+        component.getConfiguration().setProcessorClient(injectedProcessorClient);
         component.getConfiguration().setSenderAsyncClient(injectedSenderAsyncClient);
         context.addComponent("azure-servicebus", component);
 

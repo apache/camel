@@ -24,7 +24,7 @@ import com.azure.core.amqp.AmqpTransportType;
 import com.azure.core.amqp.ProxyOptions;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.util.ClientOptions;
-import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
+import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusTransactionContext;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
@@ -60,15 +60,11 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     @UriParam(label = "common",
               description = "To use a custom HeaderFilterStrategy to filter Service Bus application properties to and from Camel message headers.")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam(label = "consumer", defaultValue = "receiveMessages")
-    private ServiceBusConsumerOperationDefinition consumerOperation = ServiceBusConsumerOperationDefinition.receiveMessages;
     @UriParam(label = "consumer")
     @Metadata(autowired = true)
-    private ServiceBusReceiverAsyncClient receiverAsyncClient;
+    private ServiceBusProcessorClient processorClient;
     @UriParam(label = "consumer")
     private String subscriptionName;
-    @UriParam(label = "consumer")
-    private boolean disableAutoComplete;
     @UriParam(label = "consumer")
     private boolean enableDeadLettering;
     @UriParam(label = "consumer", defaultValue = "PEEK_LOCK")
@@ -80,7 +76,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     @UriParam(label = "consumer")
     private SubQueue subQueue;
     @UriParam(label = "consumer")
-    private Integer peekNumMaxMessages;
+    private int maxConcurrentCalls = 1;
     @UriParam(label = "producer", defaultValue = "sendMessages")
     private ServiceBusProducerOperationDefinition producerOperation = ServiceBusProducerOperationDefinition.sendMessages;
     @UriParam(label = "producer")
@@ -95,8 +91,6 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
               defaultValue = "CONNECTION_STRING")
     private CredentialType credentialType = CONNECTION_STRING;
-    @UriParam(label = "consumer,advanced", defaultValue = "5000")
-    private int reconnectDelay = 5000;
 
     /**
      * Selected topic name or the queue name, that is depending on serviceBusType config. For example if
@@ -203,26 +197,14 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets the receiverAsyncClient in order to consume messages by the consumer
+     * Sets the processorClient in order to consume messages by the consumer
      */
-    public ServiceBusReceiverAsyncClient getReceiverAsyncClient() {
-        return receiverAsyncClient;
+    public ServiceBusProcessorClient getProcessorClient() {
+        return processorClient;
     }
 
-    public void setReceiverAsyncClient(ServiceBusReceiverAsyncClient receiverAsyncClient) {
-        this.receiverAsyncClient = receiverAsyncClient;
-    }
-
-    /**
-     * Disables auto-complete and auto-abandon of received messages. By default, a successfully processed message is
-     * completed. If an error happens when the message is abandoned.
-     */
-    public boolean isDisableAutoComplete() {
-        return disableAutoComplete;
-    }
-
-    public void setDisableAutoComplete(boolean disableAutoComplete) {
-        this.disableAutoComplete = disableAutoComplete;
+    public void setProcessorClient(ServiceBusProcessorClient processorClient) {
+        this.processorClient = processorClient;
     }
 
     /**
@@ -263,7 +245,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     /**
      * Sets the prefetch count of the receiver. For both PEEK_LOCK PEEK_LOCK and RECEIVE_AND_DELETE RECEIVE_AND_DELETE
      * receive modes the default value is 1.
-     *
+     * <p>
      * Prefetch speeds up the message flow by aiming to have a message readily available for local retrieval when and
      * before the application asks for one using receive message. Setting a non-zero value will prefetch that number of
      * messages. Setting the value to zero turns prefetch off.
@@ -285,6 +267,17 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
 
     public void setSubQueue(SubQueue subQueue) {
         this.subQueue = subQueue;
+    }
+
+    /**
+     * Sets maximum number of concurrent calls
+     */
+    public int getMaxConcurrentCalls() {
+        return maxConcurrentCalls;
+    }
+
+    public void setMaxConcurrentCalls(int maxConcurrentCalls) {
+        this.maxConcurrentCalls = maxConcurrentCalls;
     }
 
     /**
@@ -321,17 +314,6 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets the desired operation to be used in the consumer
-     */
-    public ServiceBusConsumerOperationDefinition getConsumerOperation() {
-        return consumerOperation;
-    }
-
-    public void setConsumerOperation(ServiceBusConsumerOperationDefinition consumerOperation) {
-        this.consumerOperation = consumerOperation;
-    }
-
-    /**
      * Sets the desired operation to be used in the producer
      */
     public ServiceBusProducerOperationDefinition getProducerOperation() {
@@ -365,17 +347,6 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Set the max number of messages to be peeked during the peek operation.
-     */
-    public Integer getPeekNumMaxMessages() {
-        return peekNumMaxMessages;
-    }
-
-    public void setPeekNumMaxMessages(Integer peekNumMaxMessages) {
-        this.peekNumMaxMessages = peekNumMaxMessages;
-    }
-
-    /**
      * Set binary mode. If true, message body will be sent as byte[]. By default, it is false.
      */
     public boolean isBinary() {
@@ -395,17 +366,6 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
      */
     public void setCredentialType(CredentialType credentialType) {
         this.credentialType = credentialType;
-    }
-
-    public int getReconnectDelay() {
-        return reconnectDelay;
-    }
-
-    /**
-     * If the consumer has connection failure to Azure ServiceBus, then delay (millis) some time before re-connecting.
-     */
-    public void setReconnectDelay(int reconnectDelay) {
-        this.reconnectDelay = reconnectDelay;
     }
 
     // *************************************************
