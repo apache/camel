@@ -56,10 +56,10 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 myProp.put("myDir", testDirectory().toString());
 
                 context.getPropertiesComponent().setLocation("ref:myProp");

@@ -58,10 +58,10 @@ public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends Contex
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(5).redeliveryDelay(5000)
                         .allowRedeliveryWhileStopping(false));
 

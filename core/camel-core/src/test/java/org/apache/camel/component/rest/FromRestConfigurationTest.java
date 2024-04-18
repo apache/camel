@@ -35,7 +35,7 @@ public class FromRestConfigurationTest extends FromRestGetTest {
 
     @Override
     @Test
-    public void testFromRestModel() throws Exception {
+    public void testFromRestModel() {
         assertEquals("dummy-rest", context.getRestConfiguration().getComponent());
         assertEquals("localhost", context.getRestConfiguration().getHost());
         assertEquals(9090, context.getRestConfiguration().getPort());
@@ -52,10 +52,10 @@ public class FromRestConfigurationTest extends FromRestGetTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("dummy-rest").host("localhost").port(9090).componentProperty("foo", "bar")
                         .componentProperty("other", "stuff")
                         .endpointProperty("size", "200").consumerProperty("pollTimeout", "1000")

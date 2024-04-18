@@ -56,12 +56,12 @@ public class ErrorHandlerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0))
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 if ("Boom".equals(body)) {
                                     throw new IllegalArgumentException("Forced exception by unit test");

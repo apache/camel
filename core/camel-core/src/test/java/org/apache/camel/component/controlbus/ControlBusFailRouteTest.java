@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ControlBusFailRouteTest extends ContextTestSupport {
 
     @Test
-    public void testControlBusFail() throws Exception {
+    public void testControlBusFail() {
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
 
         template.sendBody("direct:foo", "Hello World");
@@ -50,10 +50,10 @@ public class ControlBusFailRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("controlbus:route?routeId=current&action=fail&async=true"));
 
                 from("direct:foo").routeId("foo")

@@ -41,7 +41,7 @@ public class RecipientListThrowExceptionSubRouteTest extends ContextTestSupport 
     public void testRecipientList() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(Exception.class).to("mock:error").end().recipientList(method(Router.class));
             }
         });
@@ -59,7 +59,7 @@ public class RecipientListThrowExceptionSubRouteTest extends ContextTestSupport 
     public void testRecipientListChild() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(Exception.class).to("mock:error").end().to("direct:child");
 
                 from("direct:child").errorHandler(noErrorHandler()).recipientList(method(Router.class));

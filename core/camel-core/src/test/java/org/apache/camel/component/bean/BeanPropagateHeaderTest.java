@@ -47,10 +47,10 @@ public class BeanPropagateHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("foo", constant("bar")).convertBodyTo(Integer.class).to("bean:order")
                         .to(ExchangePattern.InOnly, "seda:foo").transform(constant("OK"));
 

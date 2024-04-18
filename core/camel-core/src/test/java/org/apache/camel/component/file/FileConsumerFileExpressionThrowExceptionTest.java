@@ -57,7 +57,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("bean"
                              + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=next}.txt&delete=true"))
                         .to("mock:result");
@@ -96,7 +96,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
         }
 
         @Override
-        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
+        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) {
             event += "rollback";
             rollbackCause = cause;
             LATCH.countDown();

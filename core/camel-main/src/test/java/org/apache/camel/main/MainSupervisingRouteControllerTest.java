@@ -161,7 +161,7 @@ public class MainSupervisingRouteControllerTest {
 
     private class MyRoute extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             getContext().addComponent("jms", new MyJmsComponent());
 
             from("timer:foo").to("mock:foo").routeId("foo");
@@ -177,7 +177,7 @@ public class MainSupervisingRouteControllerTest {
     private static class MyJmsComponent extends SedaComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyJmsEndpoint(remaining);
         }
     }
@@ -191,7 +191,7 @@ public class MainSupervisingRouteControllerTest {
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return new MyJmsConsumer(this, processor);
         }
 
@@ -210,7 +210,7 @@ public class MainSupervisingRouteControllerTest {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             if (counter++ < 5) {
                 throw new IllegalArgumentException("Cannot start");
             }

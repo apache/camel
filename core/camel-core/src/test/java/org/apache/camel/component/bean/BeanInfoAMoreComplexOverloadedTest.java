@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
 
     @Test
-    public void testRequestA() throws Exception {
+    public void testRequestA() {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
         Message message = new DefaultMessage(context);
@@ -48,7 +48,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRequestB() throws Exception {
+    public void testRequestB() {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
         Message message = new DefaultMessage(context);

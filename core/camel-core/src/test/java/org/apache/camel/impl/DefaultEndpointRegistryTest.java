@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DefaultEndpointRegistryTest {
 
     @Test
-    public void testRemoveEndpoint() throws Exception {
+    public void testRemoveEndpoint() {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.start();
 
@@ -54,7 +54,7 @@ public class DefaultEndpointRegistryTest {
     }
 
     @Test
-    public void testRemoveEndpointWithHash() throws Exception {
+    public void testRemoveEndpointWithHash() {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.start();
 
@@ -72,7 +72,7 @@ public class DefaultEndpointRegistryTest {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toD().cacheSize(10).uri("mock:${header.foo}");
             }
@@ -104,7 +104,7 @@ public class DefaultEndpointRegistryTest {
     }
 
     @Test
-    public void testMigration() throws Exception {
+    public void testMigration() {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.start();
         DefaultEndpointRegistry reg = (DefaultEndpointRegistry) ctx.getEndpointRegistry();
@@ -126,7 +126,7 @@ public class DefaultEndpointRegistryTest {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("direct:error")
                         .maximumRedeliveries(2)
                         .redeliveryDelay(0));

@@ -80,7 +80,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCustomAssembleNoMandatory() throws Exception {
+    public void testCustomAssembleNoMandatory() {
         EndpointUriFactory assembler = new MyAssembler();
         assembler.setCamelContext(context);
 

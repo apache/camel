@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
 public class RegExPredicateIssueTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").choice().when(bodyAs(String.class).regex("^0.*$")).to("mock:result").otherwise()
                         .to("mock:other").end();
             }

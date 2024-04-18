@@ -55,9 +55,9 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 onException(MyCustomException.class).maximumRedeliveries(0).handled(true).bean("myBean", "handleException")

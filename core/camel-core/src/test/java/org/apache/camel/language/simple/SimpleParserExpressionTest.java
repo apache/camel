@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     @Test
-    public void testSimpleParserEol() throws Exception {
+    public void testSimpleParserEol() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello", true, null);
         Expression exp = parser.parseExpression();
 
@@ -37,7 +37,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleSingleQuote() throws Exception {
+    public void testSimpleSingleQuote() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "'Hello'", true, null);
         Expression exp = parser.parseExpression();
 
@@ -45,7 +45,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleStringList() throws Exception {
+    public void testSimpleStringList() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "\"Hello\" \"World\"", true, null);
         Expression exp = parser.parseExpression();
 
@@ -53,7 +53,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleSingleQuoteWithFunction() throws Exception {
+    public void testSimpleSingleQuoteWithFunction() {
         exchange.getIn().setBody("World");
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "'Hello ${body} how are you?'", true, null);
         Expression exp = parser.parseExpression();
@@ -62,7 +62,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleSingleQuoteWithFunctionBodyAs() throws Exception {
+    public void testSimpleSingleQuoteWithFunctionBodyAs() {
         exchange.getIn().setBody("World");
         SimpleExpressionParser parser
                 = new SimpleExpressionParser(context, "'Hello ${bodyAs(String)} how are you?'", true, null);
@@ -72,7 +72,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleSingleQuoteEol() throws Exception {
+    public void testSimpleSingleQuoteEol() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "'Hello' World", true, null);
         Expression exp = parser.parseExpression();
 
@@ -80,7 +80,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleFunction() throws Exception {
+    public void testSimpleFunction() {
         exchange.getIn().setBody("World");
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body}", true, null);
         Expression exp = parser.parseExpression();
@@ -89,7 +89,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleSingleQuoteDollar() throws Exception {
+    public void testSimpleSingleQuoteDollar() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Pay 200$ today", true, null);
         Expression exp = parser.parseExpression();
 
@@ -97,7 +97,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleSingleQuoteDollarEnd() throws Exception {
+    public void testSimpleSingleQuoteDollarEnd() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Pay 200$", true, null);
         Expression exp = parser.parseExpression();
 
@@ -105,7 +105,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleUnaryInc() throws Exception {
+    public void testSimpleUnaryInc() {
         exchange.getIn().setBody("122");
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body}++", true, null);
         Expression exp = parser.parseExpression();
@@ -114,7 +114,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleUnaryDec() throws Exception {
+    public void testSimpleUnaryDec() {
         exchange.getIn().setBody("122");
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body}--", true, null);
         Expression exp = parser.parseExpression();
@@ -123,7 +123,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleUnaryIncInt() throws Exception {
+    public void testSimpleUnaryIncInt() {
         exchange.getIn().setBody(122);
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body}++", true, null);
         Expression exp = parser.parseExpression();
@@ -132,7 +132,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleUnaryDecInt() throws Exception {
+    public void testSimpleUnaryDecInt() {
         exchange.getIn().setBody(122);
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body}--", true, null);
         Expression exp = parser.parseExpression();
@@ -141,7 +141,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testHeaderNestedFunction() throws Exception {
+    public void testHeaderNestedFunction() {
         exchange.getIn().setBody("foo");
         exchange.getIn().setHeader("foo", "abc");
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${header.${body}}", true, null);
@@ -153,7 +153,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testBodyAsNestedFunction() throws Exception {
+    public void testBodyAsNestedFunction() {
         exchange.getIn().setBody("123");
         exchange.getIn().setHeader("foo", "Integer");
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${bodyAs(${header.foo})}", true, null);
@@ -166,7 +166,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testThreeNestedFunctions() throws Exception {
+    public void testThreeNestedFunctions() {
         exchange.getIn().setBody("123");
         exchange.getIn().setHeader("foo", "Int");
         exchange.getIn().setHeader("bar", "e");
@@ -182,7 +182,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testNestedNestedFunctions() throws Exception {
+    public void testNestedNestedFunctions() {
         exchange.getIn().setBody("123");
         exchange.getIn().setHeader("foo", "Integer");
         exchange.getIn().setHeader("bar", "foo");
@@ -196,7 +196,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleMap() throws Exception {
+    public void testSimpleMap() {
         Map<String, String> map = new HashMap<>();
         map.put("foo", "123");
         map.put("foo bar", "456");
@@ -213,7 +213,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testUnaryLenient() throws Exception {
+    public void testUnaryLenient() {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("THE MSG ID ${header.JMSMessageID} isA --");
 
@@ -225,7 +225,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testUnaryLenient2() throws Exception {
+    public void testUnaryLenient2() {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("------------THE MSG ID ${header.JMSMessageID}------------");
 
@@ -237,7 +237,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testUnaryLenient3() throws Exception {
+    public void testUnaryLenient3() {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("------------ THE MSG ID ${header.JMSMessageID} ------------");
 

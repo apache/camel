@@ -63,21 +63,21 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTempPrefix() throws Exception {
+    public void testTempPrefix() {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists(testFile("hello.txt"));
     }
 
     @Test
-    public void testTempPrefixUUIDFilename() throws Exception {
+    public void testTempPrefixUUIDFilename() {
         template.sendBody("direct:a", "Bye World");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to(fileUri(FILE_QUERY));
             }
         };

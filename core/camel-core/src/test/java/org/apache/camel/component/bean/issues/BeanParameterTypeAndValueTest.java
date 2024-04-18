@@ -53,10 +53,10 @@ public class BeanParameterTypeAndValueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:bean")
                         .bean(Math.class, "abs(int.class -123)")
                         .to("mock:result");

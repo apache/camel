@@ -55,10 +55,10 @@ public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // using $simple{ to avoid clash with spring property
                 // placeholder
                 from(fileUri("?doneFileName=done-$simple{file:name}&initialDelay=0&delay=10")).to("mock:result");

@@ -40,9 +40,9 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
                 var xpath = expression().xpath().expression("/c:number = 55").namespaces(ns).resultType(Integer.class)
                         .source("header:cheeseDetails").end();

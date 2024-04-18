@@ -39,7 +39,7 @@ public class BeanPerformanceTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBeanPerformance() throws Exception {
+    public void testBeanPerformance() {
         StopWatch watch = new StopWatch();
 
         int times = 100000;
@@ -53,10 +53,10 @@ public class BeanPerformanceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(BeanPerformanceTest.class, "doSomething");
             }
         };

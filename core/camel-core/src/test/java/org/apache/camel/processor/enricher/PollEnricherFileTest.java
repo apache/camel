@@ -38,10 +38,10 @@ public class PollEnricherFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:hello?repeatCount=1&delay=10")
                         .to("log:1", "mock:1")
                         .pollEnrich("file:target/temp?noop=true&fileName=doesnotexist.csv", 1000)

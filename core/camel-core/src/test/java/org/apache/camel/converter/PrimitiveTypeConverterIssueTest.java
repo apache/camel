@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PrimitiveTypeConverterIssueTest extends ContextTestSupport {
 
     @Test
-    public void testPrimitiveTypeConverter() throws Exception {
+    public void testPrimitiveTypeConverter() {
         StopWatch watch = new StopWatch();
         for (int i = 0; i < 10000; i++) {
             int num = context.getTypeConverter().convertTo(int.class, "123");

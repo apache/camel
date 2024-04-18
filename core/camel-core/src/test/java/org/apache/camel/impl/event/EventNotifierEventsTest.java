@@ -49,16 +49,16 @@ public class EventNotifierEventsTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (context != null) {
             context.stop();
         }
     }
 
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
         });
@@ -116,7 +116,7 @@ public class EventNotifierEventsTest {
     }
 
     @Test
-    public void testExchangeFailed() throws Exception {
+    public void testExchangeFailed() {
         // not optimized as this requires exchange events
         assertTrue(context.getCamelContextExtension().isEventNotificationApplicable());
 
@@ -164,7 +164,7 @@ public class EventNotifierEventsTest {
     }
 
     @Test
-    public void testSuspendResume() throws Exception {
+    public void testSuspendResume() {
         // not optimized as this requires exchange events
         assertTrue(context.getCamelContextExtension().isEventNotificationApplicable());
 
@@ -196,10 +196,10 @@ public class EventNotifierEventsTest {
         assertIsInstanceOf(CamelContextResumedEvent.class, events.get(15));
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("mock:result");
 
                 from("direct:fail").throwException(new IllegalArgumentException("Damn"));

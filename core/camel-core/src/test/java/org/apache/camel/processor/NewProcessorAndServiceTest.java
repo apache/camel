@@ -31,7 +31,7 @@ public class NewProcessorAndServiceTest extends ContextTestSupport {
     private MyProcessor myProcessor;
 
     @Test
-    public void testNewProcessorAndService() throws Exception {
+    public void testNewProcessorAndService() {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
@@ -39,10 +39,10 @@ public class NewProcessorAndServiceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(myProcessor = new MyProcessor());
             }
         };
@@ -53,7 +53,7 @@ public class NewProcessorAndServiceTest extends ContextTestSupport {
         private boolean started;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getMessage().setBody("Bye World");
         }
 

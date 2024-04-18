@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class XsltFeatureRouteTest extends ContextTestSupport {
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         String message = "<hello/>";
         sendXmlMessage("direct:start1", message);
         sendXmlMessage("direct:start2", message);
@@ -47,10 +47,10 @@ public class XsltFeatureRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start1").to("xslt:org/apache/camel/component/xslt/transform_text_imported.xsl").to("mock:result");
 
                 from("direct:start2").to("xslt:org/apache/camel/component/xslt/transform_text.xsl").to("mock:result");

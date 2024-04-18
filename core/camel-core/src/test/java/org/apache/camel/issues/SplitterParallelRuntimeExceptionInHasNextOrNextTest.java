@@ -61,10 +61,10 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:errorInHasNext").split().method(SplitterImpl.class, "errorInHasNext").streaming()
                         .parallelProcessing(true).to("mock:split1");
 

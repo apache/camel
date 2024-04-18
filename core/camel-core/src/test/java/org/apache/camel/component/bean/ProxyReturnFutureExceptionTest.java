@@ -47,10 +47,10 @@ public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:echo").delay(250).throwException(new IllegalArgumentException("Forced"));
             }
         };

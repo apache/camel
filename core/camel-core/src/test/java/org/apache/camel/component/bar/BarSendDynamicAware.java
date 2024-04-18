@@ -63,7 +63,7 @@ public class BarSendDynamicAware extends SendDynamicAwareSupport {
     }
 
     @Override
-    public Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
+    public Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) {
         if (entry.getProperties().containsKey("drink")) {
             Object value = entry.getProperties().get("drink");
             return new SetHeaderProcessor(
@@ -74,13 +74,13 @@ public class BarSendDynamicAware extends SendDynamicAwareSupport {
     }
 
     @Override
-    public Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
+    public Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) {
         // remove header after use
         return new RemoveHeaderProcessor(BarConstants.DRINK);
     }
 
     @Override
-    public String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception {
+    public String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) {
         // before the ?
         String uri = entry.getOriginalUri();
         return StringHelper.before(uri, "?");

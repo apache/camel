@@ -48,10 +48,10 @@ public class AggregateCompletionSizeAndBatchConsumerTest extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionSize(3)
                         .completionFromBatchConsumer().to("log:result", "mock:result");
             }

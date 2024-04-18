@@ -36,7 +36,7 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
         assertThrows(NoSuchEndpointException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:hello").to("mock:result");
 
                     // unknown component
@@ -53,7 +53,7 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
         assertThrows(NoSuchEndpointException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:hello").to("mock:result");
 
                     // unknown component

@@ -35,7 +35,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
     public void testFooCorrect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .filter(method(BeanLanguageMethodMissingParenthesisTest.class,
                                 "couldThisBeFoo(${body}, ${header.foo})"))
@@ -62,7 +62,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
     public void testFooMissingParenthesis() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo}"))
                         .to("mock:foo").end().to("mock:result");
@@ -83,7 +83,7 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
     public void testFooInvalidName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .filter(method(BeanLanguageMethodMissingParenthesisTest.class,
                                 "--couldThisBeFoo(${body}, ${header.foo})"))

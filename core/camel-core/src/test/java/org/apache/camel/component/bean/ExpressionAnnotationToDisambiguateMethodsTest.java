@@ -35,14 +35,14 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
     protected final MyOtherBean myOtherBean = new MyOtherBean();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         template.sendBodyAndHeader("direct:in", "<hello>world!</hello>", "foo", "bar");
 
         assertEquals("bar", myBean.bar, "bean body: " + myBean);
     }
 
     @Test
-    public void testSendMessageHandler() throws Exception {
+    public void testSendMessageHandler() {
         template.sendBodyAndHeader("direct:other", "<hello>world!</hello>", "foo", "bar");
 
         assertEquals("bar", myOtherBean.bar, "bean body: " + myOtherBean);

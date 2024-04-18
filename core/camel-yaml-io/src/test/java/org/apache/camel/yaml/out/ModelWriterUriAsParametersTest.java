@@ -238,7 +238,7 @@ public class ModelWriterUriAsParametersTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start7").routeId("myRoute7")
                     .doTry()
                         .to("mock:try1")

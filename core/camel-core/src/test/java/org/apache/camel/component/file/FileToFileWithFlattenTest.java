@@ -46,7 +46,7 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
     public void testFlatternConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("flatten-in?initialDelay=0&delay=10&recursive=true&flatten=true"))
                         .to(fileUri("flatten-out"), "mock:result");
             }
@@ -73,7 +73,7 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
     public void testFlatternProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("flatten-in?initialDelay=0&delay=10&recursive=true"))
                         .to(fileUri("flatten-out?flatten=true"), "mock:result");
             }

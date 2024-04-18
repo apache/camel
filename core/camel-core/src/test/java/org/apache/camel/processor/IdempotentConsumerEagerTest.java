@@ -44,7 +44,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .eager(false).to("mock:result");
@@ -68,13 +68,13 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
     public void testFailedExchangesNotAddedDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .eager(false).process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");
@@ -103,11 +103,11 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .eager(false).process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");
@@ -134,11 +134,11 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
     public void testNotEager() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start").idempotentConsumer(header("messageId"), repo).eager(false).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         // should not contain
                         assertFalse(repo.contains(id), "Should not eager add to repo");
@@ -161,11 +161,11 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
     public void testEager() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start").idempotentConsumer(header("messageId"), repo).eager(true).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         // should contain
                         assertTrue(repo.contains(id), "Should eager add to repo");

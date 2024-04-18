@@ -44,7 +44,7 @@ public class FromRestGetCorsTest extends ContextTestSupport {
 
         Exchange out = template.request("seda:post-say-bye", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("I was here");
             }
         });
@@ -63,10 +63,10 @@ public class FromRestGetCorsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost").enableCORS(true);
 
                 rest("/say/hello").get().to("direct:hello");

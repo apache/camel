@@ -47,7 +47,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
                 from("direct:a")
@@ -86,7 +86,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
                 from("direct:a")
@@ -124,7 +124,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
                 from("direct:a")
@@ -162,7 +162,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
                 from("direct:a")
@@ -200,7 +200,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
                 from("direct:a")
@@ -239,7 +239,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
     private class MyMockComponent extends MockComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyMockEndpoint(this, uri, remaining);
         }
     }
@@ -258,7 +258,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return new MyMockProducer(this);
         }
     }
@@ -275,7 +275,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // noop
         }
 

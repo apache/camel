@@ -32,7 +32,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
     private static int errors;
 
     @Test
-    public void testBackoffIdle() throws Exception {
+    public void testBackoffIdle() {
 
         final Endpoint endpoint = getMockEndpoint("mock:foo");
         final MockScheduledPollConsumer consumer = createMockScheduledPollConsumer(endpoint);
@@ -63,7 +63,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBackoffError() throws Exception {
+    public void testBackoffError() {
 
         final Endpoint endpoint = getMockEndpoint("mock:foo");
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
@@ -108,7 +108,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
                 commits++;
             }
 
-            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 errors++;
                 return false;
             }
@@ -132,7 +132,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
                 commits++;
             }
 
-            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 return false;
             }
         });

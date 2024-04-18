@@ -22,7 +22,7 @@ import org.apache.camel.spi.Registry;
 
 public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListTest {
     @Override
-    protected void checkBean() throws Exception {
+    protected void checkBean() {
         // do nothing here
     }
 

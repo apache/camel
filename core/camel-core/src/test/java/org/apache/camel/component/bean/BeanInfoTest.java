@@ -38,7 +38,7 @@ public class BeanInfoTest {
     protected final CamelContext camelContext = new DefaultCamelContext();
 
     @Test
-    public void testObjectOperations() throws Exception {
+    public void testObjectOperations() {
         BeanInfo info = createBeanInfo(Object.class);
 
         List<MethodInfo> operations = info.getMethods();
@@ -47,7 +47,7 @@ public class BeanInfoTest {
     }
 
     @Test
-    public void testGetOperations() throws Exception {
+    public void testGetOperations() {
         BeanInfo info = createBeanInfo(Foo.class);
 
         List<MethodInfo> operations = info.getMethods();

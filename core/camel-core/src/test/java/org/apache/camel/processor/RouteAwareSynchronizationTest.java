@@ -45,7 +45,7 @@ public class RouteAwareSynchronizationTest extends ContextTestSupport {
 
         template.send("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getExchangeExtension().addOnCompletion(new MyRouteAware());
                 exchange.getIn().setBody("Hello World");
             }
@@ -62,10 +62,10 @@ public class RouteAwareSynchronizationTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start").to("mock:a").to("direct:foo").to("mock:b");
 
                 from("direct:foo").routeId("foo").to("mock:foo");

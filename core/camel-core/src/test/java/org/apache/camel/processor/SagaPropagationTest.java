@@ -39,7 +39,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     private List<String> sagaIds;
 
     @Test
-    public void testPropagationRequired() throws Exception {
+    public void testPropagationRequired() {
         context.createFluentProducerTemplate().to("direct:required").request();
 
         assertListSize(sagaIds, 3);
@@ -47,7 +47,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropagationRequiresNew() throws Exception {
+    public void testPropagationRequiresNew() {
         context.createFluentProducerTemplate().to("direct:requiresNew").request();
 
         assertListSize(sagaIds, 3);
@@ -55,7 +55,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropagationNotSupported() throws Exception {
+    public void testPropagationNotSupported() {
         context.createFluentProducerTemplate().to("direct:notSupported").request();
 
         assertListSize(sagaIds, 4);
@@ -63,7 +63,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropagationSupports() throws Exception {
+    public void testPropagationSupports() {
         context.createFluentProducerTemplate().to("direct:supports").request();
 
         assertListSize(sagaIds, 2);
@@ -71,7 +71,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropagationMandatory() throws Exception {
+    public void testPropagationMandatory() {
         try {
             context.createFluentProducerTemplate().to("direct:mandatory").request();
             fail("Exception not thrown");
@@ -81,7 +81,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropagationNever() throws Exception {
+    public void testPropagationNever() {
         try {
             context.createFluentProducerTemplate().to("direct:never").request();
             fail("Exception not thrown");
@@ -91,7 +91,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         this.sagaIds = new LinkedList<>();
 

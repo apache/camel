@@ -27,16 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PropertiesComponentNegateTest extends ContextTestSupport {
 
     @Test
-    public void testNegate() throws Exception {
+    public void testNegate() {
         assertTrue(context.getRoute("ftp").isAutoStartup());
         assertFalse(context.getRoute("jms").isAutoStartup());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:ftp").routeId("ftp").autoStartup("{{integration.ftpEnabled}}")
                         .to("mock:ftp");
 

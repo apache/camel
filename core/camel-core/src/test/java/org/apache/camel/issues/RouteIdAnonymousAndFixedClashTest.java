@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
 
     @Test
-    public void testClash() throws Exception {
+    public void testClash() {
         // should create the 2 routes
         assertEquals(2, context.getRoutes().size());
 
@@ -41,7 +41,7 @@ public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         DefaultCamelContext ctx = new DefaultCamelContext(true);
         ctx.getCamelContextExtension().addContextPlugin(NodeIdFactory.class, new NodeIdFactory() {
             final AtomicInteger counter = new AtomicInteger();
@@ -55,10 +55,10 @@ public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in1").id("route1") // Note the name
                         .to("mock:test1");
 

@@ -72,10 +72,10 @@ public class RoutePolicyFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addRoutePolicyFactory(new MyRoutePolicyFactory());
 
                 from("direct:foo").routeId("foo-route").to("mock:foo");

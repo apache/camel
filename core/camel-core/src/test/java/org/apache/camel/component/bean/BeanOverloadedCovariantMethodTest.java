@@ -31,7 +31,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
     public void testHelloCovariantOverload() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MySuperBean.class, "hello").to("mock:result");
             }
         });
@@ -48,7 +48,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
     public void testHelloCovariantOverloadNoNameOrParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MySuperBean.class).to("mock:result");
 
             }
@@ -66,7 +66,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
     public void testHelloCovariantOverloadNoParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MySuperBean.class, "hello").to("mock:result");
 
             }
@@ -84,7 +84,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
     public void testHelloCovariantOverloadFromParameters() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MySuperBean.class, "hello(String.class)").to("mock:result");
 
             }

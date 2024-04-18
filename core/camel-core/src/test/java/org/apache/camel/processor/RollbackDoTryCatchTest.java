@@ -65,7 +65,7 @@ public class RollbackDoTryCatchTest extends ContextTestSupport {
         getMockEndpoint("mock:doCatch").expectedMessageCount(1);
 
         Exchange out = template.request("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("bad");
             }
         });
@@ -77,10 +77,10 @@ public class RollbackDoTryCatchTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                     .doTry()
                         .to("mock:doTry")

@@ -56,10 +56,10 @@ public class OnExceptionNotHandledErrorHandlerRefIssueTest extends ContextTestSu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler("myDLC");
 
                 from("direct:start").onException(IllegalArgumentException.class).handled(false).to("mock:handled").end()

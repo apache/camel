@@ -40,10 +40,10 @@ public class WireTapMDCTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable MDC and breadcrumb
                 context.setUseMDCLogging(true);
                 context.setUseBreadcrumb(true);
@@ -100,7 +100,7 @@ public class WireTapMDCTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // custom is propagated as its pattern matches
             assertEquals(expected2, MDC.get("custom.hello"));
             assertEquals(expected3, MDC.get("myKey"));

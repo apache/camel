@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PropertyBindingSupportRootArrayTest {
 
     @Test
-    public void testRootArray() throws Exception {
+    public void testRootArray() {
         CamelContext context = new DefaultCamelContext();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);

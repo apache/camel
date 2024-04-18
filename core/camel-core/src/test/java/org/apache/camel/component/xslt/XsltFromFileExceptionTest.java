@@ -58,10 +58,10 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?moveFailed=error&move=ok&initialDelay=0&delay=10")).onException(Exception.class)
                         .to("mock:error").end()
                         .to("xslt:org/apache/camel/component/xslt/example.xsl").to("mock:result");

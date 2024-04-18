@@ -62,11 +62,11 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // switch on DTD Access
                 if (accessExternalDTD) {
                     getContext().getGlobalOptions().put(SchemaReader.ACCESS_EXTERNAL_DTD, "true");

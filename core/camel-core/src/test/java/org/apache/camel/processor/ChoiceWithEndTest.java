@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ChoiceWithEndTest extends ContextTestSupport {
 
     @Test
-    public void testRouteIsCorrectAtRuntime() throws Exception {
+    public void testRouteIsCorrectAtRuntime() {
         // use navigate to find that the end works as expected
         Navigate<Processor> nav = getRoute("direct://start").navigate();
         List<Processor> node = nav.next();
@@ -92,10 +92,10 @@ public class ChoiceWithEndTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 MyChoiceBean bean = new MyChoiceBean();
 
                 from("direct:start").to("mock:start").choice().when(body().contains("Hello")).bean(bean, "echo").to("mock:echo")
@@ -117,7 +117,7 @@ public class ChoiceWithEndTest extends ContextTestSupport {
             return "echo " + s;
         }
 
-        public String bye(String s) throws Exception {
+        public String bye(String s) {
             throw new IllegalArgumentException("Damn does not work");
         }
 

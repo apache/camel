@@ -56,10 +56,10 @@ public class FileAsyncStressManualTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // leverage the fact that we can limit to max 50 files per poll
                 // this will result in polling again and potentially picking up
                 // files

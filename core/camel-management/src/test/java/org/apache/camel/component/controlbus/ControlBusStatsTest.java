@@ -87,10 +87,10 @@ public class ControlBusStatsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo")
                         .to("mock:foo");
                 from("direct:bar").routeId("bar")

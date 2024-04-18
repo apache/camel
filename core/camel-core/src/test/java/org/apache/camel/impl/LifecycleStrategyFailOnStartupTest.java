@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
-import org.apache.camel.VetoCamelContextStartException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +27,7 @@ public class LifecycleStrategyFailOnStartupTest extends TestSupport {
 
     private final MyLifecycleStrategy dummy1 = new MyLifecycleStrategy();
 
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext();
         context.addLifecycleStrategy(dummy1);
         return context;
@@ -44,7 +43,7 @@ public class LifecycleStrategyFailOnStartupTest extends TestSupport {
     private static class MyLifecycleStrategy extends DummyLifecycleStrategy {
 
         @Override
-        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
+        public void onContextStarting(CamelContext context) {
             throw new IllegalArgumentException("Forced");
         }
     }

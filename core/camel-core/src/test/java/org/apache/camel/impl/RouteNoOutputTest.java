@@ -29,7 +29,7 @@ public class RouteNoOutputTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
 
         Exception e = assertThrows(Exception.class, super::setUp,
                 "Should have thrown exception");
@@ -47,10 +47,10 @@ public class RouteNoOutputTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start");
             }
         };

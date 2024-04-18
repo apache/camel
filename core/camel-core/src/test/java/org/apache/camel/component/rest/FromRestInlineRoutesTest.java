@@ -37,7 +37,7 @@ public class FromRestInlineRoutesTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInlined() throws Exception {
+    public void testInlined() {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 
         assertEquals(2, context.getRestDefinitions().size());
@@ -52,10 +52,10 @@ public class FromRestInlineRoutesTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost").inlineRoutes(true);
 
                 rest("/say/hello").get().to("direct:hello");

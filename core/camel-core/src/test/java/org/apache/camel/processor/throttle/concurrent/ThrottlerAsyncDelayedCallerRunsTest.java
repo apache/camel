@@ -41,10 +41,10 @@ public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // create a profile for the throttler
                 ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder("myThrottler");
                 builder.maxQueueSize(2);

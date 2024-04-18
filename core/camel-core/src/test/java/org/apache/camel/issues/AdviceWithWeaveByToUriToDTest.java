@@ -30,7 +30,7 @@ public class AdviceWithWeaveByToUriToDTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveByToUri("rest:get:foo/bar*").replace().to("mock:foo");
             }
         });
@@ -47,7 +47,7 @@ public class AdviceWithWeaveByToUriToDTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveByToString(".*rest:get:foo/bar/.*").replace().to("mock:foo");
             }
         });
@@ -60,10 +60,10 @@ public class AdviceWithWeaveByToUriToDTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toD("rest:get:foo/bar/{customerId}");
             }

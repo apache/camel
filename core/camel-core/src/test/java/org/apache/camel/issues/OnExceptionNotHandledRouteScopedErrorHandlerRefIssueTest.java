@@ -56,10 +56,10 @@ public class OnExceptionNotHandledRouteScopedErrorHandlerRefIssueTest extends Co
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").errorHandler("myDLC")
                         .onException(IllegalArgumentException.class).handled(false).to("mock:handled").end()
                         .to("mock:a").throwException(new IllegalArgumentException("Damn"));

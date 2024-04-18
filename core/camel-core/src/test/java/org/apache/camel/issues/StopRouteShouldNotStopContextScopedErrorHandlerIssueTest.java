@@ -39,10 +39,10 @@ public class StopRouteShouldNotStopContextScopedErrorHandlerIssueTest extends Co
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use context scoped
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
 

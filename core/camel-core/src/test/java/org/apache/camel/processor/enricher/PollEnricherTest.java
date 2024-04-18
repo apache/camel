@@ -103,7 +103,7 @@ public class PollEnricherTest extends ContextTestSupport {
     // -------------------------------------------------------------
 
     @Test
-    public void testPollEnrichInOut() throws InterruptedException {
+    public void testPollEnrichInOut() {
         template.sendBody("seda:foo4", "blah");
 
         String result = (String) template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
@@ -111,7 +111,7 @@ public class PollEnricherTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPollEnrichInOutPlusHeader() throws InterruptedException {
+    public void testPollEnrichInOutPlusHeader() {
         template.sendBody("seda:foo4", "blah");
 
         Exchange exchange = template.request("direct:enricher-test-4", new Processor() {

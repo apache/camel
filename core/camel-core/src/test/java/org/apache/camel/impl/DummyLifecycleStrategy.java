@@ -26,7 +26,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.support.LifecycleStrategySupport;
 
 public class DummyLifecycleStrategy extends LifecycleStrategySupport {
@@ -34,7 +33,7 @@ public class DummyLifecycleStrategy extends LifecycleStrategySupport {
     private final List<String> events = new ArrayList<>();
 
     @Override
-    public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
+    public void onContextStarting(CamelContext context) {
         events.add("onContextStarting");
     }
 

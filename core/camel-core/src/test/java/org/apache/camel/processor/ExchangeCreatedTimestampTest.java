@@ -39,10 +39,10 @@ public class ExchangeCreatedTimestampTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").delay(500).to("direct:foo");
 
                 from("direct:foo").to("log:foo").to("mock:result");

@@ -61,10 +61,10 @@ public class RoutePerformanceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Map<String, Object> headers = new HashMap<>();
                 headers.put("foo", 123);
                 dataSet.setDefaultHeaders(headers);

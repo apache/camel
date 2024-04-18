@@ -71,10 +71,10 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy())
                         .aggregationRepository(sharedAggregationRepository).optimisticLocking()
@@ -86,10 +86,10 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder2() throws Exception {
+    protected RouteBuilder createRouteBuilder2() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy())
                         .aggregationRepository(sharedAggregationRepository).optimisticLocking()

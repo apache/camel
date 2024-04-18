@@ -69,10 +69,10 @@ public class ManagedRoundRobinLoadBalancerTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .loadBalance().roundRobin().id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");

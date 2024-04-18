@@ -58,10 +58,10 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&moveFailed=error&move=ok")).onException(Exception.class)
                         .to("mock:error").end().choice().when().xpath("/hello")
                         .to("mock:result").end();

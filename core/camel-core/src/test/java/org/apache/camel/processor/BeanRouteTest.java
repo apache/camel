@@ -36,7 +36,7 @@ public class BeanRouteTest extends ContextTestSupport {
     protected final MyBean myBean = new MyBean();
 
     @Test
-    public void testSendingMessageWithMethodNameHeader() throws Exception {
+    public void testSendingMessageWithMethodNameHeader() {
         String expectedBody = "Wobble";
 
         template.sendBodyAndHeader("direct:in", expectedBody, Exchange.BEAN_METHOD_NAME, "read");
@@ -45,7 +45,7 @@ public class BeanRouteTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessageWithMethodNameHeaderWithMoreVerboseCoe() throws Exception {
+    public void testSendingMessageWithMethodNameHeaderWithMoreVerboseCoe() {
         final String expectedBody = "Wibble";
 
         template.send("direct:in", new Processor() {

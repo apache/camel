@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainSedaWildcardTest {
 
     @Test
-    public void testSedaWildcardMain() throws Exception {
+    public void testSedaWildcardMain() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.component.seda*.defaultQueueFactory",
@@ -58,7 +58,7 @@ public class MainSedaWildcardTest {
 
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").to("seda:foo");
 
             from("direct:hello").to("seda2:bar");

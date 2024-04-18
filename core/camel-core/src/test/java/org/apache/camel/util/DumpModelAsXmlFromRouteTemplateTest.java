@@ -128,10 +128,10 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("bar").templateParameter("greeting").templateParameter("whereto")
                         .from("direct:{{bar}}").transform(simple("{{greeting}}")).to("mock:{{whereto}}");
             }

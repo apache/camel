@@ -49,10 +49,10 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&delete=true&sortBy=file:name")).routeId("start")
                         .autoStartup(false)
                         .log("Start of file ${file:name}")

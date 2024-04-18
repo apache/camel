@@ -36,7 +36,7 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
     public void testContextScopedOnExceptionLogRouteBarFail() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).log("Error due ${exception.message}");
 
                 from("direct:start").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
@@ -65,7 +65,7 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
     public void testContextScopedOnExceptionLogRouteFooFail() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).log("Error due ${exception.message}");
 
                 from("direct:start").routeId("foo").to("mock:foo")

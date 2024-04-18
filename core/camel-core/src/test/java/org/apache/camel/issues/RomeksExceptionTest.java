@@ -67,9 +67,9 @@ public class RomeksExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final Processor exceptionThrower = new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 LOG.debug("About to throw exception on {}", exchange);
 
                 exchange.getIn().setBody("<exception/>");

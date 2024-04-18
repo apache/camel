@@ -70,10 +70,10 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getCamelContextExtension().addInterceptStrategy(strategy);
 
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
@@ -92,8 +92,7 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                CamelContext context, NamedNode definition, Processor target, Processor nextTarget)
-                throws Exception {
+                CamelContext context, NamedNode definition, Processor target, Processor nextTarget) {
             return new DelegateAsyncProcessor(target) {
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     invoked = true;

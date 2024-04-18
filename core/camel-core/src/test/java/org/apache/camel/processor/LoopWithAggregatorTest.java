@@ -37,10 +37,10 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         // instruct loop to use copy mode, which mean it will use a
@@ -54,7 +54,7 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
                 from("direct:getTimeStamp").process(new Processor() {
 
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // set the response directly
                         exchange.getIn().setBody("B");
 

@@ -95,7 +95,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         assertFiles("madrid.txt", true);
     }
 
-    private void assertFiles(String filename, boolean deleted) throws InterruptedException {
+    private void assertFiles(String filename, boolean deleted) {
         // file should be deleted as delete=true in parameter in the route below
         Path file = testFile(filename);
         assertEquals(deleted, !Files.exists(file), "File " + filename + " should be deleted: " + deleted);
@@ -107,9 +107,9 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // make sure mock:error is the dead letter channel
                 // use no delay for fast unit testing
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));

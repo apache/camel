@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PropertyBindingSupportClassFactoryMethodTest {
 
     @Test
-    public void testFactory() throws Exception {
+    public void testFactory() {
         CamelContext context = new DefaultCamelContext();
 
         context.start();
@@ -55,7 +55,7 @@ public class PropertyBindingSupportClassFactoryMethodTest {
     }
 
     @Test
-    public void testFactoryPropertyPlaceholder() throws Exception {
+    public void testFactoryPropertyPlaceholder() {
         CamelContext context = new DefaultCamelContext();
 
         Properties prop = new Properties();

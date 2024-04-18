@@ -109,7 +109,7 @@ public class CamelContextHelperTest extends ContextTestSupport {
     public void testRouteStartupOrder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").startupOrder(222).to("mock:foo");
                 from("direct:bar").routeId("bar").startupOrder(111).to("mock:bar");
             }

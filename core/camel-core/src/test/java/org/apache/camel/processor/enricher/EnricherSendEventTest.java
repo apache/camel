@@ -38,7 +38,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
     private final MyEventNotifier en = new MyEventNotifier();
 
     @Test
-    public void testAsyncEnricher() throws Exception {
+    public void testAsyncEnricher() {
 
         template.sendBody("direct:start1", "test");
         assertEquals(3, en.exchangeSendingEvent.get(), "Get a wrong sending event number");
@@ -46,7 +46,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSyncEnricher() throws Exception {
+    public void testSyncEnricher() {
         template.sendBody("direct:start2", "test");
         assertEquals(3, en.exchangeSendingEvent.get(), "Get a wrong sending event number");
         assertEquals(3, en.exchangeSentEvent.get(), "Get a wrong sent event number");
@@ -70,9 +70,9 @@ public class EnricherSendEventTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start1")
                         // using the async utility component to ensure that the
                         // async routing engine kicks in
@@ -91,7 +91,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
         final AtomicInteger exchangeSentEvent = new AtomicInteger();
 
         @Override
-        public void notify(CamelEvent event) throws Exception {
+        public void notify(CamelEvent event) {
 
             if (event instanceof ExchangeSendingEvent) {
                 exchangeSendingEvent.incrementAndGet();

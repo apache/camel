@@ -85,10 +85,10 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost");
                 rest("/say/hello/{name}")
                         .get().to("direct:hello").description("Calling direct route");

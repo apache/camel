@@ -56,10 +56,10 @@ public class DumpModelAsYamlUriAsParametersTest extends DumpModelAsYamlTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?size=1234&multipleConsumers=true").routeId("myRoute")
                         .transform().simple("Hello ${body}")
                         .to("mock:result?retainFirst=5&failFast=true").id("myMock");

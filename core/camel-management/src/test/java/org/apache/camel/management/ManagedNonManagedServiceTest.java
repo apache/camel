@@ -73,10 +73,10 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result");
             }
@@ -86,12 +86,12 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
     private static final class MyService extends ServiceSupport {
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             // noop
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             // noop
         }
     }
@@ -99,12 +99,12 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
     private static final class MyNonService extends ServiceSupport implements NonManagedService {
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             // noop
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             // noop
         }
     }

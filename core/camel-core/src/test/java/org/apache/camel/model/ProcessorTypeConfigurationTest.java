@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ProcessorTypeConfigurationTest extends ContextTestSupport {
 
     @Test
-    public void testProcessorRefMissConfigured() throws Exception {
+    public void testProcessorRefMissConfigured() {
         try {
             context.addRoutes(new RouteBuilder() {
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:in").process("hello");
                 }
             });

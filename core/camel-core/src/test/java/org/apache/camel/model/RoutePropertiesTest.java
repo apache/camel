@@ -37,7 +37,7 @@ public class RoutePropertiesTest extends ContextTestSupport {
     public void testRouteProperties() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("route-id").routeProperty("key1", "val1").routeProperty("key2", "val2")
                         .to("mock:output");
             }

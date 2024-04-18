@@ -78,7 +78,7 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     @Test
     public void testUseMap() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startMap").setHeaders(headerMap).to("mock:result");
             }
         });
@@ -91,7 +91,7 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     @Test
     public void testUseMapOf() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startMap").setHeaders(Map.of("foo", "ABC", "bar", "XYZ")).to("mock:result");
             }
         });
@@ -119,7 +119,7 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeaders("foo", simple("${body}"),

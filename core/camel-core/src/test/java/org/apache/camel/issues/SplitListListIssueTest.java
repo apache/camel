@@ -75,10 +75,10 @@ public class SplitListListIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body()).to("direct:foo").end();
 
                 from("direct:foo").to("mock:a").to("mock:b").to("mock:c").to("mock:d").to("mock:e");

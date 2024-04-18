@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanImplicitMethodTest extends ContextTestSupport {
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
 
         String stringBody = "stringBody";
         String stringResponse = (String) template.requestBody("direct:in", stringBody);

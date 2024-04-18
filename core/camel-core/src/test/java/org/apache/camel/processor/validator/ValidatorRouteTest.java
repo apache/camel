@@ -27,7 +27,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
@@ -85,10 +84,10 @@ public class ValidatorRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 validator().type("json").withExpression(bodyAs(String.class).contains("{name:XOrder}"));
                 from("direct:predicate").inputTypeWithValidate("json:JsonXOrder").outputType("json:JsonXOrderResponse")
@@ -112,7 +111,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
 
     public static class MyXmlComponent extends DefaultComponent {
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyXmlEndpoint();
         }
 
@@ -120,7 +119,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
 
     public static class MyXmlEndpoint extends DefaultEndpoint {
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return new DefaultAsyncProducer(this) {
                 @Override
                 public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -133,7 +132,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return null;
         }
 
@@ -150,7 +149,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
 
     public static class OtherXOrderValidator extends Validator {
         @Override
-        public void validate(Message message, DataType type) throws ValidationException {
+        public void validate(Message message, DataType type) {
             message.getExchange().setProperty(VALIDATOR_INVOKED, OtherXOrderValidator.class);
             assertEquals("name=XOrder", message.getBody());
             LOG.info("Java validation: other XOrder");
@@ -159,7 +158,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
 
     public static class OtherXOrderResponseValidator extends Validator {
         @Override
-        public void validate(Message message, DataType type) throws ValidationException {
+        public void validate(Message message, DataType type) {
             message.getExchange().setProperty(VALIDATOR_INVOKED, OtherXOrderResponseValidator.class);
             assertEquals("name=XOrderResponse", message.getBody());
             LOG.info("Java validation: other XOrderResponse");

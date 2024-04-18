@@ -30,7 +30,7 @@ public class BeanInvokeStaticTest extends ContextTestSupport {
     public void testA() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").bean(MyStaticClass.class, "changeSomething").to("mock:a");
             }
         });
@@ -48,7 +48,7 @@ public class BeanInvokeStaticTest extends ContextTestSupport {
     public void testB() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").bean(MyStaticClass.class, "doSomething").to("mock:a");
             }
         });

@@ -85,10 +85,10 @@ public class XsltDTDTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start1").to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl").to("mock:result");
 

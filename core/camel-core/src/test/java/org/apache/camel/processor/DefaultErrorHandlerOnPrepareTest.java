@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
 
     @Test
-    public void testDefaultErrorHandlerOnPrepare() throws Exception {
+    public void testDefaultErrorHandlerOnPrepare() {
         Exchange out = template.request("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }
         });
@@ -42,10 +42,10 @@ public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().onPrepareFailure(new MyPrepareProcessor()));
 
                 from("direct:start")
@@ -58,7 +58,7 @@ public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
     public static class MyPrepareProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             exchange.getIn().setHeader("FailedBecause", cause.getMessage());
             exchange.getIn().setHeader("FailedAtRoute", exchange.getProperty(Exchange.FAILURE_ROUTE_ID, String.class));

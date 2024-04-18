@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class MockitoMockForInterfaceTest extends ContextTestSupport {
 
     @Test
-    public void testCallingMock() throws Exception {
+    public void testCallingMock() {
         Object response = template.requestBody("direct:start", "anything");
         assertEquals("mocked answer", response);
     }
@@ -45,9 +45,9 @@ public class MockitoMockForInterfaceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean("bean:myService");
             }
         };

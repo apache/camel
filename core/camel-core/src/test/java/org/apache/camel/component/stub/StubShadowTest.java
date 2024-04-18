@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 public class StubShadowTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 StubComponent stub = context.getComponent("stub", StubComponent.class);
                 stub.setShadow(true);
 

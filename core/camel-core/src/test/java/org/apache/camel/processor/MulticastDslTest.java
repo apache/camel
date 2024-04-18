@@ -35,10 +35,10 @@ public class MulticastDslTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").multicast().onPrepare().message(m -> m.setHeader("onPrepare", true)).aggregationStrategy()
                         .body(Integer.class, (o, n) -> o != null ? o + n : n)
                         .to("direct:increase-by-1").to("direct:increase-by-2").end().to("mock:result");

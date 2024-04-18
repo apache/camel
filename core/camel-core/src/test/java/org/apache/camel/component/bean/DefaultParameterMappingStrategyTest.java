@@ -56,7 +56,7 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
     public void testException() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Exception");
         template.send("direct:c", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello");
                 exchange.setException(new IllegalArgumentException("Forced by unit test"));
             }
@@ -86,10 +86,10 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").logStackTrace(false).disableRedelivery());
 
                 onException(Exception.class).handled(true).bean("foo", "withException").to("mock:result");

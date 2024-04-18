@@ -34,7 +34,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionExactType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
                         .throwException(new IllegalArgumentException("Damn"));
 
@@ -56,7 +56,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionDifferentType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
                         .throwException(new IllegalArgumentException("Damn"));
 
@@ -78,7 +78,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionSameTypeRouteLast() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").onException(IllegalArgumentException.class).handled(true).to("mock:foo").end()
                         .throwException(new IllegalArgumentException("Damn"));
 
@@ -101,7 +101,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionDifferentTypeRouteLast() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").onException(IOException.class).handled(true).to("mock:foo").end()
                         .throwException(new IllegalArgumentException("Damn"));
 
@@ -123,7 +123,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionExactTypeDLC() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
@@ -148,7 +148,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testTwoOnExceptionExactType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(IOException.class).handled(true).to("mock:io").end()
                         .onException(IllegalArgumentException.class).handled(true).to("mock:damn")
                         .end().throwException(new IllegalArgumentException("Damn"));
@@ -173,7 +173,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionRouteAndGlobalExactType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:foo");
 
                 from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
@@ -194,7 +194,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionRouteAndGlobalDifferentType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IOException.class).handled(true).to("mock:foo");
 
                 from("direct:start").onException(IllegalArgumentException.class).handled(true).to("mock:damn").end()
@@ -215,7 +215,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionRouteAndOnlyGlobalExactType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:foo");
 
                 from("direct:start").onException(IOException.class).handled(true).to("mock:damn").end()
@@ -238,7 +238,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionRouteAndOnlyGlobalBestMatchType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IOException.class).handled(true).to("mock:foo");
 
                 from("direct:start").onException(Exception.class).handled(true).to("mock:damn").end()
@@ -261,7 +261,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
     public void testOnExceptionRouteBestMatchAndGlobalSameType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IOException.class).handled(true).to("mock:foo");
 
                 from("direct:start").onException(IOException.class).handled(true).to("mock:damn").end()

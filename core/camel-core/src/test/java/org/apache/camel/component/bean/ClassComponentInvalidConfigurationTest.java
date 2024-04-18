@@ -36,7 +36,7 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
     public void testClassNotFound() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("class:org.apache.camel.component.bean.XXX").to("mock:result");
             }
         });
@@ -54,7 +54,7 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
     public void testPropertyNotFoundOnClass() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("class:org.apache.camel.component.bean.MyPrefixBean?bean.foo=bar").to("mock:result");
             }
         });

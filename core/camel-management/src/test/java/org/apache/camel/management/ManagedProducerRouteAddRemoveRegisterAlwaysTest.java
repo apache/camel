@@ -69,7 +69,7 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
         // add a 2nd route
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:bar").routeId("bar").recipientList(header("bar"));
             }
         });
@@ -107,10 +107,10 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").to("log:foo").to("mock:result");
             }
         };

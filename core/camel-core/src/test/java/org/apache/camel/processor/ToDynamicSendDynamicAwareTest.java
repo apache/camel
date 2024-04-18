@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -57,10 +56,10 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("bar", new BarComponent());
 
                 from("direct:start").toD("bar:order?drink=${header.drink}").to("mock:bar");
@@ -76,7 +75,7 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) {
             // not in use for this test
             return null;
         }

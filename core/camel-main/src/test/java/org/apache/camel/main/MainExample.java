@@ -50,10 +50,10 @@ public class MainExample {
 
     private static class MyRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("timer:foo?delay={{millisecs}}")
                     .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                        public void process(Exchange exchange) {
                             System.out.println("Invoked timer at " + new Date());
                         }
                     })

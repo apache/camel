@@ -26,7 +26,7 @@ public class CamelContextDeadlockTest {
 
     @Timeout(5)
     @Test
-    public void testComponentDeadlock() throws Exception {
+    public void testComponentDeadlock() {
         CamelContext context = new DefaultCamelContext();
         context.getRegistry().bind("sql-connector", new DirectComponent() {
             @Override

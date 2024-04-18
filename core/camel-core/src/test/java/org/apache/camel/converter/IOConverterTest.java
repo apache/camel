@@ -268,7 +268,7 @@ public class IOConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToPathFromFile() throws Exception {
+    public void testToPathFromFile() {
         File file = new File("src/test/resources/log4j2.properties");
         Path p = IOConverter.toPath(file);
         assertNotNull(p);

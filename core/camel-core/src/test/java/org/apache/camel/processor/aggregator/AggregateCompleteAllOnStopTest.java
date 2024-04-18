@@ -47,10 +47,10 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").routeId("foo")
                         .to("mock:input")
                         .aggregate(header("id"), new BodyInAggregatingStrategy())

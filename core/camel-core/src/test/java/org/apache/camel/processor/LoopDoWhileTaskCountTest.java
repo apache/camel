@@ -34,10 +34,10 @@ public class LoopDoWhileTaskCountTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:simple").loopDoWhile(simple("${body.length} <= 5")).id("myLoop")
                         .process(exchange -> {
                             LoopProcessor lp = exchange.getContext().getProcessor("myLoop", LoopProcessor.class);

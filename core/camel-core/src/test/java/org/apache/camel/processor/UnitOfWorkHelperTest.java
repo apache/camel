@@ -40,7 +40,7 @@ public class UnitOfWorkHelperTest extends ContextTestSupport {
     private int numberOfExchangeCreatedEvents;
 
     @Test
-    void testUoWShouldBeClearedOnJobDone() throws Exception {
+    void testUoWShouldBeClearedOnJobDone() {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         fromEndpoint = context.getEndpoint("seda:from", SedaEndpoint.class);
 

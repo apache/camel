@@ -24,17 +24,17 @@ import org.junit.jupiter.api.Test;
 public class XPathIntegerResultTest extends ContextTestSupport {
 
     @Test
-    public void testXPathInteger() throws Exception {
+    public void testXPathInteger() {
         Object out = template.requestBody("direct:start", "<hello><id>123</id></hello>");
         assertIsInstanceOf(Integer.class, out);
         Assertions.assertEquals(123, (Integer) out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody(xpath("//hello/id", Integer.class));
             }

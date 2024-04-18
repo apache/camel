@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DefaultInflightRepositoryTest extends ContextTestSupport {
 
     @Test
-    public void testDefaultInflightRepository() throws Exception {
+    public void testDefaultInflightRepository() {
         InflightRepository repo = new DefaultInflightRepository();
 
         assertEquals(0, repo.size());

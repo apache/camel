@@ -38,7 +38,7 @@ public class RefInvalidTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInvalid() throws Exception {
+    public void testInvalid() {
         Exception ex = assertThrows(ResolveEndpointFailedException.class, () -> template.sendBody("ref:xxx", "Hello World"),
                 "Should have thrown an exception");
 
@@ -50,17 +50,17 @@ public class RefInvalidTest extends ContextTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext();
         context.getRegistry().bind("foo", context.getEndpoint("seda:foo"));
         return context;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ref:foo").routeId("foo").to("mock:result");
             }
         };

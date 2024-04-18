@@ -41,10 +41,10 @@ public class TokenPairPredicateTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&move=ok")).choice()
                         // does not make so much sense to use a tokenPair in a
                         // predicate but you can do it nevertheless

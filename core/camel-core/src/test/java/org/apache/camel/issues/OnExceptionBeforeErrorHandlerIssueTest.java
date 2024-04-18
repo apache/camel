@@ -64,10 +64,10 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).handled(true).setBody().constant("Handled").to("mock:error").end();
 
                 // usually error handler should be defined first (before
@@ -76,7 +76,7 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage());
 
                 from("direct:start").routeId("foo").noAutoStartup().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         if ("illegal".equals(body)) {
                             throw new IllegalArgumentException("I cannot do this");

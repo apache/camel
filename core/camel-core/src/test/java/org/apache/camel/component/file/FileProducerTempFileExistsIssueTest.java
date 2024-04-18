@@ -28,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
 
     @Test
-    public void testIllegalConfigurationPrefix() throws Exception {
+    public void testIllegalConfigurationPrefix() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> context.getEndpoint(fileUri("?fileExist=Append&tempPrefix=foo")).createProducer());
         assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options", e.getMessage());
     }
 
     @Test
-    public void testIllegalConfigurationFileName() throws Exception {
+    public void testIllegalConfigurationFileName() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> context.getEndpoint(fileUri("?fileExist=Append&tempFileName=foo")).createProducer());
         assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options", e.getMessage());

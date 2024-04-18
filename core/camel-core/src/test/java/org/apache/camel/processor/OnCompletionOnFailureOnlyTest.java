@@ -37,10 +37,10 @@ public class OnCompletionOnFailureOnlyTest extends OnCompletionTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         // here we qualify onCompletion to only invoke when the

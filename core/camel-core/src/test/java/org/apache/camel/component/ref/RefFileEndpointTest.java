@@ -42,17 +42,17 @@ public class RefFileEndpointTest extends ContextTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext();
         context.getRegistry().bind("foo", context.getEndpoint(fileUri("?initialDelay=250&delay=3000&delete=true")));
         return context;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ref:foo").routeId("foo").to("mock:result");
             }
         };

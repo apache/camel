@@ -38,7 +38,7 @@ public class TransformerBuilderTest extends TestSupport {
         CamelContext ctx = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 transformer().fromType("json:foo").toType("xml:bar").withUri("direct:transformer");
                 from("direct:transformer").log("test");
             }
@@ -62,7 +62,7 @@ public class TransformerBuilderTest extends TestSupport {
         CamelContext ctx = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 transformer().name("other").withJava(MyTransformer.class);
                 from("direct:input").log("test");
             }
@@ -76,7 +76,7 @@ public class TransformerBuilderTest extends TestSupport {
 
     public static class MyTransformer extends Transformer {
         @Override
-        public void transform(Message message, DataType from, DataType to) throws Exception {
+        public void transform(Message message, DataType from, DataType to) {
             message.getBody();
         }
     }

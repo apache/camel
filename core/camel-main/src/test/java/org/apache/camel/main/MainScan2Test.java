@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainScan2Test {
 
     @Test
-    public void testScan2() throws Exception {
+    public void testScan2() {
         Main main = new Main();
         main.configure().withBasePackageScan("org.apache.camel.main.scan2");
         main.start();

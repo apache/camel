@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DurationConverterTest extends ContextTestSupport {
 
     @Test
-    public void testToMillis() throws Exception {
+    public void testToMillis() {
         Duration duration = Duration.parse("PT2H6M20.31S");
 
         Long millis = context.getTypeConverter().convertTo(long.class, duration);
@@ -50,7 +50,7 @@ public class DurationConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFromString() throws Exception {
+    public void testFromString() {
         String durationAsString = "PT2H6M20.31S";
 
         Duration duration = context.getTypeConverter().convertTo(Duration.class, durationAsString);
@@ -59,7 +59,7 @@ public class DurationConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         Duration duration = Duration.parse("PT2H6M20.31S");
 
         String durationAsString = context.getTypeConverter().convertTo(String.class, duration);

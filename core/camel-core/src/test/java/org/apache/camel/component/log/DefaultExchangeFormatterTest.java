@@ -17,7 +17,6 @@
 package org.apache.camel.component.log;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 import org.apache.camel.ContextTestSupport;
@@ -203,7 +202,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         }
 
         @Override
-        public String get() throws InterruptedException, ExecutionException {
+        public String get() {
             return "foo";
         }
 

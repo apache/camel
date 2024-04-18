@@ -26,21 +26,21 @@ public class DeadLetterChannelNewExceptionTest extends ContextTestSupport {
 
     public static class BadErrorHandler {
         @Handler
-        public void onException(Exchange exchange, Exception exception) throws Exception {
+        public void onException(Exchange exchange, Exception exception) {
             throw new RuntimeException("error in errorhandler");
         }
     }
 
     @Test
-    public void testDeadLetterChannelNewException() throws Exception {
+    public void testDeadLetterChannelNewException() {
         template.sendBody("direct:start", "Hello World");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName()));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));

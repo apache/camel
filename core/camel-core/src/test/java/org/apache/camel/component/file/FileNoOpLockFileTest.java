@@ -77,9 +77,9 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // for locks
                 from(fileUri("locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile"))
                         .process(new MyNoopProcessor()).to("mock:report");
@@ -93,7 +93,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
 
     private class MyNoopProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             boolean locked = "Hello Locked".equals(body);
             checkLockFile(locked);

@@ -54,7 +54,7 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
     }
 
     @Test
-    public void testMustTrimValues() throws Exception {
+    public void testMustTrimValues() {
         assertEquals("Leading space", context.resolvePropertyPlaceholders("{{cool.leading}}"));
         assertEquals("Trailing space", context.resolvePropertyPlaceholders("{{cool.trailing}}"));
         assertEquals("Both leading and trailing space", context.resolvePropertyPlaceholders("{{cool.both}}"));

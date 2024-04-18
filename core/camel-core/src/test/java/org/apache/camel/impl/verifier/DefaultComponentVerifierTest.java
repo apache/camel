@@ -52,7 +52,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
     // *************************************
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("timerName", "dummy");
         parameters.put("period", "1s");
@@ -62,7 +62,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
     }
 
     @Test
-    public void testParametersWithMissingMandatoryOptions() throws Exception {
+    public void testParametersWithMissingMandatoryOptions() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("period", "1s");
 
@@ -75,7 +75,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
     }
 
     @Test
-    public void testParametersWithWrongOptions() throws Exception {
+    public void testParametersWithWrongOptions() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("timerName", "dummy");
         parameters.put("period", "1s");

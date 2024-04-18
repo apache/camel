@@ -37,7 +37,7 @@ public class EventHelperTest {
 
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("route-1").to("mock:end");
             }
 
@@ -67,7 +67,7 @@ public class EventHelperTest {
 
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("route-1").to("mock:end");
             }
 
@@ -97,7 +97,7 @@ public class EventHelperTest {
 
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("route-1").to("mock:end");
             }
 
@@ -125,7 +125,7 @@ public class EventHelperTest {
         final AtomicInteger camelContextStoppingEvent = new AtomicInteger();
 
         @Override
-        public void notify(CamelEvent event) throws Exception {
+        public void notify(CamelEvent event) {
             if (event.getType() == Type.RouteStarted) {
                 routeStartedEvent.incrementAndGet();
             } else if (event.getType() == Type.RouteStopped) {
@@ -141,11 +141,11 @@ public class EventHelperTest {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
         }
     }
 }

@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSupport {
 
     @Test
-    public void testFail() throws Exception {
+    public void testFail() {
         // noop as its tested that it fails on startup
     }
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         try {
             super.setUp();
             fail("Should have thrown an exception");
@@ -44,10 +44,10 @@ public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:bar").setHeader("Exchange.XXX", constant("bar")).to("mock:bar");
             }
         };

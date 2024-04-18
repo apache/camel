@@ -35,10 +35,10 @@ public class DefaultMethodCalledFromSimpleExpressionTest extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:defaultMethod").setBody(simple("${exchangeProperty.myObject.defaultMethod}")).to("mock:result");
             }
         };

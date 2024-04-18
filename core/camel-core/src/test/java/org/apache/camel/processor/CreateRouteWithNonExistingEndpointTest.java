@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
 
     @Test
-    public void testCreateRouteWithBadEndpoint() throws Exception {
+    public void testCreateRouteWithBadEndpoint() {
     }
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         try {
             super.setUp();
             fail("Should have failed to create this route!");

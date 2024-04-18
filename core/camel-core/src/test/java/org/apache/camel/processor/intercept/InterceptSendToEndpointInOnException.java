@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class InterceptSendToEndpointInOnException extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IOException.class).handled(true).to("mock:io");
 
                 interceptSendToEndpoint("mock:io").skipSendToOriginalEndpoint().to("mock:intercepted");
@@ -63,7 +63,7 @@ public class InterceptSendToEndpointInOnException extends ContextTestSupport {
 
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 throw new IllegalArgumentException("Forced");
             }
         });

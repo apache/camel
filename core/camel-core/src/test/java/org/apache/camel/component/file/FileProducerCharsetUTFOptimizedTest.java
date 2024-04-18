@@ -62,10 +62,10 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("input?initialDelay=0&delay=10&noop=true"))
                         // no charset so its optimized to write directly
                         .to(fileUri("?fileName=output.txt"));

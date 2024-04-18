@@ -46,7 +46,7 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?multipleConsumers=true").id("testRoute").to("mock:c");
 
             }
@@ -78,10 +78,10 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?multipleConsumers=true").to("mock:a");
 
                 from("seda:foo?multipleConsumers=true").to("mock:b");

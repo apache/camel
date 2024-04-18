@@ -66,10 +66,10 @@ public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // use a bean as the dynamic router
                         .dynamicRouter(method(DynamicRouterExchangeHeaders2Test.class, "slip"));

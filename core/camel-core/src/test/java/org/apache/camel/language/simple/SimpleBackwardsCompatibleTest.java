@@ -33,14 +33,14 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testSimpleBody() throws Exception {
+    public void testSimpleBody() {
         assertExpression(exchange, "${body}", "<hello id='m123'>world!</hello>");
 
         assertPredicate("${body}", true);
     }
 
     @Test
-    public void testSimpleHeader() throws Exception {
+    public void testSimpleHeader() {
         exchange.getIn().setHeader("foo", 123);
         assertExpression(exchange, "${header.foo}", 123);
 
@@ -50,7 +50,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testSimpleLogicalAnd() throws Exception {
+    public void testSimpleLogicalAnd() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
@@ -63,7 +63,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testSimpleLogicalOr() throws Exception {
+    public void testSimpleLogicalOr() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);

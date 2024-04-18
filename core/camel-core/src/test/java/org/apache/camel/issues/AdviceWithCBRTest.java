@@ -30,7 +30,7 @@ public class AdviceWithCBRTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveById("foo").after().to("mock:foo2");
                 weaveById("bar").after().to("mock:bar2");
             }
@@ -54,7 +54,7 @@ public class AdviceWithCBRTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveByToString("To[mock:foo]").after().to("mock:foo2");
                 weaveByToString("To[mock:bar]").after().to("mock:bar2");
             }
@@ -74,10 +74,10 @@ public class AdviceWithCBRTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when(header("foo")).to("mock:foo").id("foo").when(header("bar")).to("mock:bar")
                         .id("bar").otherwise().to("mock:baz").id("baz");
             }

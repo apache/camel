@@ -98,12 +98,12 @@ public abstract class ContextTestSupport extends TestSupport
     protected ContextTestSupport contextTestSupportExtension = this;
 
     @Override
-    public void beforeTestExecution(ExtensionContext context) throws Exception {
+    public void beforeTestExecution(ExtensionContext context) {
         watch.restart();
     }
 
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
+    public void afterTestExecution(ExtensionContext context) {
         watch.taken();
     }
 
@@ -112,13 +112,13 @@ public abstract class ContextTestSupport extends TestSupport
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         currentTestName = context.getDisplayName();
         contextStore = context.getStore(ExtensionContext.Namespace.create(getClass(), context));
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) {
         DefaultCamelContext.clearOptions();
     }
 
@@ -325,14 +325,14 @@ public abstract class ContextTestSupport extends TestSupport
     /**
      * Strategy to perform any pre setup, before {@link CamelContext} is created
      */
-    protected void doPreSetup() throws Exception {
+    protected void doPreSetup() {
         // noop
     }
 
     /**
      * Strategy to perform any post setup after {@link CamelContext} is created
      */
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
         // noop
     }
 
@@ -521,20 +521,20 @@ public abstract class ContextTestSupport extends TestSupport
     /**
      * Strategy to perform any post action, after {@link CamelContext} is stopped
      */
-    protected void doPostTearDown() throws Exception {
+    protected void doPostTearDown() {
         // noop
     }
 
     /**
      * Strategy to perform resources setup, before {@link CamelContext} is created
      */
-    protected void setupResources() throws Exception {
+    protected void setupResources() {
     }
 
     /**
      * Strategy to perform resources cleanup, after {@link CamelContext} is stopped
      */
-    protected void cleanupResources() throws Exception {
+    protected void cleanupResources() {
         // noop
     }
 
@@ -631,7 +631,7 @@ public abstract class ContextTestSupport extends TestSupport
         return false;
     }
 
-    protected void stopCamelContext() throws Exception {
+    protected void stopCamelContext() {
         doStopCamelContext(context, camelContextService);
     }
 
@@ -673,7 +673,7 @@ public abstract class ContextTestSupport extends TestSupport
         }
     }
 
-    protected void startCamelContext() throws Exception {
+    protected void startCamelContext() {
         if (camelContextService != null) {
             camelContextService.start();
         } else {
@@ -710,7 +710,7 @@ public abstract class ContextTestSupport extends TestSupport
     /**
      * Allows to bind custom beans to the Camel {@link Registry}.
      */
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // noop
     }
 

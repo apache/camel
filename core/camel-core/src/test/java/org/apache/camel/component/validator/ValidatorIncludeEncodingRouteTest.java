@@ -57,15 +57,15 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().to("validator:org/apache/camel/component/validator/text.xsd").to("mock:valid")
                         .doCatch(NumberFormatException.class)
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 System.err.println("helo " + exchange.getException());
                             }
                         }).to("mock:invalid").doFinally().to("mock:finally").end();

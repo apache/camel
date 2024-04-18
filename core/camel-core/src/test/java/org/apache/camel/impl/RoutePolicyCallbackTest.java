@@ -87,12 +87,12 @@ public class RoutePolicyCallbackTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             doStop = true;
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             doStart = true;
         }
     }
@@ -145,10 +145,10 @@ public class RoutePolicyCallbackTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").routePolicy(policy).to("mock:result");
             }
         };

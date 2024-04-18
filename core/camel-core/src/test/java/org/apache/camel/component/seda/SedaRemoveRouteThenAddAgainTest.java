@@ -51,10 +51,10 @@ public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:in").routeId("sedaToMock").to("mock:out");
             }
         };

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TimeUtilsTest {
 
     @Test
-    public void testPrintDuration() throws Exception {
+    public void testPrintDuration() {
         assertEquals("0s", TimeUtils.printDuration(123));
         assertEquals("123ms", TimeUtils.printDuration(123, true));
         assertEquals("1s", TimeUtils.printDuration(1250));
@@ -50,7 +50,7 @@ public class TimeUtilsTest {
     }
 
     @Test
-    public void testPrintAge() throws Exception {
+    public void testPrintAge() {
         assertEquals("0s", TimeUtils.printAge(123));
         assertEquals("1s", TimeUtils.printAge(1250));
         assertEquals("33s", TimeUtils.printAge(33000));
@@ -66,7 +66,7 @@ public class TimeUtilsTest {
     }
 
     @Test
-    public void testReverse() throws Exception {
+    public void testReverse() {
         long time = 259032000;
         long time2 = TimeUtils.toMilliSeconds(TimeUtils.printDuration(time, true));
         assertEquals(time, time2);

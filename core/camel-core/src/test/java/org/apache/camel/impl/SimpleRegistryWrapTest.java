@@ -40,7 +40,7 @@ public class SimpleRegistryWrapTest {
     };
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         registry.bind("a", "123");
         registry.bind("b", "456");
     }

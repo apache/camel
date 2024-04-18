@@ -55,7 +55,7 @@ public class ClassicUuidGeneratorTest {
     }
 
     @Test
-    public void testSanitizeHostName() throws Exception {
+    public void testSanitizeHostName() {
         assertEquals("somehost.lan", ClassicUuidGenerator.sanitizeHostName("somehost.lan"));
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         assertEquals("otherhost.lan", ClassicUuidGenerator.sanitizeHostName("other\u0E08host.lan"));

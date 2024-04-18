@@ -32,7 +32,7 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
     protected final MyOtherBean myOtherBean = new MyOtherBean(myBean);
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
                               + "<foo>bar</foo></env:Body></env:Envelope>";
 
@@ -44,7 +44,7 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendTwoMessages() throws Exception {
+    public void testSendTwoMessages() {
         // 1st message
         String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
                               + "<foo>bar</foo></env:Body></env:Envelope>";

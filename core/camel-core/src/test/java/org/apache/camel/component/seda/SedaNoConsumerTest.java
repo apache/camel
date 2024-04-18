@@ -39,7 +39,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
     public void testInOnly() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:foo?timeout=1000");
             }
         });
@@ -89,7 +89,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
     public void testFailIfNoConsuemerAndMultipleConsumerSetting() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?failIfNoConsumers=true&multipleConsumers=true").to("mock:foo");
                 from("seda:foo?failIfNoConsumers=true&multipleConsumers=true").to("mock:bar");
             }
@@ -110,7 +110,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
     public void testFailIfNoConsumesrAfterConsumersLeave() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?failIfNoConsumers=true").routeId("stopThisRoute").to("mock:foo");
             }
         });
@@ -135,7 +135,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
     public void testFailIfNoConsumersWithValidConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("seda:foo?failIfNoConsumers=true");
 
                 from("seda:foo").to("mock:foo");

@@ -40,7 +40,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private void sendFiles() throws Exception {
+    private void sendFiles() {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.xml");
         template.sendBodyAndHeader(fileUri(), "", Exchange.FILE_NAME, "empty1.txt");
         template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "secret.txt");
@@ -48,9 +48,9 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().when(simple("${file:length} == 0")).to("mock:skip").stop();
 
                 from(fileUri("?initialDelay=10&delay=10"))

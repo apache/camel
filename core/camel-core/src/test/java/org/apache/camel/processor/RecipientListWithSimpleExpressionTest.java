@@ -36,7 +36,7 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
     public void testRecipientList() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").recipientList(simple("mock:${in.header.queue}"));
             }
         });

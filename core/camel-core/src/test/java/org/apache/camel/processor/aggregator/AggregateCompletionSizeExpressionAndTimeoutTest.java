@@ -35,10 +35,10 @@ public class AggregateCompletionSizeExpressionAndTimeoutTest extends ContextTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body().tokenize(",")).aggregate(constant(true), new BodyInAggregatingStrategy())
                         .completionSize(constant(2)).completionTimeout(1000)
                         .to("log:result", "mock:result");

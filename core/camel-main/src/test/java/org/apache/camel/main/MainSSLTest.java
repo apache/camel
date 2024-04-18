@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainSSLTest {
 
     @Test
-    public void testMainSSLParameters() throws Exception {
+    public void testMainSSLParameters() {
         Main main = new Main();
 
         main.addInitialProperty("camel.ssl.enabled", "true");
@@ -76,7 +76,7 @@ public class MainSSLTest {
     }
 
     @Test
-    public void testMainSSLParametersFluent() throws Exception {
+    public void testMainSSLParametersFluent() {
         Main main = new Main();
 
         main.configure().sslConfig()

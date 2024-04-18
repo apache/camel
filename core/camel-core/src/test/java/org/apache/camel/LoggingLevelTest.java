@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LoggingLevelTest {
 
     @Test
-    public void testLoggingLevelInfo() throws Exception {
+    public void testLoggingLevelInfo() {
         assertTrue(LoggingLevel.INFO.isEnabled(LoggingLevel.ERROR));
         assertTrue(LoggingLevel.INFO.isEnabled(LoggingLevel.WARN));
         assertTrue(LoggingLevel.INFO.isEnabled(LoggingLevel.INFO));
@@ -36,7 +36,7 @@ public class LoggingLevelTest {
     }
 
     @Test
-    public void testLoggingLevelWARN() throws Exception {
+    public void testLoggingLevelWARN() {
         assertTrue(LoggingLevel.WARN.isEnabled(LoggingLevel.ERROR));
         assertTrue(LoggingLevel.WARN.isEnabled(LoggingLevel.WARN));
 

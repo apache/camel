@@ -68,10 +68,10 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=doSomething()").to("mock:result");
 
                 from("direct:other").to("bean:myOtherBean?method=doSomething()").to("mock:result");

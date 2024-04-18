@@ -42,9 +42,9 @@ public class FileExclusiveReadManualTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?readLock=fileLock&initialDelay=0&delay=10"))
                         .to("mock:result");
             }

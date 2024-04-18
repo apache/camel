@@ -38,7 +38,7 @@ public class BeanMapPutTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMapPut() throws Exception {
+    public void testMapPut() {
         assertEquals(0, myMap.size());
 
         template.sendBody("direct:start", "Hello World");
@@ -48,10 +48,10 @@ public class BeanMapPutTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean("myMap", "put('isMaster','true')");
             }
         };

@@ -71,7 +71,7 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNoSkip() throws Exception {
+    public void testNoSkip() {
         String body = "1" + LS + "2" + LS + "3";
 
         template.sendBody("direct:start", body);
@@ -82,7 +82,7 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSkip() throws Exception {
+    public void testSkip() {
         String body = "1" + LS + "2" + LS + "3";
 
         template.sendBody("direct:skip", body);
@@ -93,10 +93,10 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:logger_name?level=INFO&showAll=true&skipBodyLineSeparator=false");
                 from("direct:skip").to("log:logger_name?level=INFO&showAll=true&skipBodyLineSeparator=true");
             }

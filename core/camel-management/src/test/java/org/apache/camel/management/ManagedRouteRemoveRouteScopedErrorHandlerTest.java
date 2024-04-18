@@ -76,10 +76,10 @@ public class ManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagementTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo")
                         // route scoped error handler
                         .errorHandler(deadLetterChannel("mock:dead"))

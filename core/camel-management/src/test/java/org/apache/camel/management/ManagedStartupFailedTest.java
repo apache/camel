@@ -45,7 +45,7 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
     public void testAllGood() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform(body().prepend("Hello "));
             }
         });
@@ -72,7 +72,7 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
     public void testStartupFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("invalid:start");
             }
         });

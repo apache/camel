@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PredicateAssertHelperTest extends ContextTestSupport {
 
     @Test
-    public void testPredicateAssertHelper() throws Exception {
+    public void testPredicateAssertHelper() {
         Exchange exchange = new DefaultExchange(context);
         Predicate notNull = PredicateBuilder.isNotNull(constant("foo"));
 
@@ -39,7 +39,7 @@ public class PredicateAssertHelperTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPredicateAssertHelperFailed() throws Exception {
+    public void testPredicateAssertHelperFailed() {
         Exchange exchange = new DefaultExchange(context);
         Predicate notNull = PredicateBuilder.isNotNull(constant(null));
 

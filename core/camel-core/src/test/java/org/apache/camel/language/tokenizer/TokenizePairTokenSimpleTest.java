@@ -26,7 +26,7 @@ public class TokenizePairTokenSimpleTest extends ContextTestSupport {
     public void testTokenizeConstant() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .split().tokenize("B", 2)
                         .to("mock:line");
@@ -46,7 +46,7 @@ public class TokenizePairTokenSimpleTest extends ContextTestSupport {
     public void testTokenizeSimple() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .split().tokenize("${header.test}", 2)
                         .to("mock:line");

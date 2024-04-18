@@ -62,7 +62,7 @@ public class DomConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDomConverterToInteger() throws Exception {
+    public void testDomConverterToInteger() {
         Document document = context.getTypeConverter().convertTo(Document.class,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>47</hello>");
 
@@ -71,7 +71,7 @@ public class DomConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDomConverterToLong() throws Exception {
+    public void testDomConverterToLong() {
         Document document = context.getTypeConverter().convertTo(Document.class,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>47</hello>");
 

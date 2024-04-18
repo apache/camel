@@ -44,15 +44,15 @@ public class MulticastNoOnPrepareTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").multicast().to("direct:a").to("direct:b");
 
                 from("direct:a").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Animal body = exchange.getIn().getBody(Animal.class);
                         assertEquals(1, body.getId());
                         assertEquals("Tiger", body.getName());
@@ -64,7 +64,7 @@ public class MulticastNoOnPrepareTest extends ContextTestSupport {
 
                 from("direct:b").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Animal body = exchange.getIn().getBody(Animal.class);
                         assertEquals(1, body.getId());
                         assertEquals("Tony the Tiger", body.getName());

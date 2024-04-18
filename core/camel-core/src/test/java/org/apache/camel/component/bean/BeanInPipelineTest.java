@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanInPipelineTest extends ContextTestSupport {
 
     @Test
-    public void testBeanInPipeline() throws Exception {
+    public void testBeanInPipeline() {
         Object response = template.requestBody("direct:start", "Start:");
         assertEquals("Start:onetwothree", response);
     }
@@ -44,9 +44,9 @@ public class BeanInPipelineTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").pipeline("bean:one", "bean:two", "log:x", "log:y", "bean:three");
             }
         };

@@ -32,7 +32,7 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
         CamelContext camelContext = super.createCamelContext();
         camelContext.addRoutes(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration().onCompletion().onCompleteOnly().to("log:ok").to("mock:ok");
                 routeConfiguration().onCompletion().onFailureOnly().to("log:fail").to("mock:fail");
             }
@@ -86,7 +86,7 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

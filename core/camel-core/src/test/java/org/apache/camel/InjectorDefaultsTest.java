@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InjectorDefaultsTest extends ContextTestSupport {
 
     @Test
-    public void testInjectorIsDefaultByDefault() throws Exception {
+    public void testInjectorIsDefaultByDefault() {
         Injector injector = context.getInjector();
         assertIsInstanceOf(DefaultInjector.class, injector);
     }
 
     @Test
-    public void testNewInstance() throws Exception {
+    public void testNewInstance() {
         Injector injector = context.getInjector();
 
         MyFoo foo = injector.newInstance(MyFoo.class);

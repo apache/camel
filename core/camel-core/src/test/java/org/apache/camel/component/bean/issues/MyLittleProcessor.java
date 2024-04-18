@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
 public class MyLittleProcessor implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         String body = exchange.getIn().getBody(String.class);
         exchange.getIn().setBody("Bye " + body);
     }

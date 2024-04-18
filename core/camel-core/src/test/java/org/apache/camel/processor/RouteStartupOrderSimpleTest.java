@@ -48,10 +48,10 @@ public class RouteStartupOrderSimpleTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").startupOrder(2).routeId("b").to("mock:result");
 
                 from("direct:start").startupOrder(1).routeId("a").to("seda:foo");

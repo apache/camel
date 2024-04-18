@@ -34,7 +34,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
     private static String event = "";
 
     @Test
-    public void testExceptionOnPollAndCanStartAgain() throws Exception {
+    public void testExceptionOnPollAndCanStartAgain() {
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
         final Endpoint endpoint = getMockEndpoint("mock:foo");
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
@@ -47,7 +47,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
             public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             }
 
-            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 if (e == expectedException) {
                     rollback = true;
                 }
@@ -76,7 +76,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRetryAtMostThreeTimes() throws Exception {
+    public void testRetryAtMostThreeTimes() {
         final AtomicInteger counter = new AtomicInteger();
         event = "";
 
@@ -93,7 +93,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
                 event += "commit";
             }
 
-            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 event += "rollback";
                 int cnt = counter.incrementAndGet();
                 if (cnt <= 3) {
@@ -116,7 +116,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNoExceptionOnPoll() throws Exception {
+    public void testNoExceptionOnPoll() {
         final Endpoint endpoint = getMockEndpoint("mock:foo");
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, null);
         consumer.start();

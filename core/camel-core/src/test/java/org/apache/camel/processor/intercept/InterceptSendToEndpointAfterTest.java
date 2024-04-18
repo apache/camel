@@ -34,7 +34,7 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
     public void testInterceptEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
 
                 interceptSendToEndpoint("mock:foo").to("mock:detour").transform(constant("Bye World")).afterUri("direct:after");
@@ -62,7 +62,7 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
     public void testInterceptEndpointDirectly() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:start").to("mock:detour").transform(constant("Bye World"));
 
                 from("direct:start").to("mock:foo").to("mock:result");
@@ -83,7 +83,7 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
     public void testInterceptEndpointWithStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:start").to("mock:detour").afterUri("mock:after");
 
                 from("direct:start").to("mock:foo").transform().constant("Bye World");
@@ -104,7 +104,7 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
     public void testInterceptEndpointWhen() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:start").when(simple("${body} contains 'World'")).to("mock:detour")
                         .afterUri("mock:after");
 

@@ -33,7 +33,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         RouteDefinition foo = context.getRouteDefinition("foo");
         AdviceWith.adviceWith(foo, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint()
                         .throwException(new IllegalAccessException("Forced"));
             }
@@ -42,7 +42,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         RouteDefinition error = context.getRouteDefinition("error");
         AdviceWith.adviceWith(error, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("file:*").skipSendToOriginalEndpoint().to("mock:file");
             }
         });
@@ -60,9 +60,9 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("direct:error").maximumRedeliveries(2).redeliveryDelay(0));
 
                 from("direct:error").routeId("error").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("mock:error")

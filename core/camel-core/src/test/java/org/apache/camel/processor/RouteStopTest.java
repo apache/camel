@@ -73,10 +73,10 @@ public class RouteStopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").choice().when(body().contains("Hello")).to("mock:hello").when(body().contains("Bye"))
                         .to("mock:bye").stop().otherwise().to("mock:other").end()

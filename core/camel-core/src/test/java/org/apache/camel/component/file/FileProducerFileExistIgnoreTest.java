@@ -37,10 +37,10 @@ public class FileProducerFileExistIgnoreTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?noop=true&initialDelay=0&delay=10")).convertBodyTo(String.class).to("mock:result");
             }
         };

@@ -45,9 +45,9 @@ public class XsltFileNotFoundTest extends TestSupport {
         assertIsInstanceOf(FileNotFoundException.class, exception.getCause().getCause().getCause().getCause());
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:a").to("xslt:org/apache/camel/component/xslt/notfound.xsl");
             }
         };

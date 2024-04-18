@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class StartupStepLoggingTest extends ContextTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext(false);
         context.getCamelContextExtension().getStartupStepRecorder().setEnabled(true);
         // you can restrict the sub steps to a max depth level
@@ -49,10 +49,10 @@ public class StartupStepLoggingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("log:bar").to("mock:result");
             }
         };

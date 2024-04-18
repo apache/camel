@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public class MainComponentAutowiredFalseTest {
 
     @Test
-    public void testAutowiredFalse() throws Exception {
+    public void testAutowiredFalse() {
         Main main = new Main();
         main.bind("mycomponent-component", new MyComponentConfigurer());
         main.bind("chf", new MyContentHandlerFactory());
@@ -54,7 +54,7 @@ public class MainComponentAutowiredFalseTest {
     }
 
     @Test
-    public void testAutowiredTrue() throws Exception {
+    public void testAutowiredTrue() {
         Main main = new Main();
         main.bind("mycomponent-component", new MyComponentConfigurer());
         main.bind("chf", new MyContentHandlerFactory());
@@ -86,7 +86,7 @@ public class MainComponentAutowiredFalseTest {
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return null;
         }
 

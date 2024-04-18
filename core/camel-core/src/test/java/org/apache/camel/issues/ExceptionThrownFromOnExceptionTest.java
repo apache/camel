@@ -50,7 +50,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // on exception to catch all IO exceptions and handle them
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3).to("mock:b").process(new Processor() {
@@ -100,7 +100,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // on exception to catch all IO exceptions and handle them
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
@@ -152,7 +152,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // DLC
                 deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3);
 
@@ -209,7 +209,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // DLC
                 deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3);
 
@@ -268,7 +268,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // DLC
                 deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3);
 
@@ -276,7 +276,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3).to("mock:b").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         ON_EXCEPTION_RETRY.incrementAndGet();
                         // no exception is thrown this time
                     }
@@ -326,7 +326,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // DLC
                 deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3);
 
@@ -336,7 +336,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                         // we now handle the exception
                         .handled(true).to("mock:b").process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 ON_EXCEPTION_RETRY.incrementAndGet();
                                 // no exception is thrown this time
                             }

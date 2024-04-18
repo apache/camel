@@ -76,10 +76,10 @@ public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("{{start}}").routeId("myRoute")
                         .log("Got ${body}")
                         .to("{{result}}");

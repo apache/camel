@@ -35,10 +35,10 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
     private final int numFiles = 10;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String[] destinations = new String[numFiles];
                 for (int i = 0; i < numFiles; i++) {
                     destinations[i] = "direct:file" + i;

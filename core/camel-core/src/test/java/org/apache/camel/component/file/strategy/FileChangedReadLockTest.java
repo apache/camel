@@ -84,10 +84,10 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100"))
                         .to(fileUri("out"), "mock:result");
             }

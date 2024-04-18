@@ -36,7 +36,7 @@ public class TwoCamelContextDirectEndpointTest {
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:foo");
                 from("direct:foo").to("mock:a");
             }
@@ -46,7 +46,7 @@ public class TwoCamelContextDirectEndpointTest {
         camel2 = new DefaultCamelContext();
         camel2.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:foo");
                 from("direct:foo").to("mock:b");
             }
@@ -55,7 +55,7 @@ public class TwoCamelContextDirectEndpointTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camel1.stop();
         camel2.stop();
 

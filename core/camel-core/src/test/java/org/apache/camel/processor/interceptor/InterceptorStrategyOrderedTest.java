@@ -39,10 +39,10 @@ public class InterceptorStrategyOrderedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // interceptors should be invoked according to how they are
                 // ordered
                 context.getCamelContextExtension().addInterceptStrategy(new BarInterceptStrategy());
@@ -57,8 +57,7 @@ public class InterceptorStrategyOrderedTest extends ContextTestSupport {
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                CamelContext context, NamedNode definition, final Processor target, Processor nextTarget)
-                throws Exception {
+                CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String order = exchange.getIn().getHeader("order", "", String.class);
@@ -81,8 +80,7 @@ public class InterceptorStrategyOrderedTest extends ContextTestSupport {
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                CamelContext context, NamedNode definition, final Processor target, Processor nextTarget)
-                throws Exception {
+                CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String order = exchange.getIn().getHeader("order", "", String.class);

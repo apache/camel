@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainThreadPoolTest {
 
     @Test
-    public void testDefaultThreadPool() throws Exception {
+    public void testDefaultThreadPool() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.threadpool.pool-size", "5");
@@ -50,7 +50,7 @@ public class MainThreadPoolTest {
     }
 
     @Test
-    public void testCustomThreadPool() throws Exception {
+    public void testCustomThreadPool() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.threadpool.config[myPool].id", "myPool");
@@ -84,7 +84,7 @@ public class MainThreadPoolTest {
     }
 
     @Test
-    public void testDefaultAndCustomThreadPool() throws Exception {
+    public void testDefaultAndCustomThreadPool() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.threadpool.pool-size", "5");
@@ -120,7 +120,7 @@ public class MainThreadPoolTest {
 
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").to("seda:foo");
         }
     }

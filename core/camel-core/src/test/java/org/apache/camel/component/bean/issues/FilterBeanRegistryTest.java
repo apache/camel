@@ -34,7 +34,7 @@ public class FilterBeanRegistryTest extends ContextTestSupport {
     public void testMethodCallExp() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").filter().method("foo", "isGoldCustomer").to("mock:result");
             }
         });
@@ -53,7 +53,7 @@ public class FilterBeanRegistryTest extends ContextTestSupport {
     public void testBeanLanguageExp() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").filter().method("foo", "isGoldCustomer").to("mock:result");
             }
         });

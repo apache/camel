@@ -57,7 +57,7 @@ public class TokenPairIteratorSplitChoicePerformanceManualTest extends ContextTe
     }
 
     @Test
-    public void testTokenPairPerformanceRoute() throws Exception {
+    public void testTokenPairPerformanceRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(5, TimeUnit.MINUTES);
@@ -77,18 +77,18 @@ public class TokenPairIteratorSplitChoicePerformanceManualTest extends ContextTe
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&noop=true")).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         log.info("Starting to process file");
                         watch.restart();
                     }
                 }).split().tokenizeXML("order").streaming().choice().when().xpath("/order/amount < 10")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
                                 assertTrue(xml.contains("<amount>3</amount>"), xml);
 
@@ -99,7 +99,7 @@ public class TokenPairIteratorSplitChoicePerformanceManualTest extends ContextTe
                                 }
                             }
                         }).when().xpath("/order/amount < 50").process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
                                 assertTrue(xml.contains("<amount>44</amount>"), xml);
 
@@ -110,7 +110,7 @@ public class TokenPairIteratorSplitChoicePerformanceManualTest extends ContextTe
                                 }
                             }
                         }).when().xpath("/order/amount < 100").process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
                                 assertTrue(xml.contains("<amount>88</amount>"), xml);
 
@@ -121,7 +121,7 @@ public class TokenPairIteratorSplitChoicePerformanceManualTest extends ContextTe
                                 }
                             }
                         }).otherwise().process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
                                 assertTrue(xml.contains("<amount>123</amount>"), xml);
 

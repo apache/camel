@@ -73,7 +73,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             final AggregationStrategy surnameAggregator = new AggregationStrategy() {
@@ -139,7 +139,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
             }
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start")
                         // Separate people
@@ -156,7 +156,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                                 // in a
                                 // header
                                 new Processor() {
-                                    public void process(Exchange exchange) throws Exception {
+                                    public void process(Exchange exchange) {
 
                                         String[] parts = exchange.getIn().getBody(String.class).split(" ");
                                         exchange.getIn().setBody(parts[0]);

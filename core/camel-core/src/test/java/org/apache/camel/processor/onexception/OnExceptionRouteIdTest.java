@@ -41,10 +41,10 @@ public class OnExceptionRouteIdTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).id("myError").maximumRedeliveries(0).handled(true)
                         .setHeader("error", constant("true")).end().stop();
 

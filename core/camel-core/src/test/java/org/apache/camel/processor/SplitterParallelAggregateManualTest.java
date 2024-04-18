@@ -36,10 +36,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 public class SplitterParallelAggregateManualTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:splitSynchronizedAggregation")
                         .split(method(new MySplitter(), "rowIterator"), new MyAggregationStrategy())
                         .to("log:someSplitProcessing?groupSize=500");

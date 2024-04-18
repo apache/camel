@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class DataFormatFluentSyntaxTest extends RefDataFormatTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

@@ -57,7 +57,7 @@ public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:on")
                             .setBody().constant("{{query?nested=true}}")
                             .to("mock:result");
@@ -80,10 +80,10 @@ public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:off")
                         .setBody().constant("{{query?nested=false}}")
                         .to("mock:result");

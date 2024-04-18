@@ -53,10 +53,10 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("filerelative?initialDelay=0&delay=10&recursive=true")).convertBodyTo(String.class)
                         .to("mock:relative");
 

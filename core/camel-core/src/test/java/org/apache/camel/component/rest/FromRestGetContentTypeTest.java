@@ -36,10 +36,10 @@ public class FromRestGetContentTypeTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFromRestModelContentType() throws Exception {
+    public void testFromRestModelContentType() {
         Exchange out = template.request("seda:get-say-hello", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
             }
         });
@@ -50,10 +50,10 @@ public class FromRestGetContentTypeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost");
 
                 rest("/say/hello").produces("application/json").get().to("direct:hello");

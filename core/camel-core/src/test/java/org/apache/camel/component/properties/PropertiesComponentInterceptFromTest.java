@@ -42,10 +42,10 @@ public class PropertiesComponentInterceptFromTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom("{{cool.start}}").transform().simple("Bye ${body}");
 
                 from("direct:cool").to("mock:cool");

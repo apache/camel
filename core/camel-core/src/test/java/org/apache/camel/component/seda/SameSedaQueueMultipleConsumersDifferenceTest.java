@@ -65,10 +65,10 @@ public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?multipleConsumers=true").routeId("foo").to("mock:foo");
                 from("seda:foo?multipleConsumers=true").routeId("bar").to("mock:bar");
             }

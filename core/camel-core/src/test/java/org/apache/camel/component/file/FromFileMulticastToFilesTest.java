@@ -28,7 +28,7 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
     public void testFromFileMulticastToFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10")).multicast().pipeline()
                         .transform(body().prepend("HEADER:"))
                         .to(fileUri("out/?fileName=header.txt")).to("mock:header").end().pipeline()
@@ -60,7 +60,7 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
     public void testFromFileMulticastParallelToFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10")).multicast().parallelProcessing().pipeline()
                         .transform(body().prepend("HEADER:"))
                         .to(fileUri("out/?fileName=header.txt")).to("mock:header").end().pipeline()

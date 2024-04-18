@@ -37,7 +37,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testFileNoSingleExt() throws Exception {
+    public void testFileNoSingleExt() {
         assertExpression("${file:name}", "test" + File.separator + "bye.def.txt");
         assertExpression("${file:name.noext}", "test" + File.separator + "bye");
         assertExpression("${file:name.noext.single}", "test" + File.separator + "bye.def");

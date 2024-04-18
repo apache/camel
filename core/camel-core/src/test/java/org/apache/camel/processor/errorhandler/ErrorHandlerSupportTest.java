@@ -99,11 +99,11 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
     private static class ShuntErrorHandlerSupport extends ErrorHandlerSupport {
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
         }
 
         @Override
@@ -122,15 +122,15 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
         }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").to("mock:foo").routeId("foo");
             }
         };

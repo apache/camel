@@ -31,7 +31,7 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalBodyTes
     public void testMulticastMixOriginalAndHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setAllowUseOriginalMessage(true);
 
                 onException(Exception.class).useOriginalBody().handled(true).to("mock:b");

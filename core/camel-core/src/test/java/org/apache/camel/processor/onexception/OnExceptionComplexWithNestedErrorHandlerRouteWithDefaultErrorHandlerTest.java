@@ -44,10 +44,10 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandle
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // shared for both routes
                 onException(MyTechnicalException.class).handled(true).to("mock:tech.error");
 

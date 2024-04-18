@@ -34,7 +34,7 @@ public class RouteStartupOrderClashTest extends ContextTestSupport {
     public void testRouteStartupOrderClash() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").startupOrder(2).to("mock:result");
 
                 from("direct:start").startupOrder(1).to("seda:foo");

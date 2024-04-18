@@ -46,14 +46,14 @@ public class AsyncEndpointFailOverLoadBalanceMixedTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).loadBalance().failover()
@@ -63,7 +63,7 @@ public class AsyncEndpointFailOverLoadBalanceMixedTest extends ContextTestSuppor
                         .to("async:bye:camel?failFirstAttempts=5", "direct:fail", "async:bye:moon?failFirstAttempts=5",
                                 "async:bye:world")
                         .end().process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
                         }).to("log:after").to("mock:after").to("mock:result");

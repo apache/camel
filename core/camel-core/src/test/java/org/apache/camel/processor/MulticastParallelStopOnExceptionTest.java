@@ -86,10 +86,10 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start").multicast().parallelProcessing().stopOnException().executorService(service)
                         .to("direct:foo", "direct:bar", "direct:baz").end()
@@ -100,7 +100,7 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
                 from("direct:foo").delay(1000).to("mock:foo");
 
                 from("direct:bar").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         if ("Kaboom".equals(body)) {
                             throw new IllegalArgumentException("Forced");

@@ -36,7 +36,7 @@ public class LineNumberProcessorTracingTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .process(new LineNumberProcessorTracingTest.MyProcessor());
             }
@@ -76,7 +76,7 @@ public class LineNumberProcessorTracingTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getMessage().setBody(location + ":" + lineNumber);
         }
     }

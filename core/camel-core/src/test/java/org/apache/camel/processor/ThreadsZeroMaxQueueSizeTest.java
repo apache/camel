@@ -41,10 +41,10 @@ public class ThreadsZeroMaxQueueSizeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // will use a custom thread pool with 5 in core and 10 as max
                         // and no task queue

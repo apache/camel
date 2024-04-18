@@ -51,7 +51,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(dataSetUri).to(resultUri);
             }
         });
@@ -75,7 +75,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
     public void testConsumerWithProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(dataSetUri).to(dataSetUri).to(resultUri);
             }
         });
@@ -96,7 +96,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
     public void testWithDataSetIndexUriParameterUnset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(dataSetUri).to(resultUri);
             }
         });
@@ -115,7 +115,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
     public void testWithDataSetIndexUriParameterSetToOff() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(dataSetUriWithDataSetIndexSetToOff).to(resultUri);
             }
         });
@@ -133,7 +133,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
     public void testWithDataSetIndexUriParameterSetToLenient() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(dataSetUriWithDataSetIndexSetToLenient).to(resultUri);
             }
         });
@@ -152,7 +152,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
     public void testWithDataSetIndexUriParameterSetToStrict() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(dataSetUriWithDataSetIndexSetToStrict).to(resultUri);
             }
         });

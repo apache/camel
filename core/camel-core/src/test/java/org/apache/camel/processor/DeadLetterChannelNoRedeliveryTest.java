@@ -45,10 +45,10 @@ public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(0));
 
                 from("direct:start").to("mock:a").process(new MyFailProcessor()).to("mock:b");
@@ -59,7 +59,7 @@ public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
     public static final class MyFailProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             counter++;
             throw new IllegalArgumentException("Forced");
         }

@@ -55,7 +55,7 @@ public class SplitterPojoTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSplitMessageWithPojoBean() throws Exception {
+    public void testSplitMessageWithPojoBean() {
         String[] users = { "James", "Jonathan", "Hadrian", "Claus", "Willem" };
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();

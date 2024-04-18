@@ -44,7 +44,7 @@ public class FromRestGetCorsCustomTest extends ContextTestSupport {
 
         Exchange out = template.request("seda:post-say-bye", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("I was here");
             }
         });
@@ -61,10 +61,10 @@ public class FromRestGetCorsCustomTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost");
                 restConfiguration().enableCORS(true).corsHeaderProperty("Access-Control-Allow-Origin", "myserver");
                 restConfiguration().enableCORS(true).corsHeaderProperty("Access-Control-Max-Age", "180");

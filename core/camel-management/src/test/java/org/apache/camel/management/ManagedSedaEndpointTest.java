@@ -86,10 +86,10 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").routeId("foo").to("log:foo").to("mock:result");
             }
         };

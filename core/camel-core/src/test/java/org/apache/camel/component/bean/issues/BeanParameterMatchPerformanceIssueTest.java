@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class BeanParameterMatchPerformanceIssueTest extends ContextTestSupport {
 
     @Test
-    public void testPerformance() throws Exception {
+    public void testPerformance() {
         String s = template.requestBody("direct:a", "a", String.class);
         Assertions.assertEquals("Hello slow", s);
 
@@ -39,10 +39,10 @@ public class BeanParameterMatchPerformanceIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("myBean", new MyBean());
 
                 from("direct:a")

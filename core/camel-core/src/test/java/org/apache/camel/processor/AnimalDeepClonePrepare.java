@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
 public class AnimalDeepClonePrepare implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         Animal body = exchange.getIn().getBody(Animal.class);
 
         // do a deep clone of the body which wont affect when doing multicasting

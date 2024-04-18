@@ -65,10 +65,10 @@ public class UnmarshalVariableTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("myDF", new MyByeDataFormat());
 
                 from("direct:send")
@@ -95,12 +95,12 @@ public class UnmarshalVariableTest extends ContextTestSupport {
     public static class MyByeDataFormat extends ServiceSupport implements DataFormat {
 
         @Override
-        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
             // noop
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        public Object unmarshal(Exchange exchange, InputStream stream) {
             return "Bye " + exchange.getContext().getTypeConverter().convertTo(String.class, exchange, stream);
         }
     }

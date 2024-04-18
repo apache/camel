@@ -53,10 +53,10 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().addComponent("my", new MyComponent());
 
                 // configure error handler
@@ -75,7 +75,7 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
     public static class MyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyEndpoint(uri, this);
         }
     }
@@ -87,7 +87,7 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return null;
         }
 
@@ -111,7 +111,7 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
         }
 
         @Override
-        protected int poll() throws Exception {
+        protected int poll() {
             throw new IllegalArgumentException("Simulated");
         }
     }

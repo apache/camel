@@ -31,7 +31,7 @@ public class StubAwsTest extends ContextTestSupport {
     public void testStub() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("aws-s3:foo").to("mock:result");
             }
         });

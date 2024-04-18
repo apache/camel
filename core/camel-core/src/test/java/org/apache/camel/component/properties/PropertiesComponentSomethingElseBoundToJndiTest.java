@@ -34,7 +34,7 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
     public void testPropertiesComponent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:result");
             }
         });

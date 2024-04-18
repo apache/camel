@@ -39,10 +39,10 @@ public class SplitTimeoutCancelTaskTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ThreadPoolProfile myThreadPoolProfile = new ThreadPoolProfile("testProfile");
                 myThreadPoolProfile.setMaxPoolSize(20);
                 myThreadPoolProfile.setPoolSize(10);

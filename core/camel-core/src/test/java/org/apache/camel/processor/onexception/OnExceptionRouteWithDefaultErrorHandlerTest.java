@@ -101,10 +101,10 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5));
 
                 onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true);

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DelayInterceptorTest extends ContextTestSupport {
 
     @Test
-    public void testDelayer() throws Exception {
+    public void testDelayer() {
         StopWatch watch = new StopWatch();
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message #" + i);
@@ -43,17 +43,17 @@ public class DelayInterceptorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             // START SNIPPET: e1
-            public void configure() throws Exception {
+            public void configure() {
                 // configure delayer for each step 10 millis
                 getContext().setDelayer(10L);
 
                 // regular routes here
 
                 from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // do nothing
                     }
                 }).to("mock:result");

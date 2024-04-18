@@ -29,7 +29,7 @@ class DefaultTransformerRegistryTest {
     private final DefaultTransformerRegistry dataTypeRegistry = new DefaultTransformerRegistry(new DefaultCamelContext());
 
     @Test
-    public void shouldLookupDefaultDataTypeTransformers() throws Exception {
+    public void shouldLookupDefaultDataTypeTransformers() {
         Transformer transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("text-plain"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(StringDataTypeTransformer.class, transformer.getClass());

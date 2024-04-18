@@ -45,7 +45,7 @@ public class CamelContextTrackerTest {
     }
 
     @Test
-    public void testContainerSet() throws Exception {
+    public void testContainerSet() {
         MyContextTracker tracker = new MyContextTracker();
 
         CamelContext camel1 = new DefaultCamelContext();

@@ -58,9 +58,9 @@ public class XPathFunctionsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: ex
                 // setup properties component
                 context.getPropertiesComponent().setLocation("classpath:org/apache/camel/builder/xml/myprop.properties");

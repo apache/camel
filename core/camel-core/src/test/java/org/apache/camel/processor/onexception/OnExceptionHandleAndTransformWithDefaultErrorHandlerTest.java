@@ -33,7 +33,7 @@ public class OnExceptionHandleAndTransformWithDefaultErrorHandlerTest extends Co
     public void testOnExceptionTransformConstant() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // we catch MyFunctionalException and want to mark it as handled
                 // (= no failure returned to client)
@@ -58,7 +58,7 @@ public class OnExceptionHandleAndTransformWithDefaultErrorHandlerTest extends Co
     public void testOnExceptionTransformExceptionMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e2
                 // we catch MyFunctionalException and want to mark it as handled
                 // (= no failure returned to client)
@@ -83,7 +83,7 @@ public class OnExceptionHandleAndTransformWithDefaultErrorHandlerTest extends Co
     public void testOnExceptionSimpleLangaugeExceptionMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e3
                 // we catch MyFunctionalException and want to mark it as handled
                 // (= no failure returned to client)
