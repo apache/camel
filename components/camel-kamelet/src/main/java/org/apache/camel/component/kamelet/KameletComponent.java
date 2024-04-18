@@ -113,6 +113,7 @@ public class KameletComponent extends DefaultComponent {
         parameters.remove(PARAM_TEMPLATE_ID);
         parameters.remove(PARAM_ROUTE_ID);
         parameters.remove(PARAM_LOCATION);
+        parameters.remove(PARAM_UUID);
 
         // manually need to resolve raw parameters as input to the kamelet because
         // resolveRawParameterValues is false
