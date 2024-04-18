@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -330,7 +331,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             Field field, String propertyName, String propertyDefaultValue, String propertySeparator,
             Object bean, String beanName) {
         ReflectionHelper.setField(field, bean,
-                getPostProcessorHelper().getInjectionPropertyValue(field.getType(), propertyName, propertyDefaultValue,
+                getPostProcessorHelper().getInjectionPropertyValue(field.getType(), field.getGenericType(), propertyName,
+                        propertyDefaultValue,
                         propertySeparator, field.getName(), bean, beanName));
     }
 
@@ -471,7 +473,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
         } else {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], propertyValue,
+            Class<?> type = parameterTypes[0];
+            Type genericType = method.getGenericParameterTypes()[0];
+            Object value = getPostProcessorHelper().getInjectionPropertyValue(type, genericType, propertyValue,
                     propertyDefaultValue, propertySeparator, propertyName, bean, beanName);
             invokeMethod(method, bean, value);
         }

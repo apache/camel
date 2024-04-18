@@ -92,7 +92,9 @@ You can also add a default value if the key does not exist, such as:
 private int timeout;
 ----
 
-You can also use `@PropertyInject` to inject an array of values. For example you may configure multiple hostnames
+=== Using @PropertyInject with arrays, lists, sets or maps
+
+You can also use `@PropertyInject` to inject an array of values. For example, you may configure multiple hostnames
 in the configuration file, and need to inject this into an `String[]` or `List<String>` field.
 To do this you need to tell Camel that the property value should be split using a separator, as follows:
 
@@ -102,6 +104,8 @@ To do this you need to tell Camel that the property value should be split using 
 private String[] servers;
 ----
 
+TIP: You can also use list/set types, such as `List<String>` or `Set<String>` instead of array.
+
 Then in the `application.properties` file you can define the servers:
 
 [source,properties]
@@ -110,6 +114,31 @@ myHostnames = serverA, serverB, serverC
 ----
 
 TIP: This also works for fields that are not String based, such as `int[]` for numeric values.
+
+For `Map` types then the values is expected to be in key=value format, such as:
+
+[source,properties]
+----
+myServers = serverA=http://coolstore:4444,serverB=http://megastore:5555
+----
+
+You can then inject this into a `Map` as follows:
+
+[source,java]
+----
+@PropertyInject(value = "myServers", separator = ",")
+private Map servers;
+----
+
+You can use generic types in the Map such as the values should be `Integer` values:
+
+[source,java]
+----
+@PropertyInject(value = "ports", separator = ",")
+private Map<String, Integer> ports;
+----
+
+NOTE: The generic type can only be a single class type, and cannot be a nested complex type such as `Map<String,Map<Kind,Priority>>`.
 
 == See Also
 
