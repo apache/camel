@@ -37,7 +37,8 @@ public class JsonPathSplitSingleListOptionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // use option to force returning a list even for a single element selected
-                var jsonpath = expression().jsonpath().option(Option.ALWAYS_RETURN_LIST.name()).expression("$.store.book[0]").end();
+                var jsonpath
+                        = expression().jsonpath().option(Option.ALWAYS_RETURN_LIST.name()).expression("$.store.book[0]").end();
 
                 from("direct:start")
                         .split(jsonpath)

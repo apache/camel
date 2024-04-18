@@ -945,9 +945,9 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Specifies whether the consumer accepts messages while it is stopping. You may consider enabling this option if
      * you start and stop JMS routes at runtime, while there are still messages enqueued in the queue. If this option is
-     * false, and you stop the JMS route, then messages may be rejected. In this case, the JMS broker would have to attempt
-     * redeliveries, which yet again may be rejected, and eventually the message may be moved at a dead letter queue on
-     * the JMS broker. To avoid this, it's recommended to enable this option.
+     * false, and you stop the JMS route, then messages may be rejected. In this case, the JMS broker would have to
+     * attempt redeliveries, which yet again may be rejected, and eventually the message may be moved at a dead letter
+     * queue on the JMS broker. To avoid this, it's recommended to enable this option.
      */
     public void setAcceptMessagesWhileStopping(boolean acceptMessagesWhileStopping) {
         this.acceptMessagesWhileStopping = acceptMessagesWhileStopping;
@@ -957,8 +957,8 @@ public class JmsConfiguration implements Cloneable {
      * Whether the {@link DefaultMessageListenerContainer} used in the reply managers for request-reply messaging allow
      * the {@link DefaultMessageListenerContainer#runningAllowed()} flag to quick stop in case
      * {@link JmsConfiguration#isAcceptMessagesWhileStopping()} is enabled, and {@link org.apache.camel.CamelContext} is
-     * currently being stopped. This quick stop ability is enabled by default in the regular JMS consumers, but to enable
-     * for reply managers, you must enable this flag.
+     * currently being stopped. This quick stop ability is enabled by default in the regular JMS consumers, but to
+     * enable for reply managers, you must enable this flag.
      */
     public boolean isAllowReplyManagerQuickStop() {
         return allowReplyManagerQuickStop;
@@ -1155,8 +1155,8 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the interval between recovery attempts, i.e., when a connection is being refreshed, in milliseconds. The
-     * default is 5000 ms, that is, 5 seconds.
+     * Specifies the interval between recovery attempts, i.e., when a connection is being refreshed, in milliseconds.
+     * The default is 5000 ms, that is, 5 seconds.
      */
     public void setRecoveryInterval(long recoveryInterval) {
         this.recoveryInterval = recoveryInterval;
@@ -1218,9 +1218,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the limit for idle executions of a receiving task, not having received any message within its execution.
-     * If this limit is reached, the task will shut down and leave receiving to other executing tasks (in the case of
-     * dynamic scheduling; see the maxConcurrentConsumers setting). There is additional doc available from Spring.
+     * Specifies the limit for idle executions of a receiving task, not having received any message within its
+     * execution. If this limit is reached, the task will shut down and leave receiving to other executing tasks (in the
+     * case of dynamic scheduling; see the maxConcurrentConsumers setting). There is additional doc available from
+     * Spring.
      */
     public void setIdleTaskExecutionLimit(int idleTaskExecutionLimit) {
         this.idleTaskExecutionLimit = idleTaskExecutionLimit;
@@ -1467,8 +1468,8 @@ public class JmsConfiguration implements Cloneable {
      * on these values. Analogously, these parameters are not taken into account within a locally managed transaction
      * either, since Spring JMS operates on an existing JMS Session in this case.
      * <p>
-     * Setting this flag to true will use a short local JMS transaction when running outside a managed transaction,
-     * and a synchronized local JMS transaction in case of a managed transaction (other than an XA transaction) being
+     * Setting this flag to true will use a short local JMS transaction when running outside a managed transaction, and
+     * a synchronized local JMS transaction in case of a managed transaction (other than an XA transaction) being
      * present. This has the effect of a local JMS transaction being managed alongside the main transaction (which might
      * be a native JDBC transaction), with the JMS transaction committing right after the main transaction.
      */
@@ -1522,9 +1523,9 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Specifies whether Camel ignores the JMSReplyTo header in messages. If true, Camel does not send a reply back to
      * the destination specified in the JMSReplyTo header. You can use this option if you want Camel to consume from a
-     * route, and you do not want Camel to automatically send back a reply message because another component in your code
-     * handles the reply message. You can also use this option if you want to use Camel as a proxy between different
-     * message brokers, and you want to route messages from one system to another.
+     * route, and you do not want Camel to automatically send back a reply message because another component in your
+     * code handles the reply message. You can also use this option if you want to use Camel as a proxy between
+     * different message brokers, and you want to route messages from one system to another.
      */
     public void setDisableReplyTo(boolean disableReplyTo) {
         this.disableReplyTo = disableReplyTo;
@@ -1848,8 +1849,8 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the JMS Selector using the fixed name to be used, so you can filter out your own replies from the others when
-     * using a shared queue (that is, if you are not using a temporary reply queue).
+     * Sets the JMS Selector using the fixed name to be used, so you can filter out your own replies from the others
+     * when using a shared queue (that is, if you are not using a temporary reply queue).
      */
     public void setReplyToDestinationSelectorName(String replyToDestinationSelectorName) {
         this.replyToDestinationSelectorName = replyToDestinationSelectorName;
@@ -1920,8 +1921,8 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Pluggable strategy for encoding and decoding JMS keys, so they can be compliant with the JMS specification. Camel
      * provides two implementations out of the box: default and passthrough. The default strategy will safely marshal
-     * dots and hyphens (. and -). The passthrough strategy leaves the key as is. It Can be used for JMS brokers which do
-     * not care whether JMS header keys contain illegal characters. You can provide your own implementation of the
+     * dots and hyphens (. and -). The passthrough strategy leaves the key as is. It Can be used for JMS brokers which
+     * do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the
      * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.
      */
     public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
@@ -1950,9 +1951,9 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Controls whether to include serialized headers. Applies only when {@link #isTransferExchange()} is
-     * {@code true}. This requires that the objects are serializable. Camel will exclude any non-serializable objects
-     * and log it at WARN level.
+     * Controls whether to include serialized headers. Applies only when {@link #isTransferExchange()} is {@code true}.
+     * This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at
+     * WARN level.
      */
     public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
         this.allowSerializedHeaders = allowSerializedHeaders;
@@ -1983,8 +1984,8 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Whether to start up the JmsConsumer message listener asynchronously, when starting a route. For example, if a
      * JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover.
-     * This will cause Camel to block while starting routes. By setting this option to true, you will let routes
-     * start up, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this
+     * This will cause Camel to block while starting routes. By setting this option to true, you will let routes start
+     * up, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this
      * option is used, then beware that if the connection could not be established, then an exception is logged at WARN
      * level, and the consumer will not be able to receive messages; You can then restart the route to retry.
      */
@@ -2010,8 +2011,8 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS
      * consumers have a valid connection to the JMS broker. If a connection cannot be granted, then Camel throws an
-     * exception on startup. This ensures that Camel is not started with failed connections. The JMS producers are tested
-     * as well.
+     * exception on startup. This ensures that Camel is not started with failed connections. The JMS producers are
+     * tested as well.
      */
     public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
         this.testConnectionOnStartup = testConnectionOnStartup;
@@ -2051,8 +2052,8 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Allows for explicitly specifying which kind of strategy to use for replyTo queues when doing request/reply over
-     * JMS. Possible values are Temporary, Shared, or Exclusive. By default, Camel will use temporary queues. However, if
-     * replyTo has been configured, then Shared is used by default. This option allows you to use exclusive queues
+     * JMS. Possible values are Temporary, Shared, or Exclusive. By default, Camel will use temporary queues. However,
+     * if replyTo has been configured, then Shared is used by default. This option allows you to use exclusive queues
      * instead of shared ones. See Camel JMS documentation for more details, and especially the notes about the
      * implications if running in a clustered environment, and the fact that Shared reply queues has lower performance
      * than its alternatives Temporary and Exclusive.
@@ -2185,8 +2186,8 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Use this JMS property to correlate messages in InOut exchange pattern (request-reply) instead of JMSCorrelationID
      * property. This allows you to exchange messages with systems that do not correlate messages using JMSCorrelationID
-     * JMS property. If used, JMSCorrelationID will not be used or set by Camel. The value of here named property will be
-     * generated if not supplied in the header of the message under the same name.
+     * JMS property. If used, JMSCorrelationID will not be used or set by Camel. The value of here named property will
+     * be generated if not supplied in the header of the message under the same name.
      */
     public void setCorrelationProperty(final String correlationProperty) {
         this.correlationProperty = correlationProperty;
@@ -2274,10 +2275,10 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Sets whether StreamMessage type is enabled or not. Message payloads of streaming kind such as files, InputStream,
-     * and others, will either be sent as BytesMessage or StreamMessage. This option controls which kind will be used. By
-     * default, BytesMessage is used which enforces the entire message payload to be read into memory. By enabling this
-     * option, the message payload is read into memory in chunks, and each chunk is then written to the StreamMessage
-     * until no more data.
+     * and others, will either be sent as BytesMessage or StreamMessage. This option controls which kind will be used.
+     * By default, BytesMessage is used which enforces the entire message payload to be read into memory. By enabling
+     * this option, the message payload is read into memory in chunks, and each chunk is then written to the
+     * StreamMessage until no more data.
      */
     public void setStreamMessageTypeEnabled(boolean streamMessageTypeEnabled) {
         this.streamMessageTypeEnabled = streamMessageTypeEnabled;

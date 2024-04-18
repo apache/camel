@@ -232,8 +232,8 @@ public class Cw2Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
-     * option
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
@@ -278,8 +278,8 @@ public class Cw2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the CloudWatch client should expect to use Session Credentials. This is useful in a situation in which
-     * the user needs to assume an IAM role for doing operations in CloudWatch.
+     * Set whether the CloudWatch client should expect to use Session Credentials. This is useful in a situation in
+     * which the user needs to assume an IAM role for doing operations in CloudWatch.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;

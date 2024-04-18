@@ -160,8 +160,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * If it is true, camel will upload the file with multipart format. The part size is decided by the partSize
-     * option.
+     * If it is true, camel will upload the file with multipart format. The part size is decided by the partSize option.
      *
      * Camel will only do multipart uploads for files that are larger than the part-size thresholds. Files that are
      * smaller will be uploaded in a single operation.
@@ -298,10 +297,10 @@ public class AWS2S3Configuration implements Cloneable {
     /**
      * If it is true, the S3Object exchange will be consumed and put into the body and closed. If false, the S3Object
      * stream will be put raw into the body and the headers will be set with the S3 object metadata. This option is
-     * strongly related to the autocloseBody option. In case of setting includeBody to true because the S3Object stream will
-     * be consumed then it will also be closed, while in case of includeBody false then it will be up to the caller to
-     * close the S3Object stream. However, setting autocloseBody to true when includeBody is false it will schedule to
-     * close the S3Object stream automatically on exchange completion.
+     * strongly related to the autocloseBody option. In case of setting includeBody to true because the S3Object stream
+     * will be consumed then it will also be closed, while in case of includeBody false then it will be up to the caller
+     * to close the S3Object stream. However, setting autocloseBody to true when includeBody is false it will schedule
+     * to close the S3Object stream automatically on exchange completion.
      */
     public void setIncludeBody(boolean includeBody) {
         this.includeBody = includeBody;
@@ -328,8 +327,8 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Delete objects from S3 after they have been retrieved. The deleting is only performed if the Exchange is committed.
-     * If a rollback occurs, the object is not deleted.
+     * Delete objects from S3 after they have been retrieved. The deleting is only performed if the Exchange is
+     * committed. If a rollback occurs, the object is not deleted.
      * <p/>
      * If this option is false, then the same objects will be retrieved over and over again in the polls. Therefore, you
      * need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the
@@ -345,9 +344,9 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Move objects from S3 bucket to a different bucket after they have been retrieved. To accomplish the operation, the
-     * destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed.
-     * If a rollback occurs, the object is not moved.
+     * Move objects from S3 bucket to a different bucket after they have been retrieved. To accomplish the operation,
+     * the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is
+     * committed. If a rollback occurs, the object is not moved.
      */
     public void setMoveAfterRead(boolean moveAfterRead) {
         this.moveAfterRead = moveAfterRead;
@@ -581,8 +580,8 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the S3 client should expect to use Session Credentials. This is useful in a situation in which the user
-     * needs to assume an IAM role for doing operations in S3.
+     * Set whether the S3 client should expect to use Session Credentials. This is useful in a situation in which the
+     * user needs to assume an IAM role for doing operations in S3.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
@@ -616,8 +615,8 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
-     * option
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;

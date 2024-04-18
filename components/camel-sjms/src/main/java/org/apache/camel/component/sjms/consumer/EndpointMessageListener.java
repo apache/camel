@@ -289,8 +289,9 @@ public class EndpointMessageListener implements SessionMessageListener {
         MessageProducer create(Session session, Endpoint endpoint, T replyDestination) throws Exception;
     }
 
-    private <T> SessionCallback createSessionCallback(T replyDestination, Message message, Exchange exchange, org.apache.camel.Message out, Exception cause,
-                                                      MessageProducerCreator<T> messageProducerCreator) {
+    private <T> SessionCallback createSessionCallback(
+            T replyDestination, Message message, Exchange exchange, org.apache.camel.Message out, Exception cause,
+            MessageProducerCreator<T> messageProducerCreator) {
         return new SessionCallback() {
             @Override
             public Object doInJms(Session session) throws Exception {

@@ -374,9 +374,9 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. It can be one of the following
-     * options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication* option, no
-     * messageDeduplicationId will be set on the message.
+     * Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. It can be one of the
+     * following options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication*
+     * option, no messageDeduplicationId will be set on the message.
      */
     public void setMessageDeduplicationIdStrategy(String strategy) {
         if ("useExchangeId".equalsIgnoreCase(strategy)) {
@@ -397,8 +397,8 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
-     * option
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;

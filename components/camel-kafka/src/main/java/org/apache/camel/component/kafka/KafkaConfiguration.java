@@ -793,8 +793,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The offset repository to use to locally store the offset of each partition of the topic. Defining one
-     * will disable the autocommit.
+     * The offset repository to use to locally store the offset of each partition of the topic. Defining one will
+     * disable the autocommit.
      */
     public void setOffsetRepository(StateRepository<String, String> offsetRepository) {
         this.offsetRepository = offsetRepository;
@@ -877,8 +877,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      *
      * Using either the SyncCommitManager or the AsyncCommitManager, the consumer will seek back to the offset of the
      * message that caused a failure, and then re-attempt to process this message. However, this can lead to endless
-     * processing of the same message if it's bound to fail every time, e.g., a poison message. Therefore, it's recommended to
-     * deal with that, for example, by using Camel's error handler.
+     * processing of the same message if it's bound to fail every time, e.g., a poison message. Therefore, it's
+     * recommended to deal with that, for example, by using Camel's error handler.
      */
     public void setBreakOnFirstError(boolean breakOnFirstError) {
         this.breakOnFirstError = breakOnFirstError;
@@ -1071,8 +1071,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * A list of rules for mapping from principal names to short names (typically operating system usernames). The rules
      * are evaluated in order, and the first rule that matches a principal name is used to map it to a short name. Any
      * later rules in the list are ignored. By default, principal names of the form {username}/{hostname}@{REALM} are
-     * mapped to {username}. For more details on the format, please see the Security Authorization and ACLs documentation
-     * (at the Apache Kafka project website).
+     * mapped to {username}. For more details on the format, please see the Security Authorization and ACLs
+     * documentation (at the Apache Kafka project website).
      * <p/>
      * Multiple values can be separated by comma
      */
@@ -1284,8 +1284,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The store password for the key store file. This is optional for the client and only needed if
-     * sslKeystoreLocation is configured. Key store password is not supported for PEM format.
+     * The store password for the key store file. This is optional for the client and only needed if sslKeystoreLocation
+     * is configured. Key store password is not supported for PEM format.
      */
     public void setSslKeystorePassword(String sslKeystorePassword) {
         this.sslKeystorePassword = sslKeystorePassword;
@@ -1364,10 +1364,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      *
      * acks=0 If set to zero, then the producer will not wait for any acknowledgment from the server at all. The record
      * will be immediately added to the socket buffer and considered sent. No guarantee can be made that the server has
-     * received the record in this case, and the retry configuration will not take effect (as the client won't
-     * generally know of any failures). The offset given back for each record will always be set to -1. acks=1 This will
-     * mean the leader will write the record to its local log but will respond without awaiting full acknowledgment
-     * from all followers. In this case should the leader fail immediately after acknowledging the record, but before the
+     * received the record in this case, and the retry configuration will not take effect (as the client won't generally
+     * know of any failures). The offset given back for each record will always be set to -1. acks=1 This will mean the
+     * leader will write the record to its local log but will respond without awaiting full acknowledgment from all
+     * followers. In this case should the leader fail immediately after acknowledging the record, but before the
      * followers have replicated it, then the record will be lost. acks=all This means the leader will wait for the full
      * set of in-sync replicas to acknowledge the record. This guarantees that the record will not be lost as long as at
      * least one in-sync replica remains alive. This is the strongest available guarantee. This is equivalent to the
@@ -1383,11 +1383,11 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Setting a value greater than zero will cause the client to resend any record that has failed to be sent due to a potentially
-     * transient error. Note that this retry is no different from if the client re-sending the record upon receiving the
-     * error. Produce requests will be failed before the number of retries has been exhausted if the timeout configured
-     * by delivery.timeout.ms expires first before successful acknowledgement. Users should generally prefer to leave
-     * this config unset and instead use delivery.timeout.ms to control retry behavior.
+     * Setting a value greater than zero will cause the client to resend any record that has failed to be sent due to a
+     * potentially transient error. Note that this retry is no different from if the client re-sending the record upon
+     * receiving the error. Produce requests will be failed before the number of retries has been exhausted if the
+     * timeout configured by delivery.timeout.ms expires first before successful acknowledgement. Users should generally
+     * prefer to leave this config unset and instead use delivery.timeout.ms to control retry behavior.
      *
      * Enabling idempotence requires this config value to be greater than 0. If conflicting configurations are set and
      * idempotence is not explicitly enabled, idempotence is disabled.
@@ -1451,13 +1451,13 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * request. Normally, this occurs only under load when records arrive faster than they can be sent out. However, in
      * some circumstances, the client may want to reduce the number of requests even under a moderate load. This setting
      * accomplishes this by adding a small amount of artificial delay. That is, rather than immediately sending out a
-     *  record, the producer will wait for up to the given delay to allow other records to be sent so that they can be
+     * record, the producer will wait for up to the given delay to allow other records to be sent so that they can be
      * batched together. This can be thought of as analogous to Nagle's algorithm in TCP. This setting gives the upper
      * bound on the delay for batching: once we get batch.size worth of records for a partition, it will be sent
      * immediately regardless of this setting, however, if we have fewer than this many bytes accumulated for this
-     *  partition, we will 'linger' for the specified time waiting for more records to show up. This setting defaults to 0
-     * (i.e., no delay). Setting linger.ms=5, for example, would have the effect of reducing the number of requests sent
-     * but would add up to 5ms of latency to records sent in the absence of load.
+     * partition, we will 'linger' for the specified time waiting for more records to show up. This setting defaults to
+     * 0 (i.e., no delay). Setting linger.ms=5, for example, would have the effect of reducing the number of requests
+     * sent but would add up to 5ms of latency to records sent in the absence of load.
      */
     public void setLingerMs(Integer lingerMs) {
         this.lingerMs = lingerMs;
@@ -1644,8 +1644,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * The maximum delay between invocations of poll() when using consumer group management. This places an upper bound
      * on the amount of time that the consumer can be idle before fetching more records. If poll() is not called before
-     * expiration of this timeout, then the consumer is considered failed, and the group will re-balance to
-     * reassign the partitions to another member.
+     * expiration of this timeout, then the consumer is considered failed, and the group will re-balance to reassign the
+     * partitions to another member.
      */
     public void setMaxPollIntervalMs(Integer maxPollIntervalMs) {
         this.maxPollIntervalMs = maxPollIntervalMs;
@@ -1892,10 +1892,11 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * Will by default use the value from the component configuration unless an explicit value has been configured on
      * the endpoint level.
      *
-     * DISCARD will discard the message and continue to poll the next message. ERROR_HANDLER will use Camel's error handler
-     * to process the exception, and afterwards continue to poll the next message. RECONNECT will re-connect the consumer
-     * and try polling the message again. RETRY will let the consumer retry poll the same message again. STOP will stop
-     * the consumer (it has to be manually started/restarted if the consumer should be able to consume messages again)
+     * DISCARD will discard the message and continue to poll the next message. ERROR_HANDLER will use Camel's error
+     * handler to process the exception, and afterwards continue to poll the next message. RECONNECT will re-connect the
+     * consumer and try polling the message again. RETRY will let the consumer retry poll the same message again. STOP
+     * will stop the consumer (it has to be manually started/restarted if the consumer should be able to consume
+     * messages again)
      */
     public void setPollOnError(PollOnError pollOnError) {
         this.pollOnError = pollOnError;

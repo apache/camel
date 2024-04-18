@@ -167,7 +167,8 @@ public class SecretsManagerConfiguration implements Cloneable {
 
     /**
      * The region in which a Secrets Manager client needs to work. When using this parameter, the configuration will
-     * expect the lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * expect the lowercase name of the region (for example, ap-east-1) You'll need to use the name
+     * Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -200,8 +201,8 @@ public class SecretsManagerConfiguration implements Cloneable {
     }
 
     /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride
-     * option
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
      */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;

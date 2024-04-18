@@ -195,8 +195,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * Allows plugging in a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control
-     * preparation of the query and prepared statement.
+     * Allows plugging in a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of
+     * the query and prepared statement.
      */
     public void setPrepareStatementStrategy(SqlPrepareStatementStrategy prepareStatementStrategy) {
         this.prepareStatementStrategy = prepareStatementStrategy;
@@ -219,8 +219,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
-     * After processing each row, then this query can be executed, if the Exchange failed, for example, to mark the row as
-     * failed. The query can have parameter.
+     * After processing each row, then this query can be executed, if the Exchange failed, for example, to mark the row
+     * as failed. The query can have parameter.
      */
     public void setOnConsumeFailed(String onConsumeFailed) {
         this.onConsumeFailed = onConsumeFailed;
@@ -256,8 +256,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     /**
      * If enabled, then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is
      * always invoked, also if there are no expected parameters to be prepared. When this is false, then the
-     * populateStatement is only invoked if there are one or more expected parameters to be set; for example, this avoids
-     * reading the message body/headers for SQL queries with no parameters.
+     * populateStatement is only invoked if there are one or more expected parameters to be set; for example, this
+     * avoids reading the message body/headers for SQL queries with no parameters.
      */
     public void setAlwaysPopulateStatement(boolean alwaysPopulateStatement) {
         this.alwaysPopulateStatement = alwaysPopulateStatement;
@@ -283,9 +283,9 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
 
     /**
      * Make the output of consumer or producer to SelectList as List of Map, or SelectOne as a single Java object in the
-     * following way: a) If the query has only a single column, then that JDBC Column object is returned. (such as SELECT
-     * COUNT( * ) FROM PROJECT will return a Long object. b) If the query has more than one column, then it will return
-     * a Map of that result. c) If the outputClass is set, then it will convert the query result into a Java bean
+     * following way: a) If the query has only a single column, then that JDBC Column object is returned. (such as
+     * SELECT COUNT( * ) FROM PROJECT will return a Long object. b) If the query has more than one column, then it will
+     * return a Map of that result. c) If the outputClass is set, then it will convert the query result into a Java bean
      * object by calling all the setters that match the column names. It will assume your class has a default
      * constructor to create instance with. d) If the query resulted in more than one rows, it throws a non-unique
      * result exception.
@@ -311,8 +311,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
 
     /**
      * If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via
-     * JDBC metadata API. This is useful if the JDBC vendor could not return the correct parameters count, then the user may
-     * override instead.
+     * JDBC metadata API. This is useful if the JDBC vendor could not return the correct parameters count, then the user
+     * may override instead.
      */
     public void setParametersCount(int parametersCount) {
         this.parametersCount = parametersCount;

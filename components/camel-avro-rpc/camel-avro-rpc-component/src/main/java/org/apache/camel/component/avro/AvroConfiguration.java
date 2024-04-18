@@ -182,8 +182,8 @@ public class AvroConfiguration implements Cloneable {
     }
 
     /**
-     * If the protocol object provided is reflection protocol.
-     * Should be used only with protocol parameter because for protocolClassName protocol type will be auto-detected
+     * If the protocol object provided is reflection protocol. Should be used only with protocol parameter because for
+     * protocolClassName protocol type will be auto-detected
      */
     public void setReflectionProtocol(boolean isReflectionProtocol) {
         this.reflectionProtocol = isReflectionProtocol;
@@ -194,8 +194,8 @@ public class AvroConfiguration implements Cloneable {
     }
 
     /**
-     * If true, consumer parameter won't be wrapped into an array.
-     * Will fail if protocol specifies more than one parameter for the message
+     * If true, consumer parameter won't be wrapped into an array. Will fail if protocol specifies more than one
+     * parameter for the message
      */
     public void setSingleParameter(boolean singleParameter) {
         this.singleParameter = singleParameter;
