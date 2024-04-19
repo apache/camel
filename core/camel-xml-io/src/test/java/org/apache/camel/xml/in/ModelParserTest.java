@@ -73,6 +73,7 @@ public class ModelParserTest {
             = List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
+    private static final List<String> REST_CONFIGURATION_XMLS = List.of("barRestConfiguration.xml");
     private static final List<String> ROUTE_CONFIGURATION_XMLS
             = List.of("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
@@ -116,6 +117,7 @@ public class ModelParserTest {
                 boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
                 boolean isBeans = path.getFileName().toString().startsWith("beans");
                 boolean isConfiguration = ROUTE_CONFIGURATION_XMLS.contains(path.getFileName().toString());
+                boolean isRestConfiguration = REST_CONFIGURATION_XMLS.contains(path.getFileName().toString());
                 if (isRest) {
                     RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
                     assertNotNull(rests);
@@ -127,6 +129,9 @@ public class ModelParserTest {
                     assertNotNull(templatedRoutes);
                 } else if (isConfiguration) {
                     RouteConfigurationsDefinition configurations = parser.parseRouteConfigurationsDefinition().orElse(null);
+                    assertNotNull(configurations);
+                } else if (isRestConfiguration) {
+                    BeansDefinition configurations = parser.parseBeansDefinition().orElse(null);
                     assertNotNull(configurations);
                 } else if (!isBeans) {
                     RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
