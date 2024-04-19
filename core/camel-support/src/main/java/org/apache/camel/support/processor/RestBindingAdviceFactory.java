@@ -49,7 +49,8 @@ public class RestBindingAdviceFactory {
                     bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
                     bc.isEnableCORS(),
                     bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
-                    bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),
+                    bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(),
+                    bc.getRequiredQueryParameters(),
                     bc.getRequiredHeaders());
         }
 

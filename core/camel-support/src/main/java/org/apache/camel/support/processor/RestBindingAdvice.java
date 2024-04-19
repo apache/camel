@@ -319,7 +319,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                         if (Arrays.stream(parts).noneMatch(v::equals)) {
                             // this is a bad request, the client did not include some required query parameters
                             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
-                            exchange.getMessage().setBody("Some of the query parameters or HTTP headers has a not-allowed value.");
+                            exchange.getMessage()
+                                    .setBody("Some of the query parameters or HTTP headers has a not-allowed value.");
                             // stop routing and return
                             exchange.setRouteStop(true);
                             return;

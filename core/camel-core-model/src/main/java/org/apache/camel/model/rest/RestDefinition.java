@@ -1150,7 +1150,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 }
                 // register all allowed values for the query and header parameters
                 if ((RestParamType.query == type || RestParamType.header == type)
-                    && param.getAllowableValues() != null) {
+                        && param.getAllowableValues() != null) {
                     binding.addAllowedValue(param.getName(), parseText(camelContext, param.getAllowableValuesAsCommaString()));
                 }
                 // register which parameters are required
