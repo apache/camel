@@ -33,7 +33,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "destinations";
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
     private MockEndpoint endEndpoint;
     private MockEndpoint exceptionEndpoint;
     private MockEndpoint aEndpoint;

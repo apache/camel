@@ -65,7 +65,7 @@ public abstract class TestSupport {
 
     protected TestInfo info;
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @TempDir
     private Path tempDirectory;

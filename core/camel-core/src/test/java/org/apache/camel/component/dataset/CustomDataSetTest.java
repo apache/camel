@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 public class CustomDataSetTest extends ContextTestSupport {
 
-    protected DataSet dataSet = new DataSetSupport() {
+    protected final DataSet dataSet = new DataSetSupport() {
         final Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
 
         @Override

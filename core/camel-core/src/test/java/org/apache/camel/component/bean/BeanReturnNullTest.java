@@ -66,7 +66,7 @@ public class BeanReturnNullTest extends ContextTestSupport {
 
     public static final class MyBean {
 
-        public String name;
+        public final String name;
 
         public MyBean(String name) {
             this.name = name;

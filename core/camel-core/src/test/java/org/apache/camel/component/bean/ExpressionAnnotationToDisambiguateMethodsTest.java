@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
-    protected MyBean myBean = new MyBean();
-    protected MyOtherBean myOtherBean = new MyOtherBean();
+    protected final MyBean myBean = new MyBean();
+    protected final MyOtherBean myOtherBean = new MyOtherBean();
 
     @Test
     public void testSendMessage() throws Exception {

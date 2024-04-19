@@ -26,7 +26,7 @@ import org.apache.camel.ContextEvents;
  * An event clock that tracks the pass of time for different types of context-related events (see {@link ContextEvents})
  */
 public final class ContextClock implements EventClock<ContextEvents> {
-    private EnumMap<ContextEvents, Clock> events = new EnumMap<>(ContextEvents.class);
+    private final EnumMap<ContextEvents, Clock> events = new EnumMap<>(ContextEvents.class);
 
     @Override
     public long elapsed() {

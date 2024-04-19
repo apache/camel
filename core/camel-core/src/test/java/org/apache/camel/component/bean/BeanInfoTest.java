@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BeanInfoTest {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
 
-    protected CamelContext camelContext = new DefaultCamelContext();
+    protected final CamelContext camelContext = new DefaultCamelContext();
 
     @Test
     public void testObjectOperations() throws Exception {

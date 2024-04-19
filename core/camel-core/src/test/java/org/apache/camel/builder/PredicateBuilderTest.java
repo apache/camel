@@ -34,7 +34,7 @@ import static org.apache.camel.builder.PredicateBuilder.not;
 
 public class PredicateBuilderTest extends TestSupport {
 
-    protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+    protected final Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
     @Test
     public void testRegexPredicates() throws Exception {

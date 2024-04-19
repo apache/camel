@@ -29,7 +29,7 @@ public final class ProxyBuilder {
 
     private final CamelContext camelContext;
     private Endpoint endpoint;
-    private boolean binding = true;
+    private final boolean binding = true;
 
     public ProxyBuilder(CamelContext camelContext) {
         this.camelContext = camelContext;

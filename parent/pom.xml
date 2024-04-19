@@ -75,7 +75,7 @@
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.1</awaitility-version>
-        <aws-java-sdk2-version>2.25.32</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.25.34</aws-java-sdk2-version>
         <aws-xray-version>2.15.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.21</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
@@ -145,8 +145,8 @@
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <ehcache3-version>3.10.8</ehcache3-version>
-        <elasticsearch-java-client-version>8.13.0</elasticsearch-java-client-version>
-        <elasticsearch-java-client-sniffer-version>8.12.2</elasticsearch-java-client-sniffer-version>
+        <elasticsearch-java-client-version>8.13.2</elasticsearch-java-client-version>
+        <elasticsearch-java-client-sniffer-version>8.13.2</elasticsearch-java-client-sniffer-version>
         <elytron-web>4.1.0.Final</elytron-web>
         <exec-maven-plugin-version>3.2.0</exec-maven-plugin-version>
         <fastjson-version>2.0.48</fastjson-version>
@@ -223,12 +223,12 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.23.9.1</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.91</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.92</huaweicloud-sdk-version>
         <ical4j-version>3.2.17</ical4j-version>
-        <icu4j-version>74.2</icu4j-version>
+        <icu4j-version>75.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
-        <infinispan-version>15.0.1.Final</infinispan-version>
+        <infinispan-version>15.0.2.Final</infinispan-version>
         <influx-java-driver-version>2.24</influx-java-driver-version>
         <influx-client-java-driver-version>7.0.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
@@ -371,14 +371,14 @@
         <mybatis-version>3.5.15</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.108.Final</netty-version>
+        <netty-version>4.1.109.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.4.0</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.37.3</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
-        <ognl-version>3.4.2</ognl-version>
+        <ognl-version>3.4.3</ognl-version>
         <openapi-generator>7.4.0</openapi-generator>
         <openjpa-version>3.2.2</openjpa-version>
         <opensearch-rest-client-version>2.13.0</opensearch-rest-client-version>

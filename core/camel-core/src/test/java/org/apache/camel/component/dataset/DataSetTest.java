@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class DataSetTest extends ContextTestSupport {
 
-    protected SimpleDataSet dataSet = new SimpleDataSet(20);
+    protected final SimpleDataSet dataSet = new SimpleDataSet(20);
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

@@ -38,8 +38,8 @@ import static org.apache.camel.builder.PredicateBuilder.contains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExpressionBuilderTest extends TestSupport {
-    protected CamelContext camelContext = new DefaultCamelContext();
-    protected Exchange exchange = new DefaultExchange(camelContext);
+    protected final CamelContext camelContext = new DefaultCamelContext();
+    protected final Exchange exchange = new DefaultExchange(camelContext);
 
     @Test
     public void testRegexTokenize() throws Exception {

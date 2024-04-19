@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "property": { "index": 0, "kind": "element", "displayName": "Property", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.app.BeanPropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Bean properties" }
+    "property": { "index": 0, "kind": "element", "displayName": "Property", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.app.BeanPropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Bean properties" }
   }
 }

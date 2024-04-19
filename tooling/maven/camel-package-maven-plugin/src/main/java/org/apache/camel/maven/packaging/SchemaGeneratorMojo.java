@@ -259,6 +259,11 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         findClassProperties(eipOptions, classElement, classElement, "", name);
 
         eipOptions.forEach(eipModel::addOption);
+        eipOptions.forEach(o -> {
+            // compute group based on label for each option
+            String group = EndpointHelper.labelAsGroupName(o.getLabel(), false, false);
+            o.setGroup(group);
+        });
 
         // after we have found all the options then figure out if the model
         // accepts input/output

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class DataSetProducerTest extends ContextTestSupport {
 
-    protected SimpleDataSet dataSet = new SimpleDataSet(20);
+    protected final SimpleDataSet dataSet = new SimpleDataSet(20);
 
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;

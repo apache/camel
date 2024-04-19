@@ -63,7 +63,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
     protected final String tagToken;
     protected final String inheritNamespaceToken;
-    protected Expression source;
+    protected final Expression source;
 
     public TokenXMLExpressionIterator(String tagToken, String inheritNamespaceToken) {
         this(null, tagToken, inheritNamespaceToken);

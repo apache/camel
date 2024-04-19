@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
 
     @Test
     public void testSendingMessageWithMethodNameHeader() throws Exception {
