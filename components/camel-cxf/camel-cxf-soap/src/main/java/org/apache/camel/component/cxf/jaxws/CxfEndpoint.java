@@ -196,7 +196,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @UriParam(label = "logging")
     private boolean loggingFeatureEnabled;
     @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
-    private int loggingSizeLimit;
+    private int loggingSizeLimit = AbstractLoggingInterceptor.DEFAULT_LIMIT;
     @UriParam(label = "advanced")
     private boolean mtomEnabled;
     @UriParam(label = "advanced")
