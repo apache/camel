@@ -21,43 +21,41 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
- * A processor which sets multiple headers on the IN or OUT message with an {@link org.apache.camel.Expression}
+ * A processor which sets multiple variables on the Exchange with an {@link Expression}
  */
-public class SetHeadersProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetVariablesProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
     private String id;
     private String routeId;
-    private final List<Expression> headerNames;
+    private final List<Expression> variableNames;
     private final List<Expression> expressions;
 
-    public SetHeadersProcessor(List<Expression> headerNames, List<Expression> expressions) {
-        this.headerNames = headerNames;
+    public SetVariablesProcessor(List<Expression> variableNames, List<Expression> expressions) {
+        this.variableNames = variableNames;
         this.expressions = expressions;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            int headerIndex = 0;
+            int variableIndex = 0;
             for (Expression expression : expressions) {
-                Object newHeader = expression.evaluate(exchange, Object.class);
+                Object newVariable = expression.evaluate(exchange, Object.class);
 
                 if (exchange.getException() != null) {
                     // the expression threw an exception so we should break-out
                     callback.done(true);
                     return true;
                 }
-                Message message = exchange.getMessage();
-                String key = headerNames.get(headerIndex++).evaluate(exchange, String.class);
-                message.setHeader(key, newHeader);
+                String key = variableNames.get(variableIndex++).evaluate(exchange, String.class);
+                ExchangeHelper.setVariable(exchange, key, newVariable);
             }
-
         } catch (Exception e) {
             exchange.setException(e);
         }
@@ -73,13 +71,13 @@ public class SetHeadersProcessor extends AsyncProcessorSupport implements Tracea
 
     @Override
     public String getTraceLabel() {
-        StringBuilder sb = new StringBuilder("setHeaders[");
-        int headerIndex = 0;
+        StringBuilder sb = new StringBuilder("setVariables[");
+        int variableIndex = 0;
         for (Expression expression : expressions) {
-            if (headerIndex > 0) {
+            if (variableIndex > 0) {
                 sb.append("; ");
             }
-            sb.append(headerNames.get(headerIndex++).toString());
+            sb.append(variableNames.get(variableIndex++).toString());
             sb.append(", ");
             sb.append(expression.toString());
         }
@@ -107,8 +105,8 @@ public class SetHeadersProcessor extends AsyncProcessorSupport implements Tracea
         this.routeId = routeId;
     }
 
-    public List<Expression> getHeaderNames() {
-        return headerNames;
+    public List<Expression> getVariableNames() {
+        return variableNames;
     }
 
     public List<Expression> getExpressions() {

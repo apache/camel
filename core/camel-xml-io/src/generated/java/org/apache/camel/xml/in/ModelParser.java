@@ -1064,6 +1064,12 @@ public class ModelParser extends BaseParser {
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, expressionNodeElementHandler(), noValueHandler());
     }
+    protected SetVariablesDefinition doParseSetVariablesDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SetVariablesDefinition(), processorDefinitionAttributeHandler(), (def, key) -> switch (key) {
+                case "setVariable": doAdd(doParseSetVariableDefinition(), def.getVariables(), def::setVariables); yield true;
+                default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            }, noValueHandler());
+    }
     protected SortDefinition doParseSortDefinition() throws IOException, XmlPullParserException {
         return doParse(new SortDefinition(), (def, key, val) -> switch (key) {
                 case "comparator": def.setComparator(val); yield true;
@@ -2770,6 +2776,7 @@ public class ModelParser extends BaseParser {
             case "setHeaders": return doParseSetHeadersDefinition();
             case "setProperty": return doParseSetPropertyDefinition();
             case "setVariable": return doParseSetVariableDefinition();
+            case "setVariables": return doParseSetVariablesDefinition();
             case "sort": return doParseSortDefinition();
             case "split": return doParseSplitDefinition();
             case "step": return doParseStepDefinition();

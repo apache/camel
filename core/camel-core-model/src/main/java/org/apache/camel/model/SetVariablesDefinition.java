@@ -32,40 +32,40 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Allows setting multiple headers on the message at the same time.
+ * Allows setting multiple variables at the same time.
  */
 @Metadata(label = "eip,transformation")
-@XmlRootElement(name = "setHeaders")
+@XmlRootElement(name = "setVariables")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefinition> {
+public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefinition> {
 
     /** This is provided to support XML and YAML DSL */
-    @XmlElementRef(name = "headers")
-    private List<SetHeaderDefinition> headers = new java.util.ArrayList<>();
+    @XmlElementRef(name = "variables")
+    private List<SetVariableDefinition> variables = new java.util.ArrayList<>();
 
-    public SetHeadersDefinition() {
+    public SetVariablesDefinition() {
     }
 
     /**
-     * Allow setting multiple headers using a single expression.
+     * Allow setting multiple variables using a single expression.
      */
-    public SetHeadersDefinition(Object... headerNamesAndExprs) {
-        createSetHeaderDefinitions(headerNamesAndExprs);
+    public SetVariablesDefinition(Object... variableNamesAndExprs) {
+        createSetVariableDefinitions(variableNamesAndExprs);
     }
 
-    private void createSetHeaderDefinitions(Object[] headerNamesAndExprs) {
-        if (headerNamesAndExprs.length == 1 && headerNamesAndExprs[0] instanceof Map) {
-            createHeadersFromMap((Map<?, ?>) headerNamesAndExprs[0]);
-        } else if (headerNamesAndExprs.length % 2 != 0) {
+    private void createSetVariableDefinitions(Object[] variableNamesAndExprs) {
+        if (variableNamesAndExprs.length == 1 && variableNamesAndExprs[0] instanceof Map) {
+            createVariablesFromMap((Map<?, ?>) variableNamesAndExprs[0]);
+        } else if (variableNamesAndExprs.length % 2 != 0) {
             throw new IllegalArgumentException("Must be a Map or have an even number of arguments!");
         } else {
-            for (int i = 0; i < headerNamesAndExprs.length; i += 2) {
-                addHeader(headerNamesAndExprs[i], headerNamesAndExprs[i + 1]);
+            for (int i = 0; i < variableNamesAndExprs.length; i += 2) {
+                addVariable(variableNamesAndExprs[i], variableNamesAndExprs[i + 1]);
             }
         }
     }
 
-    private void addHeader(Object key, Object value) {
+    private void addVariable(Object key, Object value) {
         if (!(key instanceof String)) {
             throw new IllegalArgumentException("Keys must be Strings");
         }
@@ -73,31 +73,31 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
             // Assume it's a constant of some kind
             value = ExpressionBuilder.constantExpression(value);
         }
-        headers.add(new SetHeaderDefinition((String) key, (Expression) value));
+        variables.add(new SetVariableDefinition((String) key, (Expression) value));
     }
 
-    private void createHeadersFromMap(Map<?, ?> headerMap) {
-        for (Entry<?, ?> entry : headerMap.entrySet()) {
-            addHeader(entry.getKey(), entry.getValue());
+    private void createVariablesFromMap(Map<?, ?> variableMap) {
+        for (Entry<?, ?> entry : variableMap.entrySet()) {
+            addVariable(entry.getKey(), entry.getValue());
         }
     }
 
-    public List<SetHeaderDefinition> getHeaders() {
-        return headers;
+    public List<SetVariableDefinition> getVariables() {
+        return variables;
     }
 
-    public void setHeaders(List<SetHeaderDefinition> headers) {
-        this.headers = headers;
+    public void setVariables(List<SetVariableDefinition> variables) {
+        this.variables = variables;
     }
 
     @Override
     public String getLabel() {
-        return "setHeaders[" + getHeaderNames() + "]";
+        return "setVariables[" + getVariableNames() + "]";
     }
 
-    private String getHeaderNames() {
+    private String getVariableNames() {
         StringJoiner sb = new StringJoiner(",");
-        for (SetHeaderDefinition def : headers) {
+        for (SetVariableDefinition def : variables) {
             sb.add(def.getName());
         }
         return sb.toString();
@@ -105,7 +105,7 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
 
     @Override
     public String getShortName() {
-        return "setHeaders";
+        return "setVariables";
     }
 
     @Override

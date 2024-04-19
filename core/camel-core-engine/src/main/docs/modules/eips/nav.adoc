@@ -90,6 +90,7 @@
 ** xref:setHeaders-eip.adoc[Set Headers]
 ** xref:setProperty-eip.adoc[Set Property]
 ** xref:setVariable-eip.adoc[Set Variable]
+** xref:setVariables-eip.adoc[Set Variables]
 ** xref:sort-eip.adoc[Sort]
 ** xref:split-eip.adoc[Split]
 ** xref:step-eip.adoc[Step]

@@ -2723,6 +2723,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Adds a processor which sets several variables on the exchange
+     *
+     * @param  variableNamesAndValues a sequence of variable names and values or a Map containing names and values
+     * @return                        the builder
+     */
+    public Type setVariables(Object... variableNamesAndValues) {
+        SetVariablesDefinition answer = new SetVariablesDefinition(variableNamesAndValues);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
      * Adds a processor which sets the variable
      *
      * @param  name       the variable name
