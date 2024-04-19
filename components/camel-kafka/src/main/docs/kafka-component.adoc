@@ -656,11 +656,39 @@ public class CustomSubscribeAdapter implements SubscribeAdapter {
 
 Then, it is necessary to add it as named bean instance to the registry:
 
-
 [source,java]
 .Add to registry example
 ----
 context.getRegistry().bind(KafkaConstants.KAFKA_SUBSCRIBE_ADAPTER, new CustomSubscribeAdapter());
+----
+
+== Interoperability
+
+=== JMS
+
+When interoperating Kafka and JMS, it may be necessary to coerce the JMS headers into their expected type.
+
+For instance, when consuming messages from Kafka carrying JMS headers and then sending them to a JMS broker, those headers are
+first deserialized into a byte array. Then, the `camel-jms` component tries to coerce this byte array into the
+specific type used by.
+However, both the origin endpoint as well as how this was setup on the code itsef may affect how the data is serialized and
+deserialized. As such, it is not feasible to naively assume the data type of the byte array.
+
+To address this issue, we provide a custom header deserializer to force Kafka to de-serialize the JMS data according to
+the JMS specification. This approach ensures that the headers are properly interpreted and processed by the camel-jms component.
+
+Due to the inherent complexity of each possible system and endpoint, it may not be possible for this deserializer to cover all
+possible scenarios. As such, it is provided as model that can be modified and/or adapted for the specific needs of each application.
+
+To utilize this solution, you need to modify the route URI on the consumer end of the pipeline by including the
+`headerDeserializer` option.
+For example:
+
+[source,java]
+.Route snippet
+----
+from("kafka:topic?headerDeserializer=#class:org.apache.camel.component.kafka.consumer.support.interop.JMSDeserializer")
+    .to("...");
 ----
 
 include::spring-boot:partial$starter.adoc[]
