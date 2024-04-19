@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 public class SetVariablesProcessorTest extends ContextTestSupport {
 
