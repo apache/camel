@@ -65,6 +65,7 @@ When using named parameters, Camel will look up the names in the given precedenc
 1. from a xref:languages:simple-language.adoc[Simple] expressions
 2. from message body if its a `java.util.Map`
 3. from message headers
+4. from exchange variables
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
@@ -225,8 +226,9 @@ In the given route below, we want to get all the projects from the
 `projects` table.
 Notice the SQL query has two named parameters, `:#lic` and
 `:#min`.
-Camel will then look up for these parameters from the message body or
-message headers.
+Camel will then look up for these parameters from the message body,
+message headers and exchange variables.
+
 Notice in the example above we set two headers with
 constant value for the named parameters:
 

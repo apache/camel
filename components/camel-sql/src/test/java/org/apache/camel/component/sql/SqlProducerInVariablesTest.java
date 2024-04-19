@@ -32,7 +32,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SqlProducerInTest extends CamelTestSupport {
+public class SqlProducerInVariablesTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
 
@@ -62,7 +62,8 @@ public class SqlProducerInTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("direct:query", "Hi there!", "names", new String[] { "Camel", "AMQ" });
+        fluentTemplate.to("direct:query").withBody("Hi there!").withVariable("names", new String[] { "Camel", "AMQ" })
+                .request();
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -83,7 +84,7 @@ public class SqlProducerInTest extends CamelTestSupport {
         names.add("Camel");
         names.add("AMQ");
 
-        template.requestBodyAndHeader("direct:query", "Hi there!", "names", names);
+        fluentTemplate.to("direct:query").withBody("Hi there!").withVariable("names", names).request();
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -100,7 +101,7 @@ public class SqlProducerInTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("direct:query", "Hi there!", "names", "Camel,AMQ");
+        fluentTemplate.to("direct:query").withBody("Hi there!").withVariable("names", "Camel,AMQ").request();
 
         MockEndpoint.assertIsSatisfied(context);
 
