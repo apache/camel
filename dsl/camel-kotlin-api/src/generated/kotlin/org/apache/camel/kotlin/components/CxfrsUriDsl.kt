@@ -70,36 +70,6 @@ public class CxfrsUriDsl(
   }
 
   /**
-   * This option enables CXF Logging Feature which writes inbound and outbound REST messages to log.
-   */
-  public fun loggingFeatureEnabled(loggingFeatureEnabled: String) {
-    it.property("loggingFeatureEnabled", loggingFeatureEnabled)
-  }
-
-  /**
-   * This option enables CXF Logging Feature which writes inbound and outbound REST messages to log.
-   */
-  public fun loggingFeatureEnabled(loggingFeatureEnabled: Boolean) {
-    it.property("loggingFeatureEnabled", loggingFeatureEnabled.toString())
-  }
-
-  /**
-   * To limit the total size of number of bytes the logger will output when logging feature has been
-   * enabled.
-   */
-  public fun loggingSizeLimit(loggingSizeLimit: String) {
-    it.property("loggingSizeLimit", loggingSizeLimit)
-  }
-
-  /**
-   * To limit the total size of number of bytes the logger will output when logging feature has been
-   * enabled.
-   */
-  public fun loggingSizeLimit(loggingSizeLimit: Int) {
-    it.property("loggingSizeLimit", loggingSizeLimit.toString())
-  }
-
-  /**
    * This option is used to specify the model file which is useful for the resource class without
    * annotation. When using this option, then the service class can be omitted, to emulate
    * document-only endpoints
@@ -433,5 +403,35 @@ public class CxfrsUriDsl(
    */
   public fun propagateContexts(propagateContexts: Boolean) {
     it.property("propagateContexts", propagateContexts.toString())
+  }
+
+  /**
+   * This option enables CXF Logging Feature which writes inbound and outbound REST messages to log.
+   */
+  public fun loggingFeatureEnabled(loggingFeatureEnabled: String) {
+    it.property("loggingFeatureEnabled", loggingFeatureEnabled)
+  }
+
+  /**
+   * This option enables CXF Logging Feature which writes inbound and outbound REST messages to log.
+   */
+  public fun loggingFeatureEnabled(loggingFeatureEnabled: Boolean) {
+    it.property("loggingFeatureEnabled", loggingFeatureEnabled.toString())
+  }
+
+  /**
+   * To limit the total size of number of bytes the logger will output when logging feature has been
+   * enabled and -1 for no limit.
+   */
+  public fun loggingSizeLimit(loggingSizeLimit: String) {
+    it.property("loggingSizeLimit", loggingSizeLimit)
+  }
+
+  /**
+   * To limit the total size of number of bytes the logger will output when logging feature has been
+   * enabled and -1 for no limit.
+   */
+  public fun loggingSizeLimit(loggingSizeLimit: Int) {
+    it.property("loggingSizeLimit", loggingSizeLimit.toString())
   }
 }
