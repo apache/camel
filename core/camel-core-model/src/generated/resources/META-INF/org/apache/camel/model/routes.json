@@ -12,8 +12,8 @@
     "output": false
   },
   "properties": {
-    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "description": { "index": 1, "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
-    "routes": { "index": 2, "kind": "element", "displayName": "Routes", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteDefinition>", "oneOf": [ "route" ], "deprecated": false, "autowired": false, "secret": false, "description": "Contains the Camel routes" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "index": 1, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "routes": { "index": 2, "kind": "element", "displayName": "Routes", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteDefinition>", "oneOf": [ "route" ], "deprecated": false, "autowired": false, "secret": false, "description": "Contains the Camel routes" }
   }
 }
