@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
+import java.util.Map;
 
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpServerOptions;
@@ -68,6 +69,8 @@ public class VertxWebsocketConfiguration {
     private boolean allowOriginHeader = true;
     @UriParam(label = "producer,consumer")
     private String originHeaderUrl;
+    @UriParam(label = "producer,consumer")
+    private Map<String, String> handshakeHeaders;
 
     /**
      * The WebSocket URI address to use.
@@ -276,5 +279,17 @@ public class VertxWebsocketConfiguration {
      */
     public void setOriginHeaderUrl(String originHeaderUrl) {
         this.originHeaderUrl = originHeaderUrl;
+    }
+
+    public Map<String, String> getHandshakeHeaders() {
+        return handshakeHeaders;
+    }
+
+    /**
+     * Headers to send in the HTTP handshake request. When the endpoint is a consumer, it only works when it consumes a
+     * remote host as a client (i.e. consumeAsClient is true).
+     */
+    public void setHandshakeHeaders(Map<String, String> handshakeHeaders) {
+        this.handshakeHeaders = handshakeHeaders;
     }
 }

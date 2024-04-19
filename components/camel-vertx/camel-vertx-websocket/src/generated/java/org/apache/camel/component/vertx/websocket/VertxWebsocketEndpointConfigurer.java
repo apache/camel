@@ -41,6 +41,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "firewebsocketconnectionevents":
         case "fireWebSocketConnectionEvents": target.getConfiguration().setFireWebSocketConnectionEvents(property(camelContext, boolean.class, value)); return true;
+        case "handshakeheaders":
+        case "handshakeHeaders": target.getConfiguration().setHandshakeHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxreconnectattempts":
@@ -83,6 +85,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "firewebsocketconnectionevents":
         case "fireWebSocketConnectionEvents": return boolean.class;
+        case "handshakeheaders":
+        case "handshakeHeaders": return java.util.Map.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxreconnectattempts":
@@ -126,6 +130,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "exchangePattern": return target.getExchangePattern();
         case "firewebsocketconnectionevents":
         case "fireWebSocketConnectionEvents": return target.getConfiguration().isFireWebSocketConnectionEvents();
+        case "handshakeheaders":
+        case "handshakeHeaders": return target.getConfiguration().getHandshakeHeaders();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxreconnectattempts":
@@ -143,6 +149,15 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "serverOptions": return target.getConfiguration().getServerOptions();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "handshakeheaders":
+        case "handshakeHeaders": return java.lang.String.class;
         default: return null;
         }
     }
