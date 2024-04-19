@@ -240,19 +240,20 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
     
+        
         /**
-         * Set the max number of messages to be peeked during the peek
-         * operation.
+         * Sets maximum number of concurrent calls.
          * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
+         * Default: 1
          * Group: consumer
          * 
-         * @param peekNumMaxMessages the value to set
+         * @param maxConcurrentCalls the value to set
          * @return the dsl builder
          */
-        default AzureServicebusComponentBuilder peekNumMaxMessages(java.lang.Integer peekNumMaxMessages) {
-            doSetProperty("peekNumMaxMessages", peekNumMaxMessages);
+        default AzureServicebusComponentBuilder maxConcurrentCalls(int maxConcurrentCalls) {
+            doSetProperty("maxConcurrentCalls", maxConcurrentCalls);
             return this;
         }
     
@@ -278,19 +279,19 @@ public interface AzureServicebusComponentBuilderFactory {
         }
     
         /**
-         * Sets the receiverAsyncClient in order to consume messages by the
+         * Sets the processorClient in order to consume messages by the
          * consumer.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient&lt;/code&gt; type.
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusProcessorClient&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
-         * @param receiverAsyncClient the value to set
+         * @param processorClient the value to set
          * @return the dsl builder
          */
-        default AzureServicebusComponentBuilder receiverAsyncClient(com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient receiverAsyncClient) {
-            doSetProperty("receiverAsyncClient", receiverAsyncClient);
+        default AzureServicebusComponentBuilder processorClient(com.azure.messaging.servicebus.ServiceBusProcessorClient processorClient) {
+            doSetProperty("processorClient", processorClient);
             return this;
         }
     
@@ -343,24 +344,6 @@ public interface AzureServicebusComponentBuilderFactory {
          */
         default AzureServicebusComponentBuilder subscriptionName(java.lang.String subscriptionName) {
             doSetProperty("subscriptionName", subscriptionName);
-            return this;
-        }
-    
-        
-        /**
-         * If the consumer has connection failure to Azure ServiceBus, then
-         * delay (millis) some time before re-connecting.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 5000
-         * Group: consumer (advanced)
-         * 
-         * @param reconnectDelay the value to set
-         * @return the dsl builder
-         */
-        default AzureServicebusComponentBuilder reconnectDelay(int reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
     
@@ -593,13 +576,12 @@ public interface AzureServicebusComponentBuilderFactory {
             case "bridgeErrorHandler": ((ServiceBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "enableDeadLettering": getOrCreateConfiguration((ServiceBusComponent) component).setEnableDeadLettering((boolean) value); return true;
             case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((java.time.Duration) value); return true;
+            case "maxConcurrentCalls": getOrCreateConfiguration((ServiceBusComponent) component).setMaxConcurrentCalls((int) value); return true;
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
             case "processorClient": getOrCreateConfiguration((ServiceBusComponent) component).setProcessorClient((com.azure.messaging.servicebus.ServiceBusProcessorClient) value); return true;
             case "serviceBusReceiveMode": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusReceiveMode((com.azure.messaging.servicebus.models.ServiceBusReceiveMode) value); return true;
             case "subQueue": getOrCreateConfiguration((ServiceBusComponent) component).setSubQueue((com.azure.messaging.servicebus.models.SubQueue) value); return true;
-            case "maxConcurrentCalls": getOrCreateConfiguration((ServiceBusComponent) component).setMaxConcurrentCalls((int) value); return true;
             case "subscriptionName": getOrCreateConfiguration((ServiceBusComponent) component).setSubscriptionName((java.lang.String) value); return true;
-            case "reconnectDelay": getOrCreateConfiguration((ServiceBusComponent) component).setReconnectDelay((int) value); return true;
             case "binary": getOrCreateConfiguration((ServiceBusComponent) component).setBinary((boolean) value); return true;
             case "lazyStartProducer": ((ServiceBusComponent) component).setLazyStartProducer((boolean) value); return true;
             case "producerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setProducerOperation((org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition) value); return true;
