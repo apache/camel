@@ -75,7 +75,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private int prefetchCount;
     @UriParam(label = "consumer")
     private SubQueue subQueue;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", defaultValue = "1")
     private int maxConcurrentCalls = 1;
     @UriParam(label = "producer", defaultValue = "sendMessages")
     private ServiceBusProducerOperationDefinition producerOperation = ServiceBusProducerOperationDefinition.sendMessages;
