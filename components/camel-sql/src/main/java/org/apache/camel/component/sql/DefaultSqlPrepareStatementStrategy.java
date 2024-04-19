@@ -262,6 +262,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     protected static Object lookupParameter(String nextParam, Exchange exchange, Object body) {
         Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
         Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
+        Map<?, ?> variablesMap = safeMap(exchange.getVariables());
 
         Object answer = null;
         if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
@@ -271,6 +272,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
             answer = bodyMap.get(nextParam);
         } else if (headersMap.containsKey(nextParam)) {
             answer = headersMap.get(nextParam);
+        } else if (variablesMap.containsKey(nextParam)) {
+            answer = variablesMap.get(nextParam);
         }
 
         return answer;
@@ -279,12 +282,15 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     protected static boolean hasParameter(String nextParam, Exchange exchange, Object body) {
         Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
         Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
+        Map<?, ?> variablesMap = safeMap(exchange.getVariables());
 
         if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
             return true;
         } else if (bodyMap.containsKey(nextParam)) {
             return true;
         } else if (headersMap.containsKey(nextParam)) {
+            return true;
+        } else if (variablesMap.containsKey(nextParam)) {
             return true;
         }
 
