@@ -151,6 +151,9 @@
           "setVariable" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SetVariableDefinition"
           },
+          "setVariables" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.SetVariablesDefinition"
+          },
           "sort" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.SortDefinition"
           },
@@ -6244,6 +6247,35 @@
           "expression" : { }
         },
         "required" : [ "name" ]
+      },
+      "org.apache.camel.model.SetVariablesDefinition" : {
+        "title" : "Set Variables",
+        "description" : "Allows setting multiple variables at the same time.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "variables" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.SetVariableDefinition"
+            }
+          }
+        }
       },
       "org.apache.camel.model.SortDefinition" : {
         "title" : "Sort",

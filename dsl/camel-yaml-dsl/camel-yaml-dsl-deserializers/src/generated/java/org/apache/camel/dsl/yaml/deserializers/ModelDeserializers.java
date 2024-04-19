@@ -83,6 +83,7 @@ import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetHeadersDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.model.SetVariableDefinition;
+import org.apache.camel.model.SetVariablesDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
@@ -16612,6 +16613,72 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "set-variables",
+                    "setVariables"
+            },
+            types = org.apache.camel.model.SetVariablesDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Set Variables",
+            description = "Allows setting multiple variables at the same time.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "variables", type = "array:org.apache.camel.model.SetVariableDefinition")
+            }
+    )
+    public static class SetVariablesDefinitionDeserializer extends YamlDeserializerBase<SetVariablesDefinition> {
+        public SetVariablesDefinitionDeserializer() {
+            super(SetVariablesDefinition.class);
+        }
+
+        @Override
+        protected SetVariablesDefinition newInstance() {
+            return new SetVariablesDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(SetVariablesDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "inheritErrorHandler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "variables": {
+                    java.util.List<org.apache.camel.model.SetVariableDefinition> val = asFlatList(node, org.apache.camel.model.SetVariableDefinition.class);
+                    target.setVariables(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;

@@ -88,6 +88,7 @@ SetHeaderDefinition
 SetHeadersDefinition
 SetPropertyDefinition
 SetVariableDefinition
+SetVariablesDefinition
 SortDefinition
 SplitDefinition
 StepDefinition

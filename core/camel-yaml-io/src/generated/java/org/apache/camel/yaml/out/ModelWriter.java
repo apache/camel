@@ -291,6 +291,9 @@ public class ModelWriter extends BaseWriter {
     public void writeSetVariableDefinition(SetVariableDefinition def) throws IOException {
         doWriteSetVariableDefinition("setVariable", def);
     }
+    public void writeSetVariablesDefinition(SetVariablesDefinition def) throws IOException {
+        doWriteSetVariablesDefinition("setVariables", def);
+    }
     public void writeSortDefinition(SortDefinition def) throws IOException {
         doWriteSortDefinition("sort", def);
     }
@@ -1682,6 +1685,12 @@ public class ModelWriter extends BaseWriter {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("name", def.getName());
         doWriteExpressionNodeElements(def);
+        endElement(name);
+    }
+    protected void doWriteSetVariablesDefinition(String name, SetVariablesDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteList(null, null, def.getVariables(), this::doWriteSetVariableDefinitionRef);
         endElement(name);
     }
     protected void doWriteSortDefinition(String name, SortDefinition<?> def) throws IOException {
@@ -3687,6 +3696,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
                 case "SetVariableDefinition" -> doWriteSetVariableDefinition("setVariable", (SetVariableDefinition) v);
+                case "SetVariablesDefinition" -> doWriteSetVariablesDefinition("setVariables", (SetVariablesDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);
@@ -3782,6 +3792,7 @@ public class ModelWriter extends BaseWriter {
                 case "SetHeadersDefinition" -> doWriteSetHeadersDefinition("setHeaders", (SetHeadersDefinition) v);
                 case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
                 case "SetVariableDefinition" -> doWriteSetVariableDefinition("setVariable", (SetVariableDefinition) v);
+                case "SetVariablesDefinition" -> doWriteSetVariablesDefinition("setVariables", (SetVariablesDefinition) v);
                 case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
                 case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
                 case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);
@@ -3827,6 +3838,13 @@ public class ModelWriter extends BaseWriter {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
                 case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
+            }
+        }
+    }
+    protected void doWriteSetVariableDefinitionRef(String n, SetVariableDefinition v) throws IOException {
+        if (v != null) {
+            switch (v.getClass().getSimpleName()) {
+                case "SetVariableDefinition" -> doWriteSetVariableDefinition("setVariable", (SetVariableDefinition) v);
             }
         }
     }
