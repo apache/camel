@@ -19,6 +19,7 @@ package org.apache.camel.model.rest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -356,6 +357,10 @@ public class ParamDefinition {
             }
             return answer;
         }
+    }
+
+    public String getAllowableValuesAsCommaString() {
+        return String.join(",", getAllowableValuesAsStringList());
     }
 
 }

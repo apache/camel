@@ -70,6 +70,7 @@ public class RestBindingReifier extends AbstractReifier {
         rbc.setProduces(parseString(definition.getProduces()));
         rbc.setCorsHeaders(config.getCorsHeaders());
         rbc.setQueryDefaultValues(definition.getDefaultValues());
+        rbc.setQueryAllowedValues(definition.getAllowedValues());
         rbc.setRequiredBody(definition.getRequiredBody() != null && definition.getRequiredBody());
         rbc.setRequiredQueryParameters(definition.getRequiredQueryParameters());
         rbc.setRequiredHeaders(definition.getRequiredHeaders());

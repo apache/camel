@@ -34,6 +34,7 @@ public class RestBindingConfiguration {
     private boolean enableNoContentResponse;
     private Map<String, String> corsHeaders;
     private Map<String, String> queryDefaultValues;
+    private Map<String, String> queryAllowedValues;
     private boolean requiredBody;
     private Set<String> requiredQueryParameters;
     private Set<String> requiredHeaders;
@@ -120,6 +121,14 @@ public class RestBindingConfiguration {
 
     public void setQueryDefaultValues(Map<String, String> queryDefaultValues) {
         this.queryDefaultValues = queryDefaultValues;
+    }
+
+    public Map<String, String> getQueryAllowedValues() {
+        return queryAllowedValues;
+    }
+
+    public void setQueryAllowedValues(Map<String, String> queryAllowedValues) {
+        this.queryAllowedValues = queryAllowedValues;
     }
 
     public boolean isRequiredBody() {

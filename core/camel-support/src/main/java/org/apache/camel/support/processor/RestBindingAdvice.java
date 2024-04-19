@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.processor;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -72,6 +73,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     private final boolean enableNoContentResponse;
     private final Map<String, String> corsHeaders;
     private final Map<String, String> queryDefaultValues;
+    private final Map<String, String> queryAllowedValues;
     private final boolean requiredBody;
     private final Set<String> requiredQueryParameters;
     private final Set<String> requiredHeaders;
@@ -86,6 +88,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                              boolean enableNoContentResponse,
                              Map<String, String> corsHeaders,
                              Map<String, String> queryDefaultValues,
+                             Map<String, String> queryAllowedValues,
                              boolean requiredBody, Set<String> requiredQueryParameters,
                              Set<String> requiredHeaders) throws Exception {
 
@@ -136,6 +139,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         this.enableCORS = enableCORS;
         this.corsHeaders = corsHeaders;
         this.queryDefaultValues = queryDefaultValues;
+        this.queryAllowedValues = queryAllowedValues;
         this.requiredBody = requiredBody;
         this.requiredQueryParameters = requiredQueryParameters;
         this.requiredHeaders = requiredHeaders;
@@ -304,6 +308,24 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                 // stop routing and return
                 exchange.setRouteStop(true);
                 return;
+            }
+            // allowed values for query/header parameters
+            if (queryAllowedValues != null) {
+                for (var e : queryAllowedValues.entrySet()) {
+                    String k = e.getKey();
+                    Object v = exchange.getMessage().getHeader(k);
+                    if (v != null) {
+                        String[] parts = e.getValue().split(",");
+                        if (Arrays.stream(parts).noneMatch(v::equals)) {
+                            // this is a bad request, the client did not include some required query parameters
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                            exchange.getMessage().setBody("Some of the query parameters or HTTP headers has a not-allowed value.");
+                            // stop routing and return
+                            exchange.setRouteStop(true);
+                            return;
+                        }
+                    }
+                }
             }
         }
 
