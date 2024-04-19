@@ -41,6 +41,8 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @XmlTransient
     private Map<String, String> defaultValues;
     @XmlTransient
+    private Map<String, String> allowedValues;
+    @XmlTransient
     private Boolean requiredBody;
     @XmlTransient
     private Set<String> requiredHeaders;
@@ -106,6 +108,19 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
+     * Adds allowed value(s) for the query parameter
+     *
+     * @param paramName    query parameter name
+     * @param allowedValue the allowed value (separate by comma)
+     */
+    public void addAllowedValue(String paramName, String allowedValue) {
+        if (allowedValues == null) {
+            allowedValues = new HashMap<>();
+        }
+        allowedValues.put(paramName, allowedValue);
+    }
+
+    /**
      * Adds a required query parameter
      *
      * @param paramName query parameter name
@@ -150,6 +165,13 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      */
     public Map<String, String> getDefaultValues() {
         return defaultValues;
+    }
+
+    /**
+     * Gets the registered allowed values for query parameters
+     */
+    public Map<String, String> getAllowedValues() {
+        return allowedValues;
     }
 
     /**

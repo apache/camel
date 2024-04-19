@@ -337,6 +337,31 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             callback.done(true);
             return true;
         }
+        Map<String, List> allowedValues = null;
+        if (o.getParameters() != null) {
+            allowedValues = o.getParameters().stream()
+                    .filter(p -> "query".equals(p.getIn()))
+                    .filter(p -> p.getSchema() != null)
+                    .filter(p -> p.getSchema().getEnum() != null)
+                    .collect(Collectors.toMap(Parameter::getName, e -> e.getSchema().getEnum()));
+        }
+        if (allowedValues != null) {
+            for (var e : allowedValues.entrySet()) {
+                String k = e.getKey();
+                Object v = exchange.getMessage().getHeader(k);
+                if (v != null) {
+                    if (e.getValue().stream().noneMatch(v::equals)) {
+                        // this is a bad request, the client did not include some required query parameters
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                        exchange.getMessage().setBody("Some of the query parameters or HTTP headers has a not-allowed value.");
+                        // stop routing and return
+                        exchange.setRouteStop(true);
+                        callback.done(true);
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 

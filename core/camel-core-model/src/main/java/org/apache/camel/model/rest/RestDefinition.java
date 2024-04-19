@@ -1148,6 +1148,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                         && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), parseText(camelContext, param.getDefaultValue()));
                 }
+                // register all allowed values for the query and header parameters
+                if ((RestParamType.query == type || RestParamType.header == type)
+                        && param.getAllowableValues() != null) {
+                    binding.addAllowedValue(param.getName(), parseText(camelContext, param.getAllowableValuesAsCommaString()));
+                }
                 // register which parameters are required
                 Boolean required = param.getRequired();
                 if (required != null && required) {
