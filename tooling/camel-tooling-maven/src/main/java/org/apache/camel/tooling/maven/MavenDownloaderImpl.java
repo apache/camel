@@ -1278,22 +1278,24 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         urls.forEach(repo -> {
             try {
                 repo = repositoryResolver.resolveRepository(repo);
-                URL url = new URL(repo);
-                if (mavenCentralEnabled && url.getHost().equals("repo1.maven.org")) {
-                    // Maven Central is always used, so skip it
-                    return;
-                }
-                if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
-                        && url.getPath().contains("/snapshots")) {
-                    // Apache Snapshots added, so we'll use our own definition of this repository
-                    repositories.add(apacheSnapshotsRepository);
-                } else {
-                    // both snapshots and releases allowed for custom repos
-                    String id = "custom" + customRepositoryCounter.getAndIncrement();
-                    repositories.add(new RemoteRepository.Builder(id, "default", repo)
-                            .setReleasePolicy(defaultPolicy)
-                            .setSnapshotPolicy(defaultPolicy)
-                            .build());
+                if (repo != null && !repo.isBlank()) {
+                    URL url = new URL(repo);
+                    if (mavenCentralEnabled && url.getHost().equals("repo1.maven.org")) {
+                        // Maven Central is always used, so skip it
+                        return;
+                    }
+                    if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
+                            && url.getPath().contains("/snapshots")) {
+                        // Apache Snapshots added, so we'll use our own definition of this repository
+                        repositories.add(apacheSnapshotsRepository);
+                    } else {
+                        // both snapshots and releases allowed for custom repos
+                        String id = "custom" + customRepositoryCounter.getAndIncrement();
+                        repositories.add(new RemoteRepository.Builder(id, "default", repo)
+                                .setReleasePolicy(defaultPolicy)
+                                .setSnapshotPolicy(defaultPolicy)
+                                .build());
+                    }
                 }
             } catch (MalformedURLException e) {
                 LOG.warn("Cannot use {} URL: {}. Skipping.", repo, e.getMessage(), e);
