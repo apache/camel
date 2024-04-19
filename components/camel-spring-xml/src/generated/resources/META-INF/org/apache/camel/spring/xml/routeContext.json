@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "route": { "index": 1, "kind": "element", "displayName": "Route", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Routes" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "route": { "index": 1, "kind": "element", "displayName": "Route", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Routes" }
   }
 }
