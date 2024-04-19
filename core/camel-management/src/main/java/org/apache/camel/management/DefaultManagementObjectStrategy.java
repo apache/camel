@@ -90,8 +90,10 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedSetBody;
 import org.apache.camel.management.mbean.ManagedSetExchangePattern;
 import org.apache.camel.management.mbean.ManagedSetHeader;
+import org.apache.camel.management.mbean.ManagedSetHeaders;
 import org.apache.camel.management.mbean.ManagedSetProperty;
 import org.apache.camel.management.mbean.ManagedSetVariable;
+import org.apache.camel.management.mbean.ManagedSetVariables;
 import org.apache.camel.management.mbean.ManagedSplitter;
 import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedStickyLoadBalancer;
@@ -127,8 +129,10 @@ import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.SetHeadersDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.model.SetVariableDefinition;
+import org.apache.camel.model.SetVariablesDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
@@ -165,8 +169,10 @@ import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.processor.SetHeaderProcessor;
+import org.apache.camel.processor.SetHeadersProcessor;
 import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.processor.SetVariableProcessor;
+import org.apache.camel.processor.SetVariablesProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.StepProcessor;
 import org.apache.camel.processor.StopProcessor;
@@ -428,8 +434,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRemoveHeaders(context, (RemoveHeadersProcessor) target, definition);
             } else if (target instanceof SetHeaderProcessor) {
                 answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, (SetHeaderDefinition) definition);
+            } else if (target instanceof SetHeadersProcessor) {
+                answer = new ManagedSetHeaders(context, (SetHeadersProcessor) target, (SetHeadersDefinition) definition);
             } else if (target instanceof SetVariableProcessor) {
                 answer = new ManagedSetVariable(context, (SetVariableProcessor) target, (SetVariableDefinition) definition);
+            } else if (target instanceof SetVariablesProcessor) {
+                answer = new ManagedSetVariables(context, (SetVariablesProcessor) target, (SetVariablesDefinition) definition);
             } else if (target instanceof RemovePropertyProcessor) {
                 answer = new ManagedRemoveProperty(context, (RemovePropertyProcessor) target, definition);
             } else if (target instanceof RemovePropertiesProcessor) {
