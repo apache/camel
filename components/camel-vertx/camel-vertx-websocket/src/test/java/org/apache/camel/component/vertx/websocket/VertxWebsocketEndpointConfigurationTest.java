@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
+import java.util.Map;
 
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpClientOptions;
@@ -45,6 +46,9 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
 
     @BindToRegistry("serverOptions")
     HttpServerOptions serverOptions = new HttpServerOptions();
+
+    @BindToRegistry("headers")
+    Map<String, String> headers = Map.of("Authorization", "Bearer", "ApiSign", "12345");
 
     @Test
     public void testHttpClientOptions() {
@@ -112,6 +116,15 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
                         VertxWebsocketEndpoint.class);
         URI websocketURI = endpoint.getConfiguration().getWebsocketURI();
         assertEquals(testQueryParam, websocketURI.getQuery(), "Query parameters are not correctly set in the in websocketURI.");
+    }
+
+    @Test
+    void testHandshakeHeaders() {
+        String endpointParams = "consumeAsClient=true&handshakeHeaders=#headers";
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:foo.bar.com/test?" + endpointParams, VertxWebsocketEndpoint.class);
+        assertEquals(headers, endpoint.getConfiguration().getHandshakeHeaders(),
+                "Handshake headers are not correctly configured.");
     }
 
     @Override

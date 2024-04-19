@@ -189,6 +189,10 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
             connectOptions.addHeader(ORIGIN_HTTP_HEADER_NAME, defaultOriginHeader);
         }
 
+        if (ObjectHelper.isNotEmpty(configuration.getHandshakeHeaders())) {
+            configuration.getHandshakeHeaders().forEach(connectOptions::addHeader);
+        }
+
         return connectOptions;
     }
 
