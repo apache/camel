@@ -919,6 +919,8 @@ public class Run extends CamelCommand {
         // TODO: delete sub folder on exit
         // TODO: camel log from spring-boot/quarkus is not possible
         // TODO: copy files using symbolic link so you can edit the file
+        // TODO: camel stop does not stop quarkus correctly (spring boot do that)
+        // TODO: camel get does not show Quarkus as platform (spring boot do that)
 
         // run export
         int exit = eq.export();
