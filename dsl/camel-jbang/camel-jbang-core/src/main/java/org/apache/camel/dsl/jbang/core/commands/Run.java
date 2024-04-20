@@ -56,6 +56,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.generator.openapi.RestDslGenerator;
@@ -125,6 +126,10 @@ public class Run extends CamelCommand {
     Path[] filePaths; // Defined only for file path completion; the field never used
 
     public List<String> files = new ArrayList<>();
+
+    @Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
+            defaultValue = "camel-main", description = "Runtime (spring-boot, quarkus, or camel-main)")
+    String runtime = "camel-main";
 
     @Option(names = { "--source-dir" },
             description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.")
@@ -289,6 +294,11 @@ public class Run extends CamelCommand {
 
     @Override
     public boolean disarrangeLogging() {
+        if (runtime.equals("quarkus")) {
+            return true;
+        } else if (runtime.equals("spring-boot")) {
+            return true;
+        }
         return false;
     }
 
@@ -389,6 +399,12 @@ public class Run extends CamelCommand {
             // cannot have both files and source dir at the same time
             System.err.println("Cannot specify both file(s) and source-dir at the same time.");
             return 1;
+        }
+
+        if (runtime.equals("quarkus")) {
+            return runQuarkus();
+        } else if (runtime.equals("spring-boot")) {
+            return runSpringBoot();
         }
 
         File work = CommandLineHelper.getWorkDir();
@@ -820,6 +836,113 @@ public class Run extends CamelCommand {
         } else {
             // run default in current JVM with same camel version
             return runKameletMain(main);
+        }
+    }
+
+    protected int runQuarkus() throws Exception {
+        // export to hidden folder
+        ExportQuarkus eq = new ExportQuarkus(getMain());
+        eq.exportDir = ExportBaseCommand.RUN_DIR;
+        eq.exclude = this.exclude;
+        eq.filePaths = this.filePaths;
+        eq.files = this.files;
+        eq.gav = this.gav;
+        if (eq.gav == null) {
+            eq.gav = "org.dummy:dummy:1.0-SNAPSHOT";
+        }
+        eq.dependencies = this.dependencies;
+        if (eq.dependencies == null) {
+            eq.dependencies = "camel:cli-connector";
+        } else {
+            eq.dependencies += ",camel:cli-connector";
+        }
+        eq.fresh = this.fresh;
+        eq.download = this.download;
+        eq.quiet = true;
+        eq.logging = false;
+        eq.loggingLevel = "off";
+
+        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (have a little patience)");
+
+        // run export
+        int exit = eq.export();
+        if (exit != 0) {
+            return exit;
+        }
+        // run quarkus via maven
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(ExportBaseCommand.RUN_DIR + "/mvnw", "--quiet", "--file", ExportBaseCommand.RUN_DIR, "quarkus:dev");
+
+        if (background) {
+            Process p = pb.start();
+            this.spawnPid = p.pid();
+            if (!silentRun && !transformRun && !transformMessageRun) {
+                printer().println("Running Camel Quarkus integration: " + name + " (version: " + eq.quarkusVersion
+                                  + ") in background with PID: " + p.pid());
+            }
+            return 0;
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            Process p = pb.start();
+            this.spawnPid = p.pid();
+            // wait for that process to exit as we run in foreground
+            return p.waitFor();
+        }
+    }
+
+    protected int runSpringBoot() throws Exception {
+        // export to hidden folder
+        ExportSpringBoot eq = new ExportSpringBoot(getMain());
+        eq.exportDir = ExportBaseCommand.RUN_DIR;
+        eq.exclude = this.exclude;
+        eq.filePaths = this.filePaths;
+        eq.files = this.files;
+        eq.gav = this.gav;
+        if (eq.gav == null) {
+            eq.gav = "org.dummy:dummy:1.0-SNAPSHOT";
+        }
+        eq.dependencies = this.dependencies;
+        if (eq.dependencies == null) {
+            eq.dependencies = "camel:cli-connector";
+        } else {
+            eq.dependencies += ",camel:cli-connector";
+        }
+        eq.fresh = this.fresh;
+        eq.download = this.download;
+        eq.quiet = true;
+        eq.logging = false;
+        eq.loggingLevel = "off";
+
+        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (have a little patience)");
+        // TODO: if error exporting we should report error (log output)
+        // TODO: run in unique sub folder
+        // TODO: delete sub folder on exit
+        // TODO: camel log from spring-boot/quarkus is not possible
+        // TODO: copy files using symbolic link so you can edit the file
+
+        // run export
+        int exit = eq.export();
+        if (exit != 0) {
+            return exit;
+        }
+        // run quarkus via maven
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(ExportBaseCommand.RUN_DIR + "/mvnw", "--quiet", "--file", ExportBaseCommand.RUN_DIR, "spring-boot:run");
+
+        if (background) {
+            Process p = pb.start();
+            this.spawnPid = p.pid();
+            if (!silentRun && !transformRun && !transformMessageRun) {
+                printer().println("Running Camel Spring Boot integration: " + name + " (version: " + camelVersion
+                                  + ") in background with PID: " + p.pid());
+            }
+            return 0;
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            Process p = pb.start();
+            this.spawnPid = p.pid();
+            // wait for that process to exit as we run in foreground
+            return p.waitFor();
         }
     }
 
