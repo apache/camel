@@ -942,6 +942,7 @@ public class Run extends CamelCommand {
         // TODO: copy files using symbolic link so you can edit the file (TODO: application.properties)
         // TODO: camel stop does not stop quarkus correctly (spring boot do that)
         // TODO: camel get does not show Quarkus as platform (spring boot do that)
+        // TODO: spring-boot dev-tools reloading could update camel reload counter
 
         // run export
         int exit = eq.export();
