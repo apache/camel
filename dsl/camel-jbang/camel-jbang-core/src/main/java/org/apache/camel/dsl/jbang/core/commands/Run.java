@@ -147,6 +147,14 @@ public class Run extends CamelCommand {
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
+    @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
+            defaultValue = "3.9.4")
+    String quarkusVersion = "3.9.4";
+
+    @Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
+            defaultValue = "3.2.5")
+    String springBootVersion = "3.2.5";
+
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
             description = "Profile to run (dev, test, or prod).")
     String profile = "dev";
@@ -842,13 +850,16 @@ public class Run extends CamelCommand {
     protected int runQuarkus() throws Exception {
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
+        eq.quarkusVersion = this.quarkusVersion;
+        eq.camelVersion = this.camelVersion;
+        eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = ExportBaseCommand.RUN_DIR;
         eq.exclude = this.exclude;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.gav = this.gav;
         if (eq.gav == null) {
-            eq.gav = "org.dummy:dummy:1.0-SNAPSHOT";
+            eq.gav = "org.apache.camel:jbang-run-dummy:1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
         if (eq.dependencies == null) {
@@ -862,7 +873,7 @@ public class Run extends CamelCommand {
         eq.logging = false;
         eq.loggingLevel = "off";
 
-        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (have a little patience)");
+        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
 
         // run export
         int exit = eq.export();
@@ -893,13 +904,17 @@ public class Run extends CamelCommand {
     protected int runSpringBoot() throws Exception {
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
+        eq.springBootVersion = this.springBootVersion;
+        eq.camelVersion = this.camelVersion;
+        eq.camelSpringBootVersion = this.camelVersion;
+        eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = ExportBaseCommand.RUN_DIR;
         eq.exclude = this.exclude;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.gav = this.gav;
         if (eq.gav == null) {
-            eq.gav = "org.dummy:dummy:1.0-SNAPSHOT";
+            eq.gav = "org.apache.camel:jbang-run-dummy:1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
         if (eq.dependencies == null) {
@@ -913,7 +928,7 @@ public class Run extends CamelCommand {
         eq.logging = false;
         eq.loggingLevel = "off";
 
-        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (have a little patience)");
+        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
         // TODO: if error exporting we should report error (log output)
         // TODO: run in unique sub folder
         // TODO: delete sub folder on exit
