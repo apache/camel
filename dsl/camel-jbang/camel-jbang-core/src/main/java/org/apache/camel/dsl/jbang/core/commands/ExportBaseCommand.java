@@ -218,6 +218,8 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
+    protected boolean symbolicLink; // copy source files using symbolic link
+
     public ExportBaseCommand(CamelJBangMain main) {
         super(main);
     }
@@ -710,7 +712,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         return "3.4.0";
     }
 
-    protected static void safeCopy(File source, File target, boolean override) throws Exception {
+    protected void safeCopy(File source, File target, boolean override) throws Exception {
         if (!source.exists()) {
             return;
         }
@@ -726,6 +728,21 @@ abstract class ExportBaseCommand extends CamelCommand {
                 }
             }
             return;
+        }
+
+        if (symbolicLink) {
+            try {
+                // must use absolute paths
+                Path link = target.toPath().toAbsolutePath();
+                Path src = source.toPath().toAbsolutePath();
+                if (Files.exists(link)) {
+                    Files.delete(link);
+                }
+                Files.createSymbolicLink(link, src);
+                return; // success
+            } catch (IOException e) {
+                // ignore
+            }
         }
 
         if (!target.exists()) {

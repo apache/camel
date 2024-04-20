@@ -850,6 +850,7 @@ public class Run extends CamelCommand {
     protected int runQuarkus() throws Exception {
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
+        eq.symbolicLink = true;
         eq.quarkusVersion = this.quarkusVersion;
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
@@ -904,6 +905,7 @@ public class Run extends CamelCommand {
     protected int runSpringBoot() throws Exception {
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
+        eq.symbolicLink = true;
         eq.springBootVersion = this.springBootVersion;
         eq.camelVersion = this.camelVersion;
         eq.camelSpringBootVersion = this.camelVersion;
@@ -922,6 +924,10 @@ public class Run extends CamelCommand {
         } else {
             eq.dependencies += ",camel:cli-connector";
         }
+        if (this.dev) {
+            // hot-reload of spring-boot
+            eq.dependencies += ",mvn:org.springframework.boot:spring-boot-devtools";
+        }
         eq.fresh = this.fresh;
         eq.download = this.download;
         eq.quiet = true;
@@ -933,7 +939,7 @@ public class Run extends CamelCommand {
         // TODO: run in unique sub folder
         // TODO: delete sub folder on exit
         // TODO: camel log from spring-boot/quarkus is not possible
-        // TODO: copy files using symbolic link so you can edit the file
+        // TODO: copy files using symbolic link so you can edit the file (TODO: application.properties)
         // TODO: camel stop does not stop quarkus correctly (spring boot do that)
         // TODO: camel get does not show Quarkus as platform (spring boot do that)
 
@@ -942,7 +948,7 @@ public class Run extends CamelCommand {
         if (exit != 0) {
             return exit;
         }
-        // run quarkus via maven
+        // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(ExportBaseCommand.RUN_DIR + "/mvnw", "--quiet", "--file", ExportBaseCommand.RUN_DIR, "spring-boot:run");
 
