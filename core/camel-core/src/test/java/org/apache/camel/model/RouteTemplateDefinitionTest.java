@@ -34,10 +34,13 @@ class RouteTemplateDefinitionTest {
         RouteDefinition route = new RouteDefinition();
         route.setTemplateParameters(Map.of("parameter", "parameterValue"));
         route.setRouteProperties(List.of(new PropertyDefinition("property", "propertyValue")));
-        route.setRoutePolicies(List.of(new RoutePolicySupport() {
-        }));
+        route.setRoutePolicies(List.of(new RoutePolicySupport() {}));
         route.setInput(new FromDefinition("direct://fromEndpoint"));
-        route.setOutputs(List.of(new ToDefinition("direct://toEndpoint"), new SetHeaderDefinition("header", "headerValue")));
+        route.setOutputs(List.of(
+            new ToDefinition("direct://toEndpoint"),
+            new SetHeaderDefinition("header", "headerValue"),
+            new EnrichDefinition(),
+            new PollEnrichDefinition()));
         RouteTemplateDefinition routeTemplate = new RouteTemplateDefinition();
         routeTemplate.setRoute(route);
 
