@@ -449,8 +449,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
     private List<ProcessorDefinition<?>> copy(List<ProcessorDefinition<?>> outputs) {
         var copy = new ArrayList<ProcessorDefinition<?>>();
         for (var definition : outputs) {
-            if (definition instanceof CopyableProcessorDefinition copyable) {
-                copy.add(copyable.copy());
+            if (definition instanceof Copyable copyableDefinition) {
+                copy.add(copyableDefinition.copy());
             } else {
                 copy.add(definition);
             }
