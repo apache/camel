@@ -22,6 +22,8 @@ import java.util.Map;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.jupiter.api.Test;
 
+import static java.util.Collections.emptyList;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -34,18 +36,15 @@ class RouteTemplateDefinitionTest {
         RouteDefinition route = new RouteDefinition();
         route.setTemplateParameters(Map.of("parameter", "parameterValue"));
         route.setRouteProperties(List.of(new PropertyDefinition("property", "propertyValue")));
-        route.setRoutePolicies(List.of(new RoutePolicySupport() {}));
+        route.setRoutePolicies(List.of(new RoutePolicySupport() {
+        }));
         route.setInput(new FromDefinition("direct://fromEndpoint"));
         route.setOutputs(List.of(
-            new ToDefinition("direct://toEndpoint"),
-            new SetHeaderDefinition("header", "headerValue"),
-            new EnrichDefinition(),
-            new PollEnrichDefinition()));
+                new CopyableProcessDefinition(),
+                new NonCopyableProcessDefinition()));
         RouteTemplateDefinition routeTemplate = new RouteTemplateDefinition();
         routeTemplate.setRoute(route);
-
         RouteDefinition routeCopy = routeTemplate.asRouteDefinition();
-
         assertNotSame(route.getTemplateParameters(), routeCopy.getTemplateParameters());
         assertEquals(route.getTemplateParameters(), routeCopy.getTemplateParameters());
         assertNotSame(route.getRouteProperties(), routeCopy.getRouteProperties());
@@ -56,11 +55,46 @@ class RouteTemplateDefinitionTest {
         assertEquals(route.getInput().getUri(), routeCopy.getInput().getUri());
         assertNotSame(route.getOutputs(), routeCopy.getOutputs());
         assertEquals(2, routeCopy.getOutputs().size());
+        assertInstanceOf(CopyableProcessDefinition.class, routeCopy.getOutputs().get(0));
         assertNotSame(route.getOutputs().get(0), routeCopy.getOutputs().get(0));
-        assertInstanceOf(ToDefinition.class, route.getOutputs().get(0));
-        assertInstanceOf(ToDefinition.class, routeCopy.getOutputs().get(0));
-        assertEquals(((ToDefinition) route.getOutputs().get(0)).getUri(),
-                ((ToDefinition) routeCopy.getOutputs().get(0)).getUri());
-        assertSame(route.getOutputs().get(1), routeCopy.getOutputs().get(1));
+        assertEquals(route.getOutputs().get(0).getId(), routeCopy.getOutputs().get(0).getId());
+        assertSame(route.getOutputs().get(1), routeCopy.getOutputs().get(3));
+    }
+
+    private static final class CopyableProcessDefinition extends ProcessorDefinition<CopyableProcessDefinition> implements Copyable {
+
+        public CopyableProcessDefinition() {
+            setId(randomUUID().toString());
+        }
+
+        @Override
+        public ProcessorDefinition<?> copy() {
+            var copy = new CopyableProcessDefinition();
+            copy.setId(getId());
+            return copy;
+        }
+
+        @Override
+        public String getShortName() {
+            return toString();
+        }
+
+        @Override
+        public List<ProcessorDefinition<?>> getOutputs() {
+            return emptyList();
+        }
+    }
+
+    private static final class NonCopyableProcessDefinition extends ProcessorDefinition<NonCopyableProcessDefinition> {
+
+        @Override
+        public String getShortName() {
+            return toString();
+        }
+
+        @Override
+        public List<ProcessorDefinition<?>> getOutputs() {
+            return emptyList();
+        }
     }
 }

@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends ExpressionNode
-        implements AggregationStrategyAwareDefinition<PollEnrichDefinition>, CopyableProcessorDefinition {
+        implements AggregationStrategyAwareDefinition<PollEnrichDefinition>, Copyable {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
