@@ -61,7 +61,8 @@ class RouteTemplateDefinitionTest {
         assertSame(route.getOutputs().get(1), routeCopy.getOutputs().get(3));
     }
 
-    private static final class CopyableProcessDefinition extends ProcessorDefinition<CopyableProcessDefinition> implements Copyable {
+    private static final class CopyableProcessDefinition extends ProcessorDefinition<CopyableProcessDefinition>
+            implements Copyable {
 
         public CopyableProcessDefinition() {
             setId(randomUUID().toString());
