@@ -58,7 +58,7 @@ class RouteTemplateDefinitionTest {
         assertInstanceOf(CopyableProcessDefinition.class, routeCopy.getOutputs().get(0));
         assertNotSame(route.getOutputs().get(0), routeCopy.getOutputs().get(0));
         assertEquals(route.getOutputs().get(0).getId(), routeCopy.getOutputs().get(0).getId());
-        assertSame(route.getOutputs().get(1), routeCopy.getOutputs().get(3));
+        assertSame(route.getOutputs().get(1), routeCopy.getOutputs().get(1));
     }
 
     private static final class CopyableProcessDefinition extends ProcessorDefinition<CopyableProcessDefinition>
