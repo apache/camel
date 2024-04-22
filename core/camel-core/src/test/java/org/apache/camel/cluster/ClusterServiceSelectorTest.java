@@ -384,14 +384,6 @@ public class ClusterServiceSelectorTest {
             return Collections.emptyList();
         }
 
-        @Override
-        protected void doStart() {
-        }
-
-        @Override
-        protected void doStop() {
-        }
-
         private final class DummyClusterServiceMember implements CamelClusterMember {
             private final boolean leader;
             private final boolean local;

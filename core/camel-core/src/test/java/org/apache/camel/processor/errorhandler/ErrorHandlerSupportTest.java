@@ -99,14 +99,6 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
     private static class ShuntErrorHandlerSupport extends ErrorHandlerSupport {
 
         @Override
-        protected void doStart() {
-        }
-
-        @Override
-        protected void doStop() {
-        }
-
-        @Override
         public boolean supportTransacted() {
             return false;
         }

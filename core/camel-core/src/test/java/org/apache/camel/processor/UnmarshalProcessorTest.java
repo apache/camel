@@ -122,16 +122,6 @@ public class UnmarshalProcessorTest extends TestSupport {
         public Object unmarshal(Exchange exchange, InputStream stream) {
             return object;
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 
 }

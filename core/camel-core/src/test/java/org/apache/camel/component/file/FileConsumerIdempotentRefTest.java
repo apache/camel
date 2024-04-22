@@ -112,7 +112,6 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
         @Override
         public void clear() {
-            return;
         }
 
         @Override

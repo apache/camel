@@ -85,28 +85,10 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
     private static final class MyService extends ServiceSupport {
 
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 
     private static final class MyNonService extends ServiceSupport implements NonManagedService {
 
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 
 }

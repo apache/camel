@@ -131,16 +131,6 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         public List<EventObject> getEvents() {
             return events;
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 
     private static class MyInterceptStrategy implements InterceptStrategy {

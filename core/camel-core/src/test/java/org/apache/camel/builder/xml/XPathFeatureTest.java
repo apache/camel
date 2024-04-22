@@ -26,7 +26,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
@@ -43,26 +42,6 @@ public class XPathFeatureTest extends ContextTestSupport {
     public static final String XML_DATA_INVALID
             = " <!DOCTYPE foo [ "
               + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        resetCoreConverters();
-        super.setUp();
-    }
-
-    private void resetCoreConverters() {
-        /*
-         * Field field =
-         * CoreStaticTypeConverterLoader.class.getDeclaredField("INSTANCE");
-         * field.setAccessible(true); Field modifiersField =
-         * Field.class.getDeclaredField("modifiers");
-         * modifiersField.setAccessible(true); modifiersField.setInt(field,
-         * field.getModifiers() & ~Modifier.FINAL); Constructor<?> cns =
-         * CoreStaticTypeConverterLoader.class.getDeclaredConstructor();
-         * cns.setAccessible(true); field.set(null, cns.newInstance());
-         */
-    }
 
     @Override
     public boolean isUseRouteBuilder() {

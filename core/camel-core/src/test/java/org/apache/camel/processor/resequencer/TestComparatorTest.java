@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.resequencer;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,10 +37,6 @@ public class TestComparatorTest {
         e1 = new TestObject(3);
         e2 = new TestObject(4);
         e3 = new TestObject(7);
-    }
-
-    @AfterEach
-    public void tearDown() {
     }
 
     @Test

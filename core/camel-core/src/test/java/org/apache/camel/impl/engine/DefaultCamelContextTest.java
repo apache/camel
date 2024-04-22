@@ -456,16 +456,6 @@ public class DefaultCamelContextTest extends TestSupport {
         public void setCamelContext(CamelContext camelContext) {
             this.camelContext = camelContext;
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 
 }

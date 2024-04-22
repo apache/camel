@@ -68,10 +68,6 @@ public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
             public boolean isEnabled(CamelEvent event) {
                 return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent;
             }
-
-            @Override
-            protected void doStart() {
-            }
         });
         return context;
     }

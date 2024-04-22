@@ -79,16 +79,6 @@ public class RouteAwareProcessorTest extends ContextTestSupport {
         public void process(Exchange exchange) {
             exchange.getMessage().setBody("Hello route " + routeId + " from processor " + id);
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 
 }

@@ -95,10 +95,5 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 
             separator = "+";
         }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 }
