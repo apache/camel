@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
-                         disabledReason = "Service B?us connection string must be supplied to run this test, e.g:  mvn verify -D"
+                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
                                           + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
 public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBusProducerIT.class);

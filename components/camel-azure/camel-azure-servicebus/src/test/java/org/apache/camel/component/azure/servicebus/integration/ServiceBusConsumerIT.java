@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
-                         disabledReason = "Service B?us connection string must be supplied to run this test, e.g:  mvn verify -D"
+                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
                                           + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
 public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
 
