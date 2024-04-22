@@ -21,6 +21,7 @@ import java.util.Collection;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
@@ -82,22 +83,27 @@ public class ManagedInflightRepository extends ManagedService implements Managed
 
             for (InflightRepository.InflightExchange entry : exchanges) {
                 CompositeType ct = CamelOpenMBeanTypes.listInflightExchangesCompositeType();
-                String exchangeId = entry.getExchange().getExchangeId();
-                String fromRouteId = entry.getFromRouteId();
-                String atRouteId = entry.getAtRouteId();
-                String nodeId = entry.getNodeId();
-                String elapsed = Long.toString(entry.getElapsed());
-                String duration = Long.toString(entry.getDuration());
-
-                CompositeData data = new CompositeDataSupport(
-                        ct,
-                        new String[] { "exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration" },
-                        new Object[] { exchangeId, fromRouteId, atRouteId, nodeId, elapsed, duration });
+                final CompositeData data = toCompositeData(entry, ct);
                 answer.put(data);
             }
             return answer;
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+    }
+
+    private static CompositeData toCompositeData(InflightRepository.InflightExchange entry, CompositeType ct)
+            throws OpenDataException {
+        String exchangeId = entry.getExchange().getExchangeId();
+        String fromRouteId = entry.getFromRouteId();
+        String atRouteId = entry.getAtRouteId();
+        String nodeId = entry.getNodeId();
+        String elapsed = Long.toString(entry.getElapsed());
+        String duration = Long.toString(entry.getDuration());
+
+        return new CompositeDataSupport(
+                ct,
+                new String[] { "exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration" },
+                new Object[] { exchangeId, fromRouteId, atRouteId, nodeId, elapsed, duration });
     }
 }

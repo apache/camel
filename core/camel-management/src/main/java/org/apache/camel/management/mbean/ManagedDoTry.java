@@ -41,12 +41,10 @@ import org.apache.camel.processor.TryProcessor;
 @ManagedResource(description = "Managed DoTry")
 public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean {
 
-    private final TryProcessor processor;
     private final List<CatchProcessor> catchProcessors;
 
     public ManagedDoTry(CamelContext context, TryProcessor processor, TryDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
 
         if (processor.getCatchClauses() != null && !processor.getCatchClauses().isEmpty()) {
             catchProcessors = new ArrayList<>();

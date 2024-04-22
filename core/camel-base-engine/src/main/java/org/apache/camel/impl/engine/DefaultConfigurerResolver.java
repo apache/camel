@@ -102,10 +102,7 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
             } else {
                 type = findConfigurer(name, context);
                 if (type == null) {
-
-                    if (type == null) {
-                        return null;
-                    }
+                    return null;
                 }
             }
         } catch (Exception e) {

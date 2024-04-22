@@ -24,11 +24,9 @@ import org.apache.camel.processor.ScriptProcessor;
 
 @ManagedResource(description = "Managed Script")
 public class ManagedScript extends ManagedProcessor implements ManagedScriptMBean {
-    private final ScriptProcessor processor;
 
     public ManagedScript(CamelContext context, ScriptProcessor processor, ScriptDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override

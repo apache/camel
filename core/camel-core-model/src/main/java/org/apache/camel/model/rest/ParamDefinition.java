@@ -358,4 +358,8 @@ public class ParamDefinition {
         }
     }
 
+    public String getAllowableValuesAsCommaString() {
+        return String.join(",", getAllowableValuesAsStringList());
+    }
+
 }
