@@ -31,7 +31,6 @@ import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.*;
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 import static org.apache.camel.component.azure.servicebus.CredentialType.CONNECTION_STRING;
 
@@ -59,7 +58,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
     @UriParam(label = "common",
               description = "To use a custom HeaderFilterStrategy to filter Service Bus application properties to and from Camel message headers.")
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new ServiceBusHeaderFilterStrategy();
     @UriParam(label = "consumer", defaultValue = "receiveMessages")
     private ServiceBusConsumerOperationDefinition consumerOperation = ServiceBusConsumerOperationDefinition.receiveMessages;
     @UriParam(label = "consumer")
