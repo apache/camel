@@ -95,16 +95,6 @@ public class RefDataFormatTest extends ContextTestSupport {
             }
             return sb.toString();
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
     // END SNIPPET: e2
 

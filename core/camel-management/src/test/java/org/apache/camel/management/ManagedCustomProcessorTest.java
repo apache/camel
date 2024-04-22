@@ -94,16 +94,6 @@ public class ManagedCustomProcessorTest extends ManagementTestSupport {
         public void process(Exchange exchange) {
             exchange.getIn().setHeader("foo", getFoo());
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
     // end::e1[]
 

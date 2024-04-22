@@ -113,16 +113,6 @@ public class DataFormatServiceTest extends ContextTestSupport {
         public Object unmarshal(Exchange exchange, InputStream stream) {
             return "Bye World";
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
     // END SNIPPET: e2
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -70,10 +69,6 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         @Override
         public Consumer createConsumer(Processor processor) {
             return null;
-        }
-
-        public void setExpression(List<?> expressions) {
-            // do nothing
         }
 
         public void setExpression(Expression expression) {

@@ -139,13 +139,5 @@ public class EventHelperTest {
         public boolean isEnabled(CamelEvent event) {
             return true;
         }
-
-        @Override
-        protected void doStart() {
-        }
-
-        @Override
-        protected void doStop() {
-        }
     }
 }

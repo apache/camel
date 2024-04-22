@@ -37,7 +37,6 @@ public class RouteNoOutputTest extends ContextTestSupport {
             exception = e;
         }
 
-
     }
 
     @Test

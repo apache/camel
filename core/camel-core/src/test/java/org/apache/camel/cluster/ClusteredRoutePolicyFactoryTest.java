@@ -174,14 +174,6 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
             return Collections.emptyList();
         }
 
-        @Override
-        protected void doStart() {
-        }
-
-        @Override
-        protected void doStop() {
-        }
-
         public boolean isLeader() {
             return leader;
         }

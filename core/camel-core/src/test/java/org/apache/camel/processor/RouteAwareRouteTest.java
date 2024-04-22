@@ -64,15 +64,5 @@ public class RouteAwareRouteTest extends ContextTestSupport {
         public Route getRoute() {
             return route;
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 }

@@ -69,15 +69,5 @@ public class DeadLetterChannelUnmarshalSetHeaderTest extends ContextTestSupport 
         public Object unmarshal(Exchange exchange, InputStream stream) {
             throw new IllegalArgumentException("Damn");
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 }

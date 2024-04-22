@@ -25,14 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServiceSupportTest extends TestSupport {
 
     private static class MyService extends ServiceSupport {
-
-        @Override
-        protected void doStart() {
-        }
-
-        @Override
-        protected void doStop() {
-        }
     }
 
     @Test
@@ -77,14 +69,6 @@ public class ServiceSupportTest extends TestSupport {
     private static class MyShutdownService extends ServiceSupport {
 
         private boolean shutdown;
-
-        @Override
-        protected void doStart() {
-        }
-
-        @Override
-        protected void doStop() {
-        }
 
         @Override
         protected void doShutdown() {
@@ -167,10 +151,5 @@ public class ServiceSupportTest extends TestSupport {
         protected void doStart() {
             throw new RuntimeException("This service throws an exception when starting");
         }
-
-        @Override
-        protected void doStop() {
-        }
-
     }
 }

@@ -75,15 +75,5 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
         public Object unmarshal(Exchange exchange, InputStream stream) {
             return null;
         }
-
-        @Override
-        protected void doStart() {
-            // noop
-        }
-
-        @Override
-        protected void doStop() {
-            // noop
-        }
     }
 }

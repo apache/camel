@@ -207,10 +207,6 @@ public class ServiceRegistryTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStart() {
-        }
-
-        @Override
         protected void doStop() {
             definitions.clear();
         }
