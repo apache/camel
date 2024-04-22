@@ -105,7 +105,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
         }
 
         if (target.getDelegate() == null) {
-            ObjectHelper.notNull("uri", "The uri must set");
+            ObjectHelper.notNull(uri, "The uri must be set");
             FromDefinition from
                     = new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters));
             // enrich model with line number
