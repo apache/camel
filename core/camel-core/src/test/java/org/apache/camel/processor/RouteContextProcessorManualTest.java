@@ -50,11 +50,7 @@ public class RouteContextProcessorManualTest extends ContextTestSupport {
     private static final int NUMBER_OF_MESSAGES = 10000;
 
     @Test
-    public void testForkAndJoin() {
-        // enable the other test method for manual testing
-    }
-
-    public void xxxTestForkAndJoin() throws InterruptedException {
+    public void testForkAndJoin() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(NUMBER_OF_MESSAGES);
 

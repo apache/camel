@@ -503,7 +503,7 @@ public class CaseInsensitiveMapTest {
     }
 
     @Disabled("Manual test")
-    public void xxxTestCopyMapWithCamelHeadersTest() throws Exception {
+    public void testCopyMapWithCamelHeadersTest() throws Exception {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("CamelA", "A");
         map.put("CamelB", "B");

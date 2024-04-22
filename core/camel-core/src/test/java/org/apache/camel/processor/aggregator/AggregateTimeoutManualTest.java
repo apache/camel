@@ -20,21 +20,19 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * To be run manually when testing the timeout aggregator
  */
+@Disabled("This is a manual test")
 public class AggregateTimeoutManualTest extends ContextTestSupport {
 
     @Test
-    public void testDisabled() {
-        // noop
-    }
-
-    public void xxxtestAggregateTimeoutManual() throws Exception {
+    public void testAggregateTimeoutManual() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        // by default the use latest aggregation strategy
+        // by default, the use latest aggregation strategy
         result.expectedBodiesReceived("Message 1999");
         // should take at least 3 seconds to complete this one
         result.setResultMinimumWaitTime(2500);
