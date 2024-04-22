@@ -22,13 +22,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSupport {
+    private Exception exception;
 
     @Test
     public void testFail() {
-        // noop as its tested that it fails on startup
+        assertNotNull(exception, "Should have thrown an exception");
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertEquals("Constant field with name: XXX not found on Exchange.class", iae.getMessage());
     }
 
     @Override
@@ -36,10 +39,8 @@ public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSuppo
     public void setUp() {
         try {
             super.setUp();
-            fail("Should have thrown an exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Constant field with name: XXX not found on Exchange.class", iae.getMessage());
+            exception = e;
         }
     }
 
