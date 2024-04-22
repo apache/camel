@@ -23,12 +23,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
+    private Exception exception = null;
 
     @Test
     public void testCreateRouteWithBadEndpoint() {
+        assertNotNull(exception, "Should have failed to create a route to a non-existent endpoint!");
+        NoSuchEndpointException nse = assertIsInstanceOf(NoSuchEndpointException.class, exception.getCause());
+        assertEquals("thisUriDoesNotExist", nse.getUri(), "uri");
     }
 
     @Override
@@ -36,11 +40,9 @@ public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
     public void setUp() {
         try {
             super.setUp();
-            fail("Should have failed to create this route!");
         } catch (Exception e) {
             log.debug("Caught expected exception: {}", e.getMessage(), e);
-            NoSuchEndpointException nse = assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
-            assertEquals("thisUriDoesNotExist", nse.getUri(), "uri");
+            exception = e;
         }
     }
 
