@@ -122,9 +122,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "expression-type": {
                 return constructExpressionType(node);
             }
-            case "expressionType": {
-                return constructExpressionType(node);
-            }
         }
         return null;
     }
