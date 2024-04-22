@@ -97,6 +97,7 @@ public class BeanLifecycleTest extends ContextTestSupport {
         };
     }
 
+    @SuppressWarnings("Unused")
     public static class MyBean implements Service {
         private String status;
 

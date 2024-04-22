@@ -109,6 +109,7 @@ public class BeanConcurrentTest extends ContextTestSupport {
             this.baz = baz;
         }
 
+        @SuppressWarnings("unused")
         public void doSomething() {
             // noop
         }

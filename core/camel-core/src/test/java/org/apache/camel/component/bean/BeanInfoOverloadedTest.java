@@ -46,6 +46,7 @@ public class BeanInfoOverloadedTest extends ContextTestSupport {
         assertEquals(RequestB.class, method.getGenericParameterTypes()[0]);
     }
 
+    @SuppressWarnings("Unused")
     static class Bean {
         public void doSomething(RequestA request) {
         }

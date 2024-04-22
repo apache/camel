@@ -96,10 +96,12 @@ public class BeanInvokeTest extends ContextTestSupport {
         };
     }
 
+    @SuppressWarnings("Unused")
     public String doSomething(String s) {
         return s;
     }
 
+    @SuppressWarnings("Unused")
     public String changeSomething(String s) {
         if ("Hello World".equals(s)) {
             return "Bye World";
@@ -107,6 +109,7 @@ public class BeanInvokeTest extends ContextTestSupport {
         return null;
     }
 
+    @SuppressWarnings("Unused")
     public void doNothing(String s) {
     }
 

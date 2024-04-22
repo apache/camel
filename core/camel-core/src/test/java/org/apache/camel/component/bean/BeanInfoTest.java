@@ -166,13 +166,16 @@ public class BeanInfoTest {
 
     @InOnly
     public interface MyOneWayInterface {
+        @SuppressWarnings("Unused")
         void inOnlyMethod();
     }
 
     @InOnly
     public interface MyOneWayInterfaceWithOverloadedMethod {
+        @SuppressWarnings("Unused")
         void inOnlyMethod();
 
+        @SuppressWarnings("Unused")
         @InOut
         Object inOutMethod();
     }
