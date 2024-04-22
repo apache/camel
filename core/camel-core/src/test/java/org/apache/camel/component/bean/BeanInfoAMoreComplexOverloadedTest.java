@@ -79,6 +79,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         assertEquals(2, e.getMethods().size());
     }
 
+    @SuppressWarnings("Unused")
     static class Bean {
         public void doSomething(RequestA request) {
         }

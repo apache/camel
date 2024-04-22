@@ -42,6 +42,7 @@ public class BeanThisAdviceWithIssueTest extends ContextTestSupport {
                 from("direct:mytest").id(ROUTE_ID).bean(this, "hello", BeanScope.Prototype).to("log:out");
             }
 
+            @SuppressWarnings("Unused")
             public void hello(final Exchange exchange) {
             }
         });
