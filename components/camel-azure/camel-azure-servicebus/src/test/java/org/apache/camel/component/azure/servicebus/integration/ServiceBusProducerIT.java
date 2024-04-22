@@ -25,10 +25,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import com.azure.messaging.servicebus.ServiceBusClientBuilder;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
-import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,8 +35,6 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.*;
                          disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
                                           + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
 public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBusProducerIT.class);
     private static final String DIRECT_SEND_TO_QUEUE_URI = "direct:sendToQueue";
     private static final String DIRECT_SEND_TO_TOPIC_URI = "direct:sendToTopic";
     private static final String DIRECT_SEND_SCHEDULED_URI = "direct:sendScheduled";
@@ -54,8 +49,6 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     private static final String PROPAGATED_HEADER_VALUE = "propagated header value";
     private static final Pattern MESSAGE_BODY_PATTERN = Pattern.compile("^message-[0-4]$");
     private ProducerTemplate producerTemplate;
-    private CountDownLatch messageLatch;
-    private List<ServiceBusReceivedMessageContext> receivedMessageContexts;
 
     @BeforeEach
     void beforeEach() {
@@ -218,33 +211,5 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertInstanceOf(OffsetDateTime.class, message.getScheduledEnqueueTime());
             });
         }
-    }
-
-    private void processMessage(ServiceBusReceivedMessageContext messageContext) {
-        receivedMessageContexts.add(messageContext);
-        messageLatch.countDown();
-    }
-
-    private ServiceBusProcessorClient createQueueProcessorClient() {
-        return new ServiceBusClientBuilder()
-                .connectionString(CONNECTION_STRING)
-                .processor()
-                .queueName(QUEUE_NAME)
-                .processMessage(this::processMessage)
-                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
-                        serviceBusErrorContext.getException()))
-                .buildProcessorClient();
-    }
-
-    private ServiceBusProcessorClient createTopicProcessorClient() {
-        return new ServiceBusClientBuilder()
-                .connectionString(CONNECTION_STRING)
-                .processor()
-                .topicName(TOPIC_NAME)
-                .subscriptionName(SUBSCRIPTION_NAME)
-                .processMessage(this::processMessage)
-                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
-                        serviceBusErrorContext.getException()))
-                .buildProcessorClient();
     }
 }

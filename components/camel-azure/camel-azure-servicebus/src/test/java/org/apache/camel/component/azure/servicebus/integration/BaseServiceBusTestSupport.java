@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.azure.servicebus.integration;
 
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
 import com.azure.core.exception.ResourceExistsException;
+import com.azure.messaging.servicebus.ServiceBusClientBuilder;
+import com.azure.messaging.servicebus.ServiceBusProcessorClient;
+import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
 import com.azure.messaging.servicebus.administration.ServiceBusAdministrationClient;
 import com.azure.messaging.servicebus.administration.ServiceBusAdministrationClientBuilder;
 import org.apache.camel.CamelContext;
@@ -36,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import static java.lang.System.getProperty;
 
 public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
-    protected static final String CONNECTION_STRING_PROPERTY_NAME = "camel.component.azure-servicebus.connection-string";
+    public static final String CONNECTION_STRING_PROPERTY_NAME = "camel.component.azure-servicebus.connection-string";
     protected static final String CONNECTION_STRING = getProperty(CONNECTION_STRING_PROPERTY_NAME);
     protected static final String QUEUE_NAME = "camelTestQueue";
     protected static final String TOPIC_NAME = "camelTestTopic";
@@ -45,8 +51,9 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseServiceBusTestSupport.class);
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
-
     protected static ServiceBusAdministrationClient serviceBusAdminClient;
+    protected CountDownLatch messageLatch;
+    protected List<ServiceBusReceivedMessageContext> receivedMessageContexts;
 
     @BeforeAll
     static void baseBeforeAll() {
@@ -91,4 +98,32 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
     }
 
     protected abstract RouteBuilder createRouteBuilder();
+
+    protected ServiceBusProcessorClient createQueueProcessorClient() {
+        return new ServiceBusClientBuilder()
+                .connectionString(CONNECTION_STRING)
+                .processor()
+                .queueName(QUEUE_NAME)
+                .processMessage(this::processMessage)
+                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
+                        serviceBusErrorContext.getException()))
+                .buildProcessorClient();
+    }
+
+    protected ServiceBusProcessorClient createTopicProcessorClient() {
+        return new ServiceBusClientBuilder()
+                .connectionString(CONNECTION_STRING)
+                .processor()
+                .topicName(TOPIC_NAME)
+                .subscriptionName(SUBSCRIPTION_NAME)
+                .processMessage(this::processMessage)
+                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
+                        serviceBusErrorContext.getException()))
+                .buildProcessorClient();
+    }
+
+    private void processMessage(ServiceBusReceivedMessageContext messageContext) {
+        receivedMessageContexts.add(messageContext);
+        messageLatch.countDown();
+    }
 }

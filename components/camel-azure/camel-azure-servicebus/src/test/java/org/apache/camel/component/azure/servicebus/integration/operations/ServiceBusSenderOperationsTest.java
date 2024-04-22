@@ -19,81 +19,71 @@ package org.apache.camel.component.azure.servicebus.integration.operations;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.stream.StreamSupport;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
-import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
-import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
+import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
-import org.apache.camel.component.azure.servicebus.ServiceBusTestUtils;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusSenderAsyncClientWrapper;
+import org.apache.camel.component.azure.servicebus.integration.BaseServiceBusTestSupport;
 import org.apache.camel.component.azure.servicebus.operations.ServiceBusSenderOperations;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure servicebus connectionString, e.g:  mvn verify -DconnectionString=string")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ServiceBusSenderOperationsTest {
+@EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
+                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
+                                          + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
+public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
 
-    private ServiceBusSenderAsyncClientWrapper clientSenderWrapper;
-    private ServiceBusReceiverAsyncClient receiverAsyncClient;
+    private static ServiceBusSenderAsyncClientWrapper clientSenderWrapper;
 
     @BeforeAll
-    void prepare() throws Exception {
-        final Properties properties = ServiceBusTestUtils.loadAzureAccessFromJvmEnv();
-
-        final ServiceBusSenderAsyncClient senderClient = new ServiceBusClientBuilder()
-                .connectionString(properties.getProperty(ServiceBusTestUtils.CONNECTION_STRING))
-                .sender()
-                .buildAsyncClient();
-
+    static void prepare() {
+        final ServiceBusSenderAsyncClient senderClient = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
+                .sender().topicName(TOPIC_NAME).buildAsyncClient();
         clientSenderWrapper = new ServiceBusSenderAsyncClientWrapper(senderClient);
     }
 
-    @BeforeEach
-    void prepareReceiver() throws Exception {
-        final Properties properties = ServiceBusTestUtils.loadAzureAccessFromJvmEnv();
-
-        receiverAsyncClient = new ServiceBusClientBuilder()
-                .connectionString(properties.getProperty(ServiceBusTestUtils.CONNECTION_STRING))
-                .receiver()
-                .topicName(properties.getProperty(ServiceBusTestUtils.TOPIC_NAME))
-                .subscriptionName(properties.getProperty(ServiceBusTestUtils.SUBSCRIPTION_NAME))
-                .buildAsyncClient();
-    }
-
     @AfterAll
-    void closeClient() {
+    static void closeClient() {
         clientSenderWrapper.close();
     }
 
-    @AfterEach
-    void closeSubscriber() {
-        receiverAsyncClient.close();
+    @BeforeEach
+    void beforeEach() {
+        receivedMessageContexts = new ArrayList<>();
     }
 
     @Test
-    void testSendSingleMessage() {
+    void testSendSingleMessage() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
+        messageLatch = new CountDownLatch(2);
 
-        operations.sendMessages("test data", null, Map.of("customKey", "customValue"), null).block();
+        try (ServiceBusProcessorClient processorClient = createTopicProcessorClient()) {
+            processorClient.start();
+            operations.sendMessages("test data", null, Map.of("customKey", "customValue"), null).block();
+            //test bytes
+            byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
+            operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue"), null).block();
 
-        final boolean exists = StreamSupport.stream(receiverAsyncClient.receiveMessages().toIterable().spliterator(), false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("test data"));
+            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
-        assertTrue(exists, "test message body");
+            final boolean exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test data"));
+            assertTrue(exists, "test message body");
 
-        //test bytes
-        byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
-        operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue"), null).block();
-        final boolean exists2 = StreamSupport.stream(receiverAsyncClient.receiveMessages().toIterable().spliterator(), false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(),
-                        testByteBody));
-        assertTrue(exists2, "test byte body");
+            final boolean exists2 = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
+            assertTrue(exists2, "test byte body");
+        }
 
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
@@ -102,73 +92,73 @@ public class ServiceBusSenderOperationsTest {
     }
 
     @Test
-    void testSendingBatchMessages() {
+    void testSendingBatchMessages() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
+        messageLatch = new CountDownLatch(5);
 
-        final List<String> inputBatch = new LinkedList<>();
-        inputBatch.add("test batch 1");
-        inputBatch.add("test batch 2");
-        inputBatch.add("test batch 3");
+        try (ServiceBusProcessorClient processorClient = createTopicProcessorClient()) {
+            processorClient.start();
 
-        operations.sendMessages(inputBatch, null, null, null).block();
+            final List<String> inputBatch = new LinkedList<>();
+            inputBatch.add("test batch 1");
+            inputBatch.add("test batch 2");
+            inputBatch.add("test batch 3");
 
-        final Spliterator<ServiceBusReceivedMessage> receivedMessages
-                = receiverAsyncClient.receiveMessages().toIterable().spliterator();
+            operations.sendMessages(inputBatch, null, null, null).block();
+            //test bytes
+            final List<byte[]> inputBatch2 = new LinkedList<>();
+            byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
+            byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
+            inputBatch2.add(byteBody1);
+            inputBatch2.add(byteBody2);
+            operations.sendMessages(inputBatch2, null, null, null).block();
 
-        final boolean batch1Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("test batch 1"));
+            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
-        final boolean batch2Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("test batch 2"));
+            final boolean batch1Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 1"));
+            final boolean batch2Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 2"));
+            final boolean batch3Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 3"));
 
-        final boolean batch3Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("test batch 3"));
+            assertTrue(batch1Exists, "test message body 1");
+            assertTrue(batch2Exists, "test message body 2");
+            assertTrue(batch3Exists, "test message body 3");
 
-        assertTrue(batch1Exists, "test message body 1");
-        assertTrue(batch2Exists, "test message body 2");
-        assertTrue(batch3Exists, "test message body 3");
+            final boolean byteBody1Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
+            final boolean byteBody2Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
 
-        //test bytes
-        final List<byte[]> inputBatch2 = new LinkedList<>();
-        byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
-        byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
-        inputBatch2.add(byteBody1);
-        inputBatch2.add(byteBody2);
-
-        operations.sendMessages(inputBatch2, null, null, null).block();
-        final Spliterator<ServiceBusReceivedMessage> receivedMessages2
-                = receiverAsyncClient.receiveMessages().toIterable().spliterator();
-
-        final boolean byteBody1Exists = StreamSupport.stream(receivedMessages2, false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), byteBody1));
-        final boolean byteBody2Exists = StreamSupport.stream(receivedMessages2, false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), byteBody2));
-
-        assertTrue(byteBody1Exists, "test byte body 1");
-        assertTrue(byteBody2Exists, "test byte body 2");
-
+            assertTrue(byteBody1Exists, "test byte body 1");
+            assertTrue(byteBody2Exists, "test byte body 2");
+        }
     }
 
     @Test
-    void testScheduleMessage() {
+    void testScheduleMessage() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
+        messageLatch = new CountDownLatch(2);
 
-        operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null, null).block();
+        try (ServiceBusProcessorClient processorClient = createTopicProcessorClient()) {
+            processorClient.start();
 
-        final boolean exists = StreamSupport.stream(receiverAsyncClient.receiveMessages().toIterable().spliterator(), false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
-                        .equals("testScheduleMessage"));
+            operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null, null).block();
+            //test bytes
+            byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
+            operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null, null).block();
 
-        assertTrue(exists, "test message body");
+            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
-        //test bytes
-        byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
-        operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null, null).block();
-        final boolean exists2 = StreamSupport.stream(receiverAsyncClient.receiveMessages().toIterable().spliterator(), false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(),
-                        testByteBody));
-        assertTrue(exists2, "test byte body");
+            final boolean exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("testScheduleMessage"));
+            final boolean exists2 = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
 
+            assertTrue(exists, "test message body");
+            assertTrue(exists2, "test byte body");
+        }
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
             operations.scheduleMessages(12345, OffsetDateTime.now(), null, null, null).block();
@@ -176,52 +166,56 @@ public class ServiceBusSenderOperationsTest {
     }
 
     @Test
-    void testSchedulingBatchMessages() {
+    void testSchedulingBatchMessages() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
+        messageLatch = new CountDownLatch(5);
 
-        final List<String> inputBatch = new LinkedList<>();
-        inputBatch.add("testSchedulingBatchMessages 1");
-        inputBatch.add("testSchedulingBatchMessages 2");
-        inputBatch.add("testSchedulingBatchMessages 3");
+        try (ServiceBusProcessorClient processorClient = createTopicProcessorClient()) {
+            processorClient.start();
 
-        operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null, null).block();
+            final List<String> inputBatch = new LinkedList<>();
+            inputBatch.add("testSchedulingBatchMessages 1");
+            inputBatch.add("testSchedulingBatchMessages 2");
+            inputBatch.add("testSchedulingBatchMessages 3");
+            operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null, null).block();
+            //test bytes
+            final List<byte[]> inputBatch2 = new LinkedList<>();
+            byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
+            byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
+            inputBatch2.add(byteBody1);
+            inputBatch2.add(byteBody2);
+            operations.scheduleMessages(inputBatch2, OffsetDateTime.now(), null, null, null).block();
 
-        final Spliterator<ServiceBusReceivedMessage> receivedMessages
-                = receiverAsyncClient.receiveMessages().toIterable().spliterator();
+            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
-        final boolean batch1Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
-                        .equals("testSchedulingBatchMessages 1"));
+            final boolean batch1Exists = receivedMessageContexts.stream().anyMatch(
+                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 1"));
+            final boolean batch2Exists = receivedMessageContexts.stream().anyMatch(
+                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 2"));
+            final boolean batch3Exists = receivedMessageContexts.stream().anyMatch(
+                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 3"));
 
-        final boolean batch2Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
-                        .equals("testSchedulingBatchMessages 2"));
+            assertTrue(batch1Exists, "test message body 1");
+            assertTrue(batch2Exists, "test message body 2");
+            assertTrue(batch3Exists, "test message body 3");
 
-        final boolean batch3Exists = StreamSupport.stream(receivedMessages, false)
-                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
-                        .equals("testSchedulingBatchMessages 3"));
+            final boolean byteBody1Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
+            final boolean byteBody2Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
 
-        assertTrue(batch1Exists, "test message body 1");
-        assertTrue(batch2Exists, "test message body 2");
-        assertTrue(batch3Exists, "test message body 3");
+            assertTrue(byteBody1Exists, "test byte body 1");
+            assertTrue(byteBody2Exists, "test byte body 2");
+        }
+    }
 
-        //test bytes
-        final List<byte[]> inputBatch2 = new LinkedList<>();
-        byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
-        byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
-        inputBatch2.add(byteBody1);
-        inputBatch2.add(byteBody2);
-
-        operations.scheduleMessages(inputBatch2, OffsetDateTime.now(), null, null, null).block();
-        final Spliterator<ServiceBusReceivedMessage> receivedMessages2
-                = receiverAsyncClient.receiveMessages().toIterable().spliterator();
-
-        final boolean byteBody1Exists = StreamSupport.stream(receivedMessages2, false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), byteBody1));
-        final boolean byteBody2Exists = StreamSupport.stream(receivedMessages2, false)
-                .anyMatch(serviceBusReceivedMessage -> Arrays.equals(serviceBusReceivedMessage.getBody().toBytes(), byteBody2));
-
-        assertTrue(byteBody1Exists, "test byte body 1");
-        assertTrue(byteBody2Exists, "test byte body 2");
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                // No Routes required for this test
+            }
+        };
     }
 }
