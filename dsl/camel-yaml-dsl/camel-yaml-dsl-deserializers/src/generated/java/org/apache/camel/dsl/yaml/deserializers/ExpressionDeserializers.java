@@ -116,9 +116,8 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "xtokenize": {
                 return asType(node, org.apache.camel.model.language.XMLTokenizerExpression.class);
             }
-            case "expression": {
-                return constructExpressionType(node);
-            }
+            case "expression":
+            case "expressionType":
             case "expression-type": {
                 return constructExpressionType(node);
             }
