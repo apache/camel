@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -87,10 +88,11 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
     }
 
     public static final class MyBean {
-        private volatile int cnt;
+        private LongAdder cnt = new LongAdder();
 
         public void invoke(final List<String> strList) {
-            LOG.info("Batch {}", ++cnt);
+            cnt.increment();
+            LOG.info("Batch {}", cnt.intValue());
         }
     }
 

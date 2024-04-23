@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -62,14 +63,14 @@ public class EndpointShutdownOnceTest {
 
     private static final class MyEndpoint extends DefaultEndpoint {
 
-        private volatile int invoked;
+        private LongAdder invoked = new LongAdder();
 
         private MyEndpoint(String endpointUri, Component component) {
             super(endpointUri, component);
         }
 
         public int getInvoked() {
-            return invoked;
+            return invoked.intValue();
         }
 
         @Override
@@ -90,7 +91,7 @@ public class EndpointShutdownOnceTest {
         @Override
         protected void doShutdown() throws Exception {
             super.doShutdown();
-            invoked++;
+            invoked.increment();
         }
     }
 }

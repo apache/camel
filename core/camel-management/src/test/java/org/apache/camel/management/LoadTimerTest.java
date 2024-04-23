@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TimerListener;
@@ -50,7 +51,7 @@ public class LoadTimerTest extends ContextTestSupport {
         myTimer.addTimerListener(test);
         try {
             await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-                assertTrue(test.counter >= SAMPLES);
+                assertTrue(test.counter.intValue() >= SAMPLES);
                 assertFalse(Double.isNaN(test.load.getLoad1()));
                 assertTrue(test.load.getLoad1() > 0.0d);
                 assertTrue(test.load.getLoad1() < SAMPLES);
@@ -64,12 +65,13 @@ public class LoadTimerTest extends ContextTestSupport {
 
     private static class TestLoadAware implements TimerListener {
 
-        volatile int counter;
+        LongAdder counter = new LongAdder();
         final LoadTriplet load = new LoadTriplet();
 
         @Override
         public void onTimer() {
-            load.update(++counter);
+            counter.increment();
+            load.update(counter.intValue());
         }
 
     }

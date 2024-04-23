@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,7 +31,7 @@ public class RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest extends Contex
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest.class);
 
-    private static volatile int attempt;
+    private static LongAdder attempt = new LongAdder();
 
     @Test
     public void testRedelivery() throws Exception {
@@ -63,7 +65,8 @@ public class RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest extends Contex
 
                         String body = exchange.getIn().getBody(String.class);
                         if (body.contains("World")) {
-                            if (++attempt <= 2) {
+                            attempt.increment();
+                            if (attempt.intValue() <= 2) {
                                 LOG.info("Processing failed will thrown an exception");
                                 throw new IllegalArgumentException("Damn");
                             }

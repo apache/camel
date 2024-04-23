@@ -46,7 +46,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
                 .build();
 
         task.run(this::booleanSupplier);
-        assertEquals(maxIterations, taskCount);
+        assertEquals(maxIterations, taskCount.intValue());
 
         Duration duration = task.elapsed();
         assertNotNull(duration);
@@ -70,7 +70,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
                 .build();
 
         task.run(this::booleanSupplier);
-        assertEquals(maxIterations, taskCount);
+        assertEquals(maxIterations, taskCount.intValue());
     }
 
     @DisplayName("Test that the task does not run for more than the max iterations when using a predicate and an initial delay")
@@ -88,7 +88,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
                 .build();
 
         task.run(this::taskPredicate, new Object());
-        assertEquals(maxIterations, taskCount);
+        assertEquals(maxIterations, taskCount.intValue());
     }
 
     @DisplayName("Test that the task does not run for more than the max duration when using a predicate and an initial delay")
@@ -106,7 +106,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
                 .build();
 
         task.run(this::taskPredicate, new Object());
-        assertEquals(maxIterations, taskCount);
+        assertEquals(maxIterations, taskCount.intValue());
     }
 
     @DisplayName("Test that the task stops running once the predicate is true")
@@ -124,7 +124,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
                 .build();
 
         task.run(this::taskPredicateWithDeterministicStop, 3);
-        assertEquals(3, taskCount);
+        assertEquals(3, taskCount.intValue());
     }
 
     @DisplayName("Test that the task stops running once the predicate is true when the test is slow")
@@ -142,7 +142,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
                 .build();
 
         task.run(this::taskPredicateWithDeterministicStopSlow, 3);
-        assertTrue(taskCount < maxIterations);
+        assertTrue(taskCount.intValue() < maxIterations);
     }
 
     @DisplayName("Test that the task stops running once the predicate is true when the test is slow")
@@ -160,6 +160,6 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
                 .build();
 
         task.run(this::taskPredicateWithDeterministicStopSlow, 3);
-        assertTrue(taskCount < maxIterations);
+        assertTrue(taskCount.intValue() < maxIterations);
     }
 }
