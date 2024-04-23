@@ -100,31 +100,6 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
 
     }
 
-    protected void runTestThrottleVisibleViaJmx() throws Exception {
-        // get the stats for the route
-        MBeanServer mbeanServer = getMBeanServer();
-
-        // use route to get the total time
-        ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route2");
-
-        // reset the counters
-        mbeanServer.invoke(routeName, "reset", null, null);
-
-        getMockEndpoint("mock:end").expectedMessageCount(10);
-
-        NotifyBuilder notifier = new NotifyBuilder(context).from("seda:throttleCount").whenReceived(5).create();
-
-        for (int i = 0; i < 10; i++) {
-            template.sendBody("seda:throttleCount", "Message " + i);
-        }
-
-        assertTrue(notifier.matches(2, TimeUnit.SECONDS));
-        assertMockEndpointsSatisfied();
-
-        Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
-        assertEquals(10, completed.longValue());
-    }
-
     public void runTestThrottleAsyncVisibleViaJmx() throws Exception {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();

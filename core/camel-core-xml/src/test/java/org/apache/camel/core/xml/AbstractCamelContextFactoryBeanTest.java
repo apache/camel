@@ -196,18 +196,4 @@ public class AbstractCamelContextFactoryBeanTest {
 
         return expectedPropertiesToBeResolved;
     }
-
-    static boolean shouldProvidePropertyPlaceholderSupport(final Method method) {
-        // all abstract getter methods that return String are possibly returning
-        // strings that contain property placeholders
-
-        final boolean isAbstract = Modifier.isAbstract(method.getModifiers());
-        final boolean isGetter = method.getName().startsWith("get");
-        final Class<?> returnType = method.getReturnType();
-
-        final boolean isCompatibleReturnType = String.class.isAssignableFrom(returnType);
-
-        return isAbstract && isGetter && isCompatibleReturnType;
-    }
-
 }
