@@ -62,7 +62,7 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
         transformer.transform(staxSource, new StreamResult(baos));
         writer.flush();
         baos.flush();
-        MatcherAssert.assertThat(new String(baos.toByteArray()), equalTo(TEST_XML));
+        MatcherAssert.assertThat(baos.toString(), equalTo(TEST_XML));
     }
 
 }
