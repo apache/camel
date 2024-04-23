@@ -31,7 +31,7 @@ import org.apache.camel.spi.NamespaceAware;
 public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XPathExpression> {
 
     public XPathExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (XPathExpression) definition);
+        super(camelContext, definition);
     }
 
     @Override

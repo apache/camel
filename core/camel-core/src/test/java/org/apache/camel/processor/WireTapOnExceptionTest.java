@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -60,7 +59,7 @@ public class WireTapOnExceptionTest extends ContextTestSupport {
 
     public static final class MyProducerFailEndpoint extends DefaultEndpoint {
         private MyProducerFailEndpoint(String endpointUri, CamelContext camelContext) {
-            super(endpointUri, (Component) null);
+            super(endpointUri, null);
             setCamelContext(camelContext);
         }
 

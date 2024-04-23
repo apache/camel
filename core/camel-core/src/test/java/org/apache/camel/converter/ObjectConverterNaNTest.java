@@ -88,14 +88,14 @@ public class ObjectConverterNaNTest extends ContextTestSupport {
     @Test
     public void testDoubleToFloatWithNaN() {
         assertEquals(Float.valueOf("4"), context.getTypeConverter().convertTo(Float.class, Double.valueOf("4")));
-        assertEquals((Object) (Float) Float.NaN, context.getTypeConverter().convertTo(Float.class, Double.NaN));
+        assertEquals((Object) Float.NaN, context.getTypeConverter().convertTo(Float.class, Double.NaN));
         assertEquals(Float.valueOf("3"), context.getTypeConverter().convertTo(Float.class, Double.valueOf("3")));
     }
 
     @Test
     public void testFloatToDoubleWithNaN() {
         assertEquals(Double.valueOf("4"), context.getTypeConverter().convertTo(Double.class, Float.valueOf("4")));
-        assertEquals((Object) (Double) Double.NaN, context.getTypeConverter().convertTo(Double.class, Float.NaN));
+        assertEquals((Object) Double.NaN, context.getTypeConverter().convertTo(Double.class, Float.NaN));
         assertEquals(Double.valueOf("3"), context.getTypeConverter().convertTo(Double.class, Float.valueOf("3")));
     }
 }

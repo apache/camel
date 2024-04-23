@@ -103,7 +103,7 @@ public class DefaultTimeoutMapTest {
 
         Object old = map.remove("A");
         assertEquals(123, old);
-        assertNull((Object) map.get("A"));
+        assertNull(map.get("A"));
         assertEquals(0, map.size());
 
         map.stop();

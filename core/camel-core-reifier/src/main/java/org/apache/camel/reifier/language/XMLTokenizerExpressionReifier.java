@@ -26,7 +26,7 @@ import org.apache.camel.spi.NamespaceAware;
 public class XMLTokenizerExpressionReifier extends SingleInputTypedExpressionReifier<XMLTokenizerExpression> {
 
     public XMLTokenizerExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (XMLTokenizerExpression) definition);
+        super(camelContext, definition);
     }
 
     @Override
