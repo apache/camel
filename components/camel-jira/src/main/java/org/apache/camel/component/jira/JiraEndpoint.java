@@ -95,7 +95,7 @@ public class JiraEndpoint extends DefaultEndpoint {
     @UriParam
     private JiraConfiguration configuration;
 
-    private transient JiraRestClient client;
+    private transient volatile JiraRestClient client;
 
     public JiraEndpoint(String uri, JiraComponent component, JiraConfiguration configuration) {
         super(uri, component);
