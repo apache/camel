@@ -40,6 +40,10 @@ public final class SourceCache extends StringSource implements StreamCache {
         this.length = data.length();
     }
 
+    public SourceCache() {
+        throw new IllegalStateException();
+    }
+
     @Override
     public void reset() {
         // do nothing here
