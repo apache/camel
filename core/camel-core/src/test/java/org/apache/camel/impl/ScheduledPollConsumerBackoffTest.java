@@ -45,7 +45,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
         consumer.run();
         consumer.run();
         consumer.run();
-        assertEquals(2, commits);
+        assertEquals(3, commits);
         // and now we poll again
         consumer.run();
         consumer.run();
@@ -55,9 +55,9 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
         consumer.run();
         consumer.run();
         consumer.run();
-        assertEquals(4, commits);
+        assertEquals(6, commits);
         consumer.run();
-        assertEquals(5, commits);
+        assertEquals(6, commits);
 
         consumer.stop();
     }
@@ -78,7 +78,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
         consumer.run();
         consumer.run();
         consumer.run();
-        assertEquals(3, errors);
+        assertEquals(4, errors);
         // and now we poll again
         consumer.run();
         consumer.run();
@@ -89,7 +89,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
         consumer.run();
         consumer.run();
         consumer.run();
-        assertEquals(6, errors);
+        assertEquals(8, errors);
 
         consumer.stop();
     }
