@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.net.ssl.KeyManager;
@@ -263,7 +264,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         LOG.trace("Creating SSLContext from SSLContextParameters [{}].", this);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Available Security providers: {}.", Security.getProviders());
+            LOG.debug("Available Security providers: {}.", Arrays.toString(Security.getProviders()));
         }
 
         KeyManager[] keyManagers = this.keyManagers == null ? null : this.keyManagers.createKeyManagers();
