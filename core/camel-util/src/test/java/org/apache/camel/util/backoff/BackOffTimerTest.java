@@ -45,7 +45,7 @@ public class BackOffTimerTest {
                 context -> {
                     assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
                     assertEquals(100, context.getCurrentDelay());
-                    assertEquals(100 * counter.get(), context.getCurrentElapsedTime());
+                    assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
                     if (first.get() == 0) {
                         first.set(context.getFirstAttemptTime());
                     } else {
@@ -78,7 +78,7 @@ public class BackOffTimerTest {
                 context -> {
                     assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
                     assertEquals(100, context.getCurrentDelay());
-                    assertEquals(100 * counter.get(), context.getCurrentElapsedTime());
+                    assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
 
                     return true;
                 });
@@ -107,7 +107,7 @@ public class BackOffTimerTest {
                 context -> {
                     assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
                     assertEquals(100, context.getCurrentDelay());
-                    assertEquals(100 * counter.get(), context.getCurrentElapsedTime());
+                    assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
 
                     return true;
                 });
