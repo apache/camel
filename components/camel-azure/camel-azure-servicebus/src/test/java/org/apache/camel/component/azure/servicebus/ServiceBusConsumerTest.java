@@ -117,8 +117,8 @@ public class ServiceBusConsumerTest {
             configureMockMessage();
 
             processMessageCaptor.getValue().accept(messageContext);
-            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
 
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
@@ -141,8 +141,8 @@ public class ServiceBusConsumerTest {
             configureMockDeadLetterMessage();
 
             processMessageCaptor.getValue().accept(messageContext);
-            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
 
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
@@ -164,13 +164,14 @@ public class ServiceBusConsumerTest {
             when(messageContext.getMessage()).thenReturn(message);
             configureMockMessage();
             message.getApplicationProperties().put(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
-            when(headerFilterStrategy.applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class))).thenReturn(false);
-            when(headerFilterStrategy.applyFilterToCamelHeaders(anyString(), any(), any(Exchange.class)))
-                    .thenThrow(new IllegalStateException("Should not be called"));
+            when(headerFilterStrategy.applyFilterToExternalHeaders(anyString(), any(), any())).thenReturn(false);
 
             processMessageCaptor.getValue().accept(messageContext);
-            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
 
+            verify(headerFilterStrategy, atLeastOnce()).applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class));
+            verifyNoMoreInteractions(headerFilterStrategy);
+
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
@@ -196,12 +197,13 @@ public class ServiceBusConsumerTest {
             configureMockMessage();
             message.getApplicationProperties().put(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
             when(headerFilterStrategy.applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class))).thenReturn(true);
-            when(headerFilterStrategy.applyFilterToCamelHeaders(anyString(), any(), any(Exchange.class)))
-                    .thenThrow(new IllegalStateException("Should not be called"));
 
             processMessageCaptor.getValue().accept(messageContext);
-            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
 
+            verify(headerFilterStrategy, atLeastOnce()).applyFilterToExternalHeaders(anyString(), any(), any(Exchange.class));
+            verifyNoMoreInteractions(headerFilterStrategy);
+
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
@@ -227,6 +229,7 @@ public class ServiceBusConsumerTest {
             when(errorContext.getException()).thenReturn(new Exception("Test exception"));
 
             processErrorCaptor.getValue().accept(errorContext);
+
             verifyNoInteractions(processor);
         }
     }
@@ -241,6 +244,7 @@ public class ServiceBusConsumerTest {
             when(messageContext.getMessage()).thenReturn(message);
 
             processMessageCaptor.getValue().accept(messageContext);
+
             verify(messageContext).getMessage();
 
             Exchange exchange = exchangeCaptor.getValue();
@@ -263,8 +267,10 @@ public class ServiceBusConsumerTest {
 
             when(messageContext.getMessage()).thenReturn(message);
             processMessageCaptor.getValue().accept(messageContext);
+
             verify(messageContext).getMessage();
 
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
@@ -288,6 +294,7 @@ public class ServiceBusConsumerTest {
 
             processMessageCaptor.getValue().accept(messageContext);
 
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
@@ -321,8 +328,10 @@ public class ServiceBusConsumerTest {
             when(messageContext.getMessage()).thenReturn(message);
 
             processMessageCaptor.getValue().accept(messageContext);
+
             verify(messageContext).getMessage();
 
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
             exchange.setException(new Exception("Test exception"));
@@ -352,8 +361,10 @@ public class ServiceBusConsumerTest {
             when(messageContext.getMessage()).thenReturn(message);
 
             processMessageCaptor.getValue().accept(messageContext);
+
             verify(messageContext).getMessage();
 
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
 
@@ -378,8 +389,10 @@ public class ServiceBusConsumerTest {
             when(messageContext.getMessage()).thenReturn(message);
 
             processMessageCaptor.getValue().accept(messageContext);
+
             verify(messageContext).getMessage();
 
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
             Exchange exchange = exchangeCaptor.getValue();
             assertThat(exchange).isNotNull();
             exchange.setException(new Exception("Test exception"));
