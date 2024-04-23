@@ -129,6 +129,14 @@
             <artifactId>google-oauth-client-jetty</artifactId>
             <version>${google-oauth-client-version}</version>
         </dependency>
+        
+        <!-- optional CloudEvent support -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cloudevents</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
 
         <!-- testing -->
         <dependency>
