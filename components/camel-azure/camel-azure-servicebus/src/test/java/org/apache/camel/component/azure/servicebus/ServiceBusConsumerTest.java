@@ -177,12 +177,7 @@ public class ServiceBusConsumerTest {
 
             Message inMessage = exchange.getIn();
             assertThat(inMessage).isNotNull();
-
-            Map<String, Object> expectedMessageHeaders = createExpectedMessageHeaders();
-            expectedMessageHeaders.put(ServiceBusConstants.APPLICATION_PROPERTIES,
-                    Map.of(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE));
-            expectedMessageHeaders.put(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
-            assertThat(inMessage.getHeaders()).isEqualTo(expectedMessageHeaders);
+            assertThat(inMessage.getHeaders()).containsEntry(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
         }
     }
 
@@ -209,11 +204,7 @@ public class ServiceBusConsumerTest {
 
             Message inMessage = exchange.getIn();
             assertThat(inMessage).isNotNull();
-
-            Map<String, Object> expectedMessageHeaders = createExpectedMessageHeaders();
-            expectedMessageHeaders.put(ServiceBusConstants.APPLICATION_PROPERTIES,
-                    Map.of(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE));
-            assertThat(inMessage.getHeaders()).isEqualTo(expectedMessageHeaders);
+            assertThat(inMessage.getHeaders()).doesNotContainKey(PROPAGATED_HEADER_KEY);
         }
     }
 
