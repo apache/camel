@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -71,7 +72,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         private CamelContext camelContext;
         private TimerTask timerTask;
-        private volatile int counter;
+        private LongAdder counter = new LongAdder();
         private String foo;
 
         @Override
@@ -84,7 +85,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
             this.timerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    counter++;
+                    counter.increment();
                     task.run();
                 }
             };
@@ -96,7 +97,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         }
 
         public int getCounter() {
-            return counter;
+            return counter.intValue();
         }
 
         public String getFoo() {

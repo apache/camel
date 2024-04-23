@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,7 +33,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test.class);
 
-    private static volatile int attempt;
+    private static LongAdder attempt = new LongAdder();
     private static String beforeThreadName;
     private static String afterThreadName;
 
@@ -69,7 +71,8 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
 
                         String body = exchange.getIn().getBody(String.class);
                         if (body.contains("Camel")) {
-                            if (++attempt <= 2) {
+                            attempt.increment();
+                            if (attempt.intValue() <= 2) {
                                 LOG.info("Processing failed will thrown an exception");
                                 throw new IllegalArgumentException("Damn");
                             }

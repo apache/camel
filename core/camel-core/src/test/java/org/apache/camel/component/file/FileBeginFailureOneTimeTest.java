@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -63,7 +64,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
     private static class MyStrategy implements GenericFileProcessStrategy<File> {
 
-        private volatile int invoked;
+        private LongAdder invoked = new LongAdder();
 
         @Override
         public void prepareOnStartup(
@@ -75,8 +76,8 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
                 GenericFile<File> fileGenericFile) {
-            invoked++;
-            if (invoked <= 1) {
+            invoked.increment();
+            if (invoked.intValue() <= 1) {
                 throw new IllegalArgumentException("Damn I cannot do this");
             }
             return true;
@@ -105,7 +106,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         }
 
         public int getInvoked() {
-            return invoked;
+            return invoked.intValue();
         }
     }
 
