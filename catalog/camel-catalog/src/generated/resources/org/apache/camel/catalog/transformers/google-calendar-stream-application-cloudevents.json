@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "google-calendar-stream:application-cloudevents",
+    "title": "Google Calendar Stream (Application Cloudevents)",
+    "description": "Adds CloudEvent headers to the Camel message with Google Calendar Stream consumer response details",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.google.calendar.transform.GoogleCalendarStreamCloudEventDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-calendar",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+
