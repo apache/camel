@@ -110,7 +110,7 @@ public class StaxConverterTest extends ContextTestSupport {
         }
         assertNotNull(output);
 
-        String result = new String(output.toByteArray(), UTF_8);
+        String result = output.toString(UTF_8);
         // normalize the auotation mark
         if (result.indexOf('\'') > 0) {
             result = result.replace('\'', '"');
@@ -169,7 +169,7 @@ public class StaxConverterTest extends ContextTestSupport {
         }
         assertNotNull(output);
 
-        String result = new String(output.toByteArray(), UTF_8);
+        String result = output.toString(UTF_8);
 
         assertEquals(TEST_XML, result);
     }

@@ -152,8 +152,8 @@ public class ObjectConverterTest {
     public void testToString() {
         assertEquals("ABC", ObjectConverter.toString(new StringBuffer("ABC")));
         assertEquals("ABC", ObjectConverter.toString(new StringBuilder("ABC")));
-        assertEquals("", ObjectConverter.toString(new StringBuffer("")));
-        assertEquals("", ObjectConverter.toString(new StringBuilder("")));
+        assertEquals("", ObjectConverter.toString(new StringBuffer()));
+        assertEquals("", ObjectConverter.toString(new StringBuilder()));
     }
 
     @Test

@@ -53,7 +53,7 @@ public class SkipLastNewlineInputStreamTest {
             while ((c = in.read()) >= 0) {
                 out.write(c);
             }
-            Assertions.assertEquals(expected, new String(out.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals(expected, out.toString(StandardCharsets.UTF_8));
         }
 
         try (InputStream in
@@ -64,7 +64,7 @@ public class SkipLastNewlineInputStreamTest {
             while ((len = in.read(buf)) >= 0) {
                 out.write(buf, 0, len);
             }
-            Assertions.assertEquals(expected, new String(out.toByteArray(), StandardCharsets.UTF_8));
+            Assertions.assertEquals(expected, out.toString(StandardCharsets.UTF_8));
         }
 
     }

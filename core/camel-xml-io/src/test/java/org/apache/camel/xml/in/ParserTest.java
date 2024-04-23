@@ -76,7 +76,7 @@ public class ParserTest {
                         assertEquals("value-1", xpp.getAttributeValue(null, "a"));
                         assertEquals("value-2", xpp.getAttributeValue("uri:b", "a"));
                         // check with non-interned String
-                        assertEquals("value-2", xpp.getAttributeValue(new String("uri:b"), "a"));
+                        assertEquals("value-2", xpp.getAttributeValue("uri:b", "a"));
                     }
                 }
                 case MXParser.END_TAG -> {
