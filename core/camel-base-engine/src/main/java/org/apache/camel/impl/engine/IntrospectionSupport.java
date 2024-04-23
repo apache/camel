@@ -248,7 +248,7 @@ final class IntrospectionSupport {
                 String name = info.getterOrSetterShorthandName;
                 try {
                     // we may want to set options on classes that has package view visibility, so override the accessible
-                    Object value = invokeMethodSafe(method, target, null);
+                    Object value = invokeMethodSafe(method, target);
                     if (value != null || includeNull) {
                         properties.put(optionPrefix + name, value);
                         rc = true;
