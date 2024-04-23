@@ -91,20 +91,20 @@ public class ServiceBusConsumerTest {
     private final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.captor();
     private final ArgumentCaptor<AsyncCallback> asyncCallbackCaptor = ArgumentCaptor.captor();
 
-  @BeforeEach
-  void beforeEach() {
-    when(endpoint.getCamelContext()).thenReturn(context);
-    when(context.getCamelContextExtension()).thenReturn(ecc);
-    when(ecc.getExchangeFactory()).thenReturn(ef);
-    when(ef.newExchangeFactory(any())).thenReturn(ef);
-    when(ef.create(any(Endpoint.class), anyBoolean())).thenAnswer(invocationOnMock -> DefaultExchange.newFromEndpoint(invocationOnMock.getArgument(0)));
-    when(endpoint.getComponent()).thenReturn(component);
-    when(endpoint.getConfiguration()).thenReturn(configuration);
-    when(endpoint.getServiceBusClientFactory()).thenReturn(clientFactory);
-    when(clientFactory.createServiceBusProcessorClient(any(), processMessageCaptor.capture(), processErrorCaptor.capture())).thenReturn(client);
-    when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture())).thenReturn(true);
-    when(configuration.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
-  }
+    @BeforeEach
+    void beforeEach() {
+        when(endpoint.getCamelContext()).thenReturn(context);
+        when(context.getCamelContextExtension()).thenReturn(ecc);
+        when(ecc.getExchangeFactory()).thenReturn(ef);
+        when(ef.newExchangeFactory(any())).thenReturn(ef);
+        when(ef.create(any(Endpoint.class), anyBoolean())).thenAnswer(invocationOnMock -> DefaultExchange.newFromEndpoint(invocationOnMock.getArgument(0)));
+        when(endpoint.getComponent()).thenReturn(component);
+        when(endpoint.getConfiguration()).thenReturn(configuration);
+        when(endpoint.getServiceBusClientFactory()).thenReturn(clientFactory);
+        when(clientFactory.createServiceBusProcessorClient(any(), processMessageCaptor.capture(), processErrorCaptor.capture())).thenReturn(client);
+        when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture())).thenReturn(true);
+        when(configuration.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
+    }
 
     @Test
     void consumerSubmitsExchangeToProcessor() throws Exception {
@@ -392,30 +392,30 @@ public class ServiceBusConsumerTest {
         }
     }
 
-  private void configureMockMessage() {
-    when(message.getApplicationProperties()).thenReturn(new HashMap<>());
-    when(message.getBody()).thenReturn(BinaryData.fromBytes(MESSAGE_BODY.getBytes()));
-    when(message.getContentType()).thenReturn(MESSAGE_CONTENT_TYPE);
-    when(message.getCorrelationId()).thenReturn(MESSAGE_CORRELATION_ID);
-    when(message.getDeliveryCount()).thenReturn(MESSAGE_DELIVERY_COUNT_VALUE);
-    when(message.getEnqueuedSequenceNumber()).thenReturn(MESSAGE_ENQUEUED_SEQUENCE_NUMBER_VALUE);
-    when(message.getEnqueuedTime()).thenReturn(MESSAGE_ENQUEUED_TIME);
-    when(message.getExpiresAt()).thenReturn(MESSAGE_EXPIRES_AT);
-    when(message.getLockToken()).thenReturn(MESSAGE_LOCK_TOKEN);
-    when(message.getLockedUntil()).thenReturn(MESSAGE_LOCKED_UNTIL);
-    when(message.getMessageId()).thenReturn(MESSAGE_ID);
-    when(message.getPartitionKey()).thenReturn(MESSAGE_PARTITION_KEY);
-    when(message.getRawAmqpMessage()).thenReturn(rawAmqpAnnotatedMessage);
-    when(message.getReplyTo()).thenReturn(MESSAGE_REPLY_TO);
-    when(message.getReplyToSessionId()).thenReturn(MESSAGE_REPLY_TO_SESSION_ID);
-    when(message.getScheduledEnqueueTime()).thenReturn(MESSAGE_SCHEDULED_ENQUEUE_TIME);
-    when(message.getSequenceNumber()).thenReturn(MESSAGE_SEQUENCE_NUMBER);
-    when(message.getSessionId()).thenReturn(MESSAGE_SESSION_ID);
-    when(message.getState()).thenReturn(MESSAGE_STATE);
-    when(message.getSubject()).thenReturn(MESSAGE_SUBJECT);
-    when(message.getTimeToLive()).thenReturn(MESSAGE_TIME_TO_LIVE);
-    when(message.getTo()).thenReturn(MESSAGE_TO);
-  }
+    private void configureMockMessage() {
+        when(message.getApplicationProperties()).thenReturn(new HashMap<>());
+        when(message.getBody()).thenReturn(BinaryData.fromBytes(MESSAGE_BODY.getBytes()));
+        when(message.getContentType()).thenReturn(MESSAGE_CONTENT_TYPE);
+        when(message.getCorrelationId()).thenReturn(MESSAGE_CORRELATION_ID);
+        when(message.getDeliveryCount()).thenReturn(MESSAGE_DELIVERY_COUNT_VALUE);
+        when(message.getEnqueuedSequenceNumber()).thenReturn(MESSAGE_ENQUEUED_SEQUENCE_NUMBER_VALUE);
+        when(message.getEnqueuedTime()).thenReturn(MESSAGE_ENQUEUED_TIME);
+        when(message.getExpiresAt()).thenReturn(MESSAGE_EXPIRES_AT);
+        when(message.getLockToken()).thenReturn(MESSAGE_LOCK_TOKEN);
+        when(message.getLockedUntil()).thenReturn(MESSAGE_LOCKED_UNTIL);
+        when(message.getMessageId()).thenReturn(MESSAGE_ID);
+        when(message.getPartitionKey()).thenReturn(MESSAGE_PARTITION_KEY);
+        when(message.getRawAmqpMessage()).thenReturn(rawAmqpAnnotatedMessage);
+        when(message.getReplyTo()).thenReturn(MESSAGE_REPLY_TO);
+        when(message.getReplyToSessionId()).thenReturn(MESSAGE_REPLY_TO_SESSION_ID);
+        when(message.getScheduledEnqueueTime()).thenReturn(MESSAGE_SCHEDULED_ENQUEUE_TIME);
+        when(message.getSequenceNumber()).thenReturn(MESSAGE_SEQUENCE_NUMBER);
+        when(message.getSessionId()).thenReturn(MESSAGE_SESSION_ID);
+        when(message.getState()).thenReturn(MESSAGE_STATE);
+        when(message.getSubject()).thenReturn(MESSAGE_SUBJECT);
+        when(message.getTimeToLive()).thenReturn(MESSAGE_TIME_TO_LIVE);
+        when(message.getTo()).thenReturn(MESSAGE_TO);
+    }
 
     private void configureMockDeadLetterMessage() {
         configureMockMessage();
