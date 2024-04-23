@@ -23,7 +23,7 @@ import org.apache.camel.model.language.TokenizerExpression;
 public class TokenizerExpressionReifier extends SingleInputTypedExpressionReifier<TokenizerExpression> {
 
     public TokenizerExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (TokenizerExpression) definition);
+        super(camelContext, definition);
     }
 
     protected Object[] createProperties() {
