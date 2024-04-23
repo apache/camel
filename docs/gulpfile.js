@@ -127,8 +127,8 @@ const sources = {
     },
     json: {
       source: [
-        '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/**/*.json',
-        '../core/camel-core-model/src/generated/resources/org/apache/camel/model/dataformat/*.json',
+        '../components/{*,*/*,*/*/*}/src/generated/resources/META-INF/org/apache/camel/**/*.json',
+        '../core/camel-core-model/src/generated/resources/META-INF/org/apache/camel/model/dataformat/*.json',
       ],
       destination: 'components/modules/dataformats/examples/json',
       filter: (content) => JSON.parse(content).dataformat, // check if there is a "dataformat" key at the root
@@ -147,9 +147,9 @@ const sources = {
     },
     json: {
       source: [
-        '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/*/**/*.json',
-        '../core/camel-core-languages/src/generated/resources/org/apache/camel/language/**/*.json',
-        '../core/camel-core-model/src/generated/resources/org/apache/camel/model/language/*.json',
+        '../components/{*,*/*,*/*/*}/src/generated/resources/META-INF/org/apache/camel/*/**/*.json',
+        '../core/camel-core-languages/src/generated/resources/META-INF/org/apache/camel/language/**/*.json',
+        '../core/camel-core-model/src/generated/resources/META-INF/org/apache/camel/model/language/*.json',
       ],
       destination: 'components/modules/languages/examples/json',
       filter: (content) => JSON.parse(content).language, // check if there is a "language" key at the root

@@ -323,7 +323,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     private static String schemaSubDirectory(String javaType) {
         int idx = javaType.lastIndexOf('.');
         String pckName = javaType.substring(0, idx);
-        return pckName.replace('.', '/');
+        return "META-INF/" + pckName.replace('.', '/');
     }
 
 }
