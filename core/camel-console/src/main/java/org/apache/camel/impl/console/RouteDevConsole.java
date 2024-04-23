@@ -461,7 +461,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         if (percent) {
             double p;
             if (total > 0) {
-                p = (covered / total) * 100;
+                p = ((double) covered / total) * 100;
             } else {
                 p = 0;
             }
