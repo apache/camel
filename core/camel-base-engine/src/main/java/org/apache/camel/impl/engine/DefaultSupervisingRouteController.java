@@ -653,7 +653,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                                 String cause = e.getClass().getName() + ": " + e.getMessage();
                                 logger.info("Failed restarting route: {} attempt: {} due: {} (stacktrace in debug log level)",
                                         r.getId(), attempt, cause);
-                                logger.debug("    Error restarting route caused by: " + e.getMessage(), e);
+                                logger.debug("    Error restarting route caused by: {}", e.getMessage(), e);
                                 return true;
                             }
                         });
