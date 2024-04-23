@@ -62,14 +62,14 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         this.connect();
 
         if (this.scheduledExecutor == null) {
             this.scheduledExecutor = this.getEndpoint().getCamelContext().getExecutorServiceManager()
                     .newSingleThreadScheduledExecutor(this, "PgReplicationStatusUpdateSender");
         }
+
+        super.doStart();
     }
 
     @Override
