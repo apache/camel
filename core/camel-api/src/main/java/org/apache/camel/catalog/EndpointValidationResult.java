@@ -59,9 +59,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
         if (lenient == null) {
             lenient = new LinkedHashSet<>();
         }
-        if (!lenient.contains(name)) {
-            lenient.add(name);
-        }
+        lenient.add(name);
     }
 
     public void addNotConsumerOnly(String name) {
