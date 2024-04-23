@@ -30,7 +30,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -52,8 +51,8 @@ public class ServiceBusConsumer extends DefaultConsumer {
         super.doStart();
 
         LOG.debug("Creating connection to Azure ServiceBus");
-        client = ServiceBusClientFactory.createServiceBusProcessorClient(getConfiguration(), this::processMessage,
-                this::processError);
+        client = getEndpoint().getServiceBusClientFactory().createServiceBusProcessorClient(getConfiguration(),
+                this::processMessage, this::processError);
         client.start();
     }
 
@@ -162,8 +161,10 @@ public class ServiceBusConsumer extends DefaultConsumer {
                     deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
                             .map(StackTraceElement::toString)
                             .collect(Collectors.joining("\n")));
+                    messageContext.deadLetter(deadLetterOptions);
+                } else {
+                    messageContext.deadLetter();
                 }
-                messageContext.deadLetter(deadLetterOptions);
             } else {
                 messageContext.abandon();
             }

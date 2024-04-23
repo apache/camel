@@ -28,33 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class ServiceBusClientFactory {
 
-    private ServiceBusClientFactory() {
-    }
-
-    public static ServiceBusSenderAsyncClient createServiceBusSenderAsyncClient(final ServiceBusConfiguration configuration) {
-        return createBaseServiceBusSenderClient(createBaseServiceBusClient(configuration), configuration)
-                .buildAsyncClient();
-    }
-
-    public static ServiceBusProcessorClient createServiceBusProcessorClient(
-            ServiceBusConfiguration configuration, Consumer<ServiceBusReceivedMessageContext> processMessage,
-            Consumer<ServiceBusErrorContext> processError) {
-        ServiceBusClientBuilder.ServiceBusProcessorClientBuilder clientBuilder
-                = createBaseServiceBusProcessorClient(createBaseServiceBusClient(configuration), configuration);
-
-        clientBuilder
-                .subscriptionName(configuration.getSubscriptionName())
-                .receiveMode(configuration.getServiceBusReceiveMode())
-                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
-                .prefetchCount(configuration.getPrefetchCount())
-                .subQueue(configuration.getSubQueue())
-                .maxConcurrentCalls(configuration.getMaxConcurrentCalls())
-                .processMessage(processMessage)
-                .processError(processError);
-
-        return clientBuilder.buildProcessorClient();
-    }
-
     private static ServiceBusClientBuilder createBaseServiceBusClient(final ServiceBusConfiguration configuration) {
         ServiceBusClientBuilder builder = new ServiceBusClientBuilder()
                 .transportType(configuration.getAmqpTransportType())
@@ -104,5 +77,29 @@ public final class ServiceBusClientFactory {
         }
 
         return processorClientBuilder;
+    }
+
+    public ServiceBusSenderAsyncClient createServiceBusSenderAsyncClient(final ServiceBusConfiguration configuration) {
+        return createBaseServiceBusSenderClient(createBaseServiceBusClient(configuration), configuration)
+                .buildAsyncClient();
+    }
+
+    public ServiceBusProcessorClient createServiceBusProcessorClient(
+            ServiceBusConfiguration configuration, Consumer<ServiceBusReceivedMessageContext> processMessage,
+            Consumer<ServiceBusErrorContext> processError) {
+        ServiceBusClientBuilder.ServiceBusProcessorClientBuilder clientBuilder
+                = createBaseServiceBusProcessorClient(createBaseServiceBusClient(configuration), configuration);
+
+        clientBuilder
+                .subscriptionName(configuration.getSubscriptionName())
+                .receiveMode(configuration.getServiceBusReceiveMode())
+                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
+                .prefetchCount(configuration.getPrefetchCount())
+                .subQueue(configuration.getSubQueue())
+                .maxConcurrentCalls(configuration.getMaxConcurrentCalls())
+                .processMessage(processMessage)
+                .processError(processError);
+
+        return clientBuilder.buildProcessorClient();
     }
 }
