@@ -82,7 +82,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
             try {
                 consumer.start();
             } catch (Exception e) {
-                RuntimeCamelException.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
 
             if (counter++ == 0) {
