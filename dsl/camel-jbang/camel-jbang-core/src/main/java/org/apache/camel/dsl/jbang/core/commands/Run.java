@@ -953,9 +953,6 @@ public class Run extends CamelCommand {
 
         System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
         // TODO: camel log from spring-boot/quarkus is not possible
-        // TODO: copy files using symbolic link so you can edit the file (TODO: application.properties)
-        // TODO: camel stop does not stop quarkus correctly (spring boot does that)
-        // TODO: camel get does not show Quarkus as platform (spring boot does that)
         // TODO: spring-boot dev-tools reloading could update camel reload counter
         // TODO: docs
 
@@ -964,6 +961,10 @@ public class Run extends CamelCommand {
         if (exit != 0) {
             return exit;
         }
+        // prepare spring-boot for logging to file
+        InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml");
+        eq.safeCopy(is, new File(eq.exportDir + "/src/main/resources/logback.xml"));
+
         // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
         String mvnw = "/mvnw";
