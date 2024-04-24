@@ -335,7 +335,7 @@
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.2.1</maven-archetype-packaging-version>
         <maven-owasp-plugin-version>9.0.10</maven-owasp-plugin-version>
-        <maven-jar-plugin-version>3.4.0</maven-jar-plugin-version>
+        <maven-jar-plugin-version>3.4.1</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.6.3</maven-javadoc-plugin-version>
         <maven-plugin-plugin-version>3.12.0</maven-plugin-plugin-version>
         <maven-plugin-annotations-version>3.9.0</maven-plugin-annotations-version>
