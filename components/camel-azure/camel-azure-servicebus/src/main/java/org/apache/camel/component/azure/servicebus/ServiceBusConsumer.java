@@ -189,7 +189,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
 
         // propagate headers
         final HeaderFilterStrategy headerFilterStrategy = getConfiguration().getHeaderFilterStrategy();
-        message.setHeaders(receivedMessage.getApplicationProperties().entrySet().stream()
+        message.getHeaders().putAll(receivedMessage.getApplicationProperties().entrySet().stream()
                 .filter(entry -> !headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
