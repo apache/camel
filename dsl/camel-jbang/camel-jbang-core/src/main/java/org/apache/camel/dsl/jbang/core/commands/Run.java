@@ -952,9 +952,6 @@ public class Run extends CamelCommand {
         eq.loggingLevel = "off";
 
         System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
-        // TODO: camel log from spring-boot/quarkus is not possible
-        // TODO: spring-boot dev-tools reloading could update camel reload counter
-        // TODO: docs
 
         // run export
         int exit = eq.export();
