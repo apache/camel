@@ -2399,6 +2399,54 @@ which is due to invalid configuration: `Invalid url in bootstrap.servers: value`
 
 TIP: Use `camel get health --help` to see all the various options.
 
+
+== Running with Spring Boot or Quarkus
+
+Camel JBang is __primary__ intended to be Camel standalone only. In *Camel 4.6* onwards we added limited
+support for running with Spring Boot or Quarkus, but there are some limitations.
+
+You use the `--runtime` option to specify which platform to use, as shown below:
+
+[source,bash]
+----
+camel run foo.camel.yaml --runtime=spring-boot
+----
+
+And for Quarkus:
+
+[source,bash]
+----
+camel run foo.camel.yaml --runtime=quarkus
+----
+
+When running this way, then Camel JBang is _essentially_ doing an _export_ to a temporary folder,
+and then running Spring Boot or Quarkus using Maven.
+
+You can do changes to the source file and have Quarkus and Spring Boot reload the routes, just as `camel run --dev` can do,
+but uses the natural Spring Boot _dev-tools_ and Quarkus _dev mode_ functionality.
+
+There are several limitations, one would be that Spring Boot and Quarkus cannot automatically detect new components and download JARs.
+(you can stop and run again to update dependencies).
+
+When using Quarkus then you can only select the Quarkus version to run, that are locked to a specific Camel version.
+You can see the versions by `camel version list --runtime=quarkus`. On the other hand Spring Boot is more flexible
+where you can choose different Spring Boot and Camel versions (within reasonable range).
+
+For example:
+
+[source,bash]
+----
+camel run foo.camel.yaml --runtime=spring-boot --spring-boot-version=3.2.3 --camel-version=4.4.1
+----
+
+And for Quarkus:
+
+[source,bash]
+----
+camel run foo.camel.yaml --runtime=quarkus --quarkus-version=3.9.4
+----
+
+
 == Transforming message (data mapping)
 
 When integrating system you often need to transform messages from one system to another. Camel has rich set

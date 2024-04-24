@@ -1691,7 +1691,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         TracerConfigurationProperties config = mainConfigurationProperties.tracerConfig();
-        setPropertiesOnTarget(camelContext, config, properties, "camel.tracer.",
+        setPropertiesOnTarget(camelContext, config, properties, "camel.trace.",
                 failIfNotSet, true, autoConfiguredProperties);
 
         if (!config.isEnabled() && !config.isStandby()) {
