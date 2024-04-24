@@ -34,7 +34,8 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PollEnrichDefinition extends ExpressionNode implements AggregationStrategyAwareDefinition<PollEnrichDefinition> {
+public class PollEnrichDefinition extends ExpressionNode
+        implements AggregationStrategyAwareDefinition<PollEnrichDefinition>, Copyable {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
@@ -72,6 +73,20 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
     public PollEnrichDefinition(AggregationStrategy aggregationStrategy, long timeout) {
         this.aggregationStrategyBean = aggregationStrategy;
         this.timeout = Long.toString(timeout);
+    }
+
+    protected PollEnrichDefinition(PollEnrichDefinition source) {
+        super(source);
+        this.aggregationStrategyBean = source.aggregationStrategyBean;
+        this.variableReceive = source.variableReceive;
+        this.aggregationStrategy = source.aggregationStrategy;
+        this.aggregationStrategyMethodName = source.aggregationStrategyMethodName;
+        this.aggregationStrategyMethodAllowNull = source.aggregationStrategyMethodAllowNull;
+        this.aggregateOnException = source.aggregateOnException;
+        this.timeout = source.timeout;
+        this.cacheSize = source.cacheSize;
+        this.ignoreInvalidEndpoint = source.ignoreInvalidEndpoint;
+        this.autoStartComponents = source.autoStartComponents;
     }
 
     @Override
@@ -357,5 +372,10 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
 
     public void setAutoStartComponents(String autoStartComponents) {
         this.autoStartComponents = autoStartComponents;
+    }
+
+    @Override
+    public PollEnrichDefinition copy() {
+        return new PollEnrichDefinition(this);
     }
 }

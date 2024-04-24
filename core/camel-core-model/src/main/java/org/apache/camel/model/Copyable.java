@@ -20,6 +20,6 @@ package org.apache.camel.model;
  * This interface is used to copy {@link ProcessorDefinition ProcessorDefinitions} during instantiation of a route
  * template.
  */
-interface CopyableProcessorDefinition {
+interface Copyable {
     ProcessorDefinition<?> copy();
 }
