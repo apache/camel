@@ -34,7 +34,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
     public void testInterceptEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
 
                 // START SNIPPET: e1
@@ -68,7 +68,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
     public void testInterceptEndpointWithPredicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e2
                 // we can also attach a predicate to the endpoint interceptor.
                 // So in this example the exchange is
@@ -99,7 +99,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
     public void testInterceptEndpointStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
 
                 // START SNIPPET: e3
@@ -138,7 +138,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
     public void testInterceptEndpointDirectly() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:start").to("mock:detour").transform(constant("Bye World"));
 
                 from("direct:start").to("mock:foo").to("mock:result");
@@ -159,7 +159,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
     public void testInterceptEndpointWithStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:start").to("mock:detour").stop();
 
                 from("direct:start").to("mock:foo").to("mock:result");
@@ -180,7 +180,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
     public void testInterceptEndpointOnce() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:intercept1").to("mock:detour1");
                 interceptSendToEndpoint("direct:intercept2").to("mock:detour2");
 

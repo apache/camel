@@ -45,10 +45,10 @@ public class AggregateMultipleSourceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").to("direct:aggregate");
                 from("seda:bar").to("direct:aggregate");
                 from("seda:baz").to("direct:aggregate");

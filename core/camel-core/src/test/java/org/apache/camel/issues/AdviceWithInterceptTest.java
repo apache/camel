@@ -30,7 +30,7 @@ public class AdviceWithInterceptTest extends ContextTestSupport {
 
         AdviceWith.adviceWith(context.getRouteDefinition("main"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveAddFirst().to("direct:advice");
             }
         });
@@ -41,10 +41,10 @@ public class AdviceWithInterceptTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 intercept().log("Intercept ${body}");
 
                 from("direct:advice").log("Advice ${body}").to("mock:advice");

@@ -32,7 +32,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFastLogComponentOptions() throws Exception {
+    public void testFastLogComponentOptions() {
         context.start();
 
         long before = PluginHelper.getBeanIntrospection(context).getInvokedCounter();
@@ -54,7 +54,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFastLogComponentNestedOptions() throws Exception {
+    public void testFastLogComponentNestedOptions() {
         context.start();
 
         long before = PluginHelper.getBeanIntrospection(context).getInvokedCounter();
@@ -77,7 +77,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFastLogComponentOptionsLookupRegistry() throws Exception {
+    public void testFastLogComponentOptionsLookupRegistry() {
         context.start();
 
         long before = PluginHelper.getBeanIntrospection(context).getInvokedCounter();
@@ -102,7 +102,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSlowLogComponentOptions() throws Exception {
+    public void testSlowLogComponentOptions() {
         context.start();
 
         long before = PluginHelper.getBeanIntrospection(context).getInvokedCounter();
@@ -125,7 +125,7 @@ public class LogComponentOptionsTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSlowLogComponentOptionsLookupRegistry() throws Exception {
+    public void testSlowLogComponentOptionsLookupRegistry() {
         context.start();
 
         long before = PluginHelper.getBeanIntrospection(context).getInvokedCounter();

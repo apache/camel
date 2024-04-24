@@ -58,7 +58,7 @@ public class GroupTokenIteratorTest extends TestSupport {
     }
 
     @Test
-    public void testGroupIterator() throws Exception {
+    public void testGroupIterator() {
         String s = "ABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
         Scanner scanner = new Scanner(s, "\n");
 
@@ -74,7 +74,7 @@ public class GroupTokenIteratorTest extends TestSupport {
     }
 
     @Test
-    public void testGroupIteratorSkipFirst() throws Exception {
+    public void testGroupIteratorSkipFirst() {
         String s = "##comment\nABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
         Scanner scanner = new Scanner(s, "\n");
 
@@ -90,7 +90,7 @@ public class GroupTokenIteratorTest extends TestSupport {
     }
 
     @Test
-    public void testGroupIteratorWithDifferentEncodingFromDefault() throws Exception {
+    public void testGroupIteratorWithDifferentEncodingFromDefault() {
         if (Charset.defaultCharset() == StandardCharsets.UTF_8) {
             // can't think of test case where having default charset set to
             // UTF-8 is affected

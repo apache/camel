@@ -95,10 +95,10 @@ public class MyServiceProxyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when(body().isEqualTo("Tiger in Action"))
                         .throwException(new MyApplicationException("No tigers", 9))
                         .when(body().isEqualTo("Donkey in Action"))
@@ -111,7 +111,7 @@ public class MyServiceProxyTest extends ContextTestSupport {
                 from("direct:request").process(new Processor() {
 
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         MyRequest request = exchange.getIn().getBody(MyRequest.class);
                         MyResponse response = new MyResponse();
                         response.id = request.id;

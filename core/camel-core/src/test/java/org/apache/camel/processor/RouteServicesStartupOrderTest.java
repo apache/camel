@@ -63,10 +63,10 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").startupOrder(2).process(service1).to("seda:foo");
 
                 from("seda:foo").startupOrder(1).process(service2).to("mock:result");
@@ -88,13 +88,13 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             startOrder += name;
             started = true;
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             started = false;
         }
 
@@ -112,7 +112,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
         }
     }
 }

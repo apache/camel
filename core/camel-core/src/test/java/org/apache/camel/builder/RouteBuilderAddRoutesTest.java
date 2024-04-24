@@ -22,10 +22,10 @@ import org.junit.jupiter.api.Test;
 public class RouteBuilderAddRoutesTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("mock:result").transform(constant("Foo was here"));
 
                 from("direct:foo").to("mock:foo");

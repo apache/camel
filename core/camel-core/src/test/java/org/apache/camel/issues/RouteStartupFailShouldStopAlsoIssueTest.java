@@ -50,7 +50,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:bar").routeId("bar").to("mock:bar");
 
                 // the foo route fails to startup but it should be stopped when
@@ -87,7 +87,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyEndpoint(uri, this);
         }
     }
@@ -99,12 +99,12 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             throw new UnsupportedOperationException("Not supported");
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return new MyFailConsumer(this, processor);
         }
     }

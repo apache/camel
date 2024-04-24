@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LogEndpointOptionsTest extends ContextTestSupport {
 
     @Test
-    public void testLogEndpointOptions() throws Exception {
+    public void testLogEndpointOptions() {
         LogEndpoint log = context.getEndpoint("log:foo?level=DEBUG&marker=bar&groupSize=20", LogEndpoint.class);
         assertNotNull(log);
 
@@ -38,10 +38,10 @@ public class LogEndpointOptionsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo?level=DEBUG&marker=bar&groupSize=20");
             }
         };

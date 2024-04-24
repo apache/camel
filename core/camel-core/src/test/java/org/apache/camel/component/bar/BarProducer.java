@@ -31,7 +31,7 @@ public class BarProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         // is there a header with the drink
         String drink = exchange.getIn().getHeader(BarConstants.DRINK, String.class);
         if (drink == null) {

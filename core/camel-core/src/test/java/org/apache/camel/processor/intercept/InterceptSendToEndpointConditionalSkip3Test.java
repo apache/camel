@@ -62,10 +62,10 @@ public class InterceptSendToEndpointConditionalSkip3Test extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we have 2 interceptors, which may both trigger, or either or,
                 // or none
                 interceptSendToEndpoint("mock:skip").skipSendToOriginalEndpoint().when(body().contains("skip"))

@@ -41,7 +41,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
     public void testConsumeAndDeleteRemoveAllHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10&delete=true")
                         // remove all headers
                         .removeHeaders("*").to("mock:result");
@@ -69,7 +69,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
     public void testConsumeAndDeleteChangeFileHeader() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10&delete=true")
                         // change file header
                         .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
@@ -96,7 +96,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
     public void testConsumeAndMoveRemoveAllHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10")
                         // remove all headers
                         .removeHeaders("*").to("mock:result");
@@ -124,7 +124,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
     public void testConsumeAndMoveChangeFileHeader() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10")
                         // change file header
                         .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");

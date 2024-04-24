@@ -69,10 +69,10 @@ public class BeanExpressionConcurrentTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?concurrentConsumers=10").routeId("foo").noAutoStartup().transform(method("myBean"))
                         .to("mock:result");
             }
@@ -110,6 +110,7 @@ public class BeanExpressionConcurrentTest extends ContextTestSupport {
             this.baz = baz;
         }
 
+        @SuppressWarnings("unused")
         public void doSomething() {
             // noop
         }

@@ -35,10 +35,10 @@ public class ErrorHandlerRefPropertyPlaceholderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Properties prop = new Properties();
                 prop.put("myErrorHandler", "myDead");
                 context.getPropertiesComponent().setOverrideProperties(prop);

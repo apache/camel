@@ -47,7 +47,7 @@ public class EnricherBiFunctionTest extends ContextTestSupport {
     @Test
     public void testEnrichRef() throws Exception {
         cool.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setBody("Bye World");
             }
         });
@@ -60,10 +60,10 @@ public class EnricherBiFunctionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 cool.setCamelContext(context);
 
                 from("direct:start").enrich().simple("ref:cool").aggregationStrategy("agg");

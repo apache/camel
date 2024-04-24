@@ -64,10 +64,10 @@ public class RuntimeEndpointRegistryTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").to("mock:foo").recipientList(header("slip"));
 
                 from("seda:bar").routeId("bar").to("mock:bar").recipientList(header("slip"));

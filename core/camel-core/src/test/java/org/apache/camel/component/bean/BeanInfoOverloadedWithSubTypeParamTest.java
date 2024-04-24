@@ -29,6 +29,7 @@ public class BeanInfoOverloadedWithSubTypeParamTest extends ContextTestSupport {
         assertEquals(2, beanInfo.getMethods().size());
     }
 
+    @SuppressWarnings("Unused")
     static class Bean {
 
         public void doSomething(RequestB request) {

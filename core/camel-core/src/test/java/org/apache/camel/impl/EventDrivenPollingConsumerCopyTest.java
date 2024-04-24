@@ -48,11 +48,11 @@ public class EventDrivenPollingConsumerCopyTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getUnitOfWork().addSynchronization(new SynchronizationAdapter() {
                                     @Override
                                     public void onDone(Exchange exchange) {

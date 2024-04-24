@@ -34,14 +34,14 @@ public class RoutesConfigurationUpdateTest extends ContextTestSupport {
 
         RouteConfigurationBuilder rcb = new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration("myConfig").onException(Exception.class).handled(true).to("mock:error");
             }
         };
         rcb.addRouteConfigurationsToCamelContext(context);
         RouteBuilder rb = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start").routeConfigurationId("myConfig")
                         .throwException(new IllegalArgumentException("Foo"));
 
@@ -61,14 +61,14 @@ public class RoutesConfigurationUpdateTest extends ContextTestSupport {
         context.getRouteController().removeAllRoutes();
         RouteConfigurationBuilder rcb2 = new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration("myConfig").onException(Exception.class).handled(true).to("mock:error2");
             }
         };
         rcb2.updateRouteConfigurationsToCamelContext(context);
         RouteBuilder rb2 = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start").routeConfigurationId("myConfig")
                         .throwException(new IllegalArgumentException("Foo"));
 
@@ -93,14 +93,14 @@ public class RoutesConfigurationUpdateTest extends ContextTestSupport {
 
         RouteConfigurationBuilder rcb = new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
             }
         };
         rcb.addRouteConfigurationsToCamelContext(context);
         RouteBuilder rb = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         .throwException(new IllegalArgumentException("Foo"));
 
@@ -120,14 +120,14 @@ public class RoutesConfigurationUpdateTest extends ContextTestSupport {
         context.getRouteController().removeAllRoutes();
         RouteConfigurationBuilder rcb2 = new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration().onException(Exception.class).handled(true).to("mock:error2");
             }
         };
         rcb2.updateRouteConfigurationsToCamelContext(context);
         RouteBuilder rb2 = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         .throwException(new IllegalArgumentException("Foo"));
 

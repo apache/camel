@@ -31,7 +31,7 @@ public class FileConsumerTemplateTest extends ContextTestSupport {
     final String filename = "hello.txt";
 
     @Test
-    public void testFileConsumerTemplate() throws Exception {
+    public void testFileConsumerTemplate() {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, filename);
 
         // file should exist

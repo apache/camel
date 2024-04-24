@@ -35,10 +35,10 @@ public class SedaComplexInOutTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().setTracing(true);
 
                 from("direct:start").to("seda:a");

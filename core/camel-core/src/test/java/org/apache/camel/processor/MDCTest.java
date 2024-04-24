@@ -50,15 +50,15 @@ public class MDCTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
                 from("direct:a").routeId("route-a").step("step-a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals("route-a", MDC.get("camel.routeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                         assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
@@ -67,7 +67,7 @@ public class MDCTest extends ContextTestSupport {
                         MDC.put("custom.id", "1");
                     }
                 }).to("log:foo").to("direct:b").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals("route-a", MDC.get("camel.routeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                         assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
@@ -76,7 +76,7 @@ public class MDCTest extends ContextTestSupport {
                 });
 
                 from("direct:b").routeId("route-b").step("step-b").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals("route-b", MDC.get("camel.routeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                         assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));

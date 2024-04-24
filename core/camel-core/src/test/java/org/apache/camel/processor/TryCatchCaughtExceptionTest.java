@@ -48,14 +48,14 @@ public class TryCatchCaughtExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().to("mock:a").to("bean:myBean?method=doSomething").doCatch(Exception.class)
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 assertEquals("bean://myBean?method=doSomething",
                                         exchange.getProperty(Exchange.FAILURE_ENDPOINT));
                                 assertEquals("Forced",
@@ -66,7 +66,7 @@ public class TryCatchCaughtExceptionTest extends ContextTestSupport {
         };
     }
 
-    public void doSomething(String body) throws Exception {
+    public void doSomething(String body) {
         throw new IllegalArgumentException("Forced");
     }
 }

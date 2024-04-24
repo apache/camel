@@ -41,7 +41,7 @@ public class SedaComponentReferenceEndpointTest extends ContextTestSupport {
         // add a second consumer on the endpoint
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?blockWhenFull=true").routeId("foo2").to("mock:foo2");
             }
         });
@@ -70,10 +70,10 @@ public class SedaComponentReferenceEndpointTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").to("mock:foo");
 
                 from("seda:bar").routeId("bar").to("mock:bar");

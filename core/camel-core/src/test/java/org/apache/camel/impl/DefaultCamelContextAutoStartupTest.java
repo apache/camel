@@ -35,7 +35,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         camel.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").to("mock:result");
             }
         });
@@ -70,7 +70,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         camel.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").to("mock:result");
             }
         });
@@ -105,7 +105,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         camel.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").to("mock:result");
             }
         });
@@ -133,7 +133,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         camel.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").autoStartup(true).to("mock:result");
             }
         });

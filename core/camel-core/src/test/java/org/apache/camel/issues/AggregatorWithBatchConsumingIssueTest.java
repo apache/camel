@@ -47,7 +47,7 @@ public class AggregatorWithBatchConsumingIssueTest extends ContextTestSupport {
 
     private void sendMessage(final int index) {
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(index);
                 exchange.getIn().setHeader("aggregateGroup", "group1");
 
@@ -60,10 +60,10 @@ public class AggregatorWithBatchConsumingIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(header("aggregateGroup"), new BodyInAggregatingStrategy())
                         .completionFromBatchConsumer().to("log:aggregated").to("mock:result");
             }

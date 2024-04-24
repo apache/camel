@@ -43,7 +43,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
     public void testCorrect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=concat(${body}, ${header.foo})").to("mock:result");
             }
         });
@@ -58,7 +58,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
     public void testMissing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=concat(${body}, ${header.foo}").to("mock:result");
             }
         });
@@ -76,7 +76,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
     public void testInvalidName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=--concat(${body}, ${header.foo})").to("mock:result");
             }
         });

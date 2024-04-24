@@ -38,7 +38,7 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
     public void testRecursionDirect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Throwable.class).to("mock:c").to("direct:handle");
 
                 from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
@@ -74,7 +74,7 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
     public void testRecursionDirectNoErrorHandler() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Throwable.class).to("mock:c").to("direct:handle");
 
                 from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");

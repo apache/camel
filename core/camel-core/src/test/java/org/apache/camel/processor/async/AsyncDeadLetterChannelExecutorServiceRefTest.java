@@ -37,7 +37,7 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
     public void testAsyncErrorHandlerWait() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ThreadPoolProfile profile = new ThreadPoolProfile("myAsyncPool");
                 profile.setPoolSize(5);
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);

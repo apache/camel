@@ -63,17 +63,17 @@ public class TryFinallyCaughtExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().to("mock:a").to("bean:myBean?method=doSomething").doFinally().to("mock:b").end()
                         .to("mock:result");
             }
         };
     }
 
-    public void doSomething(String body) throws Exception {
+    public void doSomething(String body) {
         throw new IllegalArgumentException("Forced");
     }
 }

@@ -38,7 +38,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
         private int counter;
 
         @Override
-        public void notify(CamelEvent event) throws Exception {
+        public void notify(CamelEvent event) {
             counter++;
         }
 
@@ -64,7 +64,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExchangeSentNotifier() throws Exception {
+    public void testExchangeSentNotifier() {
         notifier.reset();
 
         String out = template.requestBody("direct:start", "Hello World", String.class);
@@ -75,12 +75,12 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExchangeSentNotifierExchange() throws Exception {
+    public void testExchangeSentNotifierExchange() {
         notifier.reset();
 
         Exchange out = template.request("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }
         });
@@ -91,7 +91,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExchangeSentNotifierManualExchange() throws Exception {
+    public void testExchangeSentNotifierManualExchange() {
         notifier.reset();
 
         Exchange exchange = new DefaultExchange(context);
@@ -105,13 +105,13 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getIn().setBody("I was here");
                     }
                 });

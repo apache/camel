@@ -24,10 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class SplitterNullBodyParallelTest extends SplitterNullBodyTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body()).parallelProcessing().to("mock:split").end().to("mock:result");
 
                 from("direct:streaming").split(body()).streaming().parallelProcessing().to("mock:split").end()

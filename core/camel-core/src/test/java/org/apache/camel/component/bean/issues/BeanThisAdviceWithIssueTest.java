@@ -38,17 +38,18 @@ public class BeanThisAdviceWithIssueTest extends ContextTestSupport {
     public void shouldFire() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:mytest").id(ROUTE_ID).bean(this, "hello", BeanScope.Prototype).to("log:out");
             }
 
+            @SuppressWarnings("Unused")
             public void hello(final Exchange exchange) {
             }
         });
 
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveAddLast().to("mock:extract");
             }
         });

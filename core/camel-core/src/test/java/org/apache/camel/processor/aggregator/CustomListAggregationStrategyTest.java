@@ -54,10 +54,10 @@ public class CustomListAggregationStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(new MyListOfNumbersStrategy()).header("id").completionSize(3).to("mock:result");
             }
         };

@@ -53,7 +53,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProperties() throws Exception {
+    public void testProperties() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -77,7 +77,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProperty() throws Exception {
+    public void testProperty() {
         PropertiesComponent pc = context.getPropertiesComponent();
         Properties prop = new Properties();
         prop.setProperty("customerName", "James");
@@ -113,7 +113,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testWithFluentBuilder() throws Exception {
+    public void testWithFluentBuilder() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -138,7 +138,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesNoReflection() throws Exception {
+    public void testPropertiesNoReflection() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -155,7 +155,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesIgnoreCase() throws Exception {
+    public void testPropertiesIgnoreCase() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -179,7 +179,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesDash() throws Exception {
+    public void testPropertiesDash() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -203,7 +203,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBindPropertiesWithOptionPrefix() throws Exception {
+    public void testBindPropertiesWithOptionPrefix() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -228,7 +228,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBindPropertiesWithOptionPrefixIgnoreCase() throws Exception {
+    public void testBindPropertiesWithOptionPrefixIgnoreCase() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -253,7 +253,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNested() throws Exception {
+    public void testNested() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -272,7 +272,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedReference() throws Exception {
+    public void testNestedReference() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -290,7 +290,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedReferenceId() throws Exception {
+    public void testNestedReferenceId() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -308,7 +308,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedType() throws Exception {
+    public void testNestedType() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -326,7 +326,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedClass() throws Exception {
+    public void testNestedClass() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -345,7 +345,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAutowired() throws Exception {
+    public void testAutowired() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -363,7 +363,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMandatory() throws Exception {
+    public void testMandatory() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().withMandatory(true).bind(context, foo, "name", "James");
@@ -381,7 +381,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDoesNotExistClass() throws Exception {
+    public void testDoesNotExistClass() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -394,7 +394,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNullInjectorClass() throws Exception {
+    public void testNullInjectorClass() {
         Foo foo = new Foo();
 
         context.setInjector(new Injector() {
@@ -434,7 +434,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedClassConstructorParameterOneParameter() throws Exception {
+    public void testNestedClassConstructorParameterOneParameter() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -447,7 +447,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedClassConstructorParameterPlaceholder() throws Exception {
+    public void testNestedClassConstructorParameterPlaceholder() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -460,7 +460,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedClassConstructorParameterTwoParameter() throws Exception {
+    public void testNestedClassConstructorParameterTwoParameter() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -473,7 +473,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedClassConstructorParameterMandatoryBean() throws Exception {
+    public void testNestedClassConstructorParameterMandatoryBean() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -497,7 +497,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedClassFactoryParameterOneParameter() throws Exception {
+    public void testNestedClassFactoryParameterOneParameter() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -510,7 +510,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedClassFactoryParameterTwoParameter() throws Exception {
+    public void testNestedClassFactoryParameterTwoParameter() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -523,7 +523,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNestedClassFactoryParameterPlaceholder() throws Exception {
+    public void testNestedClassFactoryParameterPlaceholder() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
@@ -536,7 +536,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesOptionalKey() throws Exception {
+    public void testPropertiesOptionalKey() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -567,7 +567,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesOptionalKeyMandatory() throws Exception {
+    public void testPropertiesOptionalKeyMandatory() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -612,7 +612,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testConvert() throws Exception {
+    public void testConvert() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();

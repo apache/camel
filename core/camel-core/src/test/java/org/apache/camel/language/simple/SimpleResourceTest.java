@@ -35,10 +35,10 @@ public class SimpleResourceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform().simple("resource:classpath:mysimple.txt").to("mock:result");
             }
         };

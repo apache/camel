@@ -36,10 +36,10 @@ public class DoTryCatchWithSplitterTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().split(body().tokenize(",")).to("direct:line").endDoTry()
                         .doCatch(IllegalArgumentException.class).to("mock:iae").end();
 

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EndpointShutdownOnceTest {
 
     @Test
-    public void testEndpointShutdown() throws Exception {
+    public void testEndpointShutdown() {
         CamelContext context = new DefaultCamelContext();
         context.addComponent("my", new MyComponent());
         context.start();
@@ -55,7 +55,7 @@ public class EndpointShutdownOnceTest {
     private static final class MyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyEndpoint(uri, this);
         }
     }
@@ -73,12 +73,12 @@ public class EndpointShutdownOnceTest {
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return null;
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return null;
         }
 

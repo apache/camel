@@ -33,7 +33,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     public void testCreateRouteIfNoInvalidOptions() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                 from("direct:start").threads().executorService(threadPoolProfile.getId()).to("mock:test");
             }
@@ -41,11 +41,11 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFailIfThreadNameAndExecutorServiceRef() throws Exception {
+    public void testFailIfThreadNameAndExecutorServiceRef() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                     from("direct:start").threads().executorService(threadPoolProfile.getId()).threadName("foo")
                             .to("mock:test");
@@ -64,7 +64,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     public void testPassIfThreadNameWithoutExecutorServiceRef() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                 from("direct:start").threads().threadName("foo").to("mock:test");
             }
@@ -72,11 +72,11 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFailIfPoolSizeAndExecutorServiceRef() throws Exception {
+    public void testFailIfPoolSizeAndExecutorServiceRef() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                     from("direct:start").threads().executorService(threadPoolProfile.getId()).poolSize(1).to("mock:test");
                 }
@@ -91,11 +91,11 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFailIfMaxPoolSizeAndExecutorServiceRef() throws Exception {
+    public void testFailIfMaxPoolSizeAndExecutorServiceRef() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                     from("direct:start").threads().executorService(threadPoolProfile.getId()).maxPoolSize(1).to("mock:test");
                 }
@@ -110,11 +110,11 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFailIfKeepAliveTimeAndExecutorServiceRef() throws Exception {
+    public void testFailIfKeepAliveTimeAndExecutorServiceRef() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                     from("direct:start").threads().executorService(threadPoolProfile.getId()).keepAliveTime(1)
                             .to("mock:test");
@@ -130,11 +130,11 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFailIfMaxQueueSizeAndExecutorServiceRef() throws Exception {
+    public void testFailIfMaxQueueSizeAndExecutorServiceRef() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                     from("direct:start").threads().executorService(threadPoolProfile.getId()).maxQueueSize(1)
                             .to("mock:test");
@@ -150,11 +150,11 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFailIfRejectedPolicyAndExecutorServiceRef() throws Exception {
+    public void testFailIfRejectedPolicyAndExecutorServiceRef() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                     from("direct:start").threads().executorService(threadPoolProfile.getId()).rejectedPolicy(Abort)
                             .to("mock:test");

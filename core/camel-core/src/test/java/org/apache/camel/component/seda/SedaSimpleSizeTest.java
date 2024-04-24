@@ -39,10 +39,10 @@ public class SedaSimpleSizeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 endpoint("seda:foo");
 
                 from("direct:start").setBody().simple("${camelContext.getEndpoint('seda:foo').currentQueueSize}")

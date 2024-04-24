@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
 
     @Test
-    public void testDurationRoutePolicy() throws Exception {
+    public void testDurationRoutePolicy() {
         Assumptions.assumeTrue(context.getRouteController().getRouteStatus("foo").isStarted());
         Assumptions.assumeFalse(context.getRouteController().getRouteStatus("foo").isStopped());
 
@@ -46,10 +46,10 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 DurationRoutePolicy policy = new DurationRoutePolicy();
                 policy.setMaxSeconds(2);
 

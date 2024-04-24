@@ -39,7 +39,7 @@ public class StreamSourceConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToReader() throws Exception {
+    public void testToReader() {
         StreamSource source = context.getTypeConverter().convertTo(StreamSource.class, "<foo>bar</foo>");
 
         Reader out = new XmlConverter().toReader(source);

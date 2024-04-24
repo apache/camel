@@ -33,7 +33,7 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
     private final MyListener myListener = new MyListener();
 
     @Test
-    public void testListener() throws Exception {
+    public void testListener() {
         assertTrue(myListener.hasName("greeting"));
         assertEquals("Hello World", myListener.getValue("greeting"));
         assertEquals("InitialProperties", myListener.getSource("greeting"));
@@ -45,10 +45,10 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody(constant("{{greeting}}"))
                         .to("{{cool.end}}");

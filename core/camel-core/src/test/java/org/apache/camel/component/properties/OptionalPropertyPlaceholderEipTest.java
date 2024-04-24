@@ -34,7 +34,7 @@ public class OptionalPropertyPlaceholderEipTest extends ContextTestSupport {
     public void testQueryOptionalNotPresent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .split(body()).delimiter("{{?myDelim}}")
                         .to("mock:line");
@@ -55,7 +55,7 @@ public class OptionalPropertyPlaceholderEipTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .split(body()).delimiter("{{?myDelim}}")
                         .to("mock:line");

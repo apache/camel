@@ -34,7 +34,7 @@ public class PojoProduceProxyInterceptEndpointTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:start").to("language:simple:${body}${body}");
 
                 from("direct:start").to("mock:result");
@@ -64,7 +64,7 @@ public class PojoProduceProxyInterceptEndpointTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:start").to("language:simple:${body}${body}");
 
                 from("direct:start").to("mock:result");
@@ -98,7 +98,7 @@ public class PojoProduceProxyInterceptEndpointTest {
         @Produce("direct:start")
         private EchoService echo;
 
-        public Object doSomething(String body) throws Exception {
+        public Object doSomething(String body) {
             return echo.echo(body);
         }
     }

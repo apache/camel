@@ -19,7 +19,7 @@ package org.apache.camel.main.scan;
 public class MyConcreteRouteBuilder extends MyAbstractRouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("direct:concrete").to("mock:concrete");
     }
 }

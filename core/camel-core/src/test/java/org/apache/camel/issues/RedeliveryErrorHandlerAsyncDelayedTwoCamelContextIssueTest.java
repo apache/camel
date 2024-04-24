@@ -64,7 +64,7 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(5).maximumRedeliveryDelay(1000)
                         .backOffMultiplier(1).asyncDelayedRedelivery();
 

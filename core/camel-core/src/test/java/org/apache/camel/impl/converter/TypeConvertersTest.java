@@ -27,7 +27,7 @@ public class TypeConvertersTest extends ContextTestSupport {
     private final MyConverters converters = new MyConverters();
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         int before = context.getTypeConverterRegistry().size();
 
         context.getTypeConverterRegistry().addTypeConverters(converters);

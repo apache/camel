@@ -37,7 +37,7 @@ public class FileStateRepositoryTest extends TestSupport {
     }
 
     @Test
-    public void shouldPreventUsingDelimiterInKey() throws Exception {
+    public void shouldPreventUsingDelimiterInKey() {
         // Given a FileStateRepository
         FileStateRepository repository = fileStateRepository(repositoryStore);
 
@@ -128,7 +128,7 @@ public class FileStateRepositoryTest extends TestSupport {
         assertTrue(repositoryStore.length() < previousSize);
     }
 
-    private FileStateRepository createRepository() throws Exception {
+    private FileStateRepository createRepository() {
         FileStateRepository repository = fileStateRepository(repositoryStore);
         repository.start();
         return repository;

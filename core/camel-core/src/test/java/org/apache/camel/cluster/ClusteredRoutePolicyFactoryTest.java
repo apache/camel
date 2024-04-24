@@ -70,7 +70,7 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
     public void testClusteredRoutePolicyFactoryAddRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:bar").routeId("bar")
                         .to("mock:bar");
             }
@@ -95,10 +95,10 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo")
                         .to("mock:foo");
             }
@@ -111,7 +111,7 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:bar").routeId("bar")
                         .to("mock:bar");
             }
@@ -174,14 +174,6 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
             return Collections.emptyList();
         }
 
-        @Override
-        protected void doStart() throws Exception {
-        }
-
-        @Override
-        protected void doStop() throws Exception {
-        }
-
         public boolean isLeader() {
             return leader;
         }
@@ -204,7 +196,7 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        protected TestClusterView createView(String namespace) throws Exception {
+        protected TestClusterView createView(String namespace) {
             if (view == null) {
                 view = new TestClusterView(this, namespace);
             }

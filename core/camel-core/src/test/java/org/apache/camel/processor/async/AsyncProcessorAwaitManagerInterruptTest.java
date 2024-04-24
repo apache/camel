@@ -60,16 +60,16 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").routeId("myRoute").to("mock:before").to("async:bye:camel?delay=2000").id("myAsync")
                         .to("mock:after").process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 final AsyncProcessorAwaitManager asyncProcessorAwaitManager
                                         = PluginHelper.getAsyncProcessorAwaitManager(context);
                                 int size = asyncProcessorAwaitManager.size();

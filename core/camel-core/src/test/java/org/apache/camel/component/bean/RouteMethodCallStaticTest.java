@@ -37,10 +37,10 @@ public class RouteMethodCallStaticTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when().method(MyStaticClass.class, "isCamel").to("mock:camel").otherwise()
                         .to("mock:other");
             }

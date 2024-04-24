@@ -33,7 +33,7 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
     private final CountProcessor processor = new CountProcessor();
 
     @Test
-    public void testSendMessages() throws Exception {
+    public void testSendMessages() {
         StopWatch watch = new StopWatch();
 
         int size = 500;
@@ -55,10 +55,10 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:a?level=OFF", "log:b?level=OFF", "direct:c");
 
                 from("direct:c").choice().when().header("foo").process(processor).otherwise().process(processor).end();
@@ -70,7 +70,7 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
         private final AtomicInteger counter = new AtomicInteger();
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             counter.incrementAndGet();
         }
 

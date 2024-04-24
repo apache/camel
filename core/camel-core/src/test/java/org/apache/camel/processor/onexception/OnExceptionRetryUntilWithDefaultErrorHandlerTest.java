@@ -47,7 +47,7 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
     public void testRetryUntil() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // as its based on a unit test we do not have any delays between
                 // and do not log the stack trace
                 errorHandler(defaultErrorHandler().maximumRedeliveries(1).logStackTrace(false));

@@ -41,7 +41,7 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
     }
 
     @Override
-    protected MBeanServerConnection getMBeanConnection() throws Exception {
+    protected MBeanServerConnection getMBeanConnection() {
         return ManagementFactory.getPlatformMBeanServer();
     }
 

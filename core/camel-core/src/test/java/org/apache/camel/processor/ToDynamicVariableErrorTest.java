@@ -33,7 +33,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testThrowException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:receive")
                         .toD("direct:${header.where}", null, "bye")
                         .to("mock:result");
@@ -61,7 +61,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testTryCatch() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:receive")
                         .toD("direct:${header.where}", null, "bye")
                         .to("mock:result");
@@ -93,7 +93,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testOnExceptionHandled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .handled(true)
                         .setBody(simple("Error: ${body}"));
@@ -124,7 +124,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testOnExceptionNotHandled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .handled(false)
                         .setBody(simple("Error: ${body}"));
@@ -155,7 +155,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:receive")
@@ -185,7 +185,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testDefaultErrorHandler() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler());
 
                 from("direct:receive")
@@ -214,7 +214,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:receive")
                         .toD("direct:${header.where}", null, "bye")
                         .to("mock:result");
@@ -241,7 +241,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testRollback() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:receive")
                         .toD("direct:${header.where}", null, "bye")
                         .to("mock:result");
@@ -268,7 +268,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testMarkRollbackLast() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:receive")
                         .toD("direct:${header.where}", null, "bye")
                         .to("mock:result");
@@ -295,7 +295,7 @@ public class ToDynamicVariableErrorTest extends ContextTestSupport {
     public void testMarkRollbackOnlyLast() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:receive")
                         .toD("direct:${header.where}", null, "bye")
                         .to("mock:result");

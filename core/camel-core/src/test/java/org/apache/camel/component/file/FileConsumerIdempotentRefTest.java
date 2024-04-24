@@ -46,9 +46,9 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class)
                         .to("mock:result");
@@ -112,7 +112,6 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
         @Override
         public void clear() {
-            return;
         }
 
         @Override

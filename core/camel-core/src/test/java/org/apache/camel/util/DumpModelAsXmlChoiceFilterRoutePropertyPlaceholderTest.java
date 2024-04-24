@@ -55,10 +55,10 @@ public class DumpModelAsXmlChoiceFilterRoutePropertyPlaceholderTest extends Cont
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Properties prop = new Properties();
                 prop.put("duke", "dude");
                 prop.put("best", "gold");

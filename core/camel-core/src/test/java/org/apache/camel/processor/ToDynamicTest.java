@@ -38,7 +38,7 @@ public class ToDynamicTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDynamicInvalid() throws Exception {
+    public void testToDynamicInvalid() {
         try {
             template.sendBody("direct:start", "Hello Camel");
             fail("Should fail");
@@ -48,10 +48,10 @@ public class ToDynamicTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").toD("mock:${header.foo}");
             }
         };

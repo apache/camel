@@ -29,7 +29,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
     private LimitedPollingConsumerPollStrategy strategy;
 
     @Test
-    public void testLimitedPollingConsumerPollStrategy() throws Exception {
+    public void testLimitedPollingConsumerPollStrategy() {
         Exception expectedException = new Exception("Hello");
 
         strategy = new LimitedPollingConsumerPollStrategy();
@@ -52,7 +52,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLimitAtTwoLimitedPollingConsumerPollStrategy() throws Exception {
+    public void testLimitAtTwoLimitedPollingConsumerPollStrategy() {
         Exception expectedException = new Exception("Hello");
 
         strategy = new LimitedPollingConsumerPollStrategy();
@@ -73,7 +73,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLimitedPollingConsumerPollStrategySuccess() throws Exception {
+    public void testLimitedPollingConsumerPollStrategySuccess() {
         Exception expectedException = new Exception("Hello");
 
         strategy = new LimitedPollingConsumerPollStrategy();
@@ -101,7 +101,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLimitedPollingConsumerPollStrategySuccessThenFail() throws Exception {
+    public void testLimitedPollingConsumerPollStrategySuccessThenFail() {
         Exception expectedException = new Exception("Hello");
 
         strategy = new LimitedPollingConsumerPollStrategy();
@@ -139,7 +139,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTwoConsumersLimitedPollingConsumerPollStrategy() throws Exception {
+    public void testTwoConsumersLimitedPollingConsumerPollStrategy() {
         Exception expectedException = new Exception("Hello");
 
         strategy = new LimitedPollingConsumerPollStrategy();
@@ -173,7 +173,7 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRestartManuallyLimitedPollingConsumerPollStrategy() throws Exception {
+    public void testRestartManuallyLimitedPollingConsumerPollStrategy() {
         Exception expectedException = new Exception("Hello");
 
         strategy = new LimitedPollingConsumerPollStrategy();

@@ -80,7 +80,7 @@ public class FileURLDecodingTest extends ContextTestSupport {
     private void assertTargetFile(final String encoded, final String expected) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(fileUri("?fileName=" + encoded));
             }
         });

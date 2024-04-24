@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConsumerTemplateSedaQueueIssueTest extends ContextTestSupport {
 
     @Test
-    public void testConsumerTemplateSedaQueue() throws Exception {
+    public void testConsumerTemplateSedaQueue() {
         template.sendBody("direct:start", "A");
         template.sendBody("direct:start", "B");
         template.sendBody("direct:start", "C");
@@ -58,10 +58,10 @@ public class ConsumerTemplateSedaQueueIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:foo");
             }
         };

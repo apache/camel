@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DefaultErrorHandlerCatchThrowableTest extends ContextTestSupport {
 
     @Test
-    public void testDefaultErrorHandlerCatchThrowable() throws Exception {
+    public void testDefaultErrorHandlerCatchThrowable() {
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should have thrown exception");
@@ -41,14 +41,14 @@ public class DefaultErrorHandlerCatchThrowableTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final String exceptionString = "This is an Error not an Exception";
 
                 from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new NoSuchMethodError(exceptionString);
                     }
                 });

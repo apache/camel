@@ -27,18 +27,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SimpleProcessorTest extends ContextTestSupport {
 
     @Test
-    public void testProcess() throws Exception {
+    public void testProcess() {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("Bye World");
                     }
                 });

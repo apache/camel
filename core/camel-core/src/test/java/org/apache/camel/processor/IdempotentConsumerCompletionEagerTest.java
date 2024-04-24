@@ -46,7 +46,7 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(true).to("log:a", "mock:a")
@@ -80,7 +80,7 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(false).to("log:a", "mock:a")

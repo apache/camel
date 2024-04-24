@@ -56,10 +56,10 @@ public class NestedChoiceIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when(header("foo").isGreaterThan(1)).choice().when(header("foo").isGreaterThan(5))
                         .to("mock:big").otherwise().to("mock:med")
                         .endChoice().otherwise().to("mock:low").end();

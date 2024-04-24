@@ -236,7 +236,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             Random random = getRandomNumberGenerator(); // NOSONAR
             double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
                               * random.nextDouble();
-            redeliveryDelayResult += redeliveryDelayResult * variance;
+            redeliveryDelayResult += (long) (redeliveryDelayResult * variance);
         }
 
         // ensure the calculated result is not bigger than the max delay (if configured)

@@ -49,7 +49,7 @@ public class ManagedThrottlerTest extends AbstractManagedThrottlerTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final ScheduledExecutorService badService = new ScheduledThreadPoolExecutor(1) {
             @Override
             public <V> ScheduledFuture<V> schedule(Callable<V> command, long delay, TimeUnit unit) {
@@ -59,7 +59,7 @@ public class ManagedThrottlerTest extends AbstractManagedThrottlerTest {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").id("route1")
                         .to("log:foo")
                         .throttle(10).totalRequestsMode().id("mythrottler")

@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileProducerMoveExistingTest extends ContextTestSupport {
 
     @Test
-    public void testExistingFileDoesNotExists() throws Exception {
+    public void testExistingFileDoesNotExists() {
         template.sendBodyAndHeader(
                 fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"), "Hello World",
                 Exchange.FILE_NAME, "hello.txt");

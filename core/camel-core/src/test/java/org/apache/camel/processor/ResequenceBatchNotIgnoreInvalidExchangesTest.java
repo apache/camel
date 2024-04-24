@@ -24,10 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class ResequenceBatchNotIgnoreInvalidExchangesTest extends ResequenceStreamNotIgnoreInvalidExchangesTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").resequence(header("seqno")).batch().timeout(50).to("mock:result");
             }
         };

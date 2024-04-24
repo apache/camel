@@ -47,21 +47,21 @@ public class EventNotifierIgnoreCamelContextInitEventsTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (context != null) {
             context.stop();
         }
     }
 
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
 
             @Override
-            protected void doBuild() throws Exception {
+            protected void doBuild() {
                 setIgnoreCamelContextInitEvents(true);
             }
         });
@@ -69,7 +69,7 @@ public class EventNotifierIgnoreCamelContextInitEventsTest {
     }
 
     @Test
-    public void testIgnoreInitEvents() throws Exception {
+    public void testIgnoreInitEvents() {
         assertEquals(10, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(CamelContextRoutesStartingEvent.class, events.get(1));
@@ -97,10 +97,10 @@ public class EventNotifierIgnoreCamelContextInitEventsTest {
         assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(19));
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("mock:result");
 
                 from("direct:fail").throwException(new IllegalArgumentException("Damn"));

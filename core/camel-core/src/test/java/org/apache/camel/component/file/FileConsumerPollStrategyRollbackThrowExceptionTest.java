@@ -48,9 +48,9 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class).to("mock:result");
             }
@@ -58,7 +58,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     }
 
     @Test
-    public void testRollbackThrowException() throws Exception {
+    public void testRollbackThrowException() {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         await().atMost(2, TimeUnit.SECONDS).until(() -> LATCH.getCount() == 0);

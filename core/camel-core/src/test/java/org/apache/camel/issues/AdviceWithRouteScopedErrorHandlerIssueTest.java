@@ -31,7 +31,7 @@ public class AdviceWithRouteScopedErrorHandlerIssueTest extends ContextTestSuppo
     public void testAdviceWith() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint()
                         .throwException(new IllegalArgumentException("Forced"));
             }
@@ -46,10 +46,10 @@ public class AdviceWithRouteScopedErrorHandlerIssueTest extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("route-a").errorHandler(deadLetterChannel("mock:error")).to("direct:bar");
 
                 from("direct:bar").routeId("route-b").to("mock:bar");

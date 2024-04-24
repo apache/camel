@@ -36,7 +36,7 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
     private final LifecycleStrategy veto = new MyVeto();
 
     @Test
-    public void testVetoCamelContextStart() throws Exception {
+    public void testVetoCamelContextStart() {
         // context is veto'ed but appears as started
         assertFalse(context.getStatus().isStarted());
         assertTrue(context.getStatus().isStopped());
@@ -44,10 +44,10 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:result");
             }
         };

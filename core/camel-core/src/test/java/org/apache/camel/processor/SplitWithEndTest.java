@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SplitWithEndTest extends ContextTestSupport {
 
     @Test
-    public void testRouteIsCorrectAtRuntime() throws Exception {
+    public void testRouteIsCorrectAtRuntime() {
         // use navigate to find that the end works as expected
         Navigate<Processor> nav = context.getRoutes().get(0).navigate();
         List<Processor> node = nav.next();
@@ -59,10 +59,10 @@ public class SplitWithEndTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
 
                 MySplitBean bean = new MySplitBean();

@@ -41,10 +41,10 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").recipientList(header("foo")).parallelProcessing().to("mock:result");
 
                 from("direct:streaming").recipientList(header("foo")).parallelProcessing().streaming().to("mock:result");

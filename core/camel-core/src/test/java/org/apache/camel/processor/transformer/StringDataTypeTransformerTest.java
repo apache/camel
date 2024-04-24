@@ -74,7 +74,7 @@ public class StringDataTypeTransformerTest {
     }
 
     @Test
-    public void shouldLookupDataType() throws Exception {
+    public void shouldLookupDataType() {
         DefaultTransformerRegistry dataTypeRegistry = new DefaultTransformerRegistry(camelContext);
         Transformer transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("text-plain"));
         Assertions.assertNotNull(transformer);

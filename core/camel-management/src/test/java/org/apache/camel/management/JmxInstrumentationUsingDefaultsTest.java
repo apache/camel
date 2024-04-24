@@ -187,7 +187,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ManagementTestSupport {
         }
     }
 
-    protected MBeanServerConnection getMBeanConnection() throws Exception {
+    protected MBeanServerConnection getMBeanConnection() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 }

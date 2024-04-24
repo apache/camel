@@ -55,19 +55,19 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
                 context.getCamelContextExtension().addInterceptStrategy(interceptor);
 
                 from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                     }
                 }).to("log:after").to("mock:after").to("mock:result");
@@ -81,8 +81,7 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
-                throws Exception {
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) {
 
             // use DelegateAsyncProcessor to ensure the interceptor works well
             // with the asynchronous routing

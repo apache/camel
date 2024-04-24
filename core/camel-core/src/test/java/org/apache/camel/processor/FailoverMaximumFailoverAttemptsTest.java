@@ -57,10 +57,10 @@ public class FailoverMaximumFailoverAttemptsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").loadBalance().failover(2, false, true).to("direct:bad", "direct:bad2", "direct:bad3",
                         "direct:good");
 

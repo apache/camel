@@ -65,10 +65,10 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends Context
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&recursive=true&sortBy=file:name&filter=#myFilter"))
                         .routeId("foo").noAutoStartup().convertBodyTo(String.class)
                         .to("mock:result");

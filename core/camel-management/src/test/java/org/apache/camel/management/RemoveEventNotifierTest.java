@@ -51,7 +51,7 @@ public class RemoveEventNotifierTest extends ContextTestSupport {
         DefaultCamelContext context = new DefaultCamelContext(createCamelRegistry());
 
         notifier = new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
         };
@@ -80,10 +80,10 @@ public class RemoveEventNotifierTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("mock:result");
             }
         };

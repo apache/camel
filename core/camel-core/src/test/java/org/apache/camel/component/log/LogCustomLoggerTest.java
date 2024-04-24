@@ -61,7 +61,7 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFallbackLogger() throws Exception {
+    public void testFallbackLogger() {
         String endpointUri = "log:" + LogCustomLoggerTest.class.getCanonicalName();
         template.requestBody(endpointUri, "hello");
 
@@ -69,7 +69,7 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testEndpointURIParametrizedLogger() throws Exception {
+    public void testEndpointURIParametrizedLogger() {
         context.getRegistry().bind("logger1", LoggerFactory.getLogger("provided.logger1.name"));
         context.getRegistry().bind("logger2", LoggerFactory.getLogger("provided.logger2.name"));
         template.requestBody("log:irrelevant.logger.name?logger=#logger2", "hello");
@@ -85,14 +85,14 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultRegistryLogger() throws Exception {
+    public void testDefaultRegistryLogger() {
         context.getRegistry().bind("logger", LoggerFactory.getLogger("provided.logger1.name"));
         template.requestBody("log:irrelevant.logger.name", "hello");
         assertThat(sw1.toString(), equalTo("provided.logger1.name"));
     }
 
     @Test
-    public void testTwoRegistryLoggers() throws Exception {
+    public void testTwoRegistryLoggers() {
         context.getRegistry().bind("logger1", LoggerFactory.getLogger("provided.logger1.name"));
         context.getRegistry().bind("logger2", LoggerFactory.getLogger("provided.logger2.name"));
         template.requestBody("log:irrelevant.logger.name", "hello");
@@ -101,7 +101,7 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         return new DefaultCamelContext();
     }
 

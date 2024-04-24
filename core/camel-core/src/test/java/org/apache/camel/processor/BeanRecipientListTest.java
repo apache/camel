@@ -51,7 +51,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
         checkBean();
     }
 
-    protected void checkBean() throws Exception {
+    protected void checkBean() {
         Object lookedUpBean = context.getRegistry().lookupByName("myBean");
         assertSame(myBean, lookedUpBean, "Lookup of 'myBean' should return same object!");
     }

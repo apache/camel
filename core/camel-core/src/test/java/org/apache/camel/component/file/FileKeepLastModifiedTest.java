@@ -31,7 +31,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
     public void testKeepLastModified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?noop=true&initialDelay=0&delay=10")).delay(10)
                         .to(fileUri("out?keepLastModified=true"), "mock:result");
             }
@@ -56,7 +56,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
     public void testDoNotKeepLastModified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?noop=true&initialDelay=0&delay=10")).delay(10)
                         .to(fileUri("out?keepLastModified=false"), "mock:result");
             }
@@ -81,7 +81,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
     public void testDoNotKeepLastModifiedIsDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?noop=true&initialDelay=0&delay=10")).delay(10).to(fileUri("out"),
                         "mock:result");
             }

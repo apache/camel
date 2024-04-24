@@ -17,7 +17,6 @@
 package org.apache.camel.issues;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.camel.CamelExecutionException;
@@ -46,7 +45,7 @@ public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTest
     }
 
     @Test
-    public void testCloseableIterator() throws Exception {
+    public void testCloseableIterator() {
         try {
             template.sendBody("direct:start", "Hello,World");
         } catch (CamelExecutionException e) {
@@ -57,10 +56,10 @@ public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split().method("mySplitter").to("log:foo", "mock:result");
             }
         };
@@ -82,7 +81,7 @@ final class MyCloseableIterator implements Iterator<String>, Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         closed = true;
     }
 

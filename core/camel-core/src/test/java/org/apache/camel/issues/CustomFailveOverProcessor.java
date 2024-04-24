@@ -45,10 +45,10 @@ public class CustomFailveOverProcessor extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(new MyFailOverProcessor(template, "direct:a", "direct:b"));
 
                 // always fail
@@ -75,7 +75,7 @@ public class CustomFailveOverProcessor extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             for (String uri : uris) {
                 // reset exception to avoid it being a problem if/when we retry
                 exchange.setException(null);

@@ -55,7 +55,7 @@ public class BeanEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(endpoint);
             }
         });
@@ -81,7 +81,7 @@ public class BeanEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(endpoint);
             }
         });
@@ -109,7 +109,7 @@ public class BeanEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(endpoint);
             }
         });
@@ -135,7 +135,7 @@ public class BeanEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(endpoint);
             }
         });

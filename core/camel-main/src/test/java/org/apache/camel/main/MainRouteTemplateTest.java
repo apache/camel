@@ -33,7 +33,7 @@ public class MainRouteTemplateTest {
         main.setPropertyPlaceholderLocations("mytemplate.properties");
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("mytemplate")
                         .templateParameter("input")
                         .templateParameter("result")

@@ -52,7 +52,7 @@ public class ToDynamicPropertyPlaceholderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDynamicNoHeader() throws Exception {
+    public void testToDynamicNoHeader() {
         try {
             template.sendBody("direct:start", "Hello Camel");
             fail("Should throw exception");
@@ -63,10 +63,10 @@ public class ToDynamicPropertyPlaceholderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").toD("mock:{{foo}}");
             }
         };

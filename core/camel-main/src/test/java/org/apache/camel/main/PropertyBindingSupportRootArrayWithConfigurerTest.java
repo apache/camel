@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PropertyBindingSupportRootArrayWithConfigurerTest {
 
     @Test
-    public void testRootArray() throws Exception {
+    public void testRootArray() {
         CamelContext context = new DefaultCamelContext();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
@@ -65,7 +65,7 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
     }
 
     @Test
-    public void testRootArrayAutoDetectClass() throws Exception {
+    public void testRootArrayAutoDetectClass() {
         CamelContext context = new DefaultCamelContext();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
@@ -98,7 +98,7 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
     }
 
     @Test
-    public void testRootArrayAutoDetectClassTwo() throws Exception {
+    public void testRootArrayAutoDetectClassTwo() {
         CamelContext context = new DefaultCamelContext();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);

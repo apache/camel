@@ -29,7 +29,7 @@ public class TryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport 
     public void testTryCatchMustHaveExceptionConfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").doTry().to("mock:b").throwException(new IllegalArgumentException("Damn")).doCatch()
                         .to("mock:catch").end();
             }

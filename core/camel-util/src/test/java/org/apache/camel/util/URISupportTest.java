@@ -254,14 +254,14 @@ public class URISupportTest {
     }
 
     @Test
-    public void testSanitizeAccessToken() throws Exception {
+    public void testSanitizeAccessToken() {
         String out1 = URISupport
                 .sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
         assertEquals("google-sheets-stream://spreadsheets?accessToken=xxxxxx&clientId=xxxxxx&clientSecret=xxxxxx", out1);
     }
 
     @Test
-    public void testSanitizeAuthorizationToken() throws Exception {
+    public void testSanitizeAuthorizationToken() {
         String out1 = URISupport.sanitizeUri("telegram:bots?authorizationToken=1234567890:XXAuthTokenHereXX");
         assertEquals("telegram:bots?authorizationToken=xxxxxx", out1);
     }
@@ -331,7 +331,7 @@ public class URISupportTest {
     }
 
     @Test
-    public void testSanitizeSaslJaasConfig() throws Exception {
+    public void testSanitizeSaslJaasConfig() {
         String out1 = URISupport.sanitizeUri(
                 "kafka://MY-TOPIC-NAME?saslJaasConfig=org.apache.kafka.common.security.plain.PlainLoginModule required username=scott password=tiger");
         assertEquals("kafka://MY-TOPIC-NAME?saslJaasConfig=xxxxxx", out1);
@@ -581,7 +581,7 @@ public class URISupportTest {
     }
 
     @Test
-    public void testExtractQuery() throws Exception {
+    public void testExtractQuery() {
         assertNull(URISupport.extractQuery(null));
         assertNull(URISupport.extractQuery(""));
         assertNull(URISupport.extractQuery("file:foo"));
@@ -590,7 +590,7 @@ public class URISupportTest {
     }
 
     @Test
-    public void testPlusInQuery() throws Exception {
+    public void testPlusInQuery() {
         Map<String, Object> map = new HashMap<>();
         map.put("param1", "+447777111222");
         String q = URISupport.createQueryString(map);
@@ -603,7 +603,7 @@ public class URISupportTest {
     }
 
     @Test
-    public void testBuildMultiValueQuery() throws Exception {
+    public void testBuildMultiValueQuery() {
         List<Object> list = new ArrayList<>();
         assertEquals("", URISupport.buildMultiValueQuery("id", list));
         list = List.of("hello");

@@ -38,7 +38,7 @@ public class RouteTemplateDuplicateIdIssueTest extends ContextTestSupport {
     void shouldNotFailDueToDuplicatedNodeId() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate")
                         .templateParameter("input")
                         .from("direct:{{input}}")

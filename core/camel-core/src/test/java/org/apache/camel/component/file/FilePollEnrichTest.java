@@ -44,10 +44,10 @@ public class FilePollEnrichTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:foo?period=1000").routeId("foo").log("Trigger timer foo")
                         .pollEnrich(fileUri("?move=done"), 5000).convertBodyTo(String.class)
                         .log("Polled filed ${file:name}").to("mock:result");

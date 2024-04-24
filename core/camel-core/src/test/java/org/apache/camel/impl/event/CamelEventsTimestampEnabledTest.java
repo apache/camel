@@ -39,12 +39,12 @@ public class CamelEventsTimestampEnabledTest extends ContextTestSupport {
         // enable timestamp
         context.getManagementStrategy().getEventFactory().setTimestampEnabled(true);
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
 
             @Override
-            protected void doBuild() throws Exception {
+            protected void doBuild() {
                 setIgnoreExchangeEvents(true);
                 setIgnoreRouteEvents(true);
             }
@@ -70,10 +70,10 @@ public class CamelEventsTimestampEnabledTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:result");
             }
         };

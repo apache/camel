@@ -55,10 +55,10 @@ public class ClaimCheckEipPushPopHeadersPatternTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World")
                         .setHeader("foo", constant(456)).removeHeader("bar")
                         .to("mock:b")

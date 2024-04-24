@@ -83,10 +83,10 @@ public class CBRContainsIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when(body().convertToString().contains("13")).to("mock:13").otherwise()
                         .to("mock:other");
             }

@@ -45,9 +45,9 @@ public class TimerFiredTimeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer://hello?period=10&delay=10&includeMetadata=true").to("mock:result");
             }
         };

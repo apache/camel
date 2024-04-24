@@ -21,10 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class SimpleLanguageBeanTypeFunctionScopeTest extends SimpleLanguageBeanFunctionScopeTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:single").choice().when().simple(
                         "${bean:type:org.apache.camel.component.bean.SimpleLanguageBeanFunctionScopeTest$MyBean?scope=Singleton}")
                         .to("mock:result")

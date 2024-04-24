@@ -38,8 +38,7 @@ public class MedPredicate extends CSimpleSupport {
     }
 
     @Override
-    public Object evaluate(CamelContext context, Exchange exchange, Message message, Object body)
-            throws Exception {
+    public Object evaluate(CamelContext context, Exchange exchange, Message message, Object body) {
         return bodyAs(message, int.class) > 5;
     }
 }

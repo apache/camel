@@ -17,7 +17,6 @@
 package org.apache.camel.urlhandler.custom;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -39,7 +38,7 @@ public class Handler extends ResourceResolverSupport {
             }
 
             @Override
-            public InputStream getInputStream() throws IOException {
+            public InputStream getInputStream() {
                 return new ByteArrayInputStream(remaining.getBytes(StandardCharsets.UTF_8));
             }
         };

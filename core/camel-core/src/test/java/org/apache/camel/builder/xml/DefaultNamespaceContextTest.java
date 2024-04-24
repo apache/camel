@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultNamespaceContextTest extends ContextTestSupport {
 
     @Test
-    public void testDefaultNamespaceContextEmpty() throws Exception {
+    public void testDefaultNamespaceContextEmpty() {
         XPathBuilder builder = XPathBuilder.xpath("/foo");
         builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
@@ -48,7 +48,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultNamespaceContextPre() throws Exception {
+    public void testDefaultNamespaceContextPre() {
         XPathBuilder builder = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese");
         builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
@@ -66,7 +66,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultNamespaceContextDualNamespaces() throws Exception {
+    public void testDefaultNamespaceContextDualNamespaces() {
         XPathBuilder builder
                 = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese").namespace("bar", "http://acme/bar");
         builder.start();
@@ -93,7 +93,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultNamespaceContextParent() throws Exception {
+    public void testDefaultNamespaceContextParent() {
         XPathBuilder builder = XPathBuilder.xpath("/foo");
         builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
@@ -118,7 +118,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultNamespaceContextCtr() throws Exception {
+    public void testDefaultNamespaceContextCtr() {
         DefaultNamespaceContext context = new DefaultNamespaceContext();
 
         // should not have any namespaces
@@ -127,7 +127,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultNamespaceContextAnotherCtr() throws Exception {
+    public void testDefaultNamespaceContextAnotherCtr() {
         Map<String, String> map = new HashMap<>();
         map.put("foo", "http://acme/cheese");
         DefaultNamespaceContext context = new DefaultNamespaceContext(null, map);

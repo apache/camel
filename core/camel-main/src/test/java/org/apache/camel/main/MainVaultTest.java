@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainVaultTest {
 
     @Test
-    public void testMainAws() throws Exception {
+    public void testMainAws() {
         Main main = new Main();
 
         main.addInitialProperty("camel.vault.aws.accessKey", "myKey");
@@ -54,7 +54,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainProfileAws() throws Exception {
+    public void testMainProfileAws() {
         final Main main = getMain();
 
         CamelContext context = main.getCamelContext();
@@ -88,7 +88,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainAwsFluent() throws Exception {
+    public void testMainAwsFluent() {
         Main main = new Main();
         main.configure().vault().aws()
                 .withAccessKey("myKey")
@@ -114,7 +114,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainAwsProfileFluent() throws Exception {
+    public void testMainAwsProfileFluent() {
         Main main = new Main();
         main.configure().vault().aws()
                 .withAccessKey("myKey")
@@ -144,7 +144,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainGcp() throws Exception {
+    public void testMainGcp() {
         Main main = new Main();
 
         main.addInitialProperty("camel.vault.gcp.serviceAccountKey", "file:////myKey");
@@ -165,7 +165,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainGcpFluent() throws Exception {
+    public void testMainGcpFluent() {
         Main main = new Main();
         main.configure().vault().gcp()
                 .withServiceAccountKey("file:////myKey")
@@ -187,7 +187,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainAzure() throws Exception {
+    public void testMainAzure() {
         Main main = new Main();
 
         main.addInitialProperty("camel.vault.azure.vaultName", "vault");
@@ -211,7 +211,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainAzureFluent() throws Exception {
+    public void testMainAzureFluent() {
         Main main = new Main();
         main.configure().vault().azure()
                 .withVaultName("vault")
@@ -237,7 +237,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainHashicorp() throws Exception {
+    public void testMainHashicorp() {
         Main main = new Main();
 
         main.addInitialProperty("camel.vault.hashicorp.token", "1111");

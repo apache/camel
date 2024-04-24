@@ -38,17 +38,17 @@ public class LogEipBodyWithSimpleTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLogEip() throws Exception {
+    public void testLogEip() {
         template.sendBody("direct:start", null);
 
         assertEquals("Response from API is ==> REAL DATA", msg);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody(constant("REAL DATA"))
                         .setProperty("body", constant("hello"))

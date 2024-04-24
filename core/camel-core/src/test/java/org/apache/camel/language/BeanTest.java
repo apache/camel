@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BeanTest extends LanguageTestSupport {
 
     @Test
-    public void testSimpleExpressions() throws Exception {
+    public void testSimpleExpressions() {
         assertExpression("foo.echo('e::o')", "e::o");
         assertExpression("foo.echo('e.o')", "e.o");
         assertExpression("my.company.MyClass::echo('a')", "a");
@@ -45,14 +45,14 @@ public class BeanTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testPredicates() throws Exception {
+    public void testPredicates() {
         assertPredicate("foo.isFooHeaderAbc");
         assertPredicate("foo?method=isFooHeaderAbc");
         assertPredicate("my.company.MyClass::isFooHeaderAbc");
     }
 
     @Test
-    public void testDoubleColon() throws Exception {
+    public void testDoubleColon() {
         assertPredicate("foo::isFooHeaderAbc");
         try {
             assertPredicateFails("foo:isFooHeaderAbc");
@@ -63,7 +63,7 @@ public class BeanTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testBeanTypeExpression() throws Exception {
+    public void testBeanTypeExpression() {
         Expression exp = new BeanExpression(MyUser.class, null);
         exp.init(context);
         Exchange exchange = createExchangeWithBody("Claus");
@@ -73,7 +73,7 @@ public class BeanTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testBeanTypeAndMethodExpression() throws Exception {
+    public void testBeanTypeAndMethodExpression() {
         Expression exp = new BeanExpression(MyUser.class, "hello");
         exp.init(context);
         Exchange exchange = createExchangeWithBody("Claus");
@@ -83,7 +83,7 @@ public class BeanTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testBeanInstanceAndMethodExpression() throws Exception {
+    public void testBeanInstanceAndMethodExpression() {
         MyUser user = new MyUser();
         Expression exp = new BeanExpression(user, "hello");
         exp.init(context);
@@ -94,7 +94,7 @@ public class BeanTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testNoMethod() throws Exception {
+    public void testNoMethod() {
         MyUser user = new MyUser();
         try {
             Expression exp = new BeanExpression(user, "unknown");
@@ -108,7 +108,7 @@ public class BeanTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testNoMethodBeanLookup() throws Exception {
+    public void testNoMethodBeanLookup() {
         try {
             Expression exp = new BeanExpression("foo", "cake");
             exp.init(context);

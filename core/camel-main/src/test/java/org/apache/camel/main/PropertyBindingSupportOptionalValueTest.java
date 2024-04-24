@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PropertyBindingSupportOptionalValueTest {
 
     @Test
-    public void testOptionalValue() throws Exception {
+    public void testOptionalValue() {
         CamelContext context = new DefaultCamelContext();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);

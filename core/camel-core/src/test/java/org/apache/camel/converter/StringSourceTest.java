@@ -39,7 +39,7 @@ public class StringSourceTest {
     protected final String expectedBody = "<hello>world!</hello>";
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         ServiceHelper.startService(converter);
     }
 

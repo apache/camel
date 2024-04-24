@@ -39,7 +39,7 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
     public void testAdvised() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
             }
         });
@@ -54,10 +54,10 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getCamelContextExtension().addInterceptStrategy(new ContainerWideInterceptor());
 
                 from("direct:start").to("mock:foo").to("mock:result");
@@ -72,8 +72,7 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
-                throws Exception {
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) {
 
             return new DelegateAsyncProcessor(new Processor() {
 

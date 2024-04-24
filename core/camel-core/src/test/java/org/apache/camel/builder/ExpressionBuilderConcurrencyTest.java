@@ -43,7 +43,7 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             final Map<String, String> body = Map.of("label", "ALabel", "startLabel", "Document", "endLabel", "Document");
@@ -51,12 +51,12 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
                     = "This is a test a with startLabel: `${body.get('startLabel')}` endLabel: `${body.get('endLabel')}` and label: `${body.get('label')}`";
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("timer://test-timer3?fixedRate=true&period=10&delay=1")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(body);
                                 exchange.getMessage().setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
                             }
@@ -67,7 +67,7 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
 
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(body);
                                 exchange.getMessage().setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
                             }
@@ -77,7 +77,7 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
                 from("timer://test-timer5?fixedRate=true&period=10&delay=1")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(body);
                                 exchange.getMessage().setHeader("#CustomHeader", resolveTemplate(simpleTemplate, exchange));
                             }

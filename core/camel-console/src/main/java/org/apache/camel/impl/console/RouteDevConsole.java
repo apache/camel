@@ -317,7 +317,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             arr.add(jo);
 
             jo.put("id", mp.getProcessorId());
-            jo.put("nodePrefixId", mp.getNodePrefixId());
+            if (mp.getNodePrefixId() != null) {
+                jo.put("nodePrefixId", mp.getNodePrefixId());
+            }
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {
@@ -461,7 +463,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         if (percent) {
             double p;
             if (total > 0) {
-                p = (covered / total) * 100;
+                p = ((double) covered / total) * 100;
             } else {
                 p = 0;
             }

@@ -27,11 +27,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends ContextTestSupport {
 
     @Test
-    public void testInvalidUri() throws Exception {
+    public void testInvalidUri() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     errorHandler(deadLetterChannel("xxx"));
 
                     from("direct:start").to("mock:foo");
@@ -46,11 +46,11 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
     }
 
     @Test
-    public void testInvalidOption() throws Exception {
+    public void testInvalidOption() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     errorHandler(deadLetterChannel("direct:error?foo=bar"));
 
                     from("direct:start").to("mock:foo");

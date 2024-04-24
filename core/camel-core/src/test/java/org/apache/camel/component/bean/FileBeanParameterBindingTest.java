@@ -47,12 +47,12 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri()).to("bean:foo?method=before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getIn().setHeader("bar", 123);
                     }
                 }).to("bean:foo?method=after").to("mock:result");

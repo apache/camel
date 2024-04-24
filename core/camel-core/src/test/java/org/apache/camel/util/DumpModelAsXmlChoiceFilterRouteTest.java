@@ -66,10 +66,10 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").to("log:input").transform().header("dude").choice().when()
                         .header("gold").to("mock:gold").filter().header("extra-gold")
                         .to("mock:extra-gold").endChoice().when().simple("${body} contains 'Camel'").to("mock:camel")

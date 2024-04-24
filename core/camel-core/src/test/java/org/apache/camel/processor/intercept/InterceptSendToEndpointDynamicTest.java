@@ -36,7 +36,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
     public void testSendToWildcard() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // intercept sending to any file endpoint, send it to our mock
                 // instead
@@ -62,7 +62,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
     public void testSendToWildcardHeaderUri() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("file:*").skipSendToOriginalEndpoint().to("mock:detour");
 
                 from("direct:first").to("file://foo").to("mock:result");
@@ -83,7 +83,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
     public void testSendToRegex() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // intercept sending to to either ./foo or ./bar directory
                 interceptSendToEndpoint(fileUri("(foo|bar)")).skipSendToOriginalEndpoint().to("mock:detour");
@@ -108,11 +108,11 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
     public void testSendToDynamicEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("file:*").to("mock:detour");
 
                 from("direct:first").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // we use a dynamic endpoint URI that Camel does not
                         // know beforehand
                         // but it should still be intercepted as we intercept

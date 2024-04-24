@@ -38,12 +38,12 @@ public class MainAddDynamicRouteTest {
         try (MainConfigurationProperties conf = main.configure()) {
             conf.addRoutesBuilder(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("timer:one?repeatCount=1")
                             .setBody().simple("{{prop}}").bean(lines, "add")
                             .process(e -> e.getContext().addRoutes(new RouteBuilder() {
                                 @Override
-                                public void configure() throws Exception {
+                                public void configure() {
                                     from("timer:two?repeatCount=1")
                                             .setBody().simple("{{prop}}").bean(lines, "add");
                                 }

@@ -25,43 +25,43 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TimePatternTypeConversionTest extends ContextTestSupport {
 
     @Test
-    public void testForNoSideEffects() throws Exception {
+    public void testForNoSideEffects() {
         long milliseconds = TimeUtils.toMilliSeconds("444");
         assertEquals(Long.valueOf("444").longValue(), milliseconds);
     }
 
     @Test
-    public void testForNoSideEffects2() throws Exception {
+    public void testForNoSideEffects2() {
         long milliseconds = TimeUtils.toMilliSeconds("-72");
         assertEquals(Long.valueOf("-72").longValue(), milliseconds);
     }
 
     @Test
-    public void testHMSTimePattern() throws Exception {
+    public void testHMSTimePattern() {
         long milliseconds = TimeUtils.toMilliSeconds("1h30m1s");
         assertEquals(5401000, milliseconds);
     }
 
     @Test
-    public void testMTimePattern() throws Exception {
+    public void testMTimePattern() {
         long milliseconds = TimeUtils.toMilliSeconds("5m");
         assertEquals(300000, milliseconds);
     }
 
     @Test
-    public void testMandSTimePattern() throws Exception {
+    public void testMandSTimePattern() {
         long milliseconds = TimeUtils.toMilliSeconds("30m55s");
         assertEquals(1855000, milliseconds);
     }
 
     @Test
-    public void testSecondsPattern() throws Exception {
+    public void testSecondsPattern() {
         long milliseconds = TimeUtils.toMilliSeconds("300s");
         assertEquals(300000, milliseconds);
     }
 
     @Test
-    public void testMillisPattern() throws Exception {
+    public void testMillisPattern() {
         long milliseconds = TimeUtils.toMilliSeconds("300ms");
         assertEquals(300, milliseconds);
     }

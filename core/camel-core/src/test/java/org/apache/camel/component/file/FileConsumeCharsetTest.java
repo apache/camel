@@ -54,9 +54,9 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&fileName=report.txt&delete=true&charset=UTF-8"))
                         .convertBodyTo(String.class).to("mock:result");
             }

@@ -26,7 +26,7 @@ public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
     public void testTryCatchSetHeaderIssue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().setHeader("foo", constant("try"))
                         .throwException(new IllegalArgumentException("Damn")).doCatch(Exception.class)
                         .setHeader("foo", constant("error")).end().to("mock:end");
@@ -46,7 +46,7 @@ public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
     public void testTryCatchTwoSetHeaderIssue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().setHeader("foo", constant("try"))
                         .throwException(new IllegalArgumentException("Damn")).doCatch(IllegalArgumentException.class)
                         .setHeader("foo", constant("error")).doCatch(Exception.class).setHeader("foo", constant("damn")).end()
@@ -69,10 +69,10 @@ public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
             }
         };
     }

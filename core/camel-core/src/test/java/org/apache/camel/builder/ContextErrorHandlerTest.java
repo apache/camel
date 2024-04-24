@@ -51,12 +51,12 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void startCamelContext() throws Exception {
+    protected void startCamelContext() {
         // do nothing here
     }
 
     @Override
-    protected void stopCamelContext() throws Exception {
+    protected void stopCamelContext() {
         // do nothing here
     }
 

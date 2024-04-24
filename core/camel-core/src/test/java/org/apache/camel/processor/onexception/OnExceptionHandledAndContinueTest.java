@@ -34,7 +34,7 @@ public class OnExceptionHandledAndContinueTest extends ContextTestSupport {
     public void testHandledAndContinued() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // should not be allowed
                 onException(IllegalArgumentException.class).continued(true).handled(true);
 

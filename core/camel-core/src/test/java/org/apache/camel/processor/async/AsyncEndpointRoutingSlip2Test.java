@@ -25,16 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AsyncEndpointRoutingSlip2Test extends ContextTestSupport {
 
     @Test
-    public void testAsyncEndpoint() throws Exception {
+    public void testAsyncEndpoint() {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye World", reply);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").routingSlip(constant("async:bye:camel,async:bye:world"));

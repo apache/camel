@@ -37,7 +37,7 @@ public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport
     private CamelContext camel1;
     private CamelContext camel2;
 
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         DefaultCamelContext context = new DefaultCamelContext();
         return context;
     }

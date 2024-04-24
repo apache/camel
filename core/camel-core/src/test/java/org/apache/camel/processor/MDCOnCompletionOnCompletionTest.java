@@ -42,23 +42,23 @@ public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
                 from("timer:foo?period=5000").routeId("route-a").setBody().constant("Hello World").onCompletion()
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getExchangeExtension().addOnCompletion(new MyOnCompletion());
                             }
                         }).end().to("log:foo").to("direct:b");
 
                 from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals("route-b", MDC.get("camel.routeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                         assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));

@@ -43,10 +43,10 @@ public class OnExceptionHandledThrowsExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IOException.class)
                         .handled(e -> {
                             throw new IllegalArgumentException("Another Forced");

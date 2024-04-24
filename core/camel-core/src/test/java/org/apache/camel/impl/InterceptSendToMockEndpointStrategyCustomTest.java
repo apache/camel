@@ -44,7 +44,7 @@ public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSu
         context.getCamelContextExtension().registerEndpointCallback(new MyStrategy());
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:foo").to("log:foo").to("mock:result");
 
                 from("direct:foo").transform(constant("Bye World"));

@@ -162,7 +162,7 @@ public class MainIoCTest {
         private String hello;
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").transform().constant(hello).to("mock:results");
         }
     }

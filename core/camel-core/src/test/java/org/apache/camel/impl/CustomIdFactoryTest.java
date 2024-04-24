@@ -52,10 +52,10 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use our own id factory so we can generate the keys we like to
                 // use
                 context.getCamelContextExtension().addContextPlugin(NodeIdFactory.class, buildNodeIdFactory());
@@ -110,8 +110,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                final CamelContext context, final NamedNode definition, Processor target, Processor nextTarget)
-                throws Exception {
+                final CamelContext context, final NamedNode definition, Processor target, Processor nextTarget) {
 
             return new DelegateProcessor(target) {
                 @Override

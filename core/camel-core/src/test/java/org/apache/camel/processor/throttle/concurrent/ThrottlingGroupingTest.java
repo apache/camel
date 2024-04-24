@@ -162,10 +162,10 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("seda:a").throttle(header("max"), 1).concurrentRequestsMode().to("mock:result");

@@ -28,7 +28,7 @@ public class LifecycleStrategyServiceTest extends TestSupport {
 
     private final MyLifecycleStrategy dummy1 = new MyLifecycleStrategy();
 
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext();
         context.addLifecycleStrategy(dummy1);
         return context;

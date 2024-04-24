@@ -32,7 +32,7 @@ public class RefPredicateTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExpression() throws Exception {
+    public void testExpression() {
         exchange.getIn().setBody("Hello World");
         assertExpression("myPredicate", "true");
 
@@ -41,7 +41,7 @@ public class RefPredicateTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testPredicates() throws Exception {
+    public void testPredicates() {
         exchange.getIn().setBody("Hello World");
         assertPredicate("myPredicate", true);
 

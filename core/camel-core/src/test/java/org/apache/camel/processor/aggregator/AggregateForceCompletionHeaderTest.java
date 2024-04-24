@@ -83,11 +83,11 @@ public class AggregateForceCompletionHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(10)
                         .to("mock:aggregated");

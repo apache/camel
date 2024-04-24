@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 public class OriginalMessageProcessor implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         Message original = null;
         if (exchange.getContext().isAllowUseOriginalMessage()) {
             original = exchange.getUnitOfWork().getOriginalInMessage();

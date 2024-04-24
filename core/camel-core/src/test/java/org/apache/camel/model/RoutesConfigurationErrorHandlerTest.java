@@ -34,7 +34,7 @@ public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
     public void testGlobal() throws Exception {
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // global routes configuration
                 routeConfiguration().errorHandler(deadLetterChannel("mock:error"));
 
@@ -42,7 +42,7 @@ public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
         });
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .throwException(new IllegalArgumentException("Foo"));
 
@@ -64,7 +64,7 @@ public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
     public void testLocalOverride() throws Exception {
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // global routes configuration
                 routeConfiguration().errorHandler(deadLetterChannel("mock:error"));
 
@@ -72,7 +72,7 @@ public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
         });
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .throwException(new IllegalArgumentException("Foo"));
 
@@ -96,14 +96,14 @@ public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
     public void testLocalConfiguration() throws Exception {
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration("mylocal").errorHandler(deadLetterChannel("mock:error"));
 
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .throwException(new IllegalArgumentException("Foo"));
 
@@ -130,7 +130,7 @@ public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
     public void testGlobalAndLocal() throws Exception {
         context.addRoutes(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 routeConfiguration().errorHandler(deadLetterChannel("mock:error"));
                 routeConfiguration("mylocal").errorHandler(deadLetterChannel("mock:error2"));
 
@@ -138,7 +138,7 @@ public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
         });
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .throwException(new IllegalArgumentException("Foo"));
 

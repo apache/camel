@@ -54,10 +54,10 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(header("id"), strategy).completionSize(3).to("mock:aggregated");
             }
         };
@@ -90,15 +90,10 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             ObjectHelper.notNull(camelContext, "CamelContext");
 
             separator = "+";
-        }
-
-        @Override
-        protected void doStop() throws Exception {
-            // noop
         }
     }
 }

@@ -55,10 +55,10 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // this routes starts from the direct:start endpoint
                 // the body is then split based on @ separator

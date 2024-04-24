@@ -52,16 +52,16 @@ public class SplitterParallelIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").log("Start ${body}").split(body().tokenize("@"), new UseLatestAggregationStrategy())
                         .parallelProcessing().streaming().process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 int num = exchange.getIn().getBody(int.class);
-                                final long sleep = num * delay;
+                                final long sleep = (long) num * delay;
                                 log.info("Sleep for {} ms", sleep);
                                 Thread.sleep(sleep);
                             }

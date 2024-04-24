@@ -548,7 +548,7 @@ public class RouteBuilderTest extends TestSupport {
     @Test
     public void testCorrectNumberOfRoutes() throws Exception {
         RouteBuilder builder = new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:start").to("direct:in");
@@ -568,7 +568,7 @@ public class RouteBuilderTest extends TestSupport {
         AtomicInteger after = new AtomicInteger();
 
         RouteBuilder builder = new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
             }
         };
 
@@ -596,7 +596,7 @@ public class RouteBuilderTest extends TestSupport {
         List<String> ordered = new ArrayList<>();
 
         RouteBuilder builder = new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
             }
         };
 

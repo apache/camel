@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PropertyBindingSupportMapKeyWithDotTest extends ContextTestSupport {
 
     @Test
-    public void testPropertiesMap() throws Exception {
+    public void testPropertiesMap() {
         Map<String, Object> prop = new LinkedHashMap<>();
         prop.put("id", "123");
         prop.put("database.name", "MySQL");
@@ -50,7 +50,7 @@ public class PropertyBindingSupportMapKeyWithDotTest extends ContextTestSupport 
     }
 
     @Test
-    public void testPropertiesConfigMap() throws Exception {
+    public void testPropertiesConfigMap() {
         Map<String, Object> prop = new LinkedHashMap<>();
         prop.put("id", "123");
         prop.put("config.database.name", "MySQL");

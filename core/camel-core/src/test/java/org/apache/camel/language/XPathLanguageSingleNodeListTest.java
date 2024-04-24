@@ -78,10 +78,10 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:doTest").transform().xpath("/root/name").choice().when().xpath("/name").to("mock:found")
                         .otherwise().to("mock:notfound");
             }

@@ -69,7 +69,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final Processor processor1 = new Processor() {
             public void process(Exchange exchange) {
                 try {

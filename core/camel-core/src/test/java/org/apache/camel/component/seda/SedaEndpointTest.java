@@ -48,7 +48,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // do nothing
             }
         });
@@ -72,7 +72,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // do nothing
             }
         });
@@ -96,7 +96,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // do nothing
             }
         });
@@ -126,7 +126,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(1, seda.getProducers().size());
 
         Consumer cons = seda.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // do nothing
             }
         });
@@ -140,7 +140,7 @@ public class SedaEndpointTest extends ContextTestSupport {
     public void testSedaConsumer() throws Exception {
         SedaEndpoint seda = context.getEndpoint("seda://foo", SedaEndpoint.class);
         Consumer consumer = seda.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // do nothing
             }
         });
@@ -150,7 +150,7 @@ public class SedaEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSedaDefaultValue() throws Exception {
+    public void testSedaDefaultValue() {
         SedaComponent sedaComponent = new SedaComponent();
         sedaComponent.setQueueSize(300);
         sedaComponent.setConcurrentConsumers(3);

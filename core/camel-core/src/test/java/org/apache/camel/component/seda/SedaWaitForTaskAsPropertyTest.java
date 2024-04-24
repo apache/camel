@@ -34,7 +34,7 @@ public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         Exchange out = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOut);
                 exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.IfReplyExpected);
@@ -50,7 +50,7 @@ public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         Exchange out = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
                 exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.IfReplyExpected);
@@ -65,10 +65,10 @@ public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:foo");
 
                 from("seda:foo").transform(constant("Bye World")).to("mock:result");

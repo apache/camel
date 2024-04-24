@@ -30,11 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
 
     @Test
-    public void testDoneByIndex() throws Exception {
+    public void testDoneByIndex() {
         final AtomicInteger counter = new AtomicInteger();
         getMockEndpoint("mock:split").whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 counter.incrementAndGet();
             }
         });
@@ -52,10 +52,10 @@ public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").delay(500).split(body().tokenize(",")).to("mock:split").end().to("mock:foo");
             }
         };

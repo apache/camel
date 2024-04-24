@@ -49,10 +49,10 @@ public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("enrich?initialDelay=0&delay=10&move=.done"))
                         .to("mock:start")
                         .pollEnrich(

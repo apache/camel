@@ -49,7 +49,7 @@ public class ClusteredRoutePolicyLeaderChangeTest extends ContextTestSupport {
     }
 
     @Test
-    public void testClusteredRoutePolicyOnLeadershipLost() throws Exception {
+    public void testClusteredRoutePolicyOnLeadershipLost() {
         cs.getView().setLeader(true);
 
         assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
@@ -60,10 +60,10 @@ public class ClusteredRoutePolicyLeaderChangeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").routePolicy(policy)
                         .to("mock:foo");
             }
@@ -113,12 +113,12 @@ public class ClusteredRoutePolicyLeaderChangeTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             running = true;
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             running = false;
         }
 
@@ -148,7 +148,7 @@ public class ClusteredRoutePolicyLeaderChangeTest extends ContextTestSupport {
         }
 
         @Override
-        protected TestClusterView createView(String namespace) throws Exception {
+        protected TestClusterView createView(String namespace) {
             if (view == null) {
                 view = new TestClusterView(this, namespace);
             }

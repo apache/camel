@@ -57,7 +57,7 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
     public void testFailover() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").loadBalance().failover(IOException.class).to("mock:a").to("mock:b").end();
             }
         });

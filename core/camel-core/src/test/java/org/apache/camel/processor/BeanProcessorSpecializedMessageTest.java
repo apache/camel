@@ -51,7 +51,7 @@ public class BeanProcessorSpecializedMessageTest extends ContextTestSupport {
         });
 
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 MyMessage my = new MyMessage(exchange.getContext());
                 my.setBody("Hello World");
                 my.setHeader("foo", 123);
@@ -63,10 +63,10 @@ public class BeanProcessorSpecializedMessageTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:foo").bean(MyBean.class, "empty").to("mock:result");
             }
         };

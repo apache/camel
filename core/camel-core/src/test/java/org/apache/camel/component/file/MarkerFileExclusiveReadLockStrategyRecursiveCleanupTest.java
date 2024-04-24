@@ -54,7 +54,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
     public void testNonRecursive() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "d1?fileName=d1.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10"))
                         .to("mock:result");
@@ -76,7 +76,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
     public void testRecursiveSingleDepth() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2"))
                         .to("mock:result");
@@ -102,7 +102,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
     public void testRecursiveRange() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=4"))
                         .to("mock:result");
@@ -127,7 +127,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
     public void testRecursiveRangeAntInclude() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "d1?antInclude=**/*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=4"))
                         .to("mock:result");
@@ -152,7 +152,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
     public void testRecursive() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true"))
                         .to("mock:result");

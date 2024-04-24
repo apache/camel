@@ -34,10 +34,10 @@ public class EnrichExpressionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").enrich().header("source").to("mock:result");
 
                 from("direct:foo").transform().constant("Hello World");

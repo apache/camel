@@ -43,7 +43,7 @@ public class SchedulerRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("scheduler://foo?delay=100").log("Fired scheduler").to("bean:myBean", "mock:result");

@@ -27,7 +27,7 @@ public class SimpleCacheExpressionTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testCachingExpression() throws Exception {
+    public void testCachingExpression() {
         exchange.getIn().setHeader("foo", 123);
 
         assertExpression(exchange, "header.foo", "header.foo");
@@ -35,7 +35,7 @@ public class SimpleCacheExpressionTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testReverseCachingExpression() throws Exception {
+    public void testReverseCachingExpression() {
         exchange.getIn().setHeader("foo", 123);
 
         assertExpression(exchange, "${header.foo}", 123);
@@ -43,7 +43,7 @@ public class SimpleCacheExpressionTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testCachingWithNestedFunction() throws Exception {
+    public void testCachingWithNestedFunction() {
         MyConverter converter = new MyConverter();
         exchange.getIn().setBody(converter);
         exchange.getIn().setHeader("input", "foo");
@@ -53,7 +53,7 @@ public class SimpleCacheExpressionTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testReversedCachingWithNestedFunction() throws Exception {
+    public void testReversedCachingWithNestedFunction() {
         MyConverter converter = new MyConverter();
         exchange.getIn().setBody(converter);
         exchange.getIn().setHeader("input", "foo");
@@ -63,7 +63,7 @@ public class SimpleCacheExpressionTest extends LanguageTestSupport {
     }
 
     public static class MyConverter {
-        public String upper(String input) throws Exception {
+        public String upper(String input) {
             return input.toUpperCase();
         }
     }

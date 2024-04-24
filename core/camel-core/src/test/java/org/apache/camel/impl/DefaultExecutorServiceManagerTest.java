@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
     @Test
-    public void testResolveThreadNameDefaultPattern() throws Exception {
+    public void testResolveThreadNameDefaultPattern() {
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
 
@@ -55,7 +55,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadNameCustomPattern() throws Exception {
+    public void testGetThreadNameCustomPattern() {
         context.getExecutorServiceManager().setThreadNamePattern("##counter# - #name#");
         assertEquals("##counter# - #name#", context.getExecutorServiceManager().getThreadNamePattern());
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
@@ -69,7 +69,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadNameCustomPatternCamelId() throws Exception {
+    public void testGetThreadNameCustomPatternCamelId() {
         context.getExecutorServiceManager().setThreadNamePattern("##camelId# - ##counter# - #name#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
@@ -82,7 +82,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadNameCustomPatternWithDollar() throws Exception {
+    public void testGetThreadNameCustomPatternWithDollar() {
         context.getExecutorServiceManager().setThreadNamePattern("Hello - #name#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo$bar");
 
@@ -90,7 +90,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadNameCustomPatternLongName() throws Exception {
+    public void testGetThreadNameCustomPatternLongName() {
         context.getExecutorServiceManager().setThreadNamePattern("##counter# - #longName#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo?beer=Carlsberg");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
@@ -103,7 +103,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadNameCustomPatternWithParameters() throws Exception {
+    public void testGetThreadNameCustomPatternWithParameters() {
         context.getExecutorServiceManager().setThreadNamePattern("##counter# - #name#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo?beer=Carlsberg");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
@@ -116,7 +116,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadNameCustomPatternNoCounter() throws Exception {
+    public void testGetThreadNameCustomPatternNoCounter() {
         context.getExecutorServiceManager().setThreadNamePattern("Cool #name#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
@@ -141,7 +141,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultThreadPool() throws Exception {
+    public void testDefaultThreadPool() {
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
         assertFalse(myPool.isShutdown());
 
@@ -157,7 +157,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultUnboundedQueueThreadPool() throws Exception {
+    public void testDefaultUnboundedQueueThreadPool() {
         ThreadPoolProfile custom = new ThreadPoolProfile("custom");
         custom.setPoolSize(10);
         custom.setMaxPoolSize(30);
@@ -182,7 +182,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDefaultNoMaxQueueThreadPool() throws Exception {
+    public void testDefaultNoMaxQueueThreadPool() {
         ThreadPoolProfile custom = new ThreadPoolProfile("custom");
         custom.setPoolSize(10);
         custom.setMaxPoolSize(30);
@@ -207,7 +207,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCustomDefaultThreadPool() throws Exception {
+    public void testCustomDefaultThreadPool() {
         ThreadPoolProfile custom = new ThreadPoolProfile("custom");
         custom.setKeepAliveTime(20L);
         custom.setMaxPoolSize(40);
@@ -232,7 +232,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadPoolProfile() throws Exception {
+    public void testGetThreadPoolProfile() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
         ThreadPoolProfile foo = new ThreadPoolProfile("foo");
@@ -247,7 +247,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTwoGetThreadPoolProfile() throws Exception {
+    public void testTwoGetThreadPoolProfile() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
         ThreadPoolProfile foo = new ThreadPoolProfile("foo");
@@ -275,7 +275,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadPoolProfileInheritDefaultValues() throws Exception {
+    public void testGetThreadPoolProfileInheritDefaultValues() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
         ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setMaxPoolSize(40);
@@ -292,7 +292,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadPoolProfileInheritCustomDefaultValues() throws Exception {
+    public void testGetThreadPoolProfileInheritCustomDefaultValues() {
         ThreadPoolProfile newDefault = new ThreadPoolProfile("newDefault");
         newDefault.setKeepAliveTime(30L);
         newDefault.setMaxPoolSize(50);
@@ -319,7 +319,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadPoolProfileInheritCustomDefaultValues2() throws Exception {
+    public void testGetThreadPoolProfileInheritCustomDefaultValues2() {
         ThreadPoolProfile newDefault = new ThreadPoolProfile("newDefault");
         // just change the max pool as the default profile should then inherit
         // the old default profile
@@ -343,7 +343,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewThreadPoolProfile() throws Exception {
+    public void testNewThreadPoolProfile() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
         ThreadPoolProfile foo = new ThreadPoolProfile("foo");
@@ -367,7 +367,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewThreadPoolProfileById() throws Exception {
+    public void testNewThreadPoolProfileById() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
         ThreadPoolProfile foo = new ThreadPoolProfile("foo");
@@ -393,7 +393,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewThreadPoolMinMax() throws Exception {
+    public void testNewThreadPoolMinMax() {
         ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "Cool", 5, 10);
         assertNotNull(pool);
 
@@ -409,7 +409,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewFixedThreadPool() throws Exception {
+    public void testNewFixedThreadPool() {
         ExecutorService pool = context.getExecutorServiceManager().newFixedThreadPool(this, "Cool", 5);
         assertNotNull(pool);
 
@@ -426,7 +426,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewSingleThreadExecutor() throws Exception {
+    public void testNewSingleThreadExecutor() {
         ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");
         assertNotNull(pool);
 
@@ -443,7 +443,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewScheduledThreadPool() throws Exception {
+    public void testNewScheduledThreadPool() {
         ExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(this, "Cool", 5);
         assertNotNull(pool);
 
@@ -460,7 +460,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewSingleThreadScheduledExecutor() throws Exception {
+    public void testNewSingleThreadScheduledExecutor() {
         ExecutorService pool = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "Cool");
         assertNotNull(pool);
 
@@ -477,7 +477,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewCachedThreadPool() throws Exception {
+    public void testNewCachedThreadPool() {
         ExecutorService pool = context.getExecutorServiceManager().newCachedThreadPool(this, "Cool");
         assertNotNull(pool);
 
@@ -493,7 +493,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewScheduledThreadPoolProfileById() throws Exception {
+    public void testNewScheduledThreadPoolProfileById() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
         ThreadPoolProfile foo = new ThreadPoolProfile("foo");
@@ -520,7 +520,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNewThread() throws Exception {
+    public void testNewThread() {
         Thread thread = context.getExecutorServiceManager().newThread("Cool", new Runnable() {
             @Override
             public void run() {
@@ -534,7 +534,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Disabled("This is a manual test, by looking at the logs")
-    public void xxxtestLongShutdownOfThreadPool() throws Exception {
+    public void testLongShutdownOfThreadPool() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");
 

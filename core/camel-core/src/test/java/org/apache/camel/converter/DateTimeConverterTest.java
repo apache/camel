@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DateTimeConverterTest extends ContextTestSupport {
 
     @Test
-    public void testToTimeZone() throws Exception {
+    public void testToTimeZone() {
         String id = TimeZone.getDefault().getID();
 
         TimeZone zone = context.getTypeConverter().convertTo(TimeZone.class, id);

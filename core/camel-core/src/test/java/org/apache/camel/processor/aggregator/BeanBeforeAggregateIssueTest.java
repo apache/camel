@@ -51,10 +51,10 @@ public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").bean(TestBean.class).aggregate(constant("true"), new BodyInAggregatingStrategy())
                         .aggregationRepository(myRepo).completionSize(2)
                         .to("mock:result");

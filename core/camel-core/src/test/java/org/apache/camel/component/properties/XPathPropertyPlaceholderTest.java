@@ -57,10 +57,10 @@ public class XPathPropertyPlaceholderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Properties prop = new Properties();
                 prop.put("foo", "//greeting/text = 'Hello, world!'");
                 prop.put("bar", "//greeting/text = 'Bye, world!'");

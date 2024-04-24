@@ -42,7 +42,7 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOneDoneFileMissing() throws Exception {
+    public void testOneDoneFileMissing() {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.ready"), "Hello World", Exchange.FILE_NAME,
@@ -54,10 +54,10 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?doneFileName=${file:name}.ready&initialDelay=0&delay=10")).to("mock:result");
             }
         };

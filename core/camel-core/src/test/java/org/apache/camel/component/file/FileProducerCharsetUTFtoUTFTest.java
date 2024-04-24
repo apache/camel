@@ -50,10 +50,10 @@ class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF(fileUri("?initialDelay=0&delay=10&fileName=%s"), INPUT_FILE)
                         .toF(fileUri("?fileName=%s&charset=utf-8"), OUTPUT_FILE);
             }

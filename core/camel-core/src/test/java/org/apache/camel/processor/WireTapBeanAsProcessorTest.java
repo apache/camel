@@ -81,7 +81,7 @@ public class WireTapBeanAsProcessorTest extends ContextTestSupport {
         private String tapped;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             tapped = exchange.getIn().getBody(String.class);
         }
 

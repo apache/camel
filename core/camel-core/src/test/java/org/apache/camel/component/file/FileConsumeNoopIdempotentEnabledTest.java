@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class FileConsumeNoopIdempotentEnabledTest extends ContextTestSupport {
 
     @Test
-    public void testNoop() throws Exception {
+    public void testNoop() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // should only be able to read the file once as idempotent is true
         mock.expectedMessageCount(1);
@@ -42,10 +42,10 @@ public class FileConsumeNoopIdempotentEnabledTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?noop=true&idempotent=true&initialDelay=0&delay=10")).convertBodyTo(String.class)
                         .to("mock:result");
             }

@@ -36,7 +36,7 @@ public class TwoSchedulerConcurrentTasksOneRouteTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // number of core threads a thread pool should have

@@ -36,13 +36,13 @@ public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFromRestModel() throws Exception {
+    public void testFromRestModel() {
         String out = template.requestBody("seda:get-say-bye", "I was here", String.class);
         assertEquals("Bye World", out);
 
         Exchange reply = template.request("seda:get-say-bye", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Kaboom");
             }
         });
@@ -52,10 +52,10 @@ public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost");
                 rest("/say/bye").get().to("direct:bye");
 

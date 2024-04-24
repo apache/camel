@@ -34,10 +34,10 @@ public class AsyncEndpointDoWhileLoopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").loopDoWhile(body().isNotEqualTo("done")).to("async:bye:camel").to("mock:line")

@@ -44,13 +44,13 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).to("mock:error");
 
                 from(fileUri("?initialDelay=0&delay=10&delete=true")).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new IllegalArgumentException("Forced by unittest");
                     }
                 });

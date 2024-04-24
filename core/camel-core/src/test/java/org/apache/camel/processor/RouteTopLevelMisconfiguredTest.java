@@ -35,7 +35,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").split(body()).onException(IllegalArgumentException.class).to("mock:illegal").end()
                             .to("mock:split").end();
                 }
@@ -51,7 +51,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").split(body()).onCompletion().to("mock:done").end().to("mock:split").end();
                 }
             });
@@ -66,7 +66,7 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").split(body()).transacted().to("mock:split").end();
                 }
             });

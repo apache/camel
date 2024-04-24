@@ -39,10 +39,10 @@ public class AggregateForceCompletionHeaderInAggregationStrategyTest extends Con
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body()).to("log:input?showAll=true")
                         .aggregate(simple("${body}"), new MyAggregationStrategy())
                         .completionPredicate(exchangeProperty(Exchange.SPLIT_COMPLETE)).to("log:aggregated", "mock:aggregated");

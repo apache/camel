@@ -32,7 +32,7 @@ public class OptionalPropertyPlaceholderBeanTest extends ContextTestSupport {
     }
 
     @Test
-    public void testQueryOptionalPresent() throws Exception {
+    public void testQueryOptionalPresent() {
         SayService say = new SayService();
         assertEquals("Hello", say.getMessage());
 
@@ -43,7 +43,7 @@ public class OptionalPropertyPlaceholderBeanTest extends ContextTestSupport {
     }
 
     @Test
-    public void testQueryOptionalNotPresent() throws Exception {
+    public void testQueryOptionalNotPresent() {
         SayService say = new SayService();
         assertEquals("Hello", say.getMessage());
 
@@ -54,7 +54,7 @@ public class OptionalPropertyPlaceholderBeanTest extends ContextTestSupport {
     }
 
     @Test
-    public void testQueryOptionalNotPresentDefaultValue() throws Exception {
+    public void testQueryOptionalNotPresentDefaultValue() {
         SayService say = new SayService();
         assertEquals("Hello", say.getMessage());
 

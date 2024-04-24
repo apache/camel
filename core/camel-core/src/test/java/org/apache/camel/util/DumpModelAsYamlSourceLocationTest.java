@@ -59,11 +59,11 @@ public class DumpModelAsYamlSourceLocationTest extends DumpModelAsYamlTestSuppor
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:start").routeId("myRoute")
                                 .filter(simple("${body} > 10"))
                                 .to("mock:result");

@@ -78,7 +78,7 @@ public class SetExchangePatternTest extends ContextTestSupport {
         // we send an InOnly
         Exchange out = template.send("direct:testInOut", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }
@@ -100,7 +100,7 @@ public class SetExchangePatternTest extends ContextTestSupport {
         // we send an InOut
         Exchange out = template.send("direct:testInOnly", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOut);
             }

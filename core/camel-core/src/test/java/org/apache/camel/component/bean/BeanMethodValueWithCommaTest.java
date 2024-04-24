@@ -70,10 +70,10 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:single").to("bean:foo?method=bar(${body}, 'a,b')").to("mock:result");
 
                 from("direct:double").to("bean:foo?method=bar(${body}, \"c,d\")").to("mock:result");

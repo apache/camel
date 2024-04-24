@@ -55,10 +55,10 @@ public class FromVariableTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromV("direct:start", "myKey")
                         .setHeader("foo", constant(456))
                         .setHeader("bar", constant("Murphy"))

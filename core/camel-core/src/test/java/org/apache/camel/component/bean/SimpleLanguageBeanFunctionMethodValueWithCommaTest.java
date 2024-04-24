@@ -74,10 +74,10 @@ public class SimpleLanguageBeanFunctionMethodValueWithCommaTest extends ContextT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:single").choice().when().simple("${bean:foo?method=bar(${body}, 'a,b')}").to("mock:result")
                         .otherwise().to("mock:other");
 

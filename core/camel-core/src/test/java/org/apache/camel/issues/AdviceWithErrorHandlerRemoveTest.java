@@ -44,7 +44,7 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
 
         AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getOriginalRoute().errorHandler(noErrorHandler());
             }
         });
@@ -72,7 +72,7 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
 
         AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // override errorHandler by using on exception
                 weaveAddFirst().onException(Exception.class).handled(true).to("mock:dead2");
             }
@@ -86,10 +86,10 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
                 from("direct:foo").routeId("foo").errorHandler(deadLetterChannel("mock:dead")).to("mock:a")

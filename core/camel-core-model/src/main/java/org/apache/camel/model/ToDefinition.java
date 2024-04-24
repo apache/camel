@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDefinition extends SendDefinition<ToDefinition> implements CopyableProcessorDefinition {
+public class ToDefinition extends SendDefinition<ToDefinition> implements Copyable {
 
     @XmlAttribute
     private String variableSend;

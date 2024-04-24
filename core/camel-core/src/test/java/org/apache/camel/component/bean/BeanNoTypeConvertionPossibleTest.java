@@ -77,10 +77,10 @@ public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 OrderServiceBean bean = new OrderServiceBean();
                 bean.setConverter(context.getTypeConverter());
                 from("direct:start").bean(bean, "handleXML").to("mock:result");

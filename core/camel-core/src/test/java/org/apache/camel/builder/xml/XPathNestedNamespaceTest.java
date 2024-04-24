@@ -37,10 +37,10 @@ public class XPathNestedNamespaceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Namespaces ns = new Namespaces("stp", "http://www.barcap.com/gcd/stpengine/1-0");
 
                 from("direct:start").choice().when().xpath("//stp:termination", ns).to("mock:FOO").when()

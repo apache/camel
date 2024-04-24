@@ -41,7 +41,7 @@ public class LanguageServiceTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLanguageService() throws Exception {
+    public void testLanguageService() {
         MyLanguage myl = (MyLanguage) context.resolveLanguage("my");
         assertNotNull(myl);
         assertEquals("Started", myl.getState());
@@ -81,13 +81,13 @@ public class LanguageServiceTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             state = "Started";
 
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             state = "Stopped";
         }
 

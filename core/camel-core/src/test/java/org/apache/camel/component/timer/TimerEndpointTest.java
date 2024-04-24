@@ -44,7 +44,7 @@ public class TimerEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(te).to("mock:result");
             }
         });
@@ -65,7 +65,7 @@ public class TimerEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(te).to("mock:result");
             }
         });

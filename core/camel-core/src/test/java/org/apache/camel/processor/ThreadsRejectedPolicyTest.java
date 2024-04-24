@@ -43,10 +43,10 @@ public class ThreadsRejectedPolicyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").threads(5, 10).rejectedPolicy(Abort).to("mock:result");
 
                 from("direct:foo")

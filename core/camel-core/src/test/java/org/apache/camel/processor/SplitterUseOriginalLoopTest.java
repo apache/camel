@@ -37,10 +37,10 @@ public class SplitterUseOriginalLoopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").loop(3).setHeader("looping", exchangeProperty(Exchange.LOOP_INDEX))
                         .split(body(), new UseOriginalAggregationStrategy(null, false))
                         .setHeader("myHeader", exchangeProperty(Exchange.LOOP_INDEX)).to("mock:line").end().end()

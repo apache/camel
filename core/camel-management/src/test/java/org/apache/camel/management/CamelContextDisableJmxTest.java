@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class CamelContextDisableJmxTest {
 
     @Test
-    public void testDisableJmx() throws Exception {
+    public void testDisableJmx() {
         CamelContext context = new DefaultCamelContext(false);
         context.disableJMX();
         context.start();

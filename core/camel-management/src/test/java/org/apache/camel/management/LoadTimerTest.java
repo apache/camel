@@ -41,7 +41,7 @@ public class LoadTimerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTimer() throws Exception {
+    public void testTimer() {
         TimerListenerManager myTimer = new TimerListenerManager();
         myTimer.setCamelContext(context);
         myTimer.start();

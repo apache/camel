@@ -50,7 +50,7 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         MockEndpoint endpointB = getMockEndpoint("mock:endpointB");
         endpointB.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 throw new IllegalArgumentException("Fake exception");
             }
         });
@@ -71,7 +71,7 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         MockEndpoint endpointA = getMockEndpoint("mock:endpointA");
         endpointA.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 throw new IllegalArgumentException("Fake exception");
             }
         });
@@ -85,10 +85,10 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").multicast(new GroupedExchangeAggregationStrategy()).to("mock:endpointA", "mock:endpointB")
                         .end().to("mock:result");
 

@@ -102,6 +102,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
         }
     }
 
+    @SuppressWarnings("Unused")
     public static class A {
 
         public void doSomething(String body) {

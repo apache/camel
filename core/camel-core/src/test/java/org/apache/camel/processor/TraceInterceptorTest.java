@@ -26,20 +26,20 @@ public class TraceInterceptorTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     @Test
-    public void testSendingSomeMessages() throws Exception {
+    public void testSendingSomeMessages() {
         template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
         template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // enable tracing
                 getContext().setTracing(true);
 
                 from("direct:start").routeId("foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // do nothing
                     }
 

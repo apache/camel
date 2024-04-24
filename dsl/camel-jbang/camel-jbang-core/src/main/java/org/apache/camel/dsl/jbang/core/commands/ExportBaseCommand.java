@@ -126,10 +126,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--main-classname" },
                         description = "The class name of the Camel Main application class",
                         defaultValue = "CamelApplication")
-    protected String mainClassname;
+    protected String mainClassname = "CamelApplication";
 
     @CommandLine.Option(names = { "--java-version" }, description = "Java version", defaultValue = "17")
-    protected String javaVersion;
+    protected String javaVersion = "17";
 
     @CommandLine.Option(names = { "--camel-version" },
                         description = "To export using a different Camel version than the default version.")
@@ -149,34 +149,34 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
                         defaultValue = "3.2.5")
-    protected String springBootVersion;
+    protected String springBootVersion = "3.2.5";
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
     protected String camelSpringBootVersion;
 
     @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
                         defaultValue = "io.quarkus.platform")
-    protected String quarkusGroupId;
+    protected String quarkusGroupId = "io.quarkus.platform";
 
     @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
                         defaultValue = "quarkus-bom")
-    protected String quarkusArtifactId;
+    protected String quarkusArtifactId = "quarkus-bom";
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
                         defaultValue = "3.9.4")
-    protected String quarkusVersion;
+    protected String quarkusVersion = "3.9.4";
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
-    protected boolean mavenWrapper;
+    protected boolean mavenWrapper = true;
 
     @CommandLine.Option(names = { "--gradle-wrapper" }, defaultValue = "true",
                         description = "Include Gradle Wrapper files in exported project")
-    protected boolean gradleWrapper;
+    protected boolean gradleWrapper = true;
 
     @CommandLine.Option(names = { "--build-tool" }, defaultValue = "maven",
                         description = "Build tool to use (maven or gradle)")
-    protected String buildTool;
+    protected String buildTool = "maven";
 
     @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     protected String openapi;
@@ -187,12 +187,11 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String exportDir;
 
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
-    protected String loggingLevel;
+    protected String loggingLevel = "info";
 
     @CommandLine.Option(names = { "--package-name" },
                         description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
-                                      +
-                                      "Use false to turn off and not include package name in the Java source files.")
+                                      + "Use false to turn off and not include package name in the Java source files.")
     protected String packageName;
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
@@ -217,6 +216,8 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--ignore-loading-error" },
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
+
+    protected boolean symbolicLink; // copy source files using symbolic link
 
     public ExportBaseCommand(CamelJBangMain main) {
         super(main);
@@ -710,7 +711,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         return "3.4.0";
     }
 
-    protected static void safeCopy(File source, File target, boolean override) throws Exception {
+    protected void safeCopy(File source, File target, boolean override) throws Exception {
         if (!source.exists()) {
             return;
         }
@@ -726,6 +727,21 @@ abstract class ExportBaseCommand extends CamelCommand {
                 }
             }
             return;
+        }
+
+        if (symbolicLink) {
+            try {
+                // must use absolute paths
+                Path link = target.toPath().toAbsolutePath();
+                Path src = source.toPath().toAbsolutePath();
+                if (Files.exists(link)) {
+                    Files.delete(link);
+                }
+                Files.createSymbolicLink(link, src);
+                return; // success
+            } catch (IOException e) {
+                // ignore
+            }
         }
 
         if (!target.exists()) {

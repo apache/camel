@@ -72,10 +72,10 @@ public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends C
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").convertBodyTo(int.class).to("mock:a");
             }
         };

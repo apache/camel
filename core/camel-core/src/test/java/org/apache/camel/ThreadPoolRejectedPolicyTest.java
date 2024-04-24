@@ -58,7 +58,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     }
 
     @Test
-    public void testAbortAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
+    public void testAbortAsRejectedExecutionHandlerWithRejectableTasks() {
 
         final ExecutorService executorService
                 = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
@@ -82,7 +82,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     }
 
     @Test
-    public void testCallerRunsAsRejectedExecutionHandler() throws InterruptedException {
+    public void testCallerRunsAsRejectedExecutionHandler() {
 
         final ExecutorService executorService
                 = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
@@ -102,7 +102,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     }
 
     @Test
-    public void testCallerRunsAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
+    public void testCallerRunsAsRejectedExecutionHandlerWithRejectableTasks() {
 
         final ExecutorService executorService
                 = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
@@ -197,7 +197,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
 
     private static class MockCallable<T> extends MockTask implements Callable<T> {
         @Override
-        public T call() throws Exception {
+        public T call() {
             countInvocation();
             try {
                 TimeUnit.MILLISECONDS.sleep(100);

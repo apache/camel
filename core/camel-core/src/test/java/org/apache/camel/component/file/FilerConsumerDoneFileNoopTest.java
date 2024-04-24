@@ -55,10 +55,10 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&doneFileName=done&noop=true")).to("mock:result");
             }
         };

@@ -31,7 +31,7 @@ public class MulticastPipelineTest extends ContextTestSupport {
     public void testPlainPipeline() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").pipeline("direct:a", "direct:b").pipeline("direct:c", "direct:d").to("mock:result");
 
                 from("direct:a").to("mock:a").setBody().constant("A");
@@ -57,7 +57,7 @@ public class MulticastPipelineTest extends ContextTestSupport {
     public void testPlainPipelineTo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").pipeline().to("direct:a", "direct:b").end().pipeline().to("direct:c", "direct:d").end()
                         .to("mock:result");
 
@@ -84,7 +84,7 @@ public class MulticastPipelineTest extends ContextTestSupport {
     public void testMulticastPipeline() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").multicast().pipeline("direct:a", "direct:b").pipeline("direct:c", "direct:d").end()
                         .to("mock:result");
 
@@ -111,7 +111,7 @@ public class MulticastPipelineTest extends ContextTestSupport {
     public void testMulticastPipelineTo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").multicast().pipeline().to("direct:a", "direct:b").end().pipeline()
                         .to("direct:c", "direct:d").end().end().to("mock:result");
 

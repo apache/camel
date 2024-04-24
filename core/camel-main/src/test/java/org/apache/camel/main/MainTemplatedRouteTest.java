@@ -32,7 +32,7 @@ class MainTemplatedRouteTest {
         Main main = new Main();
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate")
                         .templateParameter("foo")
                         .templateParameter("bar")

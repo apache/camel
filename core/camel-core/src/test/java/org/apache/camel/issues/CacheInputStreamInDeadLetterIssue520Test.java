@@ -68,9 +68,9 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // enable stream caching
                 context.setStreamCaching(true);
 
@@ -89,7 +89,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
 
                 // Need to set the streamCaching for the deadLetterChannel
                 from("direct:errorHandler").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String result = exchange.getIn().getBody(String.class);
                         assertEquals("<hello>Willem</hello>", result, "Should read the inputstream out again");
                     }

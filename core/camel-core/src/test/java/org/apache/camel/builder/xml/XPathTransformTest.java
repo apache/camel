@@ -44,7 +44,7 @@ public class XPathTransformTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPathTransform() throws Exception {
+    public void testXPathTransform() {
         Document doc = context.getTypeConverter().convertTo(Document.class,
                 "<root><firstname>Apache</firstname><lastname>Camel</lastname></root>");
         NodeList list = XPathBuilder.xpath("/root/firstname", NodeList.class).evaluate(context, doc, NodeList.class);

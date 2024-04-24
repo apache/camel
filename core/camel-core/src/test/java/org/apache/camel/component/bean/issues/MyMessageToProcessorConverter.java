@@ -26,7 +26,7 @@ public class MyMessageToProcessorConverter extends TypeConverterSupport {
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return (T) new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Bye World");
             }
         };

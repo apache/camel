@@ -33,7 +33,7 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
     public void testOnExceptionTransformConstant() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
 
                 // START SNIPPET: e1
@@ -60,7 +60,7 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
     public void testOnExceptionTransformExceptionMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
 
                 // START SNIPPET: e2
@@ -87,7 +87,7 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
     public void testOnExceptionSimpleLangaugeExceptionMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
 
                 // START SNIPPET: e3

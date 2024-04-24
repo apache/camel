@@ -38,10 +38,10 @@ public class ProcessDefinitionSetBodyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody(exchange -> FUNCTION_MESSAGE).to("mock:functionOutput").to("mock:output");
             }

@@ -31,7 +31,7 @@ public class ArgumentSubstitutionParserTest {
     private static final String PERSON = "person";
 
     @Test
-    public void testParse() throws Exception {
+    public void testParse() {
 
         final Substitution[] adapters = new Substitution[4];
         adapters[0] = new Substitution(".+", "name", PERSON);

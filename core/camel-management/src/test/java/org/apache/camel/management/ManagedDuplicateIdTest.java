@@ -31,7 +31,7 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
     public void testDuplicateId() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo")
                         .to("log:foo")
                         .split(body())

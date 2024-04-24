@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DefaultHealthCheckRegistryTest {
 
     @Test
-    public void testDefaultHealthCheckRegistry() throws Exception {
+    public void testDefaultHealthCheckRegistry() {
         CamelContext context = new DefaultCamelContext();
 
         DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -63,7 +63,7 @@ public class DefaultHealthCheckRegistryTest {
     }
 
     @Test
-    public void testInjectCamelContext() throws Exception {
+    public void testInjectCamelContext() {
         CamelContext context = new DefaultCamelContext();
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -90,7 +90,7 @@ public class DefaultHealthCheckRegistryTest {
     }
 
     @Test
-    public void testDiscoverFromCamelRegistry() throws Exception {
+    public void testDiscoverFromCamelRegistry() {
         CamelContext context = new DefaultCamelContext();
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -117,7 +117,7 @@ public class DefaultHealthCheckRegistryTest {
     }
 
     @Test
-    public void testResolveContextHealthCheck() throws Exception {
+    public void testResolveContextHealthCheck() {
         CamelContext context = new DefaultCamelContext();
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -163,7 +163,7 @@ public class DefaultHealthCheckRegistryTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:foo").routeId("foo");
                 from("direct:start2").to("mock:bar").routeId("bar");
             }

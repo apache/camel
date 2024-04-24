@@ -31,7 +31,7 @@ public class OnCompletionAfterConsumerModeIssueTest extends ContextTestSupport {
     public void testOnCompletionInSub() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform(constant("a"))
                         .to("mock:a")
@@ -63,7 +63,7 @@ public class OnCompletionAfterConsumerModeIssueTest extends ContextTestSupport {
     public void testOnCompletionInMainAndSub() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start")
                         .transform(constant("a"))
@@ -99,7 +99,7 @@ public class OnCompletionAfterConsumerModeIssueTest extends ContextTestSupport {
     public void testOnCompletionInGlobalAndSub() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 onCompletion().to("mock:end");
 

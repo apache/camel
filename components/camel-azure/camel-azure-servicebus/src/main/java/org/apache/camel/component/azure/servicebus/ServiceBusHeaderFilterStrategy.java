@@ -14,12 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.component.azure.servicebus;
 
-/**
- * This interface is used to copy {@link ProcessorDefinition ProcessorDefinitions} during instantiation of a route
- * template.
- */
-interface CopyableProcessorDefinition {
-    ProcessorDefinition<?> copy();
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
+
+public class ServiceBusHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+    public ServiceBusHeaderFilterStrategy() {
+        super();
+        initialise();
+    }
+
+    private void initialise() {
+        setOutFilterStartsWith("Camel", "camel", "org.apache.camel.");
+        setInFilterStartsWith("Camel", "camel", "org.apache.camel.");
+    }
 }

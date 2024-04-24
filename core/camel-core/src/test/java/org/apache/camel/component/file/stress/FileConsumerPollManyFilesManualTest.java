@@ -52,7 +52,7 @@ public class FileConsumerPollManyFilesManualTest extends ContextTestSupport {
     public void testPollManyFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?delete=true")).convertBodyTo(String.class).to("mock:result");
             }
         });

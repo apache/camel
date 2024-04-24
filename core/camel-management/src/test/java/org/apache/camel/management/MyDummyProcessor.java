@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 public class MyDummyProcessor implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         exchange.getIn().setBody("Bye World");
     }
 }

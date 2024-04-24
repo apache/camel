@@ -36,7 +36,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
     public void testQueryOptionalNotPresent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result?retainFirst={{?maxKeep}}");
             }
@@ -61,7 +61,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result?retainFirst={{?maxKeep}}");
             }
@@ -82,7 +82,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
     public void testPathOptionalNotPresent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:res{{?unknown}}ult");
             }
@@ -105,7 +105,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:{{?whereTo}}");
             }
@@ -124,7 +124,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
     public void testQueryAndPathOptionalNotPresent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:res{{?unknown}}ult?retainFirst={{?maxKeep}}");
             }
@@ -150,7 +150,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:{{?whereTo}}?retainFirst={{?maxKeep}}");
             }
@@ -175,7 +175,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:res{{?unknown}}ult?retainFirst={{?maxKeep}}");
             }
@@ -200,7 +200,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:{{?whereTo}}?retainFirst={{?maxKeep}}");
             }
@@ -223,7 +223,7 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:{{?whereTo}}?retainFirst=base64:{{?maxBase64}}");
             }

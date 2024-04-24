@@ -31,7 +31,7 @@ public class PropertiesComponentKeepOnlyChangedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testChanged() throws Exception {
+    public void testChanged() {
         PropertiesComponent pc = context.getPropertiesComponent();
         pc.addInitialProperty("foo", "123");
         pc.addInitialProperty("bar", "true");

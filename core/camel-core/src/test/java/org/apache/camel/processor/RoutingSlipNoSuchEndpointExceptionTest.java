@@ -41,7 +41,7 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
     public void testRoutingSlip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(Exception.class).to("mock:error").end().routingSlip(method(Router.class));
             }
         });
@@ -59,7 +59,7 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
     public void testRoutingSlipChild() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(Exception.class).to("mock:error").end().to("direct:child");
 
                 from("direct:child").errorHandler(noErrorHandler()).routingSlip(method(Router.class));

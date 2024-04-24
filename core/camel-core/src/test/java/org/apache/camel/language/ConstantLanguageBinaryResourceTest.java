@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
 
     @Test
-    public void testConstantBinaryDefault() throws Exception {
+    public void testConstantBinaryDefault() {
         byte[] data = template.requestBody("direct:default", "", byte[].class);
         // should have X number of bytes
         assertNotNull(data);
@@ -38,7 +38,7 @@ public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
     }
 
     @Test
-    public void testConstantBinaryClasspath() throws Exception {
+    public void testConstantBinaryClasspath() {
         byte[] data = template.requestBody("direct:classpath", "", byte[].class);
         // should have X number of bytes
         assertNotNull(data);
@@ -49,10 +49,10 @@ public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:default").to("language:constant:resource:org/apache/camel/logo.jpeg?binary=true");
 
                 from("direct:classpath").to("language:constant:resource:classpath:org/apache/camel/logo.jpeg?binary=true");

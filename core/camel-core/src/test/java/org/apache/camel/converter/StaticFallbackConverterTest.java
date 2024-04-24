@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StaticFallbackConverterTest extends ContextTestSupport {
 
     @Test
-    public void testStaticFallbackConverter() throws Exception {
+    public void testStaticFallbackConverter() {
         Exchange exchange = new DefaultExchange(context);
         TimeZone tz = TimeZone.getDefault();
 
@@ -49,7 +49,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testStaticFallbackMandatoryFailed() throws Exception {
+    public void testStaticFallbackMandatoryFailed() {
         Exchange exchange = new DefaultExchange(context);
 
         try {
@@ -61,7 +61,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testStaticFallbackFailed() throws Exception {
+    public void testStaticFallbackFailed() {
         Exchange exchange = new DefaultExchange(context);
 
         Date out = context.getTypeConverter().convertTo(Date.class, exchange, new Timestamp(0));

@@ -88,7 +88,7 @@ public class TryProcessorTest extends ContextTestSupport {
 
     private static class ProcessorFail implements Processor, Predicate, Expression {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
 
@@ -109,7 +109,7 @@ public class TryProcessorTest extends ContextTestSupport {
 
     private class ProcessorHandle implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             handled = true;
 
             assertFalse(exchange.isFailed(), "Should not be marked as failed");

@@ -35,7 +35,7 @@ public class RouteOneInputAllowedTest extends ContextTestSupport {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:a").from("direct:b").to("mock:ab");
                 }
             });

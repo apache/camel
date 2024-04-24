@@ -35,10 +35,10 @@ public class ClaimCheckEipPushPopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World")
                         .to("mock:b").claimCheck(ClaimCheckOperation.Pop)
                         .to("mock:c");

@@ -47,16 +47,16 @@ public class AsyncLoopCopyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").to("mock:before") // Should receive Hello
                         // Camel
                         .to("log:before").process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         }).loop(header("NumberIterations")).copy().to("mock:loopIterationStart") // Should
@@ -68,7 +68,7 @@ public class AsyncLoopCopyTest extends ContextTestSupport {
                         // Camel
                         .to("mock:loopIterationEnd") // Should receive 2x Bye Camel
                         .end().process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
                         }).to("log:after").to("mock:result"); // Should receive 1x

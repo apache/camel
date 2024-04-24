@@ -33,7 +33,7 @@ public class SchedulerRepeatCountTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("scheduler://foo?delay=10&repeatCount=3").to("mock:result");

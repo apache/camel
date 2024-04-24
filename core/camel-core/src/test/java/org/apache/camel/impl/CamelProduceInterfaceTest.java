@@ -31,13 +31,13 @@ public class CamelProduceInterfaceTest extends ContextTestSupport {
     private Echo echo;
 
     @Test
-    public void testCamelProduceInterface() throws Exception {
+    public void testCamelProduceInterface() {
         String reply = echo.hello("Camel");
         assertEquals("Hello Camel", reply);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

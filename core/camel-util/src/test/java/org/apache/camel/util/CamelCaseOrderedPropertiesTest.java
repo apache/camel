@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CamelCaseOrderedPropertiesTest {
 
     @Test
-    public void testOrdered() throws Exception {
+    public void testOrdered() {
         Properties prop = new CamelCaseOrderedProperties();
         prop.setProperty("hello-world", "Hi Camel");
         prop.setProperty("camel.main.stream-caching-enabled", "true");

@@ -43,7 +43,7 @@ public class ModelSanityCheckerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelSanityCheckerTest.class);
 
-    private Set<Class<?>> discoverJaxbClasses() throws Exception {
+    private Set<Class<?>> discoverJaxbClasses() {
         DefaultPackageScanClassResolver resolver = new DefaultPackageScanClassResolver();
         resolver.start();
         String[] packages = Constants.JAXB_CONTEXT_PACKAGES.split(":");

@@ -46,10 +46,10 @@ public class RouteWithCustomIdTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").id("A").to("log:foo").id("B").to("mock:result").id("C");
             }
         };

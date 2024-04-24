@@ -43,7 +43,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("bean"
                              + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true"))
                         .to("mock:result");
@@ -69,7 +69,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from(fileUri("date"
                              + "?initialDelay=0&delay=10&fileName=myfile-${date:now:yyyyMMdd}.txt"))

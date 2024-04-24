@@ -48,10 +48,10 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).useOriginalMessage().to(fileUri("outbox"))
                         .to("mock:error");
 

@@ -98,6 +98,7 @@ public class ObjectHelperTest {
         assertEquals("cheese", name, "Property name");
     }
 
+    @SuppressWarnings("Unused")
     public void setCheese(String cheese) {
         // used in the above unit test
     }

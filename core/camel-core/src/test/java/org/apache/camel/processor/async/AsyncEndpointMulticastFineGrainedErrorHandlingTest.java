@@ -28,7 +28,7 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
     public void testAsyncEndpointOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
@@ -51,7 +51,7 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
     public void testAsyncEndpointERROR() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);

@@ -39,10 +39,10 @@ public class DumpModelAsYamlTransformRouteTest extends DumpModelAsYamlTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").transform().simple("Hello ${body}").to("mock:result").id("myMock");
             }
         };

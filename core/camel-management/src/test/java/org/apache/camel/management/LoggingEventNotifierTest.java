@@ -60,7 +60,7 @@ public class LoggingEventNotifierTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExchangeFailed() throws Exception {
+    public void testExchangeFailed() {
         try {
             template.sendBody("direct:fail", "Hello World");
             fail("Should have thrown an exception");
@@ -73,10 +73,10 @@ public class LoggingEventNotifierTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("mock:result");
 
                 from("direct:fail").throwException(new IllegalArgumentException("Damn"));

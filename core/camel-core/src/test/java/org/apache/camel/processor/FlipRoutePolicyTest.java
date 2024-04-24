@@ -38,10 +38,10 @@ public class FlipRoutePolicyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // create the flip route policy
                 RoutePolicy policy = new FlipRoutePolicy("foo", "bar");
 

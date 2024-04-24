@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.trait.message.MessageTrait;
@@ -194,7 +193,7 @@ class MessageHelperTest {
         }
 
         @Override
-        public Object getMandatoryBody() throws InvalidPayloadException {
+        public Object getMandatoryBody() {
             return null;
         }
 
@@ -204,7 +203,7 @@ class MessageHelperTest {
         }
 
         @Override
-        public <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException {
+        public <T> T getMandatoryBody(Class<T> type) {
             return null;
         }
 

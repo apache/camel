@@ -79,7 +79,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testClusteredRoutePolicyDontStartAutoStartFalseRoutes() throws Exception {
+    public void testClusteredRoutePolicyDontStartAutoStartFalseRoutes() {
         cs.getView().setLeader(true);
 
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("baz"));
@@ -89,7 +89,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     public void testClusteredRoutePolicyAddRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:bar").routeId("bar").routePolicy(policy)
                         .to("mock:bar");
             }
@@ -119,7 +119,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:bar").routeId("bar").routePolicy(policy)
                         .to("mock:bar");
             }
@@ -142,10 +142,10 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").routePolicy(policy)
                         .to("mock:foo");
                 from("seda:baz").autoStartup(false).routeId("baz").routePolicy(policy)
@@ -197,12 +197,12 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             running = true;
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             running = false;
         }
 
@@ -232,7 +232,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
         }
 
         @Override
-        protected TestClusterView createView(String namespace) throws Exception {
+        protected TestClusterView createView(String namespace) {
             if (view == null) {
                 view = new TestClusterView(this, namespace);
             }

@@ -40,10 +40,10 @@ public class SplitterPropertyContinuedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).continued(true).setProperty("errorCode", constant("ERR-1"));
 
                 from("direct:start").split(body()).log("Step #1 - Body: ${body} with error code: ${exchangeProperty.errorCode}")

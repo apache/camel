@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ConsumerTemplateFileShutdownTest extends ContextTestSupport {
 
     @Test
-    public void testConsumerTemplateFile() throws Exception {
+    public void testConsumerTemplateFile() {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         Exchange exchange = consumer.receive(fileUri("?fileName=hello.txt"), 5000);

@@ -48,7 +48,7 @@ public class PollEnricherRefTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPollEnrichRef() throws Exception {
+    public void testPollEnrichRef() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Bye World");
         cool.getQueue().add(exchange);
@@ -60,10 +60,10 @@ public class PollEnricherRefTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 cool.setEndpointUriIfNotSpecified("cool");
 
                 from("direct:start").pollEnrich().simple("ref:cool").timeout(2000).aggregationStrategy("agg");

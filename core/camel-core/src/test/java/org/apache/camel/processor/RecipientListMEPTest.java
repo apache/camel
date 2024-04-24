@@ -50,10 +50,10 @@ public class RecipientListMEPTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").recipientList().constant("seda:foo?exchangePattern=InOut").to("mock:result");
 
                 from("seda:foo").to("mock:foo").transform().constant("Bye World");

@@ -36,10 +36,10 @@ public class InterceptSimpleRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 intercept().to("mock:intercepted");
 
                 from("direct:start").to("mock:foo").to("mock:bar").to("mock:result");

@@ -49,10 +49,10 @@ public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a")
                         // invalid due extra parenthesis at the end
                         .to("bean:foo?method=echo(${body}, 5))").to("mock:result");

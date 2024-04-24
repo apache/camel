@@ -39,10 +39,10 @@ public class MulticastStopOnExceptionLastWithOnExceptionTest extends MulticastSt
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
 
                 from("direct:start").multicast().stopOnException().to("direct:foo", "direct:baz", "direct:bar").end()

@@ -36,7 +36,7 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         Producer answer = new MyAsyncProducer(this);
         if (isSynchronous()) {
             // force it to be synchronously
@@ -47,7 +47,7 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException("Consumer not supported");
     }
 

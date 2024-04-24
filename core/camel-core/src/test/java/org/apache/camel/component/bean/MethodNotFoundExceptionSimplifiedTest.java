@@ -41,7 +41,7 @@ public class MethodNotFoundExceptionSimplifiedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").choice().when(simple("${headers.bean.isEmpty()}")).to("mock:out");
             }
         };

@@ -50,10 +50,10 @@ public class InheritErrorHandlerFalseTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2));
 
                 from("direct:start").process(new MyProcessor()).inheritErrorHandler(false).to("mock:result");
@@ -64,7 +64,7 @@ public class InheritErrorHandlerFalseTest extends ContextTestSupport {
     public static class MyProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             counter++;
             exchange.setException(new IllegalArgumentException("Damn"));
         }

@@ -98,10 +98,10 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").threads(15, 30).id("mythreads").maxQueueSize(200).to("mock:result");
             }
         };

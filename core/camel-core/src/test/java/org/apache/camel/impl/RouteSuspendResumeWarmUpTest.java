@@ -48,10 +48,10 @@ public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").process(service).to("mock:result");
             }
         };
@@ -62,17 +62,17 @@ public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
         private volatile String state;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // noop
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             state = "start";
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             state = "stop";
         }
 

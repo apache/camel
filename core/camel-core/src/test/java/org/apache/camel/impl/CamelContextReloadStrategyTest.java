@@ -75,10 +75,10 @@ public class CamelContextReloadStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody(constant("{{hello}}"))
                         .to("mock:result");
@@ -104,7 +104,7 @@ public class CamelContextReloadStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        protected void doStart() throws Exception {
+        protected void doStart() {
             // the properties source will be restarted
             counter++;
         }

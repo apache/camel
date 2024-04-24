@@ -37,10 +37,10 @@ public class StreamCachingRoutingSlipTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setStreamCaching(true);
 
                 from("direct:a").routingSlip(header("mySlip"));

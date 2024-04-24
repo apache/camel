@@ -45,9 +45,9 @@ public class BeanReturnCallableTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").setHeader("foo", constant("bar")).to("bean:myBean").to("mock:result");
             }
         };

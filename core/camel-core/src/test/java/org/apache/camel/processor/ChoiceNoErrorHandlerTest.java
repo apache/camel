@@ -41,10 +41,10 @@ public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
 
                 from("direct:start").choice().when(header("foo").isEqualTo("bar")).to("direct:end").otherwise().end();

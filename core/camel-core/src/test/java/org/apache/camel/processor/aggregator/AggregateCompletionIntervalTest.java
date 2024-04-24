@@ -45,10 +45,10 @@ public class AggregateCompletionIntervalTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("seda:start").aggregate(header("id"), new UseLatestAggregationStrategy())
                         // trigger completion every 2nd second

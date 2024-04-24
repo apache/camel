@@ -40,16 +40,16 @@ public class AggregatorExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final String exceptionString = "This is an Error not an Exception";
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).completionSize(5)
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 throw new java.lang.NoSuchMethodError(exceptionString);
                             }
                         });

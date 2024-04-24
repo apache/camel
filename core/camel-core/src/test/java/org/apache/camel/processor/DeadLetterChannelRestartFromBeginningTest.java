@@ -51,10 +51,10 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use the DLQ and let the retryBean handle this
                 errorHandler(deadLetterChannel("bean:retryBean").useOriginalMessage());
 
@@ -64,7 +64,7 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
                     private int counter;
 
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // fail the first 3 times
                         if (counter++ <= 3) {
                             throw new IllegalArgumentException("Damn");
