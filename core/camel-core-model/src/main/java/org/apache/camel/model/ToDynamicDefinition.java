@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "toD")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> implements CopyableProcessorDefinition {
+public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> implements Copyable {
 
     @XmlTransient
     protected EndpointProducerBuilder endpointProducerBuilder;

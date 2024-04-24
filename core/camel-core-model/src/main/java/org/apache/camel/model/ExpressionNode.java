@@ -58,6 +58,11 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         setPredicate(predicate);
     }
 
+    protected ExpressionNode(ExpressionNode source) {
+        super(source);
+        this.expression = source.expression;
+    }
+
     public ExpressionDefinition getExpression() {
         return expression;
     }
