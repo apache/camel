@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
@@ -665,7 +666,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
             isCompatible = false;
         } else if (reconnectInterval != other.reconnectInterval) {
             isCompatible = false;
-        } else if (unixDomainSocketPath != other.unixDomainSocketPath) {
+        } else if (!Objects.equals(unixDomainSocketPath, other.unixDomainSocketPath)) {
             isCompatible = false;
         }
 
