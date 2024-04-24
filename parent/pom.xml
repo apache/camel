@@ -63,7 +63,7 @@
         <apache-drill-version>1.21.1</apache-drill-version>
         <apicurio-version>2.0.4</apicurio-version>
         <arangodb-java-version>7.6.0</arangodb-java-version>
-        <as2-lib-version>5.1.2</as2-lib-version>
+        <as2-lib-version>5.1.3</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>9.7</asm-version>
         <asn1bean-version>1.14.0</asn1bean-version>
