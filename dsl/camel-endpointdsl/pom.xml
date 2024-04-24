@@ -58,6 +58,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
         </dependency>
+        <!-- Put this dependency first to ensure use of the 2.x SLF4J API -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-allcomponents</artifactId>
@@ -108,10 +113,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-catalog</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <!-- testing -->
@@ -223,13 +224,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <!--
-                            See CAMEL-19713.
-
-                            These tests generate a lot of bogus output and the logging does not work.
-                            This forces the output to be stored in separate files in the target directory.
-                            -->
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
