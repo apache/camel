@@ -87,6 +87,7 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrl
 public class Run extends CamelCommand {
 
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
+    private static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
     private static final String[] ACCEPTED_FILE_EXT
             = new String[] { "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
@@ -848,13 +849,19 @@ public class Run extends CamelCommand {
     }
 
     protected int runQuarkus() throws Exception {
+        // create temp run dir
+        File runDir = new File(RUN_PLATFORM_DIR, "" + System.currentTimeMillis());
+        if (!this.background) {
+            runDir.deleteOnExit();
+        }
+
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
         eq.symbolicLink = true;
         eq.quarkusVersion = this.quarkusVersion;
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
-        eq.exportDir = ExportBaseCommand.RUN_DIR;
+        eq.exportDir = runDir.toString();
         eq.exclude = this.exclude;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
@@ -883,7 +890,7 @@ public class Run extends CamelCommand {
         }
         // run quarkus via maven
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(ExportBaseCommand.RUN_DIR + "/mvnw", "--quiet", "--file", ExportBaseCommand.RUN_DIR, "quarkus:dev");
+        pb.command(runDir + "/mvnw", "--quiet", "--file", runDir.toString(), "quarkus:dev");
 
         if (background) {
             Process p = pb.start();
@@ -903,6 +910,12 @@ public class Run extends CamelCommand {
     }
 
     protected int runSpringBoot() throws Exception {
+        // create temp run dir
+        File runDir = new File(RUN_PLATFORM_DIR, "" + System.currentTimeMillis());
+        if (!this.background) {
+            runDir.deleteOnExit();
+        }
+
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
         eq.symbolicLink = true;
@@ -910,7 +923,7 @@ public class Run extends CamelCommand {
         eq.camelVersion = this.camelVersion;
         eq.camelSpringBootVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
-        eq.exportDir = ExportBaseCommand.RUN_DIR;
+        eq.exportDir = runDir.toString();
         eq.exclude = this.exclude;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
@@ -935,13 +948,10 @@ public class Run extends CamelCommand {
         eq.loggingLevel = "off";
 
         System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
-        // TODO: if error exporting we should report error (log output)
-        // TODO: run in unique sub folder
-        // TODO: delete sub folder on exit
         // TODO: camel log from spring-boot/quarkus is not possible
         // TODO: copy files using symbolic link so you can edit the file (TODO: application.properties)
-        // TODO: camel stop does not stop quarkus correctly (spring boot do that)
-        // TODO: camel get does not show Quarkus as platform (spring boot do that)
+        // TODO: camel stop does not stop quarkus correctly (spring boot does that)
+        // TODO: camel get does not show Quarkus as platform (spring boot does that)
         // TODO: spring-boot dev-tools reloading could update camel reload counter
 
         // run export
@@ -951,7 +961,7 @@ public class Run extends CamelCommand {
         }
         // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(ExportBaseCommand.RUN_DIR + "/mvnw", "--quiet", "--file", ExportBaseCommand.RUN_DIR, "spring-boot:run");
+        pb.command(runDir + "/mvnw", "--quiet", "--file", runDir.toString(), "spring-boot:run");
 
         if (background) {
             Process p = pb.start();

@@ -64,7 +64,6 @@ import picocli.CommandLine;
 abstract class ExportBaseCommand extends CamelCommand {
 
     protected static final String BUILD_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/work";
-    protected static final String RUN_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/run";
 
     protected static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
             "camel.main.routesIncludePattern",
