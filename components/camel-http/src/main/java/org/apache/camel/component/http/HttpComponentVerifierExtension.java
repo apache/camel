@@ -208,7 +208,7 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
                 proxyAuthScheme = Optional.of(HttpHelper.isSecureConnection(uri.get()) ? "https" : "http");
             }
 
-            if (proxyAuthUsername != null && proxyAuthPassword != null) {
+            if (proxyAuthUsername.isPresent() && proxyAuthPassword.isPresent()) {
                 return Optional.of(
                         new ProxyHttpClientConfigurer(
                                 proxyAuthHost.get(),
