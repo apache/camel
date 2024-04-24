@@ -889,15 +889,19 @@ public class Run extends CamelCommand {
             return exit;
         }
         // run quarkus via maven
+        String mvnw = "/mvnw";
+        if (FileUtil.isWindows()) {
+            mvnw = "/mvnw.cmd";
+        }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDir + "/mvnw", "--quiet", "--file", runDir.toString(), "quarkus:dev");
+        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "quarkus:dev");
 
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
             if (!silentRun && !transformRun && !transformMessageRun) {
                 printer().println("Running Camel Quarkus integration: " + name + " (version: " + eq.quarkusVersion
-                                  + ") in background with PID: " + p.pid());
+                                  + ") in background");
             }
             return 0;
         } else {
@@ -953,6 +957,7 @@ public class Run extends CamelCommand {
         // TODO: camel stop does not stop quarkus correctly (spring boot does that)
         // TODO: camel get does not show Quarkus as platform (spring boot does that)
         // TODO: spring-boot dev-tools reloading could update camel reload counter
+        // TODO: docs
 
         // run export
         int exit = eq.export();
@@ -961,14 +966,18 @@ public class Run extends CamelCommand {
         }
         // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDir + "/mvnw", "--quiet", "--file", runDir.toString(), "spring-boot:run");
+        String mvnw = "/mvnw";
+        if (FileUtil.isWindows()) {
+            mvnw = "/mvnw.cmd";
+        }
+        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "spring-boot:run");
 
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
             if (!silentRun && !transformRun && !transformMessageRun) {
                 printer().println("Running Camel Spring Boot integration: " + name + " (version: " + camelVersion
-                                  + ") in background with PID: " + p.pid());
+                                  + ") in background");
             }
             return 0;
         } else {
