@@ -68,6 +68,9 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // parse remaining to extract resourcePath and queryParams
+        if (remaining.startsWith("DEFAULT/")) {
+            remaining = remaining.substring(8);
+        }
         final String[] pathSegments = remaining.split("/", -1);
         final String methodName = pathSegments[0];
 
