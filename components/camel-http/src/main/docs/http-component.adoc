@@ -388,7 +388,7 @@ Programmatic configuration of the component
 [source,java]
 ---------------------------------------------------------------------------------------
 KeyStoreParameters ksp = new KeyStoreParameters();
-ksp.setResource("/users/home/server/keystore.jks");
+ksp.setResource("file:/users/home/server/keystore.jks");
 ksp.setPassword("keystorePassword");
 
 KeyManagersParameters kmp = new KeyManagersParameters();
@@ -413,7 +413,7 @@ Spring DSL based configuration of endpoint
     <camel:keyManagers
         keyPassword="keyPassword">
       <camel:keyStore
-          resource="/users/home/server/keystore.jks"
+          resource="file:/users/home/server/keystore.jks"
           password="keystorePassword"/>
     </camel:keyManagers>
   </camel:sslContextParameters>
