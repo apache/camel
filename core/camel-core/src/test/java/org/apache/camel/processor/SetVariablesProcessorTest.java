@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class SetVariablesProcessorTest extends ContextTestSupport {
 
     public static class VarBean {
-        Map<String, String> map = new java.util.LinkedHashMap<>();
+        final Map<String, String> map = new java.util.LinkedHashMap<>();
 
         public VarBean() {
         }
@@ -45,7 +45,7 @@ public class SetVariablesProcessorTest extends ContextTestSupport {
     }
 
     private final Map<String, Expression> varMap = new java.util.LinkedHashMap<>();
-    protected String body = "<person name='Jane' age='10'/>";
+    protected final String body = "<person name='Jane' age='10'/>";
     protected MockEndpoint expected;
 
     @Test

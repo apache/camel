@@ -65,7 +65,7 @@ public class LoadTimerTest extends ContextTestSupport {
 
     private static class TestLoadAware implements TimerListener {
 
-        LongAdder counter = new LongAdder();
+        final LongAdder counter = new LongAdder();
         final LoadTriplet load = new LoadTriplet();
 
         @Override

@@ -31,7 +31,7 @@ public class RedeliveryOnExceptionBlockedDelayTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryOnExceptionBlockedDelayTest.class);
 
-    private static LongAdder attempt = new LongAdder();
+    private static final LongAdder attempt = new LongAdder();
 
     @Test
     public void testRedelivery() throws Exception {

@@ -31,7 +31,7 @@ public class RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest extends Contex
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest.class);
 
-    private static LongAdder attempt = new LongAdder();
+    private static final LongAdder attempt = new LongAdder();
 
     @Test
     public void testRedelivery() throws Exception {

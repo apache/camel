@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TaskTestSupport {
     protected final int maxIterations = 5;
-    protected LongAdder taskCount = new LongAdder();
+    protected final LongAdder taskCount = new LongAdder();
 
     protected boolean booleanSupplier() {
         taskCount.increment();

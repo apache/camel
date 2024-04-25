@@ -41,7 +41,7 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
     private static class MyCustomRoutePolicy extends RoutePolicySupport {
 
-        private LongAdder invoked = new LongAdder();
+        private final LongAdder invoked = new LongAdder();
         private final AtomicBoolean stopped = new AtomicBoolean();
 
         @Override

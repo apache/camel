@@ -72,7 +72,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         private CamelContext camelContext;
         private TimerTask timerTask;
-        private LongAdder counter = new LongAdder();
+        private final LongAdder counter = new LongAdder();
         private String foo;
 
         @Override
