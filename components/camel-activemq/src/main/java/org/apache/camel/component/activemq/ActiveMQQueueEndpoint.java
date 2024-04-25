@@ -35,19 +35,20 @@ import org.springframework.jms.core.JmsOperations;
  */
 @ManagedResource(description = "Managed JMS Queue Endpoint")
 public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsableEndpoint, BrowsableEndpoint {
-    private int maximumBrowseSize = -1;
+    private static final String QUEUE = "queue";
     private final QueueBrowseStrategy queueBrowseStrategy;
+    private int maximumBrowseSize = -1;
 
     public ActiveMQQueueEndpoint(String uri, JmsComponent component, String destination,
                                  JmsConfiguration configuration) {
         this(uri, component, destination, configuration, null);
-        setDestinationType("queue");
+        setDestinationType(QUEUE);
     }
 
     public ActiveMQQueueEndpoint(String uri, JmsComponent component, String destination,
                                  JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
-        setDestinationType("queue");
+        setDestinationType(QUEUE);
         if (queueBrowseStrategy == null) {
             this.queueBrowseStrategy = createQueueBrowseStrategy();
         } else {
@@ -57,7 +58,7 @@ public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsa
 
     public ActiveMQQueueEndpoint(String endpointUri, String destination, QueueBrowseStrategy queueBrowseStrategy) {
         super(endpointUri, destination, false);
-        setDestinationType("queue");
+        setDestinationType(QUEUE);
         if (queueBrowseStrategy == null) {
             this.queueBrowseStrategy = createQueueBrowseStrategy();
         } else {
@@ -67,7 +68,7 @@ public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsa
 
     public ActiveMQQueueEndpoint(String endpointUri, String destination) {
         super(endpointUri, destination, false);
-        setDestinationType("queue");
+        setDestinationType(QUEUE);
         queueBrowseStrategy = createQueueBrowseStrategy();
     }
 
