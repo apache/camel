@@ -233,17 +233,17 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public List<String> findComponentNames() {
         return cache(FIND_COMPONENT_NAMES, () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
-                 .flatMap(Collection::stream)
-                 .sorted()
-                 .toList());
+                .flatMap(Collection::stream)
+                .sorted()
+                .toList());
     }
 
     @Override
     public List<String> findDataFormatNames() {
         return cache(FIND_DATA_FORMAT_NAMES, () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
-                 .flatMap(Collection::stream)
-                 .sorted()
-                 .toList());
+                .flatMap(Collection::stream)
+                .sorted()
+                .toList());
     }
 
     @Override
