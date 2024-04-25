@@ -67,10 +67,14 @@ public class DefaultCamelBeanPostProcessorFieldFirstTest extends ContextTestSupp
         @PropertyInject("foo")
         private String foo;
 
+        // should inject simple types first such as this property
+        @PropertyInject(value = "number", defaultValue = "123")
+        private Integer number;
+
         @BindToRegistry("myCoolBean")
         public MySerialBean myBean() {
             MySerialBean myBean = new MySerialBean();
-            myBean.setId(123);
+            myBean.setId(number);
             myBean.setName(foo);
             return myBean;
         }

@@ -21,8 +21,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import javax.swing.text.Document;
-
 /**
  * Helper for working with reflection on classes.
  * <p/>
@@ -186,7 +184,7 @@ public final class ReflectionHelper {
             }
             // must use fine-grained for the correct type when setting a field value via reflection
             Class<?> type = f.getType();
-            if (boolean.class == type || Boolean.class == type) {
+            if (boolean.class == type) {
                 boolean val;
                 if (value instanceof Boolean) {
                     val = (boolean) value;
@@ -194,7 +192,7 @@ public final class ReflectionHelper {
                     val = Boolean.parseBoolean(value.toString());
                 }
                 f.setBoolean(instance, val);
-            } else if (byte.class == type || Byte.class == type) {
+            } else if (byte.class == type) {
                 byte val;
                 if (value instanceof Byte) {
                     val = (byte) value;
@@ -202,7 +200,7 @@ public final class ReflectionHelper {
                     val = Byte.parseByte(value.toString());
                 }
                 f.setByte(instance, val);
-            } else if (int.class == type || Integer.class == type) {
+            } else if (int.class == type) {
                 int val;
                 if (value instanceof Integer) {
                     val = (int) value;
@@ -210,7 +208,7 @@ public final class ReflectionHelper {
                     val = Integer.parseInt(value.toString());
                 }
                 f.setInt(instance, val);
-            } else if (long.class == type || Long.class == type) {
+            } else if (long.class == type) {
                 long val;
                 if (value instanceof Long) {
                     val = (long) value;
@@ -218,7 +216,7 @@ public final class ReflectionHelper {
                     val = Long.parseLong(value.toString());
                 }
                 f.setLong(instance, val);
-            } else if (float.class == type || Float.class == type) {
+            } else if (float.class == type) {
                 float val;
                 if (value instanceof Float) {
                     val = (float) value;
@@ -226,9 +224,9 @@ public final class ReflectionHelper {
                     val = Float.parseFloat(value.toString());
                 }
                 f.setFloat(instance, val);
-            } else if (double.class == type || Double.class == type) {
+            } else if (double.class == type) {
                 double val;
-                if (value instanceof Document) {
+                if (value instanceof Double) {
                     val = (double) value;
                 } else {
                     val = Double.parseDouble(value.toString());
