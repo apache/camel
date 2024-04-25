@@ -280,7 +280,7 @@ public class TransformerRouteTest extends ContextTestSupport {
                     StringBuilder input = new StringBuilder();
 
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-                        String line = "";
+                        String line;
                         while ((line = reader.readLine()) != null) {
                             input.append(line);
                         }
