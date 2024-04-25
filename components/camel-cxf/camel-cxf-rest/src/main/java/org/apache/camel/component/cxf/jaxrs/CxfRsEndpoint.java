@@ -49,6 +49,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.cxf.ext.logging.AbstractLoggingInterceptor;
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
@@ -122,10 +123,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "producer")
     private HostnameVerifier hostnameVerifier;
-    @UriParam
+    @UriParam(label = "logging")
     private boolean loggingFeatureEnabled;
-    @UriParam
-    private int loggingSizeLimit;
+    @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
+    private int loggingSizeLimit = AbstractLoggingInterceptor.DEFAULT_LIMIT;
     @UriParam
     private boolean skipFaultLogging;
     @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
@@ -380,7 +381,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
         if (isLoggingFeatureEnabled()) {
             LoggingFeature loggingFeature = new LoggingFeature();
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() >= -1) {
                 loggingFeature.setLimit(getLoggingSizeLimit());
             }
             factory.getFeatures().add(loggingFeature);
@@ -530,9 +531,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * To limit the total size of number of bytes the logger will output when logging feature has been enabled.
+     * To limit the total size of number of bytes the logger will output when logging feature has been enabled and -1
+     * for no limit.
      */
     public void setLoggingSizeLimit(int loggingSizeLimit) {
+        if (loggingSizeLimit < -1) {
+            throw new IllegalArgumentException("LoggingSizeLimit must be greater or equal to -1.");
+        }
         this.loggingSizeLimit = loggingSizeLimit;
     }
 

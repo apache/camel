@@ -24,10 +24,13 @@ import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.camel.component.cxf.jaxws.CxfProducer;
 import org.apache.cxf.binding.soap.SoapBindingConfiguration;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.ext.logging.AbstractLoggingInterceptor;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
@@ -53,20 +56,21 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
                      + "/CxfEndpointBeanTest/router",
                 routerEndpoint.getAddress(), "Got the wrong endpoint address");
         assertEquals("org.apache.camel.component.cxf.HelloService",
-                routerEndpoint.getServiceClass().getName(), "Got the wrong endpont service class");
-        assertEquals(false, routerEndpoint.isLoggingFeatureEnabled(), "loggingFeatureEnabled should be false");
-        assertEquals(0, routerEndpoint.getLoggingSizeLimit(), "loggingSizeLimit should not be set");
+                routerEndpoint.getServiceClass().getName(), "Got the wrong endpoint service class");
+        assertFalse(routerEndpoint.isLoggingFeatureEnabled(), "loggingFeatureEnabled should be false");
+        assertEquals(AbstractLoggingInterceptor.DEFAULT_LIMIT, routerEndpoint.getLoggingSizeLimit(),
+                "loggingSizeLimit should not be set");
         assertEquals(1, routerEndpoint.getHandlers().size(), "Got the wrong handlers size");
-        assertEquals(1, routerEndpoint.getSchemaLocations().size(), "Got the wrong schemalocations size");
-        assertEquals("classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0), "Got the wrong schemalocation");
+        assertEquals(1, routerEndpoint.getSchemaLocations().size(), "Got the wrong schema locations size");
+        assertEquals("classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0), "Got the wrong schema location");
         assertEquals(60000, routerEndpoint.getContinuationTimeout(), "Got the wrong continuationTimeout");
 
         CxfEndpoint myEndpoint = ctx.getBean("myEndpoint", CxfEndpoint.class);
         assertEquals(endpointName, myEndpoint.getPortNameAsQName(), "Got the wrong endpointName");
         assertEquals(serviceName, myEndpoint.getServiceNameAsQName(), "Got the wrong serviceName");
-        assertEquals(true, myEndpoint.isLoggingFeatureEnabled(), "loggingFeatureEnabled should be true");
+        assertTrue(myEndpoint.isLoggingFeatureEnabled(), "loggingFeatureEnabled should be true");
         assertEquals(200, myEndpoint.getLoggingSizeLimit(), "loggingSizeLimit should be set");
-        assertTrue(myEndpoint.getBindingConfig() instanceof SoapBindingConfiguration, "We should get a soap binding");
+        assertInstanceOf(SoapBindingConfiguration.class, myEndpoint.getBindingConfig(), "We should get a soap binding");
         SoapBindingConfiguration configuration = (SoapBindingConfiguration) myEndpoint.getBindingConfig();
         assertEquals("1.2", String.valueOf(configuration.getVersion().getVersion()), "We should get a right soap version");
 
