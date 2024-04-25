@@ -63,7 +63,7 @@ public class EndpointShutdownOnceTest {
 
     private static final class MyEndpoint extends DefaultEndpoint {
 
-        private LongAdder invoked = new LongAdder();
+        private final LongAdder invoked = new LongAdder();
 
         private MyEndpoint(String endpointUri, Component component) {
             super(endpointUri, component);

@@ -88,7 +88,7 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
     }
 
     public static final class MyBean {
-        private LongAdder cnt = new LongAdder();
+        private final LongAdder cnt = new LongAdder();
 
         public void invoke(final List<String> strList) {
             cnt.increment();

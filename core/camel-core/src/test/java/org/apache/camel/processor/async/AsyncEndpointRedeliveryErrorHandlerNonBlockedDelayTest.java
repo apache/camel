@@ -33,7 +33,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelayTest extends Cont
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncEndpointRedeliveryErrorHandlerNonBlockedDelayTest.class);
 
-    private static LongAdder attempt = new LongAdder();
+    private static final LongAdder attempt = new LongAdder();
     private static String beforeThreadName;
     private static String afterThreadName;
 

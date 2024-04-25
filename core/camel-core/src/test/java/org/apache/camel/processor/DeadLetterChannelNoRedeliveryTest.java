@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
 
-    private static LongAdder counter = new LongAdder();
+    private static final LongAdder counter = new LongAdder();
 
     @Test
     public void testDLCNoRedelivery() throws Exception {

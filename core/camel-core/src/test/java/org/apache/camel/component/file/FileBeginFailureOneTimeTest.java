@@ -64,7 +64,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
     private static class MyStrategy implements GenericFileProcessStrategy<File> {
 
-        private LongAdder invoked = new LongAdder();
+        private final LongAdder invoked = new LongAdder();
 
         @Override
         public void prepareOnStartup(
