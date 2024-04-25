@@ -70,7 +70,7 @@ public class GooglePubsubLiteComponent extends DefaultComponent {
     @Metadata(label = "consumer,advanced", defaultValue = "10485760",
               description = "The number of quota bytes that may be outstanding to the client. " +
                             "Must be greater than the allowed size of the largest message (1 MiB).")
-    private long consumerBytesOutstanding = 10 * 1024 * 1024;
+    private long consumerBytesOutstanding = 10 * 1024 * 1024L;
 
     @Metadata(label = "consumer,advanced", defaultValue = "1000",
               description = "The number of messages that may be outstanding to the client. Must be >0.")
