@@ -172,8 +172,7 @@ public class DefaultExceptionPolicyStrategyTest {
     public void testCausedBy() {
         setupPoliciesCausedBy();
 
-        IOException ioe = new IOException("Damm");
-        ioe.initCause(new FileNotFoundException("Somefile not found"));
+        IOException ioe = new IOException("Damm", new FileNotFoundException("Somefile not found"));
         ExceptionPolicy result = findPolicy(ioe);
         assertEquals(type1, result);
     }
@@ -182,8 +181,7 @@ public class DefaultExceptionPolicyStrategyTest {
     public void testCausedByWrapped() {
         setupPoliciesCausedBy();
 
-        IOException ioe = new IOException("Damm");
-        ioe.initCause(new FileNotFoundException("Somefile not found"));
+        IOException ioe = new IOException("Damm", new FileNotFoundException("Somefile not found"));
         ExceptionPolicy result = findPolicy(new RuntimeCamelException(ioe));
         assertEquals(type1, result);
     }
@@ -192,8 +190,7 @@ public class DefaultExceptionPolicyStrategyTest {
     public void testCausedByNotConnected() {
         setupPoliciesCausedBy();
 
-        IOException ioe = new IOException("Damm");
-        ioe.initCause(new ConnectException("Not connected"));
+        IOException ioe = new IOException("Damm", new ConnectException("Not connected"));
         ExceptionPolicy result = findPolicy(ioe);
         assertEquals(type3, result);
     }
@@ -202,8 +199,7 @@ public class DefaultExceptionPolicyStrategyTest {
     public void testCausedByOtherIO() {
         setupPoliciesCausedBy();
 
-        IOException ioe = new IOException("Damm");
-        ioe.initCause(new MalformedURLException("Bad url"));
+        IOException ioe = new IOException("Damm", new MalformedURLException("Bad url"));
         ExceptionPolicy result = findPolicy(ioe);
         assertEquals(type2, result);
     }
