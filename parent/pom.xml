@@ -176,7 +176,7 @@
         <jakarta-transaction-api-version>2.0.1</jakarta-transaction-api-version>
         <jakarta-jws-api-version>3.0.0</jakarta-jws-api-version>
         <jaxb-core-version>4.0.5</jaxb-core-version>
-        <jaxb-impl-version>4.0.4</jaxb-impl-version>
+        <jaxb-impl-version>4.0.5</jaxb-impl-version>
         <jaxb-osgi-version>4.0.5</jaxb-osgi-version>
         <jaxb-xjc-version>4.0.5</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.5</jaxb-jxc-version>
