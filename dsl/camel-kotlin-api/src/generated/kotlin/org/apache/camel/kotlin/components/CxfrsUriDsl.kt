@@ -56,22 +56,6 @@ public class CxfrsUriDsl(
     it.property("features", features)
   }
 
-  public fun loggingFeatureEnabled(loggingFeatureEnabled: String) {
-    it.property("loggingFeatureEnabled", loggingFeatureEnabled)
-  }
-
-  public fun loggingFeatureEnabled(loggingFeatureEnabled: Boolean) {
-    it.property("loggingFeatureEnabled", loggingFeatureEnabled.toString())
-  }
-
-  public fun loggingSizeLimit(loggingSizeLimit: String) {
-    it.property("loggingSizeLimit", loggingSizeLimit)
-  }
-
-  public fun loggingSizeLimit(loggingSizeLimit: Int) {
-    it.property("loggingSizeLimit", loggingSizeLimit.toString())
-  }
-
   public fun modelRef(modelRef: String) {
     it.property("modelRef", modelRef)
   }
@@ -226,5 +210,21 @@ public class CxfrsUriDsl(
 
   public fun propagateContexts(propagateContexts: Boolean) {
     it.property("propagateContexts", propagateContexts.toString())
+  }
+
+  public fun loggingFeatureEnabled(loggingFeatureEnabled: String) {
+    it.property("loggingFeatureEnabled", loggingFeatureEnabled)
+  }
+
+  public fun loggingFeatureEnabled(loggingFeatureEnabled: Boolean) {
+    it.property("loggingFeatureEnabled", loggingFeatureEnabled.toString())
+  }
+
+  public fun loggingSizeLimit(loggingSizeLimit: String) {
+    it.property("loggingSizeLimit", loggingSizeLimit)
+  }
+
+  public fun loggingSizeLimit(loggingSizeLimit: Int) {
+    it.property("loggingSizeLimit", loggingSizeLimit.toString())
   }
 }
