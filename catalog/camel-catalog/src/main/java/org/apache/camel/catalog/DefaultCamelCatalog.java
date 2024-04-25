@@ -232,18 +232,20 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     @Override
     public List<String> findComponentNames() {
-        return cache(FIND_COMPONENT_NAMES, () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
-                .flatMap(Collection::stream)
-                .sorted()
-                .toList());
+        return cache(FIND_COMPONENT_NAMES,
+                () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
+                        .flatMap(Collection::stream)
+                        .sorted()
+                        .toList());
     }
 
     @Override
     public List<String> findDataFormatNames() {
-        return cache(FIND_DATA_FORMAT_NAMES, () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
-                .flatMap(Collection::stream)
-                .sorted()
-                .toList());
+        return cache(FIND_DATA_FORMAT_NAMES,
+                () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
+                        .flatMap(Collection::stream)
+                        .sorted()
+                        .toList());
     }
 
     @Override
@@ -451,7 +453,8 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         return cache(FIND_OTHER_LABELS, () -> findLabels(this::findOtherNames, this::otherModel));
     }
 
-    private SortedSet<String> findLabels(Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> loadModel) {
+    private SortedSet<String> findLabels(Supplier<List<String>> findNames,
+            Function<String, ? extends BaseModel<?>> loadModel) {
         TreeSet<String> answer = new TreeSet<>();
         List<String> names = findNames.get();
         for (String name : names) {
@@ -554,43 +557,38 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     @Override
     public ArtifactModel<?> modelFromMavenGAV(String groupId, String artifactId, String version) {
-        for (String name : findComponentNames()) {
-            ArtifactModel<?> am = componentModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
+        ArtifactModel<?> am = null;
+        List<String> listComponentNames = findComponentNames();
+        am = matchArtifactModelFromList(listComponentNames, groupId, artifactId, version);
+        if (am != null) {
+            return am;
         }
-        for (String name : findDataFormatNames()) {
-            ArtifactModel<?> am = dataFormatModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
+        List<String> listDataformatNames = findDataFormatNames();
+        am = matchArtifactModelFromList(listDataformatNames, groupId, artifactId, version);
+        if (am != null) {
+            return am;
         }
-        for (String name : findLanguageNames()) {
-            ArtifactModel<?> am = languageModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
+        List<String> listLanguageNames = findLanguageNames();
+        am = matchArtifactModelFromList(listLanguageNames, groupId, artifactId, version);
+        if (am != null) {
+            return am;
         }
-        for (String name : findOtherNames()) {
-            ArtifactModel<?> am = otherModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
+        List<String> listOtherNames = findOtherNames();
+        am = matchArtifactModelFromList(listOtherNames, groupId, artifactId, version);
+        if (am != null) {
+            return am;
         }
-        for (String name : findTransformerNames()) {
-            ArtifactModel<?> am = transformerModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
+        List<String> listTransformerNames = findTransformerNames();
+        am = matchArtifactModelFromList(listTransformerNames, groupId, artifactId, version);
+        if (am != null) {
+            return am;
         }
-        for (String name : findDevConsoleNames()) {
-            ArtifactModel<?> am = devConsoleModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
+        List<String> listDevConsoleNames = findDevConsoleNames();
+        am = matchArtifactModelFromList(listDevConsoleNames, groupId, artifactId, version);
+        if (am != null) {
+            return am;
         }
-        return null;
+        return am;
     }
 
     @Override
@@ -657,6 +655,17 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         } catch (IOException e) {
             return null;
         }
+    }
+
+    private ArtifactModel matchArtifactModelFromList(List<String> artifactModelList, String groupId, String artifactId,
+            String version) {
+        for (String name : artifactModelList) {
+            ArtifactModel<?> am = componentModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        return null;
     }
 
 }
