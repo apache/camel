@@ -159,7 +159,7 @@ public class MainSupervisingRouteControllerTest {
         main.stop();
     }
 
-    private class MyRoute extends RouteBuilder {
+    private static class MyRoute extends RouteBuilder {
         @Override
         public void configure() {
             getContext().addComponent("jms", new MyJmsComponent());
