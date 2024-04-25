@@ -232,8 +232,7 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     @Override
     public List<String> findComponentNames() {
-        return cache(FIND_COMPONENT_NAMES,
-                () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
+        return cache(FIND_COMPONENT_NAMES, () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
                         .flatMap(Collection::stream)
                         .sorted()
                         .toList());
@@ -241,8 +240,7 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     @Override
     public List<String> findDataFormatNames() {
-        return cache(FIND_DATA_FORMAT_NAMES,
-                () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
+        return cache(FIND_DATA_FORMAT_NAMES, () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
                         .flatMap(Collection::stream)
                         .sorted()
                         .toList());
@@ -453,8 +451,7 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         return cache(FIND_OTHER_LABELS, () -> findLabels(this::findOtherNames, this::otherModel));
     }
 
-    private SortedSet<String> findLabels(Supplier<List<String>> findNames,
-            Function<String, ? extends BaseModel<?>> loadModel) {
+    private SortedSet<String> findLabels(Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> loadModel) {
         TreeSet<String> answer = new TreeSet<>();
         List<String> names = findNames.get();
         for (String name : names) {
