@@ -59,7 +59,7 @@ public class MessagePredicate {
                     value = fieldMap.getString(c.getField());
                 }
             } catch (FieldNotFound e) {
-                RuntimeCamelException.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
             if (!c.getObject().equals(value)) {
                 return false;
