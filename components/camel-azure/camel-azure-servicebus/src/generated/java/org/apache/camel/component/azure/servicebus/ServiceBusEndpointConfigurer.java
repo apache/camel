@@ -34,12 +34,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, com.azure.core.util.ClientOptions.class, value)); return true;
         case "connectionstring":
         case "connectionString": target.getConfiguration().setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumeroperation":
-        case "consumerOperation": target.getConfiguration().setConsumerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class, value)); return true;
         case "credentialtype":
         case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.servicebus.CredentialType.class, value)); return true;
-        case "disableautocomplete":
-        case "disableAutoComplete": target.getConfiguration().setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
         case "enabledeadlettering":
         case "enableDeadLettering": target.getConfiguration().setEnableDeadLettering(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -54,18 +50,16 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": target.getConfiguration().setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
-        case "peeknummaxmessages":
-        case "peekNumMaxMessages": target.getConfiguration().setPeekNumMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxconcurrentcalls":
+        case "maxConcurrentCalls": target.getConfiguration().setMaxConcurrentCalls(property(camelContext, int.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, int.class, value)); return true;
+        case "processorclient":
+        case "processorClient": target.getConfiguration().setProcessorClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusProcessorClient.class, value)); return true;
         case "produceroperation":
         case "producerOperation": target.getConfiguration().setProducerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition.class, value)); return true;
         case "proxyoptions":
         case "proxyOptions": target.getConfiguration().setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
-        case "receiverasyncclient":
-        case "receiverAsyncClient": target.getConfiguration().setReceiverAsyncClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class, value)); return true;
-        case "reconnectdelay":
-        case "reconnectDelay": target.getConfiguration().setReconnectDelay(property(camelContext, int.class, value)); return true;
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": target.getConfiguration().setScheduledEnqueueTime(property(camelContext, java.time.OffsetDateTime.class, value)); return true;
         case "senderasyncclient":
@@ -88,7 +82,7 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"receiverAsyncClient", "senderAsyncClient"};
+        return new String[]{"processorClient", "senderAsyncClient"};
     }
 
     @Override
@@ -105,12 +99,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "clientOptions": return com.azure.core.util.ClientOptions.class;
         case "connectionstring":
         case "connectionString": return java.lang.String.class;
-        case "consumeroperation":
-        case "consumerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class;
         case "credentialtype":
         case "credentialType": return org.apache.camel.component.azure.servicebus.CredentialType.class;
-        case "disableautocomplete":
-        case "disableAutoComplete": return boolean.class;
         case "enabledeadlettering":
         case "enableDeadLettering": return boolean.class;
         case "exceptionhandler":
@@ -125,18 +115,16 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": return java.time.Duration.class;
-        case "peeknummaxmessages":
-        case "peekNumMaxMessages": return java.lang.Integer.class;
+        case "maxconcurrentcalls":
+        case "maxConcurrentCalls": return int.class;
         case "prefetchcount":
         case "prefetchCount": return int.class;
+        case "processorclient":
+        case "processorClient": return com.azure.messaging.servicebus.ServiceBusProcessorClient.class;
         case "produceroperation":
         case "producerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition.class;
         case "proxyoptions":
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
-        case "receiverasyncclient":
-        case "receiverAsyncClient": return com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient.class;
-        case "reconnectdelay":
-        case "reconnectDelay": return int.class;
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": return java.time.OffsetDateTime.class;
         case "senderasyncclient":
@@ -172,12 +160,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "clientOptions": return target.getConfiguration().getClientOptions();
         case "connectionstring":
         case "connectionString": return target.getConfiguration().getConnectionString();
-        case "consumeroperation":
-        case "consumerOperation": return target.getConfiguration().getConsumerOperation();
         case "credentialtype":
         case "credentialType": return target.getConfiguration().getCredentialType();
-        case "disableautocomplete":
-        case "disableAutoComplete": return target.getConfiguration().isDisableAutoComplete();
         case "enabledeadlettering":
         case "enableDeadLettering": return target.getConfiguration().isEnableDeadLettering();
         case "exceptionhandler":
@@ -192,18 +176,16 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxautolockrenewduration":
         case "maxAutoLockRenewDuration": return target.getConfiguration().getMaxAutoLockRenewDuration();
-        case "peeknummaxmessages":
-        case "peekNumMaxMessages": return target.getConfiguration().getPeekNumMaxMessages();
+        case "maxconcurrentcalls":
+        case "maxConcurrentCalls": return target.getConfiguration().getMaxConcurrentCalls();
         case "prefetchcount":
         case "prefetchCount": return target.getConfiguration().getPrefetchCount();
+        case "processorclient":
+        case "processorClient": return target.getConfiguration().getProcessorClient();
         case "produceroperation":
         case "producerOperation": return target.getConfiguration().getProducerOperation();
         case "proxyoptions":
         case "proxyOptions": return target.getConfiguration().getProxyOptions();
-        case "receiverasyncclient":
-        case "receiverAsyncClient": return target.getConfiguration().getReceiverAsyncClient();
-        case "reconnectdelay":
-        case "reconnectDelay": return target.getConfiguration().getReconnectDelay();
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": return target.getConfiguration().getScheduledEnqueueTime();
         case "senderasyncclient":

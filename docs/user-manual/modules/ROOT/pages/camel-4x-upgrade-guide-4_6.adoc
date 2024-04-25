@@ -76,6 +76,17 @@ Multiple scopes can be separated by comma.
 
 The Kafka component now supports custom subscription adapters for applications with very complex subscription logic.
 
+=== camel-azure-servicebus
+
+The Camel Azure ServiceBus consumer has been refactored to internally use the high-level client instead of the low-level client to more easily support automatic reconnection, competing consumers and high availability, amongst other concerns. The corresponding changes to configuration options are:
+
+- The consumer now supports the Competing Consumers EIP. This can be enabled by increasing the newly added `maxConcurrentCalls` option to a value greater than 1.
+- The `disableAutoComplete` option has been removed. Auto-complete is always disabled on the underlying client to ensure that Camel is able to correctly complete, abandon or dead-letter consumed messages as appropriate. The presence of the `disableAutoComplete` option made little sense, since it is not propagated to the underlying client and enabling this option caused Camel not to take any steps to acknowledge/reject consumed messages. Enabling this option would result in message locks being held indefinitely, which is almost certainly not the desired behaviour.
+- The high level client always operates in `receiveMessages` mode (peek mode is not supported), so the `consumerOperation` option has been removed, along with the `ServiceBusConsumerOperationDefinition` enum. The associated `peekNumMaxMessages` option has also been removed.
+- The `receiverAsyncClient` option has been replaced with a `processorClient` option to enable use of a custom-configured client. The parameter type accepted by this option is `ServiceBusProcessorClient`.
+- The `reconnectDelay` option has been removed, since reconnection is now handled internally by the client.
+
+
 === camel-yaml-dsl
 
 Renamed `streamCaching` to `streamCache` on the `route`

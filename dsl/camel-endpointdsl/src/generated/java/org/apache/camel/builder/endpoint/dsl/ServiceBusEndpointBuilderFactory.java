@@ -244,72 +244,6 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the desired operation to be used in the consumer.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition</code> type.
-         * 
-         * Default: receiveMessages
-         * Group: consumer
-         * 
-         * @param consumerOperation the value to set
-         * @return the dsl builder
-         */
-        default ServiceBusEndpointConsumerBuilder consumerOperation(org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition consumerOperation) {
-            doSetProperty("consumerOperation", consumerOperation);
-            return this;
-        }
-        /**
-         * Sets the desired operation to be used in the consumer.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition</code> type.
-         * 
-         * Default: receiveMessages
-         * Group: consumer
-         * 
-         * @param consumerOperation the value to set
-         * @return the dsl builder
-         */
-        default ServiceBusEndpointConsumerBuilder consumerOperation(String consumerOperation) {
-            doSetProperty("consumerOperation", consumerOperation);
-            return this;
-        }
-        /**
-         * Disables auto-complete and auto-abandon of received messages. By
-         * default, a successfully processed message is completed. If an error
-         * happens when the message is abandoned.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param disableAutoComplete the value to set
-         * @return the dsl builder
-         */
-        default ServiceBusEndpointConsumerBuilder disableAutoComplete(boolean disableAutoComplete) {
-            doSetProperty("disableAutoComplete", disableAutoComplete);
-            return this;
-        }
-        /**
-         * Disables auto-complete and auto-abandon of received messages. By
-         * default, a successfully processed message is completed. If an error
-         * happens when the message is abandoned.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param disableAutoComplete the value to set
-         * @return the dsl builder
-         */
-        default ServiceBusEndpointConsumerBuilder disableAutoComplete(String disableAutoComplete) {
-            doSetProperty("disableAutoComplete", disableAutoComplete);
-            return this;
-        }
-        /**
          * Enable application level deadlettering to the subscription deadletter
          * subqueue if deadletter related headers are set.
          * 
@@ -377,34 +311,33 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the max number of messages to be peeked during the peek
-         * operation.
+         * Sets maximum number of concurrent calls.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          * 
-         * @param peekNumMaxMessages the value to set
+         * @param maxConcurrentCalls the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder peekNumMaxMessages(Integer peekNumMaxMessages) {
-            doSetProperty("peekNumMaxMessages", peekNumMaxMessages);
+        default ServiceBusEndpointConsumerBuilder maxConcurrentCalls(int maxConcurrentCalls) {
+            doSetProperty("maxConcurrentCalls", maxConcurrentCalls);
             return this;
         }
         /**
-         * Set the max number of messages to be peeked during the peek
-         * operation.
+         * Sets maximum number of concurrent calls.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          * 
-         * @param peekNumMaxMessages the value to set
+         * @param maxConcurrentCalls the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder peekNumMaxMessages(String peekNumMaxMessages) {
-            doSetProperty("peekNumMaxMessages", peekNumMaxMessages);
+        default ServiceBusEndpointConsumerBuilder maxConcurrentCalls(String maxConcurrentCalls) {
+            doSetProperty("maxConcurrentCalls", maxConcurrentCalls);
             return this;
         }
         /**
@@ -448,35 +381,37 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the receiverAsyncClient in order to consume messages by the
+         * Sets the processorClient in order to consume messages by the
          * consumer.
          * 
          * The option is a:
-         * <code>com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient</code> type.
+         * <code>com.azure.messaging.servicebus.ServiceBusProcessorClient</code>
+         * type.
          * 
          * Group: consumer
          * 
-         * @param receiverAsyncClient the value to set
+         * @param processorClient the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder receiverAsyncClient(com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient receiverAsyncClient) {
-            doSetProperty("receiverAsyncClient", receiverAsyncClient);
+        default ServiceBusEndpointConsumerBuilder processorClient(com.azure.messaging.servicebus.ServiceBusProcessorClient processorClient) {
+            doSetProperty("processorClient", processorClient);
             return this;
         }
         /**
-         * Sets the receiverAsyncClient in order to consume messages by the
+         * Sets the processorClient in order to consume messages by the
          * consumer.
          * 
          * The option will be converted to a
-         * <code>com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient</code> type.
+         * <code>com.azure.messaging.servicebus.ServiceBusProcessorClient</code>
+         * type.
          * 
          * Group: consumer
          * 
-         * @param receiverAsyncClient the value to set
+         * @param processorClient the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder receiverAsyncClient(String receiverAsyncClient) {
-            doSetProperty("receiverAsyncClient", receiverAsyncClient);
+        default ServiceBusEndpointConsumerBuilder processorClient(String processorClient) {
+            doSetProperty("processorClient", processorClient);
             return this;
         }
         /**
@@ -775,38 +710,6 @@ public interface ServiceBusEndpointBuilderFactory {
          */
         default AdvancedServiceBusEndpointConsumerBuilder exchangePattern(String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * If the consumer has connection failure to Azure ServiceBus, then
-         * delay (millis) some time before re-connecting.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 5000
-         * Group: consumer (advanced)
-         * 
-         * @param reconnectDelay the value to set
-         * @return the dsl builder
-         */
-        default AdvancedServiceBusEndpointConsumerBuilder reconnectDelay(int reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
-            return this;
-        }
-        /**
-         * If the consumer has connection failure to Azure ServiceBus, then
-         * delay (millis) some time before re-connecting.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 5000
-         * Group: consumer (advanced)
-         * 
-         * @param reconnectDelay the value to set
-         * @return the dsl builder
-         */
-        default AdvancedServiceBusEndpointConsumerBuilder reconnectDelay(String reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
     }
