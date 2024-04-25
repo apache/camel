@@ -24,7 +24,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
-public class KafkaConsumerUtil {
+public final class KafkaConsumerUtil {
+
+    private KafkaConsumerUtil() {
+    }
 
     /**
      * Tests whether the Kafka consumer reached the target offsets for all specified topic partitions.
